@@ -1,13 +1,19 @@
 {
-  "name": "integraflow",
+  "name": "web-sdk",
   "version": "1.0.0",
   "description": "",
+  "private": true,
   "main": "frontend/src/index.tsx",
   "directories": {
     "doc": "docs"
   },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "semantic-release": "turbo run semantic-release",
+    "build": "turbo run build"
   },
   "repository": {
     "type": "git",
@@ -22,5 +28,8 @@
   "dependencies": {
     "turbo": "^1.10.15",
     "yarn": "^1.22.19"
+  },
+  "devDependencies": {
+    "semantic-release": "^21.1.2"
   }
 }
