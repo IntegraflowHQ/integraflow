@@ -1,0 +1,2 @@
+WEBHOOK_CACHE_DEFAULT_TIMEOUT: int = 5 * 60  # 5 minutes
+APP_ID_PREFIX = "app"
