@@ -1,1 +1,13 @@
-{}
+{
+  "[javascript][typescript][javascriptreact][typescriptreact]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true,
+      "source.formatDocument": true,
+      "source.fixAll.eslint": true
+    },
+    "editor.guides.bracketPairs": "active"
+  },
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "javascript.updateImportsOnFileMove.enabled": "always"
+}
