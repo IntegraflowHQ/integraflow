@@ -1,4 +1,19 @@
 {
+
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "python.formatting.provider": "black",
+  "python.languageServer": "Pylance",
+  "python.linting.mypyEnabled": true,
+  "python.analysis.typeCheckingMode": "basic",
+  "cSpell.words": [
+      "dataloaders",
+      "preorder",
+      "preorders",
+      "undiscounted"
+  ],
+  "python.linting.enabled": true,
+  "editor.tabSize": 4,
   "[javascript][typescript][javascriptreact][typescriptreact]": {
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
