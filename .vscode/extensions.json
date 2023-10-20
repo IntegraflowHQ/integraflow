@@ -1,12 +1,16 @@
 {
   "recommendations": [
-      "charliermarsh.ruff",
-      "editorconfig.editorconfig",
-      "github.vscode-pull-request-github",
-      "ms-python.black-formatter",
-      "ms-python.pylint",
-      "ms-python.python",
-      "ms-python.vscode-pylance",
-      "streetsidesoftware.code-spell-checker"
+    "charliermarsh.ruff",
+    "editorconfig.editorconfig",
+    "github.vscode-pull-request-github",
+    "ms-python.black-formatter",
+    "ms-python.pylint",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "streetsidesoftware.code-spell-checker",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "dsznajder.es7-react-js-snippets",
+    "bradlc.vscode-tailwindcss"
   ]
 }

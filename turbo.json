@@ -1,0 +1,10 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "@integraflow/web#semantic-release": {
+      "dependsOn": ["@integraflow/web#build"]
+    },
+    "@integraflow/web#build": {},
+    "lint": {}
+  }
+}
