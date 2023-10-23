@@ -13,6 +13,7 @@ const config: Config = {
         intg: {
           bg: {
             "1": "#21173A",
+            "2": "#53389E"
           },
           text: {
             "1": "#DBD4EB",

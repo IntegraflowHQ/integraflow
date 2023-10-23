@@ -1,2 +1,2 @@
-// UI components here
-export { InputField } from './Input';
+export { TextInput } from "./TextInput";
+

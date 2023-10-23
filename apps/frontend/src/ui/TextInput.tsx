@@ -1,4 +1,4 @@
-import { TextInput, TextInputProps } from "@tremor/react";
+import { TextInputProps, TextInput as TremorTextInput } from "@tremor/react";
 import React from "react";
 
 interface InputFieldProps extends TextInputProps {
@@ -9,7 +9,7 @@ interface InputFieldProps extends TextInputProps {
   border?: boolean;
 }
 
-export const InputField: React.FC<InputFieldProps> = ({
+export const TextInput: React.FC<InputFieldProps> = ({
   label,
   icon,
   prefix,
@@ -31,10 +31,10 @@ export const InputField: React.FC<InputFieldProps> = ({
           {label}
         </label>
       )}
-      <TextInput
+      <TremorTextInput
         {...props}
         className={`${
-          border ? "border-[#53389E]" : ""
+          border ? "border-intg-bg-2" : ""
         } rounded-lg bg-intg-bg-1 text-white placeholder:text-intg-text-3`}
         icon={prefix ? Prefix : icon}
       />
