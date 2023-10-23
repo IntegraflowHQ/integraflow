@@ -5,7 +5,8 @@ interface InputFieldProps extends TextInputProps {
   label?: string;
   icon?: React.JSXElementConstructor<any> | React.ElementType<any> | undefined;
   prefix?: string;
-  cn?: string
+  cn?: string;
+  border?: boolean;
 }
 
 export const InputField: React.FC<InputFieldProps> = ({
@@ -13,30 +14,30 @@ export const InputField: React.FC<InputFieldProps> = ({
   icon,
   prefix,
   cn,
+  border = false,
   ...props
 }) => {
   const Prefix = () => {
-    return <div className="bg-intg-bg-1 py-[14px] pl-[16px] font-medium text-[14px] text-intg-text-3">{prefix}</div>;
+    return <span className="-mr-1 pl-[14px] text-intg-text-3 ">{prefix}</span>;
   };
 
   return (
-    <div className={cn}  >
-      {label && 
-      <label className="block text-sm font-medium text-intg-text-2" htmlFor={label}>
-        {label}
-      </label>}
+    <div className={cn}>
+      {label && (
+        <label
+          className="block text-sm font-medium text-intg-text-2"
+          htmlFor={label}
+        >
+          {label}
+        </label>
+      )}
       <TextInput
-      style={{
-        background: '#21173A',
-        width:'100%',
-        color: '#DBD4EB',
-        padding:"14px 16px",
-        fontSize:'14px',
-      }}
         {...props}
+        className={`${
+          border ? "border-[#53389E]" : ""
+        } rounded-lg bg-intg-bg-1 text-white placeholder:text-intg-text-3`}
         icon={prefix ? Prefix : icon}
       />
     </div>
   );
 };
-
