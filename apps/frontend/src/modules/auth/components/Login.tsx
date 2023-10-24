@@ -16,7 +16,7 @@ function Login() {
       </header>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <TextInput placeholder="Enter your email" prefix="integraflow.app/" />
+        <TextInput placeholder="Enter your email" />
         <Button text="Continue with Email" />
       </form>
 
