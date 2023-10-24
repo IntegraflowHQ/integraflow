@@ -1,5 +1,4 @@
 {
-
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
   "python.formatting.provider": "black",
@@ -7,10 +6,11 @@
   "python.linting.mypyEnabled": true,
   "python.analysis.typeCheckingMode": "basic",
   "cSpell.words": [
-      "dataloaders",
-      "preorder",
-      "preorders",
-      "undiscounted"
+    "dataloaders",
+    "intg",
+    "preorder",
+    "preorders",
+    "undiscounted"
   ],
   "python.linting.enabled": true,
   "editor.tabSize": 4,
