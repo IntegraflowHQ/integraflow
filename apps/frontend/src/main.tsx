@@ -5,6 +5,7 @@ import "./index.css";
 import Layout from "./layout/Layout";
 import Index from "./pages";
 import TodoScreen from "./pages/todos";
+import Workspace from "./pages/workspace";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
         path: "/todos",
         element: <TodoScreen />,
       },
+      {
+        path:'/workspace',
+        element : <Workspace/>
+      }
     ],
   },
 ]);
