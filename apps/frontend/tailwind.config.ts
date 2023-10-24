@@ -23,6 +23,7 @@ const config: Config = {
             "3": "#9582C0",
             "4": "#AFAAC7",
             "5": "#F2F2F2",
+            "6": "#B5A4DB",
             DEFAULT: "#AFAAC7",
           },
           black: {

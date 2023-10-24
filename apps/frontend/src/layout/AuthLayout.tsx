@@ -1,11 +1,11 @@
+import { Outlet } from "react-router-dom";
 import AuthBG from "../assets/images/auth-bg.png";
 import Profile1 from "../assets/images/loginScreen/profile-1.png";
 import Profile2 from "../assets/images/loginScreen/profile-2.png";
 import Profile3 from "../assets/images/loginScreen/profile-3.png";
 import Logo from "../assets/images/logo.png";
-import Login from "../modules/auth/components/Login";
 
-export default function Index() {
+export function AuthLayout() {
   return (
     <main className="flex w-screen h-screen bg-intg-black">
       <div
@@ -22,7 +22,7 @@ export default function Index() {
           <img src={Logo} alt="Logo" />
         </div>
 
-        <Login />
+        <Outlet />
 
         <div className="self-center max-w-xs text-base text-center text-intg-text">
           By signing up, you agree to Integraflow Privacy and terms services

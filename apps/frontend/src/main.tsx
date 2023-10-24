@@ -2,12 +2,24 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
-import Index from "./pages";
+import { AuthLayout } from "./layout/AuthLayout";
+import Index from "./pages/Index";
+import Signup from "./pages/Signup";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Index />,
+    element: <AuthLayout />,
+    children: [
+      {
+        path: "",
+        element: <Index />,
+      },
+      {
+        path: "signup",
+        element: <Signup />,
+      },
+    ],
   },
 ]);
 
