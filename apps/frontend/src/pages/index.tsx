@@ -1,3 +1,5 @@
+import Login from "../modules/auth/components/Login";
+
 export default function Index() {
-  return <div>Hello World</div>;
+  return <Login />;
 }

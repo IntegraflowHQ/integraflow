@@ -18,7 +18,7 @@ export const TextInput: React.FC<InputFieldProps> = ({
   ...props
 }) => {
   const Prefix = () => {
-    return <span className="-mr-1 pl-[14px] text-intg-text-3 ">{prefix}</span>;
+    return <span className="pl-3 -mr-1 text-intg-text-3 ">{prefix}</span>;
   };
 
   return (
@@ -34,8 +34,8 @@ export const TextInput: React.FC<InputFieldProps> = ({
       <TremorTextInput
         {...props}
         className={`${
-          border ? "border-intg-bg-2" : ""
-        } rounded-lg bg-intg-bg-1 text-white placeholder:text-intg-text-3`}
+          border ? "border-intg-bg-2" : "border-transparent"
+        } rounded-lg bg-intg-bg-1 py-[6px] pl-1 text-sm font-medium tracking-[-0.408px] text-white placeholder:text-intg-text-3`}
         icon={prefix ? Prefix : icon}
       />
     </div>

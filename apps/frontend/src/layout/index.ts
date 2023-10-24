@@ -1,1 +1,1 @@
-// Layout components here
+export { AuthLayout } from './AuthLayout';
