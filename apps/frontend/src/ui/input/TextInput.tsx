@@ -15,9 +15,7 @@ interface InputFieldProps extends TremorTextInputProps {
 export const TextInput = forwardRef<HTMLInputElement, InputFieldProps>(
   ({ label, icon, prefix, cn, border = false, ...props }, ref) => {
     const Prefix = () => {
-      return (
-        <span className="-mr-1 pl-[14px] text-intg-text-3 ">{prefix}</span>
-      );
+      return <span className="-mr-1 pl-3 text-intg-text-3 ">{prefix}</span>;
     };
 
     return (
@@ -34,8 +32,8 @@ export const TextInput = forwardRef<HTMLInputElement, InputFieldProps>(
           {...props}
           ref={ref}
           className={`${
-            border ? "border-intg-bg-2" : ""
-          } rounded-lg bg-intg-bg-1 text-white placeholder:text-intg-text-3`}
+            border ? "border-intg-bg-2" : "border-transparent"
+          } rounded-lg bg-intg-bg-1 py-[6px] pl-1 text-sm font-medium tracking-[-0.408px] text-white placeholder:text-intg-text-3`}
           icon={prefix ? Prefix : icon}
         />
       </div>

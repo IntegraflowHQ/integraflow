@@ -2,28 +2,28 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
-import Layout from "./layout/Layout";
-import Index from "./pages";
-import TodoScreen from "./pages/todos";
+import { AuthLayout } from "./layout/AuthLayout";
+import Index from "./pages/Index";
+import Signup from "./pages/Signup";
 import Workspace from "./pages/workspace";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: <AuthLayout />,
     children: [
       {
         path: "",
         element: <Index />,
       },
       {
-        path: "/todos",
-        element: <TodoScreen />,
+        path: "signup",
+        element: <Signup />,
       },
       {
-        path:'/workspace',
-        element : <Workspace/>
-      }
+        path: "/workspace",
+        element: <Workspace />,
+      },
     ],
   },
 ]);
