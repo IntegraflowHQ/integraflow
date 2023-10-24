@@ -24,9 +24,7 @@ export function AuthLayout() {
 
         <Outlet />
 
-        <div className="self-center max-w-xs text-base text-center text-intg-text">
-          By signing up, you agree to Integraflow Privacy and terms services
-        </div>
+        
       </div>
 
       <div
