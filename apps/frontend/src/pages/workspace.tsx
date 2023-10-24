@@ -159,14 +159,6 @@ const Workspace = () => {
             />
           </div>
           <Button text="Create Workspace" />
-          {/* <div className="text-center"> */}
-          {/* <Button
-              className="bg-tasker-black hover:bg-tasker-black border-tasker-black w-2/3 border-2 "
-              type="submit"
-            >
-              Create Workspace
-            </Button> */}
-          {/* </div> */}
         </form>
       </div>
     </div>
