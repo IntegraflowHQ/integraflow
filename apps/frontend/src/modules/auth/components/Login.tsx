@@ -12,7 +12,7 @@ function Login() {
         <h1 className="text-[28px] font-medium leading-normal text-white">
           Log in to Integraflow
         </h1>
-        <p className="text-base text-intg-text">Welcome back 🥰</p>
+        <p className="text-base text-intg-text">Welcome 🥰</p>
       </header>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
