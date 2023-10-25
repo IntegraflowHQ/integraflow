@@ -9,11 +9,10 @@ interface InputFieldProps extends TremorTextInputProps {
   icon?: React.JSXElementConstructor<any> | React.ElementType<any> | undefined;
   prefix?: string;
   cn?: string;
-  border?: boolean;
 }
 
 export const TextInput = forwardRef<HTMLInputElement, InputFieldProps>(
-  ({ label, icon, prefix, cn, border = false, ...props }, ref) => {
+  ({ label, icon, prefix, cn, ...props }, ref) => {
     const Prefix = () => {
       return <span className="-mr-1 pl-3 text-intg-text-3 ">{prefix}</span>;
     };
@@ -22,7 +21,7 @@ export const TextInput = forwardRef<HTMLInputElement, InputFieldProps>(
       <div className={cn}>
         {label && (
           <label
-            className="block text-sm font-medium text-intg-text-2"
+            className="mb-2 block text-sm font-medium text-intg-text-2"
             htmlFor={label}
           >
             {label}
@@ -31,9 +30,9 @@ export const TextInput = forwardRef<HTMLInputElement, InputFieldProps>(
         <TremorTextInput
           {...props}
           ref={ref}
-          className={`${
-            border ? "border-intg-bg-2" : "border-transparent"
-          } rounded-lg bg-intg-bg-1 py-[6px] pl-1 text-sm font-medium tracking-[-0.408px] text-white placeholder:text-intg-text-3`}
+          className="rounded-lg border border-transparent bg-intg-bg-1 py-[6px] pl-1 text-sm
+           font-medium tracking-[-0.408px] text-intg-text-1 placeholder:text-intg-text-3 
+           focus:border-intg-text-3 focus:outline-none"
           icon={prefix ? Prefix : icon}
         />
       </div>

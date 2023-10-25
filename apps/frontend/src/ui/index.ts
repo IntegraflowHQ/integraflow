@@ -1,3 +1,3 @@
 export { default as Button } from "./Button/Button";
-export { Select } from "./Select/Select";
+export { SelectInput } from "./input/SelectInput";
 export { TextInput } from "./input/TextInput";
