@@ -22,7 +22,7 @@ from requests_hardened.ip_filter import InvalidIPAddress
 from integraflow import __version__ as integraflow_version
 from integraflow.core.exceptions import PermissionDenied, ReadOnlyException
 from integraflow.core.utils import is_valid_ipv4, is_valid_ipv6
-from ..webhook import observability
+from integraflow.webhook import observability
 from .api import API_PATH
 from .context import get_context_value
 from .utils import format_error, query_fingerprint, query_identifier
@@ -109,6 +109,7 @@ class GraphQLView(View):
 
     @observability.report_view
     def dispatch(self, request, *args, **kwargs):
+        print(request.method)
         # Handle options method the GraphQlView restricts it.
         if request.method == "GET":
             if settings.PLAYGROUND_ENABLED:

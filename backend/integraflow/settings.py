@@ -124,6 +124,8 @@ USE_TZ = True
 
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
+SITE_URL = os.environ.get("SITE_URL", "http://localhost:8000").rstrip("/")
+
 EMAIL_URL = os.environ.get("EMAIL_URL")
 SENDGRID_USERNAME = os.environ.get("SENDGRID_USERNAME")
 SENDGRID_PASSWORD = os.environ.get("SENDGRID_PASSWORD")
@@ -184,7 +186,7 @@ context_processors = [
     "django.template.context_processors.debug",
     "django.template.context_processors.media",
     "django.template.context_processors.static",
-    "integraflow.site.context_processors.site",
+    # "integraflow.site.context_processors.site",
 ]
 
 loaders = [
@@ -248,7 +250,10 @@ INSTALLED_APPS = [
     # Local apps
     "integraflow.app",
     "integraflow.core",
-    # "integraflow.graphql",
+    "integraflow.messaging",
+    "integraflow.organization",
+    "integraflow.project",
+    "integraflow.graphql",
     "integraflow.user",
     "integraflow.webhook",
     # External apps
@@ -503,7 +508,6 @@ PLACEHOLDER_IMAGES = {
 
 AUTHENTICATION_BACKENDS = [
     "integraflow.core.auth_backend.JSONWebTokenBackend",
-    "integraflow.core.auth_backend.PluginBackend",
 ]
 
 # Exports settings - defines after what time exported files will be deleted
@@ -542,6 +546,45 @@ EVENT_PAYLOAD_DELETE_PERIOD = timedelta(
         os.environ.get("EVENT_PAYLOAD_DELETE_PERIOD", "14 days")
     )  # type: ignore
 )
+
+CELERY_BEAT_SCHEDULE = {}
+
+# Observability settings
+OBSERVABILITY_BROKER_URL = os.environ.get("OBSERVABILITY_BROKER_URL")
+OBSERVABILITY_ACTIVE = bool(OBSERVABILITY_BROKER_URL)
+OBSERVABILITY_REPORT_ALL_API_CALLS = get_bool_from_env(
+    "OBSERVABILITY_REPORT_ALL_API_CALLS", False
+)
+OBSERVABILITY_MAX_PAYLOAD_SIZE = int(
+    os.environ.get("OBSERVABILITY_MAX_PAYLOAD_SIZE", 25 * 1000)
+)
+OBSERVABILITY_BUFFER_SIZE_LIMIT = int(
+    os.environ.get("OBSERVABILITY_BUFFER_SIZE_LIMIT", 1000)
+)
+OBSERVABILITY_BUFFER_BATCH_SIZE = int(
+    os.environ.get("OBSERVABILITY_BUFFER_BATCH_SIZE", 100)
+)
+OBSERVABILITY_REPORT_PERIOD = timedelta(
+    seconds=parse(
+        os.environ.get("OBSERVABILITY_REPORT_PERIOD", "20 seconds")
+    )  # type: ignore
+)
+OBSERVABILITY_BUFFER_TIMEOUT = timedelta(
+    seconds=parse(
+        os.environ.get("OBSERVABILITY_BUFFER_TIMEOUT", "5 minutes")
+    )  # type: ignore
+)
+if OBSERVABILITY_ACTIVE:
+    CELERY_BEAT_SCHEDULE["observability-reporter"] = {
+        "task": "saleor.plugins.webhook.tasks.observability_reporter_task",
+        "schedule": OBSERVABILITY_REPORT_PERIOD,
+        "options": {"expires": OBSERVABILITY_REPORT_PERIOD.total_seconds()},
+    }
+    if OBSERVABILITY_BUFFER_TIMEOUT < OBSERVABILITY_REPORT_PERIOD * 2:
+        warnings.warn(
+            "OBSERVABILITY_REPORT_PERIOD is too big compared to "
+            "OBSERVABILITY_BUFFER_TIMEOUT. That can lead to a loss of events."
+        )
 
 # Change this value if your application is running behind a proxy,
 # e.g. HTTP_CF_Connecting_IP for Cloudflare or X_FORWARDED_FOR
@@ -631,6 +674,8 @@ if REDIS_URL:
     CACHE_URL = os.environ.setdefault("CACHE_URL", REDIS_URL)
 CACHES = {"default": django_cache_url.config()}
 CACHES["default"]["TIMEOUT"] = parse(os.environ.get("CACHE_TIMEOUT", "7 days"))
+
+print(CACHES)
 
 JWT_EXPIRE = True
 JWT_TTL_ACCESS = timedelta(

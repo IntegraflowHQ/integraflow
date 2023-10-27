@@ -7,9 +7,12 @@ from graphene import InputField
 from graphene.types.inputobjecttype import InputObjectTypeOptions
 from graphene.types.utils import yank_fields_from_attrs
 
-from ...core.scalars import Decimal
-from ..filters import GlobalIDFilter, GlobalIDMultipleChoiceFilter
-from ..scalars import Date
+from integraflow.graphql.core.scalars import Decimal
+from integraflow.graphql.core.filters import (
+    GlobalIDFilter,
+    GlobalIDMultipleChoiceFilter
+)
+from integraflow.graphql.core.scalars import Date
 from .base import BaseInputObjectType
 from .common import (
     DateRangeInput,

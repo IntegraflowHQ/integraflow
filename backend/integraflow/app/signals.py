@@ -1,4 +1,4 @@
-from ..core.tasks import delete_from_storage_task
+from integraflow.core.tasks import delete_from_storage_task
 
 
 def delete_brand_images(sender, instance, **kwargs):

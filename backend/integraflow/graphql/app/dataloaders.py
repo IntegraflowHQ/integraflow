@@ -6,11 +6,11 @@ from django.contrib.auth.hashers import check_password
 from django.utils.functional import LazyObject
 from promise import Promise
 
-from ...app.models import App, AppExtension, AppToken
-from ...core.auth import get_token_from_request
-from ...core.utils.lazyobjects import unwrap_lazy
-from ..core import IntegraflowContext
-from ..core.dataloaders import DataLoader
+from integraflow.app.models import App, AppExtension, AppToken
+from integraflow.core.auth import get_token_from_request
+from integraflow.core.utils.lazyobjects import unwrap_lazy
+from integraflow.graphql.core import IntegraflowContext
+from integraflow.graphql.core.dataloaders import DataLoader
 
 
 class AppByIdLoader(DataLoader):

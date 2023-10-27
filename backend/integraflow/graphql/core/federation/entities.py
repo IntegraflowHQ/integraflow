@@ -10,7 +10,6 @@ T = TypeVar("T", bound=graphene.ObjectType)
 
 def federated_entity(key_fields: str):
     def federate_entity(graphql_type: T) -> T:
-        print(graphql_type)
         # Add entity to registry
         federated_entities[graphql_type.__name__] = graphql_type
 
@@ -26,5 +25,4 @@ def federated_entity(key_fields: str):
         setattr(graphql_type, "_sdl", type_sdl)
 
         return graphql_type
-    print(key_fields)
     return federate_entity

@@ -1,5 +1,6 @@
-from ..core.doc_category import DOC_CATEGORY_WEBHOOKS
-from ..core.types import BaseEnum, SortInputObjectType
+from integraflow.graphql.core.doc_category import DOC_CATEGORY_WEBHOOKS
+from integraflow.graphql.core.types.base import BaseEnum
+from integraflow.graphql.core.types.sort_input import SortInputObjectType
 
 
 class EventDeliverySortField(BaseEnum):

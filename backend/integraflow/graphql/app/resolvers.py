@@ -1,12 +1,12 @@
 from urllib.parse import urljoin, urlparse
 
-from ...app import models
-from ...app.types import AppExtensionTarget
-from ...core.jwt import (
+from integraflow.app import models
+from integraflow.app.types import AppExtensionTarget
+from integraflow.core.jwt import (
     create_access_token_for_app,
     create_access_token_for_app_extension,
 )
-from ..core.utils import from_global_id_or_error
+from integraflow.graphql.core.utils import from_global_id_or_error
 from .enums import AppTypeEnum
 
 

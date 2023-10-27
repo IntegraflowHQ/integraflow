@@ -6,7 +6,7 @@ from django_prices.utils.formatting import get_currency_fraction
 from graphene.utils.str_converters import to_camel_case
 from graphql.error import GraphQLError
 
-from ....core.utils import generate_unique_slug
+from integraflow.core.utils import generate_unique_slug
 
 if TYPE_CHECKING:
     from decimal import Decimal

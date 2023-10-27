@@ -11,7 +11,7 @@ import graphene
 from django.utils import timezone
 from graphene.utils.str_converters import to_camel_case
 
-from .. import __version__
+from integraflow import __version__
 from integraflow.user.models import User
 from .payload_serializers import PayloadSerializer
 

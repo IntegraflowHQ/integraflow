@@ -1,4 +1,4 @@
-from ..utils import from_global_id_or_error
+from integraflow.graphql.utils import from_global_id_or_error
 
 
 def resolve_federation_references(graphql_type, roots, queryset):
