@@ -109,7 +109,6 @@ class GraphQLView(View):
 
     @observability.report_view
     def dispatch(self, request, *args, **kwargs):
-        print(request.method)
         # Handle options method the GraphQlView restricts it.
         if request.method == "GET":
             if settings.PLAYGROUND_ENABLED:

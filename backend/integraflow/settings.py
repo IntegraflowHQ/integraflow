@@ -576,7 +576,7 @@ OBSERVABILITY_BUFFER_TIMEOUT = timedelta(
 )
 if OBSERVABILITY_ACTIVE:
     CELERY_BEAT_SCHEDULE["observability-reporter"] = {
-        "task": "saleor.plugins.webhook.tasks.observability_reporter_task",
+        "task": "integraflow.plugins.webhook.tasks.observability_reporter_task",
         "schedule": OBSERVABILITY_REPORT_PERIOD,
         "options": {"expires": OBSERVABILITY_REPORT_PERIOD.total_seconds()},
     }
@@ -674,8 +674,6 @@ if REDIS_URL:
     CACHE_URL = os.environ.setdefault("CACHE_URL", REDIS_URL)
 CACHES = {"default": django_cache_url.config()}
 CACHES["default"]["TIMEOUT"] = parse(os.environ.get("CACHE_TIMEOUT", "7 days"))
-
-print(CACHES)
 
 JWT_EXPIRE = True
 JWT_TTL_ACCESS = timedelta(
