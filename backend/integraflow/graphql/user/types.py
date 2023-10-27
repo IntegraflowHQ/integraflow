@@ -1,9 +1,13 @@
 import graphene
+from graphene import relay
 
-from ...user import models
+from django.contrib.auth import get_user_model
 
-from ..core.federation import federated_entity
-from ..core.types import ModelObjectType
+from integraflow.user import models
+
+from integraflow.graphql.core.federation import federated_entity
+from integraflow.graphql.core.types.model import ModelObjectType
+from integraflow.graphql.core.doc_category import DOC_CATEGORY_USERS
 
 
 @federated_entity("id")
@@ -30,3 +34,9 @@ class User(ModelObjectType[models.User]):
         required=True,
         description="Determines if user has confirmed email.",
     )
+
+    class Meta:
+        description = "Represents user data."
+        interfaces = [relay.Node]
+        model = get_user_model()
+        doc_category = DOC_CATEGORY_USERS

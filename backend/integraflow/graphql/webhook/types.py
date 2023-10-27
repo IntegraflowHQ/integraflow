@@ -2,18 +2,22 @@ from typing import List
 
 import graphene
 
-from ...core import models as core_models
-from ...webhook import models
-from ...webhook.event_types import WebhookEventAsyncType, WebhookEventSyncType
-from ..core import ResolveInfo
-from ..core.connection import (
+from integraflow.core import models as core_models
+from integraflow.webhook import models
+from integraflow.webhook.event_types import (
+    WebhookEventAsyncType,
+    WebhookEventSyncType
+)
+from integraflow.graphql.core import ResolveInfo
+from integraflow.graphql.core.connection import (
     CountableConnection,
     create_connection_slice,
     filter_connection_queryset,
 )
-from ..core.fields import FilterConnectionField, JSONString
-from ..core.types import ModelObjectType, NonNullList
-from ..webhook.enums import EventDeliveryStatusEnum, WebhookEventTypeEnum
+from integraflow.graphql.core.fields import FilterConnectionField, JSONString
+from integraflow.graphql.core.types.model import ModelObjectType
+from integraflow.graphql.core.types.common import NonNullList
+from integraflow.graphql.webhook.enums import EventDeliveryStatusEnum, WebhookEventTypeEnum
 from .filters import EventDeliveryFilterInput
 from .sorters import (
     EventDeliveryAttemptSortingInput,

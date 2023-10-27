@@ -6,8 +6,8 @@ from django.conf import settings
 from graphene.utils.str_converters import to_snake_case
 from graphql import GraphQLArgument, GraphQLError, GraphQLField, GraphQLList
 
-from ...schema_printer import print_schema
-from .. import ResolveInfo
+from integraflow.graphql.schema_printer import print_schema
+from integraflow.graphql.core import ResolveInfo
 from .entities import federated_entities
 
 
@@ -32,7 +32,6 @@ class _Any(graphene.Scalar):
 class _Entity(graphene.Union):
     """_Entity union as defined by Federation spec."""
     class Meta:
-        print(federated_entities)
         types = tuple(federated_entities.values())
 
 
@@ -46,8 +45,6 @@ def build_federated_schema(
     query, mutation, types, subscription, directives=None
 ) -> graphene.Schema:
     """Create GraphQL schema that supports Apollo Federation."""
-    print("Here")
-    print(federated_entities)
 
     schema = graphene.Schema(
         query=query,

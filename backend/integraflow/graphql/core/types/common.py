@@ -6,23 +6,25 @@ from django.core.files.storage import default_storage
 
 from integraflow.core.utils import build_absolute_uri
 from integraflow.graphql.core.doc_category import (
+    DOC_CATEGORY_USERS,
     DOC_CATEGORY_APPS,
     DOC_CATEGORY_WEBHOOKS,
 )
 from integraflow.graphql.core.scalars import Decimal
 from integraflow.graphql.core.enums import (
+    UserErrorCode,
     AppErrorCode,
     JobStatusEnum,
     WebhookDryRunErrorCode,
     WebhookErrorCode,
     WebhookTriggerErrorCode,
 )
-from ..scalars import Date
-from ..tracing import traced_resolver
+from integraflow.graphql.core.scalars import Date
+from integraflow.graphql.core.tracing import traced_resolver
 from .base import BaseObjectType
 
 if TYPE_CHECKING:
-    from .. import ResolveInfo
+    from integraflow.graphql.core import ResolveInfo
 
 
 class NonNullList(graphene.List):
@@ -60,6 +62,14 @@ class BulkError(BaseObjectType):
 
     class Meta:
         description = "Represents an error in the input of a mutation."
+
+
+class UserError(Error):
+    code = UserErrorCode(description="The error code.", required=True)
+
+    class Meta:
+        description = "Represents errors in account mutations."
+        doc_category = DOC_CATEGORY_USERS
 
 
 class AppError(Error):

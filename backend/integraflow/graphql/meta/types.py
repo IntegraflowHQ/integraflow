@@ -3,9 +3,9 @@ from typing import Optional
 import graphene
 from graphene.types.generic import GenericScalar
 
-from ...core.models import ModelWithMetadata
-from ..core import ResolveInfo
-from ..core.types import NonNullList
+from integraflow.core.models import ModelWithMetadata
+from integraflow.graphql.core import ResolveInfo
+from integraflow.graphql.core.types.common import NonNullList
 from .resolvers import (
     check_private_metadata_privilege,
     resolve_metadata,

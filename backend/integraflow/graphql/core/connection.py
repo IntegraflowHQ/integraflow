@@ -23,13 +23,13 @@ from graphql_relay.connection.arrayconnection import connection_from_list_slice
 from graphql_relay.connection.connectiontypes import Edge, PageInfo
 from graphql_relay.utils import base64, unbase64
 
-from ..core.enums import OrderDirection
-from ..core.types.base import BaseConnection
-from ..core.types.common import NonNullList
-from ..utils.sorting import sort_queryset_for_connection
+from integraflow.graphql.core.enums import OrderDirection
+from integraflow.graphql.core.types.base import BaseConnection
+from integraflow.graphql.core.types.common import NonNullList
+from integraflow.graphql.utils.sorting import sort_queryset_for_connection
 
 if TYPE_CHECKING:
-    from ..core import ResolveInfo
+    from integraflow.graphql.core import ResolveInfo
 
 ConnectionArguments = Dict[str, Any]
 

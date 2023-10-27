@@ -1,8 +1,8 @@
 from django.db import models
 
-from ..app.models import App
-from ..app.validators import AppURLValidator
-from ..core.utils.json_serializer import CustomJsonEncoder
+from integraflow.app.models import App
+from integraflow.app.validators import AppURLValidator
+from integraflow.core.utils.json_serializer import CustomJsonEncoder
 
 
 class WebhookURLField(models.URLField):
@@ -37,6 +37,7 @@ class Webhook(models.Model):
     )
 
     class Meta(object):
+        db_table = "webhooks"
         ordering = ("pk",)
 
     def __str__(self):
@@ -50,6 +51,9 @@ class WebhookEvent(models.Model):
     event_type: models.CharField = models.CharField(
         "Event type", max_length=128, db_index=True
     )
+
+    class Meta(object):
+        db_table = "webhook_events"
 
     def __repr__(self):
         return self.event_type

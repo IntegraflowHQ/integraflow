@@ -23,7 +23,7 @@ from integraflow.webhook.event_types import (
     WebhookEventSyncType
 )
 from integraflow.webhook.observability import WebhookData
-from ..utils import (
+from integraflow.webhook.transport.utils import (
     WebhookResponse,
     WebhookSchemes,
     attempt_update,
@@ -36,7 +36,7 @@ from ..utils import (
 )
 
 if TYPE_CHECKING:
-    from ....webhook.models import Webhook
+    from integraflow.webhook.models import Webhook
 
 
 logger = logging.getLogger(__name__)

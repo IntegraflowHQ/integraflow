@@ -1,23 +1,35 @@
 # Python imports
+from functools import cached_property
 import uuid
-import random
-import string
 from functools import partial
 from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Tuple,
+    Optional,
     Type,
 )
 
 # Django imports
-from django.db import models
+from django.db import models, transaction
+from django.db.models import Q
 from django.contrib.auth.models import (
-    AbstractBaseUser,
-    BaseUserManager,
-    PermissionsMixin
+    AbstractUser,
+    BaseUserManager
 )
 from django.utils.crypto import get_random_string
-from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 
-from ..core.models import ModelWithMetadata, ModelWithExternalReference
+from integraflow.core.models import UUIDClassicModel
+from integraflow.organization.models import (
+    Organization,
+    OrganizationMembership
+)
+from integraflow.project.models import Project
+from integraflow.core.utils import sane_repr
 
 
 class UserManager(BaseUserManager):
@@ -28,105 +40,255 @@ class UserManager(BaseUserManager):
 
     model: Type["User"]
 
+    use_in_migrations = True
+
+    def create_user(
+        self,
+        email: str,
+        first_name: str,
+        **extra_fields
+    ) -> "User":
+        """Create and save a User with the given email and password."""
+        if email is None:
+            raise ValueError("Email must be provided!")
+        email = self.normalize_email(email)
+        user = self.model(
+            email=email,
+            first_name=first_name,
+            **extra_fields
+        )
+
+        user.save()
+        return user
+
+    def bootstrap(
+        self,
+        organization_name: str,
+        email: str,
+        first_name: str = "",
+        organization_fields: Optional[Dict[str, Any]] = None,
+        project_fields: Optional[Dict[str, Any]] = None,
+        create_project: Optional[
+            Callable[
+                ["Organization", "User"],
+                "Project"]
+            ] = None,
+        is_staff: bool = False,
+        **user_fields,
+    ) -> Tuple["Organization", "Project", "User"]:
+        """
+        Instead of doing the legwork of creating a user from scratch,
+        delegate the details with bootstrap.
+        """
+        with transaction.atomic():
+            organization_fields = organization_fields or {}
+            organization_fields.setdefault("name", organization_name)
+            organization = Organization.objects.create(**organization_fields)
+            user = self.create_user(
+                email=email,
+                first_name=first_name,
+                is_staff=is_staff,
+                **user_fields
+            )
+
+            if create_project:
+                project = create_project(organization, user)
+            else:
+                project = Project.objects.create_with_data(
+                    user=user,
+                    organization=organization,
+                    **(project_fields or {})
+                )
+            user.join(
+                organization=organization,
+                level=OrganizationMembership.Level.OWNER
+            )
+            return organization, project, user
+
+    def create_and_join(
+        self,
+        organization: Organization,
+        email: str,
+        first_name: str = "",
+        level: OrganizationMembership.Level = (
+            OrganizationMembership.Level.MEMBER
+        ),
+        **extra_fields,
+    ) -> "User":
+        with transaction.atomic():
+            user = self.create_user(
+                email=email,
+                first_name=first_name,
+                **extra_fields
+            )
+            user.join(organization=organization, level=level)
+            return user
+
 
 class User(
-    PermissionsMixin,
-    ModelWithMetadata,
-    AbstractBaseUser,
-    ModelWithExternalReference
+    AbstractUser,
+    UUIDClassicModel
 ):
-    id: models.UUIDField = models.UUIDField(
-        default=uuid.uuid4,
-        unique=True,
-        editable=False,
-        db_index=True,
-        primary_key=True
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS: List[str] = []
+
+    current_organization: models.ForeignKey = models.ForeignKey(
+        "organization.Organization",
+        models.SET_NULL,
+        null=True,
+        related_name="current_organization"
     )
-    username: models.CharField = models.CharField(max_length=128, unique=True)
-    email: models.EmailField = models.EmailField(max_length=255, unique=True)
-    mobile_number: models.CharField = models.CharField(
-        max_length=255,
+    current_project: models.ForeignKey = models.ForeignKey(
+        "project.Project",
+        models.SET_NULL,
+        null=True,
+        related_name="current_project"
+    )
+    email: models.EmailField = models.EmailField(
+        _("email address"),
+        unique=True
+    )
+    password: models.CharField = models.CharField(
+        _('password'),
         blank=True,
-        null=True
+        null=True,
+        max_length=128
     )
-    first_name: models.CharField = models.CharField(
-        max_length=255,
-        blank=True
-    )
-    last_name: models.CharField = models.CharField(max_length=255, blank=True)
     avatar: models.URLField = models.URLField(
         blank=True,
         null=True,
         max_length=800
     )
-
     jwt_token_key: models.CharField = models.CharField(
         max_length=12, default=partial(get_random_string, length=12)
     )
     token_updated_at: models.DateTimeField = models.DateTimeField(null=True)
 
-    is_superuser: models.BooleanField = models.BooleanField(default=False)
-    is_managed: models.BooleanField = models.BooleanField(default=False)
-    is_active: models.BooleanField = models.BooleanField(default=True)
-    is_staff: models.BooleanField = models.BooleanField(default=False)
-    is_email_verified: models.BooleanField = models.BooleanField(default=False)
-    is_password_autoset: models.BooleanField = models.BooleanField(
-        default=False
-    )
-    is_onboarded: models.BooleanField = models.BooleanField(default=False)
-
-    # tracking metrics
-    date_joined: models.DateTimeField = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="Created At"
-    )
-    created_at: models.DateTimeField = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="Created At"
-    )
-    updated_at: models.DateTimeField = models.DateTimeField(
-        auto_now=True,
-        verbose_name="Last Modified At"
-    )
-
-    display_name: models.CharField = models.CharField(
-        max_length=255,
-        default=""
-    )
+    # Remove unused attributes from `AbstractUser`
+    username = None  # type: ignore
 
     objects: UserManager = UserManager()
-
-    USERNAME_FIELD = "email"
-
-    REQUIRED_FIELDS = ["username"]
 
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
         db_table = "users"
-        ordering = ("-created_at",)
+        ordering = ("-date_joined",)
 
-    def __str__(self):
-        return f"{self.username} <{self.email}>"
+    @property
+    def is_superuser(self) -> bool:  # type: ignore
+        return self.is_staff
 
-    def save(self, *args, **kwargs):
-        self.email = self.email.lower().strip()
-        self.mobile_number = self.mobile_number
+    @cached_property
+    def projects(self):
+        """
+        All projects the user has access to in any organization
+        """
+        projects = Project.objects.filter(organization__members=self)
 
-        if self.token_updated_at is not None:
-            self.jwt_token_key = uuid.uuid4().hex + uuid.uuid4().hex
-            self.token_updated_at = timezone.now()
-
-        if not self.display_name:
-            self.display_name = (
-                self.email.split("@")[0]
-                if len(self.email.split("@"))
-                else "".join(
-                    random.choice(string.ascii_letters) for _ in range(6)
+        if Organization.objects.filter(members=self).exists():
+            try:
+                from integraflow.project.models import ProjectMembership
+            except ImportError:
+                pass
+            else:
+                available_project_ids = ProjectMembership.objects.filter(
+                    Q(parent_membership__user=self)
+                ).values_list("project_id", flat=True)
+                organizations_where_user_is_admin = (
+                    OrganizationMembership.objects.filter(
+                        user=self,
+                        level__gte=OrganizationMembership.Level.ADMIN
+                    ).values_list("organization_id", flat=True)
                 )
+
+                # If project access control IS applicable, make sure
+                # - project doesn't have access control OR
+                # - the user has explicit access OR
+                # - the user is Admin or owner
+                projects = projects.filter(
+                    Q(access_control=False)
+                    | Q(pk__in=available_project_ids)
+                    | Q(organization__pk__in=organizations_where_user_is_admin)
+                )
+
+        return projects.order_by("access_control", "id")
+
+    @cached_property
+    def organization(self) -> Optional[Organization]:
+        if self.current_organization is None:
+            if self.current_project is not None:
+                self.current_organization_id = (
+                    self.current_project.organization_id
+                )
+            self.current_organization = self.organizations.first()
+            self.save()
+        return self.current_organization
+
+    @cached_property
+    def project(self) -> Optional[Project]:
+        if self.current_project is None and self.organization is not None:
+            self.current_project = self.projects.filter(
+                organization=self.current_organization
+            ).first()
+            self.save()
+        return self.current_project
+
+    def join(
+        self, *,
+        organization: Organization,
+        level: OrganizationMembership.Level = (
+            OrganizationMembership.Level.MEMBER
+        )
+    ) -> OrganizationMembership:
+        with transaction.atomic():
+            membership = OrganizationMembership.objects.create(
+                user=self,
+                organization=organization,
+                level=level
             )
 
-        if self.is_superuser:
-            self.is_staff = True
+            self.current_organization = organization
+            if (level >= OrganizationMembership.Level.ADMIN):
+                self.current_project = organization.projects.order_by(
+                    "access_control",
+                    "id"
+                ).first()
+            else:
+                # Make sure the user is assigned a project they have access to
+                # We don't need to check for ProjectMembership as none can
+                # exist for a completely new member
+                self.current_project = organization.projects.order_by(
+                    "id"
+                ).filter(
+                    access_control=False
+                ).first()
+            self.save()
 
-        super(User, self).save(*args, **kwargs)
+        return membership
+
+    def leave(self, *, organization: Organization) -> None:
+        membership: OrganizationMembership = (
+            OrganizationMembership.objects.get(
+                user=self,
+                organization=organization
+            )
+        )
+        if membership.level == OrganizationMembership.Level.OWNER:
+            raise ValidationError(
+                "Cannot leave the organization as its owner!"
+            )
+        with transaction.atomic():
+            membership.delete()
+            if self.current_organization == organization:
+                self.current_organization = (
+                    self.organizations.first()  # type: ignore
+                )
+                self.current_project = (
+                    None if self.current_organization is None
+                    else self.current_organization.projects.first()
+                )
+                self.project = self.current_project  # Update cached property
+                self.save()
+
+    __repr__ = sane_repr("email", "first_name", "distinct_id")  # type: ignore

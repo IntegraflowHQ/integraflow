@@ -1,7 +1,7 @@
 from graphene.types.objecttype import ObjectTypeOptions
 
-from ..doc_category import DOC_CATEGORY_MAP
-from ..types.base import BaseObjectType
+from integraflow.graphql.core.doc_category import DOC_CATEGORY_MAP
+from integraflow.graphql.core.types.base import BaseObjectType
 
 # Rewrite original map to use model to category mapping, with the app name
 # skipped, so that it can be used with root_type from SubscriptionObjectType.

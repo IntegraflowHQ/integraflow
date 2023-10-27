@@ -11,8 +11,8 @@ from graphene.utils.str_converters import to_camel_case as str_to_camel_case
 from graphql import get_operation_ast
 
 from integraflow.core.utils import build_absolute_uri
-from .. import traced_payload_generator
-from ..event_types import WebhookEventSyncType
+from integraflow.webhook import traced_payload_generator
+from integraflow.webhook.event_types import WebhookEventSyncType
 from .exceptions import (
     ApiCallTruncationError,
     EventDeliveryAttemptTruncationError
@@ -44,7 +44,7 @@ from .sensitive_data import SENSITIVE_GQL_FIELDS
 if TYPE_CHECKING:
     from datetime import datetime
 
-    from ...core.models import EventDeliveryAttempt
+    from integraflow.core.models import EventDeliveryAttempt
     from .utils import GraphQLOperationResponse
 
 

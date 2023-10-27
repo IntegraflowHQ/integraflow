@@ -2,12 +2,19 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.views import serve
 from django.urls import include, re_path
+from django.views.decorators.csrf import csrf_exempt
+
 from integraflow.core.views import jwks
-from integraflow.user.views import GoogleCallback
+from integraflow.graphql.api import schema
+from integraflow.graphql.views import GraphQLView
 
 urlpatterns = [
+    re_path(
+        r"^graphql$",
+        csrf_exempt(GraphQLView.as_view(schema=schema)),
+        name="api",
+    ),
     re_path(r"^\.well-known/jwks.json$", jwks, name="jwks"),
-    re_path(r"^auth/callback/google", GoogleCallback.as_view(), name="google_callback"),
 ]
 
 if settings.DEBUG:
