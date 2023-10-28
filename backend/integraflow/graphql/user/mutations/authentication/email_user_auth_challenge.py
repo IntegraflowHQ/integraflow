@@ -12,6 +12,7 @@ from integraflow.graphql.core.types.common import UserError
 from integraflow.graphql.core import ResolveInfo
 
 from integraflow.messaging.tasks import send_magic_link
+from integraflow.user.error_codes import UserErrorCode
 
 CACHE_DEFAULT_TIMEOUT: int = 5 * 60  # 5 minutes
 
@@ -46,10 +47,6 @@ class EmailUserAuthChallenge(BaseMutation):
     )
 
     @classmethod
-    def _get_user(email: str):
-        pass
-
-    @classmethod
     def perform_mutation(
         cls, _root, info: ResolveInfo, /, *, email
     ):
@@ -70,7 +67,7 @@ class EmailUserAuthChallenge(BaseMutation):
 
         key = "magic_" + str(email)
 
-        # Check if the key already exists in python
+        # Check if the key already exists in cache
         if cache.has_key(key):
             data = cache.get(key)
 
@@ -78,7 +75,8 @@ class EmailUserAuthChallenge(BaseMutation):
 
             if data["current_attempt"] > 2:
                 raise ValidationError(
-                    "Max attempts exhausted. Please try again later."
+                    "Max attempts exhausted. Please try again later.",
+                    code=UserErrorCode.GRAPHQL_ERROR.value,
                 )
         else:
             current_attempt = 0
@@ -93,6 +91,7 @@ class EmailUserAuthChallenge(BaseMutation):
         send_magic_link(email=email, token=token)
 
         return cls(
+            errors=[],
             success=True,
             authType="authToken"
         )

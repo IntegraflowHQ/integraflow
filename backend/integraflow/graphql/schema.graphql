@@ -35,9 +35,6 @@ type User implements Node @doc(category: "Users") {
 
   """Determine if the user is active."""
   isActive: Boolean!
-
-  """Determines if user has confirmed email."""
-  isConfirmed: Boolean!
 }
 
 """An object with an ID"""
@@ -47,6 +44,15 @@ interface Node {
 }
 
 type Mutation {
+  """Authenticates a user account via email and authentication token."""
+  emailTokenUserAuth(
+    """The email which to login via the magic login code."""
+    email: String!
+
+    """The magic login code."""
+    token: String!
+  ): EmailTokenUserAuth @doc(category: "Authentication")
+
   """
   Finds or creates a new user account by email and sends an email with token.
   """
@@ -62,15 +68,19 @@ type Mutation {
   ): GoogleUserAuthChallenge @doc(category: "Authentication")
 }
 
-"""
-Finds or creates a new user account by email and sends an email with token.
-"""
-type EmailUserAuthChallenge @doc(category: "Authentication") {
-  """Whether the operation was successful."""
-  success: Boolean
+"""Authenticates a user account via email and authentication token."""
+type EmailTokenUserAuth @doc(category: "Authentication") {
+  """JWT token for authentication of the user."""
+  token: String
 
-  """Supported challenge for this user."""
-  authType: String
+  """JWT refresh token, required to re-generate access token."""
+  refreshToken: String
+
+  """CSRF token required to re-generate access token."""
+  csrfToken: String
+
+  """A user instance."""
+  user: User
   userErrors: [UserError!]!
   errors: [UserError!]!
 }
@@ -97,6 +107,8 @@ enum UserErrorCode @doc(category: "Users") {
   NOT_FOUND
   REQUIRED
   UNIQUE
+  INVALID_MAGIC_CODE
+  MAGIC_CODE_EXPIRED
   JWT_SIGNATURE_EXPIRED
   JWT_INVALID_TOKEN
   JWT_DECODE_ERROR
@@ -106,6 +118,10 @@ enum UserErrorCode @doc(category: "Users") {
 
 """Finds or creates a new user account from google auth credentials."""
 type GoogleUserAuthChallenge @doc(category: "Authentication") {
+"""
+Finds or creates a new user account by email and sends an email with token.
+"""
+type EmailUserAuthChallenge @doc(category: "Authentication") {
   """Whether the operation was successful."""
   success: Boolean
 

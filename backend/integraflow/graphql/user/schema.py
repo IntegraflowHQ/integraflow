@@ -6,7 +6,7 @@ from integraflow.graphql.user.mutations.authentication.google_user_auth_challeng
     GoogleUserAuthChallenge,
 )
 
-from .mutations.authentication import EmailUserAuthChallenge
+from .mutations.authentication import EmailTokenUserAuth, EmailUserAuthChallenge
 from .types import User
 
 
@@ -25,5 +25,6 @@ class UserQueries(graphene.ObjectType):
 
 class UserMutations(graphene.ObjectType):
     # Base mutations
+    email_token_user_auth = EmailTokenUserAuth.Field()
     email_user_auth_challenge = EmailUserAuthChallenge.Field()
     google_user_auth_challenge = GoogleUserAuthChallenge.Field()
