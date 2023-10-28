@@ -116,12 +116,21 @@ enum UserErrorCode @doc(category: "Users") {
   JWT_INVALID_CSRF_TOKEN
 }
 
-"""Finds or creates a new user account from google auth credentials."""
-type GoogleUserAuthChallenge @doc(category: "Authentication") {
 """
 Finds or creates a new user account by email and sends an email with token.
 """
 type EmailUserAuthChallenge @doc(category: "Authentication") {
+  """Whether the operation was successful."""
+  success: Boolean
+
+  """Supported challenge for this user."""
+  authType: String
+  userErrors: [UserError!]!
+  errors: [UserError!]!
+}
+
+"""Finds or creates a new user account from google auth credentials."""
+type GoogleUserAuthChallenge @doc(category: "Authentication") {
   """Whether the operation was successful."""
   success: Boolean
 
