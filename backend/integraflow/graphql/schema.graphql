@@ -62,10 +62,10 @@ type Mutation {
   ): EmailUserAuthChallenge @doc(category: "Authentication")
 
   """Finds or creates a new user account from google auth credentials."""
-  googleUserAuthChallenge(
+  googleUserAuth(
     """Code gotten from google auth consent screen."""
     code: String!
-  ): GoogleUserAuthChallenge @doc(category: "Authentication")
+  ): GoogleUserAuth @doc(category: "Authentication")
 }
 
 """Authenticates a user account via email and authentication token."""
@@ -130,12 +130,9 @@ type EmailUserAuthChallenge @doc(category: "Authentication") {
 }
 
 """Finds or creates a new user account from google auth credentials."""
-type GoogleUserAuthChallenge @doc(category: "Authentication") {
+type GoogleUserAuth @doc(category: "Authentication") {
   """Whether the operation was successful."""
   success: Boolean
-
-  """Supported challenge for this user."""
-  authType: String
 
   """Access token for the user."""
   accessToken: String

@@ -6,7 +6,6 @@ from django.core.exceptions import ValidationError
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
-
 from integraflow.core.jwt import create_access_token, create_refresh_token
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_AUTH
@@ -17,7 +16,7 @@ from integraflow.user.models import User
 GOOGLE_AUTH_CLIENT_CREDENTIALS = settings.GOOGLE_AUTH_CLIENT_CREDENTIALS
 
 
-class GoogleUserAuthChallenge(BaseMutation):
+class GoogleUserAuth(BaseMutation):
     """
     Mutation that finds or creates a new user account from google auth
     credentials and returns access and refresh tokens.
@@ -39,10 +38,6 @@ class GoogleUserAuthChallenge(BaseMutation):
 
     success = graphene.Boolean(
         description="Whether the operation was successful.",
-    )
-
-    authType = graphene.String(
-        description="Supported challenge for this user.",
     )
 
     accessToken = graphene.String(
@@ -99,7 +94,6 @@ class GoogleUserAuthChallenge(BaseMutation):
         access, refresh = create_access_token(user), create_refresh_token(user)
         return cls(
             success=True,
-            authType="authToken",
             accessToken=access,
             refreshToken=refresh,
         )
