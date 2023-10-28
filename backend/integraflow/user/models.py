@@ -45,7 +45,7 @@ class UserManager(BaseUserManager):
     def create_user(
         self,
         email: str,
-        first_name: str,
+        first_name: str = "",
         **extra_fields
     ) -> "User":
         """Create and save a User with the given email and password."""

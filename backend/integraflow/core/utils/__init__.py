@@ -7,7 +7,7 @@ from urllib.parse import urljoin, urlparse
 
 from celery.utils.log import get_task_logger
 from django.conf import settings
-from django.contrib.sites.models import Site
+# from django.contrib.sites.models import Site
 from django.db import IntegrityError, transaction
 from django.db.models import Model
 from django.utils.encoding import iri_to_uri
@@ -25,18 +25,21 @@ if TYPE_CHECKING:
     from django.utils.safestring import SafeText
 
 
-def get_domain(site: Optional[Site] = None) -> str:
+def get_domain() -> str:
     if settings.PUBLIC_URL:
         return urlparse(settings.PUBLIC_URL).netloc
-    if site is None:
-        site = Site.objects.get_current()
-    return site.domain
+    if settings.SITE_URL:
+        return urlparse(settings.SITE_URL).netloc
+    return "useintegraflow.com"
 
 
 def get_public_url(domain: Optional[str] = None) -> str:
     if settings.PUBLIC_URL:
         return settings.PUBLIC_URL
-    host = domain or Site.objects.get_current().domain
+    if settings.SITE_URL:
+        return settings.SITE_URL
+
+    host = domain or "useintegraflow.com"
     protocol = "https" if settings.ENABLE_SSL else "http"
     return f"{protocol}://{host}"
 

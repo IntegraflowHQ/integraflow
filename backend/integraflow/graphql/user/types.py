@@ -30,10 +30,6 @@ class User(ModelObjectType[models.User]):
     is_active = graphene.Boolean(
         required=True, description="Determine if the user is active."
     )
-    is_confirmed = graphene.Boolean(
-        required=True,
-        description="Determines if user has confirmed email.",
-    )
 
     class Meta:
         description = "Represents user data."

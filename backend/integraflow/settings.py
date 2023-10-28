@@ -124,8 +124,6 @@ USE_TZ = True
 
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
-SITE_URL = os.environ.get("SITE_URL", "http://localhost:8000").rstrip("/")
-
 EMAIL_URL = os.environ.get("EMAIL_URL")
 SENDGRID_USERNAME = os.environ.get("SENDGRID_USERNAME")
 SENDGRID_PASSWORD = os.environ.get("SENDGRID_PASSWORD")
@@ -148,9 +146,11 @@ EMAIL_USE_SSL: bool = email_config.get("EMAIL_USE_SSL", False)
 
 ENABLE_SSL: bool = get_bool_from_env("ENABLE_SSL", False)
 
-# URL on which Integraflow is hosted (e.g., https://api.example.com/).
-# This has precedence over ENABLE_SSL and Shop.domain when generating URLs
-# pointing to itself.
+# URL on which Integraflow frontend is hosted (e.g., https://app.example.com/).
+SITE_URL = os.environ.get("SITE_URL", "http://localhost:8000").rstrip("/")
+
+# URL on which Integraflow backend is hosted (e.g., https://api.example.com/).
+# This has precedence over ENABLE_SSL when generating URLs pointing to itself.
 PUBLIC_URL: Optional[str] = get_url_from_env(
     "PUBLIC_URL",
     schemes=["http", "https"]
@@ -186,7 +186,6 @@ context_processors = [
     "django.template.context_processors.debug",
     "django.template.context_processors.media",
     "django.template.context_processors.static",
-    # "integraflow.site.context_processors.site",
 ]
 
 loaders = [
@@ -243,7 +242,6 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    "django.contrib.sites",
     "django.contrib.staticfiles",
     "django.contrib.postgres",
     "django_celery_beat",
