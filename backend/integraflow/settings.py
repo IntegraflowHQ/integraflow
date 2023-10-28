@@ -14,7 +14,6 @@ import django_stubs_ext
 import jaeger_client.config
 import sentry_sdk
 import sentry_sdk.utils
-
 # from celery.schedules import crontab
 from django.conf import global_settings
 from django.core.exceptions import ImproperlyConfigured
@@ -219,15 +218,8 @@ if not SECRET_KEY and DEBUG:
     warnings.warn("SECRET_KEY not configured, using a random temporary key.")
     SECRET_KEY = get_random_secret_key()
 
-GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
-GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
-GOOGLE_LOGIN_ENABLED = True
 
-if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
-    warnings.warn(
-        "GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET not set, disabling google login."
-    )
-    GOOGLE_LOGIN_ENABLED = False
+GOOGLE_AUTH_CLIENT_CREDENTIALS = os.environ.get("GOOGLE_AUTH_CLIENT_CREDENTIALS", None)
 
 RSA_PRIVATE_KEY = os.environ.get("RSA_PRIVATE_KEY", None)
 RSA_PRIVATE_PASSWORD = os.environ.get("RSA_PRIVATE_PASSWORD", None)

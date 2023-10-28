@@ -54,6 +54,12 @@ type Mutation {
     """The email for which to generate the magic login code."""
     email: String!
   ): EmailUserAuthChallenge @doc(category: "Authentication")
+
+  """Finds or creates a new user account from google auth credentials."""
+  googleUserAuthChallenge(
+    """Code gotten from google auth consent screen."""
+    code: String!
+  ): GoogleUserAuthChallenge @doc(category: "Authentication")
 }
 
 """
@@ -96,6 +102,23 @@ enum UserErrorCode @doc(category: "Users") {
   JWT_DECODE_ERROR
   JWT_MISSING_TOKEN
   JWT_INVALID_CSRF_TOKEN
+}
+
+"""Finds or creates a new user account from google auth credentials."""
+type GoogleUserAuthChallenge @doc(category: "Authentication") {
+  """Whether the operation was successful."""
+  success: Boolean
+
+  """Supported challenge for this user."""
+  authType: String
+
+  """Access token for the user."""
+  accessToken: String
+
+  """Refresh token for the user."""
+  refreshToken: String
+  userErrors: [UserError!]!
+  errors: [UserError!]!
 }
 
 """_Any value scalar as defined by Federation spec."""
