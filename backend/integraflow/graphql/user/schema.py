@@ -2,10 +2,11 @@ import graphene
 
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_USERS
 from integraflow.graphql.core.fields import BaseField
+from integraflow.graphql.user.mutations.authentication.google_user_auth import (
+    GoogleUserAuth,
+)
 
-from .mutations.authentication import EmailTokenUserAuth
-from .mutations.authentication import EmailUserAuthChallenge
-
+from .mutations.authentication import EmailTokenUserAuth, EmailUserAuthChallenge
 from .types import User
 
 
@@ -26,3 +27,4 @@ class UserMutations(graphene.ObjectType):
     # Base mutations
     email_token_user_auth = EmailTokenUserAuth.Field()
     email_user_auth_challenge = EmailUserAuthChallenge.Field()
+    google_user_auth = GoogleUserAuth.Field()

@@ -12,7 +12,7 @@ urlpatterns = [
     re_path(
         r"^graphql$",
         csrf_exempt(GraphQLView.as_view(schema=schema)),
-        name="api"
+        name="api",
     ),
     re_path(r"^\.well-known/jwks.json$", jwks, name="jwks"),
 ]
@@ -30,8 +30,7 @@ if settings.DEBUG:
     else:
         urlpatterns += [
             re_path(  # type: ignore
-                r"^__debug__/",
-                include(debug_toolbar.urls), name="debug"
+                r"^__debug__/", include(debug_toolbar.urls), name="debug"
             )
         ]
 

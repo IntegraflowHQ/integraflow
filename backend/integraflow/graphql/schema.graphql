@@ -60,6 +60,12 @@ type Mutation {
     """The email for which to generate the magic login code."""
     email: String!
   ): EmailUserAuthChallenge @doc(category: "Authentication")
+
+  """Finds or creates a new user account from google auth credentials."""
+  googleUserAuth(
+    """Code gotten from google auth consent screen."""
+    code: String!
+  ): GoogleUserAuth @doc(category: "Authentication")
 }
 
 """Authenticates a user account via email and authentication token."""
@@ -119,6 +125,20 @@ type EmailUserAuthChallenge @doc(category: "Authentication") {
 
   """Supported challenge for this user."""
   authType: String
+  userErrors: [UserError!]!
+  errors: [UserError!]!
+}
+
+"""Finds or creates a new user account from google auth credentials."""
+type GoogleUserAuth @doc(category: "Authentication") {
+  """Whether the operation was successful."""
+  success: Boolean
+
+  """Access token for the user."""
+  accessToken: String
+
+  """Refresh token for the user."""
+  refreshToken: String
   userErrors: [UserError!]!
   errors: [UserError!]!
 }
