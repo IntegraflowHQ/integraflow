@@ -117,11 +117,13 @@ def get_user_from_payload(
     user_jwt_token = payload.get("token")
     if not user_jwt_token or not user:
         raise jwt.InvalidTokenError(
-            "Invalid token. Create new one by using tokenCreate mutation."
+            "Invalid token. Create new one by using emailTokenUserAuth "
+            "mutation."
         )
     if user.jwt_token_key != user_jwt_token:
         raise jwt.InvalidTokenError(
-            "Invalid token. Create new one by using tokenCreate mutation."
+            "Invalid token. Create new one by using emailTokenUserAuth "
+            "mutation."
         )
     return user
 
@@ -145,7 +147,8 @@ def get_user_from_access_payload(
     jwt_type = payload.get("type")
     if jwt_type not in [JWT_ACCESS_TYPE, JWT_THIRDPARTY_ACCESS_TYPE]:
         raise jwt.InvalidTokenError(
-            "Invalid token. Create new one by using tokenCreate mutation."
+            "Invalid token. Create new one by using emailTokenUserAuth "
+            "mutation."
         )
     user = get_user_from_payload(payload, request)
     if user:
