@@ -88,7 +88,7 @@ class EmailUserAuthChallenge(BaseMutation):
         }
 
         cache.set(key, value=value, timeout=CACHE_DEFAULT_TIMEOUT)
-        send_magic_link(email=email, token=token)
+        send_magic_link.delay(email=email, token=token)
 
         return cls(
             errors=[],
