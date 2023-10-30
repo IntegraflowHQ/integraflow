@@ -12,7 +12,7 @@ from integraflow.app.models import App
 from integraflow.core.exceptions import PermissionDenied
 from integraflow.core.utils import get_domain
 from integraflow.graphql.core import IntegraflowContext
-from ..utils import format_error
+from integraflow.graphql.utils import format_error
 
 logger = get_task_logger(__name__)
 
@@ -83,8 +83,8 @@ def generate_payload_from_subscription(
     return: A payload ready to send via webhook. None if the function was not
     able to generate a payload
     """
-    from ..api import schema
-    from ..context import get_context_value
+    from integraflow.graphql.api import schema
+    from integraflow.graphql.context import get_context_value
 
     graphql_backend = get_default_backend()
     ast = parse(subscription_query)  # type: ignore

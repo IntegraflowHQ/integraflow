@@ -4,7 +4,7 @@ from django.conf import settings
 from django.db.models import Q
 from django.db.models.expressions import Exists, OuterRef
 
-from ..app.models import App
+from integraflow.app.models import App
 from .event_types import WebhookEventAsyncType
 from .models import Webhook, WebhookEvent
 

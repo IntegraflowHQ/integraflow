@@ -8,21 +8,21 @@ from celery.utils.log import get_task_logger
 from django.conf import settings
 from django.core.cache import cache
 
-from ....core import EventDeliveryStatus
-from ....core.models import EventDelivery, EventPayload
-from ....core.tracing import webhooks_opentracing_trace
-from ....core.utils import get_domain
-from ....graphql.webhook.subscription_payload import (
+from integraflow.core import EventDeliveryStatus
+from integraflow.core.models import EventDelivery, EventPayload
+from integraflow.core.tracing import webhooks_opentracing_trace
+from integraflow.core.utils import get_domain
+from integraflow.graphql.webhook.subscription_payload import (
     generate_payload_from_subscription,
     initialize_request,
 )
-from ....graphql.webhook.subscription_types import WEBHOOK_TYPES_MAP
-from ... import observability
-from ...const import WEBHOOK_CACHE_DEFAULT_TIMEOUT
-from ...event_types import WebhookEventSyncType
-from ...utils import get_webhooks_for_event
-from .. import signature_for_payload
-from ..utils import (
+from integraflow.graphql.webhook.subscription_types import WEBHOOK_TYPES_MAP
+from integraflow.webhook import observability
+from integraflow.webhook.const import WEBHOOK_CACHE_DEFAULT_TIMEOUT
+from integraflow.webhook.event_types import WebhookEventSyncType
+from integraflow.webhook.utils import get_webhooks_for_event
+from integraflow.webhook.transport import signature_for_payload
+from integraflow.webhook.transport.utils import (
     WebhookResponse,
     WebhookSchemes,
     attempt_update,
@@ -34,7 +34,7 @@ from ..utils import (
 )
 
 if TYPE_CHECKING:
-    from ....webhook.models import Webhook
+    from integraflow.webhook.models import Webhook
 
 R = TypeVar("R")
 

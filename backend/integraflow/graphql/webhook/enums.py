@@ -1,9 +1,12 @@
 import graphene
 
-from ...webhook.event_types import WebhookEventAsyncType, WebhookEventSyncType
-from ..core.doc_category import DOC_CATEGORY_WEBHOOKS
-from ..core.types import BaseEnum
-from ..core.utils import str_to_enum
+from integraflow.webhook.event_types import (
+    WebhookEventAsyncType,
+    WebhookEventSyncType
+)
+from integraflow.graphql.core.doc_category import DOC_CATEGORY_WEBHOOKS
+from integraflow.graphql.core.types.base import BaseEnum
+from integraflow.graphql.core.utils import str_to_enum
 
 checkout_updated_event_enum_description = (
     "A checkout is updated. It also triggers all updates related to the "

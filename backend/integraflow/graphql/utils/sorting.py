@@ -3,9 +3,9 @@ from typing import Tuple
 from django.db.models import QuerySet
 from graphql.error import GraphQLError
 
-from ..core.enums import OrderDirection
-from ..core.types.sort_input import SortInputObjectType
-from ..core.utils import from_global_id_or_error
+from integraflow.graphql.core.enums import OrderDirection
+from integraflow.graphql.core.types.sort_input import SortInputObjectType
+from integraflow.graphql.core.utils import from_global_id_or_error
 
 REVERSED_DIRECTION = {
     "-": "",

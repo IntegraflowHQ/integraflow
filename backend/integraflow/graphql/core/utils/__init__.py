@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from graphene import ObjectType
 from graphql.error import GraphQLError
 
-from ..validators import validate_if_int_or_uuid
+from integraflow.graphql.core.validators import validate_if_int_or_uuid
 from integraflow.webhook.event_types import WebhookEventAsyncType
 
 

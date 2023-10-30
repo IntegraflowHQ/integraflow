@@ -18,10 +18,10 @@ from integraflow.core.exceptions import (
     PermissionDenied,
     ReadOnlyException,
 )
-from ..core.utils import from_global_id_or_error
+from integraflow.graphql.core.utils import from_global_id_or_error
 
 if TYPE_CHECKING:
-    from ..core import IntegraflowContext
+    from integraflow.graphql.core import IntegraflowContext
 
 unhandled_errors_logger = logging.getLogger(
     "integraflow.graphql.errors.unhandled"

@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, TypeVar
+from typing import Any, Optional, TypeVar
 
 import pytz
 from django.contrib.postgres.indexes import GinIndex
@@ -8,6 +8,7 @@ from django.db.models import F, JSONField, Max, Q
 
 from integraflow.core import EventDeliveryStatus, JobStatus
 from .utils.json_serializer import CustomJsonEncoder
+from .utils.uuidt import UUIDT
 
 
 class SortableModel(models.Model):
@@ -138,6 +139,43 @@ class ModelWithExternalReference(models.Model):
 
     class Meta:
         abstract = True
+
+
+class UUIDModel(models.Model):
+    """Base Django Model with default autoincremented ID field replaced with
+    UUIDT.
+    """
+
+    class Meta:
+        abstract = True
+
+    id: models.UUIDField = models.UUIDField(
+        primary_key=True,
+        default=UUIDT,
+        editable=False
+    )
+
+
+class UUIDClassicModel(models.Model):
+    """Base Django Model with default autoincremented ID field kept and a
+    UUIDT field added.
+    """
+
+    class Meta:
+        abstract = True
+
+    uuid: models.UUIDField = models.UUIDField(
+        unique=True,
+        default=UUIDT,
+        editable=False
+    )
+
+
+class LowercaseSlugField(models.SlugField):
+    def get_prep_value(self, value: Optional[str]) -> Optional[str]:
+        """Return model value formatted for use as a parameter in a query."""
+        prep_value = super().get_prep_value(value)
+        return prep_value.lower() if prep_value else prep_value
 
 
 class Job(models.Model):

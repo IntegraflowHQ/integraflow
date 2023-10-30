@@ -1,0 +1,155 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+"""Groups fields and operations into named groups."""
+directive @doc(
+  """Name of the grouping category"""
+  category: String!
+) on ENUM | FIELD | FIELD_DEFINITION | INPUT_OBJECT | OBJECT
+
+type Query {
+  """Return the currently authenticated user."""
+  me: User @doc(category: "Users")
+  _entities(representations: [_Any]): [_Entity]
+  _service: _Service
+}
+
+"""Represents user data."""
+type User implements Node @doc(category: "Users") {
+  """The ID of the user."""
+  id: ID!
+
+  """The email address of the user."""
+  email: String!
+
+  """The given name of the address."""
+  firstName: String!
+
+  """The family name of the address."""
+  lastName: String!
+
+  """Determine if the user is a staff admin."""
+  isStaff: Boolean!
+
+  """Determine if the user is active."""
+  isActive: Boolean!
+}
+
+"""An object with an ID"""
+interface Node {
+  """The ID of the object."""
+  id: ID!
+}
+
+type Mutation {
+  """Authenticates a user account via email and authentication token."""
+  emailTokenUserAuth(
+    """The email which to login via the magic login code."""
+    email: String!
+
+    """The magic login code."""
+    token: String!
+  ): EmailTokenUserAuth @doc(category: "Authentication")
+
+  """
+  Finds or creates a new user account by email and sends an email with token.
+  """
+  emailUserAuthChallenge(
+    """The email for which to generate the magic login code."""
+    email: String!
+  ): EmailUserAuthChallenge @doc(category: "Authentication")
+
+  """Finds or creates a new user account from google auth credentials."""
+  googleUserAuth(
+    """Code gotten from google auth consent screen."""
+    code: String!
+  ): GoogleUserAuth @doc(category: "Authentication")
+}
+
+"""Authenticates a user account via email and authentication token."""
+type EmailTokenUserAuth @doc(category: "Authentication") {
+  """JWT token for authentication of the user."""
+  token: String
+
+  """JWT refresh token, required to re-generate access token."""
+  refreshToken: String
+
+  """CSRF token required to re-generate access token."""
+  csrfToken: String
+
+  """A user instance."""
+  user: User
+  userErrors: [UserError!]!
+  errors: [UserError!]!
+}
+
+"""Represents errors in account mutations."""
+type UserError @doc(category: "Users") {
+  """
+  Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field.
+  """
+  field: String
+
+  """The error message."""
+  message: String
+
+  """The error code."""
+  code: UserErrorCode!
+}
+
+"""An enumeration."""
+enum UserErrorCode @doc(category: "Users") {
+  GRAPHQL_ERROR
+  INACTIVE
+  INVALID
+  NOT_FOUND
+  REQUIRED
+  UNIQUE
+  INVALID_MAGIC_CODE
+  MAGIC_CODE_EXPIRED
+  JWT_SIGNATURE_EXPIRED
+  JWT_INVALID_TOKEN
+  JWT_DECODE_ERROR
+  JWT_MISSING_TOKEN
+  JWT_INVALID_CSRF_TOKEN
+}
+
+"""
+Finds or creates a new user account by email and sends an email with token.
+"""
+type EmailUserAuthChallenge @doc(category: "Authentication") {
+  """Whether the operation was successful."""
+  success: Boolean
+
+  """Supported challenge for this user."""
+  authType: String
+  userErrors: [UserError!]!
+  errors: [UserError!]!
+}
+
+"""Finds or creates a new user account from google auth credentials."""
+type GoogleUserAuth @doc(category: "Authentication") {
+  """Whether the operation was successful."""
+  success: Boolean
+
+  """Access token for the user."""
+  accessToken: String
+
+  """Refresh token for the user."""
+  refreshToken: String
+  userErrors: [UserError!]!
+  errors: [UserError!]!
+}
+
+"""_Any value scalar as defined by Federation spec."""
+scalar _Any
+
+"""_Entity union as defined by Federation spec."""
+union _Entity = User
+
+"""_Service manifest as defined by Federation spec."""
+type _Service {
+  sdl: String
+}

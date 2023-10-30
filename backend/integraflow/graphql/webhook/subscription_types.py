@@ -2,13 +2,13 @@ import graphene
 from django.utils import timezone
 from graphene import AbstractType, Union
 
-from ... import __version__
-from ...user.models import User
-from ...webhook.event_types import WebhookEventAsyncType
-from ..core.types import SubscriptionObjectType
-from ..core import ResolveInfo
-from ..app.types import App as AppType
-from ..user.types import User as UserType
+from integraflow import __version__
+from integraflow.user.models import User
+from integraflow.webhook.event_types import WebhookEventAsyncType
+from integraflow.graphql.core.types.event import SubscriptionObjectType
+from integraflow.graphql.core import ResolveInfo
+from integraflow.graphql.app.types import App as AppType
+from integraflow.graphql.user.types import User as UserType
 
 
 class IssuingPrincipal(Union):

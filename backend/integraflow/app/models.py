@@ -6,7 +6,7 @@ from django.db import models
 from django.utils.text import Truncator
 from oauthlib.common import generate_token
 
-from ..core.models import Job, ModelWithMetadata
+from integraflow.core.models import Job, ModelWithMetadata
 from .types import AppExtensionMount, AppExtensionTarget, AppType
 
 
@@ -57,6 +57,7 @@ class App(ModelWithMetadata):
     objects = AppManager()
 
     class Meta(ModelWithMetadata.Meta):
+        db_table = "apps"
         ordering = ("name", "pk")
 
     def __str__(self):
@@ -93,6 +94,9 @@ class AppToken(models.Model):
 
     objects = AppTokenManager()
 
+    class Meta:
+        db_table = "app_tokens"
+
     def set_auth_token(self, raw_token=None):
         self.auth_token = make_password(raw_token)
 
@@ -117,6 +121,9 @@ class AppExtension(models.Model):
         default=AppExtensionTarget.POPUP,
     )
 
+    class Meta:
+        db_table = "app_extensions"
+
 
 class AppInstallation(Job):
     uuid: models.UUIDField = models.UUIDField(unique=True, default=uuid4)
@@ -125,6 +132,9 @@ class AppInstallation(Job):
     brand_logo_default: models.ImageField = models.ImageField(
         upload_to="app-installation-brand-data", blank=True, null=True
     )
+
+    class Meta:
+        db_table = "app_installations"
 
     def set_message(self, message: str, truncate=True):
         if truncate:
