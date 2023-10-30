@@ -7,6 +7,9 @@ from django.conf import settings
 from graphene.relay import Connection, is_node
 from graphql import GraphQLError
 
+from integraflow.permission.utils import message_one_of_permissions_required
+from integraflow.graphql.decorators import one_of_permissions_required
+
 from .connection import (
     FILTERS_NAME,
     FILTERSET_CLASS,
@@ -42,7 +45,34 @@ class BaseField(graphene.Field):
         return resolver
 
 
-class ConnectionField(BaseField):
+class PermissionsField(BaseField):
+    description: Optional[str]
+
+    def __init__(self, *args, **kwargs):
+        self.permissions = kwargs.pop("permissions", [])
+        auto_permission_message = kwargs.pop("auto_permission_message", True)
+        assert isinstance(self.permissions, list), (
+            "FieldWithPermissions `permissions` argument must be a list: "
+            f"{self.permissions}"
+        )
+
+        super(PermissionsField, self).__init__(*args, **kwargs)
+        if auto_permission_message and self.permissions:
+            permissions_msg = message_one_of_permissions_required(
+                self.permissions
+            )
+            description = self.description or ""
+            self.description = description + permissions_msg
+
+    def get_resolver(self, parent_resolver):
+        resolver = self.resolver or parent_resolver
+        if self.permissions:
+            resolver = one_of_permissions_required(self.permissions)(resolver)
+        resolver = super(PermissionsField, self).get_resolver(resolver)
+        return resolver
+
+
+class ConnectionField(PermissionsField):
     def __init__(self, type_, *args, **kwargs):
         kwargs.setdefault(
             "before",
@@ -129,7 +159,7 @@ class FilterConnectionField(ConnectionField):
     def get_resolver(self, parent_resolver):
         wrapped_resolver = super().get_resolver(parent_resolver)
 
-        @wraps(wrapped_resolver)
+        @wraps(wrapped_resolver)  # type: ignore
         def new_resolver(obj, info, **kwargs):
             kwargs[FILTERSET_CLASS] = self.filterset_class
             kwargs[FILTERS_NAME] = self.filter_field_name

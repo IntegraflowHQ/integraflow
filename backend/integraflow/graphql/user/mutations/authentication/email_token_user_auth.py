@@ -8,7 +8,6 @@ from integraflow.graphql.core.mutations import BaseMutation
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_AUTH
 from integraflow.graphql.core.types.common import UserError
 from integraflow.graphql.core import ResolveInfo
-from integraflow.graphql.user.types import User
 
 from integraflow.core.jwt import create_access_token, create_refresh_token
 from integraflow.user.error_codes import UserErrorCode
@@ -36,7 +35,7 @@ class EmailTokenUserAuth(BaseMutation):
         )
 
     token = graphene.String(
-        description="JWT token for authentication of the user."
+        description="Access token to authenticate the user."
     )
     refresh_token = graphene.String(
         description="JWT refresh token, required to re-generate access token."
@@ -44,7 +43,6 @@ class EmailTokenUserAuth(BaseMutation):
     csrf_token = graphene.String(
         description="CSRF token required to re-generate access token."
     )
-    user = graphene.Field(User, description="A user instance.")
 
     class Meta:
         description = (
@@ -100,7 +98,6 @@ class EmailTokenUserAuth(BaseMutation):
 
                 return cls(
                     errors=[],
-                    user=user,
                     token=access_token,
                     refresh_token=refresh_token,
                     csrf_token=csrf_token,

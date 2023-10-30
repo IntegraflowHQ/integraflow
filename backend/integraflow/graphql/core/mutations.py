@@ -1,6 +1,8 @@
+from enum import Enum
 from itertools import chain
 from typing import (
     Any,
+    Collection,
     Dict,
     Iterable,
     List,
@@ -25,6 +27,12 @@ from graphene.types.mutation import MutationOptions
 from graphql.error import GraphQLError
 
 from integraflow.core.utils.events import call_event
+from integraflow.permission.enums import BasePermissionEnum
+from integraflow.permission.utils import (
+    all_permissions_required,
+    message_one_of_permissions_required,
+    one_of_permissions_or_auth_filter_required,
+)
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_MAP
 from integraflow.graphql.core.validators import (
     validate_one_of_args_is_in_mutation
@@ -134,11 +142,26 @@ class BaseMutation(graphene.Mutation):
         abstract = True
 
     @classmethod
+    def _validate_permissions(cls, permissions):
+        if not permissions:
+            return
+        if not isinstance(permissions, tuple):
+            raise ImproperlyConfigured(
+                f"Permissions should be a tuple in Meta class: {permissions}"
+            )
+        for p in permissions:
+            if not isinstance(p, Enum):
+                raise ImproperlyConfigured(
+                    f"Permission should be an enum: {p}."
+                )
+
+    @classmethod
     def __init_subclass_with_meta__(
         cls,
         auto_permission_message=True,
         description=None,
         doc_category=None,
+        permissions: Optional[Collection[BasePermissionEnum]] = None,
         _meta=None,
         error_type_class=None,
         error_type_field=None,
@@ -158,12 +181,19 @@ class BaseMutation(graphene.Mutation):
         if not error_type_class:
             raise ImproperlyConfigured("No error_type_class provided in Meta.")
 
+        cls._validate_permissions(permissions)
+
         _meta.auto_permission_message = auto_permission_message
         _meta.error_type_class = error_type_class
         _meta.error_type_field = error_type_field
         _meta.errors_mapping = errors_mapping
+        _meta.permissions = permissions
         _meta.support_meta_field = support_meta_field
         _meta.support_private_meta_field = support_private_meta_field
+
+        if permissions and auto_permission_message:
+            permissions_msg = message_one_of_permissions_required(permissions)
+            description = f"{description} {permissions_msg}"
 
         if webhook_events_info and auto_webhook_events_message:
             description += message_webhook_events(webhook_events_info)
@@ -478,6 +508,33 @@ class BaseMutation(graphene.Mutation):
                     data = f._get_default()  # type: ignore
             f.save_form_data(instance, data)
         return instance
+
+    @classmethod
+    def check_permissions(
+        cls,
+        context,
+        permissions=None,
+        require_all_permissions=False,
+        **data
+    ):
+        """Determine whether user or app has rights to perform this mutation.
+
+        Default implementation assumes that account is allowed to perform any
+        mutation. By overriding this method or defining required permissions
+        in the meta-class, you can restrict access to it.
+
+        The `context` parameter is the Context instance associated with the
+        request.
+        """
+        all_permissions = permissions or cls._meta.permissions
+        if not all_permissions:
+            return True
+        if require_all_permissions:
+            return all_permissions_required(context, all_permissions)
+        return one_of_permissions_or_auth_filter_required(
+            context,
+            all_permissions
+        )
 
     @classmethod
     def mutate(cls, root, info: ResolveInfo, **data):

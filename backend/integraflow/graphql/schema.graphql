@@ -10,8 +10,12 @@ directive @doc(
 ) on ENUM | FIELD | FIELD_DEFINITION | INPUT_OBJECT | OBJECT
 
 type Query {
-  """Return the currently authenticated user."""
-  me: User @doc(category: "Users")
+  """
+  Return the currently authenticated user.
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  viewer: User @doc(category: "Users")
   _entities(representations: [_Any]): [_Entity]
   _service: _Service
 }
@@ -66,11 +70,31 @@ type Mutation {
     """Code gotten from google auth consent screen."""
     code: String!
   ): GoogleUserAuth @doc(category: "Authentication")
+
+  """
+  Deactivate all JWT tokens of the currently authenticated user. 
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  logout: Logout @doc(category: "Authentication")
+
+  """
+  Refresh JWT token. Mutation tries to take refreshToken from the input. If it fails it will try to take `refreshToken` from the http-only cookie `refreshToken`. `csrfToken` is required when `refreshToken` is provided as a cookie.
+  """
+  tokenRefresh(
+    """
+    CSRF token required to refresh token. This argument is required when `refreshToken` is provided as a cookie.
+    """
+    csrfToken: String
+
+    """Refresh token."""
+    refreshToken: String
+  ): RefreshToken @doc(category: "Authentication")
 }
 
 """Authenticates a user account via email and authentication token."""
 type EmailTokenUserAuth @doc(category: "Authentication") {
-  """JWT token for authentication of the user."""
+  """Access token to authenticate the user."""
   token: String
 
   """JWT refresh token, required to re-generate access token."""
@@ -78,9 +102,6 @@ type EmailTokenUserAuth @doc(category: "Authentication") {
 
   """CSRF token required to re-generate access token."""
   csrfToken: String
-
-  """A user instance."""
-  user: User
   userErrors: [UserError!]!
   errors: [UserError!]!
 }
@@ -140,6 +161,26 @@ type GoogleUserAuth @doc(category: "Authentication") {
   """Refresh token for the user."""
   refreshToken: String
   userErrors: [UserError!]!
+  errors: [UserError!]!
+}
+
+"""
+Deactivate all JWT tokens of the currently authenticated user. 
+
+Requires one of the following permissions: AUTHENTICATED_USER.
+"""
+type Logout @doc(category: "Authentication") {
+  userErrors: [UserError!]!
+  errors: [UserError!]!
+}
+
+"""
+Refresh JWT token. Mutation tries to take refreshToken from the input. If it fails it will try to take `refreshToken` from the http-only cookie `refreshToken`. `csrfToken` is required when `refreshToken` is provided as a cookie.
+"""
+type RefreshToken @doc(category: "Authentication") {
+  """Acess token to authenticate the user."""
+  token: String
+  accountErrors: [UserError!]!
   errors: [UserError!]!
 }
 

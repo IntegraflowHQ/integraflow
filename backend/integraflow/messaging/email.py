@@ -27,13 +27,14 @@ def _send_email(
     txt_body: str = "",
     html_body: str = "",
     reply_to: Optional[str] = None,
+    campaign_count: int = 0,
 ) -> None:
     """
     Sends built email message asynchronously.
     """
 
     messages: List = []
-    records: List = []
+    records: List[MessagingRecord] = []
 
     with transaction.atomic():
 
@@ -49,8 +50,8 @@ def _send_email(
             )
             # If an email for this campaign was already sent to this user,
             # skip recipient
-            if record.sent_at:
-                record.save()  # release DB lock
+            if record.sent_at and record.campaign_count == 0:
+                record.delete()  # release DB lock
                 continue
 
             records.append(record)
@@ -85,8 +86,12 @@ def _send_email(
             connection.send_messages(messages)
 
             for record in records:
-                record.sent_at = timezone.now()
-                record.save()
+                if record.campaign_count > 1:
+                    record.campaign_count = record.campaign_count - 1
+                    record.sent_at = timezone.now()
+                    record.save()
+                else:
+                    record.delete()
 
         except Exception as err:
             # Handle exceptions gracefully to avoid breaking the entire task
