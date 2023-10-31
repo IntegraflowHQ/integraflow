@@ -23,5 +23,4 @@ COPY . .
 RUN adduser --disabled-password user
 USER user
 
-ENTRYPOINT ["poetry", "run"]
-CMD ["python", "manage.py", "runserver"]
+CMD ["poetry", "run", "python", "manage.py", "runserver"]
