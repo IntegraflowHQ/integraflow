@@ -13,20 +13,6 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     container_name: postgres_db
 
-  migration:
-    build:
-      context: ./backend
-    volumes:
-      - ./backend:/backend
-      - /backend/.venv
-    env_file:
-      - ./.env
-    environment:
-      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-    command: python manage.py migrate --noinput
-    depends_on:
-      - db
-
   backend:
     container_name: backend
     build:
@@ -38,8 +24,9 @@ services:
       - ./.env
     environment:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-    command: python manage.py runserver 0.0.0.0:8000
+    command: bash -c "poetry run python manage.py migrate --noinput && poetry run python manage.py runserver 0.0.0.0:8000"
+    restart: always
     ports:
       - 8000:8000
     depends_on:
-      - migration
+      - db
