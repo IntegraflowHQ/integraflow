@@ -10,7 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@apollo/client": "^3.8.6",
+    "@react-oauth/google": "^0.11.1",
     "@tremor/react": "^3.9.2",
+    "graphql": "^16.8.1",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
     "react": "^18.2.0",

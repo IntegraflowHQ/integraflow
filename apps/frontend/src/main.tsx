@@ -1,3 +1,4 @@
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
@@ -5,6 +6,8 @@ import "./index.css";
 import { AuthLayout } from "./layout/AuthLayout";
 import Index from "./pages/Index";
 import Signup from "./pages/Signup";
+
+const baseUrl = import.meta.env.VITE_BASE_URL;
 
 const router = createBrowserRouter([
   {
@@ -23,8 +26,15 @@ const router = createBrowserRouter([
   },
 ]);
 
+const client = new ApolloClient({
+  uri: baseUrl,
+  cache: new InMemoryCache(),
+});
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ApolloProvider client={client}>
+      <RouterProvider router={router} />
+    </ApolloProvider>
   </React.StrictMode>,
 );
