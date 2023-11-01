@@ -6,6 +6,7 @@ from django.core.files.storage import default_storage
 
 from integraflow.core.utils import build_absolute_uri
 from integraflow.graphql.core.doc_category import (
+    DOC_CATEGORY_ORGANIZATIONS,
     DOC_CATEGORY_USERS,
     DOC_CATEGORY_APPS,
     DOC_CATEGORY_WEBHOOKS,
@@ -64,11 +65,19 @@ class BulkError(BaseObjectType):
         description = "Represents an error in the input of a mutation."
 
 
+class OrganizationError(Error):
+    code = UserErrorCode(description="The error code.", required=True)
+
+    class Meta:
+        description = "Represents errors in organization mutations."
+        doc_category = DOC_CATEGORY_ORGANIZATIONS
+
+
 class UserError(Error):
     code = UserErrorCode(description="The error code.", required=True)
 
     class Meta:
-        description = "Represents errors in account mutations."
+        description = "Represents errors in user mutations."
         doc_category = DOC_CATEGORY_USERS
 
 
