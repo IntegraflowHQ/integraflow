@@ -163,3 +163,6 @@ venv.bak/
 # Exported results file
 django-queries-results.html
 .turbo
+
+data/
+backend/client-secret.json

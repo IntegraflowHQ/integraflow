@@ -14,7 +14,6 @@ import django_stubs_ext
 import jaeger_client.config
 import sentry_sdk
 import sentry_sdk.utils
-
 # from celery.schedules import crontab
 from django.conf import global_settings
 from django.core.exceptions import ImproperlyConfigured
@@ -229,6 +228,7 @@ JWT_MANAGER_PATH = os.environ.get(
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "integraflow.core.middleware.jwt_refresh_token_middleware",
 ]
@@ -259,6 +259,7 @@ INSTALLED_APPS = [
     "django_countries",
     "django_filters",
     "phonenumber_field",
+    "corsheaders",
 ]
 
 ENABLE_DJANGO_EXTENSIONS = get_bool_from_env("ENABLE_DJANGO_EXTENSIONS", False)
@@ -421,6 +422,7 @@ ALLOWED_HOSTS = get_list(os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1"))
 ALLOWED_GRAPHQL_ORIGINS: List[str] = get_list(
     os.environ.get("ALLOWED_GRAPHQL_ORIGINS", "*")
 )
+CORS_ALLOWED_ORIGINS = ALLOWED_GRAPHQL_ORIGINS
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
