@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.utils import timezone
 
 from .email import EmailMessage
@@ -23,7 +24,8 @@ def send_magic_link(email: str, token: str) -> None:
         template_context={
             "magic_url": absolute_uri(link),
             "site_url": absolute_uri(),
-            "code": token
+            "code": token,
+            "expires_in": settings.MAGIC_LINK_EXPIRES_IN
         },
     )
     message.add_recipient(email)

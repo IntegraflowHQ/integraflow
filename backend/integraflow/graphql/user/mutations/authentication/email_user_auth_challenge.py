@@ -2,6 +2,7 @@ import graphene
 import random
 import string
 
+from django.conf import settings
 from django.core.cache import cache
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
@@ -13,8 +14,6 @@ from integraflow.graphql.core import ResolveInfo
 
 from integraflow.messaging.tasks import send_magic_link
 from integraflow.user.error_codes import UserErrorCode
-
-CACHE_DEFAULT_TIMEOUT: int = 5 * 60  # 5 minutes
 
 
 class EmailUserAuthChallenge(BaseMutation):
@@ -73,7 +72,7 @@ class EmailUserAuthChallenge(BaseMutation):
 
             current_attempt = data["current_attempt"] + 1
 
-            if data["current_attempt"] > 2:
+            if data["current_attempt"] >= settings.MAGIC_LINK_MAX_ATTEMPTS:
                 raise ValidationError(
                     "Max attempts exhausted. Please try again later.",
                     code=UserErrorCode.GRAPHQL_ERROR.value,
@@ -87,7 +86,11 @@ class EmailUserAuthChallenge(BaseMutation):
             "token": token,
         }
 
-        cache.set(key, value=value, timeout=CACHE_DEFAULT_TIMEOUT)
+        cache.set(
+            key,
+            value=value,
+            timeout=int(settings.MAGIC_LINK_EXPIRES_IN) * 60
+        )
         send_magic_link.delay(email=email, token=token)
 
         return cls(
