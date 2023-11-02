@@ -164,5 +164,4 @@ venv.bak/
 django-queries-results.html
 .turbo
 
-data/
 backend/client-secret.json

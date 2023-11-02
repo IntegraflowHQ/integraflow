@@ -1,6 +1,20 @@
 version: '3.8'
 
 services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./apps/frontend
+    volumes:
+      - ./apps/frontend:/frontend
+      - /frontend/node_modules
+    ports:
+      - 3000:3000
+    env_file:
+      - ./.env
+    restart: always
+    command: "yarn dev"
+
   redis:
     image: redis:alpine
     container_name: redis
