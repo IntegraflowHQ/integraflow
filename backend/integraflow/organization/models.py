@@ -1,3 +1,4 @@
+import pytz
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -25,8 +26,11 @@ from integraflow.core.models import (
 from integraflow.messaging.utils import is_email_available
 
 if TYPE_CHECKING:
-    from backend.integraflow.project.models import Project
+    from integraflow.project.models import Project
     from integraflow.user.models import User
+
+
+TIMEZONES = [(tz, tz) for tz in pytz.common_timezones]
 
 INVITE_DAYS_VALIDITY = 3  # number of days for which invites are valid
 
@@ -41,11 +45,11 @@ class OrganizationManager(models.Manager):
         *,
         project_fields: Optional[Dict[str, Any]] = None,
         **kwargs
-    ) -> Tuple["Organization", Optional["OrganizationMembership"], "Project"]:
+    ) -> Tuple["Organization", Optional["User"], "Project"]:
         """Instead of doing the legwork of creating an organization yourself,
         delegate the details with bootstrap.
         """
-        from backend.integraflow.project.models import Project
+        from integraflow.project.models import Project
 
         with transaction.atomic():
             organization = Organization.objects.create(**kwargs)
@@ -53,15 +57,14 @@ class OrganizationManager(models.Manager):
                 organization=organization,
                 **(project_fields or {})
             )
-            organization_membership: Optional[OrganizationMembership] = None
+
             if user is not None:
-                organization_membership = (
-                    OrganizationMembership.objects.create(
-                        organization=organization,
-                        user=user,
-                        level=OrganizationMembership.Level.OWNER
-                    )
+                OrganizationMembership.objects.create(
+                    organization=organization,
+                    user=user,
+                    level=OrganizationMembership.Level.OWNER
                 )
+
                 user.current_organization = organization
                 user.organization = (
                     user.current_organization  # Update cached property
@@ -70,7 +73,7 @@ class OrganizationManager(models.Manager):
                 user.project = user.current_project  # Update cached property
                 user.save()
 
-        return organization, organization_membership, project
+        return organization, user, project
 
 
 class Organization(UUIDModel):
@@ -85,6 +88,13 @@ class Organization(UUIDModel):
         unique=True,
         max_length=MAX_SLUG_LENGTH
     )
+
+    timezone: models.CharField = models.CharField(
+        max_length=240,
+        choices=TIMEZONES,
+        default="UTC"
+    )
+
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
 
