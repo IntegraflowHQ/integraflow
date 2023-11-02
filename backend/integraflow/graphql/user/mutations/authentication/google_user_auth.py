@@ -3,6 +3,8 @@ from typing import Dict
 import graphene
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.utils import timezone
+
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
@@ -13,6 +15,8 @@ from integraflow.graphql.core.mutations import BaseMutation
 from integraflow.graphql.core.types.common import UserError
 from integraflow.graphql.user.types import AuthUser
 from integraflow.user.models import User
+
+from .utils import _get_new_csrf_token
 
 GOOGLE_AUTH_CLIENT_CREDENTIALS = settings.GOOGLE_AUTH_CLIENT_CREDENTIALS
 
@@ -40,15 +44,15 @@ class GoogleUserAuth(BaseMutation):
     success = graphene.Boolean(
         description="Whether the operation was successful.",
     )
-
-    accessToken = graphene.String(
-        description="Access token for the user.",
+    token = graphene.String(
+        description="Access token to authenticate the user."
     )
-
-    refreshToken = graphene.String(
-        description="Refresh token for the user.",
+    refresh_token = graphene.String(
+        description="JWT refresh token, required to re-generate access token."
     )
-
+    csrf_token = graphene.String(
+        description="CSRF token required to re-generate access token."
+    )
     user = graphene.Field(
         AuthUser,
         description=(
@@ -99,10 +103,27 @@ class GoogleUserAuth(BaseMutation):
     def perform_mutation(cls, _root, info: ResolveInfo, /, *, code):
         credentials = cls._get_credentials(code)
         user = cls._get_user(credentials)
-        access, refresh = create_access_token(user), create_refresh_token(user)
+
+        csrf_token = _get_new_csrf_token()
+        refresh_additional_payload = {
+            "csrfToken": csrf_token,
+        }
+
+        access_token = create_access_token(user)
+        refresh_token = create_refresh_token(
+            user,
+            additional_payload=refresh_additional_payload
+        )
+        setattr(info.context, "refresh_token", refresh_token)
+        info.context.user = user
+        info.context._cached_user = user
+        user.last_login = timezone.now()
+        user.save(update_fields=["last_login"])
+
         return cls(
-            success=True,
-            accessToken=access,
-            refreshToken=refresh,
+            errors=[],
+            token=access_token,
+            refresh_token=refresh_token,
+            csrf_token=csrf_token,
             user=user
         )
