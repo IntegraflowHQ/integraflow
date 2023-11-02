@@ -11,6 +11,7 @@ from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_AUTH
 from integraflow.graphql.core.mutations import BaseMutation
 from integraflow.graphql.core.types.common import UserError
+from integraflow.graphql.user.types import AuthUser
 from integraflow.user.models import User
 
 GOOGLE_AUTH_CLIENT_CREDENTIALS = settings.GOOGLE_AUTH_CLIENT_CREDENTIALS
@@ -46,6 +47,13 @@ class GoogleUserAuth(BaseMutation):
 
     refreshToken = graphene.String(
         description="Refresh token for the user.",
+    )
+
+    user = graphene.Field(
+        AuthUser,
+        description=(
+            "A user that has access to the the resources of an organization."
+        )
     )
 
     @classmethod
@@ -96,4 +104,5 @@ class GoogleUserAuth(BaseMutation):
             success=True,
             accessToken=access,
             refreshToken=refresh,
+            user=user
         )

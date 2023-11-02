@@ -3,10 +3,12 @@ import graphene
 from .utils import str_to_enum
 
 from integraflow.app import error_codes as app_error_codes
+from integraflow.organization import error_codes as organization_error_codes
 from integraflow.user import error_codes as user_error_codes
 from integraflow.webhook import error_codes as webhook_error_codes
 from .doc_category import (
     DOC_CATEGORY_APPS,
+    DOC_CATEGORY_ORGANIZATIONS,
     DOC_CATEGORY_USERS,
     DOC_CATEGORY_WEBHOOKS,
 )
@@ -97,6 +99,11 @@ AppErrorCode = graphene.Enum.from_enum(app_error_codes.AppErrorCode)
 AppErrorCode.doc_category = DOC_CATEGORY_APPS
 
 JobStatusEnum = to_enum(JobStatus)
+
+OrganizationErrorCode = graphene.Enum.from_enum(
+    organization_error_codes.OrganizationErrorCode
+)
+OrganizationErrorCode.doc_category = DOC_CATEGORY_ORGANIZATIONS
 
 UserErrorCode = graphene.Enum.from_enum(
     user_error_codes.UserErrorCode
