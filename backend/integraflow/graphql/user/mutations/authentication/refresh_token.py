@@ -136,19 +136,15 @@ class RefreshToken(BaseMutation):
     ):
         need_csrf = refresh_token is None
         refresh_token = cls.get_refresh_token(info, refresh_token)
-        print("csrf_token", refresh_token)
         payload = cls.clean_refresh_token(refresh_token)
-        print(payload)
 
         # None when we got refresh_token from cookie.
         if need_csrf:
             cls.clean_csrf_token(csrf_token, payload)
 
         user = get_user(payload)
-        additional_payload = {}
         token = create_access_token(
-            user,
-            additional_payload=additional_payload
+            user
         )
         if user and not user.is_anonymous:
             user.last_login = timezone.now()

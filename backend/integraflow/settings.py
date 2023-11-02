@@ -658,10 +658,14 @@ CACHES["default"]["TIMEOUT"] = parse(os.environ.get("CACHE_TIMEOUT", "7 days"))
 
 JWT_EXPIRE = True
 JWT_TTL_ACCESS = timedelta(
-    seconds=parse(os.environ.get("JWT_TTL_ACCESS", "5 minutes"))  # type: ignore
+    seconds=parse(
+        os.environ.get("JWT_TTL_ACCESS", "5 minutes")
+    )  # type: ignore
 )
 JWT_TTL_APP_ACCESS = timedelta(
-    seconds=parse(os.environ.get("JWT_TTL_APP_ACCESS", "5 minutes"))  # type: ignore
+    seconds=parse(
+        os.environ.get("JWT_TTL_APP_ACCESS", "5 minutes")
+    )  # type: ignore
 )
 JWT_TTL_REFRESH = timedelta(
     seconds=parse(os.environ.get("JWT_TTL_REFRESH", "30 days"))  # type: ignore
@@ -673,6 +677,9 @@ JWT_TTL_REQUEST_EMAIL_CHANGE = timedelta(
         os.environ.get("JWT_TTL_REQUEST_EMAIL_CHANGE", "1 hour")
     )  # type: ignore
 )
+
+MAGIC_LINK_EXPIRES_IN = os.environ.get("MAGIC_LINK_EXPIRES_IN", 10)
+MAGIC_LINK_MAX_ATTEMPTS = os.environ.get("MAGIC_LINK_EXPIRES_IN", 5)
 
 # Patch SubscriberExecutionContext class from `graphql-core-legacy` package
 # to fix bug causing not returning errors for subscription queries.
