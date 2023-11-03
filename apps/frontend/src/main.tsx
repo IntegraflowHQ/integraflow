@@ -7,8 +7,6 @@ import { AuthLayout } from "./layout/AuthLayout";
 import Index from "./pages/Index";
 import Signup from "./pages/Signup";
 
-const baseUrl = import.meta.env.VITE_BASE_URL;
-
 const router = createBrowserRouter([
   {
     path: "/",
@@ -27,7 +25,7 @@ const router = createBrowserRouter([
 ]);
 
 const client = new ApolloClient({
-  uri: baseUrl,
+  uri: "/graphql",
   cache: new InMemoryCache(),
 });
 
