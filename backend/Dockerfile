@@ -1,28 +1,29 @@
-FROM ubuntu
+FROM python:3.9-slim-buster
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Keeps Python from generating .pyc files in the container
+ENV PYTHONDONTWRITEBYTECODE 1
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED 1
 
-RUN apt-get update
+ENV PIP_DEFAULT_TIMEOUT=100 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    POETRY_VIRTUALENVS_CREATE=false
 
-# Add deadsnakes PPA to get Python 3.9
-RUN apt-get install -y software-properties-common
-RUN add-apt-repository -y ppa:deadsnakes/ppa
-RUN apt-get update
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    libpng-dev \
+    libjpeg-dev \
+    supervisor
 
-RUN apt-get install -y  --no-install-recommends \
-    curl python3.9 python3.9-dev python3-pip python3.9-venv \
-    build-essential libpq-dev libpng-dev libjpeg-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Clean up the package cache to reduce the image size
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set python3.9 as default python
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.9 10
+RUN pip install --upgrade pip
 
-RUN curl -sSL https://install.python-poetry.org | python -
-
-# Add poetry to PATH
-ENV PATH="/root/.local/bin:$PATH"
+RUN pip install poetry
 
 WORKDIR /backend
 
@@ -31,9 +32,12 @@ COPY requirements_dev.txt requirements_dev.txt
 COPY poetry.lock poetry.lock
 COPY pyproject.toml pyproject.toml
 
-RUN poetry config virtualenvs.in-project true
-RUN poetry lock
-RUN poetry export --without-hashes -f requirements.txt -o requirements_dev.txt --with dev
 RUN poetry install --no-interaction
 
 COPY . .
+
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+EXPOSE 8000
+
+CMD ["/usr/bin/supervisord"]

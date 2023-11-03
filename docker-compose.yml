@@ -1,14 +1,24 @@
 version: '3.8'
 
 services:
-  redis:
-    image: redis
-    container_name: redis
+  frontend:
+    container_name: frontend
+    build:
+      context: ./apps/frontend
     volumes:
-      - ./data/redis:/data
+      - ./apps/frontend:/frontend
+      - /frontend/node_modules
+    env_file:
+      - ./.env
+    restart: always
+    command: "yarn dev"
+
+  redis:
+    image: redis:alpine
+    container_name: redis
 
   db:
-    image: postgres
+    image: postgres:alpine
     volumes:
       - ./data/db:/var/lib/postgresql/data
     env_file:
@@ -25,33 +35,23 @@ services:
       context: ./backend
     volumes:
       - ./backend:/backend
-      - /backend/.venv
     env_file:
       - ./.env
     environment:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - CELERY_BROKER_URL=redis://redis:6379/0
       - CACHE_URL=redis://redis:6379/0
-    command: bash -c "poetry run python manage.py migrate --noinput && poetry run python manage.py runserver 0.0.0.0:8000"
     restart: always
-    ports:
-      - 8000:8000
     depends_on:
       - db
-
-  celery:
-    restart: always
-    build:
-      context: ./backend
+    
+  proxy:
+    image: nginx:stable-alpine
+    ports:
+      - 8000:8000
     volumes:
-      - ./backend:/backend
-      - /backend/.venv
-    env_file:
-      - ./.env
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-    container_name: celery
-    command: bash -c "poetry run celery -A integraflow worker --loglevel=info"
+      - ./nginx-setup.conf:/etc/nginx/conf.d/default.conf:ro
+    container_name: proxy
     depends_on:
-      - redis
       - backend
+      - frontend
