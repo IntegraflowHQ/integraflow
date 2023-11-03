@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { useGoogleLogin } from "@react-oauth/google";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { ROUTES } from "../../../routes";
 import { Button, TextInput } from "../../../ui";
 import { Google } from "../../../ui/icons";
 import { GOOGLE_USER_AUTH } from "../graphql.internal/mutations";
@@ -10,21 +11,36 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
     e.preventDefault();
   };
 
-  const [googleAuth, { data, loading, error }] = useMutation(GOOGLE_USER_AUTH);
+  const navigate = useNavigate();
+
+  const [googleAuth, { data }] = useMutation(GOOGLE_USER_AUTH);
 
   const loginWithGoogle = useGoogleLogin({
     flow: "auth-code",
+    ux_mode: "popup",
     onSuccess: (codeResponse) => {
-      console.log("codeResponse: ", codeResponse);
       googleAuth({
         variables: {
           code: codeResponse.code,
         },
       });
+      const {
+        user: { organization, project },
+      } = data.googleUserAuth;
+
+      if (!organization) {
+        navigate(ROUTES.CREATE_WORKSPACE);
+      } else if (organization && project && project.hasCompletedOnboardingFor) {
+        navigate(`${organization.slug}/projects/${project.id}`);
+      } else if (
+        organization &&
+        project &&
+        !project.hasCompletedOnboardingFor
+      ) {
+        navigate(`${organization.slug}/get-started`);
+      }
     },
   });
-
-  console.log(data, loading, error);
 
   return (
     <>

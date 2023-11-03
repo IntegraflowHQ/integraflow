@@ -4,8 +4,17 @@ export const GOOGLE_USER_AUTH = gql`
   mutation googleUserAuth($code: String!) {
     googleUserAuth(code: $code) {
       success
-      accessToken
       refreshToken
+      user {
+        organization {
+          id
+          slug
+        }
+        project {
+          id
+          hasCompletedOnboardingFor
+        }
+      }
       userErrors {
         message
       }
