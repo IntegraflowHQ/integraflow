@@ -165,3 +165,4 @@ django-queries-results.html
 .turbo
 
 backend/client-secret.json
+data/
