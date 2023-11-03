@@ -4,14 +4,13 @@ services:
   frontend:
     container_name: frontend
     build:
-      context: ./apps/frontend
+      context: .
     volumes:
-      - ./apps/frontend:/frontend
-      - /frontend/node_modules
+      - .:/frontend
     env_file:
       - ./.env
     restart: always
-    command: "yarn dev"
+    command: bash -c "cd apps/frontend && yarn dev"
 
   redis:
     image: redis:alpine
@@ -44,7 +43,7 @@ services:
     restart: always
     depends_on:
       - db
-    
+
   proxy:
     image: nginx:stable-alpine
     ports:

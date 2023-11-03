@@ -5,7 +5,7 @@ const config: Config = {
     "./src/**/*.{html,js,jsx,ts,tsx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/ui/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@tremor/**/*.{js,ts,jsx,tsx}",
+    "../../node_modules/@tremor/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
