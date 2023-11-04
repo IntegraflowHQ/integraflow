@@ -25,7 +25,7 @@ export const useApolloFactory = () => {
     const apolloClient = useMemo(() => {
         apolloRef.current = new ApolloFactory({
             uri: `${import.meta.env.VITE_SERVER_BASE_URL}/graphql`,
-            cache: new InMemoryCache({}),
+            cache: new InMemoryCache(),
             defaultOptions: {
                 query: {
                     fetchPolicy: 'cache-first',
