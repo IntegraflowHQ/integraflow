@@ -18,10 +18,10 @@ from integraflow.core.exceptions import (
     PermissionDenied,
     ReadOnlyException,
 )
-from ..core.utils import from_global_id_or_error
+from integraflow.graphql.core.utils import from_global_id_or_error
 
 if TYPE_CHECKING:
-    from ..core import IntegraflowContext
+    from integraflow.graphql.core import IntegraflowContext
 
 unhandled_errors_logger = logging.getLogger(
     "integraflow.graphql.errors.unhandled"
@@ -164,33 +164,21 @@ def query_identifier(document: GraphQLDocument) -> str:
 
     For queries identifier is sorted set of all root objects separated by `,`.
     e.g
-    query AnyQuery {
-        product {
-            id
-        }
-        order {
-            id
-        }
-        Product2: product {
-            id
-        }
-        Myself: me {
-            email
-        }
+    query viewer {
+        id
+        email
+        first_name
     }
     identifier: me, order, product
 
     For mutations identifier is mutation type name.
     e.g.
-    mutation CreateToken{
-        tokenCreate(...){
+    mutation EmailTokenUserAuth{
+        emailTokenUserAuth(...){
             token
         }
-        deleteWarehouse(...){
-            ...
-        }
     }
-    identifier: deleteWarehouse, tokenCreate
+    identifier: emailTokenUserAuth
     """
     labels = []
     for definition in document.document_ast.definitions:

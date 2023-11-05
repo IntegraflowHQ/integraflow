@@ -6,7 +6,7 @@ import graphene
 from django import forms
 from django.core.exceptions import ImproperlyConfigured
 
-from ..filters import (
+from integraflow.graphql.core.filters import (
     EnumFilter,
     EnumWhereFilter,
     GlobalIDFormField,

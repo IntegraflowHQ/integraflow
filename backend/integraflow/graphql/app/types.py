@@ -2,23 +2,29 @@ from typing import List, Union
 
 import graphene
 
-from ...app import models
-from ...app.types import AppExtensionTarget
-from ...core.exceptions import PermissionDenied
-from ..core import ResolveInfo
-from ..core.connection import CountableConnection
-from ..core.doc_category import DOC_CATEGORY_APPS
-from ..core.federation import federated_entity, resolve_federation_references
-from ..core.types.common import (
+from integraflow.app import models
+from integraflow.app.types import AppExtensionTarget
+from integraflow.core.exceptions import PermissionDenied
+from integraflow.graphql.core import ResolveInfo
+from integraflow.graphql.core.connection import CountableConnection
+from integraflow.graphql.core.doc_category import DOC_CATEGORY_APPS
+from integraflow.graphql.core.federation import (
+    federated_entity,
+    resolve_federation_references
+)
+from integraflow.graphql.core.types.common import (
     BaseObjectType,
     NonNullList,
 )
-from ..core.types.model import ModelObjectType
-from ..meta.types import ObjectWithMetadata
-from ..utils import get_user_or_app_from_context
-from ..webhook.dataloaders import WebhooksByAppIdLoader
-from ..webhook.enums import WebhookEventTypeAsyncEnum, WebhookEventTypeSyncEnum
-from ..webhook.types import Webhook
+from integraflow.graphql.core.types.model import ModelObjectType
+from integraflow.graphql.meta.types import ObjectWithMetadata
+from integraflow.graphql.utils import get_user_or_app_from_context
+from integraflow.graphql.webhook.dataloaders import WebhooksByAppIdLoader
+from integraflow.graphql.webhook.enums import (
+    WebhookEventTypeAsyncEnum,
+    WebhookEventTypeSyncEnum
+)
+from integraflow.graphql.webhook.types import Webhook
 from .dataloaders import (
     AppByIdLoader,
     AppExtensionByAppIdLoader,

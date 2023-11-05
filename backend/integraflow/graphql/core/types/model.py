@@ -5,7 +5,7 @@ from uuid import UUID
 from django.db.models import Model, Q
 from graphene.types.objecttype import ObjectTypeOptions
 
-from ..doc_category import DOC_CATEGORY_MAP
+from integraflow.graphql.core.doc_category import DOC_CATEGORY_MAP
 from .base import BaseObjectType
 
 

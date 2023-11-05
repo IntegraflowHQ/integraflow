@@ -19,6 +19,7 @@ class IntegraflowContext(HttpRequest):
     dataloaders: Dict[str, "DataLoader"]
     app: Optional[App]
     user: Optional[User]  # type: ignore[assignment]
+    user_permissions: Optional[Any]
     requestor: Union[App, User, None]
     request_time: datetime.datetime
 

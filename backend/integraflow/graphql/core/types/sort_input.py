@@ -3,7 +3,7 @@ import copy
 import graphene
 from graphene.types.inputobjecttype import InputObjectTypeOptions
 
-from ..enums import OrderDirection
+from integraflow.graphql.core.enums import OrderDirection
 from .base import BaseInputObjectType
 
 

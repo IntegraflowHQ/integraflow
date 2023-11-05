@@ -1,21 +1,22 @@
 from operator import itemgetter
 
-from ...app import models as app_models
-from ...core.exceptions import PermissionDenied
-from ...core.models import ModelWithMetadata
-from ..core import ResolveInfo
-from ..utils import get_user_or_app_from_context
+from integraflow.app import models as app_models
+from integraflow.user import models as user_models
+from integraflow.core.exceptions import PermissionDenied
+from integraflow.core.models import ModelWithMetadata
+from integraflow.graphql.core import ResolveInfo
+from integraflow.graphql.utils import get_user_or_app_from_context
 
 
 def resolve_object_with_metadata_type(instance):
     # Imports inside resolvers to avoid circular imports.
-    from ..app import types as app_types
-    # from ..user import types as user_types
+    from integraflow.graphql.app import types as app_types
+    from integraflow.graphql.user import types as user_types
 
     if isinstance(instance, ModelWithMetadata):
         MODEL_TO_TYPE_MAP = {
             app_models.App: app_types.App,
-            # user_models.User: user_types.User,
+            user_models.User: user_types.User,
         }
 
         return MODEL_TO_TYPE_MAP.get(

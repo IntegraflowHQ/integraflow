@@ -1,0 +1,601 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+"""Groups fields and operations into named groups."""
+directive @doc(
+  """Name of the grouping category"""
+  category: String!
+) on ENUM | FIELD | FIELD_DEFINITION | INPUT_OBJECT | OBJECT
+
+type Query {
+  """
+  Return the currently authenticated user.
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  viewer: User @doc(category: "Users")
+  _entities(representations: [_Any]): [_Entity]
+  _service: _Service
+}
+
+"""Represents user data."""
+type User implements Node @doc(category: "Users") {
+  """The ID of the user."""
+  id: ID!
+
+  """The email address of the user."""
+  email: String!
+
+  """The given name of the user."""
+  firstName: String!
+
+  """The family name of the user."""
+  lastName: String!
+
+  """Determine if the user is a staff admin."""
+  isStaff: Boolean!
+
+  """Determine if the user is active."""
+  isActive: Boolean!
+
+  """
+  The current organization of the user.
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  organization: AuthOrganization
+
+  """
+  The current project of the user.
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  project: Project
+
+  """
+  Organizations the user is part of.
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  organizations(
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): OrganizationCountableConnection
+
+  """
+  Projects the user has access to.
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  projects(
+    """By which field should the pagination order by."""
+    orderBy: ProjectSortingInput
+
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): ProjectCountableConnection
+}
+
+"""An object with an ID"""
+interface Node {
+  """The ID of the object."""
+  id: ID!
+}
+
+"""Represents an organization."""
+type AuthOrganization implements Node @doc(category: "Organizations") {
+  """The ID of the organization."""
+  id: ID!
+
+  """Slug of the organization."""
+  slug: String!
+
+  """
+  Name of the organization.
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  name: String!
+
+  """
+  Member count
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  memberCount: Int!
+}
+
+"""Represents a project."""
+type Project implements Node @doc(category: "Projects") {
+  """The ID of the project."""
+  id: ID!
+
+  """Slug of the project."""
+  name: String!
+
+  """The data required for the onboarding process"""
+  hasCompletedOnboardingFor: JSONString
+
+  """The timezone of the project."""
+  timezone: String!
+
+  """Organization the project belongs to."""
+  organization: AuthOrganization!
+}
+
+scalar JSONString
+
+type OrganizationCountableConnection @doc(category: "Organizations") {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+  edges: [OrganizationCountableEdge!]!
+
+  """A total count of items in the collection."""
+  totalCount: Int
+}
+
+"""
+The Relay compliant `PageInfo` type, containing data necessary to paginate this connection.
+"""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+type OrganizationCountableEdge @doc(category: "Organizations") {
+  """The item at the end of the edge."""
+  node: Organization!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+"""Represents an organization."""
+type Organization implements Node @doc(category: "Organizations") {
+  """The ID of the organization."""
+  id: ID!
+
+  """Slug of the organization."""
+  slug: String!
+
+  """
+  Name of the organization.
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  name: String!
+
+  """
+  Member count
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  memberCount: Int!
+
+  """
+  Users associated with the organization.
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  members(
+    """By which field should the pagination order by."""
+    orderBy: UserSortingInput
+
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): UserCountableConnection
+
+  """
+  Projects associated with the organization.
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  projects(
+    """By which field should the pagination order by."""
+    orderBy: UserSortingInput
+
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): ProjectCountableConnection
+}
+
+type UserCountableConnection @doc(category: "Users") {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+  edges: [UserCountableEdge!]!
+
+  """A total count of items in the collection."""
+  totalCount: Int
+}
+
+type UserCountableEdge @doc(category: "Users") {
+  """The item at the end of the edge."""
+  node: User!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+input UserSortingInput @doc(category: "Users") {
+  """Specifies the direction in which to sort users."""
+  direction: OrderDirection!
+
+  """Sort users by the selected field."""
+  field: UserSortField!
+}
+
+enum OrderDirection {
+  """Specifies an ascending sort order."""
+  ASC
+
+  """Specifies a descending sort order."""
+  DESC
+}
+
+enum UserSortField @doc(category: "Users") {
+  """Sort users by first name."""
+  FIRST_NAME
+
+  """Sort users by last name."""
+  LAST_NAME
+
+  """Sort users by email."""
+  EMAIL
+
+  """Sort users by created at."""
+  CREATED_AT
+}
+
+type ProjectCountableConnection @doc(category: "Projects") {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+  edges: [ProjectCountableEdge!]!
+
+  """A total count of items in the collection."""
+  totalCount: Int
+}
+
+type ProjectCountableEdge @doc(category: "Projects") {
+  """The item at the end of the edge."""
+  node: Project!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+input ProjectSortingInput @doc(category: "Projects") {
+  """Specifies the direction in which to sort projects."""
+  direction: OrderDirection!
+
+  """Sort projects by the selected field."""
+  field: ProjectSortField!
+}
+
+enum ProjectSortField @doc(category: "Projects") {
+  """Sort projects by name."""
+  NAME
+
+  """Sort projects by created at."""
+  CREATED_AT
+
+  """Sort projects by updated at."""
+  UPDATED_AT
+}
+
+type Mutation {
+  """Authenticates a user account via email and authentication token."""
+  emailTokenUserAuth(
+    """The email which to login via the magic login code."""
+    email: String!
+
+    """The magic login code."""
+    token: String!
+  ): EmailTokenUserAuth @doc(category: "Authentication")
+
+  """
+  Finds or creates a new user account by email and sends an email with token.
+  """
+  emailUserAuthChallenge(
+    """The email for which to generate the magic login code."""
+    email: String!
+  ): EmailUserAuthChallenge @doc(category: "Authentication")
+
+  """Finds or creates a new user account from google auth credentials."""
+  googleUserAuth(
+    """Code gotten from google auth consent screen."""
+    code: String!
+  ): GoogleUserAuth @doc(category: "Authentication")
+
+  """
+  Deactivate all JWT tokens of the currently authenticated user. 
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  logout: Logout @doc(category: "Authentication")
+
+  """
+  Refresh JWT token. Mutation tries to take refreshToken from the input. If it fails it will try to take `refreshToken` from the http-only cookie `refreshToken`. `csrfToken` is required when `refreshToken` is provided as a cookie.
+  """
+  tokenRefresh(
+    """
+    CSRF token required to refresh token. This argument is required when `refreshToken` is provided as a cookie.
+    """
+    csrfToken: String
+
+    """Refresh token."""
+    refreshToken: String
+  ): RefreshToken @doc(category: "Authentication")
+
+  """
+  Creates new organization. 
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  organizationCreate(
+    """Organization details for the new organization."""
+    input: OrganizationCreateInput!
+
+    """Onboarding survey."""
+    survey: OnboardingCustomerSurvey
+  ): OrganizationCreate
+}
+
+"""Authenticates a user account via email and authentication token."""
+type EmailTokenUserAuth @doc(category: "Authentication") {
+  """Access token to authenticate the user."""
+  token: String
+
+  """JWT refresh token, required to re-generate access token."""
+  refreshToken: String
+
+  """CSRF token required to re-generate access token."""
+  csrfToken: String
+
+  """A user that has access to the the resources of an organization."""
+  user: AuthUser
+  userErrors: [UserError!]!
+  errors: [UserError!]!
+}
+
+"""Represents an authenticated user data."""
+type AuthUser implements Node @doc(category: "Users") {
+  """The ID of the user."""
+  id: ID!
+
+  """The email address of the user."""
+  email: String!
+
+  """The given name of the user."""
+  firstName: String!
+
+  """The family name of the user."""
+  lastName: String!
+
+  """Determine if the user is a staff admin."""
+  isStaff: Boolean!
+
+  """Determine if the user is active."""
+  isActive: Boolean!
+
+  """
+  The current organization of the user.
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  organization: AuthOrganization
+
+  """
+  The current project of the user.
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  project: Project
+}
+
+"""Represents errors in user mutations."""
+type UserError @doc(category: "Users") {
+  """
+  Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field.
+  """
+  field: String
+
+  """The error message."""
+  message: String
+
+  """The error code."""
+  code: UserErrorCode!
+}
+
+"""An enumeration."""
+enum UserErrorCode @doc(category: "Users") {
+  GRAPHQL_ERROR
+  INACTIVE
+  INVALID
+  NOT_FOUND
+  REQUIRED
+  UNIQUE
+  INVALID_MAGIC_CODE
+  MAGIC_CODE_EXPIRED
+  JWT_SIGNATURE_EXPIRED
+  JWT_INVALID_TOKEN
+  JWT_DECODE_ERROR
+  JWT_MISSING_TOKEN
+  JWT_INVALID_CSRF_TOKEN
+}
+
+"""
+Finds or creates a new user account by email and sends an email with token.
+"""
+type EmailUserAuthChallenge @doc(category: "Authentication") {
+  """Whether the operation was successful."""
+  success: Boolean
+
+  """Supported challenge for this user."""
+  authType: String
+  userErrors: [UserError!]!
+  errors: [UserError!]!
+}
+
+"""Finds or creates a new user account from google auth credentials."""
+type GoogleUserAuth @doc(category: "Authentication") {
+  """Whether the operation was successful."""
+  success: Boolean
+
+  """Access token to authenticate the user."""
+  token: String
+
+  """JWT refresh token, required to re-generate access token."""
+  refreshToken: String
+
+  """CSRF token required to re-generate access token."""
+  csrfToken: String
+
+  """A user that has access to the the resources of an organization."""
+  user: AuthUser
+  userErrors: [UserError!]!
+  errors: [UserError!]!
+}
+
+"""
+Deactivate all JWT tokens of the currently authenticated user. 
+
+Requires one of the following permissions: AUTHENTICATED_USER.
+"""
+type Logout @doc(category: "Authentication") {
+  userErrors: [UserError!]!
+  errors: [UserError!]!
+}
+
+"""
+Refresh JWT token. Mutation tries to take refreshToken from the input. If it fails it will try to take `refreshToken` from the http-only cookie `refreshToken`. `csrfToken` is required when `refreshToken` is provided as a cookie.
+"""
+type RefreshToken @doc(category: "Authentication") {
+  """Acess token to authenticate the user."""
+  token: String
+  accountErrors: [UserError!]!
+  errors: [UserError!]!
+}
+
+"""
+Creates new organization. 
+
+Requires one of the following permissions: AUTHENTICATED_USER.
+"""
+type OrganizationCreate {
+  """
+  An organization. Organizations are root-level objects that contain users and projects.
+  """
+  organization: AuthOrganization
+
+  """A user that has access to the the resources of an organization."""
+  user: AuthUser
+  organizationErrors: [OrganizationError!]!
+  errors: [OrganizationError!]!
+}
+
+"""Represents errors in organization mutations."""
+type OrganizationError @doc(category: "Organizations") {
+  """
+  Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field.
+  """
+  field: String
+
+  """The error message."""
+  message: String
+
+  """The error code."""
+  code: UserErrorCode!
+}
+
+input OrganizationCreateInput @doc(category: "Organizations") {
+  """The name of the organization."""
+  name: String!
+
+  """The slug of the organization."""
+  slug: String!
+
+  """The timezone of the organization, passed in by client."""
+  timezone: String!
+}
+
+input OnboardingCustomerSurvey @doc(category: "Organizations") {
+  """Your role in your company"""
+  companyRole: String
+
+  """Size of your company"""
+  companySize: String
+}
+
+"""_Any value scalar as defined by Federation spec."""
+scalar _Any
+
+"""_Entity union as defined by Federation spec."""
+union _Entity = AuthUser | User
+
+"""_Service manifest as defined by Federation spec."""
+type _Service {
+  sdl: String
+}

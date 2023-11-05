@@ -14,6 +14,7 @@ import django_stubs_ext
 import jaeger_client.config
 import sentry_sdk
 import sentry_sdk.utils
+
 # from celery.schedules import crontab
 from django.conf import global_settings
 from django.core.exceptions import ImproperlyConfigured
@@ -26,6 +27,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 
 from . import PatchedSubscriberExecutionContext, __version__
+
 # from .core.languages import LANGUAGES as CORE_LANGUAGES
 # from .core.schedules import initiated_promotion_webhook_schedule
 
@@ -42,9 +44,7 @@ def get_bool_from_env(name, default_value):
         try:
             return ast.literal_eval(value)
         except ValueError as e:
-            raise ValueError(
-                "{} is an invalid value for {}".format(value, name)
-            ) from e
+            raise ValueError("{} is an invalid value for {}".format(value, name)) from e
     return default_value
 
 
@@ -79,8 +79,8 @@ if not ALLOWED_CLIENT_HOSTS:
         ALLOWED_CLIENT_HOSTS = _DEFAULT_CLIENT_HOSTS
     else:
         raise ImproperlyConfigured(
-            "ALLOWED_CLIENT_HOSTS environment variable must be set when " +
-            "DEBUG=False."
+            "ALLOWED_CLIENT_HOSTS environment variable must be set when "
+            + "DEBUG=False."
         )
 
 ALLOWED_CLIENT_HOSTS = get_list(ALLOWED_CLIENT_HOSTS)
@@ -146,18 +146,15 @@ EMAIL_USE_SSL: bool = email_config.get("EMAIL_USE_SSL", False)
 
 ENABLE_SSL: bool = get_bool_from_env("ENABLE_SSL", False)
 
-# URL on which Integraflow is hosted (e.g., https://api.example.com/).
-# This has precedence over ENABLE_SSL and Shop.domain when generating URLs
-# pointing to itself.
-PUBLIC_URL: Optional[str] = get_url_from_env(
-    "PUBLIC_URL",
-    schemes=["http", "https"]
-)
+# URL on which Integraflow frontend is hosted (e.g., https://app.example.com/).
+SITE_URL = os.environ.get("SITE_URL", "http://localhost:8000").rstrip("/")
+
+# URL on which Integraflow backend is hosted (e.g., https://api.example.com/).
+# This has precedence over ENABLE_SSL when generating URLs pointing to itself.
+PUBLIC_URL: Optional[str] = get_url_from_env("PUBLIC_URL", schemes=["http", "https"])
 if PUBLIC_URL:
     if os.environ.get("ENABLE_SSL") is not None:
-        warnings.warn(
-            "ENABLE_SSL is ignored on URL generation if PUBLIC_URL is set."
-        )
+        warnings.warn("ENABLE_SSL is ignored on URL generation if PUBLIC_URL is set.")
     ENABLE_SSL = urlparse(PUBLIC_URL).scheme.lower() == "https"
 
 if ENABLE_SSL:
@@ -184,7 +181,6 @@ context_processors = [
     "django.template.context_processors.debug",
     "django.template.context_processors.media",
     "django.template.context_processors.static",
-    "integraflow.site.context_processors.site",
 ]
 
 loaders = [
@@ -222,6 +218,9 @@ if not SECRET_KEY and DEBUG:
     warnings.warn("SECRET_KEY not configured, using a random temporary key.")
     SECRET_KEY = get_random_secret_key()
 
+
+GOOGLE_AUTH_CLIENT_CREDENTIALS = os.environ.get("GOOGLE_AUTH_CLIENT_CREDENTIALS", None)
+
 RSA_PRIVATE_KEY = os.environ.get("RSA_PRIVATE_KEY", None)
 RSA_PRIVATE_PASSWORD = os.environ.get("RSA_PRIVATE_PASSWORD", None)
 JWT_MANAGER_PATH = os.environ.get(
@@ -230,6 +229,7 @@ JWT_MANAGER_PATH = os.environ.get(
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "integraflow.core.middleware.jwt_refresh_token_middleware",
 ]
@@ -241,14 +241,16 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    "django.contrib.sites",
     "django.contrib.staticfiles",
     "django.contrib.postgres",
     "django_celery_beat",
     # Local apps
     "integraflow.app",
     "integraflow.core",
-    # "integraflow.graphql",
+    "integraflow.messaging",
+    "integraflow.organization",
+    "integraflow.project",
+    "integraflow.graphql",
     "integraflow.user",
     "integraflow.webhook",
     # External apps
@@ -258,6 +260,7 @@ INSTALLED_APPS = [
     "django_countries",
     "django_filters",
     "phonenumber_field",
+    "corsheaders",
 ]
 
 ENABLE_DJANGO_EXTENSIONS = get_bool_from_env("ENABLE_DJANGO_EXTENSIONS", False)
@@ -278,14 +281,8 @@ if ENABLE_DEBUG_TOOLBAR:
         )
         warnings.warn(msg)
     else:
-        INSTALLED_APPS += [
-            "django.forms",
-            "debug_toolbar",
-            "graphiql_debug_toolbar"
-        ]
-        MIDDLEWARE.append(
-            "integraflow.graphql.middleware.DebugToolbarMiddleware"
-        )
+        INSTALLED_APPS += ["django.forms", "debug_toolbar", "graphiql_debug_toolbar"]
+        MIDDLEWARE.append("integraflow.graphql.middleware.DebugToolbarMiddleware")
 
         DEBUG_TOOLBAR_PANELS = [
             "ddt_request_history.panels.request_history.RequestHistoryPanel",
@@ -323,8 +320,7 @@ LOGGING = {
             "()": "integraflow.core.logging.JsonCeleryFormatter",
             "datefmt": "%Y-%m-%dT%H:%M:%SZ",
             "format": (
-                "%(asctime)s %(levelname)s %(celeryTaskId)s "
-                + "%(celeryTaskName)s "
+                "%(asctime)s %(levelname)s %(celeryTaskId)s " + "%(celeryTaskName)s "
             ),
         },
         "celery_task_json": {
@@ -391,19 +387,18 @@ LOGGING = {
             "propagate": False,
         },
         "graphql.execution.utils": {"propagate": False, "handlers": ["null"]},
-        "graphql.execution.executor": {
-            "propagate": False,
-            "handlers": ["null"]
-        },
+        "graphql.execution.executor": {"propagate": False, "handlers": ["null"]},
     },
 }
 
 AUTH_USER_MODEL = "user.User"
 
-AUTH_PASSWORD_VALIDATORS = [{
-    "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    "OPTIONS": {"min_length": 8},
-}]
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {"min_length": 8},
+    }
+]
 
 DEFAULT_COUNTRY = os.environ.get("DEFAULT_COUNTRY", "US")
 DEFAULT_DECIMAL_PLACES = 3
@@ -430,6 +425,14 @@ ALLOWED_HOSTS = get_list(
 ALLOWED_GRAPHQL_ORIGINS: List[str] = get_list(
     os.environ.get("ALLOWED_GRAPHQL_ORIGINS", "*")
 )
+
+CORS_ALLOW_ALL_ORIGINS: bool = False
+CORS_ALLOWED_ORIGINS: List[str] = []
+
+if ALLOWED_GRAPHQL_ORIGINS[0] == "*":
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    CORS_ALLOWED_ORIGINS = ALLOWED_GRAPHQL_ORIGINS
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
@@ -503,14 +506,11 @@ PLACEHOLDER_IMAGES = {
 
 AUTHENTICATION_BACKENDS = [
     "integraflow.core.auth_backend.JSONWebTokenBackend",
-    "integraflow.core.auth_backend.PluginBackend",
 ]
 
 # Exports settings - defines after what time exported files will be deleted
 EXPORT_FILES_TIMEDELTA = timedelta(
-    seconds=parse(
-        os.environ.get("EXPORT_FILES_TIMEDELTA", "30 days")
-    )  # type: ignore
+    seconds=parse(os.environ.get("EXPORT_FILES_TIMEDELTA", "30 days"))  # type: ignore
 )
 
 # CELERY SETTINGS
@@ -543,6 +543,45 @@ EVENT_PAYLOAD_DELETE_PERIOD = timedelta(
     )  # type: ignore
 )
 
+CELERY_BEAT_SCHEDULE = {}
+
+# Observability settings
+OBSERVABILITY_BROKER_URL = os.environ.get("OBSERVABILITY_BROKER_URL")
+OBSERVABILITY_ACTIVE = bool(OBSERVABILITY_BROKER_URL)
+OBSERVABILITY_REPORT_ALL_API_CALLS = get_bool_from_env(
+    "OBSERVABILITY_REPORT_ALL_API_CALLS", False
+)
+OBSERVABILITY_MAX_PAYLOAD_SIZE = int(
+    os.environ.get("OBSERVABILITY_MAX_PAYLOAD_SIZE", 25 * 1000)
+)
+OBSERVABILITY_BUFFER_SIZE_LIMIT = int(
+    os.environ.get("OBSERVABILITY_BUFFER_SIZE_LIMIT", 1000)
+)
+OBSERVABILITY_BUFFER_BATCH_SIZE = int(
+    os.environ.get("OBSERVABILITY_BUFFER_BATCH_SIZE", 100)
+)
+OBSERVABILITY_REPORT_PERIOD = timedelta(
+    seconds=parse(
+        os.environ.get("OBSERVABILITY_REPORT_PERIOD", "20 seconds")
+    )  # type: ignore
+)
+OBSERVABILITY_BUFFER_TIMEOUT = timedelta(
+    seconds=parse(
+        os.environ.get("OBSERVABILITY_BUFFER_TIMEOUT", "5 minutes")
+    )  # type: ignore
+)
+if OBSERVABILITY_ACTIVE:
+    CELERY_BEAT_SCHEDULE["observability-reporter"] = {
+        "task": "integraflow.plugins.webhook.tasks.observability_reporter_task",
+        "schedule": OBSERVABILITY_REPORT_PERIOD,
+        "options": {"expires": OBSERVABILITY_REPORT_PERIOD.total_seconds()},
+    }
+    if OBSERVABILITY_BUFFER_TIMEOUT < OBSERVABILITY_REPORT_PERIOD * 2:
+        warnings.warn(
+            "OBSERVABILITY_REPORT_PERIOD is too big compared to "
+            "OBSERVABILITY_BUFFER_TIMEOUT. That can lead to a loss of events."
+        )
+
 # Change this value if your application is running behind a proxy,
 # e.g. HTTP_CF_Connecting_IP for Cloudflare or X_FORWARDED_FOR
 REAL_IP_ENVIRON = get_list(os.environ.get("REAL_IP_ENVIRON", "REMOTE_ADDR"))
@@ -573,9 +612,7 @@ GRAPHQL_MIDDLEWARE: List[str] = []
 # own part - malicious actor may build a query that requests for potentially
 # few thousands of entities. Set FEDERATED_QUERY_MAX_ENTITIES=0 in env
 # to disable (not recommended)
-FEDERATED_QUERY_MAX_ENTITIES = int(
-    os.environ.get("FEDERATED_QUERY_MAX_ENTITIES", 100)
-)
+FEDERATED_QUERY_MAX_ENTITIES = int(os.environ.get("FEDERATED_QUERY_MAX_ENTITIES", 100))
 
 # Default timeout (sec) for establishing a connection when performing external
 # requests.
@@ -592,9 +629,7 @@ WEBHOOK_SYNC_TIMEOUT = COMMON_REQUESTS_TIMEOUT
 # When `True`, HTTP requests made from arbitrary URLs will be rejected
 # (e.g.,webhooks). if they try to access private IP address ranges, and
 # loopback ranges (unless `HTTP_IP_FILTER_ALLOW_LOOPBACK_IPS=False`).
-HTTP_IP_FILTER_ENABLED: bool = get_bool_from_env(
-    "HTTP_IP_FILTER_ENABLED", True
-)
+HTTP_IP_FILTER_ENABLED: bool = get_bool_from_env("HTTP_IP_FILTER_ENABLED", True)
 
 # When `False` it rejects loopback IPs during external calls.
 # Refer to `HTTP_IP_FILTER_ENABLED` for more details.
@@ -613,8 +648,7 @@ if "JAEGER_AGENT_HOST" in os.environ:
             "sampler": {"type": "const", "param": 1},
             "local_agent": {
                 "reporting_port": os.environ.get(
-                    "JAEGER_AGENT_PORT",
-                    jaeger_client.config.DEFAULT_REPORTING_PORT
+                    "JAEGER_AGENT_PORT", jaeger_client.config.DEFAULT_REPORTING_PORT
                 ),
                 "reporting_host": os.environ.get("JAEGER_AGENT_HOST"),
             },
@@ -653,6 +687,9 @@ JWT_TTL_REQUEST_EMAIL_CHANGE = timedelta(
         os.environ.get("JWT_TTL_REQUEST_EMAIL_CHANGE", "1 hour")
     )  # type: ignore
 )
+
+MAGIC_LINK_EXPIRES_IN = os.environ.get("MAGIC_LINK_EXPIRES_IN", 10)
+MAGIC_LINK_MAX_ATTEMPTS = os.environ.get("MAGIC_LINK_EXPIRES_IN", 5)
 
 # Patch SubscriberExecutionContext class from `graphql-core-legacy` package
 # to fix bug causing not returning errors for subscription queries.

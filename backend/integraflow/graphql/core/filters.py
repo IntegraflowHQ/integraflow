@@ -12,7 +12,7 @@ from django_filters import Filter, MultipleChoiceFilter
 from django_filters.filters import FilterMethod
 from graphql_relay import from_global_id
 
-from ..utils.filters import filter_range_field
+from integraflow.graphql.utils.filters import filter_range_field
 from .enums import JobStatusEnum
 from .types.filter_input import DateTimeRangeInput
 

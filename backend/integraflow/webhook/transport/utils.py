@@ -29,7 +29,7 @@ from integraflow.core.models import (
     EventPayload,
 )
 from integraflow.core.utils import build_absolute_uri
-from .. import observability
+from integraflow.webhook import observability
 from . import signature_for_payload
 
 logger = logging.getLogger(__name__)

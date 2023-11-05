@@ -1,6 +1,10 @@
-from ...app.types import AppExtensionMount, AppExtensionTarget, AppType
-from ..core.doc_category import DOC_CATEGORY_APPS
-from ..core.enums import to_enum
+from integraflow.app.types import (
+    AppExtensionMount,
+    AppExtensionTarget,
+    AppType
+)
+from integraflow.graphql.core.doc_category import DOC_CATEGORY_APPS
+from integraflow.graphql.core.enums import to_enum
 
 
 def description(enum):

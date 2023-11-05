@@ -1,11 +1,30 @@
+import { useGoogleUserAuthMutation } from "@/generated/graphql";
+import { Button, TextInput } from "@/ui";
+import { Google } from "@/ui/icons";
+import { useGoogleLogin } from "@react-oauth/google";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, TextInput } from "../../../ui";
-import { Google } from "../../../ui/icons";
 
 function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
+  const [email, setEmail] = useState("");
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
+
+  const [googleAuth, { data, loading, error }] = useGoogleUserAuthMutation();
+
+  const loginWithGoogle = useGoogleLogin({
+    flow: "auth-code",
+    onSuccess: (codeResponse) => {
+      console.log("codeResponse: ", codeResponse);
+      googleAuth({
+        variables: {
+          code: codeResponse.code,
+        },
+      });
+    },
+  });
 
   return (
     <>
@@ -24,7 +43,12 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
         </header>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <TextInput placeholder="Enter your email" type="email" />
+          <TextInput
+            placeholder="Enter your email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
           <Button text="Continue with Email" />
         </form>
 
@@ -47,6 +71,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
         <Button
           variant="secondary"
           className="flex items-center justify-center gap-2"
+          onClick={() => loginWithGoogle()}
         >
           <Google />
           Continue with Google

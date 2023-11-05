@@ -23,9 +23,9 @@ from django.utils import timezone
 from graphql import GraphQLDocument
 from pytimeparse import parse
 
-from ...core.utils import get_domain
-from ..event_types import WebhookEventAsyncType
-from ..utils import get_webhooks_for_event
+from integraflow.core.utils import get_domain
+from integraflow.webhook.event_types import WebhookEventAsyncType
+from integraflow.webhook.utils import get_webhooks_for_event
 from .buffers import get_buffer
 from .exceptions import TruncationError
 from .payloads import (
@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from celery.exceptions import Retry
     from django.http import HttpRequest, HttpResponse
 
-    from ...core.models import EventDeliveryAttempt
+    from integraflow.core.models import EventDeliveryAttempt
 
 logger = logging.getLogger(__name__)
 CACHE_TIMEOUT = parse("2 minutes")

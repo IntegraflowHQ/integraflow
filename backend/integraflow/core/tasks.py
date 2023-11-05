@@ -8,7 +8,7 @@ from django.core.files.storage import default_storage
 from django.db.models import Exists, OuterRef
 from django.utils import timezone
 
-from ..celeryconf import app
+from integraflow.celeryconf import app
 from .models import EventDelivery, EventPayload
 
 task_logger: logging.Logger = get_task_logger(__name__)
