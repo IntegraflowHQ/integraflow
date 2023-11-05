@@ -4,6 +4,7 @@ import { Google } from "@/ui/icons";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { handleLoginRedirect } from "../helpers";
 
 function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
   const [email, setEmail] = useState("");
@@ -16,13 +17,17 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
 
   const loginWithGoogle = useGoogleLogin({
     flow: "auth-code",
+    ux_mode: "popup",
     onSuccess: (codeResponse) => {
-      console.log("codeResponse: ", codeResponse);
       googleAuth({
         variables: {
           code: codeResponse.code,
         },
       });
+      const {
+        user: { organization, project },
+      } = data.googleUserAuth;
+      handleLoginRedirect(organization, project, navigate);
     },
   });
 
@@ -60,7 +65,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
           </span>
           <Link
             to={variant === "signup" ? "/" : "/signup"}
-            className="font-medium text-transparent bg-gradient-button-hover bg-clip-text"
+            className="bg-gradient-button-hover bg-clip-text font-medium text-transparent"
           >
             {variant === "signup" ? "Log in" : "Sign up"}
           </Link>
@@ -79,7 +84,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
       </div>
 
       {variant === "signup" ? (
-        <div className="self-center max-w-xs text-base text-center text-intg-text">
+        <div className="max-w-xs self-center text-center text-base text-intg-text">
           By signing up, you agree to Integraflow Privacy and terms services
         </div>
       ) : (

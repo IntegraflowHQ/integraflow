@@ -25,6 +25,6 @@
       "ui/*": ["./src/ui/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "store/store.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
