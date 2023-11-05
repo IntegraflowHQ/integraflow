@@ -5,7 +5,7 @@ import "./index.css";
 import { AuthLayout } from "./layout/AuthLayout";
 import Index from "./pages/Index";
 import Signup from "./pages/Signup";
-import Workspace from "./pages/workspace";
+import Workspace from "./pages/create-workspace";
 
 const router = createBrowserRouter([
   {
@@ -23,7 +23,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/workspace",
+    path: "/create-workspace",
     element: <Workspace />,
   },
 ]);
