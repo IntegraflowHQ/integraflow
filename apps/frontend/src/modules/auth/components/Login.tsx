@@ -1,35 +1,44 @@
+import { GlobalSpinner } from "@/components/GlobalSpinner";
 import { useGoogleUserAuthMutation } from "@/generated/graphql";
 import { Button, TextInput } from "@/ui";
 import { Google } from "@/ui/icons";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { handleLoginRedirect } from "../helpers";
 
 function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
   const [email, setEmail] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
 
-  const [googleAuth, { data, loading, error }] = useGoogleUserAuthMutation();
+  const [googleAuth, { loading }] = useGoogleUserAuthMutation();
 
   const loginWithGoogle = useGoogleLogin({
     flow: "auth-code",
     ux_mode: "popup",
-    onSuccess: (codeResponse) => {
-      googleAuth({
+    onSuccess: async (codeResponse) => {
+      const result = await googleAuth({
         variables: {
           code: codeResponse.code,
         },
       });
-      const {
-        user: { organization, project },
-      } = data.googleUserAuth;
-      handleLoginRedirect(organization, project, navigate);
+      if (result) {
+        handleLoginRedirect(
+          result.data?.googleUserAuth?.user?.organization,
+          result.data?.googleUserAuth?.user?.project,
+          navigate,
+        );
+      }
     },
   });
+
+  if (loading) {
+    return <GlobalSpinner />;
+  }
 
   return (
     <>
