@@ -9,7 +9,7 @@ class CookieStorage {
       return null;
     }
 
-    return null
+    return item;
   }
 
   setItem(key: string, value: string, attributes?: Cookies.CookieAttributes): void {
