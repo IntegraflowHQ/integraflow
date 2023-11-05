@@ -1,38 +1,46 @@
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+
 import "./index.css";
+
+import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
+import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
 import Index from "./pages/Index";
 import Signup from "./pages/Signup";
 
+const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
+if (isDebugMode) {
+  loadDevMessages();
+  loadErrorMessages();
+}
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <AuthLayout />,
+    element: <AppShell />,
     children: [
       {
         path: "",
-        element: <Index />,
-      },
-      {
-        path: "signup",
-        element: <Signup />,
+        element: <AuthLayout />,
+        children: [
+          {
+            path: "",
+            element: <Index />,
+          },
+          {
+            path: "signup",
+            element: <Signup />,
+          },
+        ],
       },
     ],
   },
 ]);
 
-const client = new ApolloClient({
-  uri: "/graphql",
-  cache: new InMemoryCache(),
-});
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ApolloProvider client={client}>
-      <RouterProvider router={router} />
-    </ApolloProvider>
+    <RouterProvider router={router} />
   </React.StrictMode>,
 );

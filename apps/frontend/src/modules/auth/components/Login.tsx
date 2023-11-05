@@ -1,19 +1,19 @@
-import { useMutation } from "@apollo/client";
+import { useGoogleUserAuthMutation } from "@/generated/graphql";
+import { Button, TextInput } from "@/ui";
+import { Google } from "@/ui/icons";
 import { useGoogleLogin } from "@react-oauth/google";
-import { Link, useNavigate } from "react-router-dom";
-import { Button, TextInput } from "../../../ui";
-import { Google } from "../../../ui/icons";
-import { GOOGLE_USER_AUTH } from "../graphql.internal/mutations";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { handleLoginRedirect } from "../helpers";
 
 function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
+  const [email, setEmail] = useState("");
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
 
-  const navigate = useNavigate();
-
-  const [googleAuth, { data }] = useMutation(GOOGLE_USER_AUTH);
+  const [googleAuth, { data, loading, error }] = useGoogleUserAuthMutation();
 
   const loginWithGoogle = useGoogleLogin({
     flow: "auth-code",
@@ -48,7 +48,12 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
         </header>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <TextInput placeholder="Enter your email" type="email" />
+          <TextInput
+            placeholder="Enter your email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
           <Button text="Continue with Email" />
         </form>
 
