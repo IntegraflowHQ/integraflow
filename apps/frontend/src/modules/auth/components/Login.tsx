@@ -1,10 +1,13 @@
-import { useGoogleLogin } from "@react-oauth/google";
-import { Link } from "react-router-dom";
+import { useGoogleUserAuthMutation } from "@/generated/graphql";
 import { Button, TextInput } from "@/ui";
 import { Google } from "@/ui/icons";
-import { useGoogleUserAuthMutation } from "@/generated/graphql";
+import { useGoogleLogin } from "@react-oauth/google";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
+  const [email, setEmail] = useState("");
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
@@ -23,8 +26,6 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
     },
   });
 
-  console.log(data, loading, error);
-
   return (
     <>
       <div className="flex w-[478px] flex-col gap-6 self-center p-12">
@@ -42,7 +43,12 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
         </header>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <TextInput placeholder="Enter your email" type="email" />
+          <TextInput
+            placeholder="Enter your email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
           <Button text="Continue with Email" />
         </form>
 
@@ -54,7 +60,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
           </span>
           <Link
             to={variant === "signup" ? "/" : "/signup"}
-            className="bg-gradient-button-hover bg-clip-text font-medium text-transparent"
+            className="font-medium text-transparent bg-gradient-button-hover bg-clip-text"
           >
             {variant === "signup" ? "Log in" : "Sign up"}
           </Link>
@@ -73,7 +79,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
       </div>
 
       {variant === "signup" ? (
-        <div className="max-w-xs self-center text-center text-base text-intg-text">
+        <div className="self-center max-w-xs text-base text-center text-intg-text">
           By signing up, you agree to Integraflow Privacy and terms services
         </div>
       ) : (
