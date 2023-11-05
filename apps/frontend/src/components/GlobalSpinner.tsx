@@ -1,6 +1,6 @@
 import LogoIcon from "../assets/images/logo-icon.png";
 import Logo from "../assets/images/logo.png";
-import Spinner from "/assets/images/Spinner.png";
+import Spinner from "../assets/images/Spinner.png";
 
 type Props = {
   message?: string;
@@ -9,7 +9,7 @@ type Props = {
 export const GlobalSpinner = ({ message }: Props) => {
   return (
     <div
-      className="flex h-screen w-full flex-col bg-intg-black"
+      className="fixed inset-0 flex h-screen w-full flex-col bg-intg-black"
       style={{
         backgroundImage:
           "radial-gradient(rgba(28, 15, 89, 0.30) 50%, rgba(5, 5, 5, 0.30))",
