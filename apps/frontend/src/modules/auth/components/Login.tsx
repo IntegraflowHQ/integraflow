@@ -1,16 +1,15 @@
-import { useMutation } from "@apollo/client";
 import { useGoogleLogin } from "@react-oauth/google";
 import { Link } from "react-router-dom";
-import { Button, TextInput } from "../../../ui";
-import { Google } from "../../../ui/icons";
-import { GOOGLE_USER_AUTH } from "../graphql.internal/mutations";
+import { Button, TextInput } from "@/ui";
+import { Google } from "@/ui/icons";
+import { useGoogleUserAuthMutation } from "@/generated/graphql";
 
 function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
 
-  const [googleAuth, { data, loading, error }] = useMutation(GOOGLE_USER_AUTH);
+  const [googleAuth, { data, loading, error }] = useGoogleUserAuthMutation();
 
   const loginWithGoogle = useGoogleLogin({
     flow: "auth-code",
