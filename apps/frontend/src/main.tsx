@@ -4,11 +4,18 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import "./index.css";
 
+import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
 import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
 import Index from "./pages/Index";
 import Signup from "./pages/Signup";
 import Workspace from "./pages/create-workspace";
+
+const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
+if (isDebugMode) {
+  loadDevMessages();
+  loadErrorMessages();
+}
 
 const router = createBrowserRouter([
   {
@@ -42,11 +49,3 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <RouterProvider router={router} />
   </React.StrictMode>,
 );
-
-import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
-const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
-if (isDebugMode) {
-  // Adds messages only in a dev environment
-  loadDevMessages();
-  loadErrorMessages();
-}
