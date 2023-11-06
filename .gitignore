@@ -130,7 +130,6 @@ dist
 .pnp.*
 
 *.py[cod]
-.*
 !.devcontainer
 !.dockerignore
 !.github
