@@ -17,6 +17,7 @@
     "editor.insertSpaces": true,
     "editor.detectIndentation": false,
     "prettier.tabWidth": 4,
+    "prettier.useTabs": false,
     "[javascript][typescript][javascriptreact][typescriptreact]": {
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
