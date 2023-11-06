@@ -1,12 +1,11 @@
-import { useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
+import { InMemoryCache, NormalizedCacheObject } from "@apollo/client";
+import { useMemo, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { useIsMatchingLocation, useUpdateEffect } from '@/hooks';
-import { useAuthTokenStore } from '@/modules/auth/states/authToken';
-import { createSelectors } from '@/utils/selectors';
+import { useIsMatchingLocation, useUpdateEffect } from "@/hooks";
 
-import { ApolloFactory } from '../services/apollo.factory';
+import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
+import { ApolloFactory } from "../services/apollo.factory";
 
 const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
 
@@ -16,11 +15,7 @@ export const useApolloFactory = () => {
     const navigate = useNavigate();
     const isMatchingLocation = useIsMatchingLocation();
 
-    const authToken = createSelectors(useAuthTokenStore);
-    const token = authToken.use.token();
-    const refreshToken = authToken.use.refreshToken();
-    const refresh = authToken.use.refresh();
-    const logout = authToken.use.logout();
+    const { token, refresh, refreshToken, logout } = useAuthToken();
 
     const apolloClient = useMemo(() => {
         apolloRef.current = new ApolloFactory({
@@ -28,14 +23,14 @@ export const useApolloFactory = () => {
             cache: new InMemoryCache(),
             defaultOptions: {
                 query: {
-                    fetchPolicy: 'cache-first',
+                    fetchPolicy: "cache-first",
                 },
             },
             connectToDevTools: isDebugMode,
             // We don't want to re-create the client on token change or it will cause infinite loop
             initialAuthToken: {
                 token,
-                refreshToken
+                refreshToken,
             },
             onAccessTokenChange: (token: string) => refresh(token),
             onUnauthenticatedError: () => {
@@ -43,10 +38,10 @@ export const useApolloFactory = () => {
 
                 // TODO: Extract all app paths in into an enum
                 if (
-                    !isMatchingLocation('/') &&
-                    !isMatchingLocation('/signup')
+                    !isMatchingLocation("/") &&
+                    !isMatchingLocation("/signup")
                 ) {
-                    navigate('/');
+                    navigate("/");
                 }
             },
             extraLinks: [],
@@ -64,4 +59,4 @@ export const useApolloFactory = () => {
     }, [token, refreshToken]);
 
     return apolloClient;
-}
+};
