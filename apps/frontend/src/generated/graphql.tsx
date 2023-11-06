@@ -528,6 +528,10 @@ export type GoogleUserAuthFragmentFragment = { __typename?: 'GoogleUserAuth', to
 
 export type EmailTokenUserAuthFragmentFragment = { __typename?: 'EmailTokenUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> };
 
+export type OrganizationCreateFragmentFragment = { __typename?: 'OrganizationCreate', organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: UserErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: UserErrorCode }> };
+
+export type OrganizationErrorFragmentFragment = { __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: UserErrorCode };
+
 export type EmailTokenUserAuthMutationVariables = Exact<{
   email: Scalars['String'];
   token: Scalars['String'];
@@ -554,6 +558,14 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type LogoutMutation = { __typename?: 'Mutation', logout?: { __typename?: 'Logout', userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> } | null };
+
+export type OrganizationCreateMutationVariables = Exact<{
+  input: OrganizationCreateInput;
+  survey?: InputMaybe<OnboardingCustomerSurvey>;
+}>;
+
+
+export type OrganizationCreateMutation = { __typename?: 'Mutation', organizationCreate?: { __typename?: 'OrganizationCreate', organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: UserErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: UserErrorCode }> } | null };
 
 export type TokenRefreshMutationVariables = Exact<{
   csrfToken?: InputMaybe<Scalars['String']>;
@@ -631,6 +643,31 @@ export const EmailTokenUserAuthFragmentFragmentDoc = gql`
   }
 }
     ${UserErrorFragmentFragmentDoc}`;
+export const OrganizationErrorFragmentFragmentDoc = gql`
+    fragment OrganizationErrorFragment on OrganizationError {
+  field
+  message
+  code
+}
+    `;
+export const OrganizationCreateFragmentFragmentDoc = gql`
+    fragment OrganizationCreateFragment on OrganizationCreate {
+  organization {
+    ...AuthOrganizationFragment
+  }
+  user {
+    ...AuthUserFragment
+  }
+  organizationErrors {
+    ...OrganizationErrorFragment
+  }
+  errors {
+    ...OrganizationErrorFragment
+  }
+}
+    ${AuthOrganizationFragmentFragmentDoc}
+${AuthUserFragmentFragmentDoc}
+${OrganizationErrorFragmentFragmentDoc}`;
 export const EmailTokenUserAuthDocument = gql`
     mutation emailTokenUserAuth($email: String!, $token: String!) {
   emailTokenUserAuth(email: $email, token: $token) {
@@ -769,6 +806,40 @@ export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<Logou
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const OrganizationCreateDocument = gql`
+    mutation organizationCreate($input: OrganizationCreateInput!, $survey: OnboardingCustomerSurvey) {
+  organizationCreate(input: $input, survey: $survey) {
+    ...OrganizationCreateFragment
+  }
+}
+    ${OrganizationCreateFragmentFragmentDoc}`;
+export type OrganizationCreateMutationFn = Apollo.MutationFunction<OrganizationCreateMutation, OrganizationCreateMutationVariables>;
+
+/**
+ * __useOrganizationCreateMutation__
+ *
+ * To run a mutation, you first call `useOrganizationCreateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationCreateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [organizationCreateMutation, { data, loading, error }] = useOrganizationCreateMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *      survey: // value for 'survey'
+ *   },
+ * });
+ */
+export function useOrganizationCreateMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationCreateMutation, OrganizationCreateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OrganizationCreateMutation, OrganizationCreateMutationVariables>(OrganizationCreateDocument, options);
+      }
+export type OrganizationCreateMutationHookResult = ReturnType<typeof useOrganizationCreateMutation>;
+export type OrganizationCreateMutationResult = Apollo.MutationResult<OrganizationCreateMutation>;
+export type OrganizationCreateMutationOptions = Apollo.BaseMutationOptions<OrganizationCreateMutation, OrganizationCreateMutationVariables>;
 export const TokenRefreshDocument = gql`
     mutation tokenRefresh($csrfToken: String, $refreshToken: String) {
   tokenRefresh(csrfToken: $csrfToken, refreshToken: $refreshToken) {

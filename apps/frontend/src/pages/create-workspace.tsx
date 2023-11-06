@@ -1,3 +1,5 @@
+import { useOrganizationCreateMutation } from "@/generated/graphql";
+import { useAuthTokenStore } from "@/modules/auth/states/authToken";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import slugify from "slugify";
@@ -65,13 +67,33 @@ const Workspace = () => {
       setValue("workspaceUrl", "");
     }
   }, [name]);
+  const { refreshToken } = useAuthTokenStore();
+  console.log(refreshToken);
+
+  const [createOrganization, { data }] = useOrganizationCreateMutation();
 
   const onSubmit = (data: WorkSpaceData) => {
     console.log(data);
+
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    if (data) {
+      const input = {
+        name: data.workspaceName,
+        slug: data.workspaceName,
+        timezone: userTimezone,
+      };
+
+      const survey = {
+        companyRole: data.workspaceRole,
+        companySize: data.workspaceSize,
+      };
+    }
   };
+  console.log(data);
 
   return (
-    <main className="bg-intg-black h-screen w-screen">
+    <main className="h-screen w-screen bg-intg-black">
       <div
         className="h-full overflow-y-auto px-12 pt-[50px]"
         style={{
@@ -87,10 +109,10 @@ const Workspace = () => {
         </div>
         <div className="flex w-full items-center justify-between">
           <div className="m-auto rounded-md p-12 lg:max-w-lg">
-            <h3 className="text-intg-text mb-2 px-4 text-center text-3xl font-semibold">
+            <h3 className="mb-2 px-4 text-center text-3xl font-semibold text-intg-text">
               Create a new workspace
             </h3>
-            <p className="text-intg-text-4 text-center text-base">
+            <p className="text-center text-base text-intg-text-4">
               Sign in to access your dashboard
             </p>
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -143,7 +165,7 @@ const Workspace = () => {
                     errorMessage={errors.workspaceUrl?.message}
                   />
                 </div>
-                <hr className="border-intg-bg-4 my-6 border-[1px]" />
+                <hr className="my-6 border-[1px] border-intg-bg-4" />
                 <div className="space-y-4">
                   <SelectInput
                     title={"How large is your company"}
