@@ -1,67 +1,66 @@
-import { useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
+import { InMemoryCache, NormalizedCacheObject } from "@apollo/client";
+import { useMemo, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { useIsMatchingLocation, useUpdateEffect } from '@/hooks';
-import { useAuthTokenStore } from '@/modules/auth/states/authToken';
-import { createSelectors } from '@/utils/selectors';
+import { useIsMatchingLocation, useUpdateEffect } from "@/hooks";
+import { useAuthTokenStore } from "@/modules/auth/states/authToken";
+import { createSelectors } from "@/utils/selectors";
 
-import { ApolloFactory } from '../services/apollo.factory';
+import { ApolloFactory } from "../services/apollo.factory";
 
 const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
 
 export const useApolloFactory = () => {
-    const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
+  const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
 
-    const navigate = useNavigate();
-    const isMatchingLocation = useIsMatchingLocation();
+  const navigate = useNavigate();
+  const isMatchingLocation = useIsMatchingLocation();
 
-    const authToken = createSelectors(useAuthTokenStore);
-    const token = authToken.use.token();
-    const refreshToken = authToken.use.refreshToken();
-    const refresh = authToken.use.refresh();
-    const logout = authToken.use.logout();
+  const authToken = createSelectors(useAuthTokenStore);
+  const token = authToken.use.token();
+  const refreshToken = authToken.use.refreshToken();
+  const refresh = authToken.use.refresh();
+  const logout = authToken.use.logout();
 
-    const apolloClient = useMemo(() => {
-        apolloRef.current = new ApolloFactory({
-            uri: `${import.meta.env.VITE_SERVER_BASE_URL}/graphql`,
-            cache: new InMemoryCache(),
-            defaultOptions: {
-                query: {
-                    fetchPolicy: 'cache-first',
-                },
-            },
-            connectToDevTools: isDebugMode,
-            // We don't want to re-create the client on token change or it will cause infinite loop
-            initialAuthToken: {
-                token,
-                refreshToken
-            },
-            onAccessTokenChange: (token: string) => refresh(token),
-            onUnauthenticatedError: () => {
-                logout();
+  console.log("useApolloFactory", refresh, token);
 
-                // TODO: Extract all app paths in into an enum
-                if (
-                    !isMatchingLocation('/') &&
-                    !isMatchingLocation('/signup')
-                ) {
-                    navigate('/');
-                }
-            },
-            extraLinks: [],
-            isDebugMode,
-        });
+  const apolloClient = useMemo(() => {
+    apolloRef.current = new ApolloFactory({
+      uri: `${import.meta.env.VITE_SERVER_BASE_URL}/graphql`,
+      cache: new InMemoryCache(),
+      defaultOptions: {
+        query: {
+          fetchPolicy: "cache-first",
+        },
+      },
+      connectToDevTools: isDebugMode,
+      // We don't want to re-create the client on token change or it will cause infinite loop
+      initialAuthToken: {
+        token,
+        refreshToken,
+      },
+      onAccessTokenChange: (token: string) => refresh(token),
+      onUnauthenticatedError: () => {
+        logout();
 
-        return apolloRef.current.getClient();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token, refreshToken]);
-
-    useUpdateEffect(() => {
-        if (apolloRef.current) {
-            apolloRef.current.updateAuthToken({ token, refreshToken });
+        // TODO: Extract all app paths in into an enum
+        if (!isMatchingLocation("/") && !isMatchingLocation("/signup")) {
+          navigate("/");
         }
-    }, [token, refreshToken]);
+      },
+      extraLinks: [],
+      isDebugMode,
+    });
 
-    return apolloClient;
-}
+    return apolloRef.current.getClient();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, refreshToken]);
+
+  useUpdateEffect(() => {
+    if (apolloRef.current) {
+      apolloRef.current.updateAuthToken({ token, refreshToken });
+    }
+  }, [token, refreshToken]);
+
+  return apolloClient;
+};

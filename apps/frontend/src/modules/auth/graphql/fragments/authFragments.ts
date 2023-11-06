@@ -4,6 +4,7 @@ export const AUTH_USER = gql`
   fragment AuthUserFragment on AuthUser {
     id
     email
+    isActive
     firstName
     lastName
     isStaff

@@ -1,7 +1,8 @@
 import { useOrganizationCreateMutation } from "@/generated/graphql";
-import { useAuthTokenStore } from "@/modules/auth/states/authToken";
+import { handleRedirect } from "@/modules/auth/helper";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import slugify from "slugify";
 import Logo from "../assets/images/logo.png";
 import { Button, SelectInput, TextInput } from "../ui";
@@ -40,6 +41,7 @@ const WorkspaceRoles = [
 ];
 
 const Workspace = () => {
+  const navigate = useNavigate();
   const {
     watch,
     setValue,
@@ -67,30 +69,40 @@ const Workspace = () => {
       setValue("workspaceUrl", "");
     }
   }, [name]);
-  const { refreshToken } = useAuthTokenStore();
-  console.log(refreshToken);
 
   const [createOrganization, { data }] = useOrganizationCreateMutation();
 
-  const onSubmit = (data: WorkSpaceData) => {
-    console.log(data);
+  useEffect(() => {
+    if (data && data.organizationCreate?.user) {
+      handleRedirect(data.organizationCreate!.user, navigate);
+    }
+  }, [data]);
 
+  const onSubmit = async (formInfo: WorkSpaceData) => {
+    console.log("submit");
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    if (data) {
+    if (formInfo) {
+      console.log("data");
       const input = {
-        name: data.workspaceName,
-        slug: data.workspaceName,
+        name: formInfo.workspaceName,
+        slug: formInfo.workspaceName,
         timezone: userTimezone,
       };
 
       const survey = {
-        companyRole: data.workspaceRole,
-        companySize: data.workspaceSize,
+        companyRole: formInfo.workspaceRole,
+        companySize: formInfo.workspaceSize,
       };
+
+      await createOrganization({
+        variables: {
+          input: input,
+          survey: survey,
+        },
+      });
     }
   };
-  console.log(data);
 
   return (
     <main className="h-screen w-screen bg-intg-black">

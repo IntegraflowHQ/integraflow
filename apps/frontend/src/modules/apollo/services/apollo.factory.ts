@@ -76,12 +76,18 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             onErrorCb?.(graphQLErrors);
 
             for (const graphQLError of graphQLErrors) {
-              switch (graphQLError?.extensions?.code) {
-                case "UNAUTHENTICATED": {
+              console.log(graphQLError?.extensions?.exception?.code);
+              switch (graphQLError?.extensions?.exception?.code) {
+                case "ExpiredSignatureError": {
+                  console.log("Here");
                   return fromPromise(
                     refreshToken(uri, this.authToken?.refreshToken)
                       .then((token) => {
                         if (token) {
+                          this.updateAuthToken({
+                            token,
+                            refreshToken: this.authToken?.refreshToken ?? "",
+                          });
                           onAccessTokenChange?.(token);
                         }
                       })
@@ -136,7 +142,11 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
   }
 
   updateAuthToken(authToken: AuthToken | null) {
-    this.authToken = authToken;
+    console.log("updateAuthToken", JSON.stringify(authToken));
+    this.authToken = {
+      refreshToken: authToken?.refreshToken ?? "",
+      token: authToken?.token ?? "",
+    };
   }
 
   getClient() {

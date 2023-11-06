@@ -8,6 +8,7 @@ import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
 import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
 import Index from "./pages/Index";
+import Onboarding from "./pages/Onboarding";
 import Signup from "./pages/Signup";
 import Workspace from "./pages/create-workspace";
 
@@ -36,11 +37,15 @@ const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: "/create-workspace",
+        element: <Workspace />,
+      },
+      {
+        path: ":organizationSlug/projects/:projectId/get-started",
+        element: <Onboarding />,
+      },
     ],
-  },
-  {
-    path: "/create-workspace",
-    element: <Workspace />,
   },
 ]);
 

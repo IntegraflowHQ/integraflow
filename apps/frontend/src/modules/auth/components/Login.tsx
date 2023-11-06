@@ -5,7 +5,7 @@ import { Google } from "@/ui/icons";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { handleLoginRedirect } from "../helpers";
+import { handleRedirect } from "../helper";
 import { useLogin } from "../hooks.internal/useLogin";
 
 function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
@@ -36,11 +36,9 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
         )
           return;
 
-        handleLoginRedirect(
-          result.data?.googleUserAuth?.user?.organization,
-          result.data?.googleUserAuth?.user?.project,
-          navigate,
-        );
+        if (result.data?.googleUserAuth?.user) {
+          handleRedirect(result.data?.googleUserAuth?.user, navigate);
+        }
 
         login(
           result.data?.googleUserAuth?.token,
