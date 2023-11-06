@@ -6,10 +6,12 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { handleLoginRedirect } from "../helpers";
+import { useLogin } from "../hooks.internal/useLogin";
 
 function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+  const login = useLogin();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,13 +28,29 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
           code: codeResponse.code,
         },
       });
-      if (result) {
+      if (result.data?.googleUserAuth) {
+        if (
+          !result.data?.googleUserAuth?.token ||
+          !result.data?.googleUserAuth?.refreshToken ||
+          !result.data?.googleUserAuth?.csrfToken
+        )
+          return;
+
         handleLoginRedirect(
           result.data?.googleUserAuth?.user?.organization,
           result.data?.googleUserAuth?.user?.project,
           navigate,
         );
+
+        login(
+          result.data?.googleUserAuth?.token,
+          result.data?.googleUserAuth?.refreshToken,
+          result.data?.googleUserAuth?.csrfToken,
+        );
       }
+    },
+    onError: async () => {
+      navigate("/");
     },
   });
 
