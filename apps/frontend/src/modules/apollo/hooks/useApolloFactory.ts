@@ -3,9 +3,8 @@ import { useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useIsMatchingLocation, useUpdateEffect } from "@/hooks";
-import { useAuthTokenStore } from "@/modules/auth/states/authToken";
-import { createSelectors } from "@/utils/selectors";
 
+import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
 import { ApolloFactory } from "../services/apollo.factory";
 
 const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
@@ -16,11 +15,7 @@ export const useApolloFactory = () => {
   const navigate = useNavigate();
   const isMatchingLocation = useIsMatchingLocation();
 
-  const authToken = createSelectors(useAuthTokenStore);
-  const token = authToken.use.token();
-  const refreshToken = authToken.use.refreshToken();
-  const refresh = authToken.use.refresh();
-  const logout = authToken.use.logout();
+  const { token, refresh, refreshToken, logout } = useAuthToken();
 
   console.log("useApolloFactory", refresh, token);
 
@@ -62,5 +57,5 @@ export const useApolloFactory = () => {
     }
   }, [token, refreshToken]);
 
-  return apolloClient;
+    return apolloClient;
 };

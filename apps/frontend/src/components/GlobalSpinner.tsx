@@ -21,9 +21,17 @@ export const GlobalSpinner = ({ message }: Props) => {
       <style>
         {`
          .spinner__circle {
-          overflow: hidden;
-          border-radius: 50%;
-          animation: spin 1s infinite linear;
+          animation: spin-anticlockwise 1s infinite linear;
+        }
+        
+        @keyframes spin-anticlockwise {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(-360deg); /* Rotate counterclockwise by -360 degrees */
+          }
+        }
       }
         `}
       </style>
