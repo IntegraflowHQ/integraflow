@@ -2,7 +2,6 @@ import { GlobalSpinner } from "@/components/GlobalSpinner";
 import { useGoogleUserAuthMutation } from "@/generated/graphql";
 import { Button, TextInput } from "@/ui";
 import { Google } from "@/ui/icons";
-import { Alert } from "@/utils/alert";
 import { toast } from "@/utils/toast";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
