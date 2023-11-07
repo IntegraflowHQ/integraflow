@@ -86,9 +86,9 @@ export default function CompleteMagicSignIn() {
                 emailTokenUserAuth.csrfToken
             ) {
                 login(
-                emailTokenUserAuth.token,
-                emailTokenUserAuth.refreshToken,
-                emailTokenUserAuth.csrfToken,
+                    emailTokenUserAuth.token,
+                    emailTokenUserAuth.refreshToken,
+                    emailTokenUserAuth.csrfToken,
                 );
 
                 if (emailTokenUserAuth.user) {
