@@ -19,33 +19,12 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
 
     const [googleAuth, { loading }] = useGoogleUserAuthMutation();
 
-    const loginWithGoogle = useGoogleLogin({
-        flow: "auth-code",
-        ux_mode: "popup",
-        onSuccess: async (codeResponse) => {
-            const result = await googleAuth({
-                variables: {
-                    code: codeResponse.code,
-                },
-            });
-            if (result.data?.googleUserAuth) {
-                if (
-                    !result.data?.googleUserAuth?.token ||
-                    !result.data?.googleUserAuth?.refreshToken ||
-                    !result.data?.googleUserAuth?.csrfToken
-                )
-                    return;
-
-                if (result.data?.googleUserAuth?.user) {
-                    handleRedirect(result.data?.googleUserAuth?.user, navigate);
-                }
-
-                login(
-                    result.data?.googleUserAuth?.token,
-                    result.data?.googleUserAuth?.refreshToken,
-                    result.data?.googleUserAuth?.csrfToken,
-                );
-            }
+  const loginWithGoogle = useGoogleLogin({
+    flow: "auth-code",
+    onSuccess: (codeResponse) => {
+      googleAuth({
+        variables: {
+          code: codeResponse.code,
         },
         onError: async () => {
             navigate("/");
