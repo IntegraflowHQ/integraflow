@@ -65,7 +65,6 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
 
     return (
         <>
-            <Alert message="Something went wrong" />
             <div className="flex w-[478px] flex-col gap-6 self-center p-12">
                 <header className="flex flex-col gap-2 text-center">
                     <h1 className="text-[28px] font-medium leading-normal text-white">
