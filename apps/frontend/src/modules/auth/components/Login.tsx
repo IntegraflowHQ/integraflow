@@ -17,7 +17,6 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
   const loginWithGoogle = useGoogleLogin({
     flow: "auth-code",
     onSuccess: (codeResponse) => {
-      console.log("codeResponse: ", codeResponse);
       googleAuth({
         variables: {
           code: codeResponse.code,
