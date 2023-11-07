@@ -2,6 +2,8 @@ import { GlobalSpinner } from "@/components/GlobalSpinner";
 import { useGoogleUserAuthMutation } from "@/generated/graphql";
 import { Button, TextInput } from "@/ui";
 import { Google } from "@/ui/icons";
+import { Alert } from "@/utils/alert";
+import { toast } from "@/utils/toast";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -49,7 +51,13 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
                 );
             }
         },
-        onError: async () => {},
+        onError: async () => {
+            {
+                toast.error("Something went wrong", {
+                    position: "bottom-left",
+                });
+            }
+        },
     });
 
     if (loading) {
@@ -58,6 +66,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
 
     return (
         <>
+            <Alert message="Something went wrong" />
             <div className="flex w-[478px] flex-col gap-6 self-center p-12">
                 <header className="flex flex-col gap-2 text-center">
                     <h1 className="text-[28px] font-medium leading-normal text-white">
