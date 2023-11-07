@@ -7,11 +7,12 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { handleRedirect } from "../helper";
+import { toast } from "@/utils/toast";
 
 function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
     const [email, setEmail] = useState("");
     const navigate = useNavigate();
-    const { login } = useAuthToken();
+    const login = useAuthToken().login;
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -19,15 +20,40 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
 
     const [googleAuth, { loading }] = useGoogleUserAuthMutation();
 
-  const loginWithGoogle = useGoogleLogin({
-    flow: "auth-code",
-    onSuccess: (codeResponse) => {
-      googleAuth({
-        variables: {
-          code: codeResponse.code,
+    const loginWithGoogle = useGoogleLogin({
+        flow: "auth-code",
+        ux_mode: "popup",
+        onSuccess: async (codeResponse) => {
+            const result = await googleAuth({
+                variables: {
+                    code: codeResponse.code,
+                },
+            });
+            if (result.data?.googleUserAuth) {
+                if (
+                    !result.data?.googleUserAuth?.token ||
+                    !result.data?.googleUserAuth?.refreshToken ||
+                    !result.data?.googleUserAuth?.csrfToken
+                )
+                    return;
+
+                    if (result.data?.googleUserAuth?.user) {
+                        handleRedirect(result.data?.googleUserAuth?.user, navigate);
+                    }                
+
+                login(
+                    result.data?.googleUserAuth?.token,
+                    result.data?.googleUserAuth?.refreshToken,
+                    result.data?.googleUserAuth?.csrfToken,
+                );
+            }
         },
         onError: async () => {
-            navigate("/");
+            {
+                toast.error("Something went wrong", {
+                    position: "bottom-left",
+                });
+            }
         },
     });
 
