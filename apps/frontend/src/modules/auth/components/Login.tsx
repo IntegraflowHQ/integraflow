@@ -23,8 +23,8 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
             watch,
             formState: { errors },
         } = useForm<Inputs>({
-            defaultValues: {
-                email: "",
+        defaultValues: {
+            email: "",
         },
     });
     const email = watch("email");
@@ -71,8 +71,10 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
                 );
             }
         },
-        onError: async () => {
-            navigate("/");
+        onError: () => {
+            toast.error("Something went wrong", {
+                position: "bottom-left",
+            });
         },
     });
 
@@ -87,7 +89,9 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
                 }
             },
             onError: () => {
-                toast.error("Something went wrong, please try again later.");
+                toast.error("Something went wrong, please try again later.", {
+                    position: "bottom-left",
+                });
             },
         });
 
