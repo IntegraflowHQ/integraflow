@@ -4,11 +4,10 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import "./index.css";
 
+import { LoginScreen, MagicSignIn, Signup } from "@/pages";
 import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
 import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
-import Index from "./pages/Index";
-import Signup from "./pages/Signup";
 
 const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
 if (isDebugMode) {
@@ -27,13 +26,17 @@ const router = createBrowserRouter([
         children: [
           {
             path: "",
-            element: <Index />,
+            element: <LoginScreen />,
           },
           {
             path: "signup",
             element: <Signup />,
           },
         ],
+      },
+      {
+        path: "/auth/magic-sign-in/",
+        element: <MagicSignIn />,
       },
     ],
   },
