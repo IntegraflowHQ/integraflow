@@ -141,7 +141,6 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
   }
 
   updateAuthToken(authToken: AuthToken | null) {
-    console.log("updateAuthToken", JSON.stringify(authToken));
     this.authToken = {
       refreshToken: authToken?.refreshToken ?? "",
       token: authToken?.token ?? "",
