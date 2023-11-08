@@ -79,7 +79,6 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
               console.log(graphQLError?.extensions?.exception?.code);
               switch (graphQLError?.extensions?.exception?.code) {
                 case "ExpiredSignatureError": {
-                  console.log("Here");
                   return fromPromise(
                     refreshToken(uri, this.authToken?.refreshToken)
                       .then((token) => {
