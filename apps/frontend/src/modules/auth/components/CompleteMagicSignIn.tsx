@@ -3,7 +3,7 @@ import {
     useEmailTokenUserAuthMutation,
     useEmailUserAuthChallengeMutation,
 } from "@/generated/graphql";
-import { handleLoginRedirect } from '@/modules/auth/helper';
+import { handleRedirect } from '@/modules/auth/helper';
 import { useAuthToken } from '@/modules/auth/hooks/useAuthToken';
 import { Button, Screen, TextInput } from "@/ui";
 import { cn } from "@/utils";
@@ -92,7 +92,7 @@ export default function CompleteMagicSignIn() {
                 );
 
                 if (emailTokenUserAuth.user) {
-                    handleLoginRedirect(emailTokenUserAuth.user, navigate);
+                    handleRedirect(emailTokenUserAuth.user, navigate);
                 }
             } else if (emailTokenUserAuth?.userErrors?.length > 0) {
                 toast.error(emailTokenUserAuth.userErrors[0].message)
