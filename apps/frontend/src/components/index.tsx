@@ -1,1 +1,1 @@
-///
+export {GlobalSpinner} from "./GlobalSpinner";

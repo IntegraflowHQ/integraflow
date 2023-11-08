@@ -1,4 +1,3 @@
-import { cn } from "@/utils";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { ToastOptions, default as toastBase } from "react-hot-toast";
 
@@ -11,10 +10,8 @@ const Notification = ({
 }) => {
     return (
         <div className="flex w-[450px] gap-3 rounded-lg bg-intg-bg-4 p-3">
-            <div className={cn("pt-1")}>
-                {type === "success" && (
-                    <CheckCircle2 fill="green" color="white" />
-                )}
+            <div className={"pt-1"}>
+                {type === "success" && <CheckCircle2 fill="green" color="white" />}
                 {type === "error" && <XCircle fill="red" color="white" />}
             </div>
             <div>
