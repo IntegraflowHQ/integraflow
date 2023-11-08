@@ -17,7 +17,6 @@ export const useApolloFactory = () => {
 
   const { token, refresh, refreshToken, logout } = useAuthToken();
 
-  console.log("useApolloFactory", refresh, token);
 
   const apolloClient = useMemo(() => {
     apolloRef.current = new ApolloFactory({
