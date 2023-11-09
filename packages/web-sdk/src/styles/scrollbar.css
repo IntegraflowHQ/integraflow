@@ -1,0 +1,26 @@
+.custom-scrollbar {
+    overflow-y: auto;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #241b37;
+    height: 10rem;
+    border-radius: 16px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background-color: #050505;
+}
+
+.custom-scrollbar::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+
+.custom-scrollbar1 {
+    scrollbar-width: thin; /* Customize scrollbar width for Firefox */
+    scrollbar-color: #050505 #241b37; /* Customize scrollbar color for Firefox */
+}
