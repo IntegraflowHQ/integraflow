@@ -7,6 +7,7 @@
     "python.analysis.typeCheckingMode": "basic",
     "cSpell.words": [
         "dataloaders",
+        "Integraflow",
         "intg",
         "preorder",
         "preorders",

@@ -1,20 +1,42 @@
-import { GlobalSpinner } from "@/components/GlobalSpinner";
-import { useGoogleUserAuthMutation } from "@/generated/graphql";
-import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
+import { GlobalSpinner } from "@/components";
+import {
+    useEmailUserAuthChallengeMutation,
+    useGoogleUserAuthMutation,
+} from "@/generated/graphql";
 import { Button, TextInput } from "@/ui";
 import { Google } from "@/ui/icons";
+import { toast } from "@/utils/toast";
 import { useGoogleLogin } from "@react-oauth/google";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { Link, createSearchParams, useNavigate } from "react-router-dom";
 import { handleRedirect } from "../helper";
+import { useAuthToken } from "../hooks/useAuthToken";
+
+type Inputs = {
+    email: string;
+};
 
 function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
-    const [email, setEmail] = useState("");
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm<Inputs>({
+        defaultValues: {
+            email: "",
+        },
+    });
+    const email = watch("email");
     const navigate = useNavigate();
     const { login } = useAuthToken();
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const onSubmit: SubmitHandler<Inputs> = (data) => {
+        getToken({
+            variables: {
+                email: data.email,
+            },
+        });
     };
 
     const [googleAuth, { loading }] = useGoogleUserAuthMutation();
@@ -28,13 +50,15 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
                     code: codeResponse.code,
                 },
             });
+
             if (result.data?.googleUserAuth) {
                 if (
                     !result.data?.googleUserAuth?.token ||
                     !result.data?.googleUserAuth?.refreshToken ||
                     !result.data?.googleUserAuth?.csrfToken
-                )
+                ) {
                     return;
+                }
 
                 if (result.data?.googleUserAuth?.user) {
                     handleRedirect(result.data?.googleUserAuth?.user, navigate);
@@ -47,12 +71,31 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
                 );
             }
         },
-        onError: async () => {
-            navigate("/");
+        onError: () => {
+            toast.error("Something went wrong", {
+                position: "bottom-left",
+            });
         },
     });
 
-    if (loading) {
+    const [getToken, { loading: gettingToken }] =
+        useEmailUserAuthChallengeMutation({
+            onCompleted: ({ emailUserAuthChallenge }) => {
+                if (emailUserAuthChallenge?.success) {
+                    navigate({
+                        pathname: "/auth/magic-sign-in/",
+                        search: createSearchParams({ email }).toString(),
+                    });
+                }
+            },
+            onError: () => {
+                toast.error("Something went wrong, please try again later.", {
+                    position: "bottom-left",
+                });
+            },
+        });
+
+    if (loading || gettingToken) {
         return <GlobalSpinner />;
     }
 
@@ -72,12 +115,21 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
                     </p>
                 </header>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="flex flex-col gap-4"
+                >
                     <TextInput
                         placeholder="Enter your email"
                         type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        {...register("email", {
+                            required: {
+                                value: true,
+                                message: "Email is required",
+                            },
+                        })}
+                        error={!!errors.email?.message}
+                        errorMessage={errors.email?.message}
                     />
                     <Button text="Continue with Email" />
                 </form>
