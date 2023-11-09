@@ -1,5 +1,5 @@
-import { createSelectors } from '@/utils/selectors';
-import { useAuthTokenStore } from '../states/authToken';
+import { createSelectors } from "@/utils/selectors";
+import { useAuthTokenStore } from "../states/authToken";
 
 export const useAuthToken = () => {
     const authToken = createSelectors(useAuthTokenStore);
@@ -10,5 +10,5 @@ export const useAuthToken = () => {
     const refresh = authToken.use.refresh();
     const logout = authToken.use.logout();
 
-    return { token, refreshToken, csrfToken, login, refresh, logout};
+    return { token, refreshToken, csrfToken, login, refresh, logout };
 };

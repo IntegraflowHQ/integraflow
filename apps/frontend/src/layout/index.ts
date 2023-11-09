@@ -1,2 +1,2 @@
 export { AuthLayout } from "./AuthLayout";
-export { Navbar } from "./Navbar";
+export { Navbar } from "./Partials/Navbar";

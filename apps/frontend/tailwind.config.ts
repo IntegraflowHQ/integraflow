@@ -7,6 +7,10 @@ const config: Config = {
         "./src/ui/**/*.{js,ts,jsx,tsx,mdx}",
         "../../node_modules/@tremor/**/*.{js,ts,jsx,tsx}",
     ],
+    plugins: [require("tailwind-scrollbar")],
+    variants: {
+        scrollbar: ["rounded"],
+    },
     theme: {
         extend: {
             colors: {

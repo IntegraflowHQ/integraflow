@@ -1,4 +1,5 @@
 import { useOrganizationCreateMutation } from "@/generated/graphql";
+import { PrivateRoute } from "@/layout/PrivateRoute";
 import { handleRedirect } from "@/modules/auth/helper";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -109,136 +110,145 @@ const Workspace = () => {
     };
 
     return (
-        <main className="h-screen w-screen bg-intg-black">
-            <div
-                className="h-full overflow-y-auto px-12 pt-[50px]"
-                style={{
-                    backgroundImage:
-                        "radial-gradient(rgba(28, 15, 89, 0.30) 50%, rgba(5, 5, 5, 0.30))",
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center",
-                    backgroundSize: "cover",
-                }}
-            >
-                <div>
-                    <img src={Logo} alt="Logo" />
-                </div>
-                <div className="flex w-full items-center justify-between">
-                    <div className="m-auto rounded-md p-12 lg:max-w-lg">
-                        <h3 className="mb-2 px-4 text-center text-3xl font-semibold text-intg-text">
-                            Create a new workspace
-                        </h3>
-                        <p className="text-center text-base text-intg-text-4">
-                            Sign in to access your dashboard
-                        </p>
-                        <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className="my-6 rounded-md">
-                                <div className="space-y-4">
-                                    <TextInput
-                                        label={"Workspace Name"}
-                                        placeholder={"Workspace Name"}
-                                        {...register("workspaceName", {
-                                            required: {
-                                                value: true,
-                                                message:
-                                                    "Workspace name is required",
-                                            },
-                                            minLength: {
-                                                value: 3,
-                                                message:
-                                                    "Workspace name must be at least 3 characters",
-                                            },
-                                            maxLength: {
-                                                value: 64,
-                                                message:
-                                                    "Workspace name must be at most 64 characters",
-                                            },
-                                        })}
-                                        error={!!errors.workspaceName?.message}
-                                        errorMessage={
-                                            errors.workspaceName?.message
-                                        }
-                                    />
-                                    <TextInput
-                                        prefix="integraflow.app/"
-                                        label={"Workspace URL"}
-                                        placeholder={""}
-                                        {...register("workspaceUrl", {
-                                            required: {
-                                                value: true,
-                                                message:
-                                                    "Workspace URL is required",
-                                            },
-                                            minLength: {
-                                                value: 3,
-                                                message:
-                                                    "Workspace URL must be at least 3 characters",
-                                            },
-                                            maxLength: {
-                                                value: 48,
-                                                message:
-                                                    "Workspace URL must be at most 20 characters",
-                                            },
-                                            pattern: {
-                                                value: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-                                                message:
-                                                    "Workspace URL must be in the correct format, eg: my-workspace",
-                                            },
-                                        })}
-                                        error={
-                                            !!errors.workspaceUrl?.message ||
-                                            !!data?.organizationCreate?.errors
-                                        }
-                                        errorMessage={
-                                            errors.workspaceUrl?.message
-                                                ? errors.workspaceUrl?.message
-                                                : data?.organizationCreate
-                                                      ?.errors
-                                                ? (data?.organizationCreate
-                                                      ?.errors[0]
-                                                      .message as string)
-                                                : undefined
-                                        }
-                                    />
+        <PrivateRoute>
+            <main className="h-screen w-screen bg-intg-black">
+                <div
+                    className="h-full overflow-y-auto px-12 pt-[50px]"
+                    style={{
+                        backgroundImage:
+                            "radial-gradient(rgba(28, 15, 89, 0.30) 50%, rgba(5, 5, 5, 0.30))",
+                        backgroundRepeat: "no-repeat",
+                        backgroundPosition: "center",
+                        backgroundSize: "cover",
+                    }}
+                >
+                    <div>
+                        <img src={Logo} alt="Logo" />
+                    </div>
+                    <div className="flex w-full items-center justify-between">
+                        <div className="m-auto rounded-md p-12 lg:max-w-lg">
+                            <h3 className="mb-2 px-4 text-center text-3xl font-semibold text-intg-text">
+                                Create a new workspace
+                            </h3>
+                            <p className="text-center text-base text-intg-text-4">
+                                Sign in to access your dashboard
+                            </p>
+                            <form onSubmit={handleSubmit(onSubmit)}>
+                                <div className="my-6 rounded-md">
+                                    <div className="space-y-4">
+                                        <TextInput
+                                            label={"Workspace Name"}
+                                            placeholder={"Workspace Name"}
+                                            {...register("workspaceName", {
+                                                required: {
+                                                    value: true,
+                                                    message:
+                                                        "Workspace name is required",
+                                                },
+                                                minLength: {
+                                                    value: 3,
+                                                    message:
+                                                        "Workspace name must be at least 3 characters",
+                                                },
+                                                maxLength: {
+                                                    value: 64,
+                                                    message:
+                                                        "Workspace name must be at most 64 characters",
+                                                },
+                                            })}
+                                            error={
+                                                !!errors.workspaceName?.message
+                                            }
+                                            errorMessage={
+                                                errors.workspaceName?.message
+                                            }
+                                        />
+                                        <TextInput
+                                            prefix="integraflow.app/"
+                                            label={"Workspace URL"}
+                                            placeholder={""}
+                                            {...register("workspaceUrl", {
+                                                required: {
+                                                    value: true,
+                                                    message:
+                                                        "Workspace URL is required",
+                                                },
+                                                minLength: {
+                                                    value: 3,
+                                                    message:
+                                                        "Workspace URL must be at least 3 characters",
+                                                },
+                                                maxLength: {
+                                                    value: 48,
+                                                    message:
+                                                        "Workspace URL must be at most 20 characters",
+                                                },
+                                                pattern: {
+                                                    value: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+                                                    message:
+                                                        "Workspace URL must be in the correct format, eg: my-workspace",
+                                                },
+                                            })}
+                                            error={
+                                                !!errors.workspaceUrl
+                                                    ?.message ||
+                                                !!data?.organizationCreate
+                                                    ?.errors
+                                            }
+                                            errorMessage={
+                                                errors.workspaceUrl?.message
+                                                    ? errors.workspaceUrl
+                                                          ?.message
+                                                    : data?.organizationCreate
+                                                          ?.errors
+                                                    ? (data?.organizationCreate
+                                                          ?.errors[0]
+                                                          .message as string)
+                                                    : undefined
+                                            }
+                                        />
+                                    </div>
+                                    <hr className="my-6 border-[1px] border-intg-bg-4" />
+                                    <div className="space-y-4">
+                                        <SelectInput
+                                            title={"How large is your company"}
+                                            defaultValue={
+                                                WorkspaceSizeOptions[0].value
+                                            }
+                                            options={WorkspaceSizeOptions}
+                                            {...register("workspaceSize", {
+                                                required: {
+                                                    value: true,
+                                                    message:
+                                                        "Workspace size is required",
+                                                },
+                                            })}
+                                        />
+                                        <SelectInput
+                                            title={
+                                                "What is your role in the company"
+                                            }
+                                            defaultValue={
+                                                WorkspaceRoles[0].value
+                                            }
+                                            options={WorkspaceRoles}
+                                            {...register("workspaceRole", {
+                                                required: {
+                                                    value: true,
+                                                    message:
+                                                        "Workspace role is required",
+                                                },
+                                            })}
+                                        />
+                                    </div>
                                 </div>
-                                <hr className="my-6 border-[1px] border-intg-bg-4" />
-                                <div className="space-y-4">
-                                    <SelectInput
-                                        title={"How large is your company"}
-                                        defaultValue={
-                                            WorkspaceSizeOptions[0].value
-                                        }
-                                        options={WorkspaceSizeOptions}
-                                        {...register("workspaceSize", {
-                                            required: {
-                                                value: true,
-                                                message:
-                                                    "Workspace size is required",
-                                            },
-                                        })}
-                                    />
-                                    <SelectInput
-                                        title={
-                                            "What is your role in the company"
-                                        }
-                                        defaultValue={WorkspaceRoles[0].value}
-                                        options={WorkspaceRoles}
-                                        {...register("workspaceRole", {
-                                            required: {
-                                                value: true,
-                                                message:
-                                                    "Workspace role is required",
-                                            },
-                                        })}
-                                    />
-                                </div>
-                            </div>
-                            <Button text="Create Workspace" />
-                        </form>
+                                <Button text="Create Workspace" />
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </main>
+            </main>
+        </PrivateRoute>
     );
 };
 
