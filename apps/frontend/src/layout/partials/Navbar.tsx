@@ -8,8 +8,8 @@ import {
     QuestionIcon,
     SpeakerIcon,
 } from "@/assets/images";
+import { Button } from "@/ui";
 import { ChevronDown } from "lucide-react";
-import "../../../../../packages/web-sdk/src/styles/scrollbar.css";
 import Discord from "../../assets/images/navbar/Discord.png";
 import Frame from "../../assets/images/navbar/Frame.png";
 
@@ -56,7 +56,16 @@ export const Navbar = () => {
     ];
 
     return (
-        <div className="custom-scrollbar h-screen w-[240px] overflow-y-auto border border-r  border-intg-bg-4 p-6 pb-[31px]">
+        <div
+            className="w-[240px] border-r border-intg-bg-4 bg-intg-black p-6"
+            style={{
+                backgroundImage:
+                    "radial-gradient(rgba(28, 15, 89, 0.30) 50%, rgba(5, 5, 5, 0.30))",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+            }}
+        >
             <div className="mb-9 space-y-2">
                 <p className="text-xs text-intg-text-4">Project</p>
                 <p className="flex w-[177px] items-center text-intg-text-4">
@@ -86,7 +95,7 @@ export const Navbar = () => {
 
             <hr className="border-intg-bg-4" />
 
-            <ul className="mb-24 mt-4 space-y-2 text-sm text-intg-text-4">
+            <ul className="my-4 space-y-2 text-sm text-intg-text-4">
                 {navItems.map((item) => {
                     return (
                         <li className="flex items-center space-x-2 px-3 py-2">
@@ -97,7 +106,7 @@ export const Navbar = () => {
                 })}
             </ul>
             <hr className="border-intg-bg-4" />
-            <ul className="mb-[72px] mt-4 space-y-2 text-sm text-intg-text-4">
+            <ul className="my-4 space-y-2 text-sm text-intg-text-4">
                 {bottomNav.map((item) => {
                     return (
                         <li className="flex items-center space-x-2 px-3 py-2">
@@ -107,24 +116,26 @@ export const Navbar = () => {
                     );
                 })}
             </ul>
-            <div className="mb-[54px] flex w-full space-x-2 rounded-lg bg-intg-bg-9 px-2 py-4">
+            <div className="flex w-full space-x-2 rounded-lg bg-intg-bg-9 px-2 py-4">
                 <div className="h-8 w-8">
                     <img src={Discord} alt="Discord" />
                 </div>
-                <div className="space-y-[2px]">
+                <div className="space-y-[4px]">
                     <p className="flex">
                         <span className="text-sm text-white">
                             Join our Discord Community
                         </span>
                     </p>
-                    <p className="text-sm text-intg-text">
+                    <p className="text-xs text-intg-text">
                         Add your card to prevent interruption after trial
                     </p>
-                    {/* <Button text="Join now" /> */}
+                    <Button text="Join now" className="py-[6px]" />
                 </div>
             </div>
-            <hr className="border-intg-bg-4" />
-            <div className="mt-[18px] flex items-center text-intg-text">
+            <div className="my-4">
+                <hr className="border-intg-bg-4" />
+            </div>
+            <div className="flex items-center text-intg-text">
                 <div className="flex space-x-3">
                     <img src={Frame} alt="picture frame" />
                     <span>Profile</span>
