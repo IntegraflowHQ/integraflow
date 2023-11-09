@@ -4,13 +4,16 @@ import {
     HttpLink,
     InMemoryCache,
     UriFunction,
-} from '@apollo/client';
+} from "@apollo/client";
 
-import { loggerLink } from '@/modules/apollo/utils';
-import { TokenRefreshDocument, TokenRefreshMutation, TokenRefreshMutationVariables } from '@/generated/graphql';
+import {
+    TokenRefreshDocument,
+    TokenRefreshMutation,
+    TokenRefreshMutationVariables,
+} from "@/generated/graphql";
+import { loggerLink } from "@/modules/apollo/utils";
 
-
-const logger = loggerLink(() => 'Integraflow-Refresh');
+const logger = loggerLink(() => "Integraflow-Refresh");
 
 /**
  * Refresh token mutation with custom apollo client
@@ -36,16 +39,15 @@ const refreshTokenMutation = async (
     >({
         mutation: TokenRefreshDocument,
         variables: { refreshToken },
-        fetchPolicy: 'network-only',
+        fetchPolicy: "network-only",
     });
 
     if (errors || !data) {
-        throw new Error('Something went wrong during token renewal');
+        throw new Error("Something went wrong during token renewal");
     }
 
     return data;
 };
-
 
 /**
  * Refresh token and update cookie storage
@@ -57,7 +59,7 @@ export const refreshToken = async (
     refreshToken?: string | null,
 ) => {
     if (!refreshToken) {
-        throw new Error('Refresh token is not defined');
+        throw new Error("Refresh token is not defined");
     }
 
     const data = await refreshTokenMutation(uri, refreshToken);

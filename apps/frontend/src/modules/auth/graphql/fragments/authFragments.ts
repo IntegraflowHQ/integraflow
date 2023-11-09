@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const AUTH_USER = gql`
     fragment AuthUserFragment on AuthUser {
@@ -7,6 +7,7 @@ export const AUTH_USER = gql`
         firstName
         lastName
         isStaff
+        isActive
         organization {
             ...AuthOrganizationFragment
         }
@@ -37,6 +38,9 @@ export const GOOGLE_USER_AUTH = gql`
     fragment GoogleUserAuthFragment on GoogleUserAuth {
         token
         refreshToken
+        user {
+            ...AuthUserFragment
+        }
         csrfToken
         userErrors {
             ...UserErrorFragment
@@ -49,6 +53,9 @@ export const EMAIL_TOKEN_USER_AUTH = gql`
         token
         refreshToken
         csrfToken
+        user {
+            ...AuthUserFragment
+        }
         userErrors {
             ...UserErrorFragment
         }
