@@ -1,28 +1,33 @@
 {
-  "python.testing.unittestEnabled": false,
-  "python.testing.pytestEnabled": true,
-  "python.formatting.provider": "black",
-  "python.languageServer": "Pylance",
-  "python.linting.mypyEnabled": true,
-  "python.analysis.typeCheckingMode": "basic",
-  "cSpell.words": [
-    "dataloaders",
-    "intg",
-    "preorder",
-    "preorders",
-    "undiscounted"
-  ],
-  "python.linting.enabled": true,
-  "editor.tabSize": 4,
-  "[javascript][typescript][javascriptreact][typescriptreact]": {
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": true,
-      "source.formatDocument": true,
-      "source.fixAll.eslint": true
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.formatting.provider": "black",
+    "python.languageServer": "Pylance",
+    "python.linting.mypyEnabled": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "cSpell.words": [
+        "dataloaders",
+        "Integraflow",
+        "intg",
+        "preorder",
+        "preorders",
+        "undiscounted"
+    ],
+    "python.linting.enabled": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "prettier.tabWidth": 4,
+    "prettier.useTabs": false,
+    "[javascript][typescript][javascriptreact][typescriptreact]": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true,
+            "source.formatDocument": true,
+            "source.fixAll.eslint": true
+        },
+        "editor.guides.bracketPairs": "active"
     },
-    "editor.guides.bracketPairs": "active"
-  },
-  "typescript.updateImportsOnFileMove.enabled": "always",
-  "javascript.updateImportsOnFileMove.enabled": "always"
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "javascript.updateImportsOnFileMove.enabled": "always"
 }

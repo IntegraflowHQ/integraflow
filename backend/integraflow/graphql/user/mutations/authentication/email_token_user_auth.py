@@ -120,7 +120,7 @@ class EmailTokenUserAuth(BaseMutation):
         else:
             raise ValidationError({
                 "token": ValidationError(
-                    "The magic code/link has expired please try again",
+                    "The magic code/link has expired, please try again",
                     code=UserErrorCode.INVALID_MAGIC_CODE.value,
                 )
             })

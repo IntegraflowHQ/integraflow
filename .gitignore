@@ -130,7 +130,6 @@ dist
 .pnp.*
 
 *.py[cod]
-.*
 !.devcontainer
 !.dockerignore
 !.github
@@ -163,3 +162,7 @@ venv.bak/
 # Exported results file
 django-queries-results.html
 .turbo
+
+backend/client-secret.json
+backend/.jwt_key.pem
+data/

@@ -504,11 +504,14 @@ type GoogleUserAuth @doc(category: "Authentication") {
   """Whether the operation was successful."""
   success: Boolean
 
-  """Access token for the user."""
-  accessToken: String
+  """Access token to authenticate the user."""
+  token: String
 
-  """Refresh token for the user."""
+  """JWT refresh token, required to re-generate access token."""
   refreshToken: String
+
+  """CSRF token required to re-generate access token."""
+  csrfToken: String
 
   """A user that has access to the the resources of an organization."""
   user: AuthUser

@@ -229,6 +229,7 @@ JWT_MANAGER_PATH = os.environ.get(
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "integraflow.core.middleware.jwt_refresh_token_middleware",
 ]
@@ -259,6 +260,7 @@ INSTALLED_APPS = [
     "django_countries",
     "django_filters",
     "phonenumber_field",
+    "corsheaders",
 ]
 
 ENABLE_DJANGO_EXTENSIONS = get_bool_from_env("ENABLE_DJANGO_EXTENSIONS", False)
@@ -417,10 +419,20 @@ TEST_RUNNER = "integraflow.tests.runner.PytestTestRunner"
 
 PLAYGROUND_ENABLED = get_bool_from_env("PLAYGROUND_ENABLED", True)
 
-ALLOWED_HOSTS = get_list(os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1"))
+ALLOWED_HOSTS = get_list(
+    os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1")
+)
 ALLOWED_GRAPHQL_ORIGINS: List[str] = get_list(
     os.environ.get("ALLOWED_GRAPHQL_ORIGINS", "*")
 )
+
+CORS_ALLOW_ALL_ORIGINS: bool = False
+CORS_ALLOWED_ORIGINS: List[str] = []
+
+if ALLOWED_GRAPHQL_ORIGINS[0] == "*":
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    CORS_ALLOWED_ORIGINS = ALLOWED_GRAPHQL_ORIGINS
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
