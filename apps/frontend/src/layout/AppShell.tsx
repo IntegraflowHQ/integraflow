@@ -1,5 +1,5 @@
 import { ApolloProvider } from "@/modules/apollo/components/ApolloProvider";
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 import { Outlet } from "react-router-dom";
 
 export default function AppShell() {

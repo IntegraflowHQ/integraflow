@@ -10,6 +10,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
+import { AppCore } from "./layout/AppCore";
 import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
 
@@ -47,8 +48,14 @@ const router = createBrowserRouter([
                 element: <Workspace />,
             },
             {
-                path: ":organizationSlug/projects/:projectId/get-started",
-                element: <Onboarding />,
+                path: "/:organizationSlug",
+                element: <AppCore />,
+                children: [
+                    {
+                        path: "projects/:projectId/get-started",
+                        element: <Onboarding />,
+                    },
+                ],
             },
         ],
     },
