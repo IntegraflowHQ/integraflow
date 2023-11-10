@@ -98,7 +98,10 @@ export const Navbar = () => {
             <ul className="my-4 space-y-2 text-sm text-intg-text-4">
                 {navItems.map((item) => {
                     return (
-                        <li className="flex items-center space-x-2 px-3 py-2">
+                        <li
+                            key={item.id}
+                            className="flex items-center space-x-2 px-3 py-2"
+                        >
                             <span>{item.icon}</span>
                             <span>{item.title}</span>
                         </li>
@@ -109,7 +112,10 @@ export const Navbar = () => {
             <ul className="my-4 space-y-2 text-sm text-intg-text-4">
                 {bottomNav.map((item) => {
                     return (
-                        <li className="flex items-center space-x-2 px-3 py-2">
+                        <li
+                            key={item.id}
+                            className="flex items-center space-x-2 px-3 py-2"
+                        >
                             <span>{item.icon}</span>
                             <span>{item.title}</span>
                         </li>
