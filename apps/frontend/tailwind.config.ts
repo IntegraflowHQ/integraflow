@@ -2,9 +2,7 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
     content: [
-        "./src/**/*.{html,js,jsx,ts,tsx}",
-        "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-        "./src/ui/**/*.{js,ts,jsx,tsx,mdx}",
+        "./src/**/*.{html,js,jsx,ts,tsx,mdx}",
         "../../node_modules/@tremor/**/*.{js,ts,jsx,tsx}",
     ],
     theme: {
@@ -21,15 +19,21 @@ const config: Config = {
                         "7": "#443862",
                         "8": "#150E27",
                         "9": "#181325",
+                        "10": "#261F36",
+                        "11": "#299532",
+                        "12": "#231E35",
+                        "13": "#29233E",
                     },
                     text: {
+                        DEFAULT: "#AFAAC7",
                         "1": "#DBD4EB",
                         "2": "#DAD1EE",
                         "3": "#9582C0",
                         "4": "#AFAAC7",
                         "5": "#F2F2F2",
                         "6": "#B5A4DB",
-                        DEFAULT: "#AFAAC7",
+                        "7": "#D2CBF4",
+                        "8": "#7F76A9",
                     },
                     black: {
                         1: "#050505",
