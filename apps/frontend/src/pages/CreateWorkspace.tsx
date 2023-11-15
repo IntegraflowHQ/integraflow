@@ -197,7 +197,7 @@ const Workspace = () => {
                                                     ? errors.workspaceUrl
                                                           ?.message
                                                     : data?.organizationCreate
-                                                          ?.errors
+                                                          ?.errors.length > 0
                                                     ? (data?.organizationCreate
                                                           ?.errors[0]
                                                           .message as string)

@@ -1,3 +1,4 @@
+export { SettingsIcon } from "./SettingsIcon";
 export { CircleIcon } from "./navbar/CircleIcon";
 export { CirclePlusIcon } from "./navbar/CirclePlusIcon";
 export { CursorIcon } from "./navbar/CursorIcon";

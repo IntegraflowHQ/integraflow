@@ -6,12 +6,15 @@ import {
     HomeIcon,
     PeopleIcon,
     QuestionIcon,
+    SettingsIcon,
     SpeakerIcon,
 } from "@/assets/images";
 import { Button } from "@/ui";
 import { ChevronDown } from "lucide-react";
 import Discord from "../../assets/images/navbar/Discord.png";
 import Frame from "../../assets/images/navbar/Frame.png";
+
+import * as Popover from "@radix-ui/react-popover";
 
 export const Navbar = () => {
     const navItems = [
@@ -34,6 +37,16 @@ export const Navbar = () => {
             id: 4,
             title: "Audience",
             icon: <PeopleIcon />,
+        },
+    ];
+    const projects = [
+        {
+            id: 97,
+            name: "Project1",
+        },
+        {
+            id: 97,
+            name: "Project1",
         },
     ];
 
@@ -68,15 +81,61 @@ export const Navbar = () => {
         >
             <div className="mb-9 space-y-2">
                 <p className="text-xs text-intg-text-4">Project</p>
-                <p className="flex w-[177px] items-center text-intg-text-4">
-                    <span className="mr-3 rounded bg-gradient-button px-1.5">
-                        IF
-                    </span>
-                    <span>Integraflow</span>
-                    <span className="ml-auto">
-                        <ChevronDown size={16} />
-                    </span>
-                </p>
+                <Popover.Root>
+                    <Popover.Trigger className="text-white">
+                        <p className="flex w-[177px] items-center text-intg-text-4">
+                            <span className="mr-3 rounded bg-gradient-button px-1.5">
+                                IF
+                            </span>
+                            <span>Integraflow</span>
+                            <span className="ml-auto">
+                                <ChevronDown size={16} />
+                            </span>
+                        </p>
+                    </Popover.Trigger>
+                    <Popover.Anchor />
+                    <Popover.Portal>
+                        <Popover.Content
+                            align="start"
+                            sideOffset={-10}
+                            alignOffset={50}
+                            className="border-intg-bg-10  h-[13rem] w-[221px] rounded border bg-intg-bg-9 p-2 text-white"
+                        >
+                            <ul className="text-intg-text">
+                                {projects.map((item) => {
+                                    return (
+                                        <li
+                                            className="hover:bg-intg-bg-10 flex cursor-pointer rounded p-2"
+                                            onClick={() => {}}
+                                        >
+                                            <span className="mr-3 rounded bg-gradient-button px-1.5">
+                                                IF
+                                            </span>
+                                            <span>{item.name}</span>
+                                        </li>
+                                    );
+                                })}
+                                <div className="my-2">
+                                    <hr className="border-intg-bg-4" />
+                                </div>
+                                <li className="flex cursor-pointer items-center space-x-2 px-3 py-2">
+                                    <span>
+                                        <SettingsIcon />
+                                    </span>
+                                    <span>Project Settings</span>
+                                </li>
+                                <li className="bg-intg-bg-10 flex cursor-pointer items-center space-x-2 rounded p-3">
+                                    <span>
+                                        <CirclePlusIcon />
+                                    </span>
+                                    <span>New Project</span>
+                                </li>
+                            </ul>
+                            <Popover.Close />
+                            <Popover.Arrow />
+                        </Popover.Content>
+                    </Popover.Portal>
+                </Popover.Root>
             </div>
             <div className="mb-[14px] space-y-[27px]">
                 <button className="flex items-center justify-between space-x-2 rounded border border-intg-bg-4 bg-intg-bg-9 p-3 text-sm text-intg-text-4">
