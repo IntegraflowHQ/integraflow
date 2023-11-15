@@ -9,7 +9,8 @@ import {
     SettingsIcon,
     SpeakerIcon,
 } from "@/assets/images";
-import { Button } from "@/ui";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/Dialog";
+import { Button, TextInput } from "@/ui";
 import { ChevronDown } from "lucide-react";
 import Discord from "../../assets/images/navbar/Discord.png";
 import Frame from "../../assets/images/navbar/Frame.png";
@@ -124,12 +125,36 @@ export const Navbar = () => {
                                     </span>
                                     <span>Project Settings</span>
                                 </li>
-                                <li className="bg-intg-bg-10 flex cursor-pointer items-center space-x-2 rounded p-3">
-                                    <span>
-                                        <CirclePlusIcon />
-                                    </span>
-                                    <span>New Project</span>
-                                </li>
+                                <Dialog>
+                                    <DialogTrigger className="w-full">
+                                        <li className="bg-intg-bg-10 flex cursor-pointer items-center space-x-2 rounded p-3">
+                                            <span>
+                                                <CirclePlusIcon />
+                                            </span>
+                                            <span>New Project</span>
+                                        </li>
+                                    </DialogTrigger>
+                                    <DialogContent
+                                        title="Create new survey"
+                                        description="Pick a method that suits you best"
+                                    >
+                                        <div className="mt-6 w-[34rem]">
+                                            <TextInput
+                                                label="Project Name"
+                                                placeholder="Project name"
+                                            />
+                                            <div className="my-6">
+                                                <hr className="border-intg-bg-4" />
+                                            </div>
+                                            <div className="w-full">
+                                                <Button
+                                                    text="Create Project"
+                                                    className="w-full px-8 py-4"
+                                                />
+                                            </div>
+                                        </div>
+                                    </DialogContent>
+                                </Dialog>
                             </ul>
                             <Popover.Close />
                             <Popover.Arrow />
