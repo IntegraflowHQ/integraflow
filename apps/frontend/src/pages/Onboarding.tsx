@@ -1,8 +1,8 @@
+import OnboardingIndex from '@/modules/onboarding/components/OnboardingIndex';
+
 const Onboarding = () => {
     return (
-        <div>
-            <p>Onboarding</p>
-        </div>
+        <OnboardingIndex />
     );
 };
 
