@@ -11,7 +11,8 @@ import {
 } from "@/assets/images";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/Dialog";
 import { Button, TextInput } from "@/ui";
-import { ChevronDown } from "lucide-react";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import Discord from "../../assets/images/navbar/Discord.png";
 import Frame from "../../assets/images/navbar/Frame.png";
 
@@ -48,6 +49,17 @@ export const Navbar = () => {
         {
             id: 97,
             name: "Project1",
+        },
+    ];
+
+    const workspaces = [
+        {
+            id: 1,
+            name: "Workspace 1",
+        },
+        {
+            id: 1,
+            name: "Workspace 1",
         },
     ];
 
@@ -225,15 +237,98 @@ export const Navbar = () => {
             <div className="my-4">
                 <hr className="border-intg-bg-4" />
             </div>
-            <div className="flex items-center text-intg-text">
-                <div className="flex space-x-3">
-                    <img src={Frame} alt="picture frame" />
-                    <span>Profile</span>
-                </div>
-                <span className="ml-auto">
-                    <ChevronDown size={16} />
-                </span>
-            </div>
+            <DropdownMenu.Root>
+                <DropdownMenu.Trigger>
+                    <div className="flex items-center text-intg-text">
+                        <div className="flex space-x-3">
+                            <img src={Frame} alt="picture frame" />
+                            <span>Profile</span>
+                        </div>
+                        <span className="ml-auto">
+                            <ChevronDown size={16} />
+                        </span>
+                    </div>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Portal>
+                    <DropdownMenu.Content
+                        sideOffset={50}
+                        className="bg-intg-bg-9 px-2 py-3 text-intg-text"
+                    >
+                        <DropdownMenu.Item>
+                            <div>
+                                <p>SIGNED IN AS USER</p>
+                                <div className="flex justify-between">
+                                    <div>
+                                        <img src="" alt="" />
+                                        <div>
+                                            <p>User name</p>
+                                            <p>user@gmail.com</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <SettingsIcon />
+                                    </div>
+                                </div>
+                            </div>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item></DropdownMenu.Item>
+                        <DropdownMenu.Separator />
+                        <DropdownMenu.Sub>
+                            <p>CURRENT WORKSPACE</p>
+                            <DropdownMenu.SubTrigger className="flex justify-between">
+                                <div className="flex items-center">
+                                    <span className="rounded bg-gradient-button px-1.5">
+                                        IF
+                                    </span>
+                                    <span>SOBTECH</span>
+                                </div>
+                                <ChevronRight />
+                            </DropdownMenu.SubTrigger>
+                            <DropdownMenu.Portal>
+                                <DropdownMenu.SubContent className="bg-intg-bg-9 text-intg-text">
+                                    <p>OTHER WORKSPACES</p>
+
+                                    {workspaces.map((item) => {
+                                        return (
+                                            <>
+                                                <DropdownMenu.Item>
+                                                    {item.name}
+                                                </DropdownMenu.Item>
+                                                <DropdownMenu.Arrow />
+                                            </>
+                                        );
+                                    })}
+                                </DropdownMenu.SubContent>
+                            </DropdownMenu.Portal>
+                        </DropdownMenu.Sub>
+                        <DropdownMenu.Separator />
+                        <DropdownMenu.Item className="flex">
+                            <SettingsIcon />
+                            <p>Workspace Settings</p>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item className="flex">
+                            <SettingsIcon />
+                            <p>Workspace Settings</p>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item className="flex">
+                            <SettingsIcon />
+                            <p>Billing</p>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item className="flex">
+                            <SettingsIcon />
+                            <p>Status Page</p>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item className="flex">
+                            <SettingsIcon />
+                            <p>Help and doc</p>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item className="flex">
+                            <SettingsIcon />
+                            <p>Log out</p>
+                        </DropdownMenu.Item>
+                    </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+            </DropdownMenu.Root>
         </div>
     );
 };
