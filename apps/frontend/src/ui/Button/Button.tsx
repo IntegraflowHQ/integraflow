@@ -5,7 +5,7 @@ export interface ButtonProps
     extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     text?: string;
     className?: string;
-    variant?: "primary" | "secondary";
+    variant?: "primary" | "secondary" | "custom";
     children?: React.ReactNode;
     icon?: React.ReactNode;
     size?: "full" | "md";
@@ -28,12 +28,14 @@ const Button = React.forwardRef(
             <button
                 {...props}
                 className={cn(
-                    "rounded-lg text-base font-medium text-white hover:bg-gradient-button-hover",
+                    "rounded-lg text-base font-medium text-white",
                     size === "full" ? "py-4w-full px-8" : "w-fit p-3",
-                    icon ? "flex  space-x-2" : "",
+                    icon ? "flex  items-center space-x-2" : "",
                     variant === "primary"
-                        ? "bg-gradient-button"
-                        : "border border-intg-bg-2 bg-intg-bg-3",
+                        ? "bg-gradient-button hover:bg-gradient-button-hover"
+                        : variant === "secondary"
+                        ? "border border-intg-bg-2 bg-intg-bg-3 hover:bg-gradient-button-hover"
+                        : "",
                     className ?? "",
                 )}
                 ref={forwardedRef}

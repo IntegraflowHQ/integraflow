@@ -1,9 +1,12 @@
 import {
     CircleIcon,
     CirclePlusIcon,
+    CircleStackIcon,
     CursorIcon,
     DocumentIcon,
     HomeIcon,
+    LogoutIcon,
+    NewspaperIcon,
     PeopleIcon,
     QuestionIcon,
     SettingsIcon,
@@ -14,7 +17,10 @@ import { Button, TextInput } from "@/ui";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import Discord from "../../assets/images/navbar/Discord.png";
-import Frame from "../../assets/images/navbar/Frame.png";
+import {
+    default as Frame,
+    default as Profile,
+} from "../../assets/images/navbar/Frame.png";
 
 import * as Popover from "@radix-ui/react-popover";
 
@@ -139,12 +145,13 @@ export const Navbar = () => {
                                 </li>
                                 <Dialog>
                                     <DialogTrigger className="w-full">
-                                        <li className="bg-intg-bg-10 flex cursor-pointer items-center space-x-2 rounded p-3">
-                                            <span>
-                                                <CirclePlusIcon />
-                                            </span>
-                                            <span>New Project</span>
-                                        </li>
+                                        <Button
+                                            icon={<CirclePlusIcon />}
+                                            variant="custom"
+                                            text="New Workspace"
+                                            size="md"
+                                            className="bg-intg-bg-11 w-full"
+                                        />
                                     </DialogTrigger>
                                     <DialogContent
                                         title="Create new survey"
@@ -238,45 +245,57 @@ export const Navbar = () => {
                 <hr className="border-intg-bg-4" />
             </div>
             <DropdownMenu.Root>
-                <DropdownMenu.Trigger>
-                    <div className="flex items-center text-intg-text">
-                        <div className="flex space-x-3">
-                            <img src={Frame} alt="picture frame" />
-                            <span>Profile</span>
-                        </div>
-                        <span className="ml-auto">
-                            <ChevronDown size={16} />
-                        </span>
+                <DropdownMenu.Trigger className="flex w-full items-center text-intg-text outline-none">
+                    <div className="flex items-center space-x-2">
+                        <img
+                            src={Frame}
+                            alt="picture frame"
+                            className="rounded object-contain"
+                        />
+                        <span>Profile</span>
                     </div>
+                    <span className="ml-auto">
+                        <ChevronDown size={16} />
+                    </span>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Portal>
                     <DropdownMenu.Content
-                        sideOffset={50}
-                        className="bg-intg-bg-9 px-2 py-3 text-intg-text"
+                        align="start"
+                        alignOffset={50}
+                        className="border-intg-bg-10 w-[310px] rounded border-[0.5px] bg-intg-bg-9 px-2 py-3 text-intg-text"
                     >
+                        <DropdownMenu.Label className="pb-1">
+                            <p className="text-xs">SIGNED IN AS USER</p>
+                        </DropdownMenu.Label>
                         <DropdownMenu.Item>
-                            <div>
-                                <p>SIGNED IN AS USER</p>
-                                <div className="flex justify-between">
+                            <div className="flex items-center justify-between px-2 py-[6px]">
+                                <div className="flex space-x-2">
+                                    <img
+                                        src={Profile}
+                                        alt="user avatar"
+                                        className="rounded object-contain"
+                                    />
                                     <div>
-                                        <img src="" alt="" />
-                                        <div>
-                                            <p>User name</p>
-                                            <p>user@gmail.com</p>
-                                        </div>
+                                        <p className="text-intg-text-7 text-sm">
+                                            User name
+                                        </p>
+                                        <p className="text-sm">
+                                            user@gmail.com
+                                        </p>
                                     </div>
-                                    <div>
-                                        <SettingsIcon />
-                                    </div>
+                                </div>
+                                <div>
+                                    <SettingsIcon />
                                 </div>
                             </div>
                         </DropdownMenu.Item>
-                        <DropdownMenu.Item></DropdownMenu.Item>
-                        <DropdownMenu.Separator />
+                        <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
                         <DropdownMenu.Sub>
-                            <p>CURRENT WORKSPACE</p>
-                            <DropdownMenu.SubTrigger className="flex justify-between">
-                                <div className="flex items-center">
+                            <DropdownMenu.Label>
+                                <p className="text-xs">CURRENT WORKSPACE</p>
+                            </DropdownMenu.Label>
+                            <DropdownMenu.SubTrigger className="my-3 flex justify-between px-3 py-2">
+                                <div className="flex items-center space-x-2">
                                     <span className="rounded bg-gradient-button px-1.5">
                                         IF
                                     </span>
@@ -284,46 +303,58 @@ export const Navbar = () => {
                                 </div>
                                 <ChevronRight />
                             </DropdownMenu.SubTrigger>
+                            <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
                             <DropdownMenu.Portal>
-                                <DropdownMenu.SubContent className="bg-intg-bg-9 text-intg-text">
-                                    <p>OTHER WORKSPACES</p>
+                                <DropdownMenu.SubContent className="ml-4 w-[221px] rounded bg-intg-bg-9 px-2 py-4 text-intg-text">
+                                    <DropdownMenu.Label>
+                                        <p className="mb-2 text-xs">
+                                            OTHER WORKSPACES
+                                        </p>
+                                    </DropdownMenu.Label>
 
                                     {workspaces.map((item) => {
                                         return (
                                             <>
-                                                <DropdownMenu.Item>
+                                                <DropdownMenu.Item className="px-3 py-2">
                                                     {item.name}
                                                 </DropdownMenu.Item>
-                                                <DropdownMenu.Arrow />
                                             </>
                                         );
                                     })}
+                                    <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
+                                    <DropdownMenu.Item className="px-3 py-2">
+                                        <Button
+                                            icon={<CirclePlusIcon />}
+                                            variant="custom"
+                                            text="New Workspace"
+                                            size="md"
+                                            className="bg-intg-bg-11 w-full"
+                                        />
+                                    </DropdownMenu.Item>
                                 </DropdownMenu.SubContent>
                             </DropdownMenu.Portal>
                         </DropdownMenu.Sub>
                         <DropdownMenu.Separator />
-                        <DropdownMenu.Item className="flex">
+                        <DropdownMenu.Item className="flex items-center space-x-2 px-3 py-2 ">
                             <SettingsIcon />
                             <p>Workspace Settings</p>
                         </DropdownMenu.Item>
-                        <DropdownMenu.Item className="flex">
-                            <SettingsIcon />
-                            <p>Workspace Settings</p>
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item className="flex">
-                            <SettingsIcon />
+                        <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
+                        <DropdownMenu.Item className="flex items-center space-x-2 px-3 py-2">
+                            <NewspaperIcon />
                             <p>Billing</p>
                         </DropdownMenu.Item>
-                        <DropdownMenu.Item className="flex">
-                            <SettingsIcon />
+                        <DropdownMenu.Item className="flex items-center space-x-2 px-3 py-2">
+                            <CircleStackIcon />
                             <p>Status Page</p>
                         </DropdownMenu.Item>
-                        <DropdownMenu.Item className="flex">
-                            <SettingsIcon />
+                        <DropdownMenu.Item className="flex items-center space-x-2 px-3 py-2">
+                            <QuestionIcon />
                             <p>Help and doc</p>
                         </DropdownMenu.Item>
-                        <DropdownMenu.Item className="flex">
-                            <SettingsIcon />
+                        <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
+                        <DropdownMenu.Item className="flex items-center space-x-2 px-3 py-2">
+                            <LogoutIcon />
                             <p>Log out</p>
                         </DropdownMenu.Item>
                     </DropdownMenu.Content>
