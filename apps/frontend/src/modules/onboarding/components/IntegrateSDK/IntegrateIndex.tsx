@@ -156,12 +156,14 @@ export default function IntegrateIndex() {
                     name="Web"
                     image={Web}
                     onClick={() => setEventSource("web")}
+                    tall
                 />
                 <Platform
                     name="Mobile"
                     image={Mobile}
                     onClick={() => setEventSource("mobile")}
                     imagePosition="center"
+                    tall
                 />
             </div>
         </Container>

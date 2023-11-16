@@ -7,6 +7,7 @@ interface Props {
     onClick: () => void;
     imagePosition?: "left" | "center";
     comingSoon?: boolean;
+    tall?: boolean;
 }
 
 export default function Platform({
@@ -15,42 +16,34 @@ export default function Platform({
     imagePosition = "left",
     onClick,
     comingSoon = false,
+    tall = false,
 }: Props) {
     return (
         <button
             className={cn(
-                "relative flex flex-1 flex-col justify-between gap-6 rounded-lg border border-intg-bg-10 bg-intg-bg-10 pt-4 hover:border-intg-bg-2",
+                "relative  flex-1 rounded-lg border border-intg-bg-10 bg-intg-bg-10 pt-4 hover:border-intg-bg-2",
+                tall ? "h-[278px]" : "h-[190px]",
                 comingSoon ? "bg-opacity-30" : "",
             )}
             onClick={onClick}
         >
-            <p
-                className={cn(
-                    "self-center text-lg leading-6 text-white",
-                    comingSoon ? "opacity-30" : "",
-                )}
-            >
-                {name}
-            </p>
             <div
                 className={cn(
-                    "flex w-full",
-                    imagePosition === "left"
-                        ? "justify-start"
-                        : "justify-center",
+                    "flex h-full w-full flex-col justify-between gap-6 rounded-lg",
                     comingSoon ? "opacity-30" : "",
                 )}
+                style={{
+                    backgroundImage: `url(${image})`,
+                    backgroundPosition:
+                        imagePosition === "center"
+                            ? "bottom center"
+                            : "bottom left",
+                    backgroundRepeat: "no-repeat",
+                }}
             >
-                <img
-                    src={image}
-                    alt={name}
-                    className={cn(
-                        "block self-end",
-                        imagePosition === "left"
-                            ? "max-w-[251px]"
-                            : "max-w-[146px]",
-                    )}
-                />
+                <p className={cn("self-center text-lg leading-6 text-white")}>
+                    {name}
+                </p>
             </div>
 
             {comingSoon && (
