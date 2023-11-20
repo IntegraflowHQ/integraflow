@@ -5,13 +5,19 @@ from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.functional import SimpleLazyObject
 
-from integraflow.user.models import User
 from integraflow.app.models import App
-from integraflow.core.auth import get_token_from_request
+from integraflow.core.auth import (
+    get_token_from_request,
+    get_project_from_request
+)
 from integraflow.core.jwt import jwt_decode_with_exception_handler
+from integraflow.permission.user_permissions import UserPermissions
+from integraflow.user.models import User
+
 from .api import API_PATH
 from .app.dataloaders import get_app_promise
 from .core import IntegraflowContext
+from .project.dataloaders import ProjectByIdLoader
 
 
 def get_context_value(request: HttpRequest) -> IntegraflowContext:
@@ -21,6 +27,7 @@ def get_context_value(request: HttpRequest) -> IntegraflowContext:
     request.request_time = timezone.now()
     set_app_on_context(request)
     set_auth_on_context(request)
+    set_user_permission_on_context(request)
     set_decoded_auth_token(request)
     return request
 
@@ -62,3 +69,17 @@ def set_auth_on_context(request: IntegraflowContext):
         return get_user(request) or None
 
     request.user = SimpleLazyObject(user)  # type: ignore
+
+
+def set_user_permission_on_context(request: IntegraflowContext):
+    if request.user:
+        user = cast(User, request.user)
+        project = user.project
+
+        project_id = get_project_from_request(request)
+        if project_id is not None:
+            project = ProjectByIdLoader(request).load(
+                project_id
+            ).get()
+
+        request.user_permissions = UserPermissions(user, project)

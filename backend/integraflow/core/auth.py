@@ -4,6 +4,7 @@ from django.http import HttpRequest
 
 INTEGRAFLOW_AUTH_HEADER = "HTTP_AUTHORIZATION_BEARER"
 DEFAULT_AUTH_HEADER = "HTTP_AUTHORIZATION"
+PROJECT_HEADER = "PROJECT"
 AUTH_HEADER_PREFIXES = ["JWT", "BEARER"]
 
 
@@ -16,3 +17,7 @@ def get_token_from_request(request: HttpRequest) -> Optional[str]:
         if len(auth) == 2 and auth[0].upper() in AUTH_HEADER_PREFIXES:
             auth_token = auth[1]
     return auth_token
+
+
+def get_project_from_request(request: HttpRequest) -> Optional[str]:
+    return request.META.get(PROJECT_HEADER)
