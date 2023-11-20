@@ -37,7 +37,6 @@ def _send_email(
     records: List[MessagingRecord] = []
 
     with transaction.atomic():
-
         for dest in to:
             record, _ = MessagingRecord.objects.get_or_create(
                 raw_email=dest["raw_email"],
@@ -48,6 +47,10 @@ def _send_email(
             record = MessagingRecord.objects.select_for_update().get(
                 pk=record.pk
             )
+
+            if record.campaign_count is None:
+                record.campaign_count = campaign_count
+
             # If an email for this campaign was already sent to this user,
             # skip recipient
             if record.sent_at and record.campaign_count == 0:
@@ -86,7 +89,7 @@ def _send_email(
             connection.send_messages(messages)
 
             for record in records:
-                if record.campaign_count > 1:
+                if record.campaign_count > 0:
                     record.campaign_count = record.campaign_count - 1
                     record.sent_at = timezone.now()
                     record.save()

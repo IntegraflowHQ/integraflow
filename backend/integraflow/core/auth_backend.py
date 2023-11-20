@@ -70,17 +70,23 @@ class JSONWebTokenBackend(BaseBackend):
                 "content_type__app_label",
                 "codename"
             ).order_by()
-            setattr(user_obj, perm_cache_name, {f"{ct}.{name}" for ct, name in perms})
+            setattr(
+                user_obj,
+                perm_cache_name,
+                {f"{ct}.{name}" for ct, name in perms}
+            )
         return getattr(user_obj, perm_cache_name)
 
     # Moved from `django.contrib.auth.backends.ModelBackend`
-    def get_user_permissions(self, user_obj, obj=None):  # noqa: D205, D212, D400, D415
+    def get_user_permissions(self, user_obj, obj=None):
         """Return a set of permissions the user `user_obj` holds directly."""
         return self._get_permissions(user_obj, obj, "user")
 
     # Moved from `django.contrib.auth.backends.ModelBackend`
-    def get_group_permissions(self, user_obj, obj=None):  # noqa: D205, D212, D400, D415
-        """Return a set of permissions the user `user_obj` gets from their groups."""
+    def get_group_permissions(self, user_obj, obj=None):
+        """
+        Return a set of permissions the user `user_obj` gets from their groups.
+        """
         return self._get_permissions(user_obj, obj, "group")
 
     # Moved from `django.contrib.auth.backends.ModelBackend`

@@ -4,8 +4,18 @@ from integraflow.graphql.core.dataloaders import DataLoader
 from integraflow.project.models import Project
 
 
+class ProjectByIdLoader(DataLoader):
+    context_key = "project_by_id"
+
+    def batch_load(self, keys):
+        projects = Project.objects.using(
+            self.database_connection_name
+        ).in_bulk(keys)
+        return [projects.get(project_id) for project_id in keys]
+
+
 class ProjectByOrganizationIdLoader(DataLoader):
-    context_key = "app_by_organization_id"
+    context_key = "project_by_organization_id"
 
     def batch_load(self, keys):
         projects = Project.objects.using(

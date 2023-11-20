@@ -89,6 +89,12 @@ class Organization(UUIDModel):
         max_length=MAX_SLUG_LENGTH
     )
 
+    logo: models.URLField = models.URLField(
+        blank=True,
+        null=True,
+        max_length=800
+    )
+
     timezone: models.CharField = models.CharField(
         max_length=240,
         choices=TIMEZONES,
