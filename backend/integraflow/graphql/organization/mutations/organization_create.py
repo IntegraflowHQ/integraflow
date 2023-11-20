@@ -79,6 +79,7 @@ class OrganizationCreate(BaseMutation):
         permissions = (AuthorizationFilters.AUTHENTICATED_USER,)
         error_type_class = OrganizationError
         error_type_field = "organization_errors"
+        doc_category = DOC_CATEGORY_ORGANIZATIONS
 
     @classmethod
     def clean_slug(cls, slug):

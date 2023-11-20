@@ -4,6 +4,7 @@ from django.utils.functional import SimpleLazyObject
 from graphql import GraphQLScalarType
 
 from .organization.schema import OrganizationMutations, OrganizationQueries
+from .project.schema import ProjectMutations, ProjectQueries
 from .user.schema import UserMutations, UserQueries
 
 from .core.federation.schema import build_federated_schema
@@ -11,11 +12,11 @@ from .core.federation.schema import build_federated_schema
 API_PATH = SimpleLazyObject(lambda: reverse("api"))
 
 
-class Query(OrganizationQueries, UserQueries):
+class Query(OrganizationQueries, ProjectQueries, UserQueries):
     pass
 
 
-class Mutation(OrganizationMutations, UserMutations):
+class Mutation(OrganizationMutations, ProjectMutations, UserMutations):
     pass
 
 

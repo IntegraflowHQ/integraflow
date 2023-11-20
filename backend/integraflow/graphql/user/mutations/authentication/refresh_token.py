@@ -47,7 +47,7 @@ class RefreshToken(BaseMutation):
         )
         doc_category = DOC_CATEGORY_AUTH
         error_type_class = UserError
-        error_type_field = "account_errors"
+        error_type_field = "user_errors"
 
     @classmethod
     def get_refresh_token_payload(cls, refresh_token):

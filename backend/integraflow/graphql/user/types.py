@@ -29,9 +29,6 @@ from integraflow.graphql.project.types import (
     Project,
     ProjectCountableConnection
 )
-from integraflow.graphql.project.dataloaders import (
-    ProjectByOrganizationIdLoader
-)
 from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.user import models
 
@@ -133,23 +130,13 @@ class User(AuthUser):
         info: ResolveInfo,
         **kwargs
     ):
-        def _resolve_projects(projects):
-            qs = filter_connection_queryset(projects, kwargs)
-            return create_connection_slice(
-                qs,
-                info,
-                kwargs,
-                ProjectCountableConnection
-            )
-
-        current_organization_id = (
-            _root.current_organization_id or _root.organization.id
+        qs = filter_connection_queryset(_root.projects, kwargs)
+        return create_connection_slice(
+            qs,
+            info,
+            kwargs,
+            ProjectCountableConnection
         )
-
-        return ProjectByOrganizationIdLoader(info.context).load(
-            current_organization_id
-        ).then(_resolve_projects)
-
 
 
 class UserCountableConnection(CountableConnection):
