@@ -22,8 +22,6 @@ import {
     default as Profile,
 } from "../../assets/images/navbar/Frame.png";
 
-import * as Popover from "@radix-ui/react-popover";
-
 export const Navbar = () => {
     const navItems = [
         {
@@ -100,8 +98,9 @@ export const Navbar = () => {
         >
             <div className="mb-9 space-y-2">
                 <p className="text-xs text-intg-text-4">Project</p>
-                <Popover.Root>
-                    <Popover.Trigger className="text-white">
+
+                <DropdownMenu.Root>
+                    <DropdownMenu.Trigger className="outline-none">
                         <p className="flex w-[177px] items-center text-intg-text-4">
                             <span className="mr-3 rounded bg-gradient-button px-1.5">
                                 IF
@@ -111,19 +110,21 @@ export const Navbar = () => {
                                 <ChevronDown size={16} />
                             </span>
                         </p>
-                    </Popover.Trigger>
-                    <Popover.Anchor />
-                    <Popover.Portal>
-                        <Popover.Content
+                    </DropdownMenu.Trigger>
+
+                    <DropdownMenu.Portal>
+                        <DropdownMenu.Content
                             align="start"
-                            sideOffset={-10}
                             alignOffset={50}
-                            className="border-intg-bg-10  h-[13rem] w-[221px] rounded border bg-intg-bg-9 p-2 text-white"
+                            className="border-intg-bg-10  w-[221px] rounded border bg-intg-bg-9 p-2 text-white"
                         >
-                            <ul className="text-intg-text">
+                            <DropdownMenu.Label />
+                            <DropdownMenu.Item />
+
+                            <DropdownMenu.Group>
                                 {projects.map((item) => {
                                     return (
-                                        <li
+                                        <DropdownMenu.Item
                                             className="hover:bg-intg-bg-10 flex cursor-pointer rounded p-2"
                                             onClick={() => {}}
                                         >
@@ -131,18 +132,19 @@ export const Navbar = () => {
                                                 IF
                                             </span>
                                             <span>{item.name}</span>
-                                        </li>
+                                        </DropdownMenu.Item>
                                     );
                                 })}
-                                <div className="my-2">
-                                    <hr className="border-intg-bg-4" />
-                                </div>
-                                <li className="flex cursor-pointer items-center space-x-2 px-3 py-2">
+                            </DropdownMenu.Group>
+
+                            <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
+                            <DropdownMenu.Group>
+                                <DropdownMenu.Item className="flex cursor-pointer items-center space-x-2 px-3 py-2">
                                     <span>
                                         <SettingsIcon />
                                     </span>
                                     <span>Project Settings</span>
-                                </li>
+                                </DropdownMenu.Item>
                                 <Dialog>
                                     <DialogTrigger className="w-full">
                                         <Button
@@ -150,7 +152,7 @@ export const Navbar = () => {
                                             variant="custom"
                                             text="New Workspace"
                                             size="md"
-                                            className="bg-intg-bg-11 w-full"
+                                            className="bg-intg-bg-11"
                                         />
                                     </DialogTrigger>
                                     <DialogContent
@@ -174,12 +176,15 @@ export const Navbar = () => {
                                         </div>
                                     </DialogContent>
                                 </Dialog>
-                            </ul>
-                            <Popover.Close />
-                            <Popover.Arrow />
-                        </Popover.Content>
-                    </Popover.Portal>
-                </Popover.Root>
+                            </DropdownMenu.Group>
+                            <DropdownMenu.CheckboxItem>
+                                <DropdownMenu.ItemIndicator />
+                            </DropdownMenu.CheckboxItem>
+
+                            <DropdownMenu.Separator />
+                        </DropdownMenu.Content>
+                    </DropdownMenu.Portal>
+                </DropdownMenu.Root>
             </div>
             <div className="mb-[14px] space-y-[27px]">
                 <button className="flex items-center justify-between space-x-2 rounded border border-intg-bg-4 bg-intg-bg-9 p-3 text-sm text-intg-text-4">

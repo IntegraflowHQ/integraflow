@@ -28,8 +28,8 @@ const Button = React.forwardRef(
             <button
                 {...props}
                 className={cn(
-                    "rounded-lg text-base font-medium text-white",
-                    size === "full" ? "py-4w-full px-8" : "w-fit p-3",
+                    "w-full rounded-lg text-base font-medium text-white",
+                    size === "full" ? "px-8 py-4" : "p-3",
                     icon ? "flex  items-center space-x-2" : "",
                     variant === "primary"
                         ? "bg-gradient-button hover:bg-gradient-button-hover"
