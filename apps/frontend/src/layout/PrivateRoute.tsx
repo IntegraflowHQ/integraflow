@@ -37,10 +37,7 @@ export const PrivateRoute = ({ children }: Props) => {
             }
             logDebug("viewer: ", user);
             if (!user) {
-                logDebug(
-                    "No viewer, checking local storage...",
-                    "PrivateRoute",
-                );
+                logDebug("No viewer, checking local storage...");
                 const getCachedViewer = localStorage.getItem("viewer");
                 if (getCachedViewer) {
                     user = JSON.parse(getCachedViewer) as SessionViewer;
@@ -128,11 +125,6 @@ export const PrivateRoute = ({ children }: Props) => {
             }
 
             logDebug("Org check passed, checking project...");
-
-            logDebug(
-                !projectId &&
-                    user.project?.organization.slug === organizationSlug,
-            );
 
             // Project checks
             if (

@@ -1,5 +1,4 @@
 import { SessionViewer } from "@/types";
-import { logDebug } from "@/utils/log";
 import { RxDatabase, addRxPlugin, createRxDatabase } from "rxdb";
 import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode";
 import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
@@ -21,21 +20,21 @@ export type DB = RxDatabase<DBCollections>;
 export const databases = new Map<string, DB>();
 
 const createDb = async (name: string): Promise<DB> => {
-    try {
-        const db: DB = await createRxDatabase({
-            name,
-            multiInstance: true,
-            eventReduce: true,
-            ignoreDuplicate: false,
-            storage: getRxStorageDexie(),
-        });
-
-        await db.addCollections(schema);
-        databases.set(name, db);
-        return db;
-    } catch (error) {
-        logDebug(error);
+    if (databases.has(name)) {
+        return databases.get(name) as DB;
     }
+
+    const db: DB = await createRxDatabase({
+        name,
+        multiInstance: true,
+        eventReduce: true,
+        storage: getRxStorageDexie(),
+        ignoreDuplicate: true,
+    });
+
+    await db.addCollections(schema);
+    databases.set(name, db);
+    return db;
 };
 
 export const createOrgDbs = async (viewer: SessionViewer) => {
@@ -67,4 +66,11 @@ export const createOrgDbs = async (viewer: SessionViewer) => {
             },
         });
     });
+};
+
+export const clearOrgDbs = () => {
+    databases.forEach((db) => {
+        db.destroy();
+    });
+    databases.clear();
 };
