@@ -26,6 +26,7 @@ from graphene import ObjectType
 from graphene.types.mutation import MutationOptions
 from graphql.error import GraphQLError
 
+from integraflow.core.exceptions import PermissionDenied
 from integraflow.core.utils.events import call_event
 from integraflow.permission.enums import BasePermissionEnum
 from integraflow.permission.utils import (
@@ -541,6 +542,9 @@ class BaseMutation(graphene.Mutation):
         disallow_replica_in_context(info.context)
         setup_context_user(info.context)
 
+        if not cls.check_permissions(info.context, data=data):
+            raise PermissionDenied(permissions=cls._meta.permissions)
+
         try:
             response = cls.perform_mutation(root, info, **data)
             if response.errors is None:
@@ -948,6 +952,9 @@ class BaseBulkMutation(BaseMutation):
     def mutate(cls, root, info: ResolveInfo, **data):
         disallow_replica_in_context(info.context)
         setup_context_user(info.context)
+
+        if not cls.check_permissions(info.context):
+            raise PermissionDenied(permissions=cls._meta.permissions)
 
         count, errors = cls.perform_mutation(root, info, **data)
         if errors:

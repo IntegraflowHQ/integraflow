@@ -21,7 +21,8 @@ def all_permissions_required(
         return True
 
     perm_results = _get_result_of_authorization_filters_checks(
-        context, permissions
+        context,
+        permissions
     )
 
     return all(perm_results)
@@ -47,7 +48,8 @@ def one_of_permissions_or_auth_filter_required(
 
 
 def _get_result_of_authorization_filters_checks(
-    context, permissions: Iterable[BasePermissionEnum]
+    context,
+    permissions: Iterable[BasePermissionEnum]
 ) -> Iterable[bool]:
     authorization_filters = [
         p for p in permissions if isinstance(p, AuthorizationFilters)

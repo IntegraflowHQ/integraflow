@@ -7,12 +7,15 @@ from django.core.files.storage import default_storage
 from integraflow.core.utils import build_absolute_uri
 from integraflow.graphql.core.doc_category import (
     DOC_CATEGORY_ORGANIZATIONS,
+    DOC_CATEGORY_PROJECTS,
     DOC_CATEGORY_USERS,
     DOC_CATEGORY_APPS,
     DOC_CATEGORY_WEBHOOKS,
 )
 from integraflow.graphql.core.scalars import Decimal
 from integraflow.graphql.core.enums import (
+    OrganizationErrorCode,
+    ProjectErrorCode,
     UserErrorCode,
     AppErrorCode,
     JobStatusEnum,
@@ -66,11 +69,19 @@ class BulkError(BaseObjectType):
 
 
 class OrganizationError(Error):
-    code = UserErrorCode(description="The error code.", required=True)
+    code = OrganizationErrorCode(description="The error code.", required=True)
 
     class Meta:
         description = "Represents errors in organization mutations."
         doc_category = DOC_CATEGORY_ORGANIZATIONS
+
+
+class ProjectError(Error):
+    code = ProjectErrorCode(description="The error code.", required=True)
+
+    class Meta:
+        description = "Represents errors in project mutations."
+        doc_category = DOC_CATEGORY_PROJECTS
 
 
 class UserError(Error):

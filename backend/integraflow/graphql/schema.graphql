@@ -138,8 +138,14 @@ type Project implements Node @doc(category: "Projects") {
   """The ID of the project."""
   id: ID!
 
-  """Slug of the project."""
+  """Name of the project."""
   name: String!
+
+  """Slug of the project."""
+  slug: String!
+
+  """Whether the project is private or not."""
+  accessControl: Boolean
 
   """The data required for the onboarding process"""
   hasCompletedOnboardingFor: JSONString
@@ -389,6 +395,18 @@ type Mutation {
     refreshToken: String
   ): RefreshToken @doc(category: "Authentication")
 
+  """Creates a new project"""
+  projectCreate(
+    """The project object to create."""
+    input: ProjectCreateInput!
+  ): ProjectCreate @doc(category: "Projects")
+
+  """Updates a project."""
+  projectUpdate(
+    """A partial object to update the project with."""
+    input: ProjectUpdateInput!
+  ): ProjectUpdate @doc(category: "Projects")
+
   """
   Creates new organization. 
   
@@ -400,7 +418,7 @@ type Mutation {
 
     """Onboarding survey."""
     survey: OnboardingCustomerSurvey
-  ): OrganizationCreate
+  ): OrganizationCreate @doc(category: "Organizations")
 }
 
 """Authenticates a user account via email and authentication token."""
@@ -535,8 +553,85 @@ Refresh JWT token. Mutation tries to take refreshToken from the input. If it fai
 type RefreshToken @doc(category: "Authentication") {
   """Acess token to authenticate the user."""
   token: String
-  accountErrors: [UserError!]!
+  userErrors: [UserError!]!
   errors: [UserError!]!
+}
+
+"""Creates a new project"""
+type ProjectCreate @doc(category: "Projects") {
+  projectErrors: [ProjectError!]!
+  errors: [ProjectError!]!
+  project: Project
+}
+
+"""Represents errors in project mutations."""
+type ProjectError @doc(category: "Projects") {
+  """
+  Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field.
+  """
+  field: String
+
+  """The error message."""
+  message: String
+
+  """The error code."""
+  code: ProjectErrorCode!
+}
+
+"""An enumeration."""
+enum ProjectErrorCode @doc(category: "Projects") {
+  ALREADY_EXISTS
+  GRAPHQL_ERROR
+  INVALID
+  NOT_FOUND
+  REQUIRED
+  UNIQUE
+}
+
+input ProjectCreateInput @doc(category: "Projects") {
+  """The name of the project."""
+  name: String!
+
+  """The timezone of the project."""
+  timezone: String
+
+  """Whether the project is private or not."""
+  private: Boolean
+
+  """
+  The identifier in UUID v4 format. If none is provided, the backend will generate one.
+  """
+  id: UUID
+}
+
+"""
+Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
+in fields, resolvers and input.
+"""
+scalar UUID
+
+"""Updates a project."""
+type ProjectUpdate @doc(category: "Projects") {
+  projectErrors: [ProjectError!]!
+  errors: [ProjectError!]!
+  project: Project
+}
+
+input ProjectUpdateInput @doc(category: "Projects") {
+  """The name of the project."""
+  name: String
+
+  """The timezone of the project."""
+  timezone: String
+
+  """Whether the project is private or not."""
+  private: Boolean
+
+  """The icon of the project."""
+  icon: String
+
+  """The data required for the onboarding process."""
+  hasCompletedOnboardingFor: JSONString
 }
 
 """
@@ -544,7 +639,7 @@ Creates new organization.
 
 Requires one of the following permissions: AUTHENTICATED_USER.
 """
-type OrganizationCreate {
+type OrganizationCreate @doc(category: "Organizations") {
   """
   An organization. Organizations are root-level objects that contain users and projects.
   """
@@ -567,7 +662,17 @@ type OrganizationError @doc(category: "Organizations") {
   message: String
 
   """The error code."""
-  code: UserErrorCode!
+  code: OrganizationErrorCode!
+}
+
+"""An enumeration."""
+enum OrganizationErrorCode @doc(category: "Organizations") {
+  ALREADY_EXISTS
+  GRAPHQL_ERROR
+  INVALID
+  NOT_FOUND
+  REQUIRED
+  UNIQUE
 }
 
 input OrganizationCreateInput @doc(category: "Organizations") {
