@@ -16,25 +16,23 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 type Props = {
     children: React.ReactNode;
 };
+
 export const PrivateRoute = ({ children }: Props) => {
     const [ready, setReady] = useState(false);
     const [invalidUrl, setInvalidUrl] = useState(false);
     const { token } = useAuthToken();
-    const { organizationSlug, projectId } = useParams();
+    const { organizationSlug, projectSlug } = useParams();
     const { viewer, createSession, updateSession } = useSession();
     const navigate = useNavigate();
     const [fetchViewer, { loading }] = useViewerLazyQuery();
 
     useEffect(() => {
-        let user: SessionViewer | null = viewer || null;
-        let viewerIsLatest = false;
-        let shouldRedirect = false;
-        let org: OrganizationCountableEdge | null = null;
+        const validateOrg = async () => {
+            let user: SessionViewer | null = viewer || null;
+            let viewerIsLatest = false;
+            let shouldRedirect = false;
+            let org: OrganizationCountableEdge | null = null;
 
-        const validateUrl = async () => {
-            if (!token) {
-                return;
-            }
             logDebug("viewer: ", user);
             if (!user) {
                 logDebug("No viewer, checking local storage...");
@@ -128,21 +126,21 @@ export const PrivateRoute = ({ children }: Props) => {
 
             // Project checks
             if (
-                !projectId &&
+                !projectSlug &&
                 user.project?.organization.slug === organizationSlug
             ) {
                 logDebug(
-                    "No projectId supplied and current project belongs to current org\nRedirecting to current project...",
+                    "No projectSlug supplied and current project belongs to current org\nRedirecting to current project...",
                 );
                 shouldRedirect = true;
             }
 
             if (
-                !projectId &&
+                !projectSlug &&
                 user.project?.organization.slug !== organizationSlug
             ) {
                 logDebug(
-                    "No projectId supplied and current project does not belong to current org\nUpdating current project...",
+                    "No projectSlug supplied and current project does not belong to current org\nUpdating current project...",
                 );
 
                 user!.project = org?.node.projects?.edges[0].node;
@@ -151,14 +149,14 @@ export const PrivateRoute = ({ children }: Props) => {
             }
 
             if (
-                (projectId &&
-                    user.project?.id === projectId &&
+                (projectSlug &&
+                    user.project?.slug === projectSlug &&
                     user.project.organization.slug !== organizationSlug) ||
-                (projectId && user.project?.id !== projectId)
+                (projectSlug && user.project?.slug !== projectSlug)
             ) {
                 logDebug("Project mismatch, updating current project...");
                 const proj = org?.node.projects?.edges.find(
-                    (edge) => edge.node.id === projectId,
+                    (edge) => edge.node.id === projectSlug,
                 );
 
                 if (!proj && viewerIsLatest) {
@@ -182,7 +180,7 @@ export const PrivateRoute = ({ children }: Props) => {
                             viewerIsLatest = true;
                             logDebug("Updated projects, retrying...");
                             const proj = user.projects?.edges.find(
-                                (edge) => edge.node.id === projectId,
+                                (edge) => edge.node.id === projectSlug,
                             );
 
                             if (
@@ -209,8 +207,12 @@ export const PrivateRoute = ({ children }: Props) => {
             }
         };
 
-        validateUrl();
-    }, []);
+        if (organizationSlug) {
+            validateOrg();
+        } else if (!organizationSlug && !ready) {
+            setReady(true);
+        }
+    }, [organizationSlug]);
 
     useEffect(() => {
         if (viewer) {

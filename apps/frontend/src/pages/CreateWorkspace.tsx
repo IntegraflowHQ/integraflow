@@ -1,6 +1,8 @@
 import { useOrganizationCreateMutation } from "@/generated/graphql";
-import { PrivateRoute } from "@/layout/PrivateRoute";
+import { PrivateRoute } from "@/modules/auth/components/PrivateRoute";
 import { handleRedirect } from "@/modules/auth/helper";
+import { useSession } from "@/modules/users/hooks/useSession";
+import { omitTypename } from "@/utils";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -43,6 +45,7 @@ const WorkspaceRoles = [
 
 const Workspace = () => {
     const navigate = useNavigate();
+    const { updateSession } = useSession();
     const {
         watch,
         setValue,
@@ -75,6 +78,7 @@ const Workspace = () => {
 
     useEffect(() => {
         if (data && data.organizationCreate?.user) {
+            updateSession(omitTypename(data.organizationCreate?.user));
             handleRedirect(data.organizationCreate!.user, navigate);
         } else return;
     }, [data]);

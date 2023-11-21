@@ -53,7 +53,7 @@ const router = createBrowserRouter([
                 element: <AppCore />,
                 children: [
                     {
-                        path: "projects/:projectId/get-started",
+                        path: "projects/:projectSlug/get-started",
                         element: <Onboarding />,
                     },
                 ],
