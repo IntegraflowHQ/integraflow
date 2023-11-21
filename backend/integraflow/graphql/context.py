@@ -1,4 +1,5 @@
 from typing import Optional, cast
+from uuid import UUID
 
 from django.contrib.auth import authenticate
 from django.http import HttpRequest
@@ -11,6 +12,7 @@ from integraflow.core.auth import (
     get_project_from_request
 )
 from integraflow.core.jwt import jwt_decode_with_exception_handler
+from integraflow.graphql.core.utils import from_global_id_or_none
 from integraflow.permission.user_permissions import UserPermissions
 from integraflow.user.models import User
 
@@ -72,14 +74,10 @@ def set_auth_on_context(request: IntegraflowContext):
 
 
 def set_user_permission_on_context(request: IntegraflowContext):
-    if request.user:
-        user = cast(User, request.user)
-        project = user.project
+    user = cast(User, request.user)
 
-        project_id = get_project_from_request(request)
-        if project_id is not None:
-            project = ProjectByIdLoader(request).load(
-                project_id
-            ).get()
+    project_id = from_global_id_or_none(get_project_from_request(request))
+    if project_id is not None:
+        project = ProjectByIdLoader(request).load(UUID(project_id)).get()
 
         request.user_permissions = UserPermissions(user, project)
