@@ -14,6 +14,7 @@ import django_stubs_ext
 import jaeger_client.config
 import sentry_sdk
 import sentry_sdk.utils
+from corsheaders.defaults import default_headers
 
 # from celery.schedules import crontab
 from django.conf import global_settings
@@ -433,6 +434,18 @@ if ALLOWED_GRAPHQL_ORIGINS[0] == "*":
     CORS_ALLOW_ALL_ORIGINS = True
 else:
     CORS_ALLOWED_ORIGINS = ALLOWED_GRAPHQL_ORIGINS
+
+CORS_ALLOW_HEADERS = (
+    *default_headers,
+    "Project",
+    "Organization",
+)
+
+CORS_EXPOSE_HEADERS = (
+    *default_headers,
+    "Project",
+    "Organization",
+)
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
