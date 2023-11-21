@@ -144,6 +144,9 @@ type Project implements Node @doc(category: "Projects") {
   """Slug of the project."""
   slug: String!
 
+  """Whether the project is private or not."""
+  accessControl: Boolean
+
   """The data required for the onboarding process"""
   hasCompletedOnboardingFor: JSONString
 
@@ -398,6 +401,12 @@ type Mutation {
     input: ProjectCreateInput!
   ): ProjectCreate @doc(category: "Projects")
 
+  """Updates a project."""
+  projectUpdate(
+    """A partial object to update the project with."""
+    input: ProjectUpdateInput!
+  ): ProjectUpdate @doc(category: "Projects")
+
   """
   Creates new organization. 
   
@@ -580,11 +589,6 @@ enum ProjectErrorCode @doc(category: "Projects") {
 }
 
 input ProjectCreateInput @doc(category: "Projects") {
-  """
-  The identifier in UUID v4 format. If none is provided, the backend will generate one.
-  """
-  id: UUID
-
   """The name of the project."""
   name: String!
 
@@ -593,6 +597,11 @@ input ProjectCreateInput @doc(category: "Projects") {
 
   """Whether the project is private or not."""
   private: Boolean
+
+  """
+  The identifier in UUID v4 format. If none is provided, the backend will generate one.
+  """
+  id: UUID
 }
 
 """
@@ -600,6 +609,30 @@ Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide nati
 in fields, resolvers and input.
 """
 scalar UUID
+
+"""Updates a project."""
+type ProjectUpdate @doc(category: "Projects") {
+  projectErrors: [ProjectError!]!
+  errors: [ProjectError!]!
+  project: Project
+}
+
+input ProjectUpdateInput @doc(category: "Projects") {
+  """The name of the project."""
+  name: String
+
+  """The timezone of the project."""
+  timezone: String
+
+  """Whether the project is private or not."""
+  private: Boolean
+
+  """The icon of the project."""
+  icon: String
+
+  """The data required for the onboarding process."""
+  hasCompletedOnboardingFor: JSONString
+}
 
 """
 Creates new organization. 

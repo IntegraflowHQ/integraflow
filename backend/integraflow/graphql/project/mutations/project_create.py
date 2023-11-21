@@ -18,11 +18,7 @@ from integraflow.user.models import User
 from ..types import Project
 
 
-class ProjectCreateInput(BaseInputObjectType):
-    id = graphene.UUID(
-        description="The identifier in UUID v4 format. If none is provided, "
-        "the backend will generate one."
-    )
+class ProjectInput(BaseInputObjectType):
     name = graphene.String(
         required=True,
         description="The name of the project."
@@ -32,6 +28,16 @@ class ProjectCreateInput(BaseInputObjectType):
     )
     private = graphene.Boolean(
         description="Whether the project is private or not."
+    )
+
+    class Meta:
+        doc_category = DOC_CATEGORY_PROJECTS
+
+
+class ProjectCreateInput(ProjectInput):
+    id = graphene.UUID(
+        description="The identifier in UUID v4 format. If none is provided, "
+        "the backend will generate one."
     )
 
     class Meta:
