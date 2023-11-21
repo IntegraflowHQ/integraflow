@@ -1,7 +1,10 @@
-import { AuthUser, User } from "@/generated/graphql";
+import { SessionViewer } from "@/types";
 import { NavigateFunction } from "react-router-dom";
 
-export const handleRedirect = (user: AuthUser | User, navigate: NavigateFunction) => {
+export const handleRedirect = (
+    user: SessionViewer,
+    navigate: NavigateFunction,
+) => {
     if (!user.organization) {
         navigate("/create-workspace");
     } else if (
