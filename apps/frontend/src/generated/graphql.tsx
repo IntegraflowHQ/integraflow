@@ -680,7 +680,7 @@ export type ProjectCreateMutationVariables = Exact<{
 }>;
 
 
-export type ProjectCreateMutation = { __typename?: 'Mutation', projectCreate?: { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', name: string } | null } | null };
+export type ProjectCreateMutation = { __typename?: 'Mutation', projectCreate?: { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
 
 export type ViewerQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1017,12 +1017,10 @@ export type TokenRefreshMutationOptions = Apollo.BaseMutationOptions<TokenRefres
 export const ProjectCreateDocument = gql`
     mutation projectCreate($input: ProjectCreateInput!) {
   projectCreate(input: $input) {
-    project {
-      name
-    }
+    ...ProjectCreateFragment
   }
 }
-    `;
+    ${ProjectCreateFragmentFragmentDoc}`;
 export type ProjectCreateMutationFn = Apollo.MutationFunction<ProjectCreateMutation, ProjectCreateMutationVariables>;
 
 /**
