@@ -13,9 +13,11 @@ import {
     SpeakerIcon,
 } from "@/assets/images";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/Dialog";
+import { useProjectCreateMutation } from "@/generated/graphql";
 import { Button, TextInput } from "@/ui";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { useState } from "react";
 import Discord from "../../assets/images/navbar/Discord.png";
 import {
     default as Frame,
@@ -85,6 +87,30 @@ export const Navbar = () => {
         },
     ];
 
+    const [projectCreate, { data }] = useProjectCreateMutation();
+
+    const [projectName, setProjectName] = useState<string>("");
+    const [projectNameError, setProjectNameError] = useState("");
+
+    const handleCreateProject = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (!projectName) {
+            setProjectNameError("Field cannot be empty");
+            return;
+        }
+        if (projectName.split("").length <= 2) {
+            setProjectNameError("Minimum length of project is 3");
+            return;
+        }
+
+        await projectCreate({
+            variables: {
+                input: { name: projectName },
+            },
+        });
+        setProjectNameError("");
+    };
+
     return (
         <div
             className="w-[240px] border-r border-intg-bg-4 bg-intg-black p-6"
@@ -150,7 +176,7 @@ export const Navbar = () => {
                                         <Button
                                             icon={<CirclePlusIcon />}
                                             variant="custom"
-                                            text="New Workspace"
+                                            text="New Project"
                                             size="md"
                                             className="bg-intg-bg-11"
                                         />
@@ -160,19 +186,35 @@ export const Navbar = () => {
                                         description="Pick a method that suits you best"
                                     >
                                         <div className="mt-6 w-[34rem]">
-                                            <TextInput
-                                                label="Project Name"
-                                                placeholder="Project name"
-                                            />
-                                            <div className="my-6">
-                                                <hr className="border-intg-bg-4" />
-                                            </div>
-                                            <div className="w-full">
-                                                <Button
-                                                    text="Create Project"
-                                                    className="w-full px-8 py-4"
+                                            <form
+                                                onSubmit={handleCreateProject}
+                                            >
+                                                <TextInput
+                                                    label="Project Name"
+                                                    placeholder="Project name"
+                                                    value={projectName}
+                                                    onChange={(e) => {
+                                                        setProjectName(
+                                                            e.target.value,
+                                                        );
+                                                        setProjectNameError("");
+                                                    }}
+                                                    error={!!projectNameError}
+                                                    errorMessage={
+                                                        projectNameError
+                                                    }
                                                 />
-                                            </div>
+                                                <div className="my-6">
+                                                    <hr className="border-intg-bg-4" />
+                                                </div>
+                                                <div className="w-full">
+                                                    <Button
+                                                        text="Create Project"
+                                                        className="w-full px-8 py-4"
+                                                        type="submit"
+                                                    />
+                                                </div>
+                                            </form>
                                         </div>
                                     </DialogContent>
                                 </Dialog>
