@@ -25,19 +25,10 @@ export const VIEWER = gql`
                         projects(first: 1) {
                             edges {
                                 node {
-                                    id
-                                    name
-                                    timezone
+                                    ...ProjectFragment
                                 }
                             }
                         }
-                    }
-                }
-            }
-            projects(first: 1) {
-                edges {
-                    node {
-                        ...ProjectFragment
                     }
                 }
             }

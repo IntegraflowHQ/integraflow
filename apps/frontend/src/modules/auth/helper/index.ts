@@ -12,14 +12,14 @@ export const handleRedirect = (
         user.project &&
         user.project.hasCompletedOnboardingFor
     ) {
-        navigate(`${user.organization.slug}/projects/${user.project.id}`);
+        navigate(`${user.organization.slug}/projects/${user.project.slug}`);
     } else if (
         user.organization &&
         user.project &&
         !user.project.hasCompletedOnboardingFor
     ) {
         navigate(
-            `/${user.organization.slug}/projects/${user.project.id}/get-started`,
+            `/${user.organization.slug}/projects/${user.project.slug}/get-started`,
         );
     }
 };

@@ -1,21 +1,27 @@
+import { useProjectCreateMutation } from "@/generated/graphql";
 import { useSession } from "@/modules/users/hooks/useSession";
 import { Button } from "@/ui";
 
 const Onboarding = () => {
     const { viewer, createSession } = useSession();
+    const [mutate, { loading }] = useProjectCreateMutation();
     return (
         <div>
             <p>Onboarding</p>
             <Button
-                text="Delete viewer orgs"
+                text="Create project"
                 onClick={() => {
-                    createSession({
-                        ...viewer,
-                        organizations: {
-                            ...viewer?.organizations,
-                            edges: [],
+                    mutate({
+                        variables: {
+                            input: {
+                                name: "Test 1",
+                            },
                         },
-                        organization: undefined,
+                        context: {
+                            headers: {
+                                ["Project"]: viewer?.project?.id,
+                            },
+                        },
                     });
                 }}
             />
