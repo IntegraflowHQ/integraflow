@@ -21,6 +21,10 @@ class Project(ModelObjectType):
         required=True,
         description="Slug of the project.",
     )
+    access_control = graphene.Boolean(
+        required=False,
+        description="Whether the project is private or not.",
+    )
     has_completed_onboarding_for = JSONString(
         required=False,
         description="The data required for the onboarding process"
