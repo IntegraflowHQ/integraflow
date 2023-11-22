@@ -32,6 +32,13 @@ export const VIEWER = gql`
                     }
                 }
             }
+            projects(first: 1) {
+                edges {
+                    node {
+                        ...ProjectFragment
+                    }
+                }
+            }
         }
     }
 `;
