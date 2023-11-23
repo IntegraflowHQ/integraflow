@@ -124,7 +124,7 @@ class Organization(AuthOrganization):
         ).then(_resolve_projects)
 
 
-class OrganizationInvite(ModelObjectType):
+class BaseOrganizationInvite(ModelObjectType):
     id = graphene.GlobalID(
         required=True,
         description="The unique identifier of the invite."
@@ -153,9 +153,86 @@ class OrganizationInvite(ModelObjectType):
         required=True,
         description="The last time at which the invite was updated."
     )
-    is_expired = graphene.Boolean(
-        description="If the invite has expired.",
+    expired = graphene.Boolean(
+        required=True,
+        description="If the invite has expired."
     )
+
+    class Meta:
+        description = "The organization invite that was created or updated."
+        model = models.OrganizationInvite
+        interfaces = [graphene.relay.Node]
+
+    @staticmethod
+    def resolve_email(_root: models.OrganizationInvite, info: ResolveInfo):
+        return _root.target_email
+
+    @staticmethod
+    def resolve_role(_root: models.OrganizationInvite, info: ResolveInfo):
+        return _root.level
+
+    @staticmethod
+    def resolve_expired(
+        _root: models.OrganizationInvite,
+        info: ResolveInfo
+    ):
+        return _root.is_expired()
+
+
+class OrganizationInviteDetails(BaseOrganizationInvite):
+    inviter = graphene.String(
+        required=True,
+        description="The name/email of the inviter.",
+    )
+    organization_id = graphene.GlobalID(
+        required=True,
+        description="The ID of the organization the invite is for.",
+    )
+    organization_name = graphene.String(
+        required=True,
+        description="The name of the organization the invite is for.",
+    )
+    organization_logo = graphene.String(
+        required=False,
+        description="The logo of the organization the invite is for.",
+    )
+
+    class Meta:
+        description = "The organization invite that was created or updated."
+        model = models.OrganizationInvite
+        interfaces = [graphene.relay.Node]
+
+    @staticmethod
+    def resolve_inviter(_root: models.OrganizationInvite, info: ResolveInfo):
+        if _root.created_by.first_name:
+            return (
+                f"{_root.created_by.first_name} {_root.created_by.last_name}"
+            )
+        return _root.created_by.email
+
+    @staticmethod
+    def resolve_organization_id(
+        _root: models.OrganizationInvite,
+        info: ResolveInfo
+    ):
+        return _root.organization.id
+
+    @staticmethod
+    def resolve_organization_name(
+        _root: models.OrganizationInvite,
+        info: ResolveInfo
+    ):
+        return _root.organization.name
+
+    @staticmethod
+    def resolve_organization_logo(
+        _root: models.OrganizationInvite,
+        info: ResolveInfo
+    ):
+        return _root.organization.logo
+
+
+class OrganizationInvite(BaseOrganizationInvite):
     inviter = PermissionsField(
         "integraflow.graphql.user.types.User",
         required=True,
@@ -177,21 +254,6 @@ class OrganizationInvite(ModelObjectType):
         description = "The organization invite that was created or updated."
         model = models.OrganizationInvite
         interfaces = [graphene.relay.Node]
-
-    @staticmethod
-    def resolve_email(_root: models.OrganizationInvite, info: ResolveInfo):
-        return _root.target_email
-
-    @staticmethod
-    def resolve_role(_root: models.OrganizationInvite, info: ResolveInfo):
-        return _root.level
-
-    @staticmethod
-    def resolve_is_expired(
-        _root: models.OrganizationInvite,
-        info: ResolveInfo
-    ):
-        return _root.is_expired()
 
     @staticmethod
     def resolve_inviter(_root: models.OrganizationInvite, info: ResolveInfo):
