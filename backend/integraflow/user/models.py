@@ -11,6 +11,7 @@ from typing import (
 )
 
 # Django imports
+from django.contrib import auth
 from django.db import models, transaction
 from django.db.models import Q
 from django.contrib.auth.models import (
@@ -28,6 +29,15 @@ from integraflow.organization.models import (
 )
 from integraflow.project.models import Project
 from integraflow.core.utils import sane_repr
+
+
+def _user_get_permissions(user, from_name):
+    permissions = None
+    name = "get_%s_permissions" % from_name
+    for backend in auth.get_backends():
+        if hasattr(backend, name):
+            permissions = getattr(backend, name)(user)
+    return permissions
 
 
 class UserManager(BaseUserManager):
@@ -231,6 +241,9 @@ class User(
             ).first()
             self.save()
         return self.current_project
+
+    def get_permission(self):
+        return _user_get_permissions(self, "user")
 
     def join(
         self, *,

@@ -218,7 +218,7 @@ type Organization implements Node @doc(category: "Organizations") {
   """
   Users associated with the organization.
   
-  Requires one of the following permissions: AUTHENTICATED_USER.
+  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
   """
   members(
     """By which field should the pagination order by."""
@@ -244,7 +244,7 @@ type Organization implements Node @doc(category: "Organizations") {
   """
   Projects associated with the organization.
   
-  Requires one of the following permissions: AUTHENTICATED_USER.
+  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
   """
   projects(
     """By which field should the pagination order by."""
@@ -419,6 +419,16 @@ type Mutation {
     """Onboarding survey."""
     survey: OnboardingCustomerSurvey
   ): OrganizationCreate @doc(category: "Organizations")
+
+  """
+  Creates a new organization invite. 
+  
+  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+  """
+  organization_InviteCreate(
+    """The organization invite object to create."""
+    input: OrganizationInviteCreateInput!
+  ): OrganizationInviteCreate @doc(category: "Organizations")
 }
 
 """Authenticates a user account via email and authentication token."""
@@ -692,6 +702,83 @@ input OnboardingCustomerSurvey @doc(category: "Organizations") {
 
   """Size of your company"""
   companySize: String
+}
+
+"""
+Creates a new organization invite. 
+
+Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+"""
+type OrganizationInviteCreate @doc(category: "Organizations") {
+  organizationErrors: [OrganizationError!]!
+  errors: [OrganizationError!]!
+  organizationInvite: OrganizationInvite
+}
+
+"""The organization invite that was created or updated."""
+type OrganizationInvite implements Node {
+  """The unique identifier of the invite."""
+  id: ID!
+
+  """The invitees email address."""
+  email: String!
+
+  """First name of the invite."""
+  firstName: String
+
+  """The user role that the invitee will receive upon accepting the invite."""
+  role: RoleLevel!
+
+  """The time at which the invite was created."""
+  createdAt: DateTime!
+
+  """The last time at which the invite was updated."""
+  updatedAt: DateTime!
+
+  """If the invite has expired."""
+  isExpired: Boolean
+
+  """
+  The user who created the invitation.
+  
+  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+  """
+  inviter: User!
+
+  """
+  The current project of the user.
+  
+  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+  """
+  organization: Organization!
+}
+
+enum RoleLevel {
+  MEMBER
+  ADMIN
+}
+
+"""
+The `DateTime` scalar type represents a DateTime
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar DateTime
+
+input OrganizationInviteCreateInput @doc(category: "Organizations") {
+  """
+  The identifier in UUID v4 format. If none is provided, the backend will generate one.
+  """
+  id: UUID
+
+  """The email of the invitee."""
+  email: String!
+
+  """The message to send to the invitee."""
+  message: String!
+
+  """What member role the invite should grant."""
+  role: RoleLevel = MEMBER
 }
 
 """_Any value scalar as defined by Federation spec."""

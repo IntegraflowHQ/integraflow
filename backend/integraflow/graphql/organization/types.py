@@ -11,6 +11,7 @@ from integraflow.graphql.core.doc_category import (
     DOC_CATEGORY_PROJECTS,
     DOC_CATEGORY_USERS
 )
+from integraflow.graphql.core.enums import RoleLevel
 from integraflow.graphql.core.fields import (
     FilterConnectionField,
     PermissionsField
@@ -48,9 +49,7 @@ class AuthOrganization(ModelObjectType):
         graphene.Int,
         description="Member count",
         required=True,
-        permissions=[
-            AuthorizationFilters.AUTHENTICATED_USER,
-        ],
+        permissions=[AuthorizationFilters.AUTHENTICATED_USER],
     )
 
     class Meta:
@@ -70,7 +69,7 @@ class Organization(AuthOrganization):
             description="By which field should the pagination order by."
         ),
         description="Users associated with the organization.",
-        permissions=[AuthorizationFilters.AUTHENTICATED_USER],
+        permissions=[AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS],
         doc_category=DOC_CATEGORY_USERS,
     )
 
@@ -80,7 +79,7 @@ class Organization(AuthOrganization):
             description="By which field should the pagination order by."
         ),
         description="Projects associated with the organization.",
-        permissions=[AuthorizationFilters.AUTHENTICATED_USER],
+        permissions=[AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS],
         doc_category=DOC_CATEGORY_PROJECTS,
     )
 
@@ -123,6 +122,87 @@ class Organization(AuthOrganization):
         return ProjectByOrganizationIdLoader(info.context).load(
             _root.id
         ).then(_resolve_projects)
+
+
+class OrganizationInvite(ModelObjectType):
+    id = graphene.GlobalID(
+        required=True,
+        description="The unique identifier of the invite."
+    )
+    email = graphene.String(
+        required=True,
+        description="The invitees email address.",
+    )
+    first_name = graphene.String(
+        description="First name of the invite.",
+        required=False
+    )
+    role = graphene.Field(
+        RoleLevel,
+        description=(
+            "The user role that the invitee will receive upon accepting the "
+            "invite."
+        ),
+        required=True
+    )
+    created_at = graphene.DateTime(
+        required=True,
+        description="The time at which the invite was created."
+    )
+    updated_at = graphene.DateTime(
+        required=True,
+        description="The last time at which the invite was updated."
+    )
+    is_expired = graphene.Boolean(
+        description="If the invite has expired.",
+    )
+    inviter = PermissionsField(
+        "integraflow.graphql.user.types.User",
+        required=True,
+        description="The user who created the invitation.",
+        permissions=[
+            AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS,
+        ],
+    )
+    organization = PermissionsField(
+        Organization,
+        required=True,
+        description="The current project of the user.",
+        permissions=[
+            AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS,
+        ],
+    )
+
+    class Meta:
+        description = "The organization invite that was created or updated."
+        model = models.OrganizationInvite
+        interfaces = [graphene.relay.Node]
+
+    @staticmethod
+    def resolve_email(_root: models.OrganizationInvite, info: ResolveInfo):
+        return _root.target_email
+
+    @staticmethod
+    def resolve_role(_root: models.OrganizationInvite, info: ResolveInfo):
+        return _root.level
+
+    @staticmethod
+    def resolve_is_expired(
+        _root: models.OrganizationInvite,
+        info: ResolveInfo
+    ):
+        return _root.is_expired()
+
+    @staticmethod
+    def resolve_inviter(_root: models.OrganizationInvite, info: ResolveInfo):
+        return _root.created_by
+
+    @staticmethod
+    def resolve_organization(
+        _root: models.OrganizationInvite,
+        info: ResolveInfo
+    ):
+        return _root.organization
 
 
 class OrganizationCountableConnection(CountableConnection):

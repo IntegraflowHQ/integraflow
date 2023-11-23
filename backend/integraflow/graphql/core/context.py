@@ -6,7 +6,6 @@ from django.http import HttpRequest
 from django.utils.functional import empty
 
 from integraflow.app.models import App
-from integraflow.permission.user_permissions import UserPermissions
 from integraflow.user.models import User
 
 if TYPE_CHECKING:
@@ -20,7 +19,6 @@ class IntegraflowContext(HttpRequest):
     dataloaders: Dict[str, "DataLoader"]
     app: Optional[App]
     user: Optional[User]  # type: ignore[assignment]
-    user_permissions: Optional[UserPermissions]
     requestor: Union[App, User, None]
     request_time: datetime.datetime
 

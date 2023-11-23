@@ -7,6 +7,7 @@ from typing import (
     Tuple,
 )
 
+from django.conf import settings
 from django.db import models, transaction
 from django.db.models.query import QuerySet
 from django.dispatch import receiver
@@ -32,7 +33,7 @@ if TYPE_CHECKING:
 
 TIMEZONES = [(tz, tz) for tz in pytz.common_timezones]
 
-INVITE_DAYS_VALIDITY = 3  # number of days for which invites are valid
+INVITE_DAYS_VALIDITY = settings.INVITE_DAYS_VALIDITY
 
 
 class OrganizationManager(models.Manager):
@@ -132,7 +133,8 @@ class Organization(UUIDModel):
 
 class OrganizationMembership(UUIDModel):
     class Level(models.IntegerChoices):
-        """Keep in sync with ProjectMembership.Level (only difference being
+        """
+        Keep in sync with ProjectMembership.Level (only difference being
         projects not having an Owner).
         """
 
@@ -224,6 +226,10 @@ class OrganizationMembership(UUIDModel):
 
 
 class OrganizationInvite(UUIDModel):
+    class Level(models.IntegerChoices):
+        MEMBER = 1, "member"
+        ADMIN = 8, "administrator"
+
     organization: models.ForeignKey = models.ForeignKey(
         "organization.Organization",
         on_delete=models.CASCADE,
@@ -238,6 +244,10 @@ class OrganizationInvite(UUIDModel):
         max_length=30,
         blank=True,
         default=""
+    )
+    level: models.PositiveSmallIntegerField = models.PositiveSmallIntegerField(
+        default=Level.MEMBER,
+        choices=Level.choices
     )
     created_by: models.ForeignKey = models.ForeignKey(
         "user.User",
@@ -305,7 +315,10 @@ class OrganizationInvite(UUIDModel):
     def use(self, user: "User", *, prevalidated: bool = False) -> None:
         if not prevalidated:
             self.validate(user=user)
-        user.join(organization=self.organization)
+        user.join(
+            organization=self.organization,
+            level=self.level
+        )
         if (
             is_email_available(with_absolute_urls=True) and
             self.organization.is_member_join_email_enabled

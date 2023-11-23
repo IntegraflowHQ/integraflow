@@ -14,6 +14,7 @@ import django_stubs_ext
 import jaeger_client.config
 import sentry_sdk
 import sentry_sdk.utils
+from corsheaders.defaults import default_headers
 
 # from celery.schedules import crontab
 from django.conf import global_settings
@@ -44,7 +45,9 @@ def get_bool_from_env(name, default_value):
         try:
             return ast.literal_eval(value)
         except ValueError as e:
-            raise ValueError("{} is an invalid value for {}".format(value, name)) from e
+            raise ValueError(
+                "{} is an invalid value for {}".format(value, name)
+            ) from e
     return default_value
 
 
@@ -228,14 +231,15 @@ JWT_MANAGER_PATH = os.environ.get(
 )
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
     "django.middleware.common.CommonMiddleware",
     "integraflow.core.middleware.jwt_refresh_token_middleware",
 ]
 
 INSTALLED_APPS = [
     # External apps that need to go before django's
+    "corsheaders",
     "storages",
     # Django modules
     "django.contrib.auth",
@@ -260,7 +264,6 @@ INSTALLED_APPS = [
     "django_countries",
     "django_filters",
     "phonenumber_field",
-    "corsheaders",
 ]
 
 ENABLE_DJANGO_EXTENSIONS = get_bool_from_env("ENABLE_DJANGO_EXTENSIONS", False)
@@ -433,6 +436,18 @@ if ALLOWED_GRAPHQL_ORIGINS[0] == "*":
     CORS_ALLOW_ALL_ORIGINS = True
 else:
     CORS_ALLOWED_ORIGINS = ALLOWED_GRAPHQL_ORIGINS
+
+CORS_ALLOW_HEADERS = (
+    *default_headers,
+    "Project",
+    "Organization",
+)
+
+CORS_EXPOSE_HEADERS = (
+    *default_headers,
+    "Project",
+    "Organization",
+)
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
@@ -681,15 +696,20 @@ JWT_TTL_REFRESH = timedelta(
     seconds=parse(os.environ.get("JWT_TTL_REFRESH", "30 days"))  # type: ignore
 )
 
-
 JWT_TTL_REQUEST_EMAIL_CHANGE = timedelta(
     seconds=parse(
         os.environ.get("JWT_TTL_REQUEST_EMAIL_CHANGE", "1 hour")
     )  # type: ignore
 )
 
-MAGIC_LINK_EXPIRES_IN = os.environ.get("MAGIC_LINK_EXPIRES_IN", 10)
-MAGIC_LINK_MAX_ATTEMPTS = os.environ.get("MAGIC_LINK_EXPIRES_IN", 5)
+MAGIC_LINK_MINUTES_VALIDITY = os.environ.get(
+    "MAGIC_LINK_MINUTES_VALIDITY", 10
+)  # 10 mins
+MAGIC_LINK_MAX_ATTEMPTS = os.environ.get("MAGIC_LINK_MAX_ATTEMPTS", 5)  # 5 tries
+
+INVITE_DAYS_VALIDITY = os.environ.get(
+    "INVITE_DAYS_VALIDITY", 3
+)  # number of days for which invites are valid
 
 # Patch SubscriberExecutionContext class from `graphql-core-legacy` package
 # to fix bug causing not returning errors for subscription queries.
