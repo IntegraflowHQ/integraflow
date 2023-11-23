@@ -12,12 +12,17 @@ import {
     SettingsIcon,
     SpeakerIcon,
 } from "@/assets/images";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/Dialog";
+import { GlobalSpinner } from "@/components";
+import { Dialog, DialogContent } from "@/components/Dialog";
 import { useProjectCreateMutation } from "@/generated/graphql";
+import { handleRedirect } from "@/modules/auth/helper";
+import { useSession } from "@/modules/users/hooks/useSession";
 import { Button, TextInput } from "@/ui";
+import { getAcronym } from "@/utils";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Discord from "../../assets/images/navbar/Discord.png";
 import {
     default as Frame,
@@ -86,9 +91,11 @@ export const Navbar = () => {
             icon: <QuestionIcon />,
         },
     ];
+    const navigate = useNavigate();
+    const [projectCreate, { loading }] = useProjectCreateMutation();
+    const { viewer, updateSession } = useSession();
 
-    const [projectCreate, { data }] = useProjectCreateMutation();
-
+    const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
     const [projectName, setProjectName] = useState<string>("");
     const [projectNameError, setProjectNameError] = useState("");
 
@@ -103,13 +110,36 @@ export const Navbar = () => {
             return;
         }
 
-        await projectCreate({
+        const result = await projectCreate({
             variables: {
                 input: { name: projectName },
             },
+            context: {
+                headers: {
+                    Project: viewer?.project?.id,
+                },
+            },
         });
-        setProjectNameError("");
+
+        if (result.data?.projectCreate) {
+            updateSession({ project: result.data.projectCreate.project });
+            setOpenCreateProjectModal(false);
+        }
     };
+    useEffect(() => {
+        handleRedirect(viewer, navigate);
+    }, [viewer]);
+
+    useEffect(() => {
+        if (openCreateProjectModal === false) {
+            setProjectName("");
+            setProjectNameError("");
+        }
+    }, [openCreateProjectModal]);
+
+    if (loading) {
+        return <GlobalSpinner />;
+    }
 
     return (
         <div
@@ -124,29 +154,26 @@ export const Navbar = () => {
         >
             <div className="mb-9 space-y-2">
                 <p className="text-xs text-intg-text-4">Project</p>
-
                 <DropdownMenu.Root>
                     <DropdownMenu.Trigger className="outline-none">
                         <p className="flex w-[177px] items-center text-intg-text-4">
-                            <span className="mr-3 rounded bg-gradient-button px-1.5">
-                                IF
+                            <span className="mr-3 rounded bg-gradient-button px-1.5 uppercase">
+                                {getAcronym(viewer?.project?.name as string)}
                             </span>
-                            <span>Integraflow</span>
+                            <span className="capitalize">
+                                {viewer?.project?.name}
+                            </span>
                             <span className="ml-auto">
                                 <ChevronDown size={16} />
                             </span>
                         </p>
                     </DropdownMenu.Trigger>
-
                     <DropdownMenu.Portal>
                         <DropdownMenu.Content
                             align="start"
                             alignOffset={50}
                             className="border-intg-bg-10  w-[221px] rounded border bg-intg-bg-9 p-2 text-white"
                         >
-                            <DropdownMenu.Label />
-                            <DropdownMenu.Item />
-
                             <DropdownMenu.Group>
                                 {projects.map((item) => {
                                     return (
@@ -171,53 +198,18 @@ export const Navbar = () => {
                                     </span>
                                     <span>Project Settings</span>
                                 </DropdownMenu.Item>
-                                <Dialog>
-                                    <DialogTrigger className="w-full">
-                                        <Button
-                                            icon={<CirclePlusIcon />}
-                                            variant="custom"
-                                            text="New Project"
-                                            size="md"
-                                            className="bg-intg-bg-11"
-                                        />
-                                    </DialogTrigger>
-                                    <DialogContent
-                                        title="Create new survey"
-                                        description="Pick a method that suits you best"
-                                    >
-                                        <div className="mt-6 w-[34rem]">
-                                            <form
-                                                onSubmit={handleCreateProject}
-                                            >
-                                                <TextInput
-                                                    label="Project Name"
-                                                    placeholder="Project name"
-                                                    value={projectName}
-                                                    onChange={(e) => {
-                                                        setProjectName(
-                                                            e.target.value,
-                                                        );
-                                                        setProjectNameError("");
-                                                    }}
-                                                    error={!!projectNameError}
-                                                    errorMessage={
-                                                        projectNameError
-                                                    }
-                                                />
-                                                <div className="my-6">
-                                                    <hr className="border-intg-bg-4" />
-                                                </div>
-                                                <div className="w-full">
-                                                    <Button
-                                                        text="Create Project"
-                                                        className="w-full px-8 py-4"
-                                                        type="submit"
-                                                    />
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </DialogContent>
-                                </Dialog>
+                                <DropdownMenu.Item>
+                                    <Button
+                                        icon={<CirclePlusIcon />}
+                                        variant="custom"
+                                        text="New Project"
+                                        size="md"
+                                        className="bg-intg-bg-11"
+                                        onClick={() =>
+                                            setOpenCreateProjectModal(true)
+                                        }
+                                    />
+                                </DropdownMenu.Item>
                             </DropdownMenu.Group>
                             <DropdownMenu.CheckboxItem>
                                 <DropdownMenu.ItemIndicator />
@@ -228,6 +220,39 @@ export const Navbar = () => {
                     </DropdownMenu.Portal>
                 </DropdownMenu.Root>
             </div>
+            <Dialog
+                open={openCreateProjectModal}
+                onOpenChange={(value) => setOpenCreateProjectModal(value)}
+            >
+                <DialogContent title="Create new survey">
+                    <div className="mt-6 w-[34rem]">
+                        <form onSubmit={handleCreateProject}>
+                            <TextInput
+                                label="Project Name"
+                                placeholder="Project name"
+                                value={projectName}
+                                onChange={(e) => {
+                                    setProjectName(e.target.value);
+                                    setProjectNameError("");
+                                }}
+                                error={!!projectNameError}
+                                errorMessage={projectNameError}
+                            />
+                            <div className="my-6">
+                                <hr className="border-intg-bg-4" />
+                            </div>
+                            <div className="w-full">
+                                <Button
+                                    text="Create Project"
+                                    className="w-full px-8 py-4"
+                                    type="submit"
+                                />
+                            </div>
+                        </form>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
             <div className="mb-[14px] space-y-[27px]">
                 <button className="flex items-center justify-between space-x-2 rounded border border-intg-bg-4 bg-intg-bg-9 p-3 text-sm text-intg-text-4">
                     <span>

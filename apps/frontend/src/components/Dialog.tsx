@@ -9,7 +9,7 @@ type Props = {
     alignHeader?: "center" | "left";
 };
 
-export const DialogContent = forwardRef<HTMLElement, Props>(
+export const DialogContent = forwardRef<HTMLDivElement, Props>(
     ({ children, title, alignHeader = "left", ...props }, forwardedRef) => (
         <DialogPrimitive.Portal>
             <DialogPrimitive.Overlay

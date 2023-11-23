@@ -16,3 +16,7 @@ export function omitTypename<T>(obj: T): SessionViewer {
         key === "__typename" ? undefined : value,
     );
 }
+
+export function getAcronym(value: string) {
+    return value.slice(0, 1);
+}
