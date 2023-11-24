@@ -1,5 +1,6 @@
 export { CircleIcon } from "./navbar/CircleIcon";
 export { CirclePlusIcon } from "./navbar/CirclePlusIcon";
+export { CopyIcon } from "./navbar/CopyIcon";
 export { CursorIcon } from "./navbar/CursorIcon";
 export { DocumentIcon } from "./navbar/DocumentIcon";
 export { HomeIcon } from "./navbar/HomeIcon";
