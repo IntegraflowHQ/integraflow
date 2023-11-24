@@ -1,7 +1,10 @@
-import { AuthUser, User } from "@/generated/graphql";
+import { SessionViewer } from "@/types";
 import { NavigateFunction } from "react-router-dom";
 
-export const handleRedirect = (user: AuthUser | User, navigate: NavigateFunction) => {
+export const handleRedirect = (
+    user: SessionViewer,
+    navigate: NavigateFunction,
+) => {
     if (!user.organization) {
         navigate("/create-workspace");
     } else if (
@@ -9,14 +12,14 @@ export const handleRedirect = (user: AuthUser | User, navigate: NavigateFunction
         user.project &&
         user.project.hasCompletedOnboardingFor
     ) {
-        navigate(`${user.organization.slug}/projects/${user.project.id}`);
+        navigate(`${user.organization.slug}/projects/${user.project.slug}`);
     } else if (
         user.organization &&
         user.project &&
         !user.project.hasCompletedOnboardingFor
     ) {
         navigate(
-            `/${user.organization.slug}/projects/${user.project.id}/get-started`,
+            `/${user.organization.slug}/projects/${user.project.slug}/get-started`,
         );
     }
 };

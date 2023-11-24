@@ -9,6 +9,7 @@ import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { NotFound } from "./components";
 import "./index.css";
 import { AppCore } from "./layout/AppCore";
 import AppShell from "./layout/AppShell";
@@ -52,12 +53,16 @@ const router = createBrowserRouter([
                 element: <AppCore />,
                 children: [
                     {
-                        path: "projects/:projectId/get-started",
+                        path: "projects/:projectSlug/get-started",
                         element: <Onboarding />,
                     },
                 ],
             },
         ],
+    },
+    {
+        path: "*",
+        element: <NotFound />,
     },
 ]);
 

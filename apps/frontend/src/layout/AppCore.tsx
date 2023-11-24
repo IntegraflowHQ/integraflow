@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { Navbar } from ".";
-// import "../../../../packages/web-sdk/src/styles/scrollbar.css";
-import { PrivateRoute } from "./PrivateRoute";
+import { PrivateRoute } from "../modules/auth/components/PrivateRoute";
 
 export const AppCore = () => {
     return (
