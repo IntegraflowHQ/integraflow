@@ -1,8 +1,10 @@
-import { SessionViewer } from "@/types";
+import { User } from "@/generated/graphql";
+import { Session } from "@/modules/users/states/session";
+import { DeepOmit } from "@apollo/client/utilities";
 import { NavigateFunction } from "react-router-dom";
 
 export const handleRedirect = (
-    user: SessionViewer,
+    user: Session | DeepOmit<User, "__typename">,
     navigate: NavigateFunction,
 ) => {
     if (!user.organization) {

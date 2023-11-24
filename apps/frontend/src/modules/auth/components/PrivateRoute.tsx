@@ -1,10 +1,9 @@
 import { GlobalSpinner, NotFound } from "@/components";
 import { createOrgDbs } from "@/database";
 import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
-import { useSession } from "@/modules/users/hooks/useSession";
+import useUser from "@/modules/users/hooks/useSession";
 import { useEffect } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import useValidateOrgUrl from "../hooks/useValidateOrgUrl";
 
 type Props = {
     children: React.ReactNode;
@@ -12,29 +11,27 @@ type Props = {
 
 export const PrivateRoute = ({ children }: Props) => {
     const { token } = useAuthToken();
-    const { viewer } = useSession();
     const { organizationSlug, projectSlug } = useParams();
-    const { ready, loading, invalidUrl } = useValidateOrgUrl(
+    const { isValidating, isValidSession, user } = useUser(
         organizationSlug,
         projectSlug,
     );
 
     useEffect(() => {
-        if (viewer) {
-            localStorage.setItem("viewer", JSON.stringify(viewer));
-            createOrgDbs(viewer);
+        if (user) {
+            createOrgDbs(user);
         }
-    }, [viewer]);
+    }, [user]);
 
     if (!token) {
         return <Navigate to="/" />;
     }
 
-    if (!ready || loading) {
+    if (isValidating) {
         return <GlobalSpinner />;
     }
 
-    if (invalidUrl) {
+    if (!isValidSession) {
         return <NotFound />;
     }
 
