@@ -15,14 +15,12 @@ import {
 import { GlobalSpinner } from "@/components";
 import { Dialog, DialogContent } from "@/components/Dialog";
 import { useProjectCreateMutation } from "@/generated/graphql";
-import { handleRedirect } from "@/modules/auth/helper";
-import { useSession } from "@/modules/users/hooks/useSession";
+import useSession from "@/modules/users/hooks/useSession";
 import { Button, TextInput } from "@/ui";
 import { getAcronym } from "@/utils";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Discord from "../../assets/images/navbar/Discord.png";
 import {
     default as Frame,
@@ -91,9 +89,9 @@ export const Navbar = () => {
             icon: <QuestionIcon />,
         },
     ];
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [projectCreate, { loading }] = useProjectCreateMutation();
-    const { viewer, updateSession } = useSession();
+    const { session } = useSession();
 
     const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
     const [projectName, setProjectName] = useState<string>("");
@@ -116,19 +114,19 @@ export const Navbar = () => {
             },
             context: {
                 headers: {
-                    Project: viewer?.project?.id,
+                    Project: session?.project?.id,
                 },
             },
         });
 
         if (result.data?.projectCreate) {
-            updateSession({ project: result.data.projectCreate.project });
+            // updateSession({ project: result.data.projectCreate.project });
             setOpenCreateProjectModal(false);
         }
     };
-    useEffect(() => {
-        handleRedirect(viewer, navigate);
-    }, [viewer]);
+    // useEffect(() => {
+    //     handleRedirect(session, navigate);
+    // }, [session]);
 
     useEffect(() => {
         if (openCreateProjectModal === false) {
@@ -158,10 +156,10 @@ export const Navbar = () => {
                     <DropdownMenu.Trigger className="outline-none">
                         <p className="flex w-[177px] items-center text-intg-text-4">
                             <span className="mr-3 rounded bg-gradient-button px-1.5 uppercase">
-                                {getAcronym(viewer?.project?.name as string)}
+                                {getAcronym(session?.project?.name as string)}
                             </span>
                             <span className="capitalize">
-                                {viewer?.project?.name}
+                                {session?.project?.name}
                             </span>
                             <span className="ml-auto">
                                 <ChevronDown size={16} />
