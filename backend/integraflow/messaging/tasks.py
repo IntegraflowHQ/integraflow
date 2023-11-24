@@ -91,7 +91,9 @@ def send_member_join(invitee_uuid: str, organization_id: str) -> None:
     )
     message = EmailMessage(
         campaign_key=campaign_key,
-        subject=f"{invitee.first_name} joined you on Integraflow",
+        subject=(
+            f"{invitee.first_name or invitee.email} joined you on Integraflow"
+        ),
         template_name="member_join",
         template_context={
             "invitee": invitee,
