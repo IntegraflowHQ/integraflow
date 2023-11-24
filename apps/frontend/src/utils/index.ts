@@ -24,3 +24,7 @@ export function isOver24Hours(previousTimestamp: number): boolean {
 
     return timeDifference > twentyFourHoursInMilliseconds;
 }
+
+export function getAcronym(value: string) {
+    return value.slice(0, 1);
+}
