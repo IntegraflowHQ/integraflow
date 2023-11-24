@@ -16,6 +16,12 @@ type Query {
   Requires one of the following permissions: AUTHENTICATED_USER.
   """
   viewer: User @doc(category: "Users")
+
+  """One specific organization invite."""
+  organizationInviteDetails(
+    """ID of the group."""
+    id: ID!
+  ): OrganizationInviteDetails @doc(category: "Organizations")
   _entities(representations: [_Any]): [_Entity]
   _service: _Service
 }
@@ -351,11 +357,62 @@ enum ProjectSortField @doc(category: "Projects") {
   UPDATED_AT
 }
 
+"""The organization invite that was created or updated."""
+type OrganizationInviteDetails implements Node {
+  """The unique identifier of the invite."""
+  id: ID!
+
+  """The invitees email address."""
+  email: String!
+
+  """First name of the invite."""
+  firstName: String
+
+  """The user role that the invitee will receive upon accepting the invite."""
+  role: RoleLevel!
+
+  """The time at which the invite was created."""
+  createdAt: DateTime!
+
+  """The last time at which the invite was updated."""
+  updatedAt: DateTime!
+
+  """If the invite has expired."""
+  expired: Boolean!
+
+  """The name/email of the inviter."""
+  inviter: String!
+
+  """The ID of the organization the invite is for."""
+  organizationId: ID!
+
+  """The name of the organization the invite is for."""
+  organizationName: String!
+
+  """The logo of the organization the invite is for."""
+  organizationLogo: String
+}
+
+enum RoleLevel {
+  MEMBER
+  ADMIN
+}
+
+"""
+The `DateTime` scalar type represents a DateTime
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar DateTime
+
 type Mutation {
   """Authenticates a user account via email and authentication token."""
   emailTokenUserAuth(
     """The email which to login via the magic login code."""
     email: String!
+
+    """An optional invite ID for an organization."""
+    inviteId: ID
 
     """The magic login code."""
     token: String!
@@ -373,6 +430,9 @@ type Mutation {
   googleUserAuth(
     """Code gotten from google auth consent screen."""
     code: String!
+
+    """An optional invite ID for an organization."""
+    inviteId: ID
   ): GoogleUserAuth @doc(category: "Authentication")
 
   """
@@ -425,10 +485,20 @@ type Mutation {
   
   Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
   """
-  organization_InviteCreate(
+  organizationInviteCreate(
     """The organization invite object to create."""
     input: OrganizationInviteCreateInput!
   ): OrganizationInviteCreate @doc(category: "Organizations")
+
+  """
+  Joins an organization 
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  organizationJoin(
+    """Organization details for the new organization."""
+    input: OrganizationJoinInput!
+  ): OrganizationJoin @doc(category: "Organizations")
 }
 
 """Authenticates a user account via email and authentication token."""
@@ -736,7 +806,7 @@ type OrganizationInvite implements Node {
   updatedAt: DateTime!
 
   """If the invite has expired."""
-  isExpired: Boolean
+  expired: Boolean!
 
   """
   The user who created the invitation.
@@ -753,18 +823,6 @@ type OrganizationInvite implements Node {
   organization: Organization!
 }
 
-enum RoleLevel {
-  MEMBER
-  ADMIN
-}
-
-"""
-The `DateTime` scalar type represents a DateTime
-value as specified by
-[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
-"""
-scalar DateTime
-
 input OrganizationInviteCreateInput @doc(category: "Organizations") {
   """
   The identifier in UUID v4 format. If none is provided, the backend will generate one.
@@ -775,10 +833,27 @@ input OrganizationInviteCreateInput @doc(category: "Organizations") {
   email: String!
 
   """The message to send to the invitee."""
-  message: String!
+  message: String
 
   """What member role the invite should grant."""
-  role: RoleLevel = MEMBER
+  role: RoleLevel = 1
+}
+
+"""
+Joins an organization 
+
+Requires one of the following permissions: AUTHENTICATED_USER.
+"""
+type OrganizationJoin @doc(category: "Organizations") {
+  """A user that has access to the the resources of an organization."""
+  user: AuthUser!
+  organizationErrors: [OrganizationError!]!
+  errors: [OrganizationError!]!
+}
+
+input OrganizationJoinInput @doc(category: "Organizations") {
+  """The ID of the invite."""
+  inviteId: ID!
 }
 
 """_Any value scalar as defined by Federation spec."""

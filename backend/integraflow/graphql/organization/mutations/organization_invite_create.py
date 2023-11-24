@@ -1,4 +1,3 @@
-from typing import cast
 import graphene
 
 from django.core.exceptions import ValidationError

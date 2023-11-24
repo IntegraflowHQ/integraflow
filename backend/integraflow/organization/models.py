@@ -102,6 +102,10 @@ class Organization(UUIDModel):
         default="UTC"
     )
 
+    is_member_join_email_enabled: models.BooleanField = models.BooleanField(
+        default=True
+    )
+
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
 
@@ -159,10 +163,6 @@ class OrganizationMembership(UUIDModel):
     )
     joined_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
-
-    is_member_join_email_enabled: models.BooleanField = models.BooleanField(
-        default=True
-    )
 
     class Meta:
         db_table = "organization_memberships"
@@ -225,6 +225,23 @@ class OrganizationMembership(UUIDModel):
     __repr__ = sane_repr("organization", "user", "level")  # type: ignore
 
 
+class OrganizationInviteManager(models.Manager):
+    def accept_invite(self, user: "User", invite_id: str):
+        try:
+            invite: OrganizationInvite = (
+                OrganizationInvite.objects.select_related("organization").get(
+                    id=invite_id
+                )
+            )
+        except OrganizationInvite.DoesNotExist:
+            raise ValidationError("The provided invite ID is not valid.")
+
+        try:
+            invite.use(user)
+        except ValueError as e:
+            raise ValidationError(str(e))
+
+
 class OrganizationInvite(UUIDModel):
     class Level(models.IntegerChoices):
         MEMBER = 1, "member"
@@ -263,58 +280,32 @@ class OrganizationInvite(UUIDModel):
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
     message: models.TextField = models.TextField(blank=True, null=True)
 
+    objects: OrganizationInviteManager = OrganizationInviteManager()
+
     def validate(
         self,
         *,
-        user: Optional["User"] = None,
-        email: Optional[str] = None,
-        invite_email: Optional[str] = None,
-        request_path: Optional[str] = None,
-    ) -> None:
-        from integraflow.user.models import User
-
-        _email = email or getattr(user, "email", None)
-
-        if _email and _email != self.target_email:
-            raise ValidationError(
-                "This invite is intended for another email address.",
-                code="invalid_recipient",
-            )
+        user: "User"
+    ) -> bool:
+        if user.email != self.target_email:
+            return False
 
         if self.is_expired():
-            raise ValidationError(
-                "This invite has expired. Please ask your admin for a new"
-                " one.",
-                code="expired"
-            )
-
-        if user is None and User.objects.filter(email=invite_email).exists():
-            raise ValidationError(
-                f"/login?next={request_path}",
-                code="account_exists"
-            )
+            return False
 
         if OrganizationMembership.objects.filter(
             organization=self.organization,
-            user=user
+            user__email=self.target_email
         ).exists():
-            raise ValidationError(
-                "You already are a member of this organization.",
-                code="user_already_member"
-            )
+            return False
 
-        if OrganizationMembership.objects.filter(
-            organization=self.organization, user__email=self.target_email
-        ).exists():
-            raise ValidationError(
-                "Another user with this email address already belongs to this "
-                "organization.",
-                code="existing_email_address",
-            )
+        return True
 
-    def use(self, user: "User", *, prevalidated: bool = False) -> None:
-        if not prevalidated:
-            self.validate(user=user)
+    def use(self, user: "User") -> None:
+        validated = self.validate(user=user)
+        if not validated:
+            return
+
         user.join(
             organization=self.organization,
             level=self.level
@@ -329,9 +320,7 @@ class OrganizationInvite(UUIDModel):
                 "invitee_uuid": user.uuid,
                 "organization_id": self.organization_id  # type: ignore
             })
-        OrganizationInvite.objects.filter(
-            target_email__iexact=self.target_email
-        ).delete()
+        self.delete()
 
     def is_expired(self) -> bool:
         """Check if invite is older than INVITE_DAYS_VALIDITY days."""

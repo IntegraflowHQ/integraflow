@@ -4,13 +4,16 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
+from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.mutations import BaseMutation
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_AUTH
 from integraflow.graphql.core.types.common import UserError
-from integraflow.graphql.core import ResolveInfo
+from integraflow.graphql.core.utils import from_global_id_or_error
+from integraflow.graphql.organization.types import OrganizationInviteDetails
 from integraflow.graphql.user.types import AuthUser
 
 from integraflow.core.jwt import create_access_token, create_refresh_token
+from integraflow.organization.models import OrganizationInvite
 from integraflow.user.error_codes import UserErrorCode
 from integraflow.user import models
 from integraflow.user.utils import retrieve_user_by_email
@@ -33,6 +36,10 @@ class EmailTokenUserAuth(BaseMutation):
         token = graphene.String(
             required=True,
             description="The magic login code."
+        )
+
+        invite_id = graphene.ID(
+            description="An optional invite ID for an organization."
         )
 
     token = graphene.String(
@@ -65,6 +72,7 @@ class EmailTokenUserAuth(BaseMutation):
     ):
         token = data["token"].strip()
         email = data["email"].strip().lower()
+        invite_id = data["invite_id"].strip()
 
         key = "magic_" + str(email)
 
@@ -86,6 +94,13 @@ class EmailTokenUserAuth(BaseMutation):
                     user.save(
                         update_fields=["date_joined", "token_updated_at"]
                     )
+
+                if invite_id is not None:
+                    _, invite = from_global_id_or_error(
+                        invite_id,
+                        OrganizationInviteDetails
+                    )
+                    OrganizationInvite.objects.accept_invite(user, invite)
 
                 access_token = create_access_token(
                     user,
