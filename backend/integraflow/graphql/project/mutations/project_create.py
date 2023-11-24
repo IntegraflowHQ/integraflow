@@ -84,12 +84,8 @@ class ProjectCreate(ModelMutation):
 
         cleaned_input["access_control"] = cleaned_input.get("private")
 
-        if info.context.user_permissions:
-            current_organization = (
-                info.context.user_permissions.current_organization
-            )
-
-            cleaned_input["organization"] = current_organization
+        if info.context.user:
+            cleaned_input["organization"] = info.context.user.organization
 
         return cleaned_input
 
@@ -99,7 +95,7 @@ class ProjectCreate(ModelMutation):
 
         input = data["data"]["input"]
         if input.get("private") is True:
-            permissions.append(AuthorizationFilters.ORGANIZATION_ADMIN_ACCESS)
+            permissions = [AuthorizationFilters.ORGANIZATION_ADMIN_ACCESS]
 
         return super().check_permissions(
             context,
@@ -114,5 +110,9 @@ class ProjectCreate(ModelMutation):
     ):
         user = cast(User, info.context.user)
         user.current_project = instance
-        user.project = user.current_project  # Update cached property
+        user.current_organization = instance.organization
+        user.project = instance  # Update cached property
+        user.organization = (
+            instance.organization  # Update cached property
+        )
         user.save()

@@ -1,9 +1,13 @@
+from uuid import UUID
 import jwt
 
-from integraflow.user.models import User
+from integraflow.graphql.core.utils import from_global_id_or_none
+from integraflow.graphql.project.dataloaders import ProjectByIdLoader
 from integraflow.graphql.user.dataloaders import UserByEmailLoader
+from integraflow.permission.user_permissions import UserPermissions
+from integraflow.user.models import User
 
-from .auth import get_token_from_request
+from .auth import get_project_from_request, get_token_from_request
 from .jwt import (
     JWT_ACCESS_TYPE,
     JWT_THIRDPARTY_ACCESS_TYPE,
@@ -20,16 +24,19 @@ class BaseBackend:
     def get_user(self, user_id):
         return None
 
-    def get_user_permissions(self, user_obj, obj=None):
+    def get_user_permissions(self, user_obj):
+        return None
+
+    def get_user_perms(self, user_obj, obj=None):
         return set()
 
-    def get_group_permissions(self, user_obj, obj=None):
+    def get_group_perms(self, user_obj, obj=None):
         return set()
 
     def get_all_permissions(self, user_obj, obj=None):
         return {
-            *self.get_user_permissions(user_obj, obj=obj),
-            *self.get_group_permissions(user_obj, obj=obj),
+            *self.get_user_perms(user_obj, obj=obj),
+            *self.get_group_perms(user_obj, obj=obj),
         }
 
     def has_perm(self, user_obj, perm, obj=None):
@@ -78,16 +85,19 @@ class JSONWebTokenBackend(BaseBackend):
         return getattr(user_obj, perm_cache_name)
 
     # Moved from `django.contrib.auth.backends.ModelBackend`
-    def get_user_permissions(self, user_obj, obj=None):
+    def get_user_perms(self, user_obj, obj=None):
         """Return a set of permissions the user `user_obj` holds directly."""
         return self._get_permissions(user_obj, obj, "user")
 
     # Moved from `django.contrib.auth.backends.ModelBackend`
-    def get_group_permissions(self, user_obj, obj=None):
+    def get_group_perms(self, user_obj, obj=None):
         """
         Return a set of permissions the user `user_obj` gets from their groups.
         """
         return self._get_permissions(user_obj, obj, "group")
+
+    def get_user_permissions(self, user_obj):
+        return UserPermissions(user_obj)
 
     # Moved from `django.contrib.auth.backends.ModelBackend`
     def get_all_permissions(self, user_obj, obj=None):
@@ -133,6 +143,12 @@ def load_user_from_request(request):
             "Invalid token. Create new one by using emailTokenUserAuth "
             "mutation."
         )
+
+    project_id = from_global_id_or_none(get_project_from_request(request))
+    if project_id is not None:
+        project = ProjectByIdLoader(request).load(UUID(project_id)).get()
+        user.project = project
+        user.organization = project.organization
 
     if payload.get("is_staff"):
         user.is_staff = True
