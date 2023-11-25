@@ -1,36 +1,30 @@
-import { User, useViewerLazyQuery } from "@/generated/graphql";
+import {
+    Project,
+    ProjectCountableEdge,
+    User,
+    useViewerLazyQuery,
+} from "@/generated/graphql";
+import useRedirect from "@/modules/auth/hooks/useRedirect";
 import { isOver24Hours, omitTypename } from "@/utils";
 import { logDebug } from "@/utils/log";
-import { createSelectors } from "@/utils/selectors";
+import { DeepOmit } from "@apollo/client/utilities";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Session, useSessionStore } from "../states/session";
-import { useUserStore } from "../states/user";
+import { useParams } from "react-router-dom";
+import { Session } from "../states/session";
+import useSessionState from "./useSessionState";
+import useUserState from "./useUserState";
 
-export default function useSession(orgSlug?: string, projectSlug?: string) {
+export default function useSession() {
     const [isValidating, setIsValidating] = useState(true);
-    const sessionStore = createSelectors(useSessionStore);
-    const userStore = createSelectors(useUserStore);
-    const session = sessionStore.use.session();
-    const clearSession = sessionStore.use.clearSession();
-    const updateSession = sessionStore.use.updateSession();
-    const user = userStore.use.user();
-    const lastUserUpdate = userStore.use.lastUpdate();
-    const updateUser = userStore.use.updateUser();
+    const { orgSlug, projectSlug } = useParams();
+    const { session, clearSession, updateSession } = useSessionState();
+    const { user, lastUpdate: lastUserUpdate, updateUser } = useUserState();
     const [fetchUser] = useViewerLazyQuery();
+    const redirect = useRedirect();
 
-    const createSession = useCallback(
-        (data?: Session) => {
-            if (!data) {
-                updateSession({
-                    organization: user?.organization,
-                    project: user?.project,
-                } as Session);
-            } else {
-                updateSession(data);
-            }
-        },
-        [user],
-    );
+    const createSession = useCallback((data: Session) => {
+        updateSession(data);
+    }, []);
 
     const isCurrentOrg = useMemo(() => {
         if (!orgSlug) return false;
@@ -40,12 +34,13 @@ export default function useSession(orgSlug?: string, projectSlug?: string) {
     const isValidProject = useMemo(() => {
         if (!projectSlug) {
             return (
-                session?.project.organization.id === session?.organization.id
+                session?.project.organization.slug ===
+                session?.organization.slug
             );
         } else {
             return (
                 session?.project.slug === projectSlug &&
-                session.project.organization.id === session.organization.id
+                session.project.organization.slug === session.organization.slug
             );
         }
     }, [projectSlug, orgSlug, session]);
@@ -53,7 +48,7 @@ export default function useSession(orgSlug?: string, projectSlug?: string) {
     const isValidSession = useMemo(() => {
         if (!projectSlug && !orgSlug) return true;
         return isCurrentOrg && isValidProject;
-    }, [projectSlug, orgSlug]);
+    }, [projectSlug, orgSlug, isCurrentOrg, isValidProject]);
 
     const createValidSessionData = useCallback(() => {
         let org =
@@ -73,7 +68,7 @@ export default function useSession(orgSlug?: string, projectSlug?: string) {
                     const newUser = omitTypename(viewer as User);
                     updateUser(newUser);
                     org =
-                        user?.organizations?.edges.find(
+                        newUser?.organizations?.edges.find(
                             (edge) => edge.node.slug === orgSlug,
                         )?.node || null;
                     project = !projectSlug
@@ -94,7 +89,22 @@ export default function useSession(orgSlug?: string, projectSlug?: string) {
             organization: org,
             project: project,
         } as Session;
-    }, [orgSlug, projectSlug, session, isCurrentOrg]);
+    }, [orgSlug, projectSlug, session]);
+
+    const currentOrgData = useMemo(() => {
+        const data =
+            user?.organizations?.edges.find(
+                (edge) => edge.node.slug === session?.organization.slug,
+            )?.node || null;
+
+        return data;
+    }, [user?.organizations, session?.organization.id]);
+
+    const projects = useMemo(() => {
+        return (
+            currentOrgData?.projects?.edges || ([] as ProjectCountableEdge[])
+        );
+    }, [currentOrgData]);
 
     useEffect(() => {
         if (!orgSlug) {
@@ -110,12 +120,20 @@ export default function useSession(orgSlug?: string, projectSlug?: string) {
             setIsValidating(false);
             return;
         } else {
+            logDebug("isCurrentOrg: ", isCurrentOrg);
+            logDebug("isValidProject: ", isValidProject);
+            logDebug("Creating valid session.");
             const newSession = createValidSessionData();
+            logDebug("New session: ", newSession);
             if (newSession) {
                 createSession(newSession);
             }
             setIsValidating(false);
         }
+
+        return () => {
+            setIsValidating(true);
+        };
     }, [
         orgSlug,
         projectSlug,
@@ -124,14 +142,28 @@ export default function useSession(orgSlug?: string, projectSlug?: string) {
         createValidSessionData,
     ]);
 
+    const switchProject = useCallback(
+        (project: DeepOmit<Project, "__typename">) => {
+            const newSession: Session = {
+                organization: session?.organization!,
+                project: project,
+            };
+            createSession(newSession);
+            redirect(newSession);
+        },
+        [user, projects],
+    );
+
     return {
         user,
         session,
+        projects,
         isValidating,
         isValidSession,
         createSession,
         updateSession,
         clearSession,
         updateUser,
+        switchProject,
     };
 }

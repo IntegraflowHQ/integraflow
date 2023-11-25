@@ -1,9 +1,8 @@
 import { useOrganizationCreateMutation } from "@/generated/graphql";
 import { PrivateRoute } from "@/modules/auth/components/PrivateRoute";
-import { handleRedirect } from "@/modules/auth/helper";
+import useRedirect from "@/modules/auth/hooks/useRedirect";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import slugify from "slugify";
 import Logo from "../assets/images/logo.png";
 import { Button, SelectInput, TextInput } from "../ui";
@@ -42,7 +41,7 @@ const WorkspaceRoles = [
 ];
 
 const Workspace = () => {
-    const navigate = useNavigate();
+    const redirect = useRedirect();
     const {
         watch,
         setValue,
@@ -76,7 +75,7 @@ const Workspace = () => {
     useEffect(() => {
         if (data && data.organizationCreate?.user) {
             // updateSession(omitTypename(data.organizationCreate?.user));
-            handleRedirect(data.organizationCreate!.user, navigate);
+            redirect(data.organizationCreate!.user);
         } else return;
     }, [data]);
 

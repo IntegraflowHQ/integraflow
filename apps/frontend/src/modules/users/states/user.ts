@@ -1,4 +1,9 @@
-import { User } from "@/generated/graphql";
+import {
+    OrganizationCountableEdge,
+    Project,
+    ProjectCountableEdge,
+    User,
+} from "@/generated/graphql";
 import { DeepOmit } from "@apollo/client/utilities";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
@@ -11,6 +16,7 @@ export type UserState = {
 export type UserActions = {
     deleteUser: () => void;
     updateUser: (data: DeepOmit<User, "__typename">) => void;
+    addProject: (orgSlug: string, project: Project) => void;
 };
 
 const initialState: UserState = {
@@ -20,7 +26,7 @@ const initialState: UserState = {
 
 export const useUserStore = create<UserState & UserActions>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             ...initialState,
             deleteUser: () => set(initialState),
             updateUser: (data) =>
@@ -30,6 +36,26 @@ export const useUserStore = create<UserState & UserActions>()(
                     },
                     lastUpdate: Date.now(),
                 }),
+            addProject: (orgslug, project) => {
+                const orgIndex = get().user!.organizations?.edges.findIndex(
+                    (edge) => edge.node.slug === orgslug,
+                );
+                if (orgIndex === -1 || orgIndex === undefined) return;
+
+                const org = {
+                    ...get().user?.organizations?.edges[orgIndex].node,
+                } as OrganizationCountableEdge["node"];
+
+                org!.projects!.edges! = [
+                    { node: project as Project },
+                    ...org.projects?.edges!,
+                ] as ProjectCountableEdge[];
+
+                const newUser = get().user;
+                newUser!.organizations!.edges[orgIndex].node = org;
+
+                return set({ user: newUser, lastUpdate: Date.now() });
+            },
         }),
         {
             name: "authUser",

@@ -1,9 +1,9 @@
 import { GlobalSpinner, NotFound } from "@/components";
 import { createOrgDbs } from "@/database";
 import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
-import useUser from "@/modules/users/hooks/useSession";
+import useSession from "@/modules/users/hooks/useSession";
 import { useEffect } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 type Props = {
     children: React.ReactNode;
@@ -11,11 +11,8 @@ type Props = {
 
 export const PrivateRoute = ({ children }: Props) => {
     const { token } = useAuthToken();
-    const { organizationSlug, projectSlug } = useParams();
-    const { isValidating, isValidSession, user } = useUser(
-        organizationSlug,
-        projectSlug,
-    );
+
+    const { isValidating, isValidSession, user } = useSession();
 
     useEffect(() => {
         if (user) {

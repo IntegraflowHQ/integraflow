@@ -26,5 +26,5 @@ export function isOver24Hours(previousTimestamp: number): boolean {
 }
 
 export function getAcronym(value: string) {
-    return value.slice(0, 1);
+    return value.slice(0, 1).toUpperCase();
 }

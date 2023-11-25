@@ -5,9 +5,8 @@ import { Session } from "@/modules/users/states/session";
 import { omitTypename } from "@/utils";
 import { logDebug } from "@/utils/log";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { handleRedirect } from "../helper";
 import { useAuthToken } from "../hooks/useAuthToken";
+import useRedirect from "../hooks/useRedirect";
 
 export default function PublicRoute({
     children,
@@ -18,8 +17,8 @@ export default function PublicRoute({
     const { token } = useAuthToken();
     const { session, isValidSession, user, createSession, updateUser } =
         useSession();
-    const navigate = useNavigate();
     const [fetchUser] = useViewerLazyQuery();
+    const redirect = useRedirect();
 
     useEffect(() => {
         if (!token) {
@@ -39,7 +38,7 @@ export default function PublicRoute({
                             organization: newUser?.organization,
                             project: newUser?.project,
                         } as Session);
-                        handleRedirect(newUser, navigate);
+                        redirect(newUser);
                     }
                 },
             });
@@ -53,11 +52,11 @@ export default function PublicRoute({
             } as Session;
 
             createSession(newSession);
-            handleRedirect(newSession, navigate);
+            redirect(newSession);
         }
 
         if (session && isValidSession) {
-            handleRedirect(session, navigate);
+            redirect(session);
         }
 
         setReady(true);

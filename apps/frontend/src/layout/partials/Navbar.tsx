@@ -14,10 +14,12 @@ import {
 } from "@/assets/images";
 import { GlobalSpinner } from "@/components";
 import { Dialog, DialogContent } from "@/components/Dialog";
-import { useProjectCreateMutation } from "@/generated/graphql";
+import { Project, useProjectCreateMutation } from "@/generated/graphql";
 import useSession from "@/modules/users/hooks/useSession";
+import useUserState from "@/modules/users/hooks/useUserState";
 import { Button, TextInput } from "@/ui";
-import { getAcronym } from "@/utils";
+import { getAcronym, omitTypename } from "@/utils";
+import { DeepOmit } from "@apollo/client/utilities";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -48,16 +50,6 @@ export const Navbar = () => {
             id: 4,
             title: "Audience",
             icon: <PeopleIcon />,
-        },
-    ];
-    const projects = [
-        {
-            id: 97,
-            name: "Project1",
-        },
-        {
-            id: 97,
-            name: "Project1",
         },
     ];
 
@@ -91,7 +83,8 @@ export const Navbar = () => {
     ];
     // const navigate = useNavigate();
     const [projectCreate, { loading }] = useProjectCreateMutation();
-    const { session } = useSession();
+    const { session, projects, switchProject } = useSession();
+    const { addProject } = useUserState();
 
     const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
     const [projectName, setProjectName] = useState<string>("");
@@ -119,14 +112,17 @@ export const Navbar = () => {
             },
         });
 
-        if (result.data?.projectCreate) {
-            // updateSession({ project: result.data.projectCreate.project });
+        if (result.data?.projectCreate?.project) {
+            addProject(
+                session?.organization.slug!,
+                omitTypename(result.data.projectCreate.project as Project),
+            );
+            switchProject(
+                omitTypename(result.data.projectCreate.project as Project),
+            );
             setOpenCreateProjectModal(false);
         }
     };
-    // useEffect(() => {
-    //     handleRedirect(session, navigate);
-    // }, [session]);
 
     useEffect(() => {
         if (openCreateProjectModal === false) {
@@ -155,7 +151,7 @@ export const Navbar = () => {
                 <DropdownMenu.Root>
                     <DropdownMenu.Trigger className="outline-none">
                         <p className="flex w-[177px] items-center text-intg-text-4">
-                            <span className="mr-3 rounded bg-gradient-button px-1.5 uppercase">
+                            <span className="mr-3 rounded bg-gradient-button px-1.5">
                                 {getAcronym(session?.project?.name as string)}
                             </span>
                             <span className="capitalize">
@@ -170,21 +166,31 @@ export const Navbar = () => {
                         <DropdownMenu.Content
                             align="start"
                             alignOffset={50}
-                            className="border-intg-bg-10  w-[221px] rounded border bg-intg-bg-9 p-2 text-white"
+                            className="w-[221px]  rounded border border-intg-bg-10 bg-intg-bg-9 p-2 text-white"
                         >
                             <DropdownMenu.Group>
                                 {projects.map((item) => {
-                                    return (
-                                        <DropdownMenu.Item
-                                            className="hover:bg-intg-bg-10 flex cursor-pointer rounded p-2"
-                                            onClick={() => {}}
-                                        >
-                                            <span className="mr-3 rounded bg-gradient-button px-1.5">
-                                                IF
-                                            </span>
-                                            <span>{item.name}</span>
-                                        </DropdownMenu.Item>
-                                    );
+                                    if (session?.project.id !== item.node.id) {
+                                        return (
+                                            <DropdownMenu.Item
+                                                key={item.node.id}
+                                                className="flex cursor-pointer rounded p-2 hover:bg-intg-bg-10"
+                                                onClick={() => {
+                                                    switchProject(
+                                                        item.node as DeepOmit<
+                                                            Project,
+                                                            "__typename"
+                                                        >,
+                                                    );
+                                                }}
+                                            >
+                                                <span className="mr-3 rounded bg-gradient-button px-1.5">
+                                                    {getAcronym(item.node.name)}
+                                                </span>
+                                                <span>{item.node.name}</span>
+                                            </DropdownMenu.Item>
+                                        );
+                                    }
                                 })}
                             </DropdownMenu.Group>
 
@@ -332,7 +338,7 @@ export const Navbar = () => {
                     <DropdownMenu.Content
                         align="start"
                         alignOffset={50}
-                        className="border-intg-bg-10 w-[310px] rounded border-[0.5px] bg-intg-bg-9 px-2 py-3 text-intg-text"
+                        className="w-[310px] rounded border-[0.5px] border-intg-bg-10 bg-intg-bg-9 px-2 py-3 text-intg-text"
                     >
                         <DropdownMenu.Label className="pb-1">
                             <p className="text-xs">SIGNED IN AS USER</p>
@@ -346,7 +352,7 @@ export const Navbar = () => {
                                         className="rounded object-contain"
                                     />
                                     <div>
-                                        <p className="text-intg-text-7 text-sm">
+                                        <p className="text-sm text-intg-text-7">
                                             User name
                                         </p>
                                         <p className="text-sm">
@@ -384,11 +390,12 @@ export const Navbar = () => {
 
                                     {workspaces.map((item) => {
                                         return (
-                                            <>
-                                                <DropdownMenu.Item className="px-3 py-2">
-                                                    {item.name}
-                                                </DropdownMenu.Item>
-                                            </>
+                                            <DropdownMenu.Item
+                                                className="px-3 py-2"
+                                                key={item.name}
+                                            >
+                                                {item.name}
+                                            </DropdownMenu.Item>
                                         );
                                     })}
                                     <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
@@ -398,7 +405,7 @@ export const Navbar = () => {
                                             variant="custom"
                                             text="New Workspace"
                                             size="md"
-                                            className="bg-intg-bg-11 w-full"
+                                            className="w-full bg-intg-bg-11"
                                         />
                                     </DropdownMenu.Item>
                                 </DropdownMenu.SubContent>
