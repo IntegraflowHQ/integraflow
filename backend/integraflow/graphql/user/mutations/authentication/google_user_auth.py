@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, cast
 
 import graphene
 from django.conf import settings
@@ -107,7 +107,10 @@ class GoogleUserAuth(BaseMutation):
         return user
 
     @classmethod
-    def perform_mutation(cls, _root, info: ResolveInfo, /, *, code, invite_id):
+    def perform_mutation(cls, _root, info: ResolveInfo, /, **data):
+        code = cast(str, data.get("code"))
+        invite_id = data.get("invite_id")
+
         credentials = cls._get_credentials(code)
         user = cls._get_user(credentials)
 
