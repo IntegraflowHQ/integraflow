@@ -2,7 +2,6 @@ import {
     CircleIcon,
     CirclePlusIcon,
     CircleStackIcon,
-    CopyIcon,
     CursorIcon,
     DocumentIcon,
     HomeIcon,
@@ -13,21 +12,13 @@ import {
     SettingsIcon,
     SpeakerIcon,
 } from "@/assets/images";
-import {
-    Dialog,
-    DialogContent,
-    DialogTrigger,
-    GlobalSpinner,
-} from "@/components";
+import { GlobalSpinner } from "@/components";
 import { useProjectCreateMutation } from "@/generated/graphql";
-import { handleRedirect } from "@/modules/auth/helper";
-import { useSession } from "@/modules/users/hooks/useSession";
-import { Button, TextInput } from "@/ui";
-import { getAcronym } from "@/utils";
+import { OrganizationCreateInvite } from "@/modules/organizationInvite/components/OrganizationCreateInvite";
+import { Projects } from "@/modules/projects/components/Projects";
+import { Button } from "@/ui";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Discord from "../../assets/images/navbar/Discord.png";
 import {
     default as Frame,
@@ -57,16 +48,6 @@ export const Navbar = () => {
             icon: <PeopleIcon />,
         },
     ];
-    const projects = [
-        {
-            id: 97,
-            name: "Project1",
-        },
-        {
-            id: 97,
-            name: "Project1",
-        },
-    ];
 
     const workspaces = [
         {
@@ -79,52 +60,7 @@ export const Navbar = () => {
         },
     ];
 
-    const [toggleInviteType, setToggleInviteType] = useState(false);
-    const navigate = useNavigate();
-    const [projectCreate, { loading }] = useProjectCreateMutation();
-    const { viewer, updateSession } = useSession();
-
-    const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
-    const [projectName, setProjectName] = useState<string>("");
-    const [projectNameError, setProjectNameError] = useState("");
-
-    const handleCreateProject = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!projectName) {
-            setProjectNameError("Field cannot be empty");
-            return;
-        }
-        if (projectName.split("").length <= 2) {
-            setProjectNameError("Minimum length of project is 3");
-            return;
-        }
-
-        const result = await projectCreate({
-            variables: {
-                input: { name: projectName },
-            },
-            context: {
-                headers: {
-                    Project: viewer?.project?.id,
-                },
-            },
-        });
-
-        if (result.data?.projectCreate) {
-            updateSession({ project: result.data.projectCreate.project });
-            setOpenCreateProjectModal(false);
-        }
-    };
-    useEffect(() => {
-        handleRedirect(viewer, navigate);
-    }, [viewer]);
-
-    useEffect(() => {
-        if (openCreateProjectModal === false) {
-            setProjectName("");
-            setProjectNameError("");
-        }
-    }, [openCreateProjectModal]);
+    const [, { loading }] = useProjectCreateMutation();
 
     if (loading) {
         return <GlobalSpinner />;
@@ -143,112 +79,7 @@ export const Navbar = () => {
         >
             <div className="flex flex-col justify-between">
                 <div>
-                    <div className="mb-9 space-y-2">
-                        <p className="text-xs text-intg-text-4">Project</p>
-                        <DropdownMenu.Root>
-                            <DropdownMenu.Trigger className="outline-none">
-                                <p className="flex w-[177px] items-center text-intg-text-4">
-                                    <span className="mr-3 rounded bg-gradient-button px-1.5 uppercase">
-                                        {getAcronym(
-                                            viewer?.project?.name as string,
-                                        )}
-                                    </span>
-                                    <span className="capitalize">
-                                        {viewer?.project?.name}
-                                    </span>
-                                    <span className="ml-auto">
-                                        <ChevronDown size={16} />
-                                    </span>
-                                </p>
-                            </DropdownMenu.Trigger>
-                            <DropdownMenu.Portal>
-                                <DropdownMenu.Content
-                                    align="start"
-                                    alignOffset={50}
-                                    className="border-intg-bg-10  w-[221px] rounded border bg-intg-bg-9 p-2 text-white"
-                                >
-                                    <DropdownMenu.Group>
-                                        {projects.map((item) => {
-                                            return (
-                                                <DropdownMenu.Item
-                                                    className="hover:bg-intg-bg-10 flex cursor-pointer rounded p-2"
-                                                    onClick={() => {}}
-                                                >
-                                                    <span className="mr-3 rounded bg-gradient-button px-1.5">
-                                                        IF
-                                                    </span>
-                                                    <span>{item.name}</span>
-                                                </DropdownMenu.Item>
-                                            );
-                                        })}
-                                    </DropdownMenu.Group>
-
-                                    <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
-                                    <DropdownMenu.Group>
-                                        <DropdownMenu.Item className="flex cursor-pointer items-center space-x-2 px-3 py-2">
-                                            <span>
-                                                <SettingsIcon />
-                                            </span>
-                                            <span>Project Settings</span>
-                                        </DropdownMenu.Item>
-                                        <DropdownMenu.Item>
-                                            <Button
-                                                icon={<CirclePlusIcon />}
-                                                variant="custom"
-                                                text="New Project"
-                                                size="md"
-                                                className="bg-intg-bg-11"
-                                                onClick={() =>
-                                                    setOpenCreateProjectModal(
-                                                        true,
-                                                    )
-                                                }
-                                            />
-                                        </DropdownMenu.Item>
-                                    </DropdownMenu.Group>
-                                    <DropdownMenu.CheckboxItem>
-                                        <DropdownMenu.ItemIndicator />
-                                    </DropdownMenu.CheckboxItem>
-
-                                    <DropdownMenu.Separator />
-                                </DropdownMenu.Content>
-                            </DropdownMenu.Portal>
-                        </DropdownMenu.Root>
-                    </div>
-                    <Dialog
-                        open={openCreateProjectModal}
-                        onOpenChange={(value) =>
-                            setOpenCreateProjectModal(value)
-                        }
-                    >
-                        <DialogContent title="Create new survey">
-                            <div className="mt-6 w-[34rem]">
-                                <form onSubmit={handleCreateProject}>
-                                    <TextInput
-                                        label="Project Name"
-                                        placeholder="Project name"
-                                        value={projectName}
-                                        onChange={(e) => {
-                                            setProjectName(e.target.value);
-                                            setProjectNameError("");
-                                        }}
-                                        error={!!projectNameError}
-                                        errorMessage={projectNameError}
-                                    />
-                                    <div className="my-6">
-                                        <hr className="border-intg-bg-4" />
-                                    </div>
-                                    <div className="w-full">
-                                        <Button
-                                            text="Create Project"
-                                            className="w-full px-8 py-4"
-                                            type="submit"
-                                        />
-                                    </div>
-                                </form>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
+                    <Projects />
                     <div className="mb-[14px] space-y-[27px]">
                         <button className="flex items-center justify-between space-x-2 rounded border border-intg-bg-4 bg-intg-bg-9 p-3 text-sm text-intg-text-4">
                             <span>
@@ -279,81 +110,7 @@ export const Navbar = () => {
                     </ul>
                     <hr className="border-intg-bg-4" />
                     <ul className="my-4 space-y-2 text-sm text-intg-text-4">
-                        <Dialog>
-                            <DialogTrigger>
-                                <li className="flex items-center space-x-2 px-3 py-2">
-                                    <span>
-                                        <CirclePlusIcon />
-                                    </span>
-                                    <span>Invite team</span>
-                                </li>
-                            </DialogTrigger>
-                            <DialogContent
-                                alignHeader="left"
-                                title="Invite others to 'organization name'"
-                                description="Invite others to your project to collaborate together in intergraflow. An invite is specific to an email address and expires after 3 days."
-                            >
-                                {!toggleInviteType ? (
-                                    <form>
-                                        <div className="mt-3 flex w-full items-end space-x-2">
-                                            <div className="w-[65%]">
-                                                <TextInput
-                                                    label="Email address"
-                                                    placeholder="example1@gmail.com, example2@gmail.com, "
-                                                />
-                                            </div>
-                                            <div className="w-[35%]">
-                                                <Button
-                                                    text="Send Invite"
-                                                    size="md"
-                                                />
-                                            </div>
-                                        </div>
-                                    </form>
-                                ) : (
-                                    <div className="mt-3">
-                                        <p className="mb-4 text-sm text-intg-text">
-                                            Invite link will provide a unique
-                                            URL that allow anyone to join your
-                                            organization
-                                        </p>
-
-                                        <div className="flex w-full items-end space-x-2">
-                                            <div className="w-[75%]">
-                                                <TextInput
-                                                    placeholder="example1@gmail.com, example2@gmail.com,"
-                                                    disabled={true}
-                                                />
-                                            </div>
-                                            <div className="w-[25%]">
-                                                <Button
-                                                    text="Copy"
-                                                    size="md"
-                                                    icon={<CopyIcon />}
-                                                    textAlign="center"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                                <div className="py-4">
-                                    <hr className="border-intg-bg-4" />
-                                </div>
-                                <div className="w-[30%]">
-                                    <Button
-                                        variant="custom"
-                                        text="Invite with link"
-                                        className="hover:transparent bg-intg-bg-6 text-intg-text hover:bg-intg-text hover:text-white"
-                                        size="md"
-                                        onClick={() =>
-                                            setToggleInviteType(
-                                                !toggleInviteType,
-                                            )
-                                        }
-                                    />
-                                </div>
-                            </DialogContent>
-                        </Dialog>
+                        <OrganizationCreateInvite />
                         <li className="flex items-center space-x-2 px-3 py-2">
                             <span>
                                 <SpeakerIcon />
@@ -456,11 +213,12 @@ export const Navbar = () => {
 
                                         {workspaces.map((item) => {
                                             return (
-                                                <>
-                                                    <DropdownMenu.Item className="px-3 py-2">
-                                                        {item.name}
-                                                    </DropdownMenu.Item>
-                                                </>
+                                                <DropdownMenu.Item
+                                                    key={item.id}
+                                                    className="px-3 py-2"
+                                                >
+                                                    {item.name}
+                                                </DropdownMenu.Item>
                                             );
                                         })}
                                         <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
