@@ -59,8 +59,8 @@ export const Navbar = () => {
             name: "Workspace 1",
         },
         {
-            id: 1,
-            name: "Workspace 1",
+            id: 2,
+            name: "Workspace 2",
         },
     ];
 
@@ -170,27 +170,25 @@ export const Navbar = () => {
                         >
                             <DropdownMenu.Group>
                                 {projects.map((item) => {
-                                    if (session?.project.id !== item.node.id) {
-                                        return (
-                                            <DropdownMenu.Item
-                                                key={item.node.id}
-                                                className="flex cursor-pointer rounded p-2 hover:bg-intg-bg-10"
-                                                onClick={() => {
-                                                    switchProject(
-                                                        item.node as DeepOmit<
-                                                            Project,
-                                                            "__typename"
-                                                        >,
-                                                    );
-                                                }}
-                                            >
-                                                <span className="mr-3 rounded bg-gradient-button px-1.5">
-                                                    {getAcronym(item.node.name)}
-                                                </span>
-                                                <span>{item.node.name}</span>
-                                            </DropdownMenu.Item>
-                                        );
-                                    }
+                                    return (
+                                        <DropdownMenu.Item
+                                            key={item.node.id}
+                                            className="flex cursor-pointer rounded p-2 hover:bg-intg-bg-10"
+                                            onClick={() => {
+                                                switchProject(
+                                                    item.node as DeepOmit<
+                                                        Project,
+                                                        "__typename"
+                                                    >,
+                                                );
+                                            }}
+                                        >
+                                            <span className="mr-3 rounded bg-gradient-button px-1.5">
+                                                {getAcronym(item.node.name)}
+                                            </span>
+                                            <span>{item.node.name}</span>
+                                        </DropdownMenu.Item>
+                                    );
                                 })}
                             </DropdownMenu.Group>
 

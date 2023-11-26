@@ -1,4 +1,5 @@
 import {
+    AuthUser,
     OrganizationCountableEdge,
     Project,
     ProjectCountableEdge,
@@ -17,11 +18,12 @@ export type UserActions = {
     deleteUser: () => void;
     updateUser: (data: DeepOmit<User, "__typename">) => void;
     addProject: (orgSlug: string, project: Project) => void;
+    addWorkspace: (data: DeepOmit<AuthUser, "__typename">) => void;
 };
 
 const initialState: UserState = {
     user: null,
-    lastUpdate: Date.now(),
+    lastUpdate: 0,
 };
 
 export const useUserStore = create<UserState & UserActions>()(
@@ -55,6 +57,26 @@ export const useUserStore = create<UserState & UserActions>()(
                 newUser!.organizations!.edges[orgIndex].node = org;
 
                 return set({ user: newUser, lastUpdate: Date.now() });
+            },
+            addWorkspace: (data) => {
+                const user = get().user;
+
+                user?.organizations?.edges.unshift({
+                    node: {
+                        ...data.organization,
+                        projects: {
+                            edges: [
+                                {
+                                    node: {
+                                        ...data.project,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                });
+
+                return set({ user, lastUpdate: Date.now() });
             },
         }),
         {

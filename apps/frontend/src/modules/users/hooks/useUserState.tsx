@@ -8,6 +8,14 @@ export default function useUserState() {
     const addProject = userStore.use.addProject();
     const updateUser = userStore.use.updateUser();
     const deleteUser = userStore.use.deleteUser();
+    const addWorkSpace = userStore.use.addWorkspace();
 
-    return { user, lastUpdate, addProject, updateUser, deleteUser };
+    return {
+        user,
+        lastUpdate,
+        addProject,
+        addWorkSpace,
+        updateUser,
+        deleteUser,
+    };
 }

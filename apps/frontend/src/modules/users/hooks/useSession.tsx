@@ -22,9 +22,18 @@ export default function useSession() {
     const [fetchUser] = useViewerLazyQuery();
     const redirect = useRedirect();
 
-    const createSession = useCallback((data: Session) => {
-        updateSession(data);
-    }, []);
+    const createSession = useCallback(
+        (data: Session) => {
+            updateSession(data);
+            if (
+                orgSlug !== data.organization.slug ||
+                projectSlug !== data.project.slug
+            ) {
+                redirect(data);
+            }
+        },
+        [orgSlug, projectSlug],
+    );
 
     const isCurrentOrg = useMemo(() => {
         if (!orgSlug) return false;
@@ -50,7 +59,7 @@ export default function useSession() {
         return isCurrentOrg && isValidProject;
     }, [projectSlug, orgSlug, isCurrentOrg, isValidProject]);
 
-    const createValidSessionData = useCallback(() => {
+    const createValidSessionData = useCallback(async () => {
         let org =
             user?.organizations?.edges.find(
                 (edge) => edge.node.slug === orgSlug,
@@ -63,7 +72,7 @@ export default function useSession() {
 
         if ((!org || !project) && isOver24Hours(lastUserUpdate)) {
             logDebug("User might be stale\nUpdating user...");
-            fetchUser({
+            await fetchUser({
                 onCompleted: ({ viewer }) => {
                     const newUser = omitTypename(viewer as User);
                     updateUser(newUser);
@@ -117,18 +126,27 @@ export default function useSession() {
 
         if (isCurrentOrg && isValidProject) {
             logDebug("Session is valid.");
+            if (!projectSlug) {
+                redirect(session as Session);
+            }
             setIsValidating(false);
             return;
         } else {
             logDebug("isCurrentOrg: ", isCurrentOrg);
             logDebug("isValidProject: ", isValidProject);
             logDebug("Creating valid session.");
-            const newSession = createValidSessionData();
-            logDebug("New session: ", newSession);
-            if (newSession) {
-                createSession(newSession);
-            }
-            setIsValidating(false);
+            createValidSessionData()
+                .then((newSession) => {
+                    logDebug("New session: ", newSession);
+                    if (newSession) {
+                        createSession(newSession);
+                    }
+                    setIsValidating(false);
+                })
+                .catch(() => {
+                    logDebug("Failed to fetch");
+                    setIsValidating(false);
+                });
         }
 
         return () => {
@@ -149,9 +167,8 @@ export default function useSession() {
                 project: project,
             };
             createSession(newSession);
-            redirect(newSession);
         },
-        [user, projects],
+        [session, createSession],
     );
 
     return {
@@ -161,7 +178,6 @@ export default function useSession() {
         isValidating,
         isValidSession,
         createSession,
-        updateSession,
         clearSession,
         updateUser,
         switchProject,

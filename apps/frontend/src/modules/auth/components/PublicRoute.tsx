@@ -38,7 +38,6 @@ export default function PublicRoute({
                             organization: newUser?.organization,
                             project: newUser?.project,
                         } as Session);
-                        redirect(newUser);
                     }
                 },
             });
@@ -52,7 +51,6 @@ export default function PublicRoute({
             } as Session;
 
             createSession(newSession);
-            redirect(newSession);
         }
 
         if (session && isValidSession) {
