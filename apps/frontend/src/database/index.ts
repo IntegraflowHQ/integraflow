@@ -1,5 +1,10 @@
 import { SessionViewer } from "@/types";
-import { RxDatabase, addRxPlugin, createRxDatabase } from "rxdb";
+import {
+    RxDatabase,
+    addRxPlugin,
+    createRxDatabase,
+    removeRxDatabase,
+} from "rxdb";
 import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode";
 import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
 import { RxDBUpdatePlugin } from "rxdb/plugins/update";
@@ -68,9 +73,9 @@ export const createOrgDbs = async (viewer: SessionViewer) => {
     });
 };
 
-export const clearOrgDbs = () => {
-    databases.forEach((db) => {
-        db.destroy();
-    });
+export const clearOrgDbs = async () => {
+    for (const [name] of databases) {
+        await removeRxDatabase(name, getRxStorageDexie());
+    }
     databases.clear();
 };

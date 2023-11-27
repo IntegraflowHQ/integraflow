@@ -14,7 +14,9 @@ import {
 } from "@/assets/images";
 import { GlobalSpinner } from "@/components";
 import { Dialog, DialogContent } from "@/components/Dialog";
+import { clearOrgDbs } from "@/database";
 import { Project, useProjectCreateMutation } from "@/generated/graphql";
+import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
 import useSession from "@/modules/users/hooks/useSession";
 import useUserState from "@/modules/users/hooks/useUserState";
 import { Button, TextInput } from "@/ui";
@@ -83,8 +85,9 @@ export const Navbar = () => {
     ];
     // const navigate = useNavigate();
     const [projectCreate, { loading }] = useProjectCreateMutation();
-    const { session, projects, switchProject } = useSession();
-    const { addProject } = useUserState();
+    const { session, projects, switchProject, clearSession } = useSession();
+    const { addProject, deleteUser } = useUserState();
+    const { logout } = useAuthToken();
 
     const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
     const [projectName, setProjectName] = useState<string>("");
@@ -122,6 +125,13 @@ export const Navbar = () => {
             );
             setOpenCreateProjectModal(false);
         }
+    };
+
+    const handleLogout = async () => {
+        await clearOrgDbs();
+        deleteUser();
+        logout();
+        clearSession();
     };
 
     useEffect(() => {
@@ -428,7 +438,10 @@ export const Navbar = () => {
                             <p>Help and doc</p>
                         </DropdownMenu.Item>
                         <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
-                        <DropdownMenu.Item className="flex items-center space-x-2 px-3 py-2">
+                        <DropdownMenu.Item
+                            className="flex items-center space-x-2 px-3 py-2"
+                            onClick={handleLogout}
+                        >
                             <LogoutIcon />
                             <p>Log out</p>
                         </DropdownMenu.Item>

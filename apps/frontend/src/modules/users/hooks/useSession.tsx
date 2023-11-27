@@ -17,7 +17,7 @@ import useUserState from "./useUserState";
 export default function useSession() {
     const [isValidating, setIsValidating] = useState(true);
     const { orgSlug, projectSlug } = useParams();
-    const { session, clearSession, updateSession } = useSessionState();
+    const { session, updateSession, clearSession } = useSessionState();
     const { user, lastUpdate: lastUserUpdate, updateUser } = useUserState();
     const [fetchUser] = useViewerLazyQuery();
     const redirect = useRedirect();
