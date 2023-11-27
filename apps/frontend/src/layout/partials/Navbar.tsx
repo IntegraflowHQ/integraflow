@@ -14,7 +14,7 @@ import {
 } from "@/assets/images";
 import { GlobalSpinner } from "@/components";
 import { Dialog, DialogContent } from "@/components/Dialog";
-import { clearOrgDbs } from "@/database";
+import useDatabase from "@/database/hooks/useDatabase";
 import { Project, useProjectCreateMutation } from "@/generated/graphql";
 import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
 import useSession from "@/modules/users/hooks/useSession";
@@ -88,6 +88,7 @@ export const Navbar = () => {
     const { session, projects, switchProject, clearSession } = useSession();
     const { addProject, deleteUser } = useUserState();
     const { logout } = useAuthToken();
+    const { clearDBs } = useDatabase();
 
     const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
     const [projectName, setProjectName] = useState<string>("");
@@ -128,7 +129,7 @@ export const Navbar = () => {
     };
 
     const handleLogout = async () => {
-        await clearOrgDbs();
+        await clearDBs();
         deleteUser();
         logout();
         clearSession();
