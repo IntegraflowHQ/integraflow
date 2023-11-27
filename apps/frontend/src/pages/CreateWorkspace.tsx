@@ -1,5 +1,5 @@
 import { User, useOrganizationCreateMutation } from "@/generated/graphql";
-import { PrivateRoute } from "@/modules/auth/components/PrivateRoute";
+import { PrivateRoute } from "@/layout/PrivateRoute";
 import useSession from "@/modules/users/hooks/useSession";
 import useUserState from "@/modules/users/hooks/useUserState";
 import { Session } from "@/modules/users/states/session";

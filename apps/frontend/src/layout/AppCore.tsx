@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { Navbar } from ".";
-import { PrivateRoute } from "../modules/auth/components/PrivateRoute";
+import { PrivateRoute } from "./PrivateRoute";
 
 export const AppCore = () => {
     return (

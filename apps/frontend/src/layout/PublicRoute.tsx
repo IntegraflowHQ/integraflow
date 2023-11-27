@@ -1,12 +1,12 @@
 import { GlobalSpinner } from "@/components";
 import { User, useViewerLazyQuery } from "@/generated/graphql";
+import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
+import useRedirect from "@/modules/auth/hooks/useRedirect";
 import useSession from "@/modules/users/hooks/useSession";
 import { Session } from "@/modules/users/states/session";
 import { omitTypename } from "@/utils";
 import { logDebug } from "@/utils/log";
 import React, { useEffect, useState } from "react";
-import { useAuthToken } from "../hooks/useAuthToken";
-import useRedirect from "../hooks/useRedirect";
 
 export default function PublicRoute({
     children,
