@@ -5,10 +5,11 @@ from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.functional import SimpleLazyObject
 
-from integraflow.user.models import User
 from integraflow.app.models import App
 from integraflow.core.auth import get_token_from_request
 from integraflow.core.jwt import jwt_decode_with_exception_handler
+from integraflow.user.models import User
+
 from .api import API_PATH
 from .app.dataloaders import get_app_promise
 from .core import IntegraflowContext

@@ -166,3 +166,6 @@ django-queries-results.html
 backend/client-secret.json
 backend/.jwt_key.pem
 data/
+.idea
+.DS_Store
+.isort.cfg

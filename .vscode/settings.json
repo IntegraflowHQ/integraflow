@@ -11,7 +11,8 @@
         "intg",
         "preorder",
         "preorders",
-        "undiscounted"
+        "undiscounted",
+        "upsert"
     ],
     "python.linting.enabled": true,
     "editor.tabSize": 4,

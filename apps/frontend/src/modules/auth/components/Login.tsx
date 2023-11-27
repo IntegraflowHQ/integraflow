@@ -9,8 +9,8 @@ import { toast } from "@/utils/toast";
 import { useGoogleLogin } from "@react-oauth/google";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, createSearchParams, useNavigate } from "react-router-dom";
-import { handleRedirect } from "../helper";
 import { useAuthToken } from "../hooks/useAuthToken";
+import { usePersistUser } from "../hooks/usePersistUser";
 
 type Inputs = {
     email: string;
@@ -40,6 +40,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
     };
 
     const [googleAuth, { loading }] = useGoogleUserAuthMutation();
+    const [persistUser, { loading: persistingUser }] = usePersistUser();
 
     const loginWithGoogle = useGoogleLogin({
         flow: "auth-code",
@@ -60,15 +61,15 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
                     return;
                 }
 
-                if (result.data?.googleUserAuth?.user) {
-                    handleRedirect(result.data?.googleUserAuth?.user, navigate);
-                }
-
                 login(
                     result.data?.googleUserAuth?.token,
                     result.data?.googleUserAuth?.refreshToken,
                     result.data?.googleUserAuth?.csrfToken,
                 );
+
+                if (result.data?.googleUserAuth?.user) {
+                    await persistUser();
+                }
             }
         },
         onError: () => {
@@ -95,7 +96,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
             },
         });
 
-    if (loading || gettingToken) {
+    if (loading || gettingToken || persistingUser) {
         return <GlobalSpinner />;
     }
 

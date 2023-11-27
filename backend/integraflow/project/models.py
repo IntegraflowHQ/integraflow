@@ -1,11 +1,17 @@
 import pytz
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, cast
 
 from django.core.validators import MinLengthValidator
-from django.db import models
+from django.db import IntegrityError, models
+from django.core.exceptions import PermissionDenied, ValidationError
 
-from integraflow.core.models import UUIDModel
-from integraflow.core.utils import generate_random_token_project, sane_repr
+from integraflow.core.models import LowercaseSlugField, UUIDModel
+from integraflow.core.utils import (
+    MAX_SLUG_LENGTH,
+    generate_default_slug_project,
+    generate_random_token_project,
+    sane_repr
+)
 
 if TYPE_CHECKING:
     from integraflow.organization.models import OrganizationMembership
@@ -64,6 +70,17 @@ class Project(UUIDModel):
         default="Default Project",
         validators=[MinLengthValidator(1, "Project must have a name!")]
     )
+    slug: models.SlugField = LowercaseSlugField(
+        blank=False,
+        default=generate_default_slug_project,
+        max_length=MAX_SLUG_LENGTH
+    )
+    icon: models.URLField = models.URLField(
+        blank=True,
+        null=True,
+        max_length=800
+    )
+
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
     completed_snippet_onboarding: models.BooleanField = models.BooleanField(
@@ -97,6 +114,46 @@ class Project(UUIDModel):
         return str(self.pk)
 
     __repr__ = sane_repr("uuid", "name", "api_token")  # type: ignore
+
+
+class ProjectMembershipManager(models.Manager):
+    def create_membership(self, **kwargs):
+        from integraflow.organization.models import OrganizationMembership
+        from integraflow.user.models import User
+
+        if (
+            kwargs.get("user") is None and
+            kwargs.get("project") is None
+        ):
+            raise ValueError(
+                "Creating project-less membership is prohibited"
+            )
+
+        user: User = cast(User, kwargs.get("user"))
+        project: Project = cast(Project, kwargs.get("project"))
+
+        try:
+            parent_membership: OrganizationMembership = (
+                OrganizationMembership.objects.get(
+                    organization_id=project.organization_id,
+                    user__pk=user.pk,
+                    user__is_active=True,
+                )
+            )
+        except OrganizationMembership.DoesNotExist:
+            raise PermissionDenied(
+                "You both need to belong to the same organization."
+            )
+
+        kwargs["parent_membership"] = parent_membership
+
+        try:
+            return super().create(*kwargs)
+        except IntegrityError:
+            raise ValidationError(
+                "This user likely already is an explicit member of the "
+                "project."
+            )
 
 
 # We call models that grant a user access to some grouping of users a
@@ -153,3 +210,24 @@ class ProjectMembership(UUIDModel):
         "parent_membership",
         "level"
     )  # type: ignore
+
+
+class ProjectTheme(UUIDModel):
+    project: models.ForeignKey = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name="themes",
+        related_query_name="theme",
+    )
+    name: models.CharField = models.CharField(max_length=400, blank=True)
+    color_scheme: models.JSONField = models.JSONField(blank=True, null=True)
+    settings: models.JSONField = models.JSONField(blank=True, null=True)
+    created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
+    created_by: models.ForeignKey = models.ForeignKey(
+        "user.User",
+        on_delete=models.SET_NULL,
+        related_name="project_themes",
+        related_query_name="project_theme",
+        null=True,
+    )
+    updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)

@@ -5,7 +5,7 @@ from typing import Iterable, List, Union
 from graphene import ResolveInfo
 
 from integraflow.core.exceptions import PermissionDenied
-from integraflow.permission.auth_filters import is_app, is_staff_user
+from integraflow.permission.auth_filters import is_app
 from integraflow.permission.enums import BasePermissionEnum
 from integraflow.permission.utils import (
     one_of_permissions_or_auth_filter_required,
@@ -65,24 +65,11 @@ def one_of_permissions_required(perms: Iterable[BasePermissionEnum]):
     return requester_passes_test(check_perms)
 
 
-def _check_staff_member(context):
-    if not is_staff_user(context):
-        raise PermissionDenied(
-            message=(
-                "You need to be authenticated as a staff member to perform"
-                " this action"
-            )
-        )
-
-
-staff_member_required = requester_passes_test(_check_staff_member)
-
-
 def _check_staff_member_or_app(context):
-    if not (is_app(context) or is_staff_user(context)):
+    if not (is_app(context)):
         raise PermissionDenied(
             message=(
-                "You need to be authenticated as a staff member or an app to "
+                "You need to be authenticated as an app to "
                 "perform this action"
             )
         )

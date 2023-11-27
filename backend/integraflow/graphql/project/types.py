@@ -15,7 +15,15 @@ class Project(ModelObjectType):
     )
     name = graphene.String(
         required=True,
+        description="Name of the project.",
+    )
+    slug = graphene.String(
+        required=True,
         description="Slug of the project.",
+    )
+    access_control = graphene.Boolean(
+        required=False,
+        description="Whether the project is private or not.",
     )
     has_completed_onboarding_for = JSONString(
         required=False,

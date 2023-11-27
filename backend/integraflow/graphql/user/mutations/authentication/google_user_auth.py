@@ -1,19 +1,20 @@
-from typing import Dict
+from typing import Dict, cast
 
 import graphene
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
+
 from integraflow.core.jwt import create_access_token, create_refresh_token
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_AUTH
 from integraflow.graphql.core.mutations import BaseMutation
 from integraflow.graphql.core.types.common import UserError
 from integraflow.graphql.user.types import AuthUser
+from integraflow.organization.models import OrganizationInvite
 from integraflow.user.models import User
 
 from .utils import _get_new_csrf_token
@@ -31,6 +32,10 @@ class GoogleUserAuth(BaseMutation):
         code = graphene.String(
             required=True,
             description="Code gotten from google auth consent screen.",
+        )
+
+        invite_link = graphene.ID(
+            description="An optional invite link for an organization."
         )
 
     class Meta:
@@ -100,9 +105,18 @@ class GoogleUserAuth(BaseMutation):
         return user
 
     @classmethod
-    def perform_mutation(cls, _root, info: ResolveInfo, /, *, code):
+    def perform_mutation(cls, _root, info: ResolveInfo, /, **data):
+        code = cast(str, data.get("code"))
+        invite_link = data.get("invite_link")
+
         credentials = cls._get_credentials(code)
         user = cls._get_user(credentials)
+
+        if invite_link is not None:
+            OrganizationInvite.objects.accept_invite(
+                user,
+                invite_link
+            )
 
         csrf_token = _get_new_csrf_token()
         refresh_additional_payload = {
