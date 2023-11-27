@@ -35,7 +35,7 @@ export function CodeBlock({ blocks }: Props) {
                         <Tabs.Trigger
                             key={block.language}
                             value={block.language}
-                            className="text-intg-text-8 px-[3px] data-[state=active]:border-b data-[state=active]:border-intg-bg-11 data-[state=active]:bg-gradient-button-hover data-[state=active]:bg-clip-text data-[state=active]:text-transparent"
+                            className="text-intg-text-8 px-[3px] data-[state=active]:border-b data-[state=active]:border-[#299532] data-[state=active]:bg-gradient-button-hover data-[state=active]:bg-clip-text data-[state=active]:text-transparent"
                         >
                             {block.title}
                         </Tabs.Trigger>
