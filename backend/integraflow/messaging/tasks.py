@@ -57,7 +57,7 @@ def send_invite(invite_id: str) -> None:
     message = EmailMessage(
         campaign_key=campaign_key,
         subject=(
-            f"{invite.created_by.email or invite.created_by.first_name} "
+            f"{invite.created_by.first_name or invite.created_by.email} "
             f"invited you to join {invite.organization.name} on Integraflow"
         ),
         template_name="invite",
