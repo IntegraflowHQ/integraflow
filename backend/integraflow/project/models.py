@@ -151,7 +151,8 @@ class ProjectMembershipManager(models.Manager):
             return super().create(*kwargs)
         except IntegrityError:
             raise ValidationError(
-                "This user likely already is an explicit member of the project."
+                "This user likely already is an explicit member of the "
+                "project."
             )
 
 
@@ -209,3 +210,24 @@ class ProjectMembership(UUIDModel):
         "parent_membership",
         "level"
     )  # type: ignore
+
+
+class ProjectTheme(UUIDModel):
+    project: models.ForeignKey = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name="themes",
+        related_query_name="theme",
+    )
+    name: models.CharField = models.CharField(max_length=400, blank=True)
+    color_scheme: models.JSONField = models.JSONField(blank=True, null=True)
+    settings: models.JSONField = models.JSONField(blank=True, null=True)
+    created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
+    created_by: models.ForeignKey = models.ForeignKey(
+        "user.User",
+        on_delete=models.SET_NULL,
+        related_name="project_themes",
+        related_query_name="project_theme",
+        null=True,
+    )
+    updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)

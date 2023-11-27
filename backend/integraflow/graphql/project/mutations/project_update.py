@@ -1,6 +1,5 @@
 import graphene
 
-from integraflow.core.exceptions import PermissionDenied
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_PROJECTS
 from integraflow.graphql.core.fields import JSONString
@@ -48,24 +47,32 @@ class ProjectUpdate(ModelMutation):
         return Project
 
     @classmethod
-    def perform_mutation(cls, _root, info: ResolveInfo, /, **data):
-        permissions = info.context.user_permissions
-        if permissions is None:
-            raise PermissionDenied(permissions=permissions)
+    def check_permissions(cls, context, permissions=None, **data):
+        user = context.user
+        if user is None:
+            return False
 
-        project = permissions.current_project.project
-        data["id"] = graphene.Node.to_global_id("Project", project.id)
+        permissions = [AuthorizationFilters.PROJECT_MEMBER_ACCESS]
 
-        permissions = [AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS]
-
+        project = user.project
         if project.access_control:
-            permissions.append(AuthorizationFilters.ORGANIZATION_ADMIN_ACCESS)
+            permissions = [AuthorizationFilters.PROJECT_ADMIN_ACCESS]
 
-        input = data["input"]
+        input = data["data"]["input"]
         if input.get("private") is True:
-            permissions.append(AuthorizationFilters.ORGANIZATION_ADMIN_ACCESS)
+            permissions = [AuthorizationFilters.PROJECT_ADMIN_ACCESS]
 
-        if not cls.check_permissions(info.context, permissions):
-            raise PermissionDenied(permissions=permissions)
+        return super().check_permissions(
+            context,
+            permissions,
+            require_all_permissions=True,
+            **data
+        )
 
-        return super().perform_mutation(_root, info, **data)
+    @classmethod
+    def perform_mutation(cls, _root, info: ResolveInfo, /, **data):
+        user = info.context.user
+        if user and user.project:
+            data["id"] = graphene.Node.to_global_id("Project", user.project.pk)
+
+            return super().perform_mutation(_root, info, **data)

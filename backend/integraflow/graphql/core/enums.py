@@ -37,6 +37,11 @@ class ReportingPeriod(graphene.Enum):
     THIS_MONTH = "THIS_MONTH"
 
 
+class RoleLevel(graphene.Enum):
+    MEMBER = 1
+    ADMIN = 8
+
+
 def to_enum(enum_cls, *, type_name=None, **options) -> graphene.Enum:
     """Create a Graphene enum from a class containing a set of options.
 

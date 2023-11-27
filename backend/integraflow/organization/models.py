@@ -1,3 +1,4 @@
+from functools import partial
 import pytz
 from typing import (
     TYPE_CHECKING,
@@ -7,10 +8,12 @@ from typing import (
     Tuple,
 )
 
+from django.conf import settings
 from django.db import models, transaction
 from django.db.models.query import QuerySet
 from django.dispatch import receiver
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from django.core.exceptions import ValidationError, PermissionDenied
 
 from integraflow.core.utils import (
@@ -23,7 +26,8 @@ from integraflow.core.models import (
     LowercaseSlugField,
     UUIDModel
 )
-from integraflow.messaging.utils import is_email_available
+
+from .utils import get_invite_details
 
 if TYPE_CHECKING:
     from integraflow.project.models import Project
@@ -32,7 +36,7 @@ if TYPE_CHECKING:
 
 TIMEZONES = [(tz, tz) for tz in pytz.common_timezones]
 
-INVITE_DAYS_VALIDITY = 3  # number of days for which invites are valid
+INVITE_DAYS_VALIDITY = settings.INVITE_DAYS_VALIDITY
 
 
 class OrganizationManager(models.Manager):
@@ -75,6 +79,20 @@ class OrganizationManager(models.Manager):
 
         return organization, user, project
 
+    def join_organization(self, user: "User", **kwargs: Any):
+        try:
+            organization: Organization = (
+                Organization.objects.get(
+                    slug=kwargs.get("slug"),
+                    invite_token=kwargs.get("invite_token")
+                )
+            )
+            user.join(organization=organization)
+        except Organization.DoesNotExist:
+            raise ValidationError("The provided information is not valid.")
+        except ValueError as e:
+            raise ValidationError(str(e))
+
 
 class Organization(UUIDModel):
     members: models.ManyToManyField = models.ManyToManyField(
@@ -88,22 +106,25 @@ class Organization(UUIDModel):
         unique=True,
         max_length=MAX_SLUG_LENGTH
     )
-
     logo: models.URLField = models.URLField(
         blank=True,
         null=True,
         max_length=800
     )
-
     timezone: models.CharField = models.CharField(
         max_length=240,
         choices=TIMEZONES,
         default="UTC"
     )
-
+    invite_token: models.CharField = models.CharField(
+        max_length=40,
+        default=partial(get_random_string, length=32)
+    )
+    is_member_join_email_enabled: models.BooleanField = models.BooleanField(
+        default=True
+    )
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
-
     objects: OrganizationManager = OrganizationManager()
 
     def __str__(self):
@@ -126,13 +147,18 @@ class Organization(UUIDModel):
             "name": self.name,
         }
 
+    def reset_invite_token(self):
+        self.invite_token = get_random_string(32)
+        self.save()
+
     class Meta:
         db_table = "organizations"
 
 
 class OrganizationMembership(UUIDModel):
     class Level(models.IntegerChoices):
-        """Keep in sync with ProjectMembership.Level (only difference being
+        """
+        Keep in sync with ProjectMembership.Level (only difference being
         projects not having an Owner).
         """
 
@@ -157,10 +183,6 @@ class OrganizationMembership(UUIDModel):
     )
     joined_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
-
-    is_member_join_email_enabled: models.BooleanField = models.BooleanField(
-        default=True
-    )
 
     class Meta:
         db_table = "organization_memberships"
@@ -223,7 +245,34 @@ class OrganizationMembership(UUIDModel):
     __repr__ = sane_repr("organization", "user", "level")  # type: ignore
 
 
+class OrganizationInviteManager(models.Manager):
+    def accept_invite(self, user: "User", invite_link: str):
+        details = get_invite_details(invite_link)
+        if len(details) == 2:
+            args = {
+                "slug": details[0],
+                "invite_token": details[1]
+            }
+            return Organization.objects.join_organization(user, **args)
+
+        try:
+            invite: OrganizationInvite = (
+                OrganizationInvite.objects.select_related("organization").get(
+                    id=details[0]
+                )
+            )
+            invite.use(user)
+        except OrganizationInvite.DoesNotExist:
+            raise ValidationError("The provided invite ID is not valid.")
+        except ValueError as e:
+            raise ValidationError(str(e))
+
+
 class OrganizationInvite(UUIDModel):
+    class Level(models.IntegerChoices):
+        MEMBER = 1, "member"
+        ADMIN = 8, "administrator"
+
     organization: models.ForeignKey = models.ForeignKey(
         "organization.Organization",
         on_delete=models.CASCADE,
@@ -239,6 +288,10 @@ class OrganizationInvite(UUIDModel):
         blank=True,
         default=""
     )
+    level: models.PositiveSmallIntegerField = models.PositiveSmallIntegerField(
+        default=Level.MEMBER,
+        choices=Level.choices
+    )
     created_by: models.ForeignKey = models.ForeignKey(
         "user.User",
         on_delete=models.SET_NULL,
@@ -253,72 +306,32 @@ class OrganizationInvite(UUIDModel):
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
     message: models.TextField = models.TextField(blank=True, null=True)
 
+    objects: OrganizationInviteManager = OrganizationInviteManager()
+
     def validate(
         self,
         *,
-        user: Optional["User"] = None,
-        email: Optional[str] = None,
-        invite_email: Optional[str] = None,
-        request_path: Optional[str] = None,
-    ) -> None:
-        from integraflow.user.models import User
-
-        _email = email or getattr(user, "email", None)
-
-        if _email and _email != self.target_email:
-            raise ValidationError(
-                "This invite is intended for another email address.",
-                code="invalid_recipient",
-            )
+        user: "User"
+    ) -> bool:
+        if user.email != self.target_email:
+            return False
 
         if self.is_expired():
-            raise ValidationError(
-                "This invite has expired. Please ask your admin for a new"
-                " one.",
-                code="expired"
-            )
+            return False
 
-        if user is None and User.objects.filter(email=invite_email).exists():
-            raise ValidationError(
-                f"/login?next={request_path}",
-                code="account_exists"
-            )
+        return True
 
-        if OrganizationMembership.objects.filter(
+    def use(self, user: "User") -> None:
+        validated = self.validate(user=user)
+        if not validated:
+            return
+
+        user.join(
             organization=self.organization,
-            user=user
-        ).exists():
-            raise ValidationError(
-                "You already are a member of this organization.",
-                code="user_already_member"
-            )
+            level=self.level
+        )
 
-        if OrganizationMembership.objects.filter(
-            organization=self.organization, user__email=self.target_email
-        ).exists():
-            raise ValidationError(
-                "Another user with this email address already belongs to this "
-                "organization.",
-                code="existing_email_address",
-            )
-
-    def use(self, user: "User", *, prevalidated: bool = False) -> None:
-        if not prevalidated:
-            self.validate(user=user)
-        user.join(organization=self.organization)
-        if (
-            is_email_available(with_absolute_urls=True) and
-            self.organization.is_member_join_email_enabled
-        ):
-            from integraflow.messaging.tasks import send_member_join
-
-            send_member_join.apply_async(kwargs={
-                "invitee_uuid": user.uuid,
-                "organization_id": self.organization_id  # type: ignore
-            })
-        OrganizationInvite.objects.filter(
-            target_email__iexact=self.target_email
-        ).delete()
+        self.delete()
 
     def is_expired(self) -> bool:
         """Check if invite is older than INVITE_DAYS_VALIDITY days."""
