@@ -8,8 +8,6 @@ from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.mutations import BaseMutation
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_AUTH
 from integraflow.graphql.core.types.common import UserError
-from integraflow.graphql.core.utils import from_global_id_or_error
-from integraflow.graphql.organization.types import OrganizationInviteDetails
 from integraflow.graphql.user.types import AuthUser
 
 from integraflow.core.jwt import create_access_token, create_refresh_token
@@ -38,8 +36,8 @@ class EmailTokenUserAuth(BaseMutation):
             description="The magic login code."
         )
 
-        invite_id = graphene.ID(
-            description="An optional invite ID for an organization."
+        invite_link = graphene.ID(
+            description="An optional invite link for an organization."
         )
 
     token = graphene.String(
@@ -72,7 +70,7 @@ class EmailTokenUserAuth(BaseMutation):
     ):
         token = data["token"].strip()
         email = data["email"].strip().lower()
-        invite_id = data["invite_id"].strip()
+        invite_link = data["invite_link"].strip()
 
         key = "magic_" + str(email)
 
@@ -95,12 +93,11 @@ class EmailTokenUserAuth(BaseMutation):
                         update_fields=["date_joined", "token_updated_at"]
                     )
 
-                if invite_id is not None:
-                    _, invite = from_global_id_or_error(
-                        invite_id,
-                        OrganizationInviteDetails
+                if invite_link is not None:
+                    OrganizationInvite.objects.accept_invite(
+                        user,
+                        invite_link
                     )
-                    OrganizationInvite.objects.accept_invite(user, invite)
 
                 access_token = create_access_token(
                     user,

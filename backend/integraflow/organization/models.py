@@ -1,3 +1,4 @@
+from functools import partial
 import pytz
 from typing import (
     TYPE_CHECKING,
@@ -12,6 +13,7 @@ from django.db import models, transaction
 from django.db.models.query import QuerySet
 from django.dispatch import receiver
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from django.core.exceptions import ValidationError, PermissionDenied
 
 from integraflow.core.utils import (
@@ -24,7 +26,8 @@ from integraflow.core.models import (
     LowercaseSlugField,
     UUIDModel
 )
-from integraflow.messaging.utils import is_email_available
+
+from .utils import get_invite_details
 
 if TYPE_CHECKING:
     from integraflow.project.models import Project
@@ -76,6 +79,20 @@ class OrganizationManager(models.Manager):
 
         return organization, user, project
 
+    def join_organization(self, user: "User", **kwargs: Any):
+        try:
+            organization: Organization = (
+                Organization.objects.get(
+                    slug=kwargs.get("slug"),
+                    invite_token=kwargs.get("invite_token")
+                )
+            )
+            user.join(organization=organization)
+        except Organization.DoesNotExist:
+            raise ValidationError("The provided information is not valid.")
+        except ValueError as e:
+            raise ValidationError(str(e))
+
 
 class Organization(UUIDModel):
     members: models.ManyToManyField = models.ManyToManyField(
@@ -89,26 +106,25 @@ class Organization(UUIDModel):
         unique=True,
         max_length=MAX_SLUG_LENGTH
     )
-
     logo: models.URLField = models.URLField(
         blank=True,
         null=True,
         max_length=800
     )
-
     timezone: models.CharField = models.CharField(
         max_length=240,
         choices=TIMEZONES,
         default="UTC"
     )
-
+    invite_token: models.CharField = models.CharField(
+        max_length=40,
+        default=partial(get_random_string, length=32)
+    )
     is_member_join_email_enabled: models.BooleanField = models.BooleanField(
         default=True
     )
-
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
-
     objects: OrganizationManager = OrganizationManager()
 
     def __str__(self):
@@ -130,6 +146,10 @@ class Organization(UUIDModel):
             "project_count": self.projects.count(),  # type: ignore
             "name": self.name,
         }
+
+    def reset_invite_token(self):
+        self.invite_token = get_random_string(32)
+        self.save()
 
     class Meta:
         db_table = "organizations"
@@ -226,18 +246,24 @@ class OrganizationMembership(UUIDModel):
 
 
 class OrganizationInviteManager(models.Manager):
-    def accept_invite(self, user: "User", invite_id: str):
+    def accept_invite(self, user: "User", invite_link: str):
+        details = get_invite_details(invite_link)
+        if len(details) == 2:
+            args = {
+                "slug": details[0],
+                "invite_token": details[1]
+            }
+            return Organization.objects.join_organization(user, **args)
+
         try:
             invite: OrganizationInvite = (
                 OrganizationInvite.objects.select_related("organization").get(
-                    id=invite_id
+                    id=details[0]
                 )
             )
+            invite.use(user)
         except OrganizationInvite.DoesNotExist:
             raise ValidationError("The provided invite ID is not valid.")
-
-        try:
-            invite.use(user)
         except ValueError as e:
             raise ValidationError(str(e))
 
@@ -293,12 +319,6 @@ class OrganizationInvite(UUIDModel):
         if self.is_expired():
             return False
 
-        if OrganizationMembership.objects.filter(
-            organization=self.organization,
-            user__email=self.target_email
-        ).exists():
-            return False
-
         return True
 
     def use(self, user: "User") -> None:
@@ -310,16 +330,7 @@ class OrganizationInvite(UUIDModel):
             organization=self.organization,
             level=self.level
         )
-        if (
-            is_email_available(with_absolute_urls=True) and
-            self.organization.is_member_join_email_enabled
-        ):
-            from integraflow.messaging.tasks import send_member_join
 
-            send_member_join.apply_async(kwargs={
-                "invitee_uuid": user.uuid,
-                "organization_id": self.organization_id  # type: ignore
-            })
         self.delete()
 
     def is_expired(self) -> bool:

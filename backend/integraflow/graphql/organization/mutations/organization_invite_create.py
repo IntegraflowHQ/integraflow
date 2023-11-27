@@ -116,7 +116,7 @@ class OrganizationInviteCreate(ModelMutation):
         if user is None or user.organization is None:
             raise PermissionDenied()
 
-        input = data.get("input")
+        input = data["input"]
 
         try:
             instance = models.OrganizationInvite.objects.filter(

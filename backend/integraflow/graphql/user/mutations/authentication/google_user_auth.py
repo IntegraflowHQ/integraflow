@@ -12,9 +12,7 @@ from integraflow.core.jwt import create_access_token, create_refresh_token
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_AUTH
 from integraflow.graphql.core.mutations import BaseMutation
-from integraflow.graphql.core.utils import from_global_id_or_error
 from integraflow.graphql.core.types.common import UserError
-from integraflow.graphql.organization.types import OrganizationInviteDetails
 from integraflow.graphql.user.types import AuthUser
 from integraflow.organization.models import OrganizationInvite
 from integraflow.user.models import User
@@ -36,8 +34,8 @@ class GoogleUserAuth(BaseMutation):
             description="Code gotten from google auth consent screen.",
         )
 
-        invite_id = graphene.ID(
-            description="An optional invite ID for an organization."
+        invite_link = graphene.ID(
+            description="An optional invite link for an organization."
         )
 
     class Meta:
@@ -109,17 +107,16 @@ class GoogleUserAuth(BaseMutation):
     @classmethod
     def perform_mutation(cls, _root, info: ResolveInfo, /, **data):
         code = cast(str, data.get("code"))
-        invite_id = data.get("invite_id")
+        invite_link = data.get("invite_link")
 
         credentials = cls._get_credentials(code)
         user = cls._get_user(credentials)
 
-        if invite_id is not None:
-            _, invite = from_global_id_or_error(
-                invite_id,
-                OrganizationInviteDetails
+        if invite_link is not None:
+            OrganizationInvite.objects.accept_invite(
+                user,
+                invite_link
             )
-            OrganizationInvite.objects.accept_invite(user, invite)
 
         csrf_token = _get_new_csrf_token()
         refresh_additional_payload = {
