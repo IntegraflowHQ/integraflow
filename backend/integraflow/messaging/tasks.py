@@ -5,7 +5,11 @@ from .email import EmailMessage
 
 from integraflow.celeryconf import app
 from integraflow.core.utils import absolute_uri
-from integraflow.organization.models import Organization, OrganizationInvite
+from integraflow.organization.models import (
+    INVITE_DAYS_VALIDITY,
+    Organization,
+    OrganizationInvite
+)
 from integraflow.user.models import User
 
 
@@ -25,7 +29,7 @@ def send_magic_link(email: str, token: str) -> None:
             "magic_url": absolute_uri(link),
             "site_url": absolute_uri(),
             "code": token,
-            "expires_in": settings.MAGIC_LINK_EXPIRES_IN
+            "expires_in": settings.MAGIC_LINK_MINUTES_VALIDITY
         },
     )
     message.add_recipient(email)
@@ -45,17 +49,24 @@ def send_invite(invite_id: str) -> None:
     ).get(
         id=invite_id
     )
+
+    if invite is None:
+        return
+
+    link = f"/invite/{invite.pk}/accept"
     message = EmailMessage(
         campaign_key=campaign_key,
         subject=(
-            f"{invite.created_by.first_name} invited you to join "
-            f"{invite.organization.name} on Integraflow"
+            f"{invite.created_by.first_name or invite.created_by.email} "
+            f"invited you to join {invite.organization.name} on Integraflow"
         ),
         template_name="invite",
         template_context={
             "invite": invite,
+            "invite_url": absolute_uri(link),
+            "site_url": absolute_uri(),
             "expiry_date": (
-                timezone.now() + timezone.timedelta(days=3)
+                timezone.now() + timezone.timedelta(days=INVITE_DAYS_VALIDITY)
             ).strftime("%b %d %Y"),
         },
         reply_to=(
@@ -80,9 +91,15 @@ def send_member_join(invitee_uuid: str, organization_id: str) -> None:
     )
     message = EmailMessage(
         campaign_key=campaign_key,
-        subject=f"{invitee.first_name} joined you on Integraflow",
+        subject=(
+            f"{invitee.first_name or invitee.email} joined you on Integraflow"
+        ),
         template_name="member_join",
-        template_context={"invitee": invitee, "organization": organization},
+        template_context={
+            "invitee": invitee,
+            "organization": organization,
+            "site_url": absolute_uri(),
+        },
     )
     # Don't send this email to the new member themselves
     members_to_email = organization.members.exclude(email=invitee.email)

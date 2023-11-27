@@ -19,13 +19,12 @@ class UserPermissions:
     2. Calculating whether a user has access to other project(s)
 
     Note that for efficiency sake the class _generally_ expects the current
-    project/organization to be passed to it and will use it to skip certain
-    lookups.
+    project to be passed to it and will use it to skip certain lookups.
     """
 
-    def __init__(self, user: User, project: Optional[Project]):
+    def __init__(self, user: User):
         self.user = user
-        self._current_project: Optional[Project] = project
+        self._current_project: Optional[Project] = user.project
 
         self._project_permissions: Dict[int, UserProjectPermissions] = {}
 

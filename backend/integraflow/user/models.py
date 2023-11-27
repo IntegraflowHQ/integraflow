@@ -11,6 +11,7 @@ from typing import (
 )
 
 # Django imports
+from django.contrib import auth
 from django.db import models, transaction
 from django.db.models import Q
 from django.contrib.auth.models import (
@@ -22,12 +23,22 @@ from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 
 from integraflow.core.models import UUIDClassicModel
+from integraflow.core.utils import sane_repr
+from integraflow.messaging.utils import is_email_available
 from integraflow.organization.models import (
     Organization,
     OrganizationMembership
 )
 from integraflow.project.models import Project
-from integraflow.core.utils import sane_repr
+
+
+def _user_get_permissions(user, from_name):
+    permissions = None
+    name = "get_%s_permissions" % from_name
+    for backend in auth.get_backends():
+        if hasattr(backend, name):
+            permissions = getattr(backend, name)(user)
+    return permissions
 
 
 class UserManager(BaseUserManager):
@@ -232,6 +243,9 @@ class User(
             self.save()
         return self.current_project
 
+    def get_permission(self):
+        return _user_get_permissions(self, "user")
+
     def join(
         self, *,
         organization: Organization,
@@ -239,6 +253,16 @@ class User(
             OrganizationMembership.Level.MEMBER
         )
     ) -> OrganizationMembership:
+        membership = OrganizationMembership.objects.filter(
+            organization=organization,
+            user__email=self.email
+        ).first()
+
+        print("Member", membership)
+
+        if membership:
+            return membership
+
         with transaction.atomic():
             membership = OrganizationMembership.objects.create(
                 user=self,
@@ -261,17 +285,35 @@ class User(
                 ).filter(
                     access_control=False
                 ).first()
+
             self.save()
+
+            if (
+                is_email_available(with_absolute_urls=True) and
+                organization.is_member_join_email_enabled
+            ):
+                from integraflow.messaging.tasks import send_member_join
+
+                send_member_join.apply_async(kwargs={
+                    "invitee_uuid": self.uuid,
+                    "organization_id": organization.pk  # type: ignore
+                })
 
         return membership
 
     def leave(self, *, organization: Organization) -> None:
-        membership: OrganizationMembership = (
-            OrganizationMembership.objects.get(
-                user=self,
-                organization=organization
+        try:
+            membership: OrganizationMembership = (
+                OrganizationMembership.objects.get(
+                    user=self,
+                    organization=organization
+                )
             )
-        )
+        except OrganizationMembership.DoesNotExist:
+            raise ValidationError(
+                "Membership doesn't exist!"
+            )
+
         if membership.level == OrganizationMembership.Level.OWNER:
             raise ValidationError(
                 "Cannot leave the organization as its owner!"
