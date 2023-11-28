@@ -1,9 +1,9 @@
 import { User, useViewerLazyQuery } from "@/generated/graphql";
-import useSession from "@/modules/users/hooks/useSession";
+import useUserState from "@/modules/users/hooks/useUserState";
 import { omitTypename } from "@/utils";
 
 export const usePersistUser = () => {
-    const { updateUser } = useSession();
+    const { updateUser } = useUserState();
     return useViewerLazyQuery({
         onCompleted: ({ viewer }) => {
             if (!viewer) {

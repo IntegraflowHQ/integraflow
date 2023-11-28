@@ -60,15 +60,23 @@ export default function useSession() {
     }, [projectSlug, orgSlug, isCurrentOrg, isValidProject]);
 
     const createValidSessionData = useCallback(async () => {
-        let org =
-            user?.organizations?.edges.find(
-                (edge) => edge.node.slug === orgSlug,
-            )?.node || null;
-        let project = !projectSlug
-            ? org?.projects?.edges[0].node
-            : org?.projects?.edges.find(
-                  (edge) => edge.node.slug === projectSlug,
-              )?.node || null;
+        let org = null;
+        let project = null;
+
+        if (!orgSlug) {
+            org = user?.organization;
+            project = user?.project;
+        } else {
+            org =
+                user?.organizations?.edges.find(
+                    (edge) => edge.node.slug === orgSlug,
+                )?.node || null;
+            project = !projectSlug
+                ? org?.projects?.edges[0].node
+                : org?.projects?.edges.find(
+                      (edge) => edge.node.slug === projectSlug,
+                  )?.node || null;
+        }
 
         if ((!org || !project) && isOver24Hours(lastUserUpdate)) {
             logDebug("User might be stale\nUpdating user...");
@@ -76,15 +84,21 @@ export default function useSession() {
                 onCompleted: ({ viewer }) => {
                     const newUser = omitTypename(viewer as User);
                     updateUser(newUser);
-                    org =
-                        newUser?.organizations?.edges.find(
-                            (edge) => edge.node.slug === orgSlug,
-                        )?.node || null;
-                    project = !projectSlug
-                        ? org?.projects?.edges[0].node
-                        : org?.projects?.edges.find(
-                              (edge) => edge.node.slug === projectSlug,
-                          )?.node || null;
+
+                    if (!orgSlug) {
+                        org = newUser?.organization;
+                        project = newUser?.project;
+                    } else {
+                        org =
+                            newUser?.organizations?.edges.find(
+                                (edge) => edge.node.slug === orgSlug,
+                            )?.node || null;
+                        project = !projectSlug
+                            ? org?.projects?.edges[0].node
+                            : org?.projects?.edges.find(
+                                  (edge) => edge.node.slug === projectSlug,
+                              )?.node || null;
+                    }
                 },
             });
         }
@@ -172,14 +186,13 @@ export default function useSession() {
     );
 
     return {
-        user,
         session,
         projects,
         isValidating,
         isValidSession,
         createSession,
         clearSession,
-        updateUser,
         switchProject,
+        createValidSessionData,
     };
 }
