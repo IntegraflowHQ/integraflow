@@ -34,23 +34,6 @@ export default function useDatabase() {
                 });
             });
 
-            database.collections.viewer.upsert({
-                id: user.id,
-                email: user.email,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                isActive: user.isActive,
-                isStaff: user.isStaff,
-                project: {
-                    id: user.project?.id,
-                    name: user.project?.name,
-                },
-                organization: {
-                    id: user.project?.organization.id,
-                    name: user.project?.organization.name,
-                },
-            });
-
             addDbName(dbName);
             setDb(database);
         };
