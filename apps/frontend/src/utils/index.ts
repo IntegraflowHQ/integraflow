@@ -34,3 +34,11 @@ export const copyToClipboard = (textToCopy: string, toastMessage: string) => {
     navigator.clipboard.writeText(textToCopy);
     toast.success(toastMessage);
 };
+
+export function addEllipsis(text: string, maxLength: number) {
+    if (text.length > maxLength) {
+        return text.substring(0, maxLength) + "...";
+    } else {
+        return text;
+    }
+}
