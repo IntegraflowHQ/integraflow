@@ -12,14 +12,17 @@ import {
     SettingsIcon,
     SpeakerIcon,
 } from "@/assets/images";
-import { GlobalSpinner } from "@/components";
-import { useProjectCreateMutation } from "@/generated/graphql";
-import { OrganizationCreateInvite } from "@/modules/organizationInvite/components/OrganizationCreateInvite";
-import { Projects } from "@/modules/projects/components/Projects";
+import { CreateNewProject } from "@/components/CreateNewProject";
+import { OrganizationInvite } from "@/components/OrganizationInvite";
+import { handleRedirect } from "@/modules/auth/helper";
+import { useSession } from "@/modules/users/hooks/useSession";
 import { Button } from "@/ui";
+import { JoinDiscord } from "@/ui/Banner/JoinDiscord";
+import { getAcronym } from "@/utils";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import Discord from "../../assets/images/navbar/Discord.png";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     default as Frame,
     default as Profile,
@@ -60,11 +63,16 @@ export const Navbar = () => {
         },
     ];
 
-    const [, { loading }] = useProjectCreateMutation();
+    const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
+    const [openOrganizationInviteModal, setOpenOrganizationInviteModal] =
+        useState(false);
 
-    if (loading) {
-        return <GlobalSpinner />;
-    }
+    const { viewer } = useSession();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        handleRedirect(viewer, navigate);
+    }, [viewer]);
 
     return (
         <div
@@ -79,7 +87,86 @@ export const Navbar = () => {
         >
             <div className="flex flex-col justify-between">
                 <div>
-                    <Projects />
+                    <div className="mb-9 space-y-2">
+                        <p className="text-xs text-intg-text-4">Project</p>
+                        <DropdownMenu.Root>
+                            <DropdownMenu.Trigger className="outline-none">
+                                <p className="flex w-[177px] items-center text-intg-text-4">
+                                    <span className="mr-3 rounded bg-gradient-button px-1.5 uppercase">
+                                        {getAcronym(
+                                            viewer?.project?.name as string,
+                                        )}
+                                    </span>
+                                    <span className="capitalize">
+                                        {viewer?.project?.name}
+                                    </span>
+                                    <span className="ml-auto">
+                                        <ChevronDown size={16} />
+                                    </span>
+                                </p>
+                            </DropdownMenu.Trigger>
+                            <DropdownMenu.Portal>
+                                <DropdownMenu.Content
+                                    align="start"
+                                    alignOffset={50}
+                                    className="border-intg-bg-10  w-[221px] rounded border bg-intg-bg-9 p-2 text-white"
+                                >
+                                    <DropdownMenu.Group>
+                                        {viewer?.projects?.edges.map((item) => {
+                                            return (
+                                                <DropdownMenu.Item
+                                                    key={item.node.id}
+                                                    className="hover:bg-intg-bg-10 flex cursor-pointer rounded p-2"
+                                                    onClick={() => {}}
+                                                >
+                                                    <span className="mr-3 rounded bg-gradient-button px-1.5">
+                                                        IF
+                                                    </span>
+                                                    <span>
+                                                        {item.node.name}
+                                                    </span>
+                                                </DropdownMenu.Item>
+                                            );
+                                        })}
+                                    </DropdownMenu.Group>
+
+                                    <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
+                                    <DropdownMenu.Group>
+                                        <DropdownMenu.Item className="flex cursor-pointer items-center space-x-2 px-3 py-2">
+                                            <span>
+                                                <SettingsIcon />
+                                            </span>
+                                            <span>Project Settings</span>
+                                        </DropdownMenu.Item>
+                                        <DropdownMenu.Item>
+                                            <Button
+                                                icon={<CirclePlusIcon />}
+                                                variant="custom"
+                                                text="New Project"
+                                                size="md"
+                                                className="bg-intg-bg-11"
+                                                onClick={() =>
+                                                    setOpenCreateProjectModal(
+                                                        true,
+                                                    )
+                                                }
+                                            />
+                                        </DropdownMenu.Item>
+                                    </DropdownMenu.Group>
+                                    <DropdownMenu.CheckboxItem>
+                                        <DropdownMenu.ItemIndicator />
+                                    </DropdownMenu.CheckboxItem>
+                                    <DropdownMenu.Separator />
+                                </DropdownMenu.Content>
+                            </DropdownMenu.Portal>
+                        </DropdownMenu.Root>
+                        <CreateNewProject
+                            open={openCreateProjectModal}
+                            onOpenChange={(value) =>
+                                setOpenCreateProjectModal(value)
+                            }
+                        />
+                    </div>
                     <div className="mb-[14px] space-y-[27px]">
                         <button className="flex items-center justify-between space-x-2 rounded border border-intg-bg-4 bg-intg-bg-9 p-3 text-sm text-intg-text-4">
                             <span>
@@ -100,7 +187,7 @@ export const Navbar = () => {
                             return (
                                 <li
                                     key={item.id}
-                                    className="flex items-center space-x-2 px-3 py-2"
+                                    className="flex cursor-pointer items-center space-x-2 px-3 py-2"
                                 >
                                     <span>{item.icon}</span>
                                     <span>{item.title}</span>
@@ -110,7 +197,22 @@ export const Navbar = () => {
                     </ul>
                     <hr className="border-intg-bg-4" />
                     <ul className="my-4 space-y-2 text-sm text-intg-text-4">
-                        <OrganizationCreateInvite />
+                        <li
+                            className="flex items-center space-x-2 px-3 py-2"
+                            onClick={() => setOpenOrganizationInviteModal(true)}
+                        >
+                            <span>
+                                <CirclePlusIcon />
+                            </span>
+                            <span>Invite team</span>
+                        </li>
+
+                        <OrganizationInvite
+                            open={openOrganizationInviteModal}
+                            onOpenChange={(value: boolean) =>
+                                setOpenOrganizationInviteModal(value)
+                            }
+                        />
                         <li className="flex items-center space-x-2 px-3 py-2">
                             <span>
                                 <SpeakerIcon />
@@ -119,23 +221,7 @@ export const Navbar = () => {
                         </li>
                     </ul>
 
-                    <div className="flex w-full space-x-2 rounded-lg bg-intg-bg-9 px-2 py-4">
-                        <div className="h-8 w-8">
-                            <img src={Discord} alt="Discord" />
-                        </div>
-                        <div className="space-y-[4px]">
-                            <p className="flex">
-                                <span className="text-sm text-white">
-                                    Join our Discord Community
-                                </span>
-                            </p>
-                            <p className="text-xs text-intg-text">
-                                Add your card to prevent interruption after
-                                trial
-                            </p>
-                            <Button text="Join now" className="py-[6px]" />
-                        </div>
-                    </div>
+                    <JoinDiscord />
                     <div className="my-4">
                         <hr className="border-intg-bg-4" />
                     </div>
@@ -156,7 +242,6 @@ export const Navbar = () => {
                             <ChevronDown size={16} />
                         </span>
                     </DropdownMenu.Trigger>
-
                     <DropdownMenu.Portal>
                         <DropdownMenu.Content
                             align="start"
