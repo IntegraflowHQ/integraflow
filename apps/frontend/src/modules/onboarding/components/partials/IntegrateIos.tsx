@@ -12,18 +12,18 @@ export default function IntegrateIos() {
                 <div className="space-y-2">
                     <Header variant="4" title="Install" />
                     <CodeBlock
-                        blocks={[
-                            {
-                                language: "java",
-                                code: androidInstall,
-                            },
-                        ]}
+                        type="single"
+                        block={{
+                            language: "java",
+                            code: androidInstall,
+                        }}
                     />
                 </div>
 
                 <div className="space-y-2">
                     <Header variant="4" title="Configure" />
                     <CodeBlock
+                        type="multiple"
                         blocks={[
                             {
                                 language: "swift",
@@ -42,12 +42,11 @@ export default function IntegrateIos() {
                 <div className="space-y-2">
                     <Header variant="4" title="Send an event with swift" />
                     <CodeBlock
-                        blocks={[
-                            {
-                                language: "java",
-                                code: androidSendEvent,
-                            },
-                        ]}
+                        type="single"
+                        block={{
+                            language: "java",
+                            code: androidSendEvent,
+                        }}
                     />
                 </div>
 
@@ -57,12 +56,11 @@ export default function IntegrateIos() {
                         title="Send an event with Objective-C"
                     />
                     <CodeBlock
-                        blocks={[
-                            {
-                                language: "java",
-                                code: androidSendEvent,
-                            },
-                        ]}
+                        type="single"
+                        block={{
+                            language: "java",
+                            code: androidSendEvent,
+                        }}
                     />
                 </div>
             </div>

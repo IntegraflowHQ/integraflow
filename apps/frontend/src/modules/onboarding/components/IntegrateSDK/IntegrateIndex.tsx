@@ -41,12 +41,11 @@ export default function IntegrateIndex() {
                         />
 
                         <CodeBlock
-                            blocks={[
-                                {
-                                    language: "javascript",
-                                    code: htmlInitSnippet,
-                                },
-                            ]}
+                            type="single"
+                            block={{
+                                language: "javascript",
+                                code: htmlInitSnippet,
+                            }}
                         />
                     </div>
                 </div>
@@ -65,12 +64,11 @@ export default function IntegrateIndex() {
                             <Header variant="3" title="Install the package" />
 
                             <CodeBlock
-                                blocks={[
-                                    {
-                                        language: "bash",
-                                        code: webInstallSnippet,
-                                    },
-                                ]}
+                                type="single"
+                                block={{
+                                    language: "bash",
+                                    code: webInstallSnippet,
+                                }}
                             />
                         </div>
 

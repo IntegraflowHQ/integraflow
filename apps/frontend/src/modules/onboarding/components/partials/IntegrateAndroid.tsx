@@ -12,36 +12,33 @@ export default function IntegrateAndroid() {
                 <div className="space-y-2">
                     <Header variant="4" title="Install" />
                     <CodeBlock
-                        blocks={[
-                            {
-                                language: "java",
-                                code: androidInstall,
-                            },
-                        ]}
+                        type="single"
+                        block={{
+                            language: "java",
+                            code: androidInstall,
+                        }}
                     />
                 </div>
 
                 <div className="space-y-2">
                     <Header variant="4" title="Configure" />
                     <CodeBlock
-                        blocks={[
-                            {
-                                language: "java",
-                                code: androidConfigure,
-                            },
-                        ]}
+                        type="single"
+                        block={{
+                            language: "java",
+                            code: androidConfigure,
+                        }}
                     />
                 </div>
 
                 <div className="space-y-2">
                     <Header variant="4" title="Send an event" />
                     <CodeBlock
-                        blocks={[
-                            {
-                                language: "java",
-                                code: androidSendEvent,
-                            },
-                        ]}
+                        type="single"
+                        block={{
+                            language: "java",
+                            code: androidSendEvent,
+                        }}
                     />
                 </div>
             </div>
