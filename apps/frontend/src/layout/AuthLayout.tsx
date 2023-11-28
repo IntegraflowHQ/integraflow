@@ -1,4 +1,4 @@
-import PublicRoute from "@/modules/auth/components/PublicRoute";
+import PublicRoute from "@/layout/PublicRoute";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Outlet } from "react-router-dom";
 import AuthBG from "../assets/images/auth-bg.png";

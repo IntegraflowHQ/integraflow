@@ -6,7 +6,7 @@ export default function AppShell() {
     return (
         <ApolloProvider>
             <Outlet />
-            <Toaster position='bottom-right' />
+            <Toaster position="bottom-right" />
         </ApolloProvider>
     );
 }

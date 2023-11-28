@@ -1,7 +1,7 @@
-import { todoSchema } from './todo.schema';
+import { projectSchema } from "./project.schema";
 
 export const schema = {
-  todos: {
-    schema: todoSchema,
-  }
-}
+    projects: {
+        schema: projectSchema,
+    },
+};

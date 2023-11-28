@@ -21,6 +21,8 @@ const config: Config = {
                         "7": "#443862",
                         "8": "#150E27",
                         "9": "#181325",
+                        "10": "#392D72",
+                        "11": "#312848",
                     },
                     text: {
                         "1": "#DBD4EB",
@@ -29,6 +31,7 @@ const config: Config = {
                         "4": "#AFAAC7",
                         "5": "#F2F2F2",
                         "6": "#B5A4DB",
+                        "7": "#F1F1F1",
                         DEFAULT: "#AFAAC7",
                     },
                     black: {

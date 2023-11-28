@@ -1,9 +1,11 @@
-import { useOrganizationCreateMutation } from "@/generated/graphql";
+import { User, useOrganizationCreateMutation } from "@/generated/graphql";
 import { PrivateRoute } from "@/layout/PrivateRoute";
-import { handleRedirect } from "@/modules/auth/helper";
+import useSession from "@/modules/users/hooks/useSession";
+import useUserState from "@/modules/users/hooks/useUserState";
+import { Session } from "@/modules/users/states/session";
+import { omitTypename } from "@/utils";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import slugify from "slugify";
 import Logo from "../assets/images/logo.png";
 import { Button, SelectInput, TextInput } from "../ui";
@@ -42,7 +44,8 @@ const WorkspaceRoles = [
 ];
 
 const Workspace = () => {
-    const navigate = useNavigate();
+    const { createSession } = useSession();
+    const { addWorkSpace } = useUserState();
     const {
         watch,
         setValue,
@@ -75,7 +78,12 @@ const Workspace = () => {
 
     useEffect(() => {
         if (data && data.organizationCreate?.user) {
-            handleRedirect(data.organizationCreate!.user, navigate);
+            const user = omitTypename(data.organizationCreate?.user as User);
+            addWorkSpace(user);
+            createSession({
+                organization: user.organization,
+                project: user.project,
+            } as Session);
         } else return;
     }, [data]);
 
@@ -197,7 +205,7 @@ const Workspace = () => {
                                                     ? errors.workspaceUrl
                                                           ?.message
                                                     : data?.organizationCreate
-                                                          ?.errors
+                                                          ?.errors.length > 0
                                                     ? (data?.organizationCreate
                                                           ?.errors[0]
                                                           .message as string)
