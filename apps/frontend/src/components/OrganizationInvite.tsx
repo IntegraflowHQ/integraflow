@@ -1,7 +1,7 @@
 import { CopyIcon } from "@/assets/images";
 import { Dialog, DialogContent } from "@/components";
 import { useOrganizationInviteCreateMutation } from "@/generated/graphql";
-import { useSession } from "@/modules/users/hooks/useSession";
+import useSession from "@/modules/users/hooks/useSession";
 import { Button, TextInput } from "@/ui";
 import { copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
@@ -14,7 +14,7 @@ type Props = {
 
 export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
     const [createInvite] = useOrganizationInviteCreateMutation();
-    const { viewer } = useSession();
+    const { session } = useSession();
 
     const [toggleInviteType, setToggleInviteType] = useState(false);
     const [inviteEmail, setInviteEmail] = useState("");
@@ -61,7 +61,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent
                 alignHeader="left"
-                title={`Invite others to '${viewer?.organization?.name}'`}
+                title={`Invite others to '${session?.organization?.name}'`}
                 description="Invite others to your project to collaborate together in intergraflow. An invite is specific to an email address and expires after 3 days."
             >
                 {!toggleInviteType ? (

@@ -1,7 +1,9 @@
 import { Dialog, DialogContent } from "@/components";
-import { useProjectCreateMutation } from "@/generated/graphql";
-import { useSession } from "@/modules/users/hooks/useSession";
+import { Project, useProjectCreateMutation } from "@/generated/graphql";
+import useSession from "@/modules/users/hooks/useSession";
+import useUserState from "@/modules/users/hooks/useUserState";
 import { Button, TextInput } from "@/ui";
+import { omitTypename } from "@/utils";
 import { toast } from "@/utils/toast";
 import React, { useState } from "react";
 
@@ -12,7 +14,8 @@ type Props = {
 
 export const CreateNewProject = ({ open, onOpenChange }: Props) => {
     const [projectCreate] = useProjectCreateMutation();
-    const { updateSession, viewer } = useSession();
+    const { session, switchProject } = useSession();
+    const { addProject } = useUserState();
 
     const [projectName, setProjectName] = useState<string>("");
     const [projectNameError, setProjectNameError] = useState<
@@ -36,22 +39,25 @@ export const CreateNewProject = ({ open, onOpenChange }: Props) => {
             },
             context: {
                 headers: {
-                    Project: viewer?.project?.id,
+                    Project: session?.project?.id,
                 },
             },
         });
-
-        console.log(result);
 
         if (result.data?.projectCreate?.projectErrors.length > 0) {
             toast.error(result.data.projectCreate.projectErrors[0].message);
         }
 
         if (result.data?.projectCreate?.project) {
-            onOpenChange(!open);
             toast.success("Project created");
-            console.log(result);
-            updateSession({ project: result.data.projectCreate.project });
+            addProject(
+                session?.organization.slug!,
+                omitTypename(result.data.projectCreate.project as Project),
+            );
+            switchProject(
+                omitTypename(result.data.projectCreate.project as Project),
+            );
+            onOpenChange(!open);
         }
     };
 
