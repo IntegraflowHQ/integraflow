@@ -232,6 +232,70 @@ class OrganizationInviteDetails(BaseOrganizationInvite):
         return _root.organization.logo
 
 
+class OrganizationInviteLink(ModelObjectType):
+    invite_link = PermissionsField(
+        graphene.String,
+        required=True,
+        description="The link of the organization the invite is for.",
+        permissions=[
+            AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS,
+        ],
+    )
+
+    class Meta:
+        description = "The organization invite link."
+        model = models.Organization
+        interfaces = [graphene.relay.Node]
+
+    @staticmethod
+    def resolve_invite_link(
+        _root: models.Organization,
+        info: ResolveInfo
+    ):
+        return f"/{_root.slug}/join/{_root.invite_token}"
+
+
+class OrganizationInviteLinkDetails(ModelObjectType):
+    organization_id = graphene.GlobalID(
+        required=True,
+        description="The ID of the organization the invite is for.",
+    )
+    organization_name = graphene.String(
+        required=True,
+        description="The name of the organization the invite is for.",
+    )
+    organization_logo = graphene.String(
+        required=False,
+        description="The logo of the organization the invite is for.",
+    )
+
+    class Meta:
+        description = "The organization invite that was created or updated."
+        model = models.Organization
+        interfaces = [graphene.relay.Node]
+
+    @staticmethod
+    def resolve_organization_id(
+        _root: models.Organization,
+        info: ResolveInfo
+    ):
+        return _root.id
+
+    @staticmethod
+    def resolve_organization_name(
+        _root: models.Organization,
+        info: ResolveInfo
+    ):
+        return _root.name
+
+    @staticmethod
+    def resolve_organization_logo(
+        _root: models.Organization,
+        info: ResolveInfo
+    ):
+        return _root.logo
+
+
 class OrganizationInvite(BaseOrganizationInvite):
     inviter = PermissionsField(
         "integraflow.graphql.user.types.User",

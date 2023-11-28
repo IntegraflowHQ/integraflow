@@ -1,34 +1,36 @@
+import { AuthOrganization, Project } from "@/generated/graphql";
+import { DeepOmit } from "@apollo/client/utilities";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { SessionViewer } from "@/types";
+export type Session = {
+    organization: DeepOmit<AuthOrganization, "__typename">;
+    project: DeepOmit<Project, "__typename">;
+};
 
 export type SessionState = {
-    viewer: SessionViewer | null;
+    session: Session | null;
 };
 
 export type SessionActions = {
-    createSession: (viewer: SessionViewer) => void;
     clearSession: () => void;
-    updateSession: (data: Partial<SessionViewer>) => void;
+    updateSession: (data: Session) => void;
 };
 
 const initialState: SessionState = {
-    viewer: null,
+    session: null,
 };
 
 export const useSessionStore = create<SessionState & SessionActions>()(
     persist(
-        (set, get) => ({
+        (set) => ({
             ...initialState,
-            createSession: (viewer) => set({ viewer }),
             clearSession: () => set(initialState),
             updateSession: (data) =>
                 set({
-                    viewer: {
-                        ...get().viewer,
+                    session: {
                         ...data,
-                    } as SessionViewer,
+                    },
                 }),
         }),
         {

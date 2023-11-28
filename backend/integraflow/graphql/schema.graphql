@@ -19,9 +19,16 @@ type Query {
 
   """One specific organization invite."""
   organizationInviteDetails(
-    """ID of the group."""
-    id: ID!
-  ): OrganizationInviteDetails @doc(category: "Organizations")
+    """An invite link for an organization."""
+    inviteLink: String!
+  ): InviteDetails @doc(category: "Organizations")
+
+  """
+  The current organization invite link.
+  
+  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+  """
+  organizationInviteLink: OrganizationInviteLink @doc(category: "Organizations")
   _entities(representations: [_Any]): [_Entity]
   _service: _Service
 }
@@ -357,6 +364,8 @@ enum ProjectSortField @doc(category: "Projects") {
   UPDATED_AT
 }
 
+union InviteDetails = OrganizationInviteDetails | OrganizationInviteLinkDetails
+
 """The organization invite that was created or updated."""
 type OrganizationInviteDetails implements Node {
   """The unique identifier of the invite."""
@@ -405,14 +414,42 @@ value as specified by
 """
 scalar DateTime
 
+"""The organization invite that was created or updated."""
+type OrganizationInviteLinkDetails implements Node @doc(category: "Organizations") {
+  """The ID of the object."""
+  id: ID!
+
+  """The ID of the organization the invite is for."""
+  organizationId: ID!
+
+  """The name of the organization the invite is for."""
+  organizationName: String!
+
+  """The logo of the organization the invite is for."""
+  organizationLogo: String
+}
+
+"""The organization invite link."""
+type OrganizationInviteLink implements Node @doc(category: "Organizations") {
+  """The ID of the object."""
+  id: ID!
+
+  """
+  The link of the organization the invite is for.
+  
+  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+  """
+  inviteLink: String!
+}
+
 type Mutation {
   """Authenticates a user account via email and authentication token."""
   emailTokenUserAuth(
     """The email which to login via the magic login code."""
     email: String!
 
-    """An optional invite ID for an organization."""
-    inviteId: ID
+    """An optional invite link for an organization."""
+    inviteLink: ID
 
     """The magic login code."""
     token: String!
@@ -431,8 +468,8 @@ type Mutation {
     """Code gotten from google auth consent screen."""
     code: String!
 
-    """An optional invite ID for an organization."""
-    inviteId: ID
+    """An optional invite link for an organization."""
+    inviteLink: ID
   ): GoogleUserAuth @doc(category: "Authentication")
 
   """
@@ -489,6 +526,13 @@ type Mutation {
     """The organization invite object to create."""
     input: OrganizationInviteCreateInput!
   ): OrganizationInviteCreate @doc(category: "Organizations")
+
+  """
+  Reset the current organization invite link.. 
+  
+  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+  """
+  organizationInviteLinkReset: OrganizationInviteLinkReset @doc(category: "Organizations")
 
   """
   Joins an organization 
@@ -840,6 +884,21 @@ input OrganizationInviteCreateInput @doc(category: "Organizations") {
 }
 
 """
+Reset the current organization invite link.. 
+
+Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+"""
+type OrganizationInviteLinkReset @doc(category: "Organizations") {
+  """The current organization invite link."""
+  inviteLink: String
+
+  """Whether the operation was successful."""
+  success: Boolean
+  organizationErrors: [OrganizationError!]!
+  errors: [OrganizationError!]!
+}
+
+"""
 Joins an organization 
 
 Requires one of the following permissions: AUTHENTICATED_USER.
@@ -852,8 +911,8 @@ type OrganizationJoin @doc(category: "Organizations") {
 }
 
 input OrganizationJoinInput @doc(category: "Organizations") {
-  """The ID of the invite."""
-  inviteId: ID!
+  """An invite link for an organization."""
+  inviteLink: String!
 }
 
 """_Any value scalar as defined by Federation spec."""

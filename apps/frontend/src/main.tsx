@@ -49,7 +49,7 @@ const router = createBrowserRouter([
                 element: <Workspace />,
             },
             {
-                path: "/:organizationSlug",
+                path: "/:orgSlug",
                 element: <AppCore />,
                 children: [
                     {

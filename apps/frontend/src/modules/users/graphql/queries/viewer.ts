@@ -15,14 +15,14 @@ export const VIEWER = gql`
             project {
                 ...ProjectFragment
             }
-            organizations(first: 1) {
+            organizations(first: 50) {
                 edges {
                     node {
                         id
                         slug
                         name
                         memberCount
-                        projects(first: 1) {
+                        projects(first: 100) {
                             edges {
                                 node {
                                     ...ProjectFragment

@@ -1,11 +1,11 @@
-import { useOrganizationCreateMutation } from "@/generated/graphql";
-import { PrivateRoute } from "@/modules/auth/components/PrivateRoute";
-import { handleRedirect } from "@/modules/auth/helper";
-import { useSession } from "@/modules/users/hooks/useSession";
+import { User, useOrganizationCreateMutation } from "@/generated/graphql";
+import { PrivateRoute } from "@/layout/PrivateRoute";
+import useSession from "@/modules/users/hooks/useSession";
+import useUserState from "@/modules/users/hooks/useUserState";
+import { Session } from "@/modules/users/states/session";
 import { omitTypename } from "@/utils";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import slugify from "slugify";
 import Logo from "../assets/images/logo.png";
 import { Button, SelectInput, TextInput } from "../ui";
@@ -44,8 +44,8 @@ const WorkspaceRoles = [
 ];
 
 const Workspace = () => {
-    const navigate = useNavigate();
-    const { updateSession } = useSession();
+    const { createSession } = useSession();
+    const { addWorkSpace } = useUserState();
     const {
         watch,
         setValue,
@@ -78,8 +78,12 @@ const Workspace = () => {
 
     useEffect(() => {
         if (data && data.organizationCreate?.user) {
-            updateSession(omitTypename(data.organizationCreate?.user));
-            handleRedirect(data.organizationCreate!.user, navigate);
+            const user = omitTypename(data.organizationCreate?.user as User);
+            addWorkSpace(user);
+            createSession({
+                organization: user.organization,
+                project: user.project,
+            } as Session);
         } else return;
     }, [data]);
 

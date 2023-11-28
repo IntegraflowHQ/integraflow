@@ -23,12 +23,13 @@ def get_org_member_level(context: IntegraflowContext):
     if user and is_user(context):
         user_permission = user.get_permission()
         if user_permission is not None:
-            requesting_level = (
-                OrganizationMembership.objects.get(
+            try:
+                requesting_level = OrganizationMembership.objects.get(
                     user=cast(User, context.user),
                     organization=user_permission.current_organization
                 ).level
-            )
+            except OrganizationMembership.DoesNotExist:
+                requesting_level = None
 
     return requesting_level
 

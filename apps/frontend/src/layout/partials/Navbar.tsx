@@ -14,15 +14,19 @@ import {
 } from "@/assets/images";
 import { CreateNewProject } from "@/components/CreateNewProject";
 import { OrganizationInvite } from "@/components/OrganizationInvite";
-import { handleRedirect } from "@/modules/auth/helper";
-import { useSession } from "@/modules/users/hooks/useSession";
+import useDatabase from "@/database/hooks/useDatabase";
+import { Project } from "@/generated/graphql";
+import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
+import useSession from "@/modules/users/hooks/useSession";
+import useSessionState from "@/modules/users/hooks/useSessionState";
+import useUserState from "@/modules/users/hooks/useUserState";
 import { Button } from "@/ui";
 import { JoinDiscord } from "@/ui/Banner/JoinDiscord";
 import { getAcronym } from "@/utils";
+import { DeepOmit } from "@apollo/client/utilities";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import {
     default as Frame,
     default as Profile,
@@ -58,21 +62,27 @@ export const Navbar = () => {
             name: "Workspace 1",
         },
         {
-            id: 1,
-            name: "Workspace 1",
+            id: 2,
+            name: "Workspace 2",
         },
     ];
+
+    const { clearSession } = useSessionState();
+    const { session, projects, switchProject } = useSession();
+    const { deleteUser } = useUserState();
+    const { logout } = useAuthToken();
+    const { clearDBs } = useDatabase();
 
     const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
     const [openOrganizationInviteModal, setOpenOrganizationInviteModal] =
         useState(false);
 
-    const { viewer } = useSession();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        handleRedirect(viewer, navigate);
-    }, [viewer]);
+    const handleLogout = async () => {
+        await clearDBs();
+        deleteUser();
+        logout();
+        clearSession();
+    };
 
     return (
         <div
@@ -92,13 +102,13 @@ export const Navbar = () => {
                         <DropdownMenu.Root>
                             <DropdownMenu.Trigger className="outline-none">
                                 <p className="flex w-[177px] items-center text-intg-text-4">
-                                    <span className="mr-3 rounded bg-gradient-button px-1.5 uppercase">
+                                    <span className="mr-3 rounded bg-gradient-button px-1.5">
                                         {getAcronym(
-                                            viewer?.project?.name as string,
+                                            session?.project?.name as string,
                                         )}
                                     </span>
                                     <span className="capitalize">
-                                        {viewer?.project?.name}
+                                        {session?.project?.name}
                                     </span>
                                     <span className="ml-auto">
                                         <ChevronDown size={16} />
@@ -112,15 +122,24 @@ export const Navbar = () => {
                                     className="border-intg-bg-10  w-[221px] rounded border bg-intg-bg-9 p-2 text-white"
                                 >
                                     <DropdownMenu.Group>
-                                        {viewer?.projects?.edges.map((item) => {
+                                        {projects.map((item) => {
                                             return (
                                                 <DropdownMenu.Item
                                                     key={item.node.id}
                                                     className="hover:bg-intg-bg-10 flex cursor-pointer rounded p-2"
-                                                    onClick={() => {}}
+                                                    onClick={() => {
+                                                        switchProject(
+                                                            item.node as DeepOmit<
+                                                                Project,
+                                                                "__typename"
+                                                            >,
+                                                        );
+                                                    }}
                                                 >
                                                     <span className="mr-3 rounded bg-gradient-button px-1.5">
-                                                        IF
+                                                        {getAcronym(
+                                                            item.node.name,
+                                                        )}
                                                     </span>
                                                     <span>
                                                         {item.node.name}
@@ -160,6 +179,7 @@ export const Navbar = () => {
                                 </DropdownMenu.Content>
                             </DropdownMenu.Portal>
                         </DropdownMenu.Root>
+
                         <CreateNewProject
                             open={openCreateProjectModal}
                             onOpenChange={(value) =>
@@ -299,8 +319,8 @@ export const Navbar = () => {
                                         {workspaces.map((item) => {
                                             return (
                                                 <DropdownMenu.Item
-                                                    key={item.id}
                                                     className="px-3 py-2"
+                                                    key={item.name}
                                                 >
                                                     {item.name}
                                                 </DropdownMenu.Item>
@@ -338,7 +358,10 @@ export const Navbar = () => {
                                 <p>Help and doc</p>
                             </DropdownMenu.Item>
                             <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
-                            <DropdownMenu.Item className="flex items-center space-x-2 px-3 py-2">
+                            <DropdownMenu.Item
+                                className="flex items-center space-x-2 px-3 py-2"
+                                onClick={handleLogout}
+                            >
                                 <LogoutIcon />
                                 <p>Log out</p>
                             </DropdownMenu.Item>

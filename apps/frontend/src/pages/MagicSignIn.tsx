@@ -1,5 +1,5 @@
-import CompleteMagicSignIn from '@/modules/auth/components/CompleteMagicSignIn';
-import PublicRoute from '@/modules/auth/components/PublicRoute';
+import PublicRoute from "@/layout/PublicRoute";
+import CompleteMagicSignIn from "@/modules/auth/components/CompleteMagicSignIn";
 
 export function MagicSignIn() {
     return (
