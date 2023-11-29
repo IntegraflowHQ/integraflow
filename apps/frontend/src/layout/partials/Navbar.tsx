@@ -1,7 +1,10 @@
 import { CreateNewProject } from "@/components/CreateNewProject";
 import { OrganizationInvite } from "@/components/OrganizationInvite";
 import { UserProfile } from "@/components/UserProfile";
-import { Project } from "@/generated/graphql";
+import {
+    Project,
+    useOrganizationInviteLinkCreateLazyQuery,
+} from "@/generated/graphql";
 import useSession from "@/modules/users/hooks/useSession";
 import { Button } from "@/ui";
 import { JoinDiscord } from "@/ui/Banner/JoinDiscord";
@@ -54,12 +57,17 @@ export const Navbar = () => {
             icon: <PeopleIcon />,
         },
     ];
-
+    const [fetchInviteLink, { data: invitelink }] =
+        useOrganizationInviteLinkCreateLazyQuery();
     const { session, projects, switchProject } = useSession();
 
     const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
     const [openOrganizationInviteModal, setOpenOrganizationInviteModal] =
         useState(false);
+
+    const handleCreateInviteLink = async () => {
+        await fetchInviteLink();
+    };
 
     return (
         <div
@@ -88,6 +96,7 @@ export const Navbar = () => {
                                         />
                                     }
                                     rightIcon={<ChevronDown size={16} />}
+                                    classnames="w-[181px]"
                                     ellipsis={true}
                                     ellipsisLength={16}
                                 />
@@ -170,7 +179,7 @@ export const Navbar = () => {
                             }
                         />
                     </div>
-                    <div className="space-y-[27px] pb-[14px]">
+                    <div className="space-y-[27px] pb-[24px]">
                         <button className="flex items-center justify-between gap-2 rounded border border-intg-bg-4 bg-intg-bg-9 p-3 text-sm text-intg-text-4">
                             <span>
                                 <DocumentIcon />
@@ -205,7 +214,10 @@ export const Navbar = () => {
                     <ul className="space-y-2 py-4 text-sm text-intg-text-4">
                         <li
                             className="flex items-center space-x-2 px-3 py-2"
-                            onClick={() => setOpenOrganizationInviteModal(true)}
+                            onClick={() => {
+                                handleCreateInviteLink();
+                                setOpenOrganizationInviteModal(true);
+                            }}
                         >
                             <span>
                                 <CirclePlusIcon />
@@ -214,6 +226,9 @@ export const Navbar = () => {
                         </li>
 
                         <OrganizationInvite
+                            inviteLink={
+                                invitelink?.organizationInviteLink?.inviteLink
+                            }
                             open={openOrganizationInviteModal}
                             onOpenChange={(value: boolean) =>
                                 setOpenOrganizationInviteModal(value)
@@ -227,12 +242,14 @@ export const Navbar = () => {
                         </li>
                     </ul>
                     <JoinDiscord />
-                    <div className="py-4">
-                        <hr className="border-intg-bg-4" />
-                    </div>
                 </div>
             </div>
-            <UserProfile />
+            <div>
+                <div className="pb-3">
+                    <hr className="border-intg-bg-4" />
+                </div>
+                <UserProfile />
+            </div>
         </div>
     );
 };

@@ -1,26 +1,35 @@
 import { Dialog, DialogContent } from "@/components";
-import { useOrganizationInviteCreateMutation } from "@/generated/graphql";
+import {
+    useOrganizationInviteCreateMutation,
+    useOrganizationInviteLinkResetMutation,
+} from "@/generated/graphql";
 import useSession from "@/modules/users/hooks/useSession";
 import { Button, TextInput } from "@/ui";
 import { CopyIcon } from "@/ui/icons";
-import { copyToClipboard } from "@/utils";
+import { addEllipsis, copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
+import { RefreshCcwIcon } from "lucide-react";
 import { useState } from "react";
 
 type Props = {
+    inviteLink: string;
     open: boolean;
     onOpenChange: (value: boolean) => void;
 };
 
-export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
+export const OrganizationInvite = ({
+    open,
+    onOpenChange,
+    inviteLink,
+}: Props) => {
     const [createInvite] = useOrganizationInviteCreateMutation();
     const { session } = useSession();
+    const [resetInviteLink, { loading: loadingLinkRest, data }] =
+        useOrganizationInviteLinkResetMutation();
 
     const [toggleInviteType, setToggleInviteType] = useState(false);
     const [inviteEmail, setInviteEmail] = useState("");
     const [inputError, setInputError] = useState<string | undefined>("");
-    const inviteLinkValue =
-        "http://localhost:8000/invite/018c0588-69d6-0000-07b3-ae87957d1829/accept";
 
     const handleEmailInvite = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -55,6 +64,10 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                 result.data?.organizationInviteCreate?.errors[0].message,
             );
         }
+    };
+
+    const handleInviteLinkRefresh = async () => {
+        await resetInviteLink();
     };
 
     return (
@@ -99,8 +112,29 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                         <div className="flex w-full items-end space-x-2">
                             <div className="w-[75%]">
                                 <TextInput
-                                    value={inviteLinkValue}
+                                    value={addEllipsis(
+                                        data?.organizationInviteLinkReset
+                                            ?.inviteLink
+                                            ? `${window.location.host}${data?.organizationInviteLinkReset?.inviteLink}`
+                                            : `${window.location.host}${inviteLink}`,
+                                        50,
+                                    )}
                                     disabled={true}
+                                    rightIcon={
+                                        <button
+                                            disabled={loadingLinkRest}
+                                            onClick={handleInviteLinkRefresh}
+                                        >
+                                            <RefreshCcwIcon
+                                                size={20}
+                                                className={
+                                                    loadingLinkRest
+                                                        ? "spinner__circle"
+                                                        : ""
+                                                }
+                                            />
+                                        </button>
+                                    }
                                 />
                             </div>
                             <div className="w-[20%]">
@@ -111,7 +145,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                                     textAlign="center"
                                     onClick={() =>
                                         copyToClipboard(
-                                            inviteLinkValue,
+                                            inviteLink,
                                             "Invite link copied to clipboard",
                                         )
                                     }

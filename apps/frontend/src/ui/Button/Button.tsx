@@ -8,7 +8,7 @@ export interface ButtonProps
     className?: string;
     variant?: "primary" | "secondary" | "custom";
     children?: React.ReactNode;
-    icon?: React.ReactNode;
+    icon?: React.ReactElement;
     size?: "full" | "md";
 }
 
