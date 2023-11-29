@@ -5,6 +5,9 @@ import { Project } from "@/generated/graphql";
 import useSession from "@/modules/users/hooks/useSession";
 import { Button } from "@/ui";
 import { JoinDiscord } from "@/ui/Banner/JoinDiscord";
+import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
+import { NavItem } from "@/ui/NavItem/NavItem";
+import { NavLink } from "@/ui/NavItem/NavLink";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,10 +15,7 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/ui/Dropdown/DropdownMenu";
-import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
-import { NavItem } from "@/ui/NavItem/NavItem";
-import { NavLink } from "@/ui/NavItem/NavLink";
+} from "@/ui/dropdown/DropdownMenu";
 import {
     CheckCircleIcon,
     CircleIcon,

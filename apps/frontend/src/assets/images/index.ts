@@ -1,2 +1,2 @@
-export { SettingsIcon } from "../../ui/icons/navbar/SettingsIcon";
-export { CheckCircleIcon } from "../../ui/icons/navbar/CheckCircleIcon";
+export { CheckCircleIcon } from "../../ui/icons/CheckCircleIcon";
+export { SettingsIcon } from "../../ui/icons/SettingsIcon";

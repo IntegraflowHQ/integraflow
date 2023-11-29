@@ -3,6 +3,9 @@ import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
 import useSessionState from "@/modules/users/hooks/useSessionState";
 import useUserState from "@/modules/users/hooks/useUserState";
 import { Button } from "@/ui";
+import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
+import { NavItem } from "@/ui/NavItem/NavItem";
+import { NavLink } from "@/ui/NavItem/NavLink";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,10 +16,7 @@ import {
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
-} from "@/ui/Dropdown/DropdownMenu";
-import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
-import { NavItem } from "@/ui/NavItem/NavItem";
-import { NavLink } from "@/ui/NavItem/NavLink";
+} from "@/ui/dropdown/DropdownMenu";
 import {
     CirclePlusIcon,
     CircleStackIcon,
