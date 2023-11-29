@@ -1,4 +1,4 @@
-import Discord from "assets/images/navbar/Discord.png";
+import Discord from "assets/images/Discord.png";
 import { Button } from "..";
 
 export const JoinDiscord = () => {

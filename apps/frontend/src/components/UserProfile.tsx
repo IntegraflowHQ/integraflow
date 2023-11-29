@@ -1,10 +1,3 @@
-import {
-    CirclePlusIcon,
-    CircleStackIcon,
-    LogoutIcon,
-    QuestionIcon,
-    SettingsIcon,
-} from "@/assets/images";
 import useDatabase from "@/database/hooks/useDatabase";
 import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
 import useSessionState from "@/modules/users/hooks/useSessionState";
@@ -21,8 +14,19 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/ui/Dropdown/DropdownMenu";
-import Frame from "assets/images/navbar/Frame.png";
-import { ChevronDown, ChevronRight, NewspaperIcon } from "lucide-react";
+import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
+import { NavItem } from "@/ui/NavItem/NavItem";
+import { NavLink } from "@/ui/NavItem/NavLink";
+import {
+    CirclePlusIcon,
+    CircleStackIcon,
+    LogoutIcon,
+    NewspaperIcon,
+    QuestionIcon,
+    SettingsIcon,
+} from "@/ui/icons";
+import Frame from "assets/images/Frame.png";
+import { ChevronDown, ChevronRight } from "lucide-react";
 export const UserProfile = () => {
     const ProfileNavItems = [
         {
@@ -41,7 +45,6 @@ export const UserProfile = () => {
             icon: <QuestionIcon />,
         },
     ];
-
     const workspaces = [
         {
             id: 1,
@@ -72,9 +75,9 @@ export const UserProfile = () => {
                     <img
                         src={Frame}
                         alt="picture frame"
-                        className="rounded object-contain"
+                        className="h-[31px] w-[31px] rounded object-contain"
                     />
-                    <span>Profile</span>
+                    <span className="text-sm">Profile</span>
                 </div>
                 <span className="ml-auto">
                     <ChevronDown size={16} />
@@ -83,21 +86,21 @@ export const UserProfile = () => {
             <DropdownMenuContent
                 align="start"
                 alignOffset={50}
-                className="border-intg-bg-10 w-[310px] rounded border-[0.5px] bg-intg-bg-9 px-2 py-3 text-intg-text"
+                className="w-[310px] rounded border-[0.5px] border-intg-bg-10 bg-intg-bg-9 px-2 py-3 text-intg-text"
             >
                 <DropdownMenuLabel className="pb-1">
                     <p className="text-xs">SIGNED IN AS USER</p>
                 </DropdownMenuLabel>
                 <DropdownMenuItem>
                     <div className="flex items-center justify-between px-2 py-[6px]">
-                        <div className="flex space-x-2">
+                        <div className="flex items-center space-x-2">
                             <img
                                 src={Frame}
                                 alt="user avatar"
-                                className="rounded object-contain"
+                                className="h-[31px] w-[31px] rounded object-contain"
                             />
                             <div>
-                                <p className="text-intg-text-7 text-sm">
+                                <p className="text-sm text-intg-text-7">
                                     User name
                                 </p>
                                 <p className="text-sm">user@gmail.com</p>
@@ -113,14 +116,13 @@ export const UserProfile = () => {
                     <DropdownMenuLabel>
                         <p className="text-xs">CURRENT WORKSPACE</p>
                     </DropdownMenuLabel>
-                    <DropdownMenuSubTrigger className="my-3 flex justify-between px-3 py-2">
-                        <div className="flex items-center space-x-2">
-                            <span className="rounded bg-gradient-button px-1.5">
-                                IF
-                            </span>
-                            <span>SOBTECH</span>
-                        </div>
-                        <ChevronRight />
+                    <DropdownMenuSubTrigger>
+                        <NavItem
+                            text="SOBTECH"
+                            leftIcon={<AcronynmBox text="Sobtech" />}
+                            rightIcon={<ChevronRight size={20} />}
+                            classnames="px-3 py-2 my-3"
+                        />
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
                     <DropdownMenuSubContent className="ml-4 w-[221px] rounded bg-intg-bg-9 px-2 py-4 text-intg-text">
@@ -134,7 +136,12 @@ export const UserProfile = () => {
                                     className="px-3 py-2"
                                     key={item.name}
                                 >
-                                    {item.name}
+                                    <NavItem
+                                        text={item.name}
+                                        leftIcon={
+                                            <AcronynmBox text={item.name} />
+                                        }
+                                    />
                                 </DropdownMenuItem>
                             );
                         })}
@@ -145,21 +152,28 @@ export const UserProfile = () => {
                                 variant="custom"
                                 text="New Workspace"
                                 size="md"
-                                className="bg-intg-bg-11 w-full"
+                                className="w-full bg-intg-bg-11"
                             />
                         </DropdownMenuItem>
                     </DropdownMenuSubContent>
                 </DropdownMenuSub>
                 <DropdownMenuItem className="flex items-center space-x-2 px-3 py-2 ">
                     <SettingsIcon />
-                    <p>Workspace Settings</p>
+                    <p className="text-sm">Workspace Settings</p>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
                 {ProfileNavItems.map((item) => {
                     return (
-                        <DropdownMenuItem className="flex items-center space-x-2 px-3 py-2">
-                            {item.icon}
-                            <p>{item.title}</p>
+                        <DropdownMenuItem>
+                            <NavLink
+                                text={item.title}
+                                leftIcon={item.icon}
+                                to="/test"
+                                className={({ isActive }) =>
+                                    isActive ? "" : ""
+                                }
+                                classnames="px-3 py-2 text-sm text-intg-text"
+                            />
                         </DropdownMenuItem>
                     );
                 })}
@@ -169,7 +183,7 @@ export const UserProfile = () => {
                     onClick={handleLogout}
                 >
                     <LogoutIcon />
-                    <p className="text-intg-error-text">Log out</p>
+                    <p className="text-sm text-intg-error-text">Log out</p>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

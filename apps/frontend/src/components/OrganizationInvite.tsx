@@ -1,8 +1,8 @@
-import { CopyIcon } from "@/assets/images";
 import { Dialog, DialogContent } from "@/components";
 import { useOrganizationInviteCreateMutation } from "@/generated/graphql";
 import useSession from "@/modules/users/hooks/useSession";
 import { Button, TextInput } from "@/ui";
+import { CopyIcon } from "@/ui/icons";
 import { copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
 import { useState } from "react";

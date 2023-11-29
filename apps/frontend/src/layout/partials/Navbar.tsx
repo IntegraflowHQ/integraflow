@@ -1,14 +1,3 @@
-import {
-    CheckCircleIcon,
-    CircleIcon,
-    CirclePlusIcon,
-    CursorIcon,
-    DocumentIcon,
-    HomeIcon,
-    PeopleIcon,
-    SettingsIcon,
-    SpeakerIcon,
-} from "@/assets/images";
 import { CreateNewProject } from "@/components/CreateNewProject";
 import { OrganizationInvite } from "@/components/OrganizationInvite";
 import { UserProfile } from "@/components/UserProfile";
@@ -24,7 +13,20 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/ui/Dropdown/DropdownMenu";
-import { addEllipsis, cn, getAcronym } from "@/utils";
+import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
+import { NavItem } from "@/ui/NavItem/NavItem";
+import { NavLink } from "@/ui/NavItem/NavLink";
+import {
+    CheckCircleIcon,
+    CircleIcon,
+    CirclePlusIcon,
+    CursorIcon,
+    DocumentIcon,
+    HomeIcon,
+    PeopleIcon,
+    SettingsIcon,
+    SpeakerIcon,
+} from "@/ui/icons";
 import { DeepOmit } from "@apollo/client/utilities";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
@@ -76,33 +78,28 @@ export const Navbar = () => {
                         <p className="text-xs text-intg-text-4">Project</p>
                         <DropdownMenu>
                             <DropdownMenuTrigger className="select-none outline-none">
-                                <p className="flex w-[177px]  items-center gap-2 text-intg-text-4">
-                                    <span className="flex h-6 w-6 items-center justify-center rounded bg-gradient-button px-1.5 text-left text-xs">
-                                        {getAcronym(
-                                            session?.project?.name as string,
-                                        )}
-                                    </span>
-                                    <span className="flex-1 text-left text-sm capitalize">
-                                        {addEllipsis(
-                                            session?.project?.name as string,
-                                            16,
-                                        )}
-                                    </span>
-                                    <span>
-                                        <ChevronDown size={16} />
-                                    </span>
-                                </p>
+                                <NavItem
+                                    text={session?.project?.name as string}
+                                    leftIcon={
+                                        <AcronynmBox
+                                            text={
+                                                session?.project?.name as string
+                                            }
+                                        />
+                                    }
+                                    rightIcon={<ChevronDown size={16} />}
+                                    ellipsis={true}
+                                    ellipsisLength={16}
+                                />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent
                                 align="start"
-                                alignOffset={50}
                                 className=" rounded border border-intg-bg-10 bg-intg-bg-9 p-2 py-3 text-intg-text"
                             >
                                 <DropdownMenuGroup className="scrollbar-hide max-h-[20rem] overflow-y-scroll p-1">
                                     {projects.map((item) => {
                                         return (
                                             <DropdownMenuItem
-                                                asChild
                                                 key={item.node.id}
                                                 onClick={() => {
                                                     switchProject(
@@ -113,34 +110,32 @@ export const Navbar = () => {
                                                     );
                                                 }}
                                             >
-                                                <button
-                                                    className={cn(
-                                                        "mx-auto flex w-[205px] cursor-pointer items-center gap-2 overflow-x-hidden rounded p-2  hover:bg-intg-bg-10",
-                                                    )}
-                                                >
-                                                    <span className="flex h-6 w-6 items-center justify-center rounded bg-gradient-button px-1.5 text-xs">
-                                                        {getAcronym(
-                                                            item.node.name,
-                                                        )}
-                                                    </span>
-                                                    <p className="flex-1 text-left text-sm">
-                                                        {addEllipsis(
-                                                            item.node.name,
-                                                            item.node.slug ===
-                                                                session?.project
-                                                                    .slug
-                                                                ? 17
-                                                                : 22,
-                                                        )}
-                                                    </p>
-                                                    {item.node.slug ===
-                                                        session?.project
-                                                            .slug && (
-                                                        <span>
+                                                <NavItem
+                                                    leftIcon={
+                                                        <AcronynmBox
+                                                            text={
+                                                                item.node.name
+                                                            }
+                                                        />
+                                                    }
+                                                    text={item.node.name}
+                                                    rightIcon={
+                                                        item.node.slug ===
+                                                            session?.project
+                                                                .slug && (
                                                             <CheckCircleIcon />
-                                                        </span>
-                                                    )}
-                                                </button>
+                                                        )
+                                                    }
+                                                    ellipsis={true}
+                                                    ellipsisLength={
+                                                        (item.node.name,
+                                                        item.node.slug ===
+                                                        session?.project.slug
+                                                            ? 17
+                                                            : 22)
+                                                    }
+                                                    classnames="overflow-x-hidden w-[205px] hover:bg-intg-bg-10 rounded p-2"
+                                                />
                                             </DropdownMenuItem>
                                         );
                                     })}
@@ -193,13 +188,16 @@ export const Navbar = () => {
                     <ul className="space-y-2 py-4 text-sm text-intg-text-4">
                         {navItems.map((item) => {
                             return (
-                                <li
+                                <NavLink
+                                    to=""
+                                    className={({ isActive }) =>
+                                        isActive ? "bg-intg-bg-8" : ""
+                                    }
                                     key={item.id}
-                                    className="flex cursor-pointer items-center gap-2 px-3 py-2"
-                                >
-                                    <span>{item.icon}</span>
-                                    <span>{item.title}</span>
-                                </li>
+                                    leftIcon={item.icon}
+                                    text={item.title}
+                                    classnames="px-3 py-2"
+                                />
                             );
                         })}
                     </ul>
