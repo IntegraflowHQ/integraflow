@@ -33,7 +33,7 @@ const Button = React.forwardRef(
                     "w-full rounded-lg text-base font-medium",
                     textAlign === "left" ? "" : "flex justify-center",
                     size === "full" ? "px-8 py-4" : "p-3",
-                    icon ? "flex  items-center space-x-2" : "",
+                    icon ? "flex items-center gap-2" : "",
                     variant === "primary"
                         ? "bg-gradient-button text-white hover:bg-gradient-button-hover"
                         : variant === "secondary"
