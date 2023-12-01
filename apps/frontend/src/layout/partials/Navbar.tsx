@@ -63,7 +63,7 @@ export const Navbar = () => {
 
     return (
         <div
-            className="flex h-screen w-[240px] flex-col  justify-between border-r border-intg-bg-4 bg-intg-black p-6"
+            className="scrollbar-hide flex h-screen w-[240px] flex-col justify-between overflow-y-auto border-r border-intg-bg-4 bg-intg-black p-6"
             style={{
                 backgroundImage:
                     "radial-gradient(rgba(28, 15, 89, 0.30) 50%, rgba(5, 5, 5, 0.30))",

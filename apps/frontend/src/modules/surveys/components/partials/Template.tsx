@@ -1,0 +1,35 @@
+import { Header } from "@/ui";
+import { cn } from "@/utils";
+
+export type TemplateProps = {
+    title: string;
+    description: string;
+    image: string;
+    right?: boolean;
+};
+
+export default function Template({
+    title,
+    description,
+    image,
+    right = false,
+}: TemplateProps) {
+    return (
+        <div className="flex flex-col gap-4 rounded-[9.455px] border border-intg-bg-9 bg-intg-bg-9 p-[18.91px] transition-all ease-out hover:border-intg-bg-2">
+            <Header
+                variant="3"
+                title={title}
+                description={description}
+                className="w-[314px]"
+            />
+            <div
+                className={cn(
+                    "bg-intg-bg-12 flex h-[196px] items-end justify-center rounded-[9.455px]",
+                    right ? "flex-col" : "",
+                )}
+            >
+                <img src={image} alt={title} />
+            </div>
+        </div>
+    );
+}
