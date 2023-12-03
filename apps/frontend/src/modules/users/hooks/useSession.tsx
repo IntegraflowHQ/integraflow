@@ -40,6 +40,8 @@ export default function useSession() {
         return session?.organization.slug === orgSlug;
     }, [session?.organization.slug, orgSlug]);
 
+    console.log(orgSlug, isCurrentOrg, session, user);
+
     const isValidProject = useMemo(() => {
         if (!projectSlug) {
             return (
@@ -54,10 +56,14 @@ export default function useSession() {
         }
     }, [projectSlug, orgSlug, session]);
 
+    console.log(projectSlug, isValidProject);
+
     const isValidSession = useMemo(() => {
         if (!projectSlug && !orgSlug) return true;
         return isCurrentOrg && isValidProject;
     }, [projectSlug, orgSlug, isCurrentOrg, isValidProject]);
+
+    console.log(projectSlug, isValidSession);
 
     const createValidSessionData = useCallback(async () => {
         let org = null;

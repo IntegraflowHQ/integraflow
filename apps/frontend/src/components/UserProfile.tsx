@@ -1,4 +1,5 @@
 import useLogout from "@/modules/auth/hooks/useLogout";
+import useUserState from "@/modules/users/hooks/useUserState";
 import { Button } from "@/ui";
 import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
 import { NavItem } from "@/ui/NavItem/NavItem";
@@ -54,6 +55,7 @@ export const UserProfile = () => {
     ];
 
     const { handleLogout } = useLogout();
+    const {user} = useUserState()
 
     return (
         <DropdownMenu>
@@ -90,7 +92,7 @@ export const UserProfile = () => {
                                 <p className="text-sm text-intg-text-7">
                                     User name
                                 </p>
-                                <p className="text-sm">user@gmail.com</p>
+                                <p className="text-sm">{user?.email}</p>
                             </div>
                         </div>
                         <div>

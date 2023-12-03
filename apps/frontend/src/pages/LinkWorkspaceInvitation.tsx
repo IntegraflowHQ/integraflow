@@ -1,5 +1,7 @@
+import { ExpiredInviteLink } from "@/components/ExpiredInviteLink";
 import {
     Organization,
+    OrganizationInviteDetails,
     Project,
     User,
     useOrganizationInviteDetailsLazyQuery,
@@ -10,11 +12,11 @@ import useSession from "@/modules/users/hooks/useSession";
 import useUserState from "@/modules/users/hooks/useUserState";
 import { Button, GlobalSpinner, Screen } from "@/ui";
 import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
-import { omitTypename } from "@/utils";
+import { getAcronym, omitTypename } from "@/utils";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-export const JoinWorkspace = () => {
+export const LinkWorkspaceInvitation = () => {
     const { inviteLink } = useParams();
     const { createSession } = useSession();
     const { addWorkSpace } = useUserState();
@@ -23,7 +25,7 @@ export const JoinWorkspace = () => {
 
     const [joinOrganization, { loading }] = useOrganizationJoinMutation();
 
-    const [fetchInviteDetails, { data }] =
+    const [fetchInviteDetails, { data: inviteDetails }] =
         useOrganizationInviteDetailsLazyQuery({
             variables: {
                 inviteLink: window.location.href,
@@ -69,45 +71,44 @@ export const JoinWorkspace = () => {
     if (loading) {
         return <GlobalSpinner />;
     }
+    if (
+        (inviteDetails?.organizationInviteDetails as OrganizationInviteDetails)
+            ?.expired ||
+        !inviteDetails?.organizationInviteDetails
+    ) {
+        return <ExpiredInviteLink />;
+    }
 
     return (
         <Screen>
-            <div className="flex h-[calc(100%-5rem)] w-full items-center justify-between border border-yellow-500">
-                <div className="m-auto w-1/2 border  text-center text-intg-text">
+            <div className="flex h-[calc(100%-5rem)] w-full items-center justify-between">
+                <div className="m-auto space-y-6 rounded-md bg-intg-bg-4 p-6 text-center text-intg-text lg:w-1/2">
                     <div className="m-auto w-fit text-center">
                         <AcronynmBox
                             size="md"
-                            text={
-                                data
-                                    ? (data?.organizationInviteDetails
-                                          ?.organizationName as string)
-                                    : ""
-                            }
+                            text={getAcronym(
+                                (
+                                    inviteDetails?.organizationInviteDetails as OrganizationInviteDetails
+                                )?.organizationName,
+                            )}
                         />
                     </div>
-                    <p className="text-center text-3xl font-semibold">
+                    <p className="text-center text-3xl font-semibold text-white">
                         <span>You have been invited you to</span>
                         <br />
-                        {data?.organizationInviteDetails?.organizationName}
+                        {
+                            inviteDetails?.organizationInviteDetails
+                                ?.organizationName
+                        }
                     </p>
-
                     <p>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing
-                        elit. Nulla maiores facilis, consequuntur error
-                        temporibus, veritatis.
+                        Redefine customer experience with organic feedback and
+                        behavioral data in real-time. Enjoy intuitive designs,
+                        open source surveys, advanced analytics, seamless
+                        collaboration on the go.
                     </p>
-
-                    <div className="py-4">
-                        <hr className="" />
-                    </div>
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur, adipisicing
-                        elit. Nulla maiores facilis
-                        <br />
-                    </p>
-                    <div className="text-center">
+                    <div className="m-auto w-[80%]">
                         <Button
-                            className="w-[60%]"
                             onClick={handleJoinOrganization}
                             text={token ? "Accept" : "Login"}
                         />

@@ -825,6 +825,7 @@ export type OrganizationErrorFragmentFragment = { __typename?: 'OrganizationErro
 export type EmailTokenUserAuthMutationVariables = Exact<{
   email: Scalars['String'];
   token: Scalars['String'];
+  inviteLink?: InputMaybe<Scalars['ID']>;
 }>;
 
 
@@ -1136,8 +1137,8 @@ export const ProjectCreateFragmentFragmentDoc = gql`
     ${ProjectFragmentFragmentDoc}
 ${ProjectErrorFragmentFragmentDoc}`;
 export const EmailTokenUserAuthDocument = gql`
-    mutation emailTokenUserAuth($email: String!, $token: String!) {
-  emailTokenUserAuth(email: $email, token: $token) {
+    mutation emailTokenUserAuth($email: String!, $token: String!, $inviteLink: ID) {
+  emailTokenUserAuth(email: $email, token: $token, inviteLink: $inviteLink) {
     ...EmailTokenUserAuthFragment
   }
 }
@@ -1159,6 +1160,7 @@ export type EmailTokenUserAuthMutationFn = Apollo.MutationFunction<EmailTokenUse
  *   variables: {
  *      email: // value for 'email'
  *      token: // value for 'token'
+ *      inviteLink: // value for 'inviteLink'
  *   },
  * });
  */

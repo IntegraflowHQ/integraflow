@@ -41,6 +41,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
         getToken({
             variables: {
                 email: data.email,
+                inviteLink,
             },
         });
     };
@@ -53,7 +54,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
             const result = await googleAuth({
                 variables: {
                     code: codeResponse.code,
-                    inviteLink: inviteLink,
+                    inviteLink,
                 },
             });
 

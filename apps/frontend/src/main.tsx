@@ -14,8 +14,8 @@ import "./index.css";
 import { AppCore } from "./layout/AppCore";
 import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
-import { AcceptWorkspaceInvitation } from "./pages/AcceptWorkspaceInvitation";
-import { JoinWorkspace } from "./pages/JoinWorkspace";
+import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
+import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
 
 const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
 if (isDebugMode) {
@@ -62,11 +62,11 @@ const router = createBrowserRouter([
             },
             {
                 path: "/:workspaceName/join/:inviteLink",
-                element: <JoinWorkspace />,
+                element: <LinkWorkspaceInvitation />,
             },
             {
                 path: "/invite/:inviteId/accept",
-                element: <AcceptWorkspaceInvitation />,
+                element: <EmailWorkspaceInvitation />,
             },
         ],
     },
