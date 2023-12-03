@@ -60,6 +60,8 @@ export const useUserStore = create<UserState & UserActions>()(
             },
             addWorkspace: (data) => {
                 const user = get().user;
+                user!.organization = data.organization;
+                user!.project = data.project;
 
                 user?.organizations?.edges.unshift({
                     node: {
