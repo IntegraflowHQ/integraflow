@@ -13,6 +13,12 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /**
+   * The `DateTime` scalar type represents a DateTime
+   * value as specified by
+   * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+   */
+  DateTime: string;
   JSONString: any;
   /**
    * Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
@@ -116,6 +122,8 @@ export type GoogleUserAuth = {
   userErrors: Array<UserError>;
 };
 
+export type InviteDetails = OrganizationInviteDetails | OrganizationInviteLinkDetails;
+
 /**
  * Deactivate all JWT tokens of the currently authenticated user.
  *
@@ -147,6 +155,24 @@ export type Mutation = {
    * Requires one of the following permissions: AUTHENTICATED_USER.
    */
   organizationCreate?: Maybe<OrganizationCreate>;
+  /**
+   * Creates a new organization invite.
+   *
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+   */
+  organizationInviteCreate?: Maybe<OrganizationInviteCreate>;
+  /**
+   * Reset the current organization invite link..
+   *
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+   */
+  organizationInviteLinkReset?: Maybe<OrganizationInviteLinkReset>;
+  /**
+   * Joins an organization
+   *
+   * Requires one of the following permissions: AUTHENTICATED_USER.
+   */
+  organizationJoin?: Maybe<OrganizationJoin>;
   /** Creates a new project */
   projectCreate?: Maybe<ProjectCreate>;
   /** Updates a project. */
@@ -158,23 +184,36 @@ export type Mutation = {
 
 export type MutationEmailTokenUserAuthArgs = {
   email: Scalars['String'];
+  inviteLink?: InputMaybe<Scalars['String']>;
   token: Scalars['String'];
 };
 
 
 export type MutationEmailUserAuthChallengeArgs = {
   email: Scalars['String'];
+  inviteLink?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationGoogleUserAuthArgs = {
   code: Scalars['String'];
+  inviteLink?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationOrganizationCreateArgs = {
   input: OrganizationCreateInput;
   survey?: InputMaybe<OnboardingCustomerSurvey>;
+};
+
+
+export type MutationOrganizationInviteCreateArgs = {
+  input: OrganizationInviteCreateInput;
+};
+
+
+export type MutationOrganizationJoinArgs = {
+  input: OrganizationJoinInput;
 };
 
 
@@ -227,7 +266,7 @@ export type Organization = Node & {
   /**
    * Users associated with the organization.
    *
-   * Requires one of the following permissions: AUTHENTICATED_USER.
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
    */
   members?: Maybe<UserCountableConnection>;
   /**
@@ -239,7 +278,7 @@ export type Organization = Node & {
   /**
    * Projects associated with the organization.
    *
-   * Requires one of the following permissions: AUTHENTICATED_USER.
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
    */
   projects?: Maybe<ProjectCountableConnection>;
   /** Slug of the organization. */
@@ -327,6 +366,146 @@ export enum OrganizationErrorCode {
   Required = 'REQUIRED',
   Unique = 'UNIQUE'
 }
+
+/** The organization invite that was created or updated. */
+export type OrganizationInvite = Node & {
+  __typename?: 'OrganizationInvite';
+  /** The time at which the invite was created. */
+  createdAt: Scalars['DateTime'];
+  /** The invitees email address. */
+  email: Scalars['String'];
+  /** If the invite has expired. */
+  expired: Scalars['Boolean'];
+  /** First name of the invite. */
+  firstName?: Maybe<Scalars['String']>;
+  /** The unique identifier of the invite. */
+  id: Scalars['ID'];
+  /**
+   * The user who created the invitation.
+   *
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+   */
+  inviter: User;
+  /**
+   * The current project of the user.
+   *
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+   */
+  organization: Organization;
+  /** The user role that the invitee will receive upon accepting the invite. */
+  role: RoleLevel;
+  /** The last time at which the invite was updated. */
+  updatedAt: Scalars['DateTime'];
+};
+
+/**
+ * Creates a new organization invite.
+ *
+ * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+ */
+export type OrganizationInviteCreate = {
+  __typename?: 'OrganizationInviteCreate';
+  errors: Array<OrganizationError>;
+  organizationErrors: Array<OrganizationError>;
+  organizationInvite?: Maybe<OrganizationInvite>;
+};
+
+export type OrganizationInviteCreateInput = {
+  /** The email of the invitee. */
+  email: Scalars['String'];
+  /** The identifier in UUID v4 format. If none is provided, the backend will generate one. */
+  id?: InputMaybe<Scalars['UUID']>;
+  /** The message to send to the invitee. */
+  message?: InputMaybe<Scalars['String']>;
+  /** What member role the invite should grant. */
+  role?: InputMaybe<RoleLevel>;
+};
+
+/** The organization invite that was created or updated. */
+export type OrganizationInviteDetails = Node & {
+  __typename?: 'OrganizationInviteDetails';
+  /** The time at which the invite was created. */
+  createdAt: Scalars['DateTime'];
+  /** The invitees email address. */
+  email: Scalars['String'];
+  /** If the invite has expired. */
+  expired: Scalars['Boolean'];
+  /** First name of the invite. */
+  firstName?: Maybe<Scalars['String']>;
+  /** The unique identifier of the invite. */
+  id: Scalars['ID'];
+  /** The name/email of the inviter. */
+  inviter: Scalars['String'];
+  /** The ID of the organization the invite is for. */
+  organizationId: Scalars['ID'];
+  /** The logo of the organization the invite is for. */
+  organizationLogo?: Maybe<Scalars['String']>;
+  /** The name of the organization the invite is for. */
+  organizationName: Scalars['String'];
+  /** The user role that the invitee will receive upon accepting the invite. */
+  role: RoleLevel;
+  /** The last time at which the invite was updated. */
+  updatedAt: Scalars['DateTime'];
+};
+
+/** The organization invite link. */
+export type OrganizationInviteLink = Node & {
+  __typename?: 'OrganizationInviteLink';
+  /** The ID of the object. */
+  id: Scalars['ID'];
+  /**
+   * The link of the organization the invite is for.
+   *
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+   */
+  inviteLink: Scalars['String'];
+};
+
+/** The organization invite that was created or updated. */
+export type OrganizationInviteLinkDetails = Node & {
+  __typename?: 'OrganizationInviteLinkDetails';
+  /** The ID of the object. */
+  id: Scalars['ID'];
+  /** The ID of the organization the invite is for. */
+  organizationId: Scalars['ID'];
+  /** The logo of the organization the invite is for. */
+  organizationLogo?: Maybe<Scalars['String']>;
+  /** The name of the organization the invite is for. */
+  organizationName: Scalars['String'];
+};
+
+/**
+ * Reset the current organization invite link..
+ *
+ * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+ */
+export type OrganizationInviteLinkReset = {
+  __typename?: 'OrganizationInviteLinkReset';
+  errors: Array<OrganizationError>;
+  /** The current organization invite link. */
+  inviteLink?: Maybe<Scalars['String']>;
+  organizationErrors: Array<OrganizationError>;
+  /** Whether the operation was successful. */
+  success?: Maybe<Scalars['Boolean']>;
+};
+
+/**
+ * Joins an organization
+ *
+ * Requires one of the following permissions: AUTHENTICATED_USER.
+ */
+export type OrganizationJoin = {
+  __typename?: 'OrganizationJoin';
+  errors: Array<OrganizationError>;
+  organizationErrors: Array<OrganizationError>;
+  /** A user that has access to the the resources of an organization. */
+  user: AuthUser;
+};
+
+export type OrganizationJoinInput = {
+  /** An invite link for an organization. */
+  inviteLink: Scalars['String'];
+};
 
 /** The Relay compliant `PageInfo` type, containing data necessary to paginate this connection. */
 export type PageInfo = {
@@ -458,6 +637,14 @@ export type Query = {
   __typename?: 'Query';
   _entities?: Maybe<Array<Maybe<_Entity>>>;
   _service?: Maybe<_Service>;
+  /** One specific organization invite. */
+  organizationInviteDetails?: Maybe<InviteDetails>;
+  /**
+   * The current organization invite link.
+   *
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+   */
+  organizationInviteLink?: Maybe<OrganizationInviteLink>;
   /**
    * Return the currently authenticated user.
    *
@@ -471,6 +658,11 @@ export type Query_EntitiesArgs = {
   representations?: InputMaybe<Array<InputMaybe<Scalars['_Any']>>>;
 };
 
+
+export type QueryOrganizationInviteDetailsArgs = {
+  inviteLink: Scalars['String'];
+};
+
 /** Refresh JWT token. Mutation tries to take refreshToken from the input. If it fails it will try to take `refreshToken` from the http-only cookie `refreshToken`. `csrfToken` is required when `refreshToken` is provided as a cookie. */
 export type RefreshToken = {
   __typename?: 'RefreshToken';
@@ -479,6 +671,11 @@ export type RefreshToken = {
   token?: Maybe<Scalars['String']>;
   userErrors: Array<UserError>;
 };
+
+export enum RoleLevel {
+  Admin = 'ADMIN',
+  Member = 'MEMBER'
+}
 
 /** Represents user data. */
 export type User = Node & {
