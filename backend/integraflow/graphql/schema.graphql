@@ -367,7 +367,7 @@ enum ProjectSortField @doc(category: "Projects") {
 union InviteDetails = OrganizationInviteDetails | OrganizationInviteLinkDetails
 
 """The organization invite that was created or updated."""
-type OrganizationInviteDetails implements Node {
+type OrganizationInviteDetails implements Node @doc(category: "Organizations") {
   """The unique identifier of the invite."""
   id: ID!
 
@@ -449,7 +449,7 @@ type Mutation {
     email: String!
 
     """An optional invite link for an organization."""
-    inviteLink: ID
+    inviteLink: String
 
     """The magic login code."""
     token: String!
@@ -461,6 +461,9 @@ type Mutation {
   emailUserAuthChallenge(
     """The email for which to generate the magic login code."""
     email: String!
+
+    """An optional invite link for an organization."""
+    inviteLink: String
   ): EmailUserAuthChallenge @doc(category: "Authentication")
 
   """Finds or creates a new user account from google auth credentials."""
@@ -469,7 +472,7 @@ type Mutation {
     code: String!
 
     """An optional invite link for an organization."""
-    inviteLink: ID
+    inviteLink: String
   ): GoogleUserAuth @doc(category: "Authentication")
 
   """
@@ -830,7 +833,7 @@ type OrganizationInviteCreate @doc(category: "Organizations") {
 }
 
 """The organization invite that was created or updated."""
-type OrganizationInvite implements Node {
+type OrganizationInvite implements Node @doc(category: "Organizations") {
   """The unique identifier of the invite."""
   id: ID!
 

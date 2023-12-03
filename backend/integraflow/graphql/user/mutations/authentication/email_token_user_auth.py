@@ -36,7 +36,7 @@ class EmailTokenUserAuth(BaseMutation):
             description="The magic login code."
         )
 
-        invite_link = graphene.ID(
+        invite_link = graphene.String(
             description="An optional invite link for an organization."
         )
 
@@ -70,7 +70,7 @@ class EmailTokenUserAuth(BaseMutation):
     ):
         token = data["token"].strip()
         email = data["email"].strip().lower()
-        invite_link = data["invite_link"].strip()
+        invite_link = data.get("invite_link")
 
         key = "magic_" + str(email)
 
@@ -79,7 +79,6 @@ class EmailTokenUserAuth(BaseMutation):
 
             if (str(token) == str(cached_data["token"])):
                 user = retrieve_user_by_email(email)
-                additional_paylod = {}
                 csrf_token = _get_new_csrf_token()
                 refresh_additional_payload = {
                     "csrfToken": csrf_token,
@@ -93,16 +92,16 @@ class EmailTokenUserAuth(BaseMutation):
                         update_fields=["date_joined", "token_updated_at"]
                     )
 
+                if invite_link is None:
+                    invite_link = cached_data.get("invite_link")
+
                 if invite_link is not None:
                     OrganizationInvite.objects.accept_invite(
                         user,
-                        invite_link
+                        invite_link=invite_link.strip()
                     )
 
-                access_token = create_access_token(
-                    user,
-                    additional_payload=additional_paylod
-                )
+                access_token = create_access_token(user)
                 refresh_token = create_refresh_token(
                     user,
                     additional_payload=refresh_additional_payload
