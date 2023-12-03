@@ -1,6 +1,7 @@
 import { Dialog, DialogContent } from "@/components";
 import {
     useOrganizationInviteCreateMutation,
+    useOrganizationInviteLinkCreateLazyQuery,
     useOrganizationInviteLinkResetMutation,
 } from "@/generated/graphql";
 import useSession from "@/modules/users/hooks/useSession";
@@ -9,27 +10,28 @@ import { CopyIcon } from "@/ui/icons";
 import { addEllipsis, copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
 import { RefreshCcwIcon } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 type Props = {
-    inviteLink: string;
     open: boolean;
     onOpenChange: (value: boolean) => void;
 };
 
-export const OrganizationInvite = ({
-    open,
-    onOpenChange,
-    inviteLink,
-}: Props) => {
-    const [createInvite] = useOrganizationInviteCreateMutation();
+export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
+    const [fetchInviteLink, { data: inviteLink, loading: loadingInviteLink }] =
+        useOrganizationInviteLinkCreateLazyQuery();
+    const [emailInvite] = useOrganizationInviteCreateMutation();
     const { session } = useSession();
-    const [resetInviteLink, { loading: loadingLinkRest, data }] =
+    const [resetInviteLink, { loading: loadingLinkReset, data }] =
         useOrganizationInviteLinkResetMutation();
 
     const [toggleInviteType, setToggleInviteType] = useState(false);
     const [inviteEmail, setInviteEmail] = useState("");
     const [inputError, setInputError] = useState<string | undefined>("");
+
+    const handleLinkInvite = async () => {
+        await fetchInviteLink();
+    };
 
     const handleEmailInvite = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -45,7 +47,7 @@ export const OrganizationInvite = ({
             return;
         }
 
-        const result = await createInvite({
+        const result = await emailInvite({
             variables: {
                 input: {
                     email: inviteEmail,
@@ -58,7 +60,6 @@ export const OrganizationInvite = ({
                 "Success! Your email to join the workspace has been sent",
             );
         }
-
         if (result.data?.organizationInviteCreate?.errors.length > 0) {
             toast.error(
                 result.data?.organizationInviteCreate?.errors[0].message,
@@ -69,6 +70,18 @@ export const OrganizationInvite = ({
     const handleInviteLinkRefresh = async () => {
         await resetInviteLink();
     };
+    const inviteLinkValue = useMemo(() => {
+        if (data?.organizationInviteLinkReset?.inviteLink) {
+            return `${window.location.host}${data?.organizationInviteLinkReset?.inviteLink}`;
+        }
+        if (inviteLink?.organizationInviteLink?.inviteLink) {
+            return `${window.location.host}${inviteLink?.organizationInviteLink?.inviteLink}`;
+        }
+        return "";
+    }, [
+        data?.organizationInviteLinkReset?.inviteLink,
+        inviteLink?.organizationInviteLink?.inviteLink,
+    ]);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -103,7 +116,7 @@ export const OrganizationInvite = ({
                         </div>
                     </form>
                 ) : (
-                    <div className="mt-3">
+                    <div onSubmit={handleLinkInvite} className="mt-3">
                         <p className="mb-4 text-sm text-intg-text">
                             Invite link will provide a unique URL that allow
                             anyone to join your organization
@@ -112,23 +125,21 @@ export const OrganizationInvite = ({
                         <div className="flex w-full items-end space-x-2">
                             <div className="w-[75%]">
                                 <TextInput
-                                    value={addEllipsis(
-                                        data?.organizationInviteLinkReset
-                                            ?.inviteLink
-                                            ? `${window.location.host}${data?.organizationInviteLinkReset?.inviteLink}`
-                                            : `${window.location.host}${inviteLink}`,
-                                        50,
-                                    )}
+                                    placeholder=""
+                                    value={addEllipsis(inviteLinkValue, 50)}
                                     disabled={true}
                                     rightIcon={
                                         <button
-                                            disabled={loadingLinkRest}
+                                            disabled={
+                                                loadingLinkReset ||
+                                                loadingInviteLink
+                                            }
                                             onClick={handleInviteLinkRefresh}
                                         >
                                             <RefreshCcwIcon
                                                 size={20}
                                                 className={
-                                                    loadingLinkRest
+                                                    loadingLinkReset
                                                         ? "spinner__circle"
                                                         : ""
                                                 }
@@ -143,9 +154,10 @@ export const OrganizationInvite = ({
                                     size="md"
                                     icon={<CopyIcon />}
                                     textAlign="center"
+                                    disabled={loadingInviteLink}
                                     onClick={() =>
                                         copyToClipboard(
-                                            inviteLink,
+                                            inviteLinkValue,
                                             "Invite link copied to clipboard",
                                         )
                                     }
@@ -167,7 +179,10 @@ export const OrganizationInvite = ({
                         }
                         className=" bg-transparent text-intg-text hover:text-intg-bg-2"
                         size="md"
-                        onClick={() => setToggleInviteType(!toggleInviteType)}
+                        onClick={() => {
+                            setToggleInviteType(!toggleInviteType);
+                            !toggleInviteType && handleInviteLinkRefresh();
+                        }}
                     />
                 </div>
             </DialogContent>
