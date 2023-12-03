@@ -28,6 +28,10 @@ class EmailUserAuthChallenge(BaseMutation):
             description="The email for which to generate the magic login code."
         )
 
+        invite_link = graphene.String(
+            description="An optional invite link for an organization."
+        )
+
     class Meta:
         description = (
             "Finds or creates a new user account by email and sends an email "
@@ -47,10 +51,10 @@ class EmailUserAuthChallenge(BaseMutation):
 
     @classmethod
     def perform_mutation(
-        cls, _root, info: ResolveInfo, /, *, email
+        cls, _root, info: ResolveInfo, /, **data
     ):
         # Clean up
-        email = email.strip().lower()
+        email = data["email"].strip().lower()
         validate_email(email)
 
         # Generate a random token
@@ -84,6 +88,7 @@ class EmailUserAuthChallenge(BaseMutation):
             "current_attempt": current_attempt,
             "email": email,
             "token": token,
+            "invite_link": data.get("invite_link")
         }
 
         cache.set(
@@ -91,7 +96,7 @@ class EmailUserAuthChallenge(BaseMutation):
             value=value,
             timeout=int(settings.MAGIC_LINK_MINUTES_VALIDITY) * 60
         )
-        send_magic_link.delay(email=email, token=token)
+        send_magic_link.delay(email, token)
 
         return cls(
             errors=[],
