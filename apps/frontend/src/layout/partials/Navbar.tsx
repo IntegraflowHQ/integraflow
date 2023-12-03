@@ -1,10 +1,7 @@
 import { CreateNewProject } from "@/components/CreateNewProject";
 import { OrganizationInvite } from "@/components/OrganizationInvite";
 import { UserProfile } from "@/components/UserProfile";
-import {
-    Project,
-    useOrganizationInviteLinkCreateLazyQuery,
-} from "@/generated/graphql";
+import { Project } from "@/generated/graphql";
 import useSession from "@/modules/users/hooks/useSession";
 import { Button } from "@/ui";
 import { JoinDiscord } from "@/ui/Banner/JoinDiscord";
@@ -57,17 +54,12 @@ export const Navbar = () => {
             icon: <PeopleIcon />,
         },
     ];
-    const [fetchInviteLink, { data: invitelink }] =
-        useOrganizationInviteLinkCreateLazyQuery();
+
     const { session, projects, switchProject } = useSession();
 
     const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
     const [openOrganizationInviteModal, setOpenOrganizationInviteModal] =
         useState(false);
-
-    const handleCreateInviteLink = async () => {
-        await fetchInviteLink();
-    };
 
     return (
         <div
@@ -215,7 +207,6 @@ export const Navbar = () => {
                         <li
                             className="flex items-center space-x-2 px-3 py-2"
                             onClick={() => {
-                                handleCreateInviteLink();
                                 setOpenOrganizationInviteModal(true);
                             }}
                         >
@@ -226,9 +217,9 @@ export const Navbar = () => {
                         </li>
 
                         <OrganizationInvite
-                            inviteLink={
-                                invitelink?.organizationInviteLink?.inviteLink
-                            }
+                            // inviteLink={
+                            //     invitelink?.organizationInviteLink?.inviteLink
+                            // }
                             open={openOrganizationInviteModal}
                             onOpenChange={(value: boolean) =>
                                 setOpenOrganizationInviteModal(value)
