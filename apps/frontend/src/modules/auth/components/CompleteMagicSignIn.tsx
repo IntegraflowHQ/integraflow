@@ -49,6 +49,7 @@ export default function CompleteMagicSignIn() {
                 variables: {
                     email,
                     token: tokenParam,
+                    
                 },
             });
         }

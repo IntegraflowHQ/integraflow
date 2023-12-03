@@ -145,7 +145,7 @@ export const OrganizationInvite = ({
                                     textAlign="center"
                                     onClick={() =>
                                         copyToClipboard(
-                                            inviteLink,
+                                            `${window.location.host}${inviteLink}`,
                                             "Invite link copied to clipboard",
                                         )
                                     }

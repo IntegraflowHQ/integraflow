@@ -30,6 +30,12 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
     const email = watch("email");
     const navigate = useNavigate();
     const { login } = useAuthToken();
+    const [googleAuth, { loading }] = useGoogleUserAuthMutation();
+    const [persistUser, { loading: persistingUser }] = usePersistUser();
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const inviteLink = urlParams.get("inviteLink");
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
         getToken({
@@ -39,9 +45,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
         });
     };
 
-    const [googleAuth, { loading }] = useGoogleUserAuthMutation();
-    const [persistUser, { loading: persistingUser }] = usePersistUser();
-
+    console.log(urlParams);
     const loginWithGoogle = useGoogleLogin({
         flow: "auth-code",
         ux_mode: "popup",
@@ -49,6 +53,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
             const result = await googleAuth({
                 variables: {
                     code: codeResponse.code,
+                    inviteLink: inviteLink,
                 },
             });
 

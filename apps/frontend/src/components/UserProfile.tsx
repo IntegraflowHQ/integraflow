@@ -1,7 +1,4 @@
-import useDatabase from "@/database/hooks/useDatabase";
-import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
-import useSessionState from "@/modules/users/hooks/useSessionState";
-import useUserState from "@/modules/users/hooks/useUserState";
+import useLogout from "@/modules/auth/hooks/useLogout";
 import { Button } from "@/ui";
 import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
 import { NavItem } from "@/ui/NavItem/NavItem";
@@ -56,17 +53,7 @@ export const UserProfile = () => {
         },
     ];
 
-    const { clearSession } = useSessionState();
-    const { deleteUser } = useUserState();
-    const { logout } = useAuthToken();
-    const { clearDBs } = useDatabase();
-
-    const handleLogout = async () => {
-        await clearDBs();
-        deleteUser();
-        logout();
-        clearSession();
-    };
+    const { handleLogout } = useLogout();
 
     return (
         <DropdownMenu>
