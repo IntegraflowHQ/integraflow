@@ -63,7 +63,9 @@ export default function CompleteMagicSignIn() {
                         await persistUser();
                     }
                 } else if (emailTokenUserAuth?.userErrors?.length) {
-                    toast.error(emailTokenUserAuth?.userErrors[0].message ?? '');
+                    toast.error(
+                        emailTokenUserAuth?.userErrors[0].message ?? "",
+                    );
                 }
             },
             onError: () => {
@@ -207,6 +209,7 @@ export default function CompleteMagicSignIn() {
                                     resendMagicLink({
                                         variables: {
                                             email: email!,
+                                            inviteLink,
                                         },
                                     });
                                 }}

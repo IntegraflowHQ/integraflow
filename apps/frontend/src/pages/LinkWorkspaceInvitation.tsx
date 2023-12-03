@@ -25,12 +25,14 @@ export const LinkWorkspaceInvitation = () => {
 
     const [joinOrganization, { loading }] = useOrganizationJoinMutation();
 
-    const [fetchInviteDetails, { data: inviteDetails }] =
-        useOrganizationInviteDetailsLazyQuery({
-            variables: {
-                inviteLink: window.location.href,
-            },
-        });
+    const [
+        fetchInviteDetails,
+        { loading: inviteDetailsLoading, data: inviteDetails },
+    ] = useOrganizationInviteDetailsLazyQuery({
+        variables: {
+            inviteLink: window.location.href,
+        },
+    });
 
     useEffect(() => {
         const getInviteDetails = async () => {
@@ -68,7 +70,7 @@ export const LinkWorkspaceInvitation = () => {
         }
     };
 
-    if (loading) {
+    if (loading || inviteDetailsLoading) {
         return <GlobalSpinner />;
     }
     if (

@@ -36,6 +36,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const inviteLink = urlParams.get("inviteLink");
+    console.log(inviteLink)
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
         getToken({

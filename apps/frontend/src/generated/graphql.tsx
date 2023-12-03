@@ -184,19 +184,20 @@ export type Mutation = {
 
 export type MutationEmailTokenUserAuthArgs = {
   email: Scalars['String'];
-  inviteLink?: InputMaybe<Scalars['ID']>;
+  inviteLink?: InputMaybe<Scalars['String']>;
   token: Scalars['String'];
 };
 
 
 export type MutationEmailUserAuthChallengeArgs = {
   email: Scalars['String'];
+  inviteLink?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationGoogleUserAuthArgs = {
   code: Scalars['String'];
-  inviteLink?: InputMaybe<Scalars['ID']>;
+  inviteLink?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -825,7 +826,7 @@ export type OrganizationErrorFragmentFragment = { __typename?: 'OrganizationErro
 export type EmailTokenUserAuthMutationVariables = Exact<{
   email: Scalars['String'];
   token: Scalars['String'];
-  inviteLink?: InputMaybe<Scalars['ID']>;
+  inviteLink?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -833,6 +834,7 @@ export type EmailTokenUserAuthMutation = { __typename?: 'Mutation', emailTokenUs
 
 export type EmailUserAuthChallengeMutationVariables = Exact<{
   email: Scalars['String'];
+  inviteLink?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -840,7 +842,7 @@ export type EmailUserAuthChallengeMutation = { __typename?: 'Mutation', emailUse
 
 export type GoogleUserAuthMutationVariables = Exact<{
   code: Scalars['String'];
-  inviteLink?: InputMaybe<Scalars['ID']>;
+  inviteLink?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -1137,7 +1139,7 @@ export const ProjectCreateFragmentFragmentDoc = gql`
     ${ProjectFragmentFragmentDoc}
 ${ProjectErrorFragmentFragmentDoc}`;
 export const EmailTokenUserAuthDocument = gql`
-    mutation emailTokenUserAuth($email: String!, $token: String!, $inviteLink: ID) {
+    mutation emailTokenUserAuth($email: String!, $token: String!, $inviteLink: String) {
   emailTokenUserAuth(email: $email, token: $token, inviteLink: $inviteLink) {
     ...EmailTokenUserAuthFragment
   }
@@ -1172,8 +1174,8 @@ export type EmailTokenUserAuthMutationHookResult = ReturnType<typeof useEmailTok
 export type EmailTokenUserAuthMutationResult = Apollo.MutationResult<EmailTokenUserAuthMutation>;
 export type EmailTokenUserAuthMutationOptions = Apollo.BaseMutationOptions<EmailTokenUserAuthMutation, EmailTokenUserAuthMutationVariables>;
 export const EmailUserAuthChallengeDocument = gql`
-    mutation emailUserAuthChallenge($email: String!) {
-  emailUserAuthChallenge(email: $email) {
+    mutation emailUserAuthChallenge($email: String!, $inviteLink: String) {
+  emailUserAuthChallenge(email: $email, inviteLink: $inviteLink) {
     success
     authType
     userErrors {
@@ -1198,6 +1200,7 @@ export type EmailUserAuthChallengeMutationFn = Apollo.MutationFunction<EmailUser
  * const [emailUserAuthChallengeMutation, { data, loading, error }] = useEmailUserAuthChallengeMutation({
  *   variables: {
  *      email: // value for 'email'
+ *      inviteLink: // value for 'inviteLink'
  *   },
  * });
  */
@@ -1209,7 +1212,7 @@ export type EmailUserAuthChallengeMutationHookResult = ReturnType<typeof useEmai
 export type EmailUserAuthChallengeMutationResult = Apollo.MutationResult<EmailUserAuthChallengeMutation>;
 export type EmailUserAuthChallengeMutationOptions = Apollo.BaseMutationOptions<EmailUserAuthChallengeMutation, EmailUserAuthChallengeMutationVariables>;
 export const GoogleUserAuthDocument = gql`
-    mutation googleUserAuth($code: String!, $inviteLink: ID) {
+    mutation googleUserAuth($code: String!, $inviteLink: String) {
   googleUserAuth(code: $code, inviteLink: $inviteLink) {
     ...GoogleUserAuthFragment
   }

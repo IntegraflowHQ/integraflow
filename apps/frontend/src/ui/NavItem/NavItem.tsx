@@ -8,6 +8,7 @@ export interface NavItemProps {
     ellipsis?: boolean;
     ellipsisLength?: number;
     classnames?: string;
+    uppercase?: boolean;
 }
 
 export const NavItem = ({
@@ -17,6 +18,7 @@ export const NavItem = ({
     ellipsis = false,
     ellipsisLength,
     classnames = "",
+    uppercase = false,
 }: NavItemProps) => {
     return (
         <div
@@ -26,7 +28,12 @@ export const NavItem = ({
             )}
         >
             <span>{leftIcon}</span>
-            <p className="flex-1 text-left text-sm">
+            <p
+                className={cn(
+                    "flex-1 text-left text-sm",
+                    uppercase ? "uppercase" : "",
+                )}
+            >
                 {ellipsis
                     ? addEllipsis(text as string, ellipsisLength as number)
                     : text}

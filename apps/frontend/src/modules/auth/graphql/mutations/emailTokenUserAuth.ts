@@ -4,7 +4,7 @@ export const EMAIL_TOKEN_USER_AUTH = gql`
     mutation emailTokenUserAuth(
         $email: String!
         $token: String!
-        $inviteLink: ID
+        $inviteLink: String
     ) {
         emailTokenUserAuth(
             email: $email
