@@ -13,6 +13,12 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /**
+   * The `DateTime` scalar type represents a DateTime
+   * value as specified by
+   * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+   */
+  DateTime: string;
   JSONString: any;
   /**
    * Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
@@ -149,8 +155,6 @@ export type Mutation = {
    * Requires one of the following permissions: AUTHENTICATED_USER.
    */
   organizationCreate?: Maybe<OrganizationCreate>;
-<<<<<<< Updated upstream
-=======
   /**
    * Creates a new organization invite.
    *
@@ -169,7 +173,6 @@ export type Mutation = {
    * Requires one of the following permissions: AUTHENTICATED_USER.
    */
   organizationJoin?: Maybe<OrganizationJoin>;
->>>>>>> Stashed changes
   /** Creates a new project */
   projectCreate?: Maybe<ProjectCreate>;
   /** Updates a project. */
@@ -181,10 +184,7 @@ export type Mutation = {
 
 export type MutationEmailTokenUserAuthArgs = {
   email: Scalars['String'];
-<<<<<<< Updated upstream
-=======
   inviteLink?: InputMaybe<Scalars['String']>;
->>>>>>> Stashed changes
   token: Scalars['String'];
 };
 
@@ -197,16 +197,23 @@ export type MutationEmailUserAuthChallengeArgs = {
 
 export type MutationGoogleUserAuthArgs = {
   code: Scalars['String'];
-<<<<<<< Updated upstream
-=======
   inviteLink?: InputMaybe<Scalars['String']>;
->>>>>>> Stashed changes
 };
 
 
 export type MutationOrganizationCreateArgs = {
   input: OrganizationCreateInput;
   survey?: InputMaybe<OnboardingCustomerSurvey>;
+};
+
+
+export type MutationOrganizationInviteCreateArgs = {
+  input: OrganizationInviteCreateInput;
+};
+
+
+export type MutationOrganizationJoinArgs = {
+  input: OrganizationJoinInput;
 };
 
 
@@ -259,7 +266,7 @@ export type Organization = Node & {
   /**
    * Users associated with the organization.
    *
-   * Requires one of the following permissions: AUTHENTICATED_USER.
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
    */
   members?: Maybe<UserCountableConnection>;
   /**
@@ -271,7 +278,7 @@ export type Organization = Node & {
   /**
    * Projects associated with the organization.
    *
-   * Requires one of the following permissions: AUTHENTICATED_USER.
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
    */
   projects?: Maybe<ProjectCountableConnection>;
   /** Slug of the organization. */
@@ -360,8 +367,6 @@ export enum OrganizationErrorCode {
   Unique = 'UNIQUE'
 }
 
-<<<<<<< Updated upstream
-=======
 /** The organization invite that was created or updated. */
 export type OrganizationInvite = Node & {
   __typename?: 'OrganizationInvite';
@@ -502,7 +507,6 @@ export type OrganizationJoinInput = {
   inviteLink: Scalars['String'];
 };
 
->>>>>>> Stashed changes
 /** The Relay compliant `PageInfo` type, containing data necessary to paginate this connection. */
 export type PageInfo = {
   __typename?: 'PageInfo';
@@ -633,8 +637,6 @@ export type Query = {
   __typename?: 'Query';
   _entities?: Maybe<Array<Maybe<_Entity>>>;
   _service?: Maybe<_Service>;
-<<<<<<< Updated upstream
-=======
   /** One specific organization invite. */
   organizationInviteDetails?: Maybe<InviteDetails>;
   /**
@@ -643,7 +645,6 @@ export type Query = {
    * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
    */
   organizationInviteLink?: Maybe<OrganizationInviteLink>;
->>>>>>> Stashed changes
   /**
    * Return the currently authenticated user.
    *
@@ -657,14 +658,11 @@ export type Query_EntitiesArgs = {
   representations?: InputMaybe<Array<InputMaybe<Scalars['_Any']>>>;
 };
 
-<<<<<<< Updated upstream
-=======
 
 export type QueryOrganizationInviteDetailsArgs = {
   inviteLink: Scalars['String'];
 };
 
->>>>>>> Stashed changes
 /** Refresh JWT token. Mutation tries to take refreshToken from the input. If it fails it will try to take `refreshToken` from the http-only cookie `refreshToken`. `csrfToken` is required when `refreshToken` is provided as a cookie. */
 export type RefreshToken = {
   __typename?: 'RefreshToken';
@@ -673,6 +671,11 @@ export type RefreshToken = {
   token?: Maybe<Scalars['String']>;
   userErrors: Array<UserError>;
 };
+
+export enum RoleLevel {
+  Admin = 'ADMIN',
+  Member = 'MEMBER'
+}
 
 /** Represents user data. */
 export type User = Node & {
