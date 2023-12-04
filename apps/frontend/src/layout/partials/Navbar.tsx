@@ -1,13 +1,10 @@
-import { CreateNewProject } from "@/components/CreateNewProject";
-import { OrganizationInvite } from "@/components/OrganizationInvite";
-import { UserProfile } from "@/components/UserProfile";
+import { UserProfile } from "@/layout/partials/UserProfile";
 import { Project } from "@/generated/graphql";
+import { OrganizationInvite } from "@/modules/organizationInvite/components/OrganizationInvite";
+import { CreateNewProject } from "@/modules/projects/components/CreateNewProject";
 import useSession from "@/modules/users/hooks/useSession";
 import { Button } from "@/ui";
 import { JoinDiscord } from "@/ui/Banner/JoinDiscord";
-import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
-import { NavItem } from "@/ui/NavItem/NavItem";
-import { NavLink } from "@/ui/NavItem/NavLink";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -15,7 +12,10 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/ui/dropdown/DropdownMenu";
+} from "@/ui/Dropdown/DropdownMenu";
+import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
+import { NavItem } from "@/ui/NavItem/NavItem";
+import { NavLink } from "@/ui/NavItem/NavLink";
 import {
     CheckCircleIcon,
     CircleIcon,
@@ -77,7 +77,7 @@ export const Navbar = () => {
                     <div className="mb-6 space-y-2">
                         <p className="text-xs text-intg-text-4">Project</p>
                         <DropdownMenu>
-                            <DropdownMenuTrigger className="select-none outline-none">
+                            <DropdownMenuTrigger className="w-[177px] select-none outline-none">
                                 <NavItem
                                     text={session?.project?.name as string}
                                     leftIcon={
@@ -88,6 +88,7 @@ export const Navbar = () => {
                                         />
                                     }
                                     rightIcon={<ChevronDown size={16} />}
+                                    classnames="w-[181px]"
                                     ellipsis={true}
                                     ellipsisLength={16}
                                 />
@@ -170,7 +171,7 @@ export const Navbar = () => {
                             }
                         />
                     </div>
-                    <div className="space-y-[27px] pb-[14px]">
+                    <div className="space-y-[27px] pb-[24px]">
                         <button className="flex items-center justify-between gap-2 rounded border border-intg-bg-4 bg-intg-bg-9 p-3 text-sm text-intg-text-4">
                             <span>
                                 <DocumentIcon />
@@ -204,8 +205,10 @@ export const Navbar = () => {
                     <hr className="border-intg-bg-4" />
                     <ul className="space-y-2 py-4 text-sm text-intg-text-4">
                         <li
-                            className="flex items-center space-x-2 px-3 py-2"
-                            onClick={() => setOpenOrganizationInviteModal(true)}
+                            className="flex cursor-pointer items-center space-x-2 px-3 py-2"
+                            onClick={() => {
+                                setOpenOrganizationInviteModal(true);
+                            }}
                         >
                             <span>
                                 <CirclePlusIcon />
@@ -219,7 +222,7 @@ export const Navbar = () => {
                                 setOpenOrganizationInviteModal(value)
                             }
                         />
-                        <li className="flex items-center space-x-2 px-3 py-2">
+                        <li className="flex cursor-pointer items-center space-x-2 px-3 py-2">
                             <span>
                                 <SpeakerIcon />
                             </span>
@@ -227,12 +230,14 @@ export const Navbar = () => {
                         </li>
                     </ul>
                     <JoinDiscord />
-                    <div className="py-4">
-                        <hr className="border-intg-bg-4" />
-                    </div>
                 </div>
             </div>
-            <UserProfile />
+            <div>
+                <div className="pb-3">
+                    <hr className="border-intg-bg-4" />
+                </div>
+                <UserProfile />
+            </div>
         </div>
     );
 };

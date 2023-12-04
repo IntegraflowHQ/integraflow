@@ -14,7 +14,6 @@ export default function Todos() {
       if (!todos) {
         return;
       }
-      console.log("reload todo-list ");
       setTodos(todos);
     });
 

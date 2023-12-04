@@ -12,11 +12,13 @@ import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { NotFound } from "./components";
+import { NotFound } from "./components/NotFound";
 import "./index.css";
 import { AppCore } from "./layout/AppCore";
 import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
+import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
+import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
 
 const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
 if (isDebugMode) {
@@ -72,6 +74,14 @@ const router = createBrowserRouter([
                         element: <SurveyStudio />,
                     },
                 ],
+            },
+            {
+                path: "/:workspaceName/join/:inviteLink",
+                element: <LinkWorkspaceInvitation />,
+            },
+            {
+                path: "/invite/:inviteId/accept",
+                element: <EmailWorkspaceInvitation />,
             },
         ],
     },

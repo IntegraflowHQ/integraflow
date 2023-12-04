@@ -22,8 +22,8 @@ export const CheckCircleIcon = () => {
                     y2="1.875"
                     gradientUnits="userSpaceOnUse"
                 >
-                    <stop stop-color="#53389E" />
-                    <stop offset="1" stop-color="#6941C6" />
+                    <stop stopColor="#53389E" />
+                    <stop offset="1" stopColor="#6941C6" />
                 </linearGradient>
             </defs>
         </svg>

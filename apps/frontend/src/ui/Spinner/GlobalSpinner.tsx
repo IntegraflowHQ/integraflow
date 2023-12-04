@@ -18,23 +18,6 @@ export const GlobalSpinner = ({ message }: Props) => {
                 backgroundSize: "cover",
             }}
         >
-            <style>
-                {`
-         .spinner__circle {
-          animation: spin-anticlockwise 1s infinite linear;
-        }
-        
-        @keyframes spin-anticlockwise {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(-360deg); /* Rotate counterclockwise by -360 degrees */
-          }
-        }
-      }
-        `}
-            </style>
             <div className="px-12 pb-8 pt-12">
                 <img src={Logo} alt="Logo" />
             </div>

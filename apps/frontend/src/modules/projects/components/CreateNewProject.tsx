@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from "@/components";
+import { Dialog, DialogContent } from "@/ui";
 import { Project, useProjectCreateMutation } from "@/generated/graphql";
 import useSession from "@/modules/users/hooks/useSession";
 import useUserState from "@/modules/users/hooks/useUserState";

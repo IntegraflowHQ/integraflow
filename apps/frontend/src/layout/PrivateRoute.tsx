@@ -1,6 +1,7 @@
-import { GlobalSpinner, NotFound } from "@/components";
+import { NotFound } from "@/components/NotFound";
 import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
 import useSession from "@/modules/users/hooks/useSession";
+import { GlobalSpinner } from "@/ui";
 import { Navigate } from "react-router-dom";
 
 type Props = {

@@ -1,4 +1,5 @@
 export { default as Button } from "./Button/Button";
+export { Dialog, DialogContent, DialogTrigger } from "./Dialog/Dialog";
 export {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,8 +14,7 @@ export {
     DropdownMenuTrigger,
 } from "./Dropdown/DropdownMenu";
 export { Screen } from "./Screen/Screen";
+export { GlobalSpinner } from "./Spinner/GlobalSpinner";
 export { Header } from "./Typography/Header";
-export { Dialog } from "./dialog/Dialog";
 export { SelectInput } from "./input/SelectInput";
 export { TextInput } from "./input/TextInput";
-export { GlobalSpinner } from "./spinner/GlobalSpinner";
