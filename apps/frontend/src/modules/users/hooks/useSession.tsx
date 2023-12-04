@@ -180,6 +180,15 @@ export default function useSession() {
         createValidSessionData,
     ]);
 
+    useEffect(() => {
+        if (!session?.organization || !session?.project || !user) return;
+        updateUser({
+            ...user,
+            organization: session.organization,
+            project: session.project,
+        });
+    }, [session?.organization, session?.project]);
+
     const switchProject = useCallback(
         (project: DeepOmit<Project, "__typename">) => {
             const newSession: Session = {
