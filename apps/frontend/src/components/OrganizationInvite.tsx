@@ -43,26 +43,59 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
         const emailRegex =
             /^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}(?:, ?[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7})*$/;
         if (!emailRegex.test(inviteEmail)) {
-            setInputError("Check the format in which the email is entered");
+            setInputError("Format: (example@gmail.com, example2@gmail.com)");
             return;
         }
 
-        const result = await emailInvite({
-            variables: {
-                input: {
-                    email: inviteEmail,
+        const emailArray = inviteEmail.trim().split(",");
+
+        const promises = emailArray.map(async (email) => {
+            return emailInvite({
+                variables: {
+                    input: {
+                        email: email.trim(),
+                    },
                 },
-            },
+            });
         });
-        if (result.data?.organizationInviteCreate?.organizationInvite) {
+
+        const results = await Promise.all(promises);
+        const failedPromise = results.filter((item) => {
+            return item.data?.organizationInviteCreate?.errors?.length > 0;
+        });
+
+        const errorMessages = failedPromise.flatMap(
+            (response) =>
+                response?.data?.organizationInviteCreate?.organizationErrors.map(
+                    (error) => error.message,
+                ),
+        );
+
+        const flatErrorMessages = new Set(errorMessages);
+
+        if (failedPromise.length === 0) {
             onOpenChange(!open);
             toast.success(
                 "Success! Your email to join the workspace has been sent",
             );
         }
-        if (result.data?.organizationInviteCreate?.errors.length > 0) {
-            toast.error(
-                result.data?.organizationInviteCreate?.errors[0].message,
+
+        if (flatErrorMessages.size > 0) {
+            toast.custom(
+                <>
+                    {Array.from(flatErrorMessages).map((item, index) => (
+                        <>
+                            {index > 0 && (
+                                <div className="py-2">
+                                    <hr className="border-[.5px] border-intg-bg-2" />
+                                </div>
+                            )}
+                            <p>{item}</p>
+                        </>
+                    ))}
+                </>,
+                { duration: 5000 },
+                "error",
             );
         }
     };
@@ -92,7 +125,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
             >
                 {!toggleInviteType ? (
                     <form onSubmit={handleEmailInvite}>
-                        <div className="mt-3 flex w-full items-end space-x-2">
+                        <div className="mt-3  flex w-full items-start space-x-2">
                             <div className="w-[75%]">
                                 <TextInput
                                     label="Email address"
@@ -106,11 +139,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                                     errorMessage={inputError}
                                 />
                             </div>
-                            <div
-                                className={`${
-                                    inputError ? "mb-7" : ""
-                                } w-[25%]`}
-                            >
+                            <div className={`mt-7 w-[25%]`}>
                                 <Button text="Send Invite" size="md" />
                             </div>
                         </div>
