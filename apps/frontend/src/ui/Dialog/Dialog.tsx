@@ -15,7 +15,7 @@ export const DialogContent = forwardRef<HTMLDivElement, Props>(
             <DialogPrimitive.Overlay
                 className="fixed inset-0"
                 style={{
-                    background: "rgba(20, 23, 26, 0.20);",
+                    background: "rgba(20, 23, 26, 0.20)",
                     backdropFilter: "blur(8px)",
                 }}
             />

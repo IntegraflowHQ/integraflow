@@ -39,6 +39,38 @@ export default function CompleteMagicSignIn() {
     const code = watch("code");
     const [persistUser, { loading: persistingUser }] = usePersistUser();
 
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const inviteLink = urlParams.get("inviteLink") ?? undefined;
+
+    const [verifyToken, { loading: isVerifyingToken }] =
+        useEmailTokenUserAuthMutation({
+            onCompleted: async ({ emailTokenUserAuth }) => {
+                if (
+                    emailTokenUserAuth?.token &&
+                    emailTokenUserAuth.refreshToken &&
+                    emailTokenUserAuth.csrfToken
+                ) {
+                    login(
+                        emailTokenUserAuth.token,
+                        emailTokenUserAuth.refreshToken,
+                        emailTokenUserAuth.csrfToken,
+                    );
+
+                    if (emailTokenUserAuth.user) {
+                        await persistUser();
+                    }
+                } else if (emailTokenUserAuth?.userErrors?.length) {
+                    toast.error(
+                        emailTokenUserAuth?.userErrors[0].message ?? "",
+                    );
+                }
+            },
+            onError: () => {
+                toast.error("Something went wrong, please try again later.");
+            },
+        });
+
     useEffect(() => {
         if (!email || !emailRegex.test(email)) {
             navigate("/");
@@ -49,6 +81,7 @@ export default function CompleteMagicSignIn() {
                 variables: {
                     email,
                     token: tokenParam,
+                    inviteLink,
                 },
             });
         }
@@ -82,33 +115,10 @@ export default function CompleteMagicSignIn() {
             },
         });
 
-    const [verifyToken, { loading: isVerifyingToken }] =
-        useEmailTokenUserAuthMutation({
-            onCompleted: async ({ emailTokenUserAuth }) => {
-                if (
-                    emailTokenUserAuth?.token &&
-                    emailTokenUserAuth.refreshToken &&
-                    emailTokenUserAuth.csrfToken
-                ) {
-                    login(
-                        emailTokenUserAuth.token,
-                        emailTokenUserAuth.refreshToken,
-                        emailTokenUserAuth.csrfToken,
-                    );
-
-                    if (emailTokenUserAuth.user) {
-                        await persistUser();
-                    }
-                } else if (emailTokenUserAuth?.userErrors?.length > 0) {
-                    toast.error(emailTokenUserAuth.userErrors[0].message);
-                }
-            },
-            onError: () => {
-                toast.error("Something went wrong, please try again later.");
-            },
-        });
-
     const onSubmit: SubmitHandler<Inputs> = (data) => {
+        if (!emailRegex.test(email as string)) {
+            return 
+        }
         if (!email || !data.code) {
             return;
         }
@@ -201,6 +211,7 @@ export default function CompleteMagicSignIn() {
                                     resendMagicLink({
                                         variables: {
                                             email: email!,
+                                            inviteLink,
                                         },
                                     });
                                 }}

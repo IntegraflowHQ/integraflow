@@ -1,6 +1,5 @@
-import useDatabase from "@/database/hooks/useDatabase";
-import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
-import useSessionState from "@/modules/users/hooks/useSessionState";
+import useLogout from "@/modules/auth/hooks/useLogout";
+import useSession from "@/modules/users/hooks/useSession";
 import useUserState from "@/modules/users/hooks/useUserState";
 import { Button } from "@/ui";
 import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
@@ -18,6 +17,7 @@ import {
     DropdownMenuTrigger,
 } from "@/ui/dropdown/DropdownMenu";
 import {
+    CheckCircleIcon,
     CirclePlusIcon,
     CircleStackIcon,
     LogoutIcon,
@@ -26,7 +26,8 @@ import {
     SettingsIcon,
 } from "@/ui/icons";
 import Frame from "assets/images/Frame.png";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 export const UserProfile = () => {
     const ProfileNavItems = [
         {
@@ -45,28 +46,11 @@ export const UserProfile = () => {
             icon: <QuestionIcon />,
         },
     ];
-    const workspaces = [
-        {
-            id: 1,
-            name: "Workspace 1",
-        },
-        {
-            id: 2,
-            name: "Workspace 2",
-        },
-    ];
 
-    const { clearSession } = useSessionState();
-    const { deleteUser } = useUserState();
-    const { logout } = useAuthToken();
-    const { clearDBs } = useDatabase();
-
-    const handleLogout = async () => {
-        await clearDBs();
-        deleteUser();
-        logout();
-        clearSession();
-    };
+    const { handleLogout } = useLogout();
+    const { session } = useSession();
+    const { user } = useUserState();
+    const navigate = useNavigate();
 
     return (
         <DropdownMenu>
@@ -101,9 +85,9 @@ export const UserProfile = () => {
                             />
                             <div>
                                 <p className="text-sm text-intg-text-7">
-                                    User name
+                                    {user?.firstName} {user?.lastName}
                                 </p>
-                                <p className="text-sm">user@gmail.com</p>
+                                <p className="text-sm">{user?.email}</p>
                             </div>
                         </div>
                         <div>
@@ -118,10 +102,15 @@ export const UserProfile = () => {
                     </DropdownMenuLabel>
                     <DropdownMenuSubTrigger>
                         <NavItem
-                            text="SOBTECH"
-                            leftIcon={<AcronynmBox text="Sobtech" />}
-                            rightIcon={<ChevronRight size={20} />}
-                            classnames="px-3 py-2 my-3"
+                            uppercase={true}
+                            text={session?.organization?.name}
+                            leftIcon={
+                                <AcronynmBox
+                                    text={session?.organization?.name as string}
+                                />
+                            }
+                            rightIcon={<CheckCircleIcon />}
+                            classnames="px-3 py-2 my-3 uppercase"
                         />
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
@@ -129,17 +118,23 @@ export const UserProfile = () => {
                         <DropdownMenuLabel>
                             <p className="mb-2 text-xs">OTHER WORKSPACES</p>
                         </DropdownMenuLabel>
-
-                        {workspaces.map((item) => {
+                        {user?.organizations?.edges.map((item) => {
                             return (
                                 <DropdownMenuItem
                                     className="px-3 py-2"
-                                    key={item.name}
+                                    key={item.node.name}
+                                    onClick={
+                                        () => {
+                                            navigate(`/${item.node.slug}`);
+                                        }
+                                    }
                                 >
                                     <NavItem
-                                        text={item.name}
+                                        text={item.node.name}
                                         leftIcon={
-                                            <AcronynmBox text={item.name} />
+                                            <AcronynmBox
+                                                text={item.node.name}
+                                            />
                                         }
                                     />
                                 </DropdownMenuItem>
@@ -147,13 +142,15 @@ export const UserProfile = () => {
                         })}
                         <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
                         <DropdownMenuItem className="px-3 py-2">
-                            <Button
-                                icon={<CirclePlusIcon />}
-                                variant="custom"
-                                text="New Workspace"
-                                size="md"
-                                className="w-full bg-intg-bg-11"
-                            />
+                            <a href="/create-workspace">
+                                <Button
+                                    icon={<CirclePlusIcon />}
+                                    variant="custom"
+                                    text="New Workspace"
+                                    size="md"
+                                    className="w-full bg-intg-bg-11"
+                                />
+                            </a>
                         </DropdownMenuItem>
                     </DropdownMenuSubContent>
                 </DropdownMenuSub>

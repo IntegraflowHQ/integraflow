@@ -40,6 +40,7 @@ export default function useSession() {
         return session?.organization.slug === orgSlug;
     }, [session?.organization.slug, orgSlug]);
 
+
     const isValidProject = useMemo(() => {
         if (!projectSlug) {
             return (
@@ -53,6 +54,7 @@ export default function useSession() {
             );
         }
     }, [projectSlug, orgSlug, session]);
+
 
     const isValidSession = useMemo(() => {
         if (!projectSlug && !orgSlug) return true;
