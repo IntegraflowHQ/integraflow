@@ -1,13 +1,10 @@
-import { CreateNewProject } from "@/components/CreateNewProject";
-import { OrganizationInvite } from "@/components/OrganizationInvite";
 import { UserProfile } from "@/components/UserProfile";
 import { Project } from "@/generated/graphql";
+import { OrganizationInvite } from "@/modules/organizationInvite/components/OrganizationInvite";
+import { CreateNewProject } from "@/modules/projects/components/CreateNewProject";
 import useSession from "@/modules/users/hooks/useSession";
 import { Button } from "@/ui";
 import { JoinDiscord } from "@/ui/Banner/JoinDiscord";
-import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
-import { NavItem } from "@/ui/NavItem/NavItem";
-import { NavLink } from "@/ui/NavItem/NavLink";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,6 +13,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/ui/Dropdown/DropdownMenu";
+import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
+import { NavItem } from "@/ui/NavItem/NavItem";
+import { NavLink } from "@/ui/NavItem/NavLink";
 import {
     CheckCircleIcon,
     CircleIcon,
@@ -77,7 +77,7 @@ export const Navbar = () => {
                     <div className="mb-6 space-y-2">
                         <p className="text-xs text-intg-text-4">Project</p>
                         <DropdownMenu>
-                            <DropdownMenuTrigger className="select-none outline-none">
+                            <DropdownMenuTrigger className="w-[177px] select-none outline-none">
                                 <NavItem
                                     text={session?.project?.name as string}
                                     leftIcon={

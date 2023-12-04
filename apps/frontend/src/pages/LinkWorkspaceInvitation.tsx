@@ -1,4 +1,3 @@
-import { ExpiredInviteLink } from "@/components/ExpiredInviteLink";
 import {
     Organization,
     OrganizationInviteDetails,
@@ -8,6 +7,7 @@ import {
     useOrganizationJoinMutation,
 } from "@/generated/graphql";
 import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
+import { ExpiredInviteLink } from "@/modules/organizationInvite/components/ExpiredInviteLink";
 import useSession from "@/modules/users/hooks/useSession";
 import useUserState from "@/modules/users/hooks/useUserState";
 import { Button, GlobalSpinner, Screen } from "@/ui";

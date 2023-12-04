@@ -8,7 +8,7 @@ import { Button, Dialog, DialogContent, TextInput } from "@/ui";
 import { CopyIcon } from "@/ui/icons";
 import { addEllipsis, copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
-import { RefreshCcwIcon } from "lucide-react";
+import { Link, LucideMail, RefreshCcwIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 type Props = {
@@ -200,6 +200,13 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                 <div className="w-[30%]">
                     <Button
                         variant="custom"
+                        icon={
+                            toggleInviteType ? (
+                                <LucideMail size={20} />
+                            ) : (
+                                <Link size={20} />
+                            )
+                        }
                         text={
                             toggleInviteType
                                 ? "Invite with email"

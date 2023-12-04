@@ -1,4 +1,3 @@
-import { ExpiredInviteLink } from "@/components/ExpiredInviteLink";
 import {
     Organization,
     OrganizationInviteDetails,
@@ -8,6 +7,7 @@ import {
     useOrganizationJoinMutation,
 } from "@/generated/graphql";
 import useLogout from "@/modules/auth/hooks/useLogout";
+import { ExpiredInviteLink } from "@/modules/organizationInvite/components/ExpiredInviteLink";
 import useSession from "@/modules/users/hooks/useSession";
 import useUserState from "@/modules/users/hooks/useUserState";
 import { Button, GlobalSpinner, Screen } from "@/ui";
@@ -102,7 +102,7 @@ export const EmailWorkspaceInvitation = () => {
     if (loading || inviteDetailsLoading) {
         return <GlobalSpinner />;
     }
-    
+
     if (
         (inviteDetails?.organizationInviteDetails as OrganizationInviteDetails)
             ?.expired ||
