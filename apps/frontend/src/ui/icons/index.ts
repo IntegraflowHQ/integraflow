@@ -1,1 +1,15 @@
+export { CheckCircleIcon } from "./CheckCircleIcon";
+export { CircleIcon } from "./CircleIcon";
+export { CirclePlusIcon } from "./CirclePlusIcon";
+export { CircleStackIcon } from "./CircleStackIcon";
+export { CopyIcon } from "./CopyIcon";
+export { CursorIcon } from "./CursorIcon";
+export { DocumentIcon } from "./DocumentIcon";
 export { Google } from "./Google";
+export { HomeIcon } from "./HomeIcon";
+export { LogoutIcon } from "./LogoutIcon";
+export { NewspaperIcon } from "./NewspaperIcon";
+export { PeopleIcon } from "./PeopleIcon";
+export { QuestionIcon } from "./QuestionIcon";
+export { SettingsIcon } from "./SettingsIcon";
+export { SpeakerIcon } from "./SpeakerIcon";

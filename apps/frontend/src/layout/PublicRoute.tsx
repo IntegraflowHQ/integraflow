@@ -1,8 +1,8 @@
-import { GlobalSpinner } from "@/components";
 import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
 import useRedirect from "@/modules/auth/hooks/useRedirect";
 import useSession from "@/modules/users/hooks/useSession";
 import useUserState from "@/modules/users/hooks/useUserState";
+import { GlobalSpinner } from "@/ui";
 import React, { useEffect, useState } from "react";
 
 export default function PublicRoute({

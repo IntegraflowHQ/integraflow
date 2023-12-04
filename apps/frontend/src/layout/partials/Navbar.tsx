@@ -1,36 +1,35 @@
+import { UserProfile } from "@/layout/partials/UserProfile";
+import { Project } from "@/generated/graphql";
+import { OrganizationInvite } from "@/modules/organizationInvite/components/OrganizationInvite";
+import { CreateNewProject } from "@/modules/projects/components/CreateNewProject";
+import useSession from "@/modules/users/hooks/useSession";
+import { Button } from "@/ui";
+import { JoinDiscord } from "@/ui/Banner/JoinDiscord";
 import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/ui/Dropdown/DropdownMenu";
+import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
+import { NavItem } from "@/ui/NavItem/NavItem";
+import { NavLink } from "@/ui/NavItem/NavLink";
+import {
+    CheckCircleIcon,
     CircleIcon,
     CirclePlusIcon,
-    CircleStackIcon,
     CursorIcon,
     DocumentIcon,
     HomeIcon,
-    LogoutIcon,
-    NewspaperIcon,
     PeopleIcon,
-    QuestionIcon,
     SettingsIcon,
     SpeakerIcon,
-} from "@/assets/images";
-import { GlobalSpinner } from "@/components";
-import { Dialog, DialogContent } from "@/components/Dialog";
-import useDatabase from "@/database/hooks/useDatabase";
-import { Project, useProjectCreateMutation } from "@/generated/graphql";
-import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
-import useSession from "@/modules/users/hooks/useSession";
-import useSessionState from "@/modules/users/hooks/useSessionState";
-import useUserState from "@/modules/users/hooks/useUserState";
-import { Button, TextInput } from "@/ui";
-import { getAcronym, omitTypename } from "@/utils";
+} from "@/ui/icons";
 import { DeepOmit } from "@apollo/client/utilities";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { ChevronDown, ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
-import Discord from "../../assets/images/navbar/Discord.png";
-import {
-    default as Frame,
-    default as Profile,
-} from "../../assets/images/navbar/Frame.png";
+import { ChevronDown } from "lucide-react";
+import { useState } from "react";
 
 export const Navbar = () => {
     const navItems = [
@@ -56,101 +55,15 @@ export const Navbar = () => {
         },
     ];
 
-    const workspaces = [
-        {
-            id: 1,
-            name: "Workspace 1",
-        },
-        {
-            id: 2,
-            name: "Workspace 2",
-        },
-    ];
-
-    const bottomNav = [
-        {
-            id: 1,
-            title: "Invite team",
-            icon: <CirclePlusIcon />,
-        },
-        {
-            id: 2,
-            title: "Feedbacks",
-            icon: <SpeakerIcon />,
-        },
-        {
-            id: 3,
-            title: "Help and doc",
-            icon: <QuestionIcon />,
-        },
-    ];
-    // const navigate = useNavigate();
-    const [projectCreate, { loading }] = useProjectCreateMutation();
-    const { clearSession } = useSessionState();
     const { session, projects, switchProject } = useSession();
-    const { addProject, deleteUser } = useUserState();
-    const { logout } = useAuthToken();
-    const { clearDBs } = useDatabase();
 
     const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
-    const [projectName, setProjectName] = useState<string>("");
-    const [projectNameError, setProjectNameError] = useState("");
-
-    const handleCreateProject = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!projectName) {
-            setProjectNameError("Field cannot be empty");
-            return;
-        }
-        if (projectName.split("").length <= 2) {
-            setProjectNameError("Minimum length of project is 3");
-            return;
-        }
-
-        const result = await projectCreate({
-            variables: {
-                input: { name: projectName },
-            },
-            context: {
-                headers: {
-                    Project: session?.project?.id,
-                },
-            },
-        });
-
-        if (result.data?.projectCreate?.project) {
-            addProject(
-                session?.organization.slug!,
-                omitTypename(result.data.projectCreate.project as Project),
-            );
-            switchProject(
-                omitTypename(result.data.projectCreate.project as Project),
-            );
-            setOpenCreateProjectModal(false);
-        }
-    };
-
-    const handleLogout = async () => {
-        await clearDBs();
-        deleteUser();
-        logout();
-        clearSession();
-    };
-
-    useEffect(() => {
-        if (openCreateProjectModal === false) {
-            setProjectName("");
-            setProjectNameError("");
-        }
-    }, [openCreateProjectModal]);
-
-    if (loading) {
-        return <GlobalSpinner />;
-    }
+    const [openOrganizationInviteModal, setOpenOrganizationInviteModal] =
+        useState(false);
 
     return (
         <div
-            className="w-[240px] border-r border-intg-bg-4 bg-intg-black p-6"
+            className="flex h-screen w-[240px] flex-col  justify-between border-r border-intg-bg-4 bg-intg-black p-6"
             style={{
                 backgroundImage:
                     "radial-gradient(rgba(28, 15, 89, 0.30) 50%, rgba(5, 5, 5, 0.30))",
@@ -159,298 +72,172 @@ export const Navbar = () => {
                 backgroundSize: "cover",
             }}
         >
-            <div className="mb-9 space-y-2">
-                <p className="text-xs text-intg-text-4">Project</p>
-                <DropdownMenu.Root>
-                    <DropdownMenu.Trigger className="outline-none">
-                        <p className="flex w-[177px] items-center text-intg-text-4">
-                            <span className="mr-3 rounded bg-gradient-button px-1.5">
-                                {getAcronym(session?.project?.name as string)}
-                            </span>
-                            <span className="capitalize">
-                                {session?.project?.name}
-                            </span>
-                            <span className="ml-auto">
-                                <ChevronDown size={16} />
-                            </span>
-                        </p>
-                    </DropdownMenu.Trigger>
-                    <DropdownMenu.Portal>
-                        <DropdownMenu.Content
-                            align="start"
-                            alignOffset={50}
-                            className="w-[221px]  rounded border border-intg-bg-10 bg-intg-bg-9 p-2 text-white"
-                        >
-                            <DropdownMenu.Group>
-                                {projects.map((item) => {
-                                    return (
-                                        <DropdownMenu.Item
-                                            key={item.node.id}
-                                            className="flex cursor-pointer rounded p-2 hover:bg-intg-bg-10"
-                                            onClick={() => {
-                                                switchProject(
-                                                    item.node as DeepOmit<
-                                                        Project,
-                                                        "__typename"
-                                                    >,
-                                                );
-                                            }}
-                                        >
-                                            <span className="mr-3 rounded bg-gradient-button px-1.5">
-                                                {getAcronym(item.node.name)}
-                                            </span>
-                                            <span>{item.node.name}</span>
-                                        </DropdownMenu.Item>
-                                    );
-                                })}
-                            </DropdownMenu.Group>
-
-                            <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
-                            <DropdownMenu.Group>
-                                <DropdownMenu.Item className="flex cursor-pointer items-center space-x-2 px-3 py-2">
-                                    <span>
-                                        <SettingsIcon />
-                                    </span>
-                                    <span>Project Settings</span>
-                                </DropdownMenu.Item>
-                                <DropdownMenu.Item>
-                                    <Button
-                                        icon={<CirclePlusIcon />}
-                                        variant="custom"
-                                        text="New Project"
-                                        size="md"
-                                        className="bg-intg-bg-11"
-                                        onClick={() =>
-                                            setOpenCreateProjectModal(true)
-                                        }
-                                    />
-                                </DropdownMenu.Item>
-                            </DropdownMenu.Group>
-                            <DropdownMenu.CheckboxItem>
-                                <DropdownMenu.ItemIndicator />
-                            </DropdownMenu.CheckboxItem>
-
-                            <DropdownMenu.Separator />
-                        </DropdownMenu.Content>
-                    </DropdownMenu.Portal>
-                </DropdownMenu.Root>
-            </div>
-            <Dialog
-                open={openCreateProjectModal}
-                onOpenChange={(value) => setOpenCreateProjectModal(value)}
-            >
-                <DialogContent title="Create new survey">
-                    <div className="mt-6 w-[34rem]">
-                        <form onSubmit={handleCreateProject}>
-                            <TextInput
-                                label="Project Name"
-                                placeholder="Project name"
-                                value={projectName}
-                                onChange={(e) => {
-                                    setProjectName(e.target.value);
-                                    setProjectNameError("");
-                                }}
-                                error={!!projectNameError}
-                                errorMessage={projectNameError}
-                            />
-                            <div className="my-6">
-                                <hr className="border-intg-bg-4" />
-                            </div>
-                            <div className="w-full">
-                                <Button
-                                    text="Create Project"
-                                    className="w-full px-8 py-4"
-                                    type="submit"
+            <div>
+                <div>
+                    <div className="mb-6 space-y-2">
+                        <p className="text-xs text-intg-text-4">Project</p>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger className="w-[177px] select-none outline-none">
+                                <NavItem
+                                    text={session?.project?.name as string}
+                                    leftIcon={
+                                        <AcronynmBox
+                                            text={
+                                                session?.project?.name as string
+                                            }
+                                        />
+                                    }
+                                    rightIcon={<ChevronDown size={16} />}
+                                    classnames="w-[181px]"
+                                    ellipsis={true}
+                                    ellipsisLength={16}
                                 />
-                            </div>
-                        </form>
-                    </div>
-                </DialogContent>
-            </Dialog>
-
-            <div className="mb-[14px] space-y-[27px]">
-                <button className="flex items-center justify-between space-x-2 rounded border border-intg-bg-4 bg-intg-bg-9 p-3 text-sm text-intg-text-4">
-                    <span>
-                        <DocumentIcon />
-                    </span>
-                    <span>Create new survey</span>
-                </button>
-                <button className="flex w-[177px]  items-center  space-x-2 rounded bg-intg-bg-8 px-3 py-2 text-sm text-intg-text-4">
-                    <span>
-                        <CircleIcon />
-                    </span>
-                    <span>Get started</span>
-                </button>
-            </div>
-
-            <hr className="border-intg-bg-4" />
-
-            <ul className="my-4 space-y-2 text-sm text-intg-text-4">
-                {navItems.map((item) => {
-                    return (
-                        <li
-                            key={item.id}
-                            className="flex items-center space-x-2 px-3 py-2"
-                        >
-                            <span>{item.icon}</span>
-                            <span>{item.title}</span>
-                        </li>
-                    );
-                })}
-            </ul>
-            <hr className="border-intg-bg-4" />
-            <ul className="my-4 space-y-2 text-sm text-intg-text-4">
-                {bottomNav.map((item) => {
-                    return (
-                        <li
-                            key={item.id}
-                            className="flex items-center space-x-2 px-3 py-2"
-                        >
-                            <span>{item.icon}</span>
-                            <span>{item.title}</span>
-                        </li>
-                    );
-                })}
-            </ul>
-            <div className="flex w-full space-x-2 rounded-lg bg-intg-bg-9 px-2 py-4">
-                <div className="h-8 w-8">
-                    <img src={Discord} alt="Discord" />
-                </div>
-                <div className="space-y-[4px]">
-                    <p className="flex">
-                        <span className="text-sm text-white">
-                            Join our Discord Community
-                        </span>
-                    </p>
-                    <p className="text-xs text-intg-text">
-                        Add your card to prevent interruption after trial
-                    </p>
-                    <Button text="Join now" className="py-[6px]" />
-                </div>
-            </div>
-            <div className="my-4">
-                <hr className="border-intg-bg-4" />
-            </div>
-            <DropdownMenu.Root>
-                <DropdownMenu.Trigger className="flex w-full items-center text-intg-text outline-none">
-                    <div className="flex items-center space-x-2">
-                        <img
-                            src={Frame}
-                            alt="picture frame"
-                            className="rounded object-contain"
-                        />
-                        <span>Profile</span>
-                    </div>
-                    <span className="ml-auto">
-                        <ChevronDown size={16} />
-                    </span>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Portal>
-                    <DropdownMenu.Content
-                        align="start"
-                        alignOffset={50}
-                        className="w-[310px] rounded border-[0.5px] border-intg-bg-10 bg-intg-bg-9 px-2 py-3 text-intg-text"
-                    >
-                        <DropdownMenu.Label className="pb-1">
-                            <p className="text-xs">SIGNED IN AS USER</p>
-                        </DropdownMenu.Label>
-                        <DropdownMenu.Item>
-                            <div className="flex items-center justify-between px-2 py-[6px]">
-                                <div className="flex space-x-2">
-                                    <img
-                                        src={Profile}
-                                        alt="user avatar"
-                                        className="rounded object-contain"
-                                    />
-                                    <div>
-                                        <p className="text-sm text-intg-text-7">
-                                            User name
-                                        </p>
-                                        <p className="text-sm">
-                                            user@gmail.com
-                                        </p>
-                                    </div>
-                                </div>
-                                <div>
-                                    <SettingsIcon />
-                                </div>
-                            </div>
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
-                        <DropdownMenu.Sub>
-                            <DropdownMenu.Label>
-                                <p className="text-xs">CURRENT WORKSPACE</p>
-                            </DropdownMenu.Label>
-                            <DropdownMenu.SubTrigger className="my-3 flex justify-between px-3 py-2">
-                                <div className="flex items-center space-x-2">
-                                    <span className="rounded bg-gradient-button px-1.5">
-                                        IF
-                                    </span>
-                                    <span>SOBTECH</span>
-                                </div>
-                                <ChevronRight />
-                            </DropdownMenu.SubTrigger>
-                            <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
-                            <DropdownMenu.Portal>
-                                <DropdownMenu.SubContent className="ml-4 w-[221px] rounded bg-intg-bg-9 px-2 py-4 text-intg-text">
-                                    <DropdownMenu.Label>
-                                        <p className="mb-2 text-xs">
-                                            OTHER WORKSPACES
-                                        </p>
-                                    </DropdownMenu.Label>
-
-                                    {workspaces.map((item) => {
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                                align="start"
+                                className=" rounded border border-intg-bg-10 bg-intg-bg-9 p-2 py-3 text-intg-text"
+                            >
+                                <DropdownMenuGroup className="scrollbar-hide max-h-[20rem] overflow-y-scroll p-1">
+                                    {projects.map((item) => {
                                         return (
-                                            <DropdownMenu.Item
-                                                className="px-3 py-2"
-                                                key={item.name}
+                                            <DropdownMenuItem
+                                                key={item.node.id}
+                                                onClick={() => {
+                                                    switchProject(
+                                                        item.node as DeepOmit<
+                                                            Project,
+                                                            "__typename"
+                                                        >,
+                                                    );
+                                                }}
                                             >
-                                                {item.name}
-                                            </DropdownMenu.Item>
+                                                <NavItem
+                                                    leftIcon={
+                                                        <AcronynmBox
+                                                            text={
+                                                                item.node.name
+                                                            }
+                                                        />
+                                                    }
+                                                    text={item.node.name}
+                                                    rightIcon={
+                                                        item.node.slug ===
+                                                            session?.project
+                                                                .slug && (
+                                                            <CheckCircleIcon />
+                                                        )
+                                                    }
+                                                    ellipsis={true}
+                                                    ellipsisLength={
+                                                        (item.node.name,
+                                                        item.node.slug ===
+                                                        session?.project.slug
+                                                            ? 17
+                                                            : 22)
+                                                    }
+                                                    classnames="overflow-x-hidden w-[205px] hover:bg-intg-bg-10 rounded p-2"
+                                                />
+                                            </DropdownMenuItem>
                                         );
                                     })}
-                                    <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
-                                    <DropdownMenu.Item className="px-3 py-2">
+                                </DropdownMenuGroup>
+                                <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem className="flex cursor-pointer items-center space-x-2 px-3 py-2 text-sm">
+                                        <span>
+                                            <SettingsIcon />
+                                        </span>
+                                        <span>Project Settings</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
                                         <Button
                                             icon={<CirclePlusIcon />}
                                             variant="custom"
-                                            text="New Workspace"
+                                            text="New Project"
                                             size="md"
-                                            className="w-full bg-intg-bg-11"
+                                            className="bg-intg-bg-11 text-sm"
+                                            onClick={() =>
+                                                setOpenCreateProjectModal(true)
+                                            }
                                         />
-                                    </DropdownMenu.Item>
-                                </DropdownMenu.SubContent>
-                            </DropdownMenu.Portal>
-                        </DropdownMenu.Sub>
-                        <DropdownMenu.Separator />
-                        <DropdownMenu.Item className="flex items-center space-x-2 px-3 py-2 ">
-                            <SettingsIcon />
-                            <p>Workspace Settings</p>
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
-                        <DropdownMenu.Item className="flex items-center space-x-2 px-3 py-2">
-                            <NewspaperIcon />
-                            <p>Billing</p>
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item className="flex items-center space-x-2 px-3 py-2">
-                            <CircleStackIcon />
-                            <p>Status Page</p>
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item className="flex items-center space-x-2 px-3 py-2">
-                            <QuestionIcon />
-                            <p>Help and doc</p>
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Separator className="my-3 border-[.5px] border-intg-bg-4" />
-                        <DropdownMenu.Item
-                            className="flex items-center space-x-2 px-3 py-2"
-                            onClick={handleLogout}
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                        <CreateNewProject
+                            open={openCreateProjectModal}
+                            onOpenChange={(value) =>
+                                setOpenCreateProjectModal(value)
+                            }
+                        />
+                    </div>
+                    <div className="space-y-[27px] pb-[24px]">
+                        <button className="flex items-center justify-between gap-2 rounded border border-intg-bg-4 bg-intg-bg-9 p-3 text-sm text-intg-text-4">
+                            <span>
+                                <DocumentIcon />
+                            </span>
+                            <span>Create new survey</span>
+                        </button>
+                        <button className="flex w-[177px]  items-center  gap-2 rounded bg-intg-bg-8 px-3 py-2 text-sm text-intg-text-4">
+                            <span>
+                                <CircleIcon />
+                            </span>
+                            <span>Get started</span>
+                        </button>
+                    </div>
+                    <hr className="border-intg-bg-4" />
+                    <ul className="space-y-2 py-4 text-sm text-intg-text-4">
+                        {navItems.map((item) => {
+                            return (
+                                <NavLink
+                                    to=""
+                                    className={({ isActive }) =>
+                                        isActive ? "bg-intg-bg-8" : ""
+                                    }
+                                    key={item.id}
+                                    leftIcon={item.icon}
+                                    text={item.title}
+                                    classnames="px-3 py-2"
+                                />
+                            );
+                        })}
+                    </ul>
+                    <hr className="border-intg-bg-4" />
+                    <ul className="space-y-2 py-4 text-sm text-intg-text-4">
+                        <li
+                            className="flex cursor-pointer items-center space-x-2 px-3 py-2"
+                            onClick={() => {
+                                setOpenOrganizationInviteModal(true);
+                            }}
                         >
-                            <LogoutIcon />
-                            <p>Log out</p>
-                        </DropdownMenu.Item>
-                    </DropdownMenu.Content>
-                </DropdownMenu.Portal>
-            </DropdownMenu.Root>
+                            <span>
+                                <CirclePlusIcon />
+                            </span>
+                            <span>Invite team</span>
+                        </li>
+
+                        <OrganizationInvite
+                            open={openOrganizationInviteModal}
+                            onOpenChange={(value: boolean) =>
+                                setOpenOrganizationInviteModal(value)
+                            }
+                        />
+                        <li className="flex cursor-pointer items-center space-x-2 px-3 py-2">
+                            <span>
+                                <SpeakerIcon />
+                            </span>
+                            <span>Feedbacks</span>
+                        </li>
+                    </ul>
+                    <JoinDiscord />
+                </div>
+            </div>
+            <div>
+                <div className="pb-3">
+                    <hr className="border-intg-bg-4" />
+                </div>
+                <UserProfile />
+            </div>
         </div>
     );
 };

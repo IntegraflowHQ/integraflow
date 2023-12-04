@@ -4,10 +4,11 @@ import { cn } from "../../utils";
 export interface ButtonProps
     extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     text?: string;
+    textAlign?: "left" | "center";
     className?: string;
     variant?: "primary" | "secondary" | "custom";
     children?: React.ReactNode;
-    icon?: React.ReactNode;
+    icon?: React.ReactElement;
     size?: "full" | "md";
 }
 
@@ -20,6 +21,7 @@ const Button = React.forwardRef(
             variant = "primary",
             size = "full",
             icon,
+            textAlign = "left",
             ...props
         }: ButtonProps,
         forwardedRef: React.ForwardedRef<HTMLButtonElement>,
@@ -28,13 +30,14 @@ const Button = React.forwardRef(
             <button
                 {...props}
                 className={cn(
-                    "w-full rounded-lg text-base font-medium text-white",
+                    "w-full rounded-lg text-base font-medium",
+                    textAlign === "left" ? "" : "flex justify-center",
                     size === "full" ? "px-8 py-4" : "p-3",
                     icon ? "flex  items-center space-x-2" : "",
                     variant === "primary"
-                        ? "bg-gradient-button hover:bg-gradient-button-hover"
+                        ? "bg-gradient-button text-white hover:bg-gradient-button-hover"
                         : variant === "secondary"
-                        ? "border border-intg-bg-2 bg-intg-bg-3 hover:bg-gradient-button-hover"
+                        ? "border border-intg-bg-2 bg-intg-bg-3 text-white hover:bg-gradient-button-hover"
                         : "",
                     className ?? "",
                 )}

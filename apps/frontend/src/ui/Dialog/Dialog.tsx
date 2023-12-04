@@ -15,7 +15,7 @@ export const DialogContent = forwardRef<HTMLDivElement, Props>(
             <DialogPrimitive.Overlay
                 className="fixed inset-0"
                 style={{
-                    background: "rgba(20, 23, 26, 0.20);",
+                    background: "rgba(20, 23, 26, 0.20)",
                     backdropFilter: "blur(8px)",
                 }}
             />
@@ -27,7 +27,7 @@ export const DialogContent = forwardRef<HTMLDivElement, Props>(
                 {alignHeader === "left" && (
                     <>
                         <div className="flex justify-between">
-                            <DialogPrimitive.Title className="text-600 text-2xl">
+                            <DialogPrimitive.Title className="text-600 mb-3 text-2xl">
                                 {title}
                             </DialogPrimitive.Title>
                             <DialogPrimitive.Close aria-label="Close">
