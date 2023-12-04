@@ -12,7 +12,7 @@ export default function SurveyCreate({ className }: Props) {
     const { orgSlug, projectSlug } = useParams();
     const surveyCreateOptions = [
         {
-            icon: PlusCircle,
+            icon: <PlusCircle color="#AFAAC7" size="48" />,
             title: "Start form scratch",
             description: "Craft and design your unique survey",
             href: ROUTES.STUDIO.replace(":orgSlug", orgSlug!).replace(
@@ -21,7 +21,7 @@ export default function SurveyCreate({ className }: Props) {
             ),
         },
         {
-            icon: List,
+            icon: <List />,
             title: "Use a template",
             description: "Select one from our curated list of templates",
             href: ROUTES.SURVEY_TEMPLATES.replace(":orgSlug", orgSlug!).replace(

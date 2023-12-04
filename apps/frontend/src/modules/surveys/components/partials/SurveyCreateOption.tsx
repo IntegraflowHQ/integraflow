@@ -1,8 +1,9 @@
 import { Header } from "@/ui";
+import { ReactElement } from "react";
 import { Link } from "react-router-dom";
 
 type Props = {
-    icon: React.ComponentType;
+    icon: ReactElement;
     title: string;
     description: string;
     href: string;

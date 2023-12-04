@@ -3,6 +3,7 @@ import {
     MagicSignIn,
     Onboarding,
     Signup,
+    SurveyStudio,
     SurveyTemplates,
     Surveys,
     Workspace,
@@ -65,6 +66,10 @@ const router = createBrowserRouter([
                     {
                         path: "projects/:projectSlug/surveys/templates",
                         element: <SurveyTemplates />,
+                    },
+                    {
+                        path: "projects/:projectSlug/surveys/studio",
+                        element: <SurveyStudio />,
                     },
                 ],
             },

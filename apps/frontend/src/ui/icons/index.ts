@@ -7,6 +7,7 @@ export { CursorIcon } from "./CursorIcon";
 export { Document } from "./Document";
 export { DocumentIcon } from "./DocumentIcon";
 export { Google } from "./Google";
+export { HelpCircle } from "./HelpCircle";
 export { HomeIcon } from "./HomeIcon";
 export { List } from "./List";
 export { LogoutIcon } from "./LogoutIcon";
