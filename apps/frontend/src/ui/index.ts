@@ -13,7 +13,7 @@ export {
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
-} from "./dropdown/DropdownMenu";
+} from "./Dropdown/DropdownMenu";
 export { SelectInput } from "./input/SelectInput";
 export { TextInput } from "./input/TextInput";
 export { GlobalSpinner } from "./spinner/GlobalSpinner";
