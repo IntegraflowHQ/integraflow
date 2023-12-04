@@ -10,7 +10,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-from .cors_handler import cors_handler
 from .gzip_compression import gzip_compression
 from .health_check import health_check
 
@@ -21,5 +20,4 @@ application = health_check(  # type: ignore
     application,  # type: ignore[arg-type] # Django's ASGI app is less strict than the spec # noqa: E501
     "/health/"
 )
-application = gzip_compression(application)  # type: ignore
-application = cors_handler(application)  # type: ignore
+application = gzip_compression(application)

@@ -40,6 +40,7 @@ export default function useSession() {
         return session?.organization.slug === orgSlug;
     }, [session?.organization.slug, orgSlug]);
 
+
     const isValidProject = useMemo(() => {
         if (!projectSlug) {
             return (
@@ -53,6 +54,7 @@ export default function useSession() {
             );
         }
     }, [projectSlug, orgSlug, session]);
+
 
     const isValidSession = useMemo(() => {
         if (!projectSlug && !orgSlug) return true;
@@ -173,6 +175,15 @@ export default function useSession() {
         isValidProject,
         createValidSessionData,
     ]);
+
+    useEffect(() => {
+        if (!session?.organization || !session?.project || !user) return;
+        updateUser({
+            ...user,
+            organization: session.organization,
+            project: session.project,
+        });
+    }, [session?.organization, session?.project]);
 
     const switchProject = useCallback(
         (project: DeepOmit<Project, "__typename">) => {
