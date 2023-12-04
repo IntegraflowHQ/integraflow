@@ -125,7 +125,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
             >
                 {!toggleInviteType ? (
                     <form onSubmit={handleEmailInvite}>
-                        <div className="mt-3  flex w-full items-start space-x-2">
+                        <div className="flex w-full items-start gap-2 pt-3">
                             <div className="w-[75%]">
                                 <TextInput
                                     label="Email address"
