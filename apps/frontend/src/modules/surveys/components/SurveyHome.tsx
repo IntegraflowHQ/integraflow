@@ -1,5 +1,4 @@
-import { DialogContent, DialogTrigger } from "@/components";
-import { Dialog, Header } from "@/ui";
+import { Dialog, DialogContent, DialogTrigger, Header } from "@/ui";
 import { Document } from "@/ui/icons";
 import SurveyCreate from "./SurveyCreate";
 import CreateSurveyButton from "./partials/CreateSurveyButton";
