@@ -81,6 +81,7 @@ export default function CompleteMagicSignIn() {
                 variables: {
                     email,
                     token: tokenParam,
+                    inviteLink,
                 },
             });
         }
@@ -115,6 +116,9 @@ export default function CompleteMagicSignIn() {
         });
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
+        if (!emailRegex.test(email as string)) {
+            return 
+        }
         if (!email || !data.code) {
             return;
         }
