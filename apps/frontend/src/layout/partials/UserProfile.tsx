@@ -158,7 +158,6 @@ export const UserProfile = () => {
                     return (
                         <DropdownMenuItem>
                             <NavLink
-                                key={item.title}
                                 text={item.title}
                                 leftIcon={item.icon}
                                 to="/test"
