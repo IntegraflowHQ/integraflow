@@ -43,8 +43,6 @@ export default function CompleteMagicSignIn() {
     const urlParams = new URLSearchParams(queryString);
     const inviteLink = urlParams.get("inviteLink") ?? undefined;
 
-    console.log(queryString);
-
     const [verifyToken, { loading: isVerifyingToken }] =
         useEmailTokenUserAuthMutation({
             onCompleted: async ({ emailTokenUserAuth }) => {
