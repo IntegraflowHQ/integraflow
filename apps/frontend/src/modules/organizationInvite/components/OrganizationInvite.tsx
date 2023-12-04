@@ -197,7 +197,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                 <div className="py-4">
                     <hr className="border-intg-bg-4" />
                 </div>
-                <div className="w-[30%]">
+                <div>
                     <Button
                         variant="custom"
                         icon={
@@ -212,7 +212,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                                 ? "Invite with email"
                                 : "Invite with link"
                         }
-                        className=" bg-transparent text-intg-text hover:text-intg-bg-2"
+                        className=" w-max bg-transparent text-intg-text hover:text-intg-bg-2"
                         size="md"
                         onClick={() => {
                             setToggleInviteType(!toggleInviteType);
