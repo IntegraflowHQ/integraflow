@@ -2,6 +2,7 @@ import { GlobalSpinner } from "@/components";
 import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
 import useRedirect from "@/modules/auth/hooks/useRedirect";
 import useSession from "@/modules/users/hooks/useSession";
+import useUserState from "@/modules/users/hooks/useUserState";
 import React, { useEffect, useState } from "react";
 
 export default function PublicRoute({
@@ -11,6 +12,7 @@ export default function PublicRoute({
 }) {
     const [ready, setReady] = useState(false);
     const { token } = useAuthToken();
+    const { user } = useUserState();
     const { session, isValidSession, createValidSessionData, createSession } =
         useSession();
     const redirect = useRedirect();
@@ -28,13 +30,15 @@ export default function PublicRoute({
                 const newSession = await createValidSessionData();
                 if (newSession) {
                     createSession(newSession);
+                } else if (user) {
+                    redirect(user);
                 }
             }
             setReady(true);
         };
 
         onMount();
-    }, [session, isValidSession]);
+    }, [session, isValidSession, user]);
 
     if (!ready) {
         return <GlobalSpinner />;

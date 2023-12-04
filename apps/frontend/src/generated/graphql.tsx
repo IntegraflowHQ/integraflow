@@ -184,19 +184,20 @@ export type Mutation = {
 
 export type MutationEmailTokenUserAuthArgs = {
   email: Scalars['String'];
-  inviteLink?: InputMaybe<Scalars['ID']>;
+  inviteLink?: InputMaybe<Scalars['String']>;
   token: Scalars['String'];
 };
 
 
 export type MutationEmailUserAuthChallengeArgs = {
   email: Scalars['String'];
+  inviteLink?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationGoogleUserAuthArgs = {
   code: Scalars['String'];
-  inviteLink?: InputMaybe<Scalars['ID']>;
+  inviteLink?: InputMaybe<Scalars['String']>;
 };
 
 
