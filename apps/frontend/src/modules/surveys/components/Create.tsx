@@ -1,4 +1,4 @@
-import { Button } from "@/ui";
+import { Button, Header } from "@/ui";
 import { HelpCircle, PlusCircle, SettingsIcon } from "@/ui/icons";
 import EmptySurvey from "assets/images/surveys/empty.png";
 import { Pen } from "lucide-react";
@@ -39,12 +39,17 @@ export default function Create() {
                 </div>
 
                 <div className="flex flex-1 flex-col items-center justify-center rounded-xl bg-intg-bg-9">
-                    <div>
+                    {/* Empty state */}
+                    <div className="space-y-8">
                         <img src={EmptySurvey} alt="" />
+                        <Header
+                            title="Nothing to see here yet."
+                            description="Add your first question first!"
+                            className="text-center"
+                        />
                     </div>
                 </div>
             </div>
-            ;
         </div>
     );
 }
