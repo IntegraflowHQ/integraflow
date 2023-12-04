@@ -12,3 +12,18 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
 }
+
+.spinner__circle {
+    animation: spin-anticlockwise 1s infinite linear;
+}
+
+@keyframes spin-anticlockwise {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(
+            -360deg
+        ); /* Rotate counterclockwise by -360 degrees */
+    }
+}

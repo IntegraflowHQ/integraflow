@@ -13,6 +13,12 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /**
+   * The `DateTime` scalar type represents a DateTime
+   * value as specified by
+   * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+   */
+  DateTime: string;
   JSONString: any;
   /**
    * Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
@@ -116,6 +122,8 @@ export type GoogleUserAuth = {
   userErrors: Array<UserError>;
 };
 
+export type InviteDetails = OrganizationInviteDetails | OrganizationInviteLinkDetails;
+
 /**
  * Deactivate all JWT tokens of the currently authenticated user.
  *
@@ -147,6 +155,24 @@ export type Mutation = {
    * Requires one of the following permissions: AUTHENTICATED_USER.
    */
   organizationCreate?: Maybe<OrganizationCreate>;
+  /**
+   * Creates a new organization invite.
+   *
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+   */
+  organizationInviteCreate?: Maybe<OrganizationInviteCreate>;
+  /**
+   * Reset the current organization invite link..
+   *
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+   */
+  organizationInviteLinkReset?: Maybe<OrganizationInviteLinkReset>;
+  /**
+   * Joins an organization
+   *
+   * Requires one of the following permissions: AUTHENTICATED_USER.
+   */
+  organizationJoin?: Maybe<OrganizationJoin>;
   /** Creates a new project */
   projectCreate?: Maybe<ProjectCreate>;
   /** Updates a project. */
@@ -158,23 +184,36 @@ export type Mutation = {
 
 export type MutationEmailTokenUserAuthArgs = {
   email: Scalars['String'];
+  inviteLink?: InputMaybe<Scalars['String']>;
   token: Scalars['String'];
 };
 
 
 export type MutationEmailUserAuthChallengeArgs = {
   email: Scalars['String'];
+  inviteLink?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationGoogleUserAuthArgs = {
   code: Scalars['String'];
+  inviteLink?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationOrganizationCreateArgs = {
   input: OrganizationCreateInput;
   survey?: InputMaybe<OnboardingCustomerSurvey>;
+};
+
+
+export type MutationOrganizationInviteCreateArgs = {
+  input: OrganizationInviteCreateInput;
+};
+
+
+export type MutationOrganizationJoinArgs = {
+  input: OrganizationJoinInput;
 };
 
 
@@ -227,7 +266,7 @@ export type Organization = Node & {
   /**
    * Users associated with the organization.
    *
-   * Requires one of the following permissions: AUTHENTICATED_USER.
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
    */
   members?: Maybe<UserCountableConnection>;
   /**
@@ -239,7 +278,7 @@ export type Organization = Node & {
   /**
    * Projects associated with the organization.
    *
-   * Requires one of the following permissions: AUTHENTICATED_USER.
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
    */
   projects?: Maybe<ProjectCountableConnection>;
   /** Slug of the organization. */
@@ -327,6 +366,146 @@ export enum OrganizationErrorCode {
   Required = 'REQUIRED',
   Unique = 'UNIQUE'
 }
+
+/** The organization invite that was created or updated. */
+export type OrganizationInvite = Node & {
+  __typename?: 'OrganizationInvite';
+  /** The time at which the invite was created. */
+  createdAt: Scalars['DateTime'];
+  /** The invitees email address. */
+  email: Scalars['String'];
+  /** If the invite has expired. */
+  expired: Scalars['Boolean'];
+  /** First name of the invite. */
+  firstName?: Maybe<Scalars['String']>;
+  /** The unique identifier of the invite. */
+  id: Scalars['ID'];
+  /**
+   * The user who created the invitation.
+   *
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+   */
+  inviter: User;
+  /**
+   * The current project of the user.
+   *
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+   */
+  organization: Organization;
+  /** The user role that the invitee will receive upon accepting the invite. */
+  role: RoleLevel;
+  /** The last time at which the invite was updated. */
+  updatedAt: Scalars['DateTime'];
+};
+
+/**
+ * Creates a new organization invite.
+ *
+ * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+ */
+export type OrganizationInviteCreate = {
+  __typename?: 'OrganizationInviteCreate';
+  errors: Array<OrganizationError>;
+  organizationErrors: Array<OrganizationError>;
+  organizationInvite?: Maybe<OrganizationInvite>;
+};
+
+export type OrganizationInviteCreateInput = {
+  /** The email of the invitee. */
+  email: Scalars['String'];
+  /** The identifier in UUID v4 format. If none is provided, the backend will generate one. */
+  id?: InputMaybe<Scalars['UUID']>;
+  /** The message to send to the invitee. */
+  message?: InputMaybe<Scalars['String']>;
+  /** What member role the invite should grant. */
+  role?: InputMaybe<RoleLevel>;
+};
+
+/** The organization invite that was created or updated. */
+export type OrganizationInviteDetails = Node & {
+  __typename?: 'OrganizationInviteDetails';
+  /** The time at which the invite was created. */
+  createdAt: Scalars['DateTime'];
+  /** The invitees email address. */
+  email: Scalars['String'];
+  /** If the invite has expired. */
+  expired: Scalars['Boolean'];
+  /** First name of the invite. */
+  firstName?: Maybe<Scalars['String']>;
+  /** The unique identifier of the invite. */
+  id: Scalars['ID'];
+  /** The name/email of the inviter. */
+  inviter: Scalars['String'];
+  /** The ID of the organization the invite is for. */
+  organizationId: Scalars['ID'];
+  /** The logo of the organization the invite is for. */
+  organizationLogo?: Maybe<Scalars['String']>;
+  /** The name of the organization the invite is for. */
+  organizationName: Scalars['String'];
+  /** The user role that the invitee will receive upon accepting the invite. */
+  role: RoleLevel;
+  /** The last time at which the invite was updated. */
+  updatedAt: Scalars['DateTime'];
+};
+
+/** The organization invite link. */
+export type OrganizationInviteLink = Node & {
+  __typename?: 'OrganizationInviteLink';
+  /** The ID of the object. */
+  id: Scalars['ID'];
+  /**
+   * The link of the organization the invite is for.
+   *
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+   */
+  inviteLink: Scalars['String'];
+};
+
+/** The organization invite that was created or updated. */
+export type OrganizationInviteLinkDetails = Node & {
+  __typename?: 'OrganizationInviteLinkDetails';
+  /** The ID of the object. */
+  id: Scalars['ID'];
+  /** The ID of the organization the invite is for. */
+  organizationId: Scalars['ID'];
+  /** The logo of the organization the invite is for. */
+  organizationLogo?: Maybe<Scalars['String']>;
+  /** The name of the organization the invite is for. */
+  organizationName: Scalars['String'];
+};
+
+/**
+ * Reset the current organization invite link..
+ *
+ * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+ */
+export type OrganizationInviteLinkReset = {
+  __typename?: 'OrganizationInviteLinkReset';
+  errors: Array<OrganizationError>;
+  /** The current organization invite link. */
+  inviteLink?: Maybe<Scalars['String']>;
+  organizationErrors: Array<OrganizationError>;
+  /** Whether the operation was successful. */
+  success?: Maybe<Scalars['Boolean']>;
+};
+
+/**
+ * Joins an organization
+ *
+ * Requires one of the following permissions: AUTHENTICATED_USER.
+ */
+export type OrganizationJoin = {
+  __typename?: 'OrganizationJoin';
+  errors: Array<OrganizationError>;
+  organizationErrors: Array<OrganizationError>;
+  /** A user that has access to the the resources of an organization. */
+  user: AuthUser;
+};
+
+export type OrganizationJoinInput = {
+  /** An invite link for an organization. */
+  inviteLink: Scalars['String'];
+};
 
 /** The Relay compliant `PageInfo` type, containing data necessary to paginate this connection. */
 export type PageInfo = {
@@ -458,6 +637,14 @@ export type Query = {
   __typename?: 'Query';
   _entities?: Maybe<Array<Maybe<_Entity>>>;
   _service?: Maybe<_Service>;
+  /** One specific organization invite. */
+  organizationInviteDetails?: Maybe<InviteDetails>;
+  /**
+   * The current organization invite link.
+   *
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+   */
+  organizationInviteLink?: Maybe<OrganizationInviteLink>;
   /**
    * Return the currently authenticated user.
    *
@@ -471,6 +658,11 @@ export type Query_EntitiesArgs = {
   representations?: InputMaybe<Array<InputMaybe<Scalars['_Any']>>>;
 };
 
+
+export type QueryOrganizationInviteDetailsArgs = {
+  inviteLink: Scalars['String'];
+};
+
 /** Refresh JWT token. Mutation tries to take refreshToken from the input. If it fails it will try to take `refreshToken` from the http-only cookie `refreshToken`. `csrfToken` is required when `refreshToken` is provided as a cookie. */
 export type RefreshToken = {
   __typename?: 'RefreshToken';
@@ -479,6 +671,11 @@ export type RefreshToken = {
   token?: Maybe<Scalars['String']>;
   userErrors: Array<UserError>;
 };
+
+export enum RoleLevel {
+  Admin = 'ADMIN',
+  Member = 'MEMBER'
+}
 
 /** Represents user data. */
 export type User = Node & {
@@ -629,6 +826,7 @@ export type OrganizationErrorFragmentFragment = { __typename?: 'OrganizationErro
 export type EmailTokenUserAuthMutationVariables = Exact<{
   email: Scalars['String'];
   token: Scalars['String'];
+  inviteLink?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -636,6 +834,7 @@ export type EmailTokenUserAuthMutation = { __typename?: 'Mutation', emailTokenUs
 
 export type EmailUserAuthChallengeMutationVariables = Exact<{
   email: Scalars['String'];
+  inviteLink?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -643,6 +842,7 @@ export type EmailUserAuthChallengeMutation = { __typename?: 'Mutation', emailUse
 
 export type GoogleUserAuthMutationVariables = Exact<{
   code: Scalars['String'];
+  inviteLink?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -668,6 +868,51 @@ export type TokenRefreshMutationVariables = Exact<{
 
 
 export type TokenRefreshMutation = { __typename?: 'Mutation', tokenRefresh?: { __typename?: 'RefreshToken', token?: string | null, errors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> } | null };
+
+export type OrganizationInviteLinkCreateFragmentFragment = { __typename?: 'OrganizationInviteLink', id: string, inviteLink: string };
+
+export type OrganizationInviteCreateFragmentFragment = { __typename?: 'OrganizationInviteCreate', organizationInvite?: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel, createdAt: string, updatedAt: string, expired: boolean, inviter: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean }, organization: { __typename?: 'Organization', id: string } } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
+
+export type OrganizationInviteFragmentFragment = { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel, createdAt: string, updatedAt: string, expired: boolean, inviter: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean }, organization: { __typename?: 'Organization', id: string } };
+
+export type OrganizationInviteDetailsFragmentFragment = { __typename?: 'OrganizationInviteDetails', id: string, email: string, firstName?: string | null, expired: boolean, inviter: string, organizationId: string, organizationName: string, organizationLogo?: string | null };
+
+export type OrganizationInviteLinkDetailsFragmentFragment = { __typename?: 'OrganizationInviteLinkDetails', id: string, organizationId: string, organizationName: string, organizationLogo?: string | null };
+
+export type OrganizationJoinFragmentFragment = { __typename?: 'OrganizationJoin', user: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null }, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
+
+export type RefreshOrganizationInviteLinkFragmentFragment = { __typename?: 'OrganizationInviteLinkReset', inviteLink?: string | null, success?: boolean | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
+
+export type OrganizationInviteCreateMutationVariables = Exact<{
+  input: OrganizationInviteCreateInput;
+}>;
+
+
+export type OrganizationInviteCreateMutation = { __typename?: 'Mutation', organizationInviteCreate?: { __typename?: 'OrganizationInviteCreate', organizationInvite?: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel, createdAt: string, updatedAt: string, expired: boolean, inviter: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean }, organization: { __typename?: 'Organization', id: string } } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
+
+export type OrganizationJoinMutationVariables = Exact<{
+  input: OrganizationJoinInput;
+}>;
+
+
+export type OrganizationJoinMutation = { __typename?: 'Mutation', organizationJoin?: { __typename?: 'OrganizationJoin', user: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null }, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
+
+export type OrganizationInviteLinkResetMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OrganizationInviteLinkResetMutation = { __typename?: 'Mutation', organizationInviteLinkReset?: { __typename?: 'OrganizationInviteLinkReset', inviteLink?: string | null, success?: boolean | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
+
+export type OrganizationInviteDetailsQueryVariables = Exact<{
+  inviteLink: Scalars['String'];
+}>;
+
+
+export type OrganizationInviteDetailsQuery = { __typename?: 'Query', organizationInviteDetails?: { __typename?: 'OrganizationInviteDetails', id: string, email: string, firstName?: string | null, expired: boolean, inviter: string, organizationId: string, organizationName: string, organizationLogo?: string | null } | { __typename?: 'OrganizationInviteLinkDetails', id: string, organizationId: string, organizationName: string, organizationLogo?: string | null } | null };
+
+export type OrganizationInviteLinkCreateQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OrganizationInviteLinkCreateQuery = { __typename?: 'Query', organizationInviteLink?: { __typename?: 'OrganizationInviteLink', id: string, inviteLink: string } | null };
 
 export type ProjectCreateFragmentFragment = { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
 
@@ -784,6 +1029,94 @@ export const OrganizationCreateFragmentFragmentDoc = gql`
     ${AuthOrganizationFragmentFragmentDoc}
 ${AuthUserFragmentFragmentDoc}
 ${OrganizationErrorFragmentFragmentDoc}`;
+export const OrganizationInviteLinkCreateFragmentFragmentDoc = gql`
+    fragment OrganizationInviteLinkCreateFragment on OrganizationInviteLink {
+  id
+  inviteLink
+}
+    `;
+export const OrganizationInviteFragmentFragmentDoc = gql`
+    fragment OrganizationInviteFragment on OrganizationInvite {
+  id
+  email
+  firstName
+  role
+  createdAt
+  updatedAt
+  expired
+  inviter {
+    id
+    email
+    firstName
+    lastName
+    isStaff
+    isActive
+  }
+  organization {
+    id
+  }
+}
+    `;
+export const OrganizationInviteCreateFragmentFragmentDoc = gql`
+    fragment OrganizationInviteCreateFragment on OrganizationInviteCreate {
+  organizationInvite {
+    ...OrganizationInviteFragment
+  }
+  organizationErrors {
+    ...OrganizationErrorFragment
+  }
+  errors {
+    ...OrganizationErrorFragment
+  }
+}
+    ${OrganizationInviteFragmentFragmentDoc}
+${OrganizationErrorFragmentFragmentDoc}`;
+export const OrganizationInviteDetailsFragmentFragmentDoc = gql`
+    fragment OrganizationInviteDetailsFragment on OrganizationInviteDetails {
+  id
+  email
+  firstName
+  expired
+  inviter
+  organizationId
+  organizationName
+  organizationLogo
+}
+    `;
+export const OrganizationInviteLinkDetailsFragmentFragmentDoc = gql`
+    fragment OrganizationInviteLinkDetailsFragment on OrganizationInviteLinkDetails {
+  id
+  organizationId
+  organizationName
+  organizationLogo
+}
+    `;
+export const OrganizationJoinFragmentFragmentDoc = gql`
+    fragment OrganizationJoinFragment on OrganizationJoin {
+  user {
+    ...AuthUserFragment
+  }
+  organizationErrors {
+    ...OrganizationErrorFragment
+  }
+  errors {
+    ...OrganizationErrorFragment
+  }
+}
+    ${AuthUserFragmentFragmentDoc}
+${OrganizationErrorFragmentFragmentDoc}`;
+export const RefreshOrganizationInviteLinkFragmentFragmentDoc = gql`
+    fragment RefreshOrganizationInviteLinkFragment on OrganizationInviteLinkReset {
+  inviteLink
+  success
+  organizationErrors {
+    ...OrganizationErrorFragment
+  }
+  errors {
+    ...OrganizationErrorFragment
+  }
+}
+    ${OrganizationErrorFragmentFragmentDoc}`;
 export const ProjectErrorFragmentFragmentDoc = gql`
     fragment ProjectErrorFragment on ProjectError {
   field
@@ -806,8 +1139,8 @@ export const ProjectCreateFragmentFragmentDoc = gql`
     ${ProjectFragmentFragmentDoc}
 ${ProjectErrorFragmentFragmentDoc}`;
 export const EmailTokenUserAuthDocument = gql`
-    mutation emailTokenUserAuth($email: String!, $token: String!) {
-  emailTokenUserAuth(email: $email, token: $token) {
+    mutation emailTokenUserAuth($email: String!, $token: String!, $inviteLink: String) {
+  emailTokenUserAuth(email: $email, token: $token, inviteLink: $inviteLink) {
     ...EmailTokenUserAuthFragment
   }
 }
@@ -829,6 +1162,7 @@ export type EmailTokenUserAuthMutationFn = Apollo.MutationFunction<EmailTokenUse
  *   variables: {
  *      email: // value for 'email'
  *      token: // value for 'token'
+ *      inviteLink: // value for 'inviteLink'
  *   },
  * });
  */
@@ -840,8 +1174,8 @@ export type EmailTokenUserAuthMutationHookResult = ReturnType<typeof useEmailTok
 export type EmailTokenUserAuthMutationResult = Apollo.MutationResult<EmailTokenUserAuthMutation>;
 export type EmailTokenUserAuthMutationOptions = Apollo.BaseMutationOptions<EmailTokenUserAuthMutation, EmailTokenUserAuthMutationVariables>;
 export const EmailUserAuthChallengeDocument = gql`
-    mutation emailUserAuthChallenge($email: String!) {
-  emailUserAuthChallenge(email: $email) {
+    mutation emailUserAuthChallenge($email: String!, $inviteLink: String) {
+  emailUserAuthChallenge(email: $email, inviteLink: $inviteLink) {
     success
     authType
     userErrors {
@@ -866,6 +1200,7 @@ export type EmailUserAuthChallengeMutationFn = Apollo.MutationFunction<EmailUser
  * const [emailUserAuthChallengeMutation, { data, loading, error }] = useEmailUserAuthChallengeMutation({
  *   variables: {
  *      email: // value for 'email'
+ *      inviteLink: // value for 'inviteLink'
  *   },
  * });
  */
@@ -877,8 +1212,8 @@ export type EmailUserAuthChallengeMutationHookResult = ReturnType<typeof useEmai
 export type EmailUserAuthChallengeMutationResult = Apollo.MutationResult<EmailUserAuthChallengeMutation>;
 export type EmailUserAuthChallengeMutationOptions = Apollo.BaseMutationOptions<EmailUserAuthChallengeMutation, EmailUserAuthChallengeMutationVariables>;
 export const GoogleUserAuthDocument = gql`
-    mutation googleUserAuth($code: String!) {
-  googleUserAuth(code: $code) {
+    mutation googleUserAuth($code: String!, $inviteLink: String) {
+  googleUserAuth(code: $code, inviteLink: $inviteLink) {
     ...GoogleUserAuthFragment
   }
 }
@@ -899,6 +1234,7 @@ export type GoogleUserAuthMutationFn = Apollo.MutationFunction<GoogleUserAuthMut
  * const [googleUserAuthMutation, { data, loading, error }] = useGoogleUserAuthMutation({
  *   variables: {
  *      code: // value for 'code'
+ *      inviteLink: // value for 'inviteLink'
  *   },
  * });
  */
@@ -1014,6 +1350,175 @@ export function useTokenRefreshMutation(baseOptions?: Apollo.MutationHookOptions
 export type TokenRefreshMutationHookResult = ReturnType<typeof useTokenRefreshMutation>;
 export type TokenRefreshMutationResult = Apollo.MutationResult<TokenRefreshMutation>;
 export type TokenRefreshMutationOptions = Apollo.BaseMutationOptions<TokenRefreshMutation, TokenRefreshMutationVariables>;
+export const OrganizationInviteCreateDocument = gql`
+    mutation organizationInviteCreate($input: OrganizationInviteCreateInput!) {
+  organizationInviteCreate(input: $input) {
+    ...OrganizationInviteCreateFragment
+  }
+}
+    ${OrganizationInviteCreateFragmentFragmentDoc}`;
+export type OrganizationInviteCreateMutationFn = Apollo.MutationFunction<OrganizationInviteCreateMutation, OrganizationInviteCreateMutationVariables>;
+
+/**
+ * __useOrganizationInviteCreateMutation__
+ *
+ * To run a mutation, you first call `useOrganizationInviteCreateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationInviteCreateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [organizationInviteCreateMutation, { data, loading, error }] = useOrganizationInviteCreateMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useOrganizationInviteCreateMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationInviteCreateMutation, OrganizationInviteCreateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OrganizationInviteCreateMutation, OrganizationInviteCreateMutationVariables>(OrganizationInviteCreateDocument, options);
+      }
+export type OrganizationInviteCreateMutationHookResult = ReturnType<typeof useOrganizationInviteCreateMutation>;
+export type OrganizationInviteCreateMutationResult = Apollo.MutationResult<OrganizationInviteCreateMutation>;
+export type OrganizationInviteCreateMutationOptions = Apollo.BaseMutationOptions<OrganizationInviteCreateMutation, OrganizationInviteCreateMutationVariables>;
+export const OrganizationJoinDocument = gql`
+    mutation OrganizationJoin($input: OrganizationJoinInput!) {
+  organizationJoin(input: $input) {
+    ...OrganizationJoinFragment
+  }
+}
+    ${OrganizationJoinFragmentFragmentDoc}`;
+export type OrganizationJoinMutationFn = Apollo.MutationFunction<OrganizationJoinMutation, OrganizationJoinMutationVariables>;
+
+/**
+ * __useOrganizationJoinMutation__
+ *
+ * To run a mutation, you first call `useOrganizationJoinMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationJoinMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [organizationJoinMutation, { data, loading, error }] = useOrganizationJoinMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useOrganizationJoinMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationJoinMutation, OrganizationJoinMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OrganizationJoinMutation, OrganizationJoinMutationVariables>(OrganizationJoinDocument, options);
+      }
+export type OrganizationJoinMutationHookResult = ReturnType<typeof useOrganizationJoinMutation>;
+export type OrganizationJoinMutationResult = Apollo.MutationResult<OrganizationJoinMutation>;
+export type OrganizationJoinMutationOptions = Apollo.BaseMutationOptions<OrganizationJoinMutation, OrganizationJoinMutationVariables>;
+export const OrganizationInviteLinkResetDocument = gql`
+    mutation organizationInviteLinkReset {
+  organizationInviteLinkReset {
+    ...RefreshOrganizationInviteLinkFragment
+  }
+}
+    ${RefreshOrganizationInviteLinkFragmentFragmentDoc}`;
+export type OrganizationInviteLinkResetMutationFn = Apollo.MutationFunction<OrganizationInviteLinkResetMutation, OrganizationInviteLinkResetMutationVariables>;
+
+/**
+ * __useOrganizationInviteLinkResetMutation__
+ *
+ * To run a mutation, you first call `useOrganizationInviteLinkResetMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationInviteLinkResetMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [organizationInviteLinkResetMutation, { data, loading, error }] = useOrganizationInviteLinkResetMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOrganizationInviteLinkResetMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationInviteLinkResetMutation, OrganizationInviteLinkResetMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OrganizationInviteLinkResetMutation, OrganizationInviteLinkResetMutationVariables>(OrganizationInviteLinkResetDocument, options);
+      }
+export type OrganizationInviteLinkResetMutationHookResult = ReturnType<typeof useOrganizationInviteLinkResetMutation>;
+export type OrganizationInviteLinkResetMutationResult = Apollo.MutationResult<OrganizationInviteLinkResetMutation>;
+export type OrganizationInviteLinkResetMutationOptions = Apollo.BaseMutationOptions<OrganizationInviteLinkResetMutation, OrganizationInviteLinkResetMutationVariables>;
+export const OrganizationInviteDetailsDocument = gql`
+    query organizationInviteDetails($inviteLink: String!) {
+  organizationInviteDetails(inviteLink: $inviteLink) {
+    ...OrganizationInviteLinkDetailsFragment
+    ...OrganizationInviteDetailsFragment
+  }
+}
+    ${OrganizationInviteLinkDetailsFragmentFragmentDoc}
+${OrganizationInviteDetailsFragmentFragmentDoc}`;
+
+/**
+ * __useOrganizationInviteDetailsQuery__
+ *
+ * To run a query within a React component, call `useOrganizationInviteDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationInviteDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOrganizationInviteDetailsQuery({
+ *   variables: {
+ *      inviteLink: // value for 'inviteLink'
+ *   },
+ * });
+ */
+export function useOrganizationInviteDetailsQuery(baseOptions: Apollo.QueryHookOptions<OrganizationInviteDetailsQuery, OrganizationInviteDetailsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OrganizationInviteDetailsQuery, OrganizationInviteDetailsQueryVariables>(OrganizationInviteDetailsDocument, options);
+      }
+export function useOrganizationInviteDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OrganizationInviteDetailsQuery, OrganizationInviteDetailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OrganizationInviteDetailsQuery, OrganizationInviteDetailsQueryVariables>(OrganizationInviteDetailsDocument, options);
+        }
+export type OrganizationInviteDetailsQueryHookResult = ReturnType<typeof useOrganizationInviteDetailsQuery>;
+export type OrganizationInviteDetailsLazyQueryHookResult = ReturnType<typeof useOrganizationInviteDetailsLazyQuery>;
+export type OrganizationInviteDetailsQueryResult = Apollo.QueryResult<OrganizationInviteDetailsQuery, OrganizationInviteDetailsQueryVariables>;
+export const OrganizationInviteLinkCreateDocument = gql`
+    query OrganizationInviteLinkCreate {
+  organizationInviteLink {
+    ...OrganizationInviteLinkCreateFragment
+  }
+}
+    ${OrganizationInviteLinkCreateFragmentFragmentDoc}`;
+
+/**
+ * __useOrganizationInviteLinkCreateQuery__
+ *
+ * To run a query within a React component, call `useOrganizationInviteLinkCreateQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationInviteLinkCreateQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOrganizationInviteLinkCreateQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOrganizationInviteLinkCreateQuery(baseOptions?: Apollo.QueryHookOptions<OrganizationInviteLinkCreateQuery, OrganizationInviteLinkCreateQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OrganizationInviteLinkCreateQuery, OrganizationInviteLinkCreateQueryVariables>(OrganizationInviteLinkCreateDocument, options);
+      }
+export function useOrganizationInviteLinkCreateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OrganizationInviteLinkCreateQuery, OrganizationInviteLinkCreateQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OrganizationInviteLinkCreateQuery, OrganizationInviteLinkCreateQueryVariables>(OrganizationInviteLinkCreateDocument, options);
+        }
+export type OrganizationInviteLinkCreateQueryHookResult = ReturnType<typeof useOrganizationInviteLinkCreateQuery>;
+export type OrganizationInviteLinkCreateLazyQueryHookResult = ReturnType<typeof useOrganizationInviteLinkCreateLazyQuery>;
+export type OrganizationInviteLinkCreateQueryResult = Apollo.QueryResult<OrganizationInviteLinkCreateQuery, OrganizationInviteLinkCreateQueryVariables>;
 export const ProjectCreateDocument = gql`
     mutation projectCreate($input: ProjectCreateInput!) {
   projectCreate(input: $input) {

@@ -1,12 +1,13 @@
-import { GlobalSpinner } from "@/components";
 import {
     useEmailUserAuthChallengeMutation,
     useGoogleUserAuthMutation,
 } from "@/generated/graphql";
-import { Button, TextInput } from "@/ui";
+import { Button, GlobalSpinner, TextInput } from "@/ui";
 import { Google } from "@/ui/icons";
+import { emailRegex } from "@/utils";
 import { toast } from "@/utils/toast";
 import { useGoogleLogin } from "@react-oauth/google";
+import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, createSearchParams, useNavigate } from "react-router-dom";
 import { useAuthToken } from "../hooks/useAuthToken";
@@ -21,6 +22,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
         register,
         handleSubmit,
         watch,
+        setValue,
         formState: { errors },
     } = useForm<Inputs>({
         defaultValues: {
@@ -30,17 +32,28 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
     const email = watch("email");
     const navigate = useNavigate();
     const { login } = useAuthToken();
+    const [googleAuth, { loading }] = useGoogleUserAuthMutation();
+    const [persistUser, { loading: persistingUser }] = usePersistUser();
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const inviteLink = urlParams.get("inviteLink");
+    const inviteEmail = urlParams.get("email");
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
         getToken({
             variables: {
                 email: data.email,
+                inviteLink,
             },
         });
     };
 
-    const [googleAuth, { loading }] = useGoogleUserAuthMutation();
-    const [persistUser, { loading: persistingUser }] = usePersistUser();
+    useEffect(() => {
+        if (inviteLink) {
+            setValue("email", inviteEmail || "");
+        }
+    }, [inviteEmail]);
 
     const loginWithGoogle = useGoogleLogin({
         flow: "auth-code",
@@ -49,6 +62,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
             const result = await googleAuth({
                 variables: {
                     code: codeResponse.code,
+                    inviteLink,
                 },
             });
 
@@ -84,8 +98,10 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
             onCompleted: ({ emailUserAuthChallenge }) => {
                 if (emailUserAuthChallenge?.success) {
                     navigate({
-                        pathname: "/auth/magic-sign-in/",
-                        search: createSearchParams({ email }).toString(),
+                        pathname: `/auth/magic-sign-in/`,
+                        search: createSearchParams(
+                            !inviteLink ? { email } : { email, inviteLink },
+                        ).toString(),
                     });
                 }
             },
@@ -127,6 +143,10 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
                             required: {
                                 value: true,
                                 message: "Email is required",
+                            },
+                            pattern: {
+                                value: emailRegex,
+                                message: "Invalid email address",
                             },
                         })}
                         error={!!errors.email?.message}

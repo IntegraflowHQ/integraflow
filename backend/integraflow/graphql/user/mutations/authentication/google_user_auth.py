@@ -34,7 +34,7 @@ class GoogleUserAuth(BaseMutation):
             description="Code gotten from google auth consent screen.",
         )
 
-        invite_link = graphene.ID(
+        invite_link = graphene.String(
             description="An optional invite link for an organization."
         )
 

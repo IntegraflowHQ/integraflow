@@ -1,4 +1,5 @@
 import { DeepOmit } from "@apollo/client/utilities";
+import { toast } from "./toast";
 
 export function cn(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
@@ -28,3 +29,18 @@ export function isOver24Hours(previousTimestamp: number): boolean {
 export function getAcronym(value: string) {
     return value.slice(0, 1).toUpperCase();
 }
+
+export const copyToClipboard = (textToCopy: string, toastMessage: string) => {
+    navigator.clipboard.writeText(textToCopy);
+    toast.success(toastMessage);
+};
+
+export function addEllipsis(text: string, maxLength: number) {
+    if (text.length > maxLength) {
+        return text.substring(0, maxLength) + "...";
+    } else {
+        return text;
+    }
+}
+
+export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

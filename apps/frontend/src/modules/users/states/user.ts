@@ -54,12 +54,17 @@ export const useUserStore = create<UserState & UserActions>()(
                 ] as ProjectCountableEdge[];
 
                 const newUser = get().user;
-                newUser!.organizations!.edges[orgIndex].node = org;
+                if (!newUser || !newUser.organizations) return;
+                newUser.organizations.edges[orgIndex].node = org;
 
                 return set({ user: newUser, lastUpdate: Date.now() });
             },
             addWorkspace: (data) => {
                 const user = get().user;
+                if (!user || !data.organization || !data.project) return;
+
+                user.organization = data.organization;
+                user.project = data.project;
 
                 user?.organizations?.edges.unshift({
                     node: {
