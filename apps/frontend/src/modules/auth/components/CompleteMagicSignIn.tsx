@@ -1,10 +1,9 @@
-import { GlobalSpinner } from "@/components";
 import {
     useEmailTokenUserAuthMutation,
     useEmailUserAuthChallengeMutation,
 } from "@/generated/graphql";
 import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
-import { Button, Screen, TextInput } from "@/ui";
+import { Button, GlobalSpinner, Screen, TextInput } from "@/ui";
 import { cn } from "@/utils";
 import { toast } from "@/utils/toast";
 import CheckInbox from "assets/images/check-inbox.gif";
@@ -117,7 +116,7 @@ export default function CompleteMagicSignIn() {
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
         if (!emailRegex.test(email as string)) {
-            return 
+            return;
         }
         if (!email || !data.code) {
             return;

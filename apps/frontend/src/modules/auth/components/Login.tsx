@@ -1,9 +1,8 @@
-import { GlobalSpinner } from "@/components";
 import {
     useEmailUserAuthChallengeMutation,
     useGoogleUserAuthMutation,
 } from "@/generated/graphql";
-import { Button, TextInput } from "@/ui";
+import { Button, GlobalSpinner, TextInput } from "@/ui";
 import { Google } from "@/ui/icons";
 import { emailRegex } from "@/utils";
 import { toast } from "@/utils/toast";

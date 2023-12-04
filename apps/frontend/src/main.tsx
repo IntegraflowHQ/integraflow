@@ -9,7 +9,7 @@ import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { NotFound } from "./components";
+import { NotFound } from "./components/NotFound";
 import "./index.css";
 import { AppCore } from "./layout/AppCore";
 import AppShell from "./layout/AppShell";

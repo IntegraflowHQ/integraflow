@@ -25,7 +25,7 @@ export const TextInput = forwardRef<HTMLInputElement, InputFieldProps>(
         };
 
         return (
-            <div className={`${cn}, relative`}>
+            <div className={`${cn} relative`}>
                 {label && (
                     <label
                         className="mb-2 block text-sm font-medium text-intg-text-2"

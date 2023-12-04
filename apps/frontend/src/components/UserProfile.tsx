@@ -15,7 +15,7 @@ import {
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
-} from "@/ui/dropdown/DropdownMenu";
+} from "@/ui/Dropdown/DropdownMenu";
 import {
     CheckCircleIcon,
     CirclePlusIcon,

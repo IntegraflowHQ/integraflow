@@ -15,7 +15,7 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/ui/dropdown/DropdownMenu";
+} from "@/ui/Dropdown/DropdownMenu";
 import {
     CheckCircleIcon,
     CircleIcon,
@@ -205,7 +205,7 @@ export const Navbar = () => {
                     <hr className="border-intg-bg-4" />
                     <ul className="space-y-2 py-4 text-sm text-intg-text-4">
                         <li
-                            className="flex items-center space-x-2 px-3 py-2"
+                            className="flex cursor-pointer items-center space-x-2 px-3 py-2"
                             onClick={() => {
                                 setOpenOrganizationInviteModal(true);
                             }}
@@ -217,15 +217,12 @@ export const Navbar = () => {
                         </li>
 
                         <OrganizationInvite
-                            // inviteLink={
-                            //     invitelink?.organizationInviteLink?.inviteLink
-                            // }
                             open={openOrganizationInviteModal}
                             onOpenChange={(value: boolean) =>
                                 setOpenOrganizationInviteModal(value)
                             }
                         />
-                        <li className="flex items-center space-x-2 px-3 py-2">
+                        <li className="flex cursor-pointer items-center space-x-2 px-3 py-2">
                             <span>
                                 <SpeakerIcon />
                             </span>

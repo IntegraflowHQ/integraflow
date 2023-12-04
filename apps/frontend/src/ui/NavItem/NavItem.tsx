@@ -23,7 +23,7 @@ export const NavItem = ({
     return (
         <div
             className={cn(
-                "mx-auto flex w-full cursor-pointer items-center gap-2 overflow-x-hidden rounded capitalize text-intg-text",
+                "flex w-full cursor-pointer items-center gap-2 overflow-x-hidden rounded capitalize text-intg-text",
                 classnames,
             )}
         >
