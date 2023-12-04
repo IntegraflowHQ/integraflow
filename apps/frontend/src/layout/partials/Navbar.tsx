@@ -1,4 +1,4 @@
-import { UserProfile } from "@/components/UserProfile";
+import { UserProfile } from "@/layout/partials/UserProfile";
 import { Project } from "@/generated/graphql";
 import { OrganizationInvite } from "@/modules/organizationInvite/components/OrganizationInvite";
 import { CreateNewProject } from "@/modules/projects/components/CreateNewProject";
