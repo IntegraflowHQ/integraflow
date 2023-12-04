@@ -22,7 +22,9 @@ const Notification = ({
                 <h5 className="text-xl text-white">
                     {type == "success" ? "Success!" : "Error!"}
                 </h5>
-                <p className="text-base text-intg-text">{message}</p>
+                {message && (
+                    <p className="text-base text-intg-text">{message}</p>
+                )}
                 <div className="text-base text-intg-text">
                     {children && children}
                 </div>
