@@ -10,7 +10,7 @@ import {
 import useLogout from "@/modules/auth/hooks/useLogout";
 import useSession from "@/modules/users/hooks/useSession";
 import useUserState from "@/modules/users/hooks/useUserState";
-import { Button, GlobalSpinner, Screen } from "@/ui";
+import { Button, GlobalSpinner, Header, Screen } from "@/ui";
 import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
 import { getAcronym, omitTypename } from "@/utils";
 import { useEffect } from "react";
@@ -102,7 +102,7 @@ export const EmailWorkspaceInvitation = () => {
     if (loading || inviteDetailsLoading) {
         return <GlobalSpinner />;
     }
-    
+
     if (
         (inviteDetails?.organizationInviteDetails as OrganizationInviteDetails)
             ?.expired ||
@@ -127,32 +127,17 @@ export const EmailWorkspaceInvitation = () => {
                             )}
                         />
                     </div>
-                    <p className="text-center text-3xl font-semibold text-white">
-                        <span>
-                            {
-                                (
-                                    inviteDetails?.organizationInviteDetails as OrganizationInviteDetails
-                                )?.inviter
-                            }{" "}
-                            invited you to
-                        </span>
-                        <br />
-                        <span>
-                            {
-                                (
-                                    inviteDetails?.organizationInviteDetails as OrganizationInviteDetails
-                                )?.organizationName
-                            }
-                        </span>
-                    </p>
-                    <p>
-                        Redefine customer experience with organic feedback and
-                        behavioral data in real-time. Enjoy intuitive designs,
-                        open source surveys, advanced analytics, seamless
-                        collaboration on the go.
-                    </p>
-                    <hr className="border border-[.3px] border-intg-text" />
-                    <p>
+                    <Header
+                        className="text-center"
+                        title={`${(
+                            inviteDetails?.organizationInviteDetails as OrganizationInviteDetails
+                        )?.inviter} invited you to ${(
+                            inviteDetails?.organizationInviteDetails as OrganizationInviteDetails
+                        )?.organizationName}`}
+                        description="Integraflow helps businesses connect with and learn from their customers."
+                    />
+                    <hr className="border-[.3px] border-intg-text" />
+                    <p className="text-sm">
                         To accept the invitation, please login as
                         <br />
                         <b>
