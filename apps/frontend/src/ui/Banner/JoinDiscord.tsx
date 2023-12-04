@@ -3,7 +3,7 @@ import { Button } from "..";
 
 export const JoinDiscord = () => {
     return (
-        <div className="flex w-full space-x-2 rounded-lg bg-intg-bg-9 px-2 py-4">
+        <div className="my-5 flex w-full space-x-2 rounded-lg bg-intg-bg-9 px-2 py-4">
             <div className="h-8 w-8">
                 <img src={Discord} alt="Discord" />
             </div>
