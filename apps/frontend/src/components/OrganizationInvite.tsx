@@ -1,11 +1,10 @@
-import { Dialog, DialogContent } from "@/components";
 import {
     useOrganizationInviteCreateMutation,
     useOrganizationInviteLinkCreateLazyQuery,
     useOrganizationInviteLinkResetMutation,
 } from "@/generated/graphql";
 import useSession from "@/modules/users/hooks/useSession";
-import { Button, TextInput } from "@/ui";
+import { Button, Dialog, DialogContent, TextInput } from "@/ui";
 import { CopyIcon } from "@/ui/icons";
 import { addEllipsis, copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
@@ -151,7 +150,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                             anyone to join your organization
                         </p>
 
-                        <div className="flex w-full items-end space-x-2">
+                        <div className="flex w-full items-end gap-2">
                             <div className="w-[75%]">
                                 <TextInput
                                     placeholder=""

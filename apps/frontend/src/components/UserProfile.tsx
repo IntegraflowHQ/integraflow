@@ -55,7 +55,7 @@ export const UserProfile = () => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger className="flex w-full items-center text-intg-text outline-none">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-2">
                     <img
                         src={Frame}
                         alt="picture frame"
@@ -77,7 +77,7 @@ export const UserProfile = () => {
                 </DropdownMenuLabel>
                 <DropdownMenuItem>
                     <div className="flex items-center justify-between px-2 py-[6px]">
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center gap-2">
                             <img
                                 src={Frame}
                                 alt="user avatar"
@@ -154,7 +154,7 @@ export const UserProfile = () => {
                         </DropdownMenuItem>
                     </DropdownMenuSubContent>
                 </DropdownMenuSub>
-                <DropdownMenuItem className="flex items-center space-x-2 px-3 py-2 ">
+                <DropdownMenuItem className="flex items-center gap-2 px-3 py-2 ">
                     <SettingsIcon />
                     <p className="text-sm">Workspace Settings</p>
                 </DropdownMenuItem>
@@ -176,7 +176,7 @@ export const UserProfile = () => {
                 })}
                 <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
                 <DropdownMenuItem
-                    className="flex items-center space-x-2 px-3 py-2"
+                    className="flex items-center gap-2 px-3 py-2"
                     onClick={handleLogout}
                 >
                     <LogoutIcon />
