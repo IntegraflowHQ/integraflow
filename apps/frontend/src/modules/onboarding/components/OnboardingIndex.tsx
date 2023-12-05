@@ -2,6 +2,7 @@ import { Header } from "@/ui";
 import { CheckComplete, CheckPending } from "@/ui/icons";
 import * as Tabs from "@radix-ui/react-tabs";
 import { onboardingSteps, useOnboarding } from "../states/onboarding";
+import ConnectIntegration from "./ConnectIntegration";
 import IntegrateIndex from "./IntegrateSDK/IntegrateIndex";
 
 export default function OnboardingIndex() {
@@ -40,6 +41,10 @@ export default function OnboardingIndex() {
 
                 <Tabs.Content value={onboardingSteps[0]} asChild>
                     <IntegrateIndex />
+                </Tabs.Content>
+
+                <Tabs.Content value={onboardingSteps[4]} asChild>
+                    <ConnectIntegration />
                 </Tabs.Content>
             </Tabs.Root>
         </section>

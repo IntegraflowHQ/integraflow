@@ -28,22 +28,36 @@ const status = {
 export const onboardingSteps = Object.keys(status) as (keyof typeof status)[];
 export type OnboardingStep = (typeof status)[keyof typeof status];
 
+type EventSource = "web" | "mobile" | null;
+type MobilePlatform = "android" | "ios" | "rn" | "flutter" | null;
+
 export type OnboardingState = {
     status: typeof status;
+    eventSource: EventSource;
+    mobilePlatform: MobilePlatform;
 };
 
 export type OnboardingActions = {
     complete: (key: keyof typeof status) => void;
+    clearEventSource: () => void;
+    setEventSource: (eventSource: EventSource) => void;
+    setMobilePlatform: (mobilePlatform: MobilePlatform) => void;
+};
+
+const initialState: OnboardingState = {
+    status,
+    eventSource: null,
+    mobilePlatform: null,
 };
 
 export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
     persist(
         (set, get) => ({
-            status,
+            ...initialState,
             complete: (key) => {
                 const currentStatus = get().status;
                 const currentStep = currentStatus[key];
-                set({
+                return set({
                     status: {
                         ...currentStatus,
                         [key]: {
@@ -53,6 +67,10 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
                     },
                 });
             },
+            clearEventSource: () =>
+                set({ eventSource: null, mobilePlatform: null }),
+            setEventSource: (eventSource) => set({ eventSource }),
+            setMobilePlatform: (mobilePlatform) => set({ mobilePlatform }),
         }),
         {
             name: "onboarding",
@@ -63,7 +81,20 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
 export const useOnboarding = () => {
     const onboarding = createSelectors(useOnboardingStore);
     const status = onboarding.use.status();
+    const eventSource = onboarding.use.eventSource();
+    const mobilePlatform = onboarding.use.mobilePlatform();
     const complete = onboarding.use.complete();
+    const clearEventSource = onboarding.use.clearEventSource();
+    const setEventSource = onboarding.use.setEventSource();
+    const setMobilePlatform = onboarding.use.setMobilePlatform();
 
-    return { status, complete };
+    return {
+        status,
+        eventSource,
+        mobilePlatform,
+        complete,
+        clearEventSource,
+        setEventSource,
+        setMobilePlatform,
+    };
 };
