@@ -1,16 +1,9 @@
-import { Button, CodeBlock, Header } from "@/ui";
+import { CodeBlock, Header } from "@/ui";
 import { htmlInitSnippet, webInstallSnippet } from "../../snippets";
-import { useOnboarding } from "../../states/onboarding";
-import Container from "../Container";
 
 export default function IntegrateWeb() {
-    const { clearEventSource } = useOnboarding();
-
     return (
-        <Container
-            title="Connect your web app or product"
-            onBack={() => clearEventSource()}
-        >
+        <>
             <div className="flex flex-col gap-8 py-6">
                 <Header
                     title="Option 1. Code snippet"
@@ -44,22 +37,18 @@ export default function IntegrateWeb() {
                     description="Insert this snippet in your website within the <head> tag."
                 />
 
-                <div className="flex flex-col gap-8">
-                    <div className="space-y-3">
-                        <Header variant="3" title="Install the package" />
+                <div className="space-y-3">
+                    <Header variant="3" title="Install the package" />
 
-                        <CodeBlock
-                            type="single"
-                            block={{
-                                language: "bash",
-                                code: webInstallSnippet,
-                            }}
-                        />
-                    </div>
-
-                    <Button text="Continue" />
+                    <CodeBlock
+                        type="single"
+                        block={{
+                            language: "bash",
+                            code: webInstallSnippet,
+                        }}
+                    />
                 </div>
             </div>
-        </Container>
+        </>
     );
 }

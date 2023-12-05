@@ -2,13 +2,17 @@ import { OrganizationInvite } from "@/modules/organizationInvite/components/Orga
 import { Header } from "@/ui";
 import React, { useState } from "react";
 
-interface Props {
+export type SwitchProps = {
+    onSkip?: () => void;
+    onBack?: () => void;
+    onComplete?: () => void;
+};
+
+export type OnboardingScreenProps = {
     title: string;
     description?: string;
     children?: React.ReactNode;
-    onSkip?: () => void;
-    onBack?: () => void;
-}
+} & SwitchProps;
 
 const backgroundTextStyles: React.CSSProperties = {
     backgroundImage: "linear-gradient(27deg, #B7A6E8 8.33%, #6941C6 91.67%)",
@@ -29,7 +33,7 @@ export default function Container({
     children,
     onSkip,
     onBack,
-}: Props) {
+}: OnboardingScreenProps) {
     const [isAddingTeamMember, setIsAddingTeamMember] = useState(false);
     return (
         <div className="max-w-[660px] rounded-xl bg-intg-bg-9 p-12">

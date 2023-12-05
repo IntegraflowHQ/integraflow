@@ -1,13 +1,48 @@
 import { Header } from "@/ui";
 import { CheckComplete, CheckPending } from "@/ui/icons";
 import * as Tabs from "@radix-ui/react-tabs";
-import { onboardingSteps, useOnboarding } from "../states/onboarding";
+import {
+    OnboardingStepKey,
+    onboardingSteps,
+    useOnboarding,
+} from "../states/onboarding";
 import ConnectIntegration from "./ConnectIntegration";
-import CreaateFirstSurvey from "./CreaateFirstSurvey";
-import IntegrateIndex from "./IntegrateSDK/IntegrateIndex";
+import CreateFirstSurvey from "./CreateFirstSurvey";
+import IntegrateSDK from "./IntegrateSDK/IntegrateSDK";
+
+const status = {
+    integrateSdk: {
+        name: "Integrate SDK",
+        completed: false,
+    },
+    identifyUsers: {
+        name: "Identify your users",
+        completed: false,
+    },
+    trackEvents: {
+        name: "Track your events",
+        completed: false,
+    },
+    publishFirstSurvey: {
+        name: "Publish your first survey",
+        completed: false,
+    },
+    connectIntegration: {
+        name: "Connect your first integration",
+        completed: false,
+    },
+};
 
 export default function OnboardingIndex() {
-    const { status } = useOnboarding();
+    const { status, currentTab, switchTab, complete } = useOnboarding();
+
+    const tabContents = [
+        { content: IntegrateSDK },
+        { content: IntegrateSDK },
+        { content: IntegrateSDK },
+        { content: CreateFirstSurvey },
+        { content: ConnectIntegration },
+    ];
 
     return (
         <section className="px-[72px] pt-20">
@@ -19,7 +54,8 @@ export default function OnboardingIndex() {
 
             <Tabs.Root
                 className="flex gap-12 pt-10"
-                defaultValue={onboardingSteps[0]}
+                value={currentTab}
+                onValueChange={(value) => switchTab(value as OnboardingStepKey)}
             >
                 <Tabs.List className="flex flex-col gap-2 pt-[25px]">
                     {onboardingSteps.map((key) => (
@@ -40,25 +76,37 @@ export default function OnboardingIndex() {
                     ))}
                 </Tabs.List>
 
-                <Tabs.Content value={onboardingSteps[0]} asChild>
-                    <IntegrateIndex />
-                </Tabs.Content>
-
-                <Tabs.Content value={onboardingSteps[1]} asChild>
-                    <IntegrateIndex />
-                </Tabs.Content>
-
-                <Tabs.Content value={onboardingSteps[2]} asChild>
-                    <IntegrateIndex />
-                </Tabs.Content>
-
-                <Tabs.Content value={onboardingSteps[3]} asChild>
-                    <CreaateFirstSurvey />
-                </Tabs.Content>
-
-                <Tabs.Content value={onboardingSteps[4]} asChild>
-                    <ConnectIntegration />
-                </Tabs.Content>
+                {onboardingSteps.map((key, index) => {
+                    const Content = tabContents[index].content;
+                    return (
+                        <Tabs.Content value={onboardingSteps[index]} asChild>
+                            <Content
+                                onSkip={
+                                    index < onboardingSteps.length - 1
+                                        ? () => {
+                                              console.log("skip");
+                                              console.log(
+                                                  onboardingSteps[index + 1],
+                                              );
+                                              complete(key);
+                                              switchTab(
+                                                  onboardingSteps[index + 1],
+                                              );
+                                          }
+                                        : () => {
+                                              complete(key);
+                                          }
+                                }
+                                onComplete={() => {
+                                    complete(key);
+                                    if (index < onboardingSteps.length - 1) {
+                                        switchTab(onboardingSteps[index + 1]);
+                                    }
+                                }}
+                            />
+                        </Tabs.Content>
+                    );
+                })}
             </Tabs.Root>
         </section>
     );

@@ -27,6 +27,7 @@ const status = {
 
 export const onboardingSteps = Object.keys(status) as (keyof typeof status)[];
 export type OnboardingStep = (typeof status)[keyof typeof status];
+export type OnboardingStepKey = keyof typeof status;
 
 type EventSource = "web" | "mobile" | null;
 type MobilePlatform = "android" | "ios" | "rn" | "flutter" | null;
@@ -35,19 +36,22 @@ export type OnboardingState = {
     status: typeof status;
     eventSource: EventSource;
     mobilePlatform: MobilePlatform;
+    currentTab: OnboardingStepKey;
 };
 
 export type OnboardingActions = {
-    complete: (key: keyof typeof status) => void;
+    complete: (key: OnboardingStepKey) => void;
     clearEventSource: () => void;
     setEventSource: (eventSource: EventSource) => void;
     setMobilePlatform: (mobilePlatform: MobilePlatform) => void;
+    switchTab: (tab: OnboardingStepKey) => void;
 };
 
 const initialState: OnboardingState = {
     status,
     eventSource: null,
     mobilePlatform: null,
+    currentTab: "integrateSdk",
 };
 
 export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
@@ -71,6 +75,7 @@ export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
                 set({ eventSource: null, mobilePlatform: null }),
             setEventSource: (eventSource) => set({ eventSource }),
             setMobilePlatform: (mobilePlatform) => set({ mobilePlatform }),
+            switchTab: (tab) => set({ currentTab: tab }),
         }),
         {
             name: "onboarding",
@@ -83,18 +88,22 @@ export const useOnboarding = () => {
     const status = onboarding.use.status();
     const eventSource = onboarding.use.eventSource();
     const mobilePlatform = onboarding.use.mobilePlatform();
+    const currentTab = onboarding.use.currentTab();
     const complete = onboarding.use.complete();
     const clearEventSource = onboarding.use.clearEventSource();
     const setEventSource = onboarding.use.setEventSource();
     const setMobilePlatform = onboarding.use.setMobilePlatform();
+    const switchTab = onboarding.use.switchTab();
 
     return {
         status,
         eventSource,
         mobilePlatform,
+        currentTab,
         complete,
         clearEventSource,
         setEventSource,
         setMobilePlatform,
+        switchTab,
     };
 };

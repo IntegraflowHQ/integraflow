@@ -7,7 +7,7 @@ import MailchimpIcon from "assets/icons/integrations/mailchimp.png";
 import MixpanelIcon from "assets/icons/integrations/mixpanel.png";
 import NotionIcon from "assets/icons/integrations/notion.png";
 import SlackIcon from "assets/icons/integrations/slack.png";
-import Container from "./Container";
+import Container, { SwitchProps } from "./Container";
 
 const integrations = [
     {
@@ -68,18 +68,22 @@ const integrations = [
     },
 ];
 
-export default function ConnectIntegration() {
+export default function ConnectIntegration({
+    onComplete,
+    ...props
+}: SwitchProps) {
     return (
         <Container
             title="Install your first integration"
             description="Send an identify call wherever a user signs up or logs into your product. Read the docs for more details."
+            {...props}
         >
             <div className="flex w-full flex-col gap-8 pt-8">
                 <div className="grid grid-cols-2 gap-2">
                     {integrations.map((integration) => (
                         <div
                             key={integration.name}
-                            className="bg-intg-bg-14 flex gap-2 rounded-lg p-2"
+                            className="flex gap-2 rounded-lg bg-intg-bg-14 p-2"
                         >
                             <img
                                 src={integration.icon}
@@ -93,7 +97,7 @@ export default function ConnectIntegration() {
                                     description={integration.description}
                                     className="[&>h4]:font-medium"
                                 />
-                                <button className="bg-intg-bg-13 w-max rounded px-2 py-[2px] text-xs leading-[18px] text-intg-text">
+                                <button className="w-max rounded bg-intg-bg-13 px-2 py-[2px] text-xs leading-[18px] text-intg-text">
                                     {integration.available
                                         ? "Install"
                                         : "Request"}
@@ -102,7 +106,7 @@ export default function ConnectIntegration() {
                         </div>
                     ))}
                 </div>
-                <Button text="Continue" />
+                <Button text="Continue" onClick={onComplete} />
             </div>
         </Container>
     );
