@@ -23,20 +23,39 @@ export default function IntegrateAndroid() {
                 <div className="space-y-2">
                     <Header variant="4" title="Configure" />
                     <CodeBlock
+                        type="multiple"
+                        blocks={[
+                            {
+                                title: "Java",
+                                language: "java",
+                                code: androidConfigure,
+                            },
+                            {
+                                title: "Kotlin",
+                                language: "kotlin",
+                                code: androidConfigure,
+                            },
+                        ]}
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <Header variant="4" title="Send an event with Java" />
+                    <CodeBlock
                         type="single"
                         block={{
                             language: "java",
-                            code: androidConfigure,
+                            code: androidSendEvent,
                         }}
                     />
                 </div>
 
                 <div className="space-y-2">
-                    <Header variant="4" title="Send an event" />
+                    <Header variant="4" title="Send an event with Kotlin" />
                     <CodeBlock
                         type="single"
                         block={{
-                            language: "java",
+                            language: "kotlin",
                             code: androidSendEvent,
                         }}
                     />

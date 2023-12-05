@@ -4,6 +4,7 @@ import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import bash from "react-syntax-highlighter/dist/esm/languages/hljs/bash";
 import java from "react-syntax-highlighter/dist/esm/languages/hljs/java";
 import js from "react-syntax-highlighter/dist/esm/languages/hljs/javascript";
+import kotlin from "react-syntax-highlighter/dist/esm/languages/hljs/kotlin";
 import objectiveC from "react-syntax-highlighter/dist/esm/languages/hljs/objectivec";
 import swift from "react-syntax-highlighter/dist/esm/languages/hljs/swift";
 import atomOneDark from "react-syntax-highlighter/dist/esm/styles/hljs/atom-one-dark";
@@ -12,6 +13,7 @@ import { Copy } from "../icons";
 SyntaxHighlighter.registerLanguage("javascript", js);
 SyntaxHighlighter.registerLanguage("bash", bash);
 SyntaxHighlighter.registerLanguage("java", java);
+SyntaxHighlighter.registerLanguage("kotlin", kotlin);
 SyntaxHighlighter.registerLanguage("swift", swift);
 SyntaxHighlighter.registerLanguage("objective-c", objectiveC);
 
@@ -53,7 +55,7 @@ export function CodeBlock(block: Props) {
                 className="flex flex-col"
                 defaultValue={block.blocks[0].language}
             >
-                <Tabs.List className="bg-intg-bg-12 flex justify-end gap-2 rounded-t-lg px-[19px] pb-[5px] pt-[10px]">
+                <Tabs.List className="flex justify-end gap-2 rounded-t-lg bg-intg-bg-12 px-[19px] pb-[5px] pt-[10px]">
                     {block.blocks.map((block) => (
                         <Tabs.Trigger
                             key={block.language}

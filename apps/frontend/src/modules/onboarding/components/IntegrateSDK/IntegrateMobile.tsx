@@ -18,7 +18,9 @@ export default function IntegrateMobile() {
                     ? "Setup React Native"
                     : "Setup Flutter"
             }
-            onBack={() => setMobilePlatform(null)}
+            onBack={() => {
+                setMobilePlatform(null);
+            }}
         >
             {mobilePlatform === "android" && <IntegrateAndroid />}
             {mobilePlatform === "ios" && <IntegrateIos />}
