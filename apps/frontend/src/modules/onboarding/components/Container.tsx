@@ -1,5 +1,6 @@
+import { OrganizationInvite } from "@/modules/organizationInvite/components/OrganizationInvite";
 import { Header } from "@/ui";
-import React from "react";
+import React, { useState } from "react";
 
 interface Props {
     title: string;
@@ -19,6 +20,7 @@ const backgroundTextStyles: React.CSSProperties = {
     fontWeight: 400,
     lineHeight: "24px",
     textAlign: "center",
+    cursor: "pointer",
 };
 
 export default function Container({
@@ -28,6 +30,7 @@ export default function Container({
     onSkip,
     onBack,
 }: Props) {
+    const [isAddingTeamMember, setIsAddingTeamMember] = useState(false);
     return (
         <div className="max-w-[660px] rounded-xl bg-intg-bg-9 p-12">
             {onSkip || onBack ? (
@@ -71,9 +74,18 @@ export default function Container({
 
             <div className="w-full pb-12">{children}</div>
 
-            <p style={backgroundTextStyles}>
+            <p
+                style={backgroundTextStyles}
+                onClick={() => {
+                    setIsAddingTeamMember(true);
+                }}
+            >
                 Invite a team member to help with this step
             </p>
+            <OrganizationInvite
+                open={isAddingTeamMember}
+                onOpenChange={(value) => setIsAddingTeamMember(value)}
+            />
         </div>
     );
 }
