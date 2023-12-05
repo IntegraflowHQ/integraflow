@@ -60,7 +60,7 @@ export function CodeBlock(block: Props) {
                         <Tabs.Trigger
                             key={block.language}
                             value={block.language}
-                            className="text-intg-text-8 px-[3px] data-[state=active]:border-b data-[state=active]:border-[#299532] data-[state=active]:bg-gradient-button-hover data-[state=active]:bg-clip-text data-[state=active]:text-transparent"
+                            className="px-[3px] text-intg-text-8 data-[state=active]:border-b data-[state=active]:border-[#299532] data-[state=active]:bg-gradient-button-hover data-[state=active]:bg-clip-text data-[state=active]:text-transparent"
                         >
                             {block.title}
                         </Tabs.Trigger>
@@ -68,7 +68,11 @@ export function CodeBlock(block: Props) {
                 </Tabs.List>
 
                 {block.blocks.map((block) => (
-                    <Tabs.Content value={block.language} className="relative">
+                    <Tabs.Content
+                        key={block.language}
+                        value={block.language}
+                        className="relative"
+                    >
                         <CopyButton
                             onClick={() => {
                                 copyText(block.code);
