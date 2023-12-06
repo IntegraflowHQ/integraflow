@@ -32,7 +32,7 @@ class OrganizationInviteCreateInput(BaseInputObjectType):
     )
     role = graphene.Field(
         RoleLevel,
-        default_value=1,
+        default_value=models.OrganizationMembership.Level.MEMBER,
         description="What member role the invite should grant.",
     )
 

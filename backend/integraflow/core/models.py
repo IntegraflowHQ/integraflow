@@ -152,7 +152,7 @@ class UUIDModel(models.Model):
     id: models.UUIDField = models.UUIDField(
         primary_key=True,
         default=UUIDT,
-        editable=False
+        editable=True
     )
 
 
@@ -167,7 +167,7 @@ class UUIDClassicModel(models.Model):
     uuid: models.UUIDField = models.UUIDField(
         unique=True,
         default=UUIDT,
-        editable=False
+        editable=True
     )
 
 

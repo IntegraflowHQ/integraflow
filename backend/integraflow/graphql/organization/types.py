@@ -16,6 +16,7 @@ from integraflow.graphql.core.fields import (
     FilterConnectionField,
     PermissionsField
 )
+from integraflow.graphql.core.types.base import BaseObjectType
 from integraflow.graphql.core.types.model import ModelObjectType
 from integraflow.graphql.project.types import ProjectCountableConnection
 from integraflow.graphql.user.sorters import UserSortingInput
@@ -56,6 +57,7 @@ class AuthOrganization(ModelObjectType):
         description = "Represents an organization."
         model = models.Organization
         interfaces = [graphene.relay.Node]
+        doc_category = DOC_CATEGORY_ORGANIZATIONS
 
     @staticmethod
     def resolve_member_count(root: models.Organization, info: ResolveInfo):
@@ -87,6 +89,7 @@ class Organization(AuthOrganization):
         description = "Represents an organization."
         model = models.Organization
         interfaces = [graphene.relay.Node]
+        doc_category = DOC_CATEGORY_ORGANIZATIONS
 
     @staticmethod
     def resolve_members(
@@ -162,6 +165,7 @@ class BaseOrganizationInvite(ModelObjectType):
         description = "The organization invite that was created or updated."
         model = models.OrganizationInvite
         interfaces = [graphene.relay.Node]
+        doc_category = DOC_CATEGORY_ORGANIZATIONS
 
     @staticmethod
     def resolve_email(_root: models.OrganizationInvite, info: ResolveInfo):
@@ -201,6 +205,7 @@ class OrganizationInviteDetails(BaseOrganizationInvite):
         description = "The organization invite that was created or updated."
         model = models.OrganizationInvite
         interfaces = [graphene.relay.Node]
+        doc_category = DOC_CATEGORY_ORGANIZATIONS
 
     @staticmethod
     def resolve_inviter(_root: models.OrganizationInvite, info: ResolveInfo):
@@ -232,7 +237,7 @@ class OrganizationInviteDetails(BaseOrganizationInvite):
         return _root.organization.logo
 
 
-class OrganizationInviteLink(ModelObjectType):
+class OrganizationInviteLink(BaseObjectType):
     invite_link = PermissionsField(
         graphene.String,
         required=True,
@@ -244,15 +249,11 @@ class OrganizationInviteLink(ModelObjectType):
 
     class Meta:
         description = "The organization invite link."
-        model = models.Organization
-        interfaces = [graphene.relay.Node]
+        doc_category = DOC_CATEGORY_ORGANIZATIONS
 
     @staticmethod
-    def resolve_invite_link(
-        _root: models.Organization,
-        info: ResolveInfo
-    ):
-        return f"/{_root.slug}/join/{_root.invite_token}"
+    def resolve_invite_link(root, info: ResolveInfo):
+        return f"/{root.slug}/join/{root.invite_token}"
 
 
 class OrganizationInviteLinkDetails(ModelObjectType):
@@ -273,6 +274,7 @@ class OrganizationInviteLinkDetails(ModelObjectType):
         description = "The organization invite that was created or updated."
         model = models.Organization
         interfaces = [graphene.relay.Node]
+        doc_category = DOC_CATEGORY_ORGANIZATIONS
 
     @staticmethod
     def resolve_organization_id(
@@ -318,6 +320,7 @@ class OrganizationInvite(BaseOrganizationInvite):
         description = "The organization invite that was created or updated."
         model = models.OrganizationInvite
         interfaces = [graphene.relay.Node]
+        doc_category = DOC_CATEGORY_ORGANIZATIONS
 
     @staticmethod
     def resolve_inviter(_root: models.OrganizationInvite, info: ResolveInfo):
