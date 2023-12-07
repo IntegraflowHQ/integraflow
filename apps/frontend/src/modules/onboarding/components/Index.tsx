@@ -78,12 +78,6 @@ export default function OnboardingIndex() {
                 }
             },
             optimisticResponse: (input) => {
-                console.log("optimisticDataParam: ", input);
-                console.log("id: ", session?.project.id);
-                console.log(
-                    "updatedKeys: ",
-                    input.input.hasCompletedOnboardingFor,
-                );
                 return {
                     __typename: "Mutation",
                     projectUpdate: {
