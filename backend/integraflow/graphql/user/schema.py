@@ -1,5 +1,4 @@
 import graphene
-
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_USERS
 from integraflow.graphql.core.fields import PermissionsField
 from integraflow.permission.auth_filters import AuthorizationFilters
@@ -11,7 +10,7 @@ from .mutations.authentication import (
     Logout,
     RefreshToken,
 )
-from .mutations.onboarding import OnboardUser
+from .mutations.user_update import UserUpdate
 from .types import User
 
 
@@ -38,4 +37,4 @@ class UserMutations(graphene.ObjectType):
     google_user_auth = GoogleUserAuth.Field()
     logout = Logout.Field()
     token_refresh = RefreshToken.Field()
-    onboard_user = OnboardUser.Field()
+    user_update = UserUpdate.Field()

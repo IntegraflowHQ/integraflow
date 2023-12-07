@@ -2,7 +2,7 @@ import { useUpdateOnboardingMutation } from "@/generated/graphql";
 import useSessionState from "@/modules/users/hooks/useSessionState";
 import useUserState from "@/modules/users/hooks/useUserState";
 import { Session } from "@/modules/users/states/session";
-import { Header } from "@/ui";
+import { GlobalSpinner, Header } from "@/ui";
 import { CheckComplete, CheckPending } from "@/ui/icons";
 import * as Tabs from "@radix-ui/react-tabs";
 import { useMemo } from "react";
@@ -22,10 +22,8 @@ export const tabContents = [
 export default function OnboardingIndex() {
     const { session, updateSession } = useSessionState();
     const { updateProject } = useUserState();
-    const { currentTab, switchTab, steps } = useOnboarding();
-    const [updateOnboarding, { data }] = useUpdateOnboardingMutation();
-
-    console.log("data: ", data);
+    const { currentTab, switchTab, steps, updatingUser } = useOnboarding();
+    const [updateOnboarding] = useUpdateOnboardingMutation();
 
     const completedKeys = useMemo(() => {
         if (!session?.project.hasCompletedOnboardingFor) {
@@ -43,7 +41,7 @@ export default function OnboardingIndex() {
             return;
         }
         updatedKeys.push(steps[index].key);
-        await updateOnboarding({
+        updateOnboarding({
             variables: {
                 input: {
                     hasCompletedOnboardingFor: JSON.stringify(updatedKeys),
@@ -57,6 +55,7 @@ export default function OnboardingIndex() {
             onCompleted: (data) => {
                 if (data.projectUpdate?.project?.hasCompletedOnboardingFor) {
                     if (!session) return;
+
                     updateProject(
                         session?.project.organization.slug,
                         session?.project.slug,
@@ -66,6 +65,7 @@ export default function OnboardingIndex() {
                                     ?.hasCompletedOnboardingFor,
                         },
                     );
+
                     updateSession({
                         ...session,
                         project: {
@@ -93,6 +93,8 @@ export default function OnboardingIndex() {
             },
         });
     };
+
+    if (updatingUser) return <GlobalSpinner />;
 
     return (
         <section className="px-[72px] pt-20">

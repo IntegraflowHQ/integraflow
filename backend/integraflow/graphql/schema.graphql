@@ -977,11 +977,14 @@ type Mutation {
   ): RefreshToken @doc(category: "Authentication")
 
   """
-  Marks user as onboarded. 
+  Updates a user. 
   
   Requires one of the following permissions: AUTHENTICATED_USER.
   """
-  onboardUser: OnboardUser @doc(category: "Authentication")
+  userUpdate(
+    """A partial object to update the user with."""
+    input: UserInput!
+  ): UserUpdate @doc(category: "Authentication")
 
   """
   Creates a new distibution channel 
@@ -1308,15 +1311,28 @@ type RefreshToken @doc(category: "Authentication") {
 }
 
 """
-Marks user as onboarded. 
+Updates a user. 
 
 Requires one of the following permissions: AUTHENTICATED_USER.
 """
-type OnboardUser @doc(category: "Authentication") {
-  """A user that is being onboarded."""
-  user: AuthUser
+type UserUpdate @doc(category: "Authentication") {
   userErrors: [UserError!]!
   errors: [UserError!]!
+  user: User
+}
+
+input UserInput @doc(category: "Authentication") {
+  """The given name of the user."""
+  firstName: String
+
+  """The family name of the user."""
+  lastName: String
+
+  """Determine if the user has finished onboarding."""
+  isOnboarded: Boolean
+
+  """The avatar of the user."""
+  avatar: String
 }
 
 """
