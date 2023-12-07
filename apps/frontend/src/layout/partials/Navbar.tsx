@@ -4,6 +4,7 @@ import { useOnboarding } from "@/modules/onboarding/hooks/useOnboarding";
 import { OrganizationInvite } from "@/modules/organizationInvite/components/OrganizationInvite";
 import { CreateNewProject } from "@/modules/projects/components/CreateNewProject";
 import useSession from "@/modules/users/hooks/useSession";
+import useUserState from "@/modules/users/hooks/useUserState";
 import { ROUTES } from "@/routes";
 import { Button, ProgressRadial } from "@/ui";
 import { JoinDiscord } from "@/ui/Banner/JoinDiscord";
@@ -31,6 +32,7 @@ import {
 import { DeepOmit } from "@apollo/client/utilities";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export const Navbar = () => {
     const { session, projects, switchProject } = useSession();
@@ -68,6 +70,7 @@ export const Navbar = () => {
     const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
     const [openOrganizationInviteModal, setOpenOrganizationInviteModal] =
         useState(false);
+    const { user } = useUserState();
     const { completionRate: onboardingCompletionRate } = useOnboarding();
 
     return (
@@ -187,10 +190,23 @@ export const Navbar = () => {
                             </span>
                             <span>Create new survey</span>
                         </button>
-                        <button className="flex w-[177px]  items-center  gap-2 rounded bg-intg-bg-8 px-3 py-2 text-sm text-intg-text-4">
-                            <ProgressRadial value={onboardingCompletionRate} />
-                            <span>Get started</span>
-                        </button>
+                        {!user?.isOnboarded && (
+                            <Link
+                                to={ROUTES.GET_STARTED.replace(
+                                    ":orgSlug",
+                                    session?.organization.slug as string,
+                                ).replace(
+                                    ":projectSlug",
+                                    session?.project.slug as string,
+                                )}
+                                className="flex w-[177px] items-center gap-2 rounded bg-intg-bg-8 px-3 py-2 text-sm text-intg-text-4"
+                            >
+                                <ProgressRadial
+                                    value={onboardingCompletionRate}
+                                />
+                                <span>Get started</span>
+                            </Link>
+                        )}
                     </div>
                     <hr className="border-intg-bg-4" />
                     <ul className="space-y-2 py-4 text-sm text-intg-text-4">
