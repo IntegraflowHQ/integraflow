@@ -8,6 +8,7 @@ from integraflow.core.utils import build_absolute_uri
 from integraflow.graphql.core.doc_category import (
     DOC_CATEGORY_ORGANIZATIONS,
     DOC_CATEGORY_PROJECTS,
+    DOC_CATEGORY_SURVEYS,
     DOC_CATEGORY_USERS,
     DOC_CATEGORY_APPS,
     DOC_CATEGORY_WEBHOOKS,
@@ -82,6 +83,14 @@ class ProjectError(Error):
     class Meta:
         description = "Represents errors in project mutations."
         doc_category = DOC_CATEGORY_PROJECTS
+
+
+class SurveyError(Error):
+    code = ProjectErrorCode(description="The error code.", required=True)
+
+    class Meta:
+        description = "Represents errors in survey mutations."
+        doc_category = DOC_CATEGORY_SURVEYS
 
 
 class UserError(Error):

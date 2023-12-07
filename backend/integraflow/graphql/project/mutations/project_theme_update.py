@@ -27,7 +27,7 @@ class ProjectThemeUpdate(ModelMutation):
         )
 
     class Meta:
-        description = "Creates a new theme"
+        description = "Updates an existing theme"
         model = models.ProjectTheme
         object_type = ProjectTheme
         error_type_class = ProjectError
