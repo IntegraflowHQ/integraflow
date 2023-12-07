@@ -25,6 +25,7 @@ export default function useSession() {
     const createSession = useCallback(
         (data: Session) => {
             updateSession(data);
+            console.log(data);
             if (
                 orgSlug !== data.organization.slug ||
                 projectSlug !== data.project.slug
@@ -40,7 +41,6 @@ export default function useSession() {
         return session?.organization.slug === orgSlug;
     }, [session?.organization.slug, orgSlug]);
 
-
     const isValidProject = useMemo(() => {
         if (!projectSlug) {
             return (
@@ -54,7 +54,6 @@ export default function useSession() {
             );
         }
     }, [projectSlug, orgSlug, session]);
-
 
     const isValidSession = useMemo(() => {
         if (!projectSlug && !orgSlug) return true;
@@ -143,6 +142,7 @@ export default function useSession() {
         if (isCurrentOrg && isValidProject) {
             logDebug("Session is valid.");
             if (!projectSlug) {
+                console.log("session: ", session);
                 redirect(session as Session);
             }
             setIsValidating(false);

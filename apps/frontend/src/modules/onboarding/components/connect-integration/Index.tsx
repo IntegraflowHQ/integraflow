@@ -7,7 +7,7 @@ import MailchimpIcon from "assets/icons/integrations/mailchimp.png";
 import MixpanelIcon from "assets/icons/integrations/mixpanel.png";
 import NotionIcon from "assets/icons/integrations/notion.png";
 import SlackIcon from "assets/icons/integrations/slack.png";
-import Container, { SwitchProps } from "./Container";
+import Container, { SwitchProps } from "../Container";
 
 const integrations = [
     {

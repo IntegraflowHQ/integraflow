@@ -2,7 +2,7 @@ import Android from "assets/images/onboarding/integrate-android.png";
 import Flutter from "assets/images/onboarding/integrate-flutter.png";
 import IOS from "assets/images/onboarding/integrate-ios.png";
 import ReactNative from "assets/images/onboarding/integrate-react-native.png";
-import { useOnboarding } from "../../states/onboarding";
+import { useOnboarding } from "../../hooks/useOnboarding";
 import Platform from "./Platform";
 
 export default function SelectMobilePlatform() {

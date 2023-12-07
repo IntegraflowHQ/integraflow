@@ -1,6 +1,6 @@
 import Mobile from "assets/images/onboarding/integrate-mobile.png";
 import Web from "assets/images/onboarding/integrate-web.png";
-import { useOnboarding } from "../../states/onboarding";
+import { useOnboarding } from "../../hooks/useOnboarding";
 import Platform from "./Platform";
 
 export default function SelectEventSource() {

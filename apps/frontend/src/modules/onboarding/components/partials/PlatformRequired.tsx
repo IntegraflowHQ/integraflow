@@ -1,4 +1,4 @@
-import { useOnboarding } from "../../states/onboarding";
+import { useOnboarding } from "../../hooks/useOnboarding";
 import Container, { OnboardingScreenProps } from "../Container";
 import SelectEventSource from "./SelectEventSource";
 import SelectMobilePlatform from "./SelectMobilePlatform";

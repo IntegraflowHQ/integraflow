@@ -1,9 +1,11 @@
-import { UserProfile } from "@/layout/partials/UserProfile";
 import { Project } from "@/generated/graphql";
+import { UserProfile } from "@/layout/partials/UserProfile";
+import { useOnboarding } from "@/modules/onboarding/hooks/useOnboarding";
 import { OrganizationInvite } from "@/modules/organizationInvite/components/OrganizationInvite";
 import { CreateNewProject } from "@/modules/projects/components/CreateNewProject";
 import useSession from "@/modules/users/hooks/useSession";
-import { Button } from "@/ui";
+import { ROUTES } from "@/routes";
+import { Button, ProgressRadial } from "@/ui";
 import { JoinDiscord } from "@/ui/Banner/JoinDiscord";
 import {
     DropdownMenu,
@@ -18,7 +20,6 @@ import { NavItem } from "@/ui/NavItem/NavItem";
 import { NavLink } from "@/ui/NavItem/NavLink";
 import {
     CheckCircleIcon,
-    CircleIcon,
     CirclePlusIcon,
     CursorIcon,
     DocumentIcon,
@@ -32,38 +33,46 @@ import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
 export const Navbar = () => {
+    const { session, projects, switchProject } = useSession();
+
     const navItems = [
         {
             id: 1,
             title: "Home",
             icon: <HomeIcon />,
+            href: "",
         },
         {
             id: 2,
             title: "Surveys",
             icon: <DocumentIcon />,
+            href: ROUTES.SURVEY_LIST.replace(
+                ":orgSlug",
+                session?.organization.slug as string,
+            ).replace(":projectSlug", session?.project.slug as string),
         },
         {
             id: 3,
             title: "Events",
             icon: <CursorIcon />,
+            href: "",
         },
         {
             id: 4,
             title: "Audience",
             icon: <PeopleIcon />,
+            href: "",
         },
     ];
-
-    const { session, projects, switchProject } = useSession();
 
     const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
     const [openOrganizationInviteModal, setOpenOrganizationInviteModal] =
         useState(false);
+    const { completionRate: onboardingCompletionRate } = useOnboarding();
 
     return (
         <div
-            className="flex h-screen w-[240px] flex-col  justify-between border-r border-intg-bg-4 bg-intg-black p-6"
+            className="scrollbar-hide flex h-screen w-[240px]  flex-col justify-between overflow-y-auto border-r border-intg-bg-4 bg-intg-black p-6"
             style={{
                 backgroundImage:
                     "radial-gradient(rgba(28, 15, 89, 0.30) 50%, rgba(5, 5, 5, 0.30))",
@@ -179,9 +188,7 @@ export const Navbar = () => {
                             <span>Create new survey</span>
                         </button>
                         <button className="flex w-[177px]  items-center  gap-2 rounded bg-intg-bg-8 px-3 py-2 text-sm text-intg-text-4">
-                            <span>
-                                <CircleIcon />
-                            </span>
+                            <ProgressRadial value={onboardingCompletionRate} />
                             <span>Get started</span>
                         </button>
                     </div>
@@ -190,7 +197,7 @@ export const Navbar = () => {
                         {navItems.map((item) => {
                             return (
                                 <NavLink
-                                    to=""
+                                    to={item.href}
                                     className={({ isActive }) =>
                                         isActive ? "bg-intg-bg-8" : ""
                                     }

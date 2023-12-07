@@ -1,5 +1,5 @@
 import SurveyCreate from "@/modules/surveys/components/SurveyCreate";
-import Container, { SwitchProps } from "./Container";
+import Container, { SwitchProps } from "../Container";
 
 export default function CreateFirstSurvey({
     onComplete,

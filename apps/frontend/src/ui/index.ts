@@ -13,6 +13,7 @@ export {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "./Dropdown/DropdownMenu";
+export { ProgressRadial } from "./ProgressRadial";
 export { Screen } from "./Screen/Screen";
 export { GlobalSpinner } from "./Spinner/GlobalSpinner";
 export { CodeBlock } from "./Typography/CodeBlock";

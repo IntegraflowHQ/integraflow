@@ -1,5 +1,5 @@
 import { Button } from "@/ui";
-import { useOnboarding } from "../../states/onboarding";
+import { useOnboarding } from "../../hooks/useOnboarding";
 import { SwitchProps } from "../Container";
 import PlatformRequired from "../partials/PlatformRequired";
 import IntegrateMobile from "./IntegrateMobile";
@@ -29,7 +29,13 @@ export default function IntegrateSDK({ onComplete, ...props }: SwitchProps) {
             {eventSource === "web" && <IntegrateWeb />}
             {eventSource === "mobile" && <IntegrateMobile />}
             <div className="pt-8">
-                <Button text="Continue" onClick={onComplete} />
+                <Button
+                    text="Continue"
+                    onClick={() => {
+                        // TODO: Implement integration test
+                        onComplete && onComplete();
+                    }}
+                />
             </div>
         </PlatformRequired>
     );

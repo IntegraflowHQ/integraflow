@@ -1,4 +1,4 @@
-import { useOnboarding } from "../../states/onboarding";
+import { useOnboarding } from "../../hooks/useOnboarding";
 import IntegrateAndroid from "./IntegrateAndroid";
 import IntegrateIos from "./IntegrateIos";
 

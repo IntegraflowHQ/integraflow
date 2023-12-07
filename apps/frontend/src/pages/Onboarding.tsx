@@ -1,9 +1,7 @@
-import OnboardingIndex from '@/modules/onboarding/components/OnboardingIndex';
+import OnboardingIndex from "@/modules/onboarding/components/Index";
 
 const Onboarding = () => {
-    return (
-        <OnboardingIndex />
-    );
+    return <OnboardingIndex />;
 };
 
 export default Onboarding;
