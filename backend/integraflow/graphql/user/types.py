@@ -1,34 +1,27 @@
 import graphene
-from graphene import relay
-
 from django.contrib.auth import get_user_model
+from graphene import relay
 
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.connection import (
     CountableConnection,
     create_connection_slice,
-    filter_connection_queryset
+    filter_connection_queryset,
 )
-from integraflow.graphql.core.federation import federated_entity
-from integraflow.graphql.core.fields import (
-    FilterConnectionField,
-    PermissionsField
-)
-from integraflow.graphql.core.types.model import ModelObjectType
 from integraflow.graphql.core.doc_category import (
     DOC_CATEGORY_ORGANIZATIONS,
     DOC_CATEGORY_PROJECTS,
-    DOC_CATEGORY_USERS
+    DOC_CATEGORY_USERS,
 )
+from integraflow.graphql.core.federation import federated_entity
+from integraflow.graphql.core.fields import FilterConnectionField, PermissionsField
+from integraflow.graphql.core.types.model import ModelObjectType
 from integraflow.graphql.organization.types import (
     AuthOrganization,
-    OrganizationCountableConnection
+    OrganizationCountableConnection,
 )
 from integraflow.graphql.project.sorters import ProjectSortingInput
-from integraflow.graphql.project.types import (
-    Project,
-    ProjectCountableConnection
-)
+from integraflow.graphql.project.types import Project, ProjectCountableConnection
 from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.user import models
 
@@ -52,6 +45,10 @@ class AuthUser(ModelObjectType[models.User]):
     )
     is_active = graphene.Boolean(
         required=True, description="Determine if the user is active."
+    )
+    is_onboarded = graphene.Boolean(
+        required=True,
+        description="Determine if the user has finished onboarding.",
     )
     organization = PermissionsField(
         AuthOrganization,

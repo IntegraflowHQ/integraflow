@@ -53,6 +53,9 @@ type User implements Node @doc(category: "Users") {
   """Determine if the user is active."""
   isActive: Boolean!
 
+  """Determine if the user has finished onboarding."""
+  isOnboarded: Boolean!
+
   """
   The current organization of the user.
   
@@ -367,7 +370,7 @@ enum ProjectSortField @doc(category: "Projects") {
 union InviteDetails = OrganizationInviteDetails | OrganizationInviteLinkDetails
 
 """The organization invite that was created or updated."""
-type OrganizationInviteDetails implements Node @doc(category: "Organizations") {
+type OrganizationInviteDetails implements Node {
   """The unique identifier of the invite."""
   id: ID!
 
@@ -495,6 +498,13 @@ type Mutation {
     refreshToken: String
   ): RefreshToken @doc(category: "Authentication")
 
+  """
+  Marks user as onboarded. 
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  onboardUser: OnboardUser @doc(category: "Authentication")
+
   """Creates a new project"""
   projectCreate(
     """The project object to create."""
@@ -584,6 +594,9 @@ type AuthUser implements Node @doc(category: "Users") {
 
   """Determine if the user is active."""
   isActive: Boolean!
+
+  """Determine if the user has finished onboarding."""
+  isOnboarded: Boolean!
 
   """
   The current organization of the user.
@@ -680,6 +693,18 @@ Refresh JWT token. Mutation tries to take refreshToken from the input. If it fai
 type RefreshToken @doc(category: "Authentication") {
   """Acess token to authenticate the user."""
   token: String
+  userErrors: [UserError!]!
+  errors: [UserError!]!
+}
+
+"""
+Marks user as onboarded. 
+
+Requires one of the following permissions: AUTHENTICATED_USER.
+"""
+type OnboardUser @doc(category: "Authentication") {
+  """A user that is being onboarded."""
+  user: AuthUser
   userErrors: [UserError!]!
   errors: [UserError!]!
 }
@@ -833,7 +858,7 @@ type OrganizationInviteCreate @doc(category: "Organizations") {
 }
 
 """The organization invite that was created or updated."""
-type OrganizationInvite implements Node @doc(category: "Organizations") {
+type OrganizationInvite implements Node {
   """The unique identifier of the invite."""
   id: ID!
 

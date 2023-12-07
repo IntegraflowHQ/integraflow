@@ -9,9 +9,9 @@ from .mutations.authentication import (
     EmailUserAuthChallenge,
     GoogleUserAuth,
     Logout,
-    RefreshToken
+    RefreshToken,
 )
-
+from .mutations.onboarding import OnboardUser
 from .types import User
 
 
@@ -38,3 +38,4 @@ class UserMutations(graphene.ObjectType):
     google_user_auth = GoogleUserAuth.Field()
     logout = Logout.Field()
     token_refresh = RefreshToken.Field()
+    onboard_user = OnboardUser.Field()
