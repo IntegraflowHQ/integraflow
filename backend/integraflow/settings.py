@@ -154,10 +154,15 @@ SITE_URL = os.environ.get("SITE_URL", "http://localhost:8000").rstrip("/")
 
 # URL on which Integraflow backend is hosted (e.g., https://api.example.com/).
 # This has precedence over ENABLE_SSL when generating URLs pointing to itself.
-PUBLIC_URL: Optional[str] = get_url_from_env("PUBLIC_URL", schemes=["http", "https"])
+PUBLIC_URL: Optional[str] = get_url_from_env(
+    "PUBLIC_URL",
+    schemes=["http", "https"]
+)
 if PUBLIC_URL:
     if os.environ.get("ENABLE_SSL") is not None:
-        warnings.warn("ENABLE_SSL is ignored on URL generation if PUBLIC_URL is set.")
+        warnings.warn(
+            "ENABLE_SSL is ignored on URL generation if PUBLIC_URL is set."
+        )
     ENABLE_SSL = urlparse(PUBLIC_URL).scheme.lower() == "https"
 
 if ENABLE_SSL:
@@ -222,7 +227,10 @@ if not SECRET_KEY and DEBUG:
     SECRET_KEY = get_random_secret_key()
 
 
-GOOGLE_AUTH_CLIENT_CREDENTIALS = os.environ.get("GOOGLE_AUTH_CLIENT_CREDENTIALS", None)
+GOOGLE_AUTH_CLIENT_CREDENTIALS = os.environ.get(
+    "GOOGLE_AUTH_CLIENT_CREDENTIALS",
+    None
+)
 
 RSA_PRIVATE_KEY = os.environ.get("RSA_PRIVATE_KEY", None)
 RSA_PRIVATE_PASSWORD = os.environ.get("RSA_PRIVATE_PASSWORD", None)
@@ -251,10 +259,12 @@ INSTALLED_APPS = [
     # Local apps
     "integraflow.app",
     "integraflow.core",
+    "integraflow.event",
     "integraflow.messaging",
     "integraflow.organization",
     "integraflow.project",
     "integraflow.graphql",
+    "integraflow.survey",
     "integraflow.user",
     "integraflow.webhook",
     # External apps
@@ -396,7 +406,10 @@ LOGGING = {
             "propagate": False,
         },
         "graphql.execution.utils": {"propagate": False, "handlers": ["null"]},
-        "graphql.execution.executor": {"propagate": False, "handlers": ["null"]},
+        "graphql.execution.executor": {
+            "propagate": False,
+            "handlers": ["null"]
+        },
     },
 }
 
@@ -404,7 +417,9 @@ AUTH_USER_MODEL = "user.User"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation.MinimumLengthValidator"
+        ),
         "OPTIONS": {"min_length": 8},
     }
 ]
@@ -531,7 +546,9 @@ AUTHENTICATION_BACKENDS = [
 
 # Exports settings - defines after what time exported files will be deleted
 EXPORT_FILES_TIMEDELTA = timedelta(
-    seconds=parse(os.environ.get("EXPORT_FILES_TIMEDELTA", "30 days"))  # type: ignore
+    seconds=parse(
+        os.environ.get("EXPORT_FILES_TIMEDELTA", "30 days")
+    )  # type: ignore
 )
 
 # CELERY SETTINGS
@@ -593,7 +610,9 @@ OBSERVABILITY_BUFFER_TIMEOUT = timedelta(
 )
 if OBSERVABILITY_ACTIVE:
     CELERY_BEAT_SCHEDULE["observability-reporter"] = {
-        "task": "integraflow.plugins.webhook.tasks.observability_reporter_task",
+        "task": (
+            "integraflow.plugins.webhook.tasks.observability_reporter_task"
+        ),
         "schedule": OBSERVABILITY_REPORT_PERIOD,
         "options": {"expires": OBSERVABILITY_REPORT_PERIOD.total_seconds()},
     }
@@ -628,12 +647,19 @@ def SENTRY_INIT(dsn: str, sentry_opts: dict):
 GRAPHQL_PAGINATION_LIMIT = 100
 GRAPHQL_MIDDLEWARE: List[str] = []
 
+# Set GRAPHQL_QUERY_MAX_COMPLEXITY=0 in env to disable (not recommended)
+GRAPHQL_QUERY_MAX_COMPLEXITY = int(
+    os.environ.get("GRAPHQL_QUERY_MAX_COMPLEXITY", 50000)
+)
+
 # Max number entities that can be requested in single query by
 # Apollo Federation. Federation protocol implements no securities on its
 # own part - malicious actor may build a query that requests for potentially
 # few thousands of entities. Set FEDERATED_QUERY_MAX_ENTITIES=0 in env
 # to disable (not recommended)
-FEDERATED_QUERY_MAX_ENTITIES = int(os.environ.get("FEDERATED_QUERY_MAX_ENTITIES", 100))
+FEDERATED_QUERY_MAX_ENTITIES = int(
+    os.environ.get("FEDERATED_QUERY_MAX_ENTITIES", 100)
+)
 
 # Default timeout (sec) for establishing a connection when performing external
 # requests.
@@ -650,7 +676,10 @@ WEBHOOK_SYNC_TIMEOUT = COMMON_REQUESTS_TIMEOUT
 # When `True`, HTTP requests made from arbitrary URLs will be rejected
 # (e.g.,webhooks). if they try to access private IP address ranges, and
 # loopback ranges (unless `HTTP_IP_FILTER_ALLOW_LOOPBACK_IPS=False`).
-HTTP_IP_FILTER_ENABLED: bool = get_bool_from_env("HTTP_IP_FILTER_ENABLED", True)
+HTTP_IP_FILTER_ENABLED: bool = get_bool_from_env(
+    "HTTP_IP_FILTER_ENABLED",
+    True
+)
 
 # When `False` it rejects loopback IPs during external calls.
 # Refer to `HTTP_IP_FILTER_ENABLED` for more details.
@@ -669,7 +698,8 @@ if "JAEGER_AGENT_HOST" in os.environ:
             "sampler": {"type": "const", "param": 1},
             "local_agent": {
                 "reporting_port": os.environ.get(
-                    "JAEGER_AGENT_PORT", jaeger_client.config.DEFAULT_REPORTING_PORT
+                    "JAEGER_AGENT_PORT",
+                    jaeger_client.config.DEFAULT_REPORTING_PORT
                 ),
                 "reporting_host": os.environ.get("JAEGER_AGENT_HOST"),
             },
@@ -711,7 +741,10 @@ JWT_TTL_REQUEST_EMAIL_CHANGE = timedelta(
 MAGIC_LINK_MINUTES_VALIDITY = os.environ.get(
     "MAGIC_LINK_MINUTES_VALIDITY", 10
 )  # 10 mins
-MAGIC_LINK_MAX_ATTEMPTS = os.environ.get("MAGIC_LINK_MAX_ATTEMPTS", 5)  # 5 tries
+MAGIC_LINK_MAX_ATTEMPTS = os.environ.get(
+    "MAGIC_LINK_MAX_ATTEMPTS",
+    5
+)  # 5 tries
 
 INVITE_DAYS_VALIDITY = os.environ.get(
     "INVITE_DAYS_VALIDITY", 3

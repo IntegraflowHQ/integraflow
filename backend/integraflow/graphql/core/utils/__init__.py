@@ -129,6 +129,36 @@ def ext_ref_to_global_id_or_error(model, external_reference):
         )
 
 
+def from_global_id_to_pk(obj: dict, key):
+    id = obj.get(key, None)
+    if id is not None and not validate_if_int_or_uuid(id):
+        _, obj[key] = from_global_id_or_error(id)
+
+
+def from_global_ids_to_pks(data: Union[list, dict], key: str):
+    if isinstance(data, list):
+        for obj in data:
+            from_global_id_to_pk(obj, key)
+
+    if isinstance(data, dict):
+        from_global_id_to_pk(data, key)
+
+
+def to_global_id_from_pk(obj: dict, key):
+    id = obj.get(key, None)
+    if id is not None and validate_if_int_or_uuid(id):
+        obj[key] = to_global_id_or_none(id)
+
+
+def to_global_ids_from_pks(data: Union[list, dict], key: str):
+    if isinstance(data, list):
+        for obj in data:
+            to_global_id_from_pk(obj, key)
+
+    if isinstance(data, dict):
+        to_global_id_from_pk(data, key)
+
+
 @dataclass
 class WebhookEventInfo:
     type: str

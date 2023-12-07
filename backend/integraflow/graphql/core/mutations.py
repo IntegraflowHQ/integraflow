@@ -170,6 +170,8 @@ class BaseMutation(graphene.Mutation):
         support_meta_field=False,
         support_private_meta_field=False,
         auto_webhook_events_message: bool = True,
+        auto_verify_project: bool = False,
+        auto_verify_organization: bool = False,
         webhook_events_info: Optional[List[WebhookEventInfo]] = None,
         **options,
     ):
@@ -191,6 +193,8 @@ class BaseMutation(graphene.Mutation):
         _meta.permissions = permissions
         _meta.support_meta_field = support_meta_field
         _meta.support_private_meta_field = support_private_meta_field
+        _meta.auto_verify_project = auto_verify_project
+        _meta.auto_verify_organization = auto_verify_organization
 
         if permissions and auto_permission_message:
             permissions_msg = message_one_of_permissions_required(permissions)
@@ -458,6 +462,9 @@ class BaseMutation(graphene.Mutation):
         model validation.
         """
         try:
+            if not cls.verify_instance(info.context, instance):
+                raise PermissionDenied()
+
             instance.full_clean()
         except ValidationError as error:
             if hasattr(cls._meta, "exclude"):
@@ -509,6 +516,16 @@ class BaseMutation(graphene.Mutation):
                     data = f._get_default()  # type: ignore
             f.save_form_data(instance, data)
         return instance
+
+    @classmethod
+    def verify_instance(cls, context, instance):
+        if cls._meta.auto_verify_project:
+            return instance.project.pk == context.user.project.pk
+
+        if cls._meta.auto_verify_organization:
+            return instance.organization.pk == context.user.organization.pk
+
+        return True
 
     @classmethod
     def check_permissions(
@@ -810,12 +827,19 @@ class ModelDeleteMutation(ModelMutation):
         abstract = True
 
     @classmethod
-    def clean_instance(cls, _info: ResolveInfo, _instance, /):
+    def clean_instance(cls, info: ResolveInfo, instance, /):
         """Perform additional logic before deleting the model instance.
 
         Override this method to raise custom validation error and abort
         the deletion process.
         """
+
+        if not cls.verify_instance(info.context, instance):
+            raise PermissionDenied()
+
+    @classmethod
+    def delete(cls, _info: ResolveInfo, instance):
+        instance.delete()
 
     @classmethod
     def perform_mutation(  # type: ignore[override]
@@ -829,7 +853,7 @@ class ModelDeleteMutation(ModelMutation):
 
         cls.clean_instance(info, instance)
         db_id = instance.id
-        instance.delete()
+        cls.delete(info, instance)
 
         # After the instance is deleted, set its ID to the original database's
         # ID so that the success response contains ID of the deleted object.
@@ -881,12 +905,15 @@ class BaseBulkMutation(BaseMutation):
         return cls._meta.object_type
 
     @classmethod
-    def clean_instance(cls, _info: ResolveInfo, _instance, /):
+    def clean_instance(cls, info: ResolveInfo, instance, /):
         """Perform additional logic.
 
         Override this method to raise custom validation error and prevent
         bulk action on the instance.
         """
+
+        if not cls.verify_instance(info.context, instance):
+            raise PermissionDenied()
 
     @classmethod
     def bulk_action(cls, _info: ResolveInfo, _queryset: QuerySet, /):
