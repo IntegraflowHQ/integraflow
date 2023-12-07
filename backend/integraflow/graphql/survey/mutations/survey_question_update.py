@@ -42,7 +42,7 @@ class SurveyQuestionUpdate(ModelMutation):
 
         settings = cleaned_input.get("settings")
         if settings:
-            from_global_ids_to_pks(settings.get("logic"), "destination")
+            from_global_ids_to_pks(settings.get("logic", []), "destination")
             cleaned_input["settings"] = settings
 
         return cleaned_input

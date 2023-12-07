@@ -92,6 +92,4 @@ class SurveyCreate(ModelMutation):
             cleaned_input["created_by"] = info.context.user
             cleaned_input["project"] = info.context.user.project
 
-        print(cleaned_input)
-
         return cleaned_input
