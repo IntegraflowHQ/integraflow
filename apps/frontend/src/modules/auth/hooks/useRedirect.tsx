@@ -19,7 +19,9 @@ export default function useRedirect() {
             user.project &&
             user.project.hasCompletedOnboardingFor
         ) {
-            navigate(`${user.organization.slug}/projects/${user.project.slug}`);
+            navigate(
+                `/${user.organization.slug}/projects/${user.project.slug}`,
+            );
         } else if (
             user.organization &&
             user.project &&

@@ -1,8 +1,9 @@
-import { UserProfile } from "@/layout/partials/UserProfile";
 import { Project } from "@/generated/graphql";
+import { UserProfile } from "@/layout/partials/UserProfile";
 import { OrganizationInvite } from "@/modules/organizationInvite/components/OrganizationInvite";
 import { CreateNewProject } from "@/modules/projects/components/CreateNewProject";
 import useSession from "@/modules/users/hooks/useSession";
+import { ROUTES } from "@/routes";
 import { Button } from "@/ui";
 import { JoinDiscord } from "@/ui/Banner/JoinDiscord";
 import {
@@ -32,30 +33,37 @@ import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
 export const Navbar = () => {
+    const { session, projects, switchProject } = useSession();
+
     const navItems = [
         {
             id: 1,
             title: "Home",
             icon: <HomeIcon />,
+            href: "",
         },
         {
             id: 2,
             title: "Surveys",
             icon: <DocumentIcon />,
+            href: ROUTES.SURVEY_LIST.replace(
+                ":orgSlug",
+                session?.organization.slug as string,
+            ).replace(":projectSlug", session?.project.slug as string),
         },
         {
             id: 3,
             title: "Events",
             icon: <CursorIcon />,
+            href: "",
         },
         {
             id: 4,
             title: "Audience",
             icon: <PeopleIcon />,
+            href: "",
         },
     ];
-
-    const { session, projects, switchProject } = useSession();
 
     const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
     const [openOrganizationInviteModal, setOpenOrganizationInviteModal] =
@@ -190,7 +198,7 @@ export const Navbar = () => {
                         {navItems.map((item) => {
                             return (
                                 <NavLink
-                                    to=""
+                                    to={item.href}
                                     className={({ isActive }) =>
                                         isActive ? "bg-intg-bg-8" : ""
                                     }
