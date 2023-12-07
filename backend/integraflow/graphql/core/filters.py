@@ -14,7 +14,7 @@ from graphql_relay import from_global_id
 
 from integraflow.graphql.utils.filters import filter_range_field
 from .enums import JobStatusEnum
-from .types.filter_input import DateTimeRangeInput
+from .types.common import DateTimeRangeInput
 
 
 class DefaultMultipleChoiceField(MultipleChoiceField):
@@ -173,7 +173,7 @@ class GlobalIDFilter(Filter):
         _id = None
         if value is not None:
             _, _id = from_global_id(value)
-        return super(GlobalIDFilter, self).filter(qs, _id)
+        return super().filter(qs, _id)
 
 
 class GlobalIDMultipleChoiceField(MultipleChoiceField):

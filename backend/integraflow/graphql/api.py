@@ -5,6 +5,7 @@ from graphql import GraphQLScalarType
 
 from .organization.schema import OrganizationMutations, OrganizationQueries
 from .project.schema import ProjectMutations, ProjectQueries
+from .survey.schema import SurveyMutations, SurveyQueries
 from .user.schema import UserMutations, UserQueries
 
 from .core.federation.schema import build_federated_schema
@@ -12,11 +13,16 @@ from .core.federation.schema import build_federated_schema
 API_PATH = SimpleLazyObject(lambda: reverse("api"))
 
 
-class Query(OrganizationQueries, ProjectQueries, UserQueries):
+class Query(OrganizationQueries, ProjectQueries, SurveyQueries, UserQueries):
     pass
 
 
-class Mutation(OrganizationMutations, ProjectMutations, UserMutations):
+class Mutation(
+    OrganizationMutations,
+    ProjectMutations,
+    SurveyMutations,
+    UserMutations
+):
     pass
 
 

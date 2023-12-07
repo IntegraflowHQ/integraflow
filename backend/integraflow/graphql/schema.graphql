@@ -17,6 +17,110 @@ type Query {
   """
   viewer: User @doc(category: "Users")
 
+  """
+  List of channels for a specific survey.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  channels(
+    """The ID of the survey."""
+    id: ID!
+
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): SurveyChannelCountableConnection @doc(category: "Surveys")
+
+  """
+  List of questions for a specific survey.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  questions(
+    """The ID of the survey."""
+    id: ID!
+
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): SurveyQuestionCountableConnection @doc(category: "Surveys")
+
+  """
+  List of the project's surveys.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  surveys(
+    """Filtering options for surveys."""
+    filter: SurveyFilterInput
+
+    """Sort surveys."""
+    sortBy: SurveySortingInput
+
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): SurveyCountableConnection @doc(category: "Surveys")
+
+  """
+  List of the project's themes.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  themes(
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): ProjectThemeCountableConnection @doc(category: "Projects")
+
   """One specific organization invite."""
   organizationInviteDetails(
     """An invite link for an organization."""
@@ -364,6 +468,390 @@ enum ProjectSortField @doc(category: "Projects") {
   UPDATED_AT
 }
 
+type SurveyChannelCountableConnection @doc(category: "Surveys") {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+  edges: [SurveyChannelCountableEdge!]!
+
+  """A total count of items in the collection."""
+  totalCount: Int
+}
+
+type SurveyChannelCountableEdge @doc(category: "Surveys") {
+  """The item at the end of the edge."""
+  node: SurveyChannel!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+"""Represents a survey channel."""
+type SurveyChannel implements Node @doc(category: "Surveys") {
+  """The ID of the channel."""
+  id: ID!
+
+  """For internal purpose."""
+  reference: ID
+
+  """The type of the survey channel"""
+  type: SurveyChannelTypeEnum!
+
+  """The options of the question."""
+  triggers: JSONString
+
+  """The settings of the question."""
+  conditions: JSONString
+
+  """The settings of the question."""
+  settings: JSONString
+
+  """The time at which the channel was created."""
+  createdAt: DateTime!
+
+  """
+  The project the survey belongs to
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  survey: Survey
+}
+
+enum SurveyChannelTypeEnum {
+  IN_APP
+  EMAIL
+  LINK
+  API
+  CUSTOM
+}
+
+"""
+The `DateTime` scalar type represents a DateTime
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar DateTime
+
+"""Represents a survey."""
+type Survey implements Node @doc(category: "Surveys") {
+  """The ID of the survey."""
+  id: ID!
+
+  """For internal purpose."""
+  reference: ID
+
+  """Name of the survey."""
+  name: String
+
+  """Slug of the survey."""
+  slug: String!
+
+  """The type of the survey"""
+  type: SurveyTypeEnum!
+
+  """The status of the survey"""
+  status: SurveyStatusEnum!
+
+  """The settings of the survey."""
+  settings: JSONString
+
+  """
+  The project the survey belongs to
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  project: Project
+
+  """
+  The theme of the survey.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  theme: ProjectTheme
+
+  """
+  The user who created the theme.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  creator: User!
+
+  """
+  The questions in the the survey
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  questions(
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): SurveyQuestionCountableConnection!
+
+  """
+  The distribution channels supported by the survey
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  channels(
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): SurveyChannelCountableConnection!
+
+  """The time at which the survey was created."""
+  createdAt: DateTime!
+
+  """The last time at which the survey was updated."""
+  updatedAt: DateTime!
+}
+
+enum SurveyTypeEnum {
+  SURVEY
+  QUIZ
+  POLL
+  CUSTOM
+}
+
+enum SurveyStatusEnum {
+  DRAFT
+  IN_PROGRESS
+  ACTIVE
+  PAUSED
+  ARCHIVED
+  COMPLETED
+}
+
+"""Represents a theme."""
+type ProjectTheme implements Node @doc(category: "Projects") {
+  """The ID of the theme."""
+  id: ID!
+
+  """For internal purpose."""
+  reference: ID
+
+  """Name of the theme."""
+  name: String!
+
+  """The settings of the theme."""
+  colorScheme: JSONString
+
+  """The settings of the theme."""
+  settings: JSONString
+
+  """
+  The project the theme belongs to.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  project: Project!
+
+  """
+  The user who created the theme.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  creator: User!
+
+  """The time at which the invite was created."""
+  createdAt: DateTime!
+
+  """The last time at which the invite was updated."""
+  updatedAt: DateTime!
+}
+
+type SurveyQuestionCountableConnection @doc(category: "Surveys") {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+  edges: [SurveyQuestionCountableEdge!]!
+
+  """A total count of items in the collection."""
+  totalCount: Int
+}
+
+type SurveyQuestionCountableEdge @doc(category: "Surveys") {
+  """The item at the end of the edge."""
+  node: SurveyQuestion!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+"""Represents a question."""
+type SurveyQuestion implements Node @doc(category: "Surveys") {
+  """The ID of the question."""
+  id: ID!
+
+  """For internal purpose."""
+  reference: ID
+
+  """Label of the question."""
+  label: String!
+
+  """Description of the question."""
+  description: String!
+
+  """The type of the question"""
+  type: SurveyQuestionTypeEnum!
+
+  """The options of the question."""
+  options: JSONString
+
+  """The settings of the question."""
+  settings: JSONString
+
+  """The position of the question."""
+  orderNumber: Int!
+
+  """The position of the question."""
+  maxPath: Int!
+
+  """
+  The project the survey belongs to
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  survey: Survey
+
+  """The time at which the question was created."""
+  createdAt: DateTime!
+}
+
+enum SurveyQuestionTypeEnum {
+  SINGLE
+  MULTIPLE
+  TEXT
+  DATE
+  CSAT
+  SMILEY_SCALE
+  NUMERICAL_SCALE
+  RATING
+  NPS
+  FORM
+  BOOLEAN
+  CTA
+  DROPDOWN
+  INTEGRATION
+  CUSTOM
+}
+
+type SurveyCountableConnection @doc(category: "Surveys") {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+  edges: [SurveyCountableEdge!]!
+
+  """A total count of items in the collection."""
+  totalCount: Int
+}
+
+type SurveyCountableEdge @doc(category: "Surveys") {
+  """The item at the end of the edge."""
+  node: Survey!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+input SurveyFilterInput @doc(category: "Surveys") {
+  """Filter by type"""
+  type: SurveyTypeEnum
+  status: SurveyStatusEnum
+  startDate: DateRangeInput
+  endDate: DateTimeRangeInput
+  createdAt: DateRangeInput
+  updatedAt: DateTimeRangeInput
+
+  """Filter by ids."""
+  ids: [ID!]
+}
+
+input DateRangeInput {
+  """Start date."""
+  gte: Date
+
+  """End date."""
+  lte: Date
+}
+
+"""
+The `Date` scalar type represents a Date
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar Date
+
+input DateTimeRangeInput {
+  """Start date."""
+  gte: DateTime
+
+  """End date."""
+  lte: DateTime
+}
+
+input SurveySortingInput @doc(category: "Surveys") {
+  """Specifies the direction in which to sort surveys."""
+  direction: OrderDirection!
+
+  """Sort surveys by the selected field."""
+  field: SurveySortField!
+}
+
+enum SurveySortField @doc(category: "Surveys") {
+  """Sort surveys by name."""
+  NAME
+
+  """Sort surveys by type."""
+  TYPE
+
+  """Sort surveys by status."""
+  STATUS
+
+  """Sort surveys by created at."""
+  CREATED_AT
+
+  """Sort surveys by last modified at."""
+  LAST_MODIFIED_AT
+}
+
+type ProjectThemeCountableConnection @doc(category: "Projects") {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+  edges: [ProjectThemeCountableEdge!]!
+
+  """A total count of items in the collection."""
+  totalCount: Int
+}
+
+type ProjectThemeCountableEdge @doc(category: "Projects") {
+  """The item at the end of the edge."""
+  node: ProjectTheme!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
 union InviteDetails = OrganizationInviteDetails | OrganizationInviteLinkDetails
 
 """The organization invite that was created or updated."""
@@ -407,13 +895,6 @@ enum RoleLevel {
   ADMIN
 }
 
-"""
-The `DateTime` scalar type represents a DateTime
-value as specified by
-[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
-"""
-scalar DateTime
-
 """The organization invite that was created or updated."""
 type OrganizationInviteLinkDetails implements Node @doc(category: "Organizations") {
   """The ID of the object."""
@@ -430,10 +911,7 @@ type OrganizationInviteLinkDetails implements Node @doc(category: "Organizations
 }
 
 """The organization invite link."""
-type OrganizationInviteLink implements Node @doc(category: "Organizations") {
-  """The ID of the object."""
-  id: ID!
-
+type OrganizationInviteLink @doc(category: "Organizations") {
   """
   The link of the organization the invite is for.
   
@@ -495,11 +973,143 @@ type Mutation {
     refreshToken: String
   ): RefreshToken @doc(category: "Authentication")
 
+  """
+  Creates a new distibution channel 
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  surveyChannelCreate(
+    """The channel object to create."""
+    input: SurveyChannelCreateInput!
+  ): SurveyChannelCreate @doc(category: "Surveys")
+
+  """
+  Deletes a channel. 
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  surveyChannelDelete(
+    """ID of a channel to delete."""
+    id: ID!
+  ): SurveyChannelDelete @doc(category: "Surveys")
+
+  """
+  Updates a channel 
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  surveyChannelUpdate(
+    """ID of a channel to update."""
+    id: ID!
+
+    """A partial object to update the channel with."""
+    input: SurveyChannelUpdateInput!
+  ): SurveyChannelUpdate @doc(category: "Surveys")
+
+  """
+  Creates a new survey 
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  surveyCreate(
+    """The survey object to create."""
+    input: SurveyCreateInput!
+  ): SurveyCreate @doc(category: "Surveys")
+
+  """
+  Deletes a survey. 
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  surveyDelete(
+    """ID of a survey to delete."""
+    id: ID!
+  ): SurveyDelete @doc(category: "Surveys")
+
+  """
+  Creates a new question 
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  surveyQuestionCreate(
+    """The question object to create."""
+    input: SurveyQuestionCreateInput!
+  ): SurveyQuestionCreate @doc(category: "Surveys")
+
+  """
+  Deletes a question. 
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  surveyQuestionDelete(
+    """ID of a question to delete."""
+    id: ID!
+  ): SurveyQuestionDelete @doc(category: "Surveys")
+
+  """
+  Updates a question 
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  surveyQuestionUpdate(
+    """ID of a question to update."""
+    id: ID!
+
+    """A partial object to update the question with."""
+    input: SurveyQuestionUpdateInput!
+  ): SurveyQuestionUpdate @doc(category: "Surveys")
+
+  """
+  Updates a survey 
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  surveyUpdate(
+    """ID of a survey to update."""
+    id: ID!
+
+    """A partial object to update the survey with."""
+    input: SurveyUpdateInput!
+  ): SurveyUpdate @doc(category: "Surveys")
+
   """Creates a new project"""
   projectCreate(
     """The project object to create."""
     input: ProjectCreateInput!
   ): ProjectCreate @doc(category: "Projects")
+
+  """
+  Creates a new theme 
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  projectThemeCreate(
+    """The theme object to create."""
+    input: ProjectThemeCreateInput!
+  ): ProjectThemeCreate @doc(category: "Projects")
+
+  """
+  Deletes a theme. 
+  
+  Requires one of the following permissions: PROJECT_ADMIN_ACCESS.
+  """
+  projectThemeDelete(
+    """ID of a theme to delete."""
+    id: ID!
+  ): ProjectThemeDelete @doc(category: "Projects")
+
+  """
+  Creates a new theme 
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  projectThemeUpdate(
+    """ID of a theme to update."""
+    id: ID!
+
+    """The theme object to create."""
+    input: ProjectThemeUpdateInput!
+  ): ProjectThemeUpdate @doc(category: "Projects")
 
   """Updates a project."""
   projectUpdate(
@@ -684,6 +1294,259 @@ type RefreshToken @doc(category: "Authentication") {
   errors: [UserError!]!
 }
 
+"""
+Creates a new distibution channel 
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyChannelCreate @doc(category: "Surveys") {
+  surveyErrors: [SurveyError!]!
+  errors: [SurveyError!]!
+  surveyChannel: SurveyChannel
+}
+
+"""Represents errors in survey mutations."""
+type SurveyError @doc(category: "Surveys") {
+  """
+  Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field.
+  """
+  field: String
+
+  """The error message."""
+  message: String
+
+  """The error code."""
+  code: ProjectErrorCode!
+}
+
+"""An enumeration."""
+enum ProjectErrorCode @doc(category: "Projects") {
+  ALREADY_EXISTS
+  GRAPHQL_ERROR
+  INVALID
+  INVALID_PERMISSION
+  NOT_FOUND
+  REQUIRED
+  UNIQUE
+}
+
+input SurveyChannelCreateInput @doc(category: "Surveys") {
+  """The type of the distribution channel"""
+  type: SurveyChannelTypeEnum
+
+  """The triggers for the channel."""
+  triggers: JSONString
+
+  """The conditions for the channel."""
+  conditions: JSONString
+
+  """The settings of the channel."""
+  settings: JSONString
+
+  """The id of the channel."""
+  id: UUID
+
+  """The survey ID the channel belongs to."""
+  surveyId: ID!
+}
+
+"""
+Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
+in fields, resolvers and input.
+"""
+scalar UUID
+
+"""
+Deletes a channel. 
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyChannelDelete @doc(category: "Surveys") {
+  surveyErrors: [SurveyError!]!
+  errors: [SurveyError!]!
+  surveyChannel: SurveyChannel
+}
+
+"""
+Updates a channel 
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyChannelUpdate @doc(category: "Surveys") {
+  surveyErrors: [SurveyError!]!
+  errors: [SurveyError!]!
+  surveyChannel: SurveyChannel
+}
+
+input SurveyChannelUpdateInput @doc(category: "Surveys") {
+  """The type of the distribution channel"""
+  type: SurveyChannelTypeEnum
+
+  """The triggers for the channel."""
+  triggers: JSONString
+
+  """The conditions for the channel."""
+  conditions: JSONString
+
+  """The settings of the channel."""
+  settings: JSONString
+}
+
+"""
+Creates a new survey 
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyCreate @doc(category: "Surveys") {
+  surveyErrors: [SurveyError!]!
+  errors: [SurveyError!]!
+  survey: Survey
+}
+
+input SurveyCreateInput @doc(category: "Surveys") {
+  """The name of the survey."""
+  name: String
+
+  """The slug of the survey."""
+  slug: String
+
+  """The type of the survey"""
+  type: SurveyTypeEnum
+
+  """The status of the survey"""
+  status: SurveyStatusEnum
+
+  """The settings of the survey."""
+  settings: JSONString
+
+  """The theme of the survey."""
+  themeId: ID
+
+  """The id of the survey."""
+  id: UUID
+}
+
+"""
+Deletes a survey. 
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyDelete @doc(category: "Surveys") {
+  surveyErrors: [SurveyError!]!
+  errors: [SurveyError!]!
+  survey: Survey
+}
+
+"""
+Creates a new question 
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyQuestionCreate @doc(category: "Surveys") {
+  surveyErrors: [SurveyError!]!
+  errors: [SurveyError!]!
+  surveyQuestion: SurveyQuestion
+}
+
+input SurveyQuestionCreateInput @doc(category: "Surveys") {
+  """The label of the question."""
+  label: String
+
+  """The description of the question."""
+  description: String
+
+  """The type of the question"""
+  type: SurveyQuestionTypeEnum
+
+  """The settings of the question."""
+  settings: JSONString
+
+  """The options of the question."""
+  options: JSONString
+
+  """The settings of the question."""
+  orderNumber: Int!
+
+  """The id of the question."""
+  id: UUID
+
+  """The survey ID the question belongs to."""
+  surveyId: ID!
+}
+
+"""
+Deletes a question. 
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyQuestionDelete @doc(category: "Surveys") {
+  surveyErrors: [SurveyError!]!
+  errors: [SurveyError!]!
+  surveyQuestion: SurveyQuestion
+}
+
+"""
+Updates a question 
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyQuestionUpdate @doc(category: "Surveys") {
+  surveyErrors: [SurveyError!]!
+  errors: [SurveyError!]!
+  surveyQuestion: SurveyQuestion
+}
+
+input SurveyQuestionUpdateInput @doc(category: "Surveys") {
+  """The label of the question."""
+  label: String
+
+  """The description of the question."""
+  description: String
+
+  """The type of the question"""
+  type: SurveyQuestionTypeEnum
+
+  """The settings of the question."""
+  settings: JSONString
+
+  """The options of the question."""
+  options: JSONString
+
+  """The settings of the question."""
+  orderNumber: Int!
+}
+
+"""
+Updates a survey 
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyUpdate @doc(category: "Surveys") {
+  surveyErrors: [SurveyError!]!
+  errors: [SurveyError!]!
+  survey: Survey
+}
+
+input SurveyUpdateInput @doc(category: "Surveys") {
+  """The name of the survey."""
+  name: String
+
+  """The slug of the survey."""
+  slug: String
+
+  """The type of the survey"""
+  type: SurveyTypeEnum
+
+  """The status of the survey"""
+  status: SurveyStatusEnum
+
+  """The settings of the survey."""
+  settings: JSONString
+
+  """The theme of the survey."""
+  themeId: ID
+}
+
 """Creates a new project"""
 type ProjectCreate @doc(category: "Projects") {
   projectErrors: [ProjectError!]!
@@ -705,16 +1568,6 @@ type ProjectError @doc(category: "Projects") {
   code: ProjectErrorCode!
 }
 
-"""An enumeration."""
-enum ProjectErrorCode @doc(category: "Projects") {
-  ALREADY_EXISTS
-  GRAPHQL_ERROR
-  INVALID
-  NOT_FOUND
-  REQUIRED
-  UNIQUE
-}
-
 input ProjectCreateInput @doc(category: "Projects") {
   """The name of the project."""
   name: String!
@@ -732,10 +1585,56 @@ input ProjectCreateInput @doc(category: "Projects") {
 }
 
 """
-Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
-in fields, resolvers and input.
+Creates a new theme 
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
 """
-scalar UUID
+type ProjectThemeCreate @doc(category: "Projects") {
+  projectErrors: [ProjectError!]!
+  errors: [ProjectError!]!
+  projectTheme: ProjectTheme
+}
+
+input ProjectThemeCreateInput @doc(category: "Projects") {
+  """The name of the theme."""
+  name: String!
+
+  """The color scheme of the theme."""
+  colorScheme: JSONString
+
+  """The id of the theme."""
+  id: UUID
+}
+
+"""
+Deletes a theme. 
+
+Requires one of the following permissions: PROJECT_ADMIN_ACCESS.
+"""
+type ProjectThemeDelete @doc(category: "Projects") {
+  projectErrors: [ProjectError!]!
+  errors: [ProjectError!]!
+  projectTheme: ProjectTheme
+}
+
+"""
+Creates a new theme 
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type ProjectThemeUpdate @doc(category: "Projects") {
+  projectErrors: [ProjectError!]!
+  errors: [ProjectError!]!
+  projectTheme: ProjectTheme
+}
+
+input ProjectThemeUpdateInput @doc(category: "Projects") {
+  """The name of the theme."""
+  name: String
+
+  """The color scheme of the theme."""
+  colorScheme: JSONString
+}
 
 """Updates a project."""
 type ProjectUpdate @doc(category: "Projects") {
