@@ -34,7 +34,7 @@ This will result in following queries having cost of 100:
 
 { surveys(first: 10, last: 10) { edges: { id } } }
 
-Notice that complexity is in last case is multiplied by all arguments.
+Notice that complexity in last case is multiplied by all arguments.
 
 Complexity is also multiplied recursively:
 
