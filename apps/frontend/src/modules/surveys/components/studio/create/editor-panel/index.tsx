@@ -3,20 +3,20 @@ import * as Tabs from "@radix-ui/react-tabs";
 import { Pen } from "lucide-react";
 import React from "react";
 import { Preview } from "../preview-panel/index.tsx";
-import { UpdateQuestionsEditor } from "./components/UpdateQuestionsEditor.tsx";
+import { UpdateDesignEditor } from "./components";
 
 const tabs = [
   {
     id: crypto.randomUUID(),
     label: "Update questions",
     icon: <HelpCircle />,
-    content: <UpdateQuestionsEditor />,
+    content: <div>Question</div>,
   },
   {
     id: crypto.randomUUID(),
     label: "Update design",
     icon: <Pen size={20} color="#AFAAC7" fill="#AFAAC7" />,
-    content: <div>Design</div>,
+    content: <UpdateDesignEditor />,
   },
   {
     id: crypto.randomUUID(),
@@ -36,7 +36,7 @@ export default function Create() {
           <Tabs.Trigger
             value={label}
             onClick={() => setActiveTab(id)}
-            className={`hover:bg-intg-bg-13 delay-50 rounded p-2 ease-in-out  hover:transition-all ${
+            className={`delay-50 rounded p-2 ease-in-out hover:bg-intg-bg-13  hover:transition-all ${
               activeTab === id ? "bg-intg-bg-13" : ""
             }`}
           >
