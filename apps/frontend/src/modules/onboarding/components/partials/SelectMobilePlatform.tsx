@@ -23,13 +23,17 @@ export default function SelectMobilePlatform() {
                 name="React Native"
                 image={ReactNative}
                 comingSoon
-                onClick={() => {}}
+                onClick={() => {
+                    // TODO: Implement notify me
+                }}
             />
             <Platform
                 name="Flutter"
                 image={Flutter}
                 comingSoon
-                onClick={() => {}}
+                onClick={() => {
+                    // TODO: Implement notify me
+                }}
             />
         </div>
     );

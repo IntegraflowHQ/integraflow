@@ -2,9 +2,6 @@ import useLogout from "@/modules/auth/hooks/useLogout";
 import useSession from "@/modules/users/hooks/useSession";
 import useUserState from "@/modules/users/hooks/useUserState";
 import { Button } from "@/ui";
-import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
-import { NavItem } from "@/ui/NavItem/NavItem";
-import { NavLink } from "@/ui/NavItem/NavLink";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,6 +13,9 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/ui/Dropdown/DropdownMenu";
+import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
+import { NavItem } from "@/ui/NavItem/NavItem";
+import { NavLink } from "@/ui/NavItem/NavLink";
 import {
     CheckCircleIcon,
     CirclePlusIcon,
@@ -123,11 +123,9 @@ export const UserProfile = () => {
                                 <DropdownMenuItem
                                     className="px-3 py-2"
                                     key={item.node.name}
-                                    onClick={
-                                        () => {
-                                            navigate(`/${item.node.slug}`);
-                                        }
-                                    }
+                                    onClick={() => {
+                                        navigate(`/${item.node.slug}`);
+                                    }}
                                 >
                                     <NavItem
                                         text={item.node.name}
@@ -161,7 +159,7 @@ export const UserProfile = () => {
                 <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
                 {ProfileNavItems.map((item) => {
                     return (
-                        <DropdownMenuItem>
+                        <DropdownMenuItem key={item.title}>
                             <NavLink
                                 text={item.title}
                                 leftIcon={item.icon}

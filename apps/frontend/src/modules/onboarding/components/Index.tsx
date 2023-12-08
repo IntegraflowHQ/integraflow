@@ -132,27 +132,31 @@ export default function OnboardingIndex() {
                 {steps.map((step, index) => {
                     const Content = tabContents[index].content;
                     return (
-                        <Tabs.Content value={step.name} asChild>
-                            <Content
-                                onSkip={
-                                    index < steps.length - 1
-                                        ? () => {
-                                              console.log("skip");
-                                              console.log(steps[index + 1]);
-                                              markAsCompleted(index);
-                                              switchTab(steps[index + 1].name);
-                                          }
-                                        : () => {
-                                              markAsCompleted(index);
-                                          }
-                                }
-                                onComplete={() => {
-                                    markAsCompleted(index);
-                                    if (index < steps.length - 1) {
-                                        switchTab(steps[index + 1].name);
+                        <Tabs.Content key={step.name} value={step.name} asChild>
+                            <div>
+                                <Content
+                                    onSkip={
+                                        index < steps.length - 1
+                                            ? () => {
+                                                  console.log("skip");
+                                                  console.log(steps[index + 1]);
+                                                  markAsCompleted(index);
+                                                  switchTab(
+                                                      steps[index + 1].name,
+                                                  );
+                                              }
+                                            : () => {
+                                                  markAsCompleted(index);
+                                              }
                                     }
-                                }}
-                            />
+                                    onComplete={() => {
+                                        markAsCompleted(index);
+                                        if (index < steps.length - 1) {
+                                            switchTab(steps[index + 1].name);
+                                        }
+                                    }}
+                                />
+                            </div>
                         </Tabs.Content>
                     );
                 })}

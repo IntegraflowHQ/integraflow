@@ -19,13 +19,17 @@ export default function Platform({
     tall = false,
 }: Props) {
     return (
-        <button
+        <div
             className={cn(
                 "relative  flex-1 rounded-lg border border-[#261F36] bg-[#261F36] pt-4 hover:border-intg-bg-2",
                 tall ? "h-[278px]" : "h-[190px]",
                 comingSoon ? "bg-opacity-30" : "",
             )}
-            onClick={onClick}
+            onClick={() => {
+                if (!comingSoon) {
+                    onClick();
+                }
+            }}
         >
             <div
                 className={cn(
@@ -53,9 +57,14 @@ export default function Platform({
                         variant="secondary"
                         text="Notify me"
                         className="w-max px-8 py-[8px]"
+                        onClick={() => {
+                            if (comingSoon) {
+                                onClick();
+                            }
+                        }}
                     />
                 </div>
             )}
-        </button>
+        </div>
     );
 }
