@@ -1,12 +1,6 @@
 import { Header } from "@/ui";
 import { cn } from "@/utils";
-
-export type TemplateProps = {
-    title: string;
-    description: string;
-    image: string;
-    right?: boolean;
-};
+import { TemplateProps } from "@/utils/survey";
 
 export default function Template({
     title,

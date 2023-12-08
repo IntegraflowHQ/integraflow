@@ -20,7 +20,7 @@ export const SurveyCreateOption = ({
             className="flex flex-1 flex-col items-center justify-center gap-3 rounded-lg bg-[#261F36]"
             to={href}
         >
-            <Icon />
+            {/* <Icon /> */}
             <Header
                 title={title}
                 description={description}
