@@ -107,13 +107,19 @@ class Project(UUIDModel):
 
     class Meta:
         db_table = "projects"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["organization", "slug"],
+                name="unique slug for organization"
+            )
+        ]
 
     def __str__(self):
         if self.name:
             return self.name
         return str(self.pk)
 
-    __repr__ = sane_repr("uuid", "name", "api_token")  # type: ignore
+    __repr__ = sane_repr("name", "api_token")  # type: ignore
 
 
 class ProjectMembershipManager(models.Manager):
@@ -216,12 +222,11 @@ class ProjectTheme(UUIDModel):
     project: models.ForeignKey = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
-        related_name="themes",
-        related_query_name="theme",
+        related_name="project_themes",
+        related_query_name="project_theme",
     )
     name: models.CharField = models.CharField(max_length=400, blank=True)
     color_scheme: models.JSONField = models.JSONField(blank=True, null=True)
-    settings: models.JSONField = models.JSONField(blank=True, null=True)
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     created_by: models.ForeignKey = models.ForeignKey(
         "user.User",
@@ -231,3 +236,6 @@ class ProjectTheme(UUIDModel):
         null=True,
     )
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "project_themes"

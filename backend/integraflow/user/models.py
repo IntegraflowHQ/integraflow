@@ -258,8 +258,6 @@ class User(
             user__email=self.email
         ).first()
 
-        print("Member", membership)
-
         if membership:
             return membership
 
@@ -331,4 +329,4 @@ class User(
                 self.project = self.current_project  # Update cached property
                 self.save()
 
-    __repr__ = sane_repr("email", "first_name", "distinct_id")  # type: ignore
+    __repr__ = sane_repr("email", "first_name")  # type: ignore

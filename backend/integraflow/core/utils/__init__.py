@@ -2,14 +2,23 @@ import secrets
 import socket
 import string
 from random import choice
-from typing import TYPE_CHECKING, Callable, Iterable, Optional, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Iterable,
+    Optional,
+    TypeVar,
+    Union
+)
 from urllib.parse import urljoin, urlparse
 
 from celery.utils.log import get_task_logger
 from django.conf import settings
-# from django.contrib.sites.models import Site
 from django.db import IntegrityError, transaction
+from django.db.backends.ddl_references import Statement
 from django.db.models import Model
+from django.db.models.constraints import BaseConstraint
 from django.utils.encoding import iri_to_uri
 from django.utils.text import slugify
 from text_unidecode import unidecode
@@ -269,3 +278,51 @@ def int_to_base(number: int, base: int) -> str:
         number, index = divmod(number, len(alphabet))
         value = alphabet[index] + value
     return value or "0"
+
+
+class UniqueConstraintByExpression(BaseConstraint):
+    def __init__(self, *, name: str, expression: str, concurrently=True):
+        self.name = name
+        self.expression = expression
+        self.concurrently = concurrently
+
+    def constraint_sql(self, model, schema_editor: Any):
+        schema_editor.deferred_sql.append(
+            str(self.create_sql(model, schema_editor, table_creation=True))
+        )
+        return None
+
+    def create_sql(self, model, schema_editor, table_creation=False):
+        table = model._meta.db_table
+        return Statement(
+            f"""
+            CREATE UNIQUE INDEX {
+                'CONCURRENTLY' if self.concurrently and not table_creation
+                else ''
+            } %(name)s
+            ON %(table)s
+            %(expression)s
+            """,
+            name=self.name,
+            table=table,
+            expression=self.expression,
+        )
+
+    def remove_sql(self, model, schema_editor):
+        return Statement(
+            "DROP INDEX IF EXISTS %(name)s",
+            name=self.name,
+        )
+
+    def deconstruct(self):
+        path, args, kwargs = super().deconstruct()
+        kwargs["expression"] = self.expression
+        kwargs["concurrently"] = self.concurrently
+        return path, args, kwargs
+
+    def __eq__(self, other):
+        if isinstance(other, UniqueConstraintByExpression):
+            return (
+                self.name == other.name and self.expression == other.expression
+            )
+        return super().__eq__(other)
