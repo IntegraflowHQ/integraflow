@@ -18,11 +18,6 @@ export type UserActions = {
     deleteUser: () => void;
     updateUser: (data: DeepOmit<User, "__typename">) => void;
     addProject: (orgSlug: string, project: Project) => void;
-    updateProject: (
-        orgSlug: string,
-        projectSlug: string,
-        project: Partial<Project>,
-    ) => void;
     addWorkspace: (data: DeepOmit<AuthUser, "__typename">) => void;
 };
 
@@ -60,33 +55,6 @@ export const useUserStore = create<UserState & UserActions>()(
                     { node: project as Project },
                     ...org.projects?.edges!,
                 ] as ProjectCountableEdge[];
-
-                newUser.organizations.edges[orgIndex].node = org;
-
-                return set({ user: newUser, lastUpdate: Date.now() });
-            },
-            updateProject: (orgSlug, projectSlug, project) => {
-                const newUser = get().user;
-                if (!newUser || !newUser.organizations) return;
-
-                const orgIndex = newUser.organizations?.edges.findIndex(
-                    (edge) => edge.node.slug === orgSlug,
-                );
-                if (orgIndex === -1 || orgIndex === undefined) return;
-
-                const org = {
-                    ...newUser?.organizations?.edges[orgIndex].node,
-                } as OrganizationCountableEdge["node"];
-
-                const projectIndex = org.projects?.edges?.findIndex(
-                    (edge) => edge.node.slug === projectSlug,
-                );
-                if (projectIndex === -1 || projectIndex === undefined) return;
-
-                org.projects!.edges![projectIndex].node = {
-                    ...org.projects?.edges![projectIndex].node,
-                    ...project,
-                } as Project;
 
                 newUser.organizations.edges[orgIndex].node = org;
 

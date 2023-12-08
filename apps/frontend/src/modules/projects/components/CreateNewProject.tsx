@@ -1,11 +1,11 @@
-import { Dialog, DialogContent } from "@/ui";
 import { Project, useProjectCreateMutation } from "@/generated/graphql";
 import useSession from "@/modules/users/hooks/useSession";
 import useUserState from "@/modules/users/hooks/useUserState";
-import { Button, TextInput } from "@/ui";
+import { Button, Dialog, DialogContent, TextInput } from "@/ui";
 import { omitTypename } from "@/utils";
 import { toast } from "@/utils/toast";
 import React, { useState } from "react";
+import { useProject } from "../hooks/useProject";
 
 type Props = {
     open: boolean;
@@ -16,6 +16,7 @@ export const CreateNewProject = ({ open, onOpenChange }: Props) => {
     const [projectCreate] = useProjectCreateMutation();
     const { session, switchProject } = useSession();
     const { addProject } = useUserState();
+    const { upsertProject } = useProject();
 
     const [projectName, setProjectName] = useState<string>("");
     const [projectNameError, setProjectNameError] = useState<
@@ -50,8 +51,7 @@ export const CreateNewProject = ({ open, onOpenChange }: Props) => {
 
         if (result.data?.projectCreate?.project) {
             toast.success("Project created");
-            addProject(
-                session?.organization.slug!,
+            upsertProject(
                 omitTypename(result.data.projectCreate.project as Project),
             );
             switchProject(

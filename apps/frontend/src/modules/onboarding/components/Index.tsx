@@ -1,7 +1,6 @@
 import { useUpdateOnboardingMutation } from "@/generated/graphql";
+import { useProject } from "@/modules/projects/hooks/useProject";
 import useSessionState from "@/modules/users/hooks/useSessionState";
-import useUserState from "@/modules/users/hooks/useUserState";
-import { Session } from "@/modules/users/states/session";
 import { GlobalSpinner, Header } from "@/ui";
 import { CheckComplete, CheckPending } from "@/ui/icons";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -21,7 +20,7 @@ export const tabContents = [
 
 export default function OnboardingIndex() {
     const { session, updateSession } = useSessionState();
-    const { updateProject } = useUserState();
+    const { upsertProject } = useProject();
     const { currentTab, switchTab, steps, updatingUser } = useOnboarding();
     const [updateOnboarding] = useUpdateOnboardingMutation();
 
@@ -42,20 +41,11 @@ export default function OnboardingIndex() {
             return;
         }
         updatedKeys.push(steps[index].key);
-        updateProject(
-            session?.project.organization.slug,
-            session?.project.slug,
-            {
-                hasCompletedOnboardingFor: JSON.stringify(updatedKeys),
-            },
-        );
-        updateSession({
-            ...session,
-            project: {
-                ...session?.project,
-                hasCompletedOnboardingFor: JSON.stringify(updatedKeys),
-            },
-        } as Session);
+
+        upsertProject({
+            ...session.project,
+            hasCompletedOnboardingFor: JSON.stringify(updatedKeys),
+        });
 
         updateOnboarding({
             variables: {
