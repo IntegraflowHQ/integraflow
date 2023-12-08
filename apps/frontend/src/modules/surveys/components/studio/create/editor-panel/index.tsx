@@ -3,13 +3,14 @@ import * as Tabs from "@radix-ui/react-tabs";
 import { Pen } from "lucide-react";
 import React from "react";
 import { Preview } from "../preview-panel/index.tsx";
+import { UpdateQuestionsEditor } from "./components/UpdateQuestionsEditor.tsx";
 
 const tabs = [
   {
     id: crypto.randomUUID(),
     label: "Update questions",
     icon: <HelpCircle />,
-    content: <div>Update question</div>,
+    content: <UpdateQuestionsEditor />,
   },
   {
     id: crypto.randomUUID(),
@@ -26,24 +27,15 @@ const tabs = [
 ];
 
 export default function Create() {
-  const [activeTab, setActiveTab] = React.useState<string>("");
-
-  const handleActiveTab = (index: number) => {
-    const availableTabIds = tabs?.map(({ id }) => id);
-
-    const selectedTab = availableTabIds[index];
-    setActiveTab(selectedTab);
-
-    console.log(selectedTab);
-  };
+  const [activeTab, setActiveTab] = React.useState<string>(tabs[0].id);
 
   return (
     <Tabs.Root className="flex h-screen pt-[84px]" defaultValue={tabs[0].label}>
       <Tabs.List className="flex h-full flex-col gap-6 border-r border-intg-bg-4 px-[18px] pt-12">
-        {tabs.map(({ id, label, icon }, index: number) => (
+        {tabs.map(({ id, label, icon }) => (
           <Tabs.Trigger
             value={label}
-            onClick={() => handleActiveTab(index)}
+            onClick={() => setActiveTab(id)}
             className={`hover:bg-intg-bg-13 delay-50 rounded p-2 ease-in-out  hover:transition-all ${
               activeTab === id ? "bg-intg-bg-13" : ""
             }`}
