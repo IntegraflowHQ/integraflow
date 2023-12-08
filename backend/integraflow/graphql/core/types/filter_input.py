@@ -8,10 +8,6 @@ from graphene.types.inputobjecttype import InputObjectTypeOptions
 from graphene.types.utils import yank_fields_from_attrs
 
 from integraflow.graphql.core.scalars import Decimal
-from integraflow.graphql.core.filters import (
-    GlobalIDFilter,
-    GlobalIDMultipleChoiceFilter
-)
 from integraflow.graphql.core.scalars import Date
 from .base import BaseInputObjectType
 from .common import (
@@ -24,12 +20,30 @@ from .common import (
 from .converter import convert_form_field
 
 GLOBAL_ID_FILTERS = {
-    models.AutoField: {"filter_class": GlobalIDFilter},
-    models.OneToOneField: {"filter_class": GlobalIDFilter},
-    models.ForeignKey: {"filter_class": GlobalIDFilter},
-    models.ManyToManyField: {"filter_class": GlobalIDMultipleChoiceFilter},
-    models.ManyToOneRel: {"filter_class": GlobalIDMultipleChoiceFilter},
-    models.ManyToManyRel: {"filter_class": GlobalIDMultipleChoiceFilter},
+    models.AutoField: {
+        "filter_class": "integraflow.graphql.core.filters.GlobalIDFilter"
+    },
+    models.OneToOneField: {
+        "filter_class": "integraflow.graphql.core.filters.GlobalIDFilter"
+    },
+    models.ForeignKey: {
+        "filter_class": "integraflow.graphql.core.filters.GlobalIDFilter"
+    },
+    models.ManyToManyField: {
+        "filter_class": (
+            "integraflow.graphql.core.filters.GlobalIDMultipleChoiceFilter"
+        )
+    },
+    models.ManyToOneRel: {
+        "filter_class": (
+            "integraflow.graphql.core.filters.GlobalIDMultipleChoiceFilter"
+        )
+    },
+    models.ManyToManyRel: {
+        "filter_class": (
+            "integraflow.graphql.core.filters.GlobalIDMultipleChoiceFilter"
+        )
+    },
 }
 
 

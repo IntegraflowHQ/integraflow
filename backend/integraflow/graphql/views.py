@@ -20,10 +20,13 @@ from jwt.exceptions import PyJWTError
 from requests_hardened.ip_filter import InvalidIPAddress
 
 from integraflow import __version__ as integraflow_version
+from integraflow.graphql.core.validators.query_cost import validate_query_cost
+from integraflow.graphql.query_cost_map import COST_MAP
 from integraflow.core.exceptions import PermissionDenied, ReadOnlyException
 from integraflow.core.utils import is_valid_ipv4, is_valid_ipv6
 from integraflow.webhook import observability
-from .api import API_PATH
+
+from .api import API_PATH, schema
 from .context import get_context_value
 from .utils import format_error, query_fingerprint, query_identifier
 
@@ -334,6 +337,18 @@ class GraphQLView(View):
             except GraphQLError as e:
                 return ExecutionResult(errors=[e], invalid=True)
 
+            query_cost, cost_errors = validate_query_cost(
+                schema,
+                document,
+                variables,
+                COST_MAP,
+                settings.GRAPHQL_QUERY_MAX_COMPLEXITY,
+            )
+            span.set_tag("graphql.query_cost", query_cost)
+            if settings.GRAPHQL_QUERY_MAX_COMPLEXITY and cost_errors:
+                result = ExecutionResult(errors=cost_errors, invalid=True)
+                return set_query_cost_on_result(result, query_cost)
+
             extra_options: Dict[str, Optional[Any]] = {}
 
             if self.executor:
@@ -370,7 +385,7 @@ class GraphQLView(View):
                         if should_use_cache_for_scheme:
                             cache.set(str(key), response)
 
-                    return response
+                    return set_query_cost_on_result(response, query_cost)
             except Exception as e:
                 span.set_tag(opentracing.tags.ERROR, True)
 
@@ -481,3 +496,16 @@ def instantiate_middleware(middlewares):
 def generate_cache_key(raw_query: str) -> str:
     hashed_query = hashlib.sha256(str(raw_query).encode("utf-8")).hexdigest()
     return f"{integraflow_version}-{hashed_query}"
+
+
+def set_query_cost_on_result(execution_result: ExecutionResult, query_cost):
+    if settings.GRAPHQL_QUERY_MAX_COMPLEXITY:
+        execution_result.extensions.update(
+            {
+                "cost": {
+                    "requestedQueryCost": query_cost,
+                    "maximumAvailable": settings.GRAPHQL_QUERY_MAX_COMPLEXITY,
+                }
+            }
+        )
+    return execution_result

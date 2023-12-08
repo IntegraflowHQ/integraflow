@@ -1,5 +1,6 @@
 import { ROUTES } from "@/routes";
 import { Header } from "@/ui";
+import { TemplateProps } from "@/utils/survey";
 import Birthday from "assets/images/surveys/Birthday.svg";
 import Boolean from "assets/images/surveys/Boolean.svg";
 import Contact from "assets/images/surveys/Contact.svg";
@@ -12,9 +13,9 @@ import Text from "assets/images/surveys/Text.svg";
 import Welcome from "assets/images/surveys/welcome.svg";
 import { Link, useParams } from "react-router-dom";
 import CreateSurveyButton from "./partials/CreateSurveyButton";
-import Template, { TemplateProps } from "./partials/Template";
+import Template from "./partials/Template";
 
-const surveyTypes: TemplateProps[] = [
+export const surveyTypes: TemplateProps[] = [
     {
         title: "Welcome message",
         description:
@@ -77,7 +78,7 @@ const surveyTypes: TemplateProps[] = [
         image: Boolean,
     },
     {
-        title: "Matrix",
+        title: "Smiley scale",
         description:
             "Take a moment to introduce the purpose of your survey or say hi to your audience.",
         image: Welcome,

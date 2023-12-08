@@ -13,6 +13,9 @@ export {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "./Dropdown/DropdownMenu";
+export { AcronynmBox } from "./NavItem/AcronynmBox";
+export { NavItem } from "./NavItem/NavItem";
+export { NavLink } from "./NavItem/NavLink";
 export { Screen } from "./Screen/Screen";
 export { GlobalSpinner } from "./Spinner/GlobalSpinner";
 export { Header } from "./Typography/Header";

@@ -3,10 +3,10 @@ import * as Tabs from "@radix-ui/react-tabs";
 import { XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import useStudioState from "../hooks/useStudioState";
-import Analyze from "./Analyze";
-import Configure from "./Configure";
-import Create from "./Create";
-import Publish from "./Publish";
+import Analyze from "./studio/analyze";
+import Configure from "./studio/configure";
+import Create from "./studio/create/editor-panel";
+import Publish from "./studio/publish";
 
 const tabs = [
     { label: "Create", screen: Create },
@@ -28,7 +28,7 @@ export default function Studio() {
 
     return (
         <Tabs.Root className="h-full w-full" defaultValue={tabs[0].label}>
-            <header className="fixed flex w-full items-center justify-between border-b border-intg-bg-4 py-[22px] pl-10 pr-12">
+            <header className="fixed flex w-full items-center justify-between border-b border-intg-bg-4 bg-intg-bg-8 py-[22px] pl-10 pr-12">
                 <input
                     type="text"
                     name="title"
