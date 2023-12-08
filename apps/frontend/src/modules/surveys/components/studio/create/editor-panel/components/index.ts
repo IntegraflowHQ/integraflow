@@ -1,1 +1,1 @@
-export { UpdateDesignEditor } from "./UpdateDesignEditor";
+export { UpdateDesignEditor } from "./DesignEditor/UpdateDesignEditor";
