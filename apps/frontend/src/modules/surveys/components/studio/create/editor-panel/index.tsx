@@ -2,12 +2,13 @@ import { HelpCircle, SettingsIcon } from "@/ui/icons";
 
 import * as Tabs from "@radix-ui/react-tabs";
 import { Pen } from "lucide-react";
+import { Preview } from "../preview-panel/index.tsx";
 
 const tabs = [
     {
         label: "Update questions",
         icon: <HelpCircle />,
-        content: <div>Editor Panel</div>,
+        content: <div>Update question</div>,
     },
     {
         label: "Update design",
@@ -35,11 +36,14 @@ export default function Create() {
                 ))}
             </Tabs.List>
 
-            {tabs.map(({ content, label }) => (
-                <Tabs.Content value={label} className="flex-1" asChild>
-                    {content}
-                </Tabs.Content>
-            ))}
+            <div className="flex flex-1 gap-[38px] overflow-y-scroll pb-8 pl-5 pr-12 pt-6">
+                {tabs.map(({ content, label }) => (
+                    <Tabs.Content value={label} className="w-[519px]">
+                        {content}
+                    </Tabs.Content>
+                ))}
+                <Preview />
+            </div>
         </Tabs.Root>
     );
 }
