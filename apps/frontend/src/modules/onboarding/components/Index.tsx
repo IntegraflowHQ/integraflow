@@ -7,8 +7,8 @@ import { CheckComplete, CheckPending } from "@/ui/icons";
 import * as Tabs from "@radix-ui/react-tabs";
 import { useMemo } from "react";
 import { useOnboarding } from "../hooks/useOnboarding";
-import ConnectIntegration from "./connect-integration/Index";
-import CreateFirstSurvey from "./create-first-survey/Index";
+import ConnectIntegration from "./ConnectIntegration";
+import CreateFirstSurvey from "./CreateFirstSurvey";
 import IntegrateSDK from "./integrate-sdk/Index";
 
 export const tabContents = [
@@ -36,11 +36,27 @@ export default function OnboardingIndex() {
     }, [session?.project.hasCompletedOnboardingFor]);
 
     const markAsCompleted = async (index: number) => {
+        if (!session) return;
         const updatedKeys = [...completedKeys];
         if (updatedKeys.includes(steps[index].key)) {
             return;
         }
         updatedKeys.push(steps[index].key);
+        updateProject(
+            session?.project.organization.slug,
+            session?.project.slug,
+            {
+                hasCompletedOnboardingFor: JSON.stringify(updatedKeys),
+            },
+        );
+        updateSession({
+            ...session,
+            project: {
+                ...session?.project,
+                hasCompletedOnboardingFor: JSON.stringify(updatedKeys),
+            },
+        } as Session);
+
         updateOnboarding({
             variables: {
                 input: {
@@ -51,45 +67,6 @@ export default function OnboardingIndex() {
                 headers: {
                     Project: session?.project.id,
                 },
-            },
-            onCompleted: (data) => {
-                if (data.projectUpdate?.project?.hasCompletedOnboardingFor) {
-                    if (!session) return;
-
-                    updateProject(
-                        session?.project.organization.slug,
-                        session?.project.slug,
-                        {
-                            hasCompletedOnboardingFor:
-                                data.projectUpdate?.project
-                                    ?.hasCompletedOnboardingFor,
-                        },
-                    );
-
-                    updateSession({
-                        ...session,
-                        project: {
-                            ...session?.project,
-                            hasCompletedOnboardingFor:
-                                data.projectUpdate?.project
-                                    ?.hasCompletedOnboardingFor,
-                        },
-                    } as Session);
-                }
-            },
-            optimisticResponse: (input) => {
-                return {
-                    __typename: "Mutation",
-                    projectUpdate: {
-                        project: {
-                            id: session!.project.id,
-                            hasCompletedOnboardingFor:
-                                input.input.hasCompletedOnboardingFor,
-                            __typename: "Project",
-                        },
-                        __typename: "ProjectUpdate",
-                    },
-                };
             },
         });
     };
@@ -138,8 +115,6 @@ export default function OnboardingIndex() {
                                     onSkip={
                                         index < steps.length - 1
                                             ? () => {
-                                                  console.log("skip");
-                                                  console.log(steps[index + 1]);
                                                   markAsCompleted(index);
                                                   switchTab(
                                                       steps[index + 1].name,

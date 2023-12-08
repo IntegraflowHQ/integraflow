@@ -20,9 +20,6 @@ export const useOnboarding = () => {
     const setEventSource = onboarding.use.setEventSource();
     const setMobilePlatform = onboarding.use.setMobilePlatform();
     const switchTab = onboarding.use.switchTab();
-    // const { token } = useAuthToken();
-
-    // console.log("token: ", token);
 
     const [onboardUser, { loading: updatingUser }] = useUserUpdateMutation();
 
@@ -39,7 +36,6 @@ export const useOnboarding = () => {
     }, [session?.project.hasCompletedOnboardingFor, steps]);
 
     useEffect(() => {
-        console.log("completion rate: ", completionRate);
         if (!user) return;
         if (!user.isOnboarded && completionRate === 100) {
             onboardUser({
