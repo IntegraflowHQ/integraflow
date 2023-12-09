@@ -23,7 +23,6 @@ export const UpdateDesignEditor = () => {
 
     const handleSelectedOption = (index: number, color: string) => {
         const selectedThemeOption = THEMES_INFO[index];
-
         setThemeOption(selectedThemeOption.id);
 
         if (themeOption) {

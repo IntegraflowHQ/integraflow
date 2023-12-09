@@ -23,7 +23,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
     return (
         <Popover.Root>
             <Popover.Trigger>{children}</Popover.Trigger>
-            <Popover.Anchor />
+
             <Popover.Portal>
                 <Popover.Content>
                     <Sketch
