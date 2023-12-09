@@ -40,4 +40,4 @@ If you want to stop docker from requesting for permission everytime, you can add
 newgrp docker
 ```
 
-After following the steps above, you should be able to use the `docker compose` command without the `sudo` flag.
+After following the steps above, you should be able to user the `docker compose` command without the `sudo` flag.
