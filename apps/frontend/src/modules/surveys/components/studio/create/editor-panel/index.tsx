@@ -1,10 +1,10 @@
 import { HelpCircle, SettingsIcon } from "@/ui/icons";
 import * as Tabs from "@radix-ui/react-tabs";
+import * as Tooltip from "@radix-ui/react-tooltip";
 import { Pen } from "lucide-react";
 import React from "react";
 import { Preview } from "../preview-panel/index.tsx";
 import { UpdateDesignEditor } from "./DesignEditor";
-import { StudioTooltip } from "./components/Tooltip.tsx";
 
 const tabs = [
     {
@@ -38,9 +38,27 @@ export default function Create() {
                     <Tabs.Trigger
                         value={label}
                         key={index}
-                        className={`h-9 rounded px-2 ease-in-out hover:bg-[#272138] hover:transition-all data-[state=active]:bg-[#272138]`}
+                        className="data-[state=active]:rounded-md data-[state=active]:bg-[#272138]"
+                        asChild
                     >
-                        <StudioTooltip id={id} info={label} item={icon} />
+                        <div>
+                            <Tooltip.Provider>
+                                <Tooltip.Root key={id}>
+                                    <Tooltip.Trigger className="h-9 rounded px-2 ease-in-out hover:bg-[#272138] hover:transition-all">
+                                        {icon}
+                                    </Tooltip.Trigger>
+
+                                    <Tooltip.Portal>
+                                        <Tooltip.Content className="tooltip__arrow">
+                                            <div className="absolute -left-6 top-1 ml-16 rounded-md border border-intg-text-4 bg-intg-bg-9 px-1 py-2 text-xs text-intg-text-4">
+                                                <p className="w-28">{label}</p>
+                                            </div>
+                                        </Tooltip.Content>
+                                    </Tooltip.Portal>
+                                </Tooltip.Root>
+                            </Tooltip.Provider>
+                        </div>
+                        {/* <StudioTooltip id={id} info={label} item={icon} /> */}
                     </Tabs.Trigger>
                 ))}
             </Tabs.List>

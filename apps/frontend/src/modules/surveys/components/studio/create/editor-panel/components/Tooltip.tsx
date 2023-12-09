@@ -11,7 +11,9 @@ export const StudioTooltip = ({ item, info, id }: tooltipProp) => {
     return (
         <Tooltip.Provider>
             <Tooltip.Root key={id}>
-                <Tooltip.Trigger className="mt-2">{item}</Tooltip.Trigger>
+                <Tooltip.Trigger className="mt-2" asChild>
+                    {item}
+                </Tooltip.Trigger>
 
                 <Tooltip.Portal>
                     <Tooltip.Content className="tooltip__arrow">
