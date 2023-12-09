@@ -47,11 +47,11 @@ export default function SurveyCreate({ className, size = "lg" }: Props) {
                     .replace(":surveySlug", surveySlug),
             );
 
-          await createSurvey({
+            await createSurvey({
                 variables: {
                     input: {
-                        id: surveySlug,
-                        slug: crypto.randomUUID(),
+                        id: crypto.randomUUID(),
+                        slug: surveySlug,
                     },
                 },
                 onError: () => {
