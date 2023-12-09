@@ -1685,12 +1685,12 @@ export type TokenRefreshMutationVariables = Exact<{
 
 export type TokenRefreshMutation = { __typename?: 'Mutation', tokenRefresh?: { __typename?: 'RefreshToken', token?: string | null, errors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> } | null };
 
-export type UpdateOnboardingMutationVariables = Exact<{
+export type CompleteOnboardingStageMutationVariables = Exact<{
   input: ProjectUpdateInput;
 }>;
 
 
-export type UpdateOnboardingMutation = { __typename?: 'Mutation', projectUpdate?: { __typename?: 'ProjectUpdate', project?: { __typename: 'Project', id: string, hasCompletedOnboardingFor?: any | null } | null } | null };
+export type CompleteOnboardingStageMutation = { __typename?: 'Mutation', projectUpdate?: { __typename?: 'ProjectUpdate', project?: { __typename: 'Project', id: string, hasCompletedOnboardingFor?: any | null } | null } | null };
 
 export type OrganizationInviteLinkCreateFragmentFragment = { __typename?: 'OrganizationInviteLink', inviteLink: string };
 
@@ -1752,9 +1752,7 @@ export type ProjectCreateMutationVariables = Exact<{
 
 export type ProjectCreateMutation = { __typename?: 'Mutation', projectCreate?: { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
 
-export type UserFragmentFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean };
-
-export type ViewerFragmentFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null };
+export type UserFragmentFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null };
 
 export type UserUpdateMutationVariables = Exact<{
   input: UserInput;
@@ -1997,11 +1995,6 @@ export const UserFragmentFragmentDoc = gql`
   isStaff
   isActive
   isOnboarded
-}
-    `;
-export const ViewerFragmentFragmentDoc = gql`
-    fragment ViewerFragment on User {
-  ...UserFragment
   organization {
     ...AuthOrganizationFragment
   }
@@ -2026,8 +2019,7 @@ export const ViewerFragmentFragmentDoc = gql`
     }
   }
 }
-    ${UserFragmentFragmentDoc}
-${AuthOrganizationFragmentFragmentDoc}
+    ${AuthOrganizationFragmentFragmentDoc}
 ${ProjectFragmentFragmentDoc}`;
 export const EmailTokenUserAuthDocument = gql`
     mutation emailTokenUserAuth($email: String!, $token: String!, $inviteLink: String) {
@@ -2241,8 +2233,8 @@ export function useTokenRefreshMutation(baseOptions?: Apollo.MutationHookOptions
 export type TokenRefreshMutationHookResult = ReturnType<typeof useTokenRefreshMutation>;
 export type TokenRefreshMutationResult = Apollo.MutationResult<TokenRefreshMutation>;
 export type TokenRefreshMutationOptions = Apollo.BaseMutationOptions<TokenRefreshMutation, TokenRefreshMutationVariables>;
-export const UpdateOnboardingDocument = gql`
-    mutation updateOnboarding($input: ProjectUpdateInput!) {
+export const CompleteOnboardingStageDocument = gql`
+    mutation completeOnboardingStage($input: ProjectUpdateInput!) {
   projectUpdate(input: $input) {
     project {
       id
@@ -2252,32 +2244,32 @@ export const UpdateOnboardingDocument = gql`
   }
 }
     `;
-export type UpdateOnboardingMutationFn = Apollo.MutationFunction<UpdateOnboardingMutation, UpdateOnboardingMutationVariables>;
+export type CompleteOnboardingStageMutationFn = Apollo.MutationFunction<CompleteOnboardingStageMutation, CompleteOnboardingStageMutationVariables>;
 
 /**
- * __useUpdateOnboardingMutation__
+ * __useCompleteOnboardingStageMutation__
  *
- * To run a mutation, you first call `useUpdateOnboardingMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateOnboardingMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCompleteOnboardingStageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCompleteOnboardingStageMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateOnboardingMutation, { data, loading, error }] = useUpdateOnboardingMutation({
+ * const [completeOnboardingStageMutation, { data, loading, error }] = useCompleteOnboardingStageMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useUpdateOnboardingMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOnboardingMutation, UpdateOnboardingMutationVariables>) {
+export function useCompleteOnboardingStageMutation(baseOptions?: Apollo.MutationHookOptions<CompleteOnboardingStageMutation, CompleteOnboardingStageMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateOnboardingMutation, UpdateOnboardingMutationVariables>(UpdateOnboardingDocument, options);
+        return Apollo.useMutation<CompleteOnboardingStageMutation, CompleteOnboardingStageMutationVariables>(CompleteOnboardingStageDocument, options);
       }
-export type UpdateOnboardingMutationHookResult = ReturnType<typeof useUpdateOnboardingMutation>;
-export type UpdateOnboardingMutationResult = Apollo.MutationResult<UpdateOnboardingMutation>;
-export type UpdateOnboardingMutationOptions = Apollo.BaseMutationOptions<UpdateOnboardingMutation, UpdateOnboardingMutationVariables>;
+export type CompleteOnboardingStageMutationHookResult = ReturnType<typeof useCompleteOnboardingStageMutation>;
+export type CompleteOnboardingStageMutationResult = Apollo.MutationResult<CompleteOnboardingStageMutation>;
+export type CompleteOnboardingStageMutationOptions = Apollo.BaseMutationOptions<CompleteOnboardingStageMutation, CompleteOnboardingStageMutationVariables>;
 export const OrganizationInviteCreateDocument = gql`
     mutation organizationInviteCreate($input: OrganizationInviteCreateInput!) {
   organizationInviteCreate(input: $input) {
@@ -2484,11 +2476,19 @@ export const UserUpdateDocument = gql`
     mutation userUpdate($input: UserInput!) {
   userUpdate(input: $input) {
     user {
-      ...UserFragment
+      ... on User {
+        id
+        email
+        firstName
+        lastName
+        isStaff
+        isActive
+        isOnboarded
+      }
     }
   }
 }
-    ${UserFragmentFragmentDoc}`;
+    `;
 export type UserUpdateMutationFn = Apollo.MutationFunction<UserUpdateMutation, UserUpdateMutationVariables>;
 
 /**
@@ -2518,10 +2518,10 @@ export type UserUpdateMutationOptions = Apollo.BaseMutationOptions<UserUpdateMut
 export const ViewerDocument = gql`
     query viewer {
   viewer {
-    ...ViewerFragment
+    ...UserFragment
   }
 }
-    ${ViewerFragmentFragmentDoc}`;
+    ${UserFragmentFragmentDoc}`;
 
 /**
  * __useViewerQuery__

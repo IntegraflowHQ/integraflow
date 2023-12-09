@@ -1,7 +1,7 @@
 import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
 import useRedirect from "@/modules/auth/hooks/useRedirect";
-import useSession from "@/modules/users/hooks/useSession";
 import useUserState from "@/modules/users/hooks/useUserState";
+import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import { GlobalSpinner } from "@/ui";
 import React, { useEffect, useState } from "react";
 
@@ -13,8 +13,12 @@ export default function PublicRoute({
     const [ready, setReady] = useState(false);
     const { token } = useAuthToken();
     const { user } = useUserState();
-    const { session, isValidSession, createValidSessionData, createSession } =
-        useSession();
+    const {
+        workspace,
+        isValidWorkspace,
+        createValidWorkspaceData,
+        switchWorkspace,
+    } = useWorkspace();
     const redirect = useRedirect();
 
     useEffect(() => {
@@ -24,12 +28,12 @@ export default function PublicRoute({
                 return;
             }
 
-            if (session && isValidSession) {
-                redirect(session);
+            if (workspace && isValidWorkspace) {
+                redirect(workspace);
             } else {
-                const newSession = await createValidSessionData();
-                if (newSession) {
-                    createSession(newSession);
+                const newWorkspace = await createValidWorkspaceData();
+                if (newWorkspace) {
+                    switchWorkspace(newWorkspace);
                 } else if (user) {
                     redirect(user);
                 }
@@ -38,7 +42,7 @@ export default function PublicRoute({
         };
 
         onMount();
-    }, [session, isValidSession, user]);
+    }, [workspace, isValidWorkspace, user]);
 
     if (!ready) {
         return <GlobalSpinner />;

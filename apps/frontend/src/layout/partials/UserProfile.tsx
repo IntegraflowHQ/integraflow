@@ -1,6 +1,6 @@
 import useLogout from "@/modules/auth/hooks/useLogout";
-import useSession from "@/modules/users/hooks/useSession";
 import useUserState from "@/modules/users/hooks/useUserState";
+import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import { Button } from "@/ui";
 import {
     DropdownMenu,
@@ -48,7 +48,7 @@ export const UserProfile = () => {
     ];
 
     const { handleLogout } = useLogout();
-    const { session } = useSession();
+    const { workspace } = useWorkspace();
     const { user } = useUserState();
     const navigate = useNavigate();
 
@@ -103,10 +103,12 @@ export const UserProfile = () => {
                     <DropdownMenuSubTrigger>
                         <NavItem
                             uppercase={true}
-                            text={session?.organization?.name}
+                            text={workspace?.organization?.name}
                             leftIcon={
                                 <AcronynmBox
-                                    text={session?.organization?.name as string}
+                                    text={
+                                        workspace?.organization?.name as string
+                                    }
                                 />
                             }
                             rightIcon={<CheckCircleIcon />}

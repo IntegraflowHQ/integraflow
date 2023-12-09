@@ -1,6 +1,6 @@
-import { useUpdateOnboardingMutation } from "@/generated/graphql";
+import { useCompleteOnboardingStageMutation } from "@/generated/graphql";
 import { useProject } from "@/modules/projects/hooks/useProject";
-import useSessionState from "@/modules/users/hooks/useSessionState";
+import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
 import { GlobalSpinner, Header } from "@/ui";
 import { CheckComplete, CheckPending } from "@/ui/icons";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -19,23 +19,23 @@ export const tabContents = [
 ];
 
 export default function OnboardingIndex() {
-    const { session, updateSession } = useSessionState();
+    const { workspace } = useWorkspaceState();
     const { upsertProject } = useProject();
     const { currentTab, switchTab, steps, updatingUser } = useOnboarding();
-    const [updateOnboarding] = useUpdateOnboardingMutation();
+    const [completeStage] = useCompleteOnboardingStageMutation();
 
     const completedKeys = useMemo(() => {
-        if (!session?.project.hasCompletedOnboardingFor) {
+        if (!workspace?.project.hasCompletedOnboardingFor) {
             return [];
         }
 
         return JSON.parse(
-            session?.project.hasCompletedOnboardingFor,
+            workspace?.project.hasCompletedOnboardingFor,
         ) as string[];
-    }, [session?.project.hasCompletedOnboardingFor]);
+    }, [workspace?.project.hasCompletedOnboardingFor]);
 
     const markAsCompleted = async (index: number) => {
-        if (!session) return;
+        if (!workspace) return;
         const updatedKeys = [...completedKeys];
         if (updatedKeys.includes(steps[index].key)) {
             return;
@@ -43,11 +43,11 @@ export default function OnboardingIndex() {
         updatedKeys.push(steps[index].key);
 
         upsertProject({
-            ...session.project,
+            ...workspace.project,
             hasCompletedOnboardingFor: JSON.stringify(updatedKeys),
         });
 
-        updateOnboarding({
+        completeStage({
             variables: {
                 input: {
                     hasCompletedOnboardingFor: JSON.stringify(updatedKeys),
@@ -55,7 +55,7 @@ export default function OnboardingIndex() {
             },
             context: {
                 headers: {
-                    Project: session?.project.id,
+                    Project: workspace?.project.id,
                 },
             },
         });
@@ -64,7 +64,7 @@ export default function OnboardingIndex() {
     if (updatingUser) return <GlobalSpinner />;
 
     return (
-        <section className="px-[72px] pt-20">
+        <section className="px-[72px] pb-20 pt-20">
             <Header
                 title="Getting started"
                 description="Integraflow enables you to understand your customers  To get started, we'll need to integrate your SDK product."
@@ -100,7 +100,7 @@ export default function OnboardingIndex() {
                     const Content = tabContents[index].content;
                     return (
                         <Tabs.Content key={step.name} value={step.name} asChild>
-                            <div>
+                            <div className="min-w-[660px]">
                                 <Content
                                     onSkip={
                                         index < steps.length - 1

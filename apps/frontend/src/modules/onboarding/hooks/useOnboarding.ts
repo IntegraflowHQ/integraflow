@@ -1,14 +1,14 @@
 import { User, useUserUpdateMutation } from "@/generated/graphql";
 import useRedirect from "@/modules/auth/hooks/useRedirect";
-import useSessionState from "@/modules/users/hooks/useSessionState";
 import useUserState from "@/modules/users/hooks/useUserState";
+import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
 import { createSelectors } from "@/utils/selectors";
 import { DeepOmit } from "@apollo/client/utilities";
 import { useEffect, useMemo } from "react";
 import { useOnboardingStore } from "../states/onboarding";
 
 export const useOnboarding = () => {
-    const { session } = useSessionState();
+    const { workspace } = useWorkspaceState();
     const { user, updateUser } = useUserState();
     const redirect = useRedirect();
     const onboarding = createSelectors(useOnboardingStore);
@@ -24,16 +24,16 @@ export const useOnboarding = () => {
     const [onboardUser, { loading: updatingUser }] = useUserUpdateMutation();
 
     const completionRate = useMemo(() => {
-        if (!session?.project.hasCompletedOnboardingFor) return 0;
+        if (!workspace?.project.hasCompletedOnboardingFor) return 0;
         const completedKeys = JSON.parse(
-            session?.project.hasCompletedOnboardingFor,
+            workspace?.project.hasCompletedOnboardingFor,
         );
         let completedSteps = 0;
         steps.forEach((step) => {
             if (completedKeys.includes(step.key)) completedSteps++;
         });
         return (completedSteps / steps.length) * 100;
-    }, [session?.project.hasCompletedOnboardingFor, steps]);
+    }, [workspace?.project.hasCompletedOnboardingFor, steps]);
 
     useEffect(() => {
         if (!user) return;

@@ -1,6 +1,5 @@
 import { Project, useProjectCreateMutation } from "@/generated/graphql";
-import useSession from "@/modules/users/hooks/useSession";
-import useUserState from "@/modules/users/hooks/useUserState";
+import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import { Button, Dialog, DialogContent, TextInput } from "@/ui";
 import { omitTypename } from "@/utils";
 import { toast } from "@/utils/toast";
@@ -14,8 +13,7 @@ type Props = {
 
 export const CreateNewProject = ({ open, onOpenChange }: Props) => {
     const [projectCreate] = useProjectCreateMutation();
-    const { session, switchProject } = useSession();
-    const { addProject } = useUserState();
+    const { workspace, switchProject } = useWorkspace();
     const { upsertProject } = useProject();
 
     const [projectName, setProjectName] = useState<string>("");
@@ -40,7 +38,7 @@ export const CreateNewProject = ({ open, onOpenChange }: Props) => {
             },
             context: {
                 headers: {
-                    Project: session?.project?.id,
+                    Project: workspace?.project?.id,
                 },
             },
         });

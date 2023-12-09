@@ -15,7 +15,7 @@ const integrations = [
         icon: SlackIcon,
         description:
             "Send survey answers to a selected Slack channel in real time",
-        available: true,
+        available: false,
     },
     {
         name: "Mixpanel",
@@ -36,28 +36,28 @@ const integrations = [
         icon: IntercomIcon,
         description:
             "Send survey answers to a selected Slack channel in real time",
-        available: true,
+        available: false,
     },
     {
         name: "Calendly",
         icon: CalendlyIcon,
         description:
             "Send survey answers to a selected Slack channel in real time",
-        available: true,
+        available: false,
     },
     {
         name: "Github",
         icon: GithubIcon,
         description:
             "Send survey answers to a selected Slack channel in real time",
-        available: true,
+        available: false,
     },
     {
         name: "Mailchimp",
         icon: MailchimpIcon,
         description:
             "Send survey answers to a selected Slack channel in real time",
-        available: true,
+        available: false,
     },
     {
         name: "Calcom",

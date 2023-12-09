@@ -1,15 +1,12 @@
 import {
-    Organization,
     OrganizationInviteDetails,
-    Project,
     User,
     useOrganizationInviteDetailsLazyQuery,
     useOrganizationJoinMutation,
 } from "@/generated/graphql";
 import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
 import { ExpiredInviteLink } from "@/modules/organizationInvite/components/ExpiredInviteLink";
-import useSession from "@/modules/users/hooks/useSession";
-import useUserState from "@/modules/users/hooks/useUserState";
+import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import { Button, GlobalSpinner, Screen } from "@/ui";
 import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
 import { getAcronym, omitTypename } from "@/utils";
@@ -18,8 +15,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export const LinkWorkspaceInvitation = () => {
     const { inviteLink } = useParams();
-    const { createSession } = useSession();
-    const { addWorkSpace } = useUserState();
+    const { addWorkspace } = useWorkspace();
     const { token } = useAuthToken();
     const navigate = useNavigate();
 
@@ -54,16 +50,7 @@ export const LinkWorkspaceInvitation = () => {
                 const user = omitTypename(
                     result.data.organizationJoin?.user as User,
                 );
-                addWorkSpace(user);
-                createSession({
-                    organization: omitTypename(
-                        result.data?.organizationJoin?.user
-                            .organization as Organization,
-                    ),
-                    project: omitTypename(
-                        result.data?.organizationJoin?.user.project as Project,
-                    ),
-                });
+                addWorkspace(user);
             }
         } else {
             navigate(`/?inviteLink=${window.location.href}`);

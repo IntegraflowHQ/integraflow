@@ -1,4 +1,4 @@
-import { toast } from "@/utils/toast";
+import { copyToClipboard } from "@/utils";
 import * as Tabs from "@radix-ui/react-tabs";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import bash from "react-syntax-highlighter/dist/esm/languages/hljs/bash";
@@ -45,8 +45,7 @@ const CopyButton = ({ onClick }: { onClick: () => void }) => (
 
 export function CodeBlock(block: Props) {
     const copyText = (text: string) => {
-        navigator.clipboard.writeText(text);
-        toast.success("Copied!");
+        copyToClipboard(text, "Copied!");
     };
 
     if (block.type === "multiple") {

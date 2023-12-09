@@ -9,12 +9,6 @@ export const USER = gql`
         isStaff
         isActive
         isOnboarded
-    }
-`;
-
-export const VIEWER = gql`
-    fragment ViewerFragment on User {
-        ...UserFragment
         organization {
             ...AuthOrganizationFragment
         }

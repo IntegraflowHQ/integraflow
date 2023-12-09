@@ -74,7 +74,11 @@ export default function Container({
                 </div>
             ) : null}
 
-            <Header title={title} description={description} />
+            <Header
+                title={title}
+                description={description}
+                className="max-w-[479px]"
+            />
 
             <div className="w-full pb-12">{children}</div>
 

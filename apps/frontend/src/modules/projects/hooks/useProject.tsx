@@ -3,18 +3,18 @@ import {
     Project,
     ProjectCountableEdge,
 } from "@/generated/graphql";
-import useSessionState from "@/modules/users/hooks/useSessionState";
 import useUserState from "@/modules/users/hooks/useUserState";
+import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
 import { DeepOmit } from "@apollo/client/utilities";
 import { useCallback } from "react";
 
 export const useProject = () => {
-    const { session, updateSession } = useSessionState();
+    const { workspace, updateWorkspace } = useWorkspaceState();
     const { user, updateUser } = useUserState();
 
     const upsertProject = useCallback(
         (project: DeepOmit<Project, "__typename">) => {
-            if (!session || !user) return;
+            if (!workspace || !user) return;
 
             const newUser = { ...user };
             if (!newUser || !newUser.organizations) return;
@@ -45,12 +45,12 @@ export const useProject = () => {
 
             newUser.organizations.edges[orgIndex].node = org;
             updateUser(newUser);
-            updateSession({
-                ...session,
+            updateWorkspace({
+                ...workspace,
                 project: project,
             });
         },
-        [user, session],
+        [user, workspace],
     );
 
     return {

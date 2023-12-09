@@ -1,10 +1,4 @@
-import {
-    AuthUser,
-    OrganizationCountableEdge,
-    Project,
-    ProjectCountableEdge,
-    User,
-} from "@/generated/graphql";
+import { User } from "@/generated/graphql";
 import { DeepOmit } from "@apollo/client/utilities";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
@@ -17,8 +11,6 @@ export type UserState = {
 export type UserActions = {
     deleteUser: () => void;
     updateUser: (data: DeepOmit<User, "__typename">) => void;
-    addProject: (orgSlug: string, project: Project) => void;
-    addWorkspace: (data: DeepOmit<AuthUser, "__typename">) => void;
 };
 
 const initialState: UserState = {
@@ -28,7 +20,7 @@ const initialState: UserState = {
 
 export const useUserStore = create<UserState & UserActions>()(
     persist(
-        (set, get) => ({
+        (set) => ({
             ...initialState,
             deleteUser: () => set(initialState),
             updateUser: (data) =>
@@ -38,52 +30,6 @@ export const useUserStore = create<UserState & UserActions>()(
                     },
                     lastUpdate: Date.now(),
                 }),
-            addProject: (orgslug, project) => {
-                const newUser = get().user;
-                if (!newUser || !newUser.organizations) return;
-
-                const orgIndex = newUser.organizations?.edges.findIndex(
-                    (edge) => edge.node.slug === orgslug,
-                );
-                if (orgIndex === -1 || orgIndex === undefined) return;
-
-                const org = {
-                    ...newUser?.organizations?.edges[orgIndex].node,
-                } as OrganizationCountableEdge["node"];
-
-                org!.projects!.edges! = [
-                    { node: project as Project },
-                    ...org.projects?.edges!,
-                ] as ProjectCountableEdge[];
-
-                newUser.organizations.edges[orgIndex].node = org;
-
-                return set({ user: newUser, lastUpdate: Date.now() });
-            },
-            addWorkspace: (data) => {
-                const user = get().user;
-                if (!user || !data.organization || !data.project) return;
-
-                user.organization = data.organization;
-                user.project = data.project;
-
-                user?.organizations?.edges.unshift({
-                    node: {
-                        ...data.organization,
-                        projects: {
-                            edges: [
-                                {
-                                    node: {
-                                        ...data.project,
-                                    },
-                                },
-                            ],
-                        },
-                    },
-                });
-
-                return set({ user, lastUpdate: Date.now() });
-            },
         }),
         {
             name: "authUser",
