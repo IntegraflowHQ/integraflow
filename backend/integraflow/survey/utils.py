@@ -121,16 +121,13 @@ def traverse_destination(
     if destination in max_paths:
         return max_paths[destination]
 
-    print(destination, destinations, max_paths)
-
     # Get the next destinations for current destination
-    next_destinations = destinations[destination]
+    next_destinations = destinations.get(destination, [])
 
     # Calculate the max path for the current question
     max_path = 0
 
     for next_destination in next_destinations:
-        print("NEXT", next_destination)
         if is_temp_id(next_destination):
             # End of the survey
             max_path = max(max_path, 0)

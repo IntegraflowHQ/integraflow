@@ -281,7 +281,6 @@ def int_to_base(number: int, base: int) -> str:
 
 
 def is_temp_id(id):
-    print(id, id == -1 or id == "-1")
     if id == -1 or id == "-1":
         return True
     return False
