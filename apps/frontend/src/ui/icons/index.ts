@@ -1,7 +1,10 @@
 export { CheckCircleIcon } from "./CheckCircleIcon";
+export { CheckComplete } from "./CheckComplete";
+export { CheckPending } from "./CheckPending";
 export { CircleIcon } from "./CircleIcon";
 export { CirclePlusIcon } from "./CirclePlusIcon";
 export { CircleStackIcon } from "./CircleStackIcon";
+export { Copy } from "./Copy";
 export { CopyIcon } from "./CopyIcon";
 export { CursorIcon } from "./CursorIcon";
 export { Document } from "./Document";

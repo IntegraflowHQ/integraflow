@@ -1,42 +1,40 @@
 import * as Popover from "@radix-ui/react-popover";
+import Sketch from "@uiw/react-color-sketch";
 import React, { useState } from "react";
-import { ColorResult, SketchPicker } from "react-color";
 
 interface ColorPickerProps {
+    children: React.ReactNode;
     defaultColor?: string;
     onChange: (color: string) => void;
-    selectedColor: string | undefined;
 }
 
 export const ColorPicker: React.FC<ColorPickerProps> = ({
     defaultColor = "#124CA4",
     onChange,
-    selectedColor = "#ffffff",
+    children,
 }) => {
     const [color, setColor] = useState(defaultColor);
 
-    const handleColorChange = (color: ColorResult) => {
+    const handleColorChange = (color: { hex: string }) => {
         setColor(color.hex);
         onChange(color.hex);
     };
 
     return (
         <Popover.Root>
-            <Popover.Trigger>
-                <button className="text-shippy-gray-tx flex items-center space-x-2 rounded-md border bg-transparent px-1 py-2 text-sm font-semibold">
-                    <span className="uppercase">{selectedColor}</span>
-                    <span
-                        className="h-3 w-3 rounded-full shadow-md"
-                        style={{ backgroundColor: selectedColor }}
-                    ></span>
-                </button>
-            </Popover.Trigger>
+            <Popover.Trigger>{children}</Popover.Trigger>
             <Popover.Anchor />
             <Popover.Portal>
-                <Popover.Content align="start">
-                    <SketchPicker
+                <Popover.Content>
+                    <Sketch
+                        style={{
+                            background: "#261F36",
+                            borderRadius: "8px",
+                            border: "1px solid #392d72",
+                            marginLeft: "40px",
+                        }}
                         color={color}
-                        onChangeComplete={handleColorChange}
+                        onChange={handleColorChange}
                     />
                 </Popover.Content>
             </Popover.Portal>

@@ -40,8 +40,8 @@ export default function Create() {
                     <Tabs.Trigger
                         value={label}
                         onClick={() => setActiveTab(id)}
-                        className={`hover:bg-intg-bg-[#272138] h-9 rounded px-2 ease-in-out hover:transition-all ${
-                            activeTab === id ? "bg-intg-bg-[#272138]" : ""
+                        className={`h-9 rounded px-2 ease-in-out hover:bg-[#272138] hover:transition-all ${
+                            activeTab === id ? "bg-[#272138]" : ""
                         }`}
                     >
                         <StudioTooltip id={id} info={label} item={icon} />

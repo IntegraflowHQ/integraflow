@@ -1,34 +1,19 @@
 # Python imports
 from functools import cached_property, partial
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    List,
-    Tuple,
-    Optional,
-    Type,
-)
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type
 
 # Django imports
 from django.contrib import auth
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models import Q
-from django.contrib.auth.models import (
-    AbstractUser,
-    BaseUserManager
-)
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError
-
 from integraflow.core.models import UUIDClassicModel
 from integraflow.core.utils import sane_repr
 from integraflow.messaging.utils import is_email_available
-from integraflow.organization.models import (
-    Organization,
-    OrganizationMembership
-)
+from integraflow.organization.models import Organization, OrganizationMembership
 from integraflow.project.models import Project
 
 
@@ -171,7 +156,8 @@ class User(
     jwt_token_key: models.CharField = models.CharField(
         max_length=12, default=partial(get_random_string, length=12)
     )
-    token_updated_at: models.DateTimeField = models.DateTimeField(null=True)
+    token_updated_at: models.DateTimeField = models.DateTimeField(null=True, blank=True)
+    is_onboarded: models.BooleanField = models.BooleanField(default=False)
 
     # Remove unused attributes from `AbstractUser`
     username = None  # type: ignore

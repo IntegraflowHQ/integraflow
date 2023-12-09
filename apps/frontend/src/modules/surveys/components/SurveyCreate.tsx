@@ -45,7 +45,7 @@ export default function SurveyCreate({ className, size = "lg" }: Props) {
                 className ?? "",
             )}
         >
-            {surveyCreateOptions.map((option) => (
+            {surveyCreateOptions.map((option, index) => (
                 <Link
                     key={option.title}
                     className="flex flex-1 flex-col items-center justify-center gap-3 rounded-lg bg-[#261F36]"
@@ -55,7 +55,10 @@ export default function SurveyCreate({ className, size = "lg" }: Props) {
                     <Header
                         title={option.title}
                         description={option.description}
-                        className="text-center"
+                        className={cn(
+                            "text-center",
+                            size === "sm" && index === 1 ? "px-8" : "",
+                        )}
                         variant={size === "sm" ? "3" : "2"}
                         font="medium"
                     />

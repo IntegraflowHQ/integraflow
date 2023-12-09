@@ -42,7 +42,12 @@ const refreshTokenMutation = async (
         fetchPolicy: "network-only",
     });
 
-    if (errors || !data) {
+    if (
+        errors ||
+        !data ||
+        data.tokenRefresh?.errors?.length ||
+        !data.tokenRefresh?.token
+    ) {
         throw new Error("Something went wrong during token renewal");
     }
 

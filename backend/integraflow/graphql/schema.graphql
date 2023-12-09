@@ -157,6 +157,9 @@ type User implements Node @doc(category: "Users") {
   """Determine if the user is active."""
   isActive: Boolean!
 
+  """Determine if the user has finished onboarding."""
+  isOnboarded: Boolean!
+
   """
   The current organization of the user.
   
@@ -974,6 +977,16 @@ type Mutation {
   ): RefreshToken @doc(category: "Authentication")
 
   """
+  Updates a user. 
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  userUpdate(
+    """A partial object to update the user with."""
+    input: UserInput!
+  ): UserUpdate @doc(category: "Authentication")
+
+  """
   Creates a new distibution channel 
   
   Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -1099,7 +1112,7 @@ type Mutation {
   ): ProjectThemeDelete @doc(category: "Projects")
 
   """
-  Creates a new theme 
+  Updates an existing theme 
   
   Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
   """
@@ -1194,6 +1207,9 @@ type AuthUser implements Node @doc(category: "Users") {
 
   """Determine if the user is active."""
   isActive: Boolean!
+
+  """Determine if the user has finished onboarding."""
+  isOnboarded: Boolean!
 
   """
   The current organization of the user.
@@ -1292,6 +1308,31 @@ type RefreshToken @doc(category: "Authentication") {
   token: String
   userErrors: [UserError!]!
   errors: [UserError!]!
+}
+
+"""
+Updates a user. 
+
+Requires one of the following permissions: AUTHENTICATED_USER.
+"""
+type UserUpdate @doc(category: "Authentication") {
+  userErrors: [UserError!]!
+  errors: [UserError!]!
+  user: User
+}
+
+input UserInput @doc(category: "Authentication") {
+  """The given name of the user."""
+  firstName: String
+
+  """The family name of the user."""
+  lastName: String
+
+  """Determine if the user has finished onboarding."""
+  isOnboarded: Boolean
+
+  """The avatar of the user."""
+  avatar: String
 }
 
 """
@@ -1618,7 +1659,7 @@ type ProjectThemeDelete @doc(category: "Projects") {
 }
 
 """
-Creates a new theme 
+Updates an existing theme 
 
 Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
 """

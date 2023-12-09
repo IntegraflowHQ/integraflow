@@ -8,6 +8,7 @@ export const AUTH_USER = gql`
         lastName
         isStaff
         isActive
+        isOnboarded
         organization {
             ...AuthOrganizationFragment
         }
