@@ -28,16 +28,16 @@ docker compose up
 
 If you want to stop docker from requesting for permission everytime, you can add your use to the `docker` group.
 
-- Run the command to add your user to the docker group. You can replace `$USER` with your actual user name if doesn't work at first.
+-   Run the command to add your user to the docker group. You can replace `$USER` with your actual user name if doesn't work at first.
 
 ```shell
   sudo usermod -aG $USER
 ```
 
-- After running this command, you'll need to log out and log back in for the changes to take effect. Alternatively, you can run the following command to apply the changes to your current session:
+-   After running this command, you'll need to log out and log back in for the changes to take effect. Alternatively, you can run the following command to apply the changes to your current session:
 
 ```shell
 newgrp docker
 ```
 
-After following the steps above, you should be able to user the `docker compose` command without the `sudo` flag.
+After following the steps above, you should be able to use the `docker compose` command without the `sudo` flag.
