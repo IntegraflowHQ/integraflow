@@ -33,11 +33,11 @@ const THEMES = [
     },
 ];
 
-interface contentProp {
+interface ContentProp {
     onOpen: () => void;
 }
 
-export const DesignEditorContent = ({ onOpen }: contentProp) => {
+export const DesignEditorContent = ({ onOpen }: ContentProp) => {
     return (
         <div>
             <p className="py-4 font-light uppercase">Selected Theme</p>

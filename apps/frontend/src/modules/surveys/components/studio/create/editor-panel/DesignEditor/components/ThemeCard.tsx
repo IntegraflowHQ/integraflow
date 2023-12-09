@@ -1,8 +1,8 @@
-interface cardProps {
+interface CardProps {
     themeData: { palette: string[]; themeName: string };
 }
 
-export const ThemeCard = ({ themeData: { themeName, palette } }: cardProps) => {
+export const ThemeCard = ({ themeData: { themeName, palette } }: CardProps) => {
     return (
         <div className="my-3 mb-2 flex w-full gap-5 rounded-md bg-[#272138] px-3 py-2">
             {/* color palete -- theme */}
