@@ -49,13 +49,18 @@ export default function Create() {
                 ))}
             </Tabs.List>
 
-            <div className="flex flex-1 gap-[38px] overflow-y-scroll pb-8 pl-5 pr-12 pt-6">
+            <div className="flex flex-1 gap-[38px] pl-5 pr-12 pt-6">
                 {tabs.map(({ content, label }) => (
-                    <Tabs.Content value={label} className="w-[519px]">
+                    <Tabs.Content
+                        value={label}
+                        className="scrollbar-hide w-[519px] overflow-y-auto pb-8"
+                    >
                         {content}
                     </Tabs.Content>
                 ))}
-                <Preview />
+                <div className="min-w-[580px] flex-1 pb-8">
+                    <Preview />
+                </div>
             </div>
         </Tabs.Root>
     );
