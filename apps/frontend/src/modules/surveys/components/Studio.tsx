@@ -48,9 +48,9 @@ export default function Studio() {
                             key={tab.label}
                             value={tab.label}
                             onClick={() => setActiveStudioTab(tab.id)}
-                            className={`rounded-md px-3 py-2 text-sm text-intg-text transition-all ease-in hover:bg-intg-bg-13 data-[state=active]:text-white ${
+                            className={`hover:bg-intg-bg-[#272138] rounded-md px-3 py-2 text-sm text-intg-text transition-all ease-in data-[state=active]:text-white ${
                                 activeStudioTab === tab.id
-                                    ? "bg-intg-bg-13"
+                                    ? "bg-intg-bg-[#272138]"
                                     : ""
                             }`}
                         >

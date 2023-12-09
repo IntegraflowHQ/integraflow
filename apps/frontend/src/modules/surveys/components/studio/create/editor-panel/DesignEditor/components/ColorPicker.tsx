@@ -8,7 +8,7 @@ interface ColorPickerProps {
     selectedColor: string | undefined;
 }
 
-const ColorPicker: React.FC<ColorPickerProps> = ({
+export const ColorPicker: React.FC<ColorPickerProps> = ({
     defaultColor = "#124CA4",
     onChange,
     selectedColor = "#ffffff",
@@ -33,10 +33,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             </Popover.Trigger>
             <Popover.Anchor />
             <Popover.Portal>
-                <Popover.Content
-                    align="start"
-                    className="w-[13rem] border bg-[#fff] px-3 pt-0"
-                >
+                <Popover.Content align="start">
                     <SketchPicker
                         color={color}
                         onChangeComplete={handleColorChange}
@@ -46,5 +43,3 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
         </Popover.Root>
     );
 };
-
-export default ColorPicker;
