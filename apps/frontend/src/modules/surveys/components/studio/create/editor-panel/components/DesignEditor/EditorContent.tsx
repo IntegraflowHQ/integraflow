@@ -1,3 +1,4 @@
+import React from "react";
 import { ThemeCard } from "./ThemeCard";
 
 const PALETTE = ["#FF4A4A", "#FF9551", "#6FEDD6", "#B9FFF8"];
@@ -32,7 +33,11 @@ const THEMES = [
   },
 ];
 
-export const DesignEditorContent = () => {
+interface contentProp {
+  onOpen: () => void;
+}
+
+export const DesignEditorContent = ({ onOpen }: contentProp) => {
   return (
     <div>
       <p className="py-4 font-light uppercase">Selected Theme</p>
@@ -63,7 +68,10 @@ export const DesignEditorContent = () => {
       <div className="h-full py-6">
         <p className="py-2 font-light capitalize">all themes</p>
 
-        <button className="my-4 h-12 w-full rounded-md border border-intg-bg-2 bg-intg-bg-10">
+        <button
+          onClick={onOpen}
+          className="bg-intg-bg-15 my-4 h-12 w-full rounded-md border border-intg-bg-2 focus:outline-none"
+        >
           New theme
         </button>
 
