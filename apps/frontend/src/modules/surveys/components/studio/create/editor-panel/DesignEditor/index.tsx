@@ -1,7 +1,7 @@
+import { ColorPicker } from "@/ui";
 import * as Tabs from "@radix-ui/react-tabs";
 import { MoreHorizontal, X } from "lucide-react";
 import React from "react";
-import { ColorPicker } from "./components/ColorPicker";
 import { DesignEditorContent } from "./components/EditorContent";
 import { ThemesMenu } from "./components/ThemesMenu";
 
@@ -66,7 +66,6 @@ export const UpdateDesignEditor = () => {
                                 </p>
 
                                 <ColorPicker
-                                    defaultColor="#124ca4"
                                     onChange={(color) => {
                                         handleSelectedOption(index, color);
                                     }}
