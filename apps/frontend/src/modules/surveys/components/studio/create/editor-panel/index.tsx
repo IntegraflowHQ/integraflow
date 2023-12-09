@@ -58,7 +58,6 @@ export default function Create() {
                                 </Tooltip.Root>
                             </Tooltip.Provider>
                         </div>
-                        {/* <StudioTooltip id={id} info={label} item={icon} /> */}
                     </Tabs.Trigger>
                 ))}
             </Tabs.List>

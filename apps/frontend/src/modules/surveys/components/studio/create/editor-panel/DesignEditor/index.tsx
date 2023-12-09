@@ -37,7 +37,7 @@ export const UpdateDesignEditor = () => {
                     <Tabs.List aria-label="create a new theme">
                         <Tabs.Trigger
                             value="theme-name"
-                            className="border-b border-[#6941c6] px-3 py-2 font-light capitalize text-white"
+                            className="border-b border-[#6941c6] px-3 py-2 text-sm  font-normal capitalize text-white"
                         >
                             theme name
                         </Tabs.Trigger>
@@ -61,7 +61,7 @@ export const UpdateDesignEditor = () => {
                                 key={index}
                                 className="my-3 mb-3 flex w-full justify-between rounded-md bg-[#272138] px-3 py-3"
                             >
-                                <p className="py-1 font-light capitalize text-intg-text-2">
+                                <p className="py-1 text-sm font-normal capitalize text-intg-text-2">
                                     {name}
                                 </p>
 
@@ -88,18 +88,11 @@ export const UpdateDesignEditor = () => {
             </div>
 
             <div className="mt-4 flex justify-end gap-2">
-                {/* <Button variant="secondary" className="rounded-sm py-1">
-                    Revert changes
-                </Button>
-
-                <Button variant="primary" className="rounded-sm py-1">
-                    Update theme
-                </Button> */}
-                <button className="w-38 h-11 rounded-sm border border-intg-bg-2 bg-[#322751] px-3 font-normal text-white transition-all ease-in-out hover:border-2">
+                <button className="w-38 h-11 rounded-sm border border-intg-bg-2 bg-[#322751] px-3 text-sm font-normal text-white transition-all ease-in-out hover:border-2">
                     Revert changes
                 </button>
 
-                <button className="w-38 h-11 rounded-sm bg-intg-bg-2 px-3 font-normal text-white transition-all ease-in-out hover:bg-gradient-button-hover">
+                <button className="w-38 h-11 rounded-sm bg-intg-bg-2 px-3 text-sm font-normal text-white transition-all ease-in-out hover:bg-gradient-button-hover">
                     Update theme
                 </button>
             </div>
@@ -121,7 +114,7 @@ export const UpdateDesignEditor = () => {
                         <Tabs.List aria-label="update your theme survey">
                             <Tabs.Trigger
                                 value="theme"
-                                className={`border border-x-0 border-t-0 border-[#6941c6] px-3 py-2 font-light capitalize`}
+                                className={`border border-x-0 border-t-0 border-[#6941c6] px-3 py-2 text-sm font-normal capitalize`}
                             >
                                 theme
                             </Tabs.Trigger>

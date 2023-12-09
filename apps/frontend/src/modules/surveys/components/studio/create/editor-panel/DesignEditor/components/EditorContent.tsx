@@ -40,7 +40,7 @@ interface ContentProp {
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
     return (
         <div>
-            <p className="py-4 font-light uppercase">Selected Theme</p>
+            <p className="py-4 text-sm font-normal uppercase">Selected Theme</p>
 
             <div className="flex w-full gap-5 rounded-md bg-[#272138] px-3 py-2">
                 {/* color palete -- theme */}
@@ -59,10 +59,10 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                 </div>
 
                 <div>
-                    <p className="font-normal leading-6">
+                    <p className="text-base font-normal leading-6">
                         Your branded dark theme
                     </p>
-                    <p className="font-normal text-intg-text-4">
+                    <p className="text-sm font-normal text-intg-text-4">
                         Fetched theme
                     </p>
                 </div>
@@ -70,11 +70,13 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
             {/* all themes */}
             <div className="h-full py-6">
-                <p className="py-2 font-light capitalize">all themes</p>
+                <p className="py-2 text-sm font-normal capitalize">
+                    all themes
+                </p>
 
                 <button
                     onClick={onOpen}
-                    className="my-4 h-12 w-full rounded-md border border-intg-bg-2 bg-[#322751] focus:outline-none"
+                    className="my-4 h-12 w-full rounded-md border border-intg-bg-2 bg-[#322751] text-base font-normal focus:outline-none"
                 >
                     New theme
                 </button>
