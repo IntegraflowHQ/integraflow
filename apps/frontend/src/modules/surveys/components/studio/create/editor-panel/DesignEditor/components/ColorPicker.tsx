@@ -31,7 +31,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
                             background: "#261F36",
                             borderRadius: "8px",
                             border: "1px solid #392d72",
-                            marginLeft: "40px",
+                            marginLeft: "-40px !important",
                         }}
                         color={color}
                         onChange={handleColorChange}
