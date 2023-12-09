@@ -46,8 +46,9 @@ export default function Create() {
             </Tabs.List>
 
             <div className="flex flex-1 gap-[38px] pl-5 pr-12 pt-6">
-                {tabs.map(({ content, label }) => (
+                {tabs.map(({ content, label, id }) => (
                     <Tabs.Content
+                        key={id}
                         value={label}
                         className="scrollbar-hide w-[519px] overflow-y-auto pb-8"
                     >
