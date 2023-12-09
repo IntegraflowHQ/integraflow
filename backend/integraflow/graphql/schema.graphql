@@ -1099,7 +1099,7 @@ type Mutation {
   ): ProjectThemeDelete @doc(category: "Projects")
 
   """
-  Creates a new theme 
+  Updates an existing theme 
   
   Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
   """
@@ -1618,7 +1618,7 @@ type ProjectThemeDelete @doc(category: "Projects") {
 }
 
 """
-Creates a new theme 
+Updates an existing theme 
 
 Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
 """

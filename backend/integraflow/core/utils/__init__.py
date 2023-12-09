@@ -280,6 +280,13 @@ def int_to_base(number: int, base: int) -> str:
     return value or "0"
 
 
+def is_temp_id(id):
+    print(id, id == -1 or id == "-1")
+    if id == -1 or id == "-1":
+        return True
+    return False
+
+
 class UniqueConstraintByExpression(BaseConstraint):
     def __init__(self, *, name: str, expression: str, concurrently=True):
         self.name = name
