@@ -3,7 +3,6 @@ from typing import Generic, Optional, Type, TypeVar
 
 from django.db.models import Model, Q
 from graphene.types.objecttype import ObjectTypeOptions
-
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_MAP
 
 from .base import BaseObjectType
@@ -97,7 +96,6 @@ class ModelObjectType(Generic[MT], BaseObjectType):
     @classmethod
     def get_node(cls, _, id) -> Optional[MT]:
         model = cls._meta.model
-        # type_name = cls._meta.name
         lookup = Q(pk=id)
 
         try:
