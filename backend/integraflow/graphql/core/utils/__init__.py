@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from graphene import ObjectType
 from graphql.error import GraphQLError
 
-from integraflow.core.utils import is_temp_id
+from integraflow.core.utils import is_minus_one
 from integraflow.graphql.core.validators import validate_if_int_or_uuid
 from integraflow.webhook.event_types import WebhookEventAsyncType
 
@@ -135,7 +135,7 @@ def from_global_id_to_pk(obj: dict, key):
     if (
         id is not None and
         not validate_if_int_or_uuid(id) and
-        not is_temp_id(id)
+        not is_minus_one(id)
     ):
         _, obj[key] = from_global_id_or_error(id)
 
@@ -151,7 +151,7 @@ def from_global_ids_to_pks(data: Union[list, dict], key: str):
 
 def to_global_id_from_pk(class_name, obj: dict, key: str):
     id = obj.get(key, None)
-    if id is not None and validate_if_int_or_uuid(id) and not is_temp_id(id):
+    if id is not None and validate_if_int_or_uuid(id) and not is_minus_one(id):
         obj[key] = graphene.Node.to_global_id(class_name, id)
 
 

@@ -1,6 +1,6 @@
 from typing import List, Union
 
-from integraflow.core.utils import is_temp_id
+from integraflow.core.utils import is_minus_one
 
 from .models import SurveyQuestion
 
@@ -128,7 +128,7 @@ def traverse_destination(
     max_path = 0
 
     for next_destination in next_destinations:
-        if is_temp_id(next_destination):
+        if is_minus_one(next_destination):
             # End of the survey
             max_path = max(max_path, 0)
         else:
