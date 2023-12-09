@@ -18,7 +18,7 @@ export default function Template({
             />
             <div
                 className={cn(
-                    "bg-intg-bg-12 flex h-[196px] items-end justify-center rounded-[9.455px]",
+                    "flex h-[196px] items-end justify-center rounded-[9.455px] bg-[#261f36]",
                     right ? "flex-col" : "",
                 )}
             >

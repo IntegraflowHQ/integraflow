@@ -1,4 +1,5 @@
 export { default as Button } from "./Button/Button";
+export { ColorPicker } from "./ColorPicker";
 export { Dialog, DialogContent, DialogTrigger } from "./Dialog/Dialog";
 export {
     DropdownMenu,

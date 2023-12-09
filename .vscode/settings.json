@@ -23,9 +23,9 @@
     "[javascript][typescript][javascriptreact][typescriptreact]": {
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
-            "source.organizeImports": true,
-            "source.formatDocument": true,
-            "source.fixAll.eslint": true
+            "source.organizeImports": "always",
+            "source.formatDocument": "always",
+            "source.fixAll.eslint": "always"
         },
         "editor.guides.bracketPairs": "active"
     },

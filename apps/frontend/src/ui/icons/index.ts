@@ -9,6 +9,7 @@ export { CopyIcon } from "./CopyIcon";
 export { CursorIcon } from "./CursorIcon";
 export { Document } from "./Document";
 export { DocumentIcon } from "./DocumentIcon";
+export { DocumentPlusIcon } from "./DocumentPlusIcon";
 export { Google } from "./Google";
 export { HelpCircle } from "./HelpCircle";
 export { HomeIcon } from "./HomeIcon";

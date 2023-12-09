@@ -3703,6 +3703,25 @@
     "@radix-ui/react-roving-focus" "1.0.4"
     "@radix-ui/react-use-controllable-state" "1.0.1"
 
+"@radix-ui/react-tooltip@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-tooltip/-/react-tooltip-1.0.7.tgz#8f55070f852e7e7450cc1d9210b793d2e5a7686e"
+  integrity sha512-lPh5iKNFVQ/jav/j6ZrWq3blfDJ0OH9R6FlNUHPMqdLuQ9vwDgFsRxvl8b7Asuy5c8xmoojHUxKHQSOAvMHxyw==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/primitive" "1.0.1"
+    "@radix-ui/react-compose-refs" "1.0.1"
+    "@radix-ui/react-context" "1.0.1"
+    "@radix-ui/react-dismissable-layer" "1.0.5"
+    "@radix-ui/react-id" "1.0.1"
+    "@radix-ui/react-popper" "1.1.3"
+    "@radix-ui/react-portal" "1.0.4"
+    "@radix-ui/react-presence" "1.0.1"
+    "@radix-ui/react-primitive" "1.0.3"
+    "@radix-ui/react-slot" "1.0.2"
+    "@radix-ui/react-use-controllable-state" "1.0.1"
+    "@radix-ui/react-visually-hidden" "1.0.3"
+
 "@radix-ui/react-use-callback-ref@1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-use-callback-ref/-/react-use-callback-ref-1.0.1.tgz#f4bb1f27f2023c984e6534317ebc411fc181107a"
@@ -4449,10 +4468,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-syntax-highlighter@^15.5.10":
-  version "15.5.10"
-  resolved "https://registry.yarnpkg.com/@types/react-syntax-highlighter/-/react-syntax-highlighter-15.5.10.tgz#697dd4c640baefbfce655d3cd2b54629922ec05f"
-  integrity sha512-Vf8nNkGHnjwK37b2wDs92zJSAWS2Mb57NcYHgajCNssHeTNEixvjINnXJkKdY0V0/eLrYkPP1xDKvNmYIr4HIg==
+"@types/react-syntax-highlighter@^15.5.11":
+  version "15.5.11"
+  resolved "https://registry.yarnpkg.com/@types/react-syntax-highlighter/-/react-syntax-highlighter-15.5.11.tgz#e050745b22eff81fc13cb0c763dd0d063413bbf1"
+  integrity sha512-ZqIJl+Pg8kD+47kxUjvrlElrraSUrYa4h0dauY/U/FTUuprSCqvUj+9PNQNQzVc6AJgIWUUxn87/gqsMHNbRjw==
   dependencies:
     "@types/react" "*"
 
@@ -4768,6 +4787,73 @@
   dependencies:
     "@typescript-eslint/types" "6.8.0"
     eslint-visitor-keys "^3.4.1"
+
+"@uiw/color-convert@2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@uiw/color-convert/-/color-convert-2.0.3.tgz#85cc010b3350aa3b7223bc6637bcbdbdca8a53b8"
+  integrity sha512-lP/dnZzaiUDMrn3F+WYAG/TLhIanoy5A0HAPEO6Z/s3Jv5AI0nOM2bVOm0HI+vNiHZkVTkE1oGP0k+endEA+9A==
+
+"@uiw/react-color-alpha@2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@uiw/react-color-alpha/-/react-color-alpha-2.0.3.tgz#7f9dc53764e69eebb067bfff4ab543272c9c36ea"
+  integrity sha512-bTO0jMTT2fFZr8lGpDrOCbMSbidkgYMuCmyc6A8p6WfyCznKZvKG5WG9KukDOB2ReJUZKIaiR20CgUa6opS3Hw==
+  dependencies:
+    "@uiw/color-convert" "2.0.3"
+    "@uiw/react-drag-event-interactive" "2.0.3"
+
+"@uiw/react-color-editable-input-rgba@2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@uiw/react-color-editable-input-rgba/-/react-color-editable-input-rgba-2.0.3.tgz#daa4600b76695de00be30601b960cfe7882a82be"
+  integrity sha512-ROz25EVr5F9XgNLG9p0RKMTgzg5ORh2RxMKC8Ch3vXrdTt4FL350Kq0N5KMHs7gyQAzcr4GQmuaCLlbEHHYAwA==
+  dependencies:
+    "@uiw/color-convert" "2.0.3"
+    "@uiw/react-color-editable-input" "2.0.3"
+
+"@uiw/react-color-editable-input@2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@uiw/react-color-editable-input/-/react-color-editable-input-2.0.3.tgz#b1c70a2ea2dc6f67110a55fd7cfb2555a942e53e"
+  integrity sha512-Zy+BuvtQ5c2XcSPN+zgVQ0gnz4fl+1YB1kpKnTYNyZptL2HXWPygwz2OdfNB/bVNRR34s5/4x3jD/zNQTBe60w==
+
+"@uiw/react-color-hue@2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@uiw/react-color-hue/-/react-color-hue-2.0.3.tgz#d3b1f5c6b216ae14c593e261af762e27627da48b"
+  integrity sha512-Bi9/JkLH6FSxULC52y7kjLlunkRbL6TRuAzm5+BBs/4tSf+VL8Xp5Dr2gCPJG1vuA4ohDx9vl3P5QO4Rk9h8wQ==
+  dependencies:
+    "@uiw/color-convert" "2.0.3"
+    "@uiw/react-color-alpha" "2.0.3"
+
+"@uiw/react-color-saturation@2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@uiw/react-color-saturation/-/react-color-saturation-2.0.3.tgz#91efd2941f238e6ec51b5983f05108d7a606945b"
+  integrity sha512-+AZM3WemWv7w/uRGmSY5lXWdSJoKKysKMW+C7/qkWNQmN/WjG6YmC4ZtcEqPr7BbWFXSS2DJTn15fNBvxCFKDg==
+  dependencies:
+    "@uiw/color-convert" "2.0.3"
+    "@uiw/react-drag-event-interactive" "2.0.3"
+
+"@uiw/react-color-sketch@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@uiw/react-color-sketch/-/react-color-sketch-2.0.3.tgz#03ceda3c757c20f4ac1234b8f256afb9c2ceef12"
+  integrity sha512-OS7nD7DlsYhtQJrSQOwM2kXcLrpqYzbLcY6dy55odmgMPx1ixbhhgXfDp8zAPOT5+guPAOdfy4PV4fpUGGYiSg==
+  dependencies:
+    "@uiw/color-convert" "2.0.3"
+    "@uiw/react-color-alpha" "2.0.3"
+    "@uiw/react-color-editable-input" "2.0.3"
+    "@uiw/react-color-editable-input-rgba" "2.0.3"
+    "@uiw/react-color-hue" "2.0.3"
+    "@uiw/react-color-saturation" "2.0.3"
+    "@uiw/react-color-swatch" "2.0.3"
+
+"@uiw/react-color-swatch@2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@uiw/react-color-swatch/-/react-color-swatch-2.0.3.tgz#47f817ee5a7bf5b6160c020c7c984349c31dff59"
+  integrity sha512-xKUASrSB4wPQ+kmMV1Yr1gQ9BZvMzkdotr9o+CYFGvZNSLclEur0cIhu5RkBhZ6PGP6Vd54mod43amY/a905lw==
+  dependencies:
+    "@uiw/color-convert" "2.0.3"
+
+"@uiw/react-drag-event-interactive@2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@uiw/react-drag-event-interactive/-/react-drag-event-interactive-2.0.3.tgz#cfe614cbbc4e73d58236a0a1f83c5904355a0cbc"
+  integrity sha512-r9VQbvpk2z0ux3GenmT5K4BVQqT91eBSDQjYuR43Ya0kJaD2yJPuPe8JqvKTFR3/C9kldolJoWbxl0mbuu1X0w==
 
 "@vitejs/plugin-react-swc@^3.3.2":
   version "3.4.0"
