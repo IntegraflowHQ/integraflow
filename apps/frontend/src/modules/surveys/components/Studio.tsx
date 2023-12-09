@@ -66,7 +66,7 @@ export default function Studio() {
             </header>
 
             {tabs.map(({ screen: Screen }) => (
-                <Tabs.Content key={Screen.name} value={Screen.name} asChild>
+                <Tabs.Content key={Screen.name} value={Screen.name}>
                     <Screen />
                 </Tabs.Content>
             ))}
