@@ -6,6 +6,7 @@ from integraflow.graphql.core.types.common import SurveyError
 from integraflow.graphql.core.utils import from_global_ids_to_pks
 from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.survey import models
+from integraflow.survey.utils import calculate_max_paths
 
 from .survey_question_create import SurveyQuestionInput
 from ..types import SurveyQuestion
@@ -37,6 +38,10 @@ class SurveyQuestionUpdate(ModelMutation):
         permissions = (AuthorizationFilters.PROJECT_MEMBER_ACCESS,)
 
     @classmethod
+    def get_type_for_model(cls):
+        return SurveyQuestion
+
+    @classmethod
     def clean_input(cls, info, instance, data, **kwargs):
         cleaned_input = super().clean_input(info, instance, data, **kwargs)
 
@@ -46,3 +51,7 @@ class SurveyQuestionUpdate(ModelMutation):
             cleaned_input["settings"] = settings
 
         return cleaned_input
+
+    @classmethod
+    def post_save_action(cls, info, instance, cleaned_input):
+        calculate_max_paths(instance.survey_id)

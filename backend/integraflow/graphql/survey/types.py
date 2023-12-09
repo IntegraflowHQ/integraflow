@@ -190,15 +190,18 @@ class SurveyQuestion(ModelObjectType):
     class Meta:
         description = "Represents a question."
         doc_category = DOC_CATEGORY_SURVEYS
-        model = models.Survey
+        model = models.SurveyQuestion
         interfaces = [graphene.relay.Node]
 
     @staticmethod
     def resolve_settings(root: models.SurveyQuestion, info: ResolveInfo):
         settings = root.settings
         if settings:
-            to_global_ids_from_pks(settings.get("logic", []), "destination")
-            print("resolve_settings", settings)
+            to_global_ids_from_pks(
+                "SurveyQuestion",
+                settings.get("logic", []),
+                "destination"
+            )
 
         return settings
 
