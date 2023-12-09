@@ -1,6 +1,7 @@
 import * as Tabs from "@radix-ui/react-tabs";
 import { MoreHorizontal, X } from "lucide-react";
 import React from "react";
+import ColorPicker from "./components/ColorPicker";
 import { DesignEditorContent } from "./components/EditorContent";
 import { ThemesMenu } from "./components/ThemesMenu";
 
@@ -16,6 +17,9 @@ const THEMES_INFO = [
 
 export const UpdateDesignEditor = () => {
     const [newThemeOpenState, setOpenState] = React.useState<boolean>(false);
+    const [isColorPickerOpen, setColorPickerState] =
+        React.useState<boolean>(false);
+    const [selectedColor, setSelectedColor] = React.useState<string>("");
 
     const themeSettingsPanel = (
         <>
@@ -41,37 +45,57 @@ export const UpdateDesignEditor = () => {
                     </div>
                 </Tabs.Root>
 
-                {THEMES_INFO.map(
-                    (
-                        { name, color },
-                        index: React.Key | number | undefined,
-                    ) => {
-                        return (
-                            <div
-                                key={index}
-                                className="my-3 mb-3 flex w-full justify-between rounded-md bg-intg-bg-13 px-3 py-3"
-                            >
-                                <p className="py-1 font-light capitalize text-intg-text-2">
-                                    {name}
-                                </p>
+                <>
+                    {THEMES_INFO.map(
+                        (
+                            { name, color },
+                            index: React.Key | number | undefined,
+                        ) => {
+                            return (
                                 <div
-                                    className="h-8 w-8 rounded-full"
-                                    style={{
-                                        background: `${color}`,
-                                    }}
-                                />
-                            </div>
-                        );
-                    },
-                )}
+                                    key={index}
+                                    className="my-3 mb-3 flex w-full justify-between rounded-md bg-intg-bg-13 px-3 py-3"
+                                >
+                                    <p className="py-1 font-light capitalize text-intg-text-2">
+                                        {name}
+                                    </p>
+                                    <div
+                                        className="h-8 w-8 cursor-pointer rounded-full"
+                                        onClick={() =>
+                                            setColorPickerState(true)
+                                        }
+                                        style={{
+                                            background: `${color}`,
+                                        }}
+                                    />
+                                </div>
+                            );
+                        },
+                    )}
+
+                    {isColorPickerOpen ? (
+                        <ColorPicker
+                            defaultColor="#124ca4"
+                            selectedColor={selectedColor}
+                            onChange={() => setSelectedColor(selectedColor)}
+                        />
+                    ) : null}
+                </>
             </div>
 
             <div className="mt-4 flex justify-end gap-2">
-                <button className="bg-intg-bg-15 w-38 h-11 rounded-sm border border-intg-bg-2 px-3 font-normal text-white">
+                {/* <Button variant="secondary" className="rounded-sm py-1">
+                    Revert changes
+                </Button>
+
+                <Button variant="primary" className="rounded-sm py-1">
+                    Update theme
+                </Button> */}
+                <button className="bg-intg-bg-15 w-38 h-11 rounded-sm border border-intg-bg-2 px-3 font-normal text-white transition-all ease-in-out hover:border-2">
                     Revert changes
                 </button>
 
-                <button className="w-38 h-11 rounded-sm bg-intg-bg-2 px-3 font-normal text-white">
+                <button className="w-38 h-11 rounded-sm bg-intg-bg-2 px-3 font-normal text-white transition-all ease-in-out hover:bg-gradient-button-hover">
                     Update theme
                 </button>
             </div>
