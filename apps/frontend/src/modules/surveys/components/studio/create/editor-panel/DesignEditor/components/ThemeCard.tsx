@@ -4,7 +4,7 @@ interface CardProps {
 
 export const ThemeCard = ({ themeData: { themeName, palette } }: CardProps) => {
     return (
-        <div className="my-3 mb-2 flex w-full gap-5 rounded-md bg-[#272138] px-3 py-2">
+        <div className="bg-intg-bg-15 my-3 mb-2 flex w-full gap-5 rounded-md px-3 py-2">
             {/* color palete -- theme */}
             <div className="flex py-2">
                 {palette.map((color, index) => {

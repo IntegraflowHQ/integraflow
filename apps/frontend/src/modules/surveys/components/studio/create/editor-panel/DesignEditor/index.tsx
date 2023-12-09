@@ -59,7 +59,7 @@ export const UpdateDesignEditor = () => {
                         return (
                             <div
                                 key={index}
-                                className="my-3 mb-3 flex w-full justify-between rounded-md bg-[#272138] px-3 py-3"
+                                className="bg-intg-bg-15 my-3 mb-3 flex w-full justify-between rounded-md px-3 py-3"
                             >
                                 <p className="py-1 text-sm font-normal capitalize text-intg-text-2">
                                     {name}

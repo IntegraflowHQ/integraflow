@@ -5,6 +5,7 @@ import { Pen } from "lucide-react";
 import React from "react";
 import { Preview } from "../preview-panel/index.tsx";
 import { UpdateDesignEditor } from "./DesignEditor";
+import { UpdateSettingsEditor } from "./SettingsEditor";
 
 const tabs = [
     {
@@ -23,7 +24,7 @@ const tabs = [
         id: crypto.randomUUID(),
         label: "Update settings",
         icon: <SettingsIcon />,
-        content: <div>Settings</div>,
+        content: <UpdateSettingsEditor />,
     },
 ];
 
@@ -38,13 +39,13 @@ export default function Create() {
                     <Tabs.Trigger
                         value={label}
                         key={index}
-                        className="data-[state=active]:rounded-md data-[state=active]:bg-[#272138]"
+                        className="data-[state=active]:bg-intg-bg-15 data-[state=active]:rounded-md"
                         asChild
                     >
                         <div>
                             <Tooltip.Provider>
                                 <Tooltip.Root key={id}>
-                                    <Tooltip.Trigger className="h-9 rounded px-2 ease-in-out hover:bg-[#272138] hover:transition-all">
+                                    <Tooltip.Trigger className="hover:bg-intg-bg-15 h-9 rounded px-2 ease-in-out hover:transition-all">
                                         {icon}
                                     </Tooltip.Trigger>
 

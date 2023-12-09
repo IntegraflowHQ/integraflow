@@ -42,7 +42,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
         <div>
             <p className="py-4 text-sm font-normal uppercase">Selected Theme</p>
 
-            <div className="flex w-full gap-5 rounded-md bg-[#272138] px-3 py-2">
+            <div className="bg-intg-bg-15 flex w-full gap-5 rounded-md px-3 py-2">
                 {/* color palete -- theme */}
                 <div className="flex py-2">
                     {PALETTE.map((color, index) => {

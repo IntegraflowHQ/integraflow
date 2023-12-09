@@ -46,7 +46,7 @@ export default function Studio() {
                         <Tabs.Trigger
                             key={tab.label}
                             value={tab.label}
-                            className={`rounded-md px-3 py-2 text-sm text-intg-text transition-all ease-in hover:bg-[#272138] data-[state=active]:bg-[#272138] data-[state=active]:text-white`}
+                            className={`hover:bg-intg-bg-15 data-[state=active]:bg-intg-bg-15 rounded-md px-3 py-2 text-sm text-intg-text transition-all ease-in data-[state=active]:text-white`}
                         >
                             {tab.label}
                         </Tabs.Trigger>
