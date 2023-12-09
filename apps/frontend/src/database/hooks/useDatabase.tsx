@@ -1,5 +1,5 @@
-import useSessionState from "@/modules/users/hooks/useSessionState";
 import useUserState from "@/modules/users/hooks/useUserState";
+import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
 import { createSelectors } from "@/utils/selectors";
 import { useCallback, useEffect, useState } from "react";
 import { DB, createDb, removeDb } from "..";
@@ -7,7 +7,7 @@ import { useDbNamesStore } from "../states/dbNames";
 
 export default function useDatabase() {
     const { user } = useUserState();
-    const { session } = useSessionState();
+    const { workspace } = useWorkspaceState();
     const dbNamesStore = createSelectors(useDbNamesStore);
     const addDbName = dbNamesStore.use.add();
     const clearDbNames = dbNamesStore.use.clear();
@@ -16,10 +16,10 @@ export default function useDatabase() {
 
     useEffect(() => {
         const createDbForCurrentOrg = async () => {
-            if (!user || !session) return null;
+            if (!user || !workspace) return null;
 
             const org = user.organizations?.edges.find(
-                ({ node }) => node.slug === session.organization.slug,
+                ({ node }) => node.slug === workspace.organization.slug,
             )?.node;
             if (!org) return null;
 
@@ -39,7 +39,7 @@ export default function useDatabase() {
         };
 
         createDbForCurrentOrg();
-    }, [session, user]);
+    }, [workspace, user]);
 
     const clearDBs = useCallback(async () => {
         if (dbNames.length < 1) return;

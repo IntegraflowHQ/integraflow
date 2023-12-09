@@ -1,6 +1,6 @@
 import { NotFound } from "@/components/NotFound";
 import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
-import useSession from "@/modules/users/hooks/useSession";
+import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import { GlobalSpinner } from "@/ui";
 import { Navigate } from "react-router-dom";
 
@@ -11,7 +11,7 @@ type Props = {
 export const PrivateRoute = ({ children }: Props) => {
     const { token } = useAuthToken();
 
-    const { isValidating, isValidSession } = useSession();
+    const { isValidating, isValidWorkspace } = useWorkspace();
 
     if (!token) {
         return <Navigate to="/" />;
@@ -21,7 +21,7 @@ export const PrivateRoute = ({ children }: Props) => {
         return <GlobalSpinner />;
     }
 
-    if (!isValidSession) {
+    if (!isValidating && !isValidWorkspace) {
         return <NotFound />;
     }
 

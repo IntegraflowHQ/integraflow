@@ -1,15 +1,13 @@
 import {
-    Organization,
     OrganizationInviteDetails,
-    Project,
     User,
     useOrganizationInviteDetailsLazyQuery,
     useOrganizationJoinMutation,
 } from "@/generated/graphql";
 import useLogout from "@/modules/auth/hooks/useLogout";
 import { ExpiredInviteLink } from "@/modules/organizationInvite/components/ExpiredInviteLink";
-import useSession from "@/modules/users/hooks/useSession";
 import useUserState from "@/modules/users/hooks/useUserState";
+import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import { Button, GlobalSpinner, Screen } from "@/ui";
 import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
 import { getAcronym, omitTypename } from "@/utils";
@@ -18,8 +16,8 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export const EmailWorkspaceInvitation = () => {
     const { inviteLink } = useParams();
-    const { user, addWorkSpace } = useUserState();
-    const { createSession } = useSession();
+    const { user } = useUserState();
+    const { addWorkspace } = useWorkspace();
 
     const { handleLogout } = useLogout();
 
@@ -85,17 +83,7 @@ export const EmailWorkspaceInvitation = () => {
                 result.data?.organizationJoin?.user as User,
             );
 
-            createSession({
-                organization: omitTypename(
-                    result.data?.organizationJoin?.user
-                        .organization as Organization,
-                ),
-                project: omitTypename(
-                    result.data?.organizationJoin?.user.project as Project,
-                ),
-            });
-            addWorkSpace(userWorkspace);
-            return;
+            addWorkspace(userWorkspace);
         }
     };
 

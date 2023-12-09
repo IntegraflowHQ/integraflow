@@ -30,10 +30,10 @@ export const ORGANIZATION_INVITE = gql`
             lastName
             isStaff
             isActive
-          }
-          organization {
+        }
+        organization {
             id
-          }
+        }
     }
 `;
 
