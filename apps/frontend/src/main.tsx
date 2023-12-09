@@ -70,8 +70,12 @@ const router = createBrowserRouter([
                         element: <SurveyTemplates />,
                     },
                     {
-                        path: "projects/:projectSlug/surveys/studio",
+                        path: "/:orgSlug/projects/:projectSlug/survey/:surveySlug",
                         element: <SurveyStudio />,
+                    },
+                    {
+                        path: "/:orgSlug/projects/:projectSlug/surveys",
+                        element: <Surveys />,
                     },
                 ],
             },
