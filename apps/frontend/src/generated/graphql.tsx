@@ -14,6 +14,12 @@ export type Scalars = {
   Int: number;
   Float: number;
   /**
+   * The `Date` scalar type represents a Date
+   * value as specified by
+   * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+   */
+  Date: any;
+  /**
    * The `DateTime` scalar type represents a DateTime
    * value as specified by
    * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
@@ -77,6 +83,20 @@ export type AuthUser = Node & {
    * Requires one of the following permissions: AUTHENTICATED_USER.
    */
   project?: Maybe<Project>;
+};
+
+export type DateRangeInput = {
+  /** Start date. */
+  gte?: InputMaybe<Scalars['Date']>;
+  /** End date. */
+  lte?: InputMaybe<Scalars['Date']>;
+};
+
+export type DateTimeRangeInput = {
+  /** Start date. */
+  gte?: InputMaybe<Scalars['DateTime']>;
+  /** End date. */
+  lte?: InputMaybe<Scalars['DateTime']>;
 };
 
 /** Authenticates a user account via email and authentication token. */
@@ -175,8 +195,80 @@ export type Mutation = {
   organizationJoin?: Maybe<OrganizationJoin>;
   /** Creates a new project */
   projectCreate?: Maybe<ProjectCreate>;
+  /**
+   * Creates a new theme
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  projectThemeCreate?: Maybe<ProjectThemeCreate>;
+  /**
+   * Deletes a theme.
+   *
+   * Requires one of the following permissions: PROJECT_ADMIN_ACCESS.
+   */
+  projectThemeDelete?: Maybe<ProjectThemeDelete>;
+  /**
+   * Creates a new theme
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  projectThemeUpdate?: Maybe<ProjectThemeUpdate>;
   /** Updates a project. */
   projectUpdate?: Maybe<ProjectUpdate>;
+  /**
+   * Creates a new distibution channel
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  surveyChannelCreate?: Maybe<SurveyChannelCreate>;
+  /**
+   * Deletes a channel.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  surveyChannelDelete?: Maybe<SurveyChannelDelete>;
+  /**
+   * Updates a channel
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  surveyChannelUpdate?: Maybe<SurveyChannelUpdate>;
+  /**
+   * Creates a new survey
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  surveyCreate?: Maybe<SurveyCreate>;
+  /**
+   * Deletes a survey.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  surveyDelete?: Maybe<SurveyDelete>;
+  /**
+   * Creates a new question
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  surveyQuestionCreate?: Maybe<SurveyQuestionCreate>;
+  /**
+   * Deletes a question.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  surveyQuestionDelete?: Maybe<SurveyQuestionDelete>;
+  /**
+   * Updates a question
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  surveyQuestionUpdate?: Maybe<SurveyQuestionUpdate>;
+  /**
+   * Updates a survey
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  surveyUpdate?: Maybe<SurveyUpdate>;
   /** Refresh JWT token. Mutation tries to take refreshToken from the input. If it fails it will try to take `refreshToken` from the http-only cookie `refreshToken`. `csrfToken` is required when `refreshToken` is provided as a cookie. */
   tokenRefresh?: Maybe<RefreshToken>;
 };
@@ -222,8 +314,72 @@ export type MutationProjectCreateArgs = {
 };
 
 
+export type MutationProjectThemeCreateArgs = {
+  input: ProjectThemeCreateInput;
+};
+
+
+export type MutationProjectThemeDeleteArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationProjectThemeUpdateArgs = {
+  id: Scalars['ID'];
+  input: ProjectThemeUpdateInput;
+};
+
+
 export type MutationProjectUpdateArgs = {
   input: ProjectUpdateInput;
+};
+
+
+export type MutationSurveyChannelCreateArgs = {
+  input: SurveyChannelCreateInput;
+};
+
+
+export type MutationSurveyChannelDeleteArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationSurveyChannelUpdateArgs = {
+  id: Scalars['ID'];
+  input: SurveyChannelUpdateInput;
+};
+
+
+export type MutationSurveyCreateArgs = {
+  input: SurveyCreateInput;
+};
+
+
+export type MutationSurveyDeleteArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationSurveyQuestionCreateArgs = {
+  input: SurveyQuestionCreateInput;
+};
+
+
+export type MutationSurveyQuestionDeleteArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationSurveyQuestionUpdateArgs = {
+  id: Scalars['ID'];
+  input: SurveyQuestionUpdateInput;
+};
+
+
+export type MutationSurveyUpdateArgs = {
+  id: Scalars['ID'];
+  input: SurveyUpdateInput;
 };
 
 
@@ -449,10 +605,8 @@ export type OrganizationInviteDetails = Node & {
 };
 
 /** The organization invite link. */
-export type OrganizationInviteLink = Node & {
+export type OrganizationInviteLink = {
   __typename?: 'OrganizationInviteLink';
-  /** The ID of the object. */
-  id: Scalars['ID'];
   /**
    * The link of the organization the invite is for.
    *
@@ -591,6 +745,7 @@ export enum ProjectErrorCode {
   AlreadyExists = 'ALREADY_EXISTS',
   GraphqlError = 'GRAPHQL_ERROR',
   Invalid = 'INVALID',
+  InvalidPermission = 'INVALID_PERMISSION',
   NotFound = 'NOT_FOUND',
   Required = 'REQUIRED',
   Unique = 'UNIQUE'
@@ -610,6 +765,106 @@ export type ProjectSortingInput = {
   direction: OrderDirection;
   /** Sort projects by the selected field. */
   field: ProjectSortField;
+};
+
+/** Represents a theme. */
+export type ProjectTheme = Node & {
+  __typename?: 'ProjectTheme';
+  /** The settings of the theme. */
+  colorScheme?: Maybe<Scalars['JSONString']>;
+  /** The time at which the invite was created. */
+  createdAt: Scalars['DateTime'];
+  /**
+   * The user who created the theme.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  creator: User;
+  /** The ID of the theme. */
+  id: Scalars['ID'];
+  /** Name of the theme. */
+  name: Scalars['String'];
+  /**
+   * The project the theme belongs to.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  project: Project;
+  /** For internal purpose. */
+  reference?: Maybe<Scalars['ID']>;
+  /** The settings of the theme. */
+  settings?: Maybe<Scalars['JSONString']>;
+  /** The last time at which the invite was updated. */
+  updatedAt: Scalars['DateTime'];
+};
+
+export type ProjectThemeCountableConnection = {
+  __typename?: 'ProjectThemeCountableConnection';
+  edges: Array<ProjectThemeCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type ProjectThemeCountableEdge = {
+  __typename?: 'ProjectThemeCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: ProjectTheme;
+};
+
+/**
+ * Creates a new theme
+ *
+ * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+ */
+export type ProjectThemeCreate = {
+  __typename?: 'ProjectThemeCreate';
+  errors: Array<ProjectError>;
+  projectErrors: Array<ProjectError>;
+  projectTheme?: Maybe<ProjectTheme>;
+};
+
+export type ProjectThemeCreateInput = {
+  /** The color scheme of the theme. */
+  colorScheme?: InputMaybe<Scalars['JSONString']>;
+  /** The id of the theme. */
+  id?: InputMaybe<Scalars['UUID']>;
+  /** The name of the theme. */
+  name: Scalars['String'];
+};
+
+/**
+ * Deletes a theme.
+ *
+ * Requires one of the following permissions: PROJECT_ADMIN_ACCESS.
+ */
+export type ProjectThemeDelete = {
+  __typename?: 'ProjectThemeDelete';
+  errors: Array<ProjectError>;
+  projectErrors: Array<ProjectError>;
+  projectTheme?: Maybe<ProjectTheme>;
+};
+
+/**
+ * Creates a new theme
+ *
+ * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+ */
+export type ProjectThemeUpdate = {
+  __typename?: 'ProjectThemeUpdate';
+  errors: Array<ProjectError>;
+  projectErrors: Array<ProjectError>;
+  projectTheme?: Maybe<ProjectTheme>;
+};
+
+export type ProjectThemeUpdateInput = {
+  /** The color scheme of the theme. */
+  colorScheme?: InputMaybe<Scalars['JSONString']>;
+  /** The name of the theme. */
+  name?: InputMaybe<Scalars['String']>;
 };
 
 /** Updates a project. */
@@ -637,6 +892,12 @@ export type Query = {
   __typename?: 'Query';
   _entities?: Maybe<Array<Maybe<_Entity>>>;
   _service?: Maybe<_Service>;
+  /**
+   * List of channels for a specific survey.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  channels?: Maybe<SurveyChannelCountableConnection>;
   /** One specific organization invite. */
   organizationInviteDetails?: Maybe<InviteDetails>;
   /**
@@ -645,6 +906,24 @@ export type Query = {
    * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
    */
   organizationInviteLink?: Maybe<OrganizationInviteLink>;
+  /**
+   * List of questions for a specific survey.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  questions?: Maybe<SurveyQuestionCountableConnection>;
+  /**
+   * List of the project's surveys.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  surveys?: Maybe<SurveyCountableConnection>;
+  /**
+   * List of the project's themes.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  themes?: Maybe<ProjectThemeCountableConnection>;
   /**
    * Return the currently authenticated user.
    *
@@ -659,8 +938,44 @@ export type Query_EntitiesArgs = {
 };
 
 
+export type QueryChannelsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  id: Scalars['ID'];
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryOrganizationInviteDetailsArgs = {
   inviteLink: Scalars['String'];
+};
+
+
+export type QueryQuestionsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  id: Scalars['ID'];
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QuerySurveysArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<SurveyFilterInput>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  sortBy?: InputMaybe<SurveySortingInput>;
+};
+
+
+export type QueryThemesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 /** Refresh JWT token. Mutation tries to take refreshToken from the input. If it fails it will try to take `refreshToken` from the http-only cookie `refreshToken`. `csrfToken` is required when `refreshToken` is provided as a cookie. */
@@ -676,6 +991,469 @@ export enum RoleLevel {
   Admin = 'ADMIN',
   Member = 'MEMBER'
 }
+
+/** Represents a survey. */
+export type Survey = Node & {
+  __typename?: 'Survey';
+  /**
+   * The distribution channels supported by the survey
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  channels: SurveyChannelCountableConnection;
+  /** The time at which the survey was created. */
+  createdAt: Scalars['DateTime'];
+  /**
+   * The user who created the theme.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  creator: User;
+  /** The ID of the survey. */
+  id: Scalars['ID'];
+  /** Name of the survey. */
+  name?: Maybe<Scalars['String']>;
+  /**
+   * The project the survey belongs to
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  project?: Maybe<Project>;
+  /**
+   * The questions in the the survey
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  questions: SurveyQuestionCountableConnection;
+  /** For internal purpose. */
+  reference?: Maybe<Scalars['ID']>;
+  /** The settings of the survey. */
+  settings?: Maybe<Scalars['JSONString']>;
+  /** Slug of the survey. */
+  slug: Scalars['String'];
+  /** The status of the survey */
+  status: SurveyStatusEnum;
+  /**
+   * The theme of the survey.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  theme?: Maybe<ProjectTheme>;
+  /** The type of the survey */
+  type: SurveyTypeEnum;
+  /** The last time at which the survey was updated. */
+  updatedAt: Scalars['DateTime'];
+};
+
+
+/** Represents a survey. */
+export type SurveyChannelsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+/** Represents a survey. */
+export type SurveyQuestionsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+/** Represents a survey channel. */
+export type SurveyChannel = Node & {
+  __typename?: 'SurveyChannel';
+  /** The settings of the question. */
+  conditions?: Maybe<Scalars['JSONString']>;
+  /** The time at which the channel was created. */
+  createdAt: Scalars['DateTime'];
+  /** The ID of the channel. */
+  id: Scalars['ID'];
+  /** For internal purpose. */
+  reference?: Maybe<Scalars['ID']>;
+  /** The settings of the question. */
+  settings?: Maybe<Scalars['JSONString']>;
+  /**
+   * The project the survey belongs to
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  survey?: Maybe<Survey>;
+  /** The options of the question. */
+  triggers?: Maybe<Scalars['JSONString']>;
+  /** The type of the survey channel */
+  type: SurveyChannelTypeEnum;
+};
+
+export type SurveyChannelCountableConnection = {
+  __typename?: 'SurveyChannelCountableConnection';
+  edges: Array<SurveyChannelCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type SurveyChannelCountableEdge = {
+  __typename?: 'SurveyChannelCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: SurveyChannel;
+};
+
+/**
+ * Creates a new distibution channel
+ *
+ * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+ */
+export type SurveyChannelCreate = {
+  __typename?: 'SurveyChannelCreate';
+  errors: Array<SurveyError>;
+  surveyChannel?: Maybe<SurveyChannel>;
+  surveyErrors: Array<SurveyError>;
+};
+
+export type SurveyChannelCreateInput = {
+  /** The conditions for the channel. */
+  conditions?: InputMaybe<Scalars['JSONString']>;
+  /** The id of the channel. */
+  id?: InputMaybe<Scalars['UUID']>;
+  /** The settings of the channel. */
+  settings?: InputMaybe<Scalars['JSONString']>;
+  /** The survey ID the channel belongs to. */
+  surveyId: Scalars['ID'];
+  /** The triggers for the channel. */
+  triggers?: InputMaybe<Scalars['JSONString']>;
+  /** The type of the distribution channel */
+  type?: InputMaybe<SurveyChannelTypeEnum>;
+};
+
+/**
+ * Deletes a channel.
+ *
+ * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+ */
+export type SurveyChannelDelete = {
+  __typename?: 'SurveyChannelDelete';
+  errors: Array<SurveyError>;
+  surveyChannel?: Maybe<SurveyChannel>;
+  surveyErrors: Array<SurveyError>;
+};
+
+export enum SurveyChannelTypeEnum {
+  Api = 'API',
+  Custom = 'CUSTOM',
+  Email = 'EMAIL',
+  InApp = 'IN_APP',
+  Link = 'LINK'
+}
+
+/**
+ * Updates a channel
+ *
+ * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+ */
+export type SurveyChannelUpdate = {
+  __typename?: 'SurveyChannelUpdate';
+  errors: Array<SurveyError>;
+  surveyChannel?: Maybe<SurveyChannel>;
+  surveyErrors: Array<SurveyError>;
+};
+
+export type SurveyChannelUpdateInput = {
+  /** The conditions for the channel. */
+  conditions?: InputMaybe<Scalars['JSONString']>;
+  /** The settings of the channel. */
+  settings?: InputMaybe<Scalars['JSONString']>;
+  /** The triggers for the channel. */
+  triggers?: InputMaybe<Scalars['JSONString']>;
+  /** The type of the distribution channel */
+  type?: InputMaybe<SurveyChannelTypeEnum>;
+};
+
+export type SurveyCountableConnection = {
+  __typename?: 'SurveyCountableConnection';
+  edges: Array<SurveyCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type SurveyCountableEdge = {
+  __typename?: 'SurveyCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: Survey;
+};
+
+/**
+ * Creates a new survey
+ *
+ * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+ */
+export type SurveyCreate = {
+  __typename?: 'SurveyCreate';
+  errors: Array<SurveyError>;
+  survey?: Maybe<Survey>;
+  surveyErrors: Array<SurveyError>;
+};
+
+export type SurveyCreateInput = {
+  /** The id of the survey. */
+  id?: InputMaybe<Scalars['UUID']>;
+  /** The name of the survey. */
+  name?: InputMaybe<Scalars['String']>;
+  /** The settings of the survey. */
+  settings?: InputMaybe<Scalars['JSONString']>;
+  /** The slug of the survey. */
+  slug?: InputMaybe<Scalars['String']>;
+  /** The status of the survey */
+  status?: InputMaybe<SurveyStatusEnum>;
+  /** The theme of the survey. */
+  themeId?: InputMaybe<Scalars['ID']>;
+  /** The type of the survey */
+  type?: InputMaybe<SurveyTypeEnum>;
+};
+
+/**
+ * Deletes a survey.
+ *
+ * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+ */
+export type SurveyDelete = {
+  __typename?: 'SurveyDelete';
+  errors: Array<SurveyError>;
+  survey?: Maybe<Survey>;
+  surveyErrors: Array<SurveyError>;
+};
+
+/** Represents errors in survey mutations. */
+export type SurveyError = {
+  __typename?: 'SurveyError';
+  /** The error code. */
+  code: ProjectErrorCode;
+  /** Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field. */
+  field?: Maybe<Scalars['String']>;
+  /** The error message. */
+  message?: Maybe<Scalars['String']>;
+};
+
+export type SurveyFilterInput = {
+  createdAt?: InputMaybe<DateRangeInput>;
+  endDate?: InputMaybe<DateTimeRangeInput>;
+  /** Filter by ids. */
+  ids?: InputMaybe<Array<Scalars['ID']>>;
+  startDate?: InputMaybe<DateRangeInput>;
+  status?: InputMaybe<SurveyStatusEnum>;
+  /** Filter by type */
+  type?: InputMaybe<SurveyTypeEnum>;
+  updatedAt?: InputMaybe<DateTimeRangeInput>;
+};
+
+/** Represents a question. */
+export type SurveyQuestion = Node & {
+  __typename?: 'SurveyQuestion';
+  /** The time at which the question was created. */
+  createdAt: Scalars['DateTime'];
+  /** Description of the question. */
+  description: Scalars['String'];
+  /** The ID of the question. */
+  id: Scalars['ID'];
+  /** Label of the question. */
+  label: Scalars['String'];
+  /** The position of the question. */
+  maxPath: Scalars['Int'];
+  /** The options of the question. */
+  options?: Maybe<Scalars['JSONString']>;
+  /** The position of the question. */
+  orderNumber: Scalars['Int'];
+  /** For internal purpose. */
+  reference?: Maybe<Scalars['ID']>;
+  /** The settings of the question. */
+  settings?: Maybe<Scalars['JSONString']>;
+  /**
+   * The project the survey belongs to
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  survey?: Maybe<Survey>;
+  /** The type of the question */
+  type: SurveyQuestionTypeEnum;
+};
+
+export type SurveyQuestionCountableConnection = {
+  __typename?: 'SurveyQuestionCountableConnection';
+  edges: Array<SurveyQuestionCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type SurveyQuestionCountableEdge = {
+  __typename?: 'SurveyQuestionCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: SurveyQuestion;
+};
+
+/**
+ * Creates a new question
+ *
+ * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+ */
+export type SurveyQuestionCreate = {
+  __typename?: 'SurveyQuestionCreate';
+  errors: Array<SurveyError>;
+  surveyErrors: Array<SurveyError>;
+  surveyQuestion?: Maybe<SurveyQuestion>;
+};
+
+export type SurveyQuestionCreateInput = {
+  /** The description of the question. */
+  description?: InputMaybe<Scalars['String']>;
+  /** The id of the question. */
+  id?: InputMaybe<Scalars['UUID']>;
+  /** The label of the question. */
+  label?: InputMaybe<Scalars['String']>;
+  /** The options of the question. */
+  options?: InputMaybe<Scalars['JSONString']>;
+  /** The settings of the question. */
+  orderNumber: Scalars['Int'];
+  /** The settings of the question. */
+  settings?: InputMaybe<Scalars['JSONString']>;
+  /** The survey ID the question belongs to. */
+  surveyId: Scalars['ID'];
+  /** The type of the question */
+  type?: InputMaybe<SurveyQuestionTypeEnum>;
+};
+
+/**
+ * Deletes a question.
+ *
+ * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+ */
+export type SurveyQuestionDelete = {
+  __typename?: 'SurveyQuestionDelete';
+  errors: Array<SurveyError>;
+  surveyErrors: Array<SurveyError>;
+  surveyQuestion?: Maybe<SurveyQuestion>;
+};
+
+export enum SurveyQuestionTypeEnum {
+  Boolean = 'BOOLEAN',
+  Csat = 'CSAT',
+  Cta = 'CTA',
+  Custom = 'CUSTOM',
+  Date = 'DATE',
+  Dropdown = 'DROPDOWN',
+  Form = 'FORM',
+  Integration = 'INTEGRATION',
+  Multiple = 'MULTIPLE',
+  Nps = 'NPS',
+  NumericalScale = 'NUMERICAL_SCALE',
+  Rating = 'RATING',
+  Single = 'SINGLE',
+  SmileyScale = 'SMILEY_SCALE',
+  Text = 'TEXT'
+}
+
+/**
+ * Updates a question
+ *
+ * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+ */
+export type SurveyQuestionUpdate = {
+  __typename?: 'SurveyQuestionUpdate';
+  errors: Array<SurveyError>;
+  surveyErrors: Array<SurveyError>;
+  surveyQuestion?: Maybe<SurveyQuestion>;
+};
+
+export type SurveyQuestionUpdateInput = {
+  /** The description of the question. */
+  description?: InputMaybe<Scalars['String']>;
+  /** The label of the question. */
+  label?: InputMaybe<Scalars['String']>;
+  /** The options of the question. */
+  options?: InputMaybe<Scalars['JSONString']>;
+  /** The settings of the question. */
+  orderNumber: Scalars['Int'];
+  /** The settings of the question. */
+  settings?: InputMaybe<Scalars['JSONString']>;
+  /** The type of the question */
+  type?: InputMaybe<SurveyQuestionTypeEnum>;
+};
+
+export enum SurveySortField {
+  /** Sort surveys by created at. */
+  CreatedAt = 'CREATED_AT',
+  /** Sort surveys by last modified at. */
+  LastModifiedAt = 'LAST_MODIFIED_AT',
+  /** Sort surveys by name. */
+  Name = 'NAME',
+  /** Sort surveys by status. */
+  Status = 'STATUS',
+  /** Sort surveys by type. */
+  Type = 'TYPE'
+}
+
+export type SurveySortingInput = {
+  /** Specifies the direction in which to sort surveys. */
+  direction: OrderDirection;
+  /** Sort surveys by the selected field. */
+  field: SurveySortField;
+};
+
+export enum SurveyStatusEnum {
+  Active = 'ACTIVE',
+  Archived = 'ARCHIVED',
+  Completed = 'COMPLETED',
+  Draft = 'DRAFT',
+  InProgress = 'IN_PROGRESS',
+  Paused = 'PAUSED'
+}
+
+export enum SurveyTypeEnum {
+  Custom = 'CUSTOM',
+  Poll = 'POLL',
+  Quiz = 'QUIZ',
+  Survey = 'SURVEY'
+}
+
+/**
+ * Updates a survey
+ *
+ * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+ */
+export type SurveyUpdate = {
+  __typename?: 'SurveyUpdate';
+  errors: Array<SurveyError>;
+  survey?: Maybe<Survey>;
+  surveyErrors: Array<SurveyError>;
+};
+
+export type SurveyUpdateInput = {
+  /** The name of the survey. */
+  name?: InputMaybe<Scalars['String']>;
+  /** The settings of the survey. */
+  settings?: InputMaybe<Scalars['JSONString']>;
+  /** The slug of the survey. */
+  slug?: InputMaybe<Scalars['String']>;
+  /** The status of the survey */
+  status?: InputMaybe<SurveyStatusEnum>;
+  /** The theme of the survey. */
+  themeId?: InputMaybe<Scalars['ID']>;
+  /** The type of the survey */
+  type?: InputMaybe<SurveyTypeEnum>;
+};
 
 /** Represents user data. */
 export type User = Node & {
@@ -869,7 +1647,7 @@ export type TokenRefreshMutationVariables = Exact<{
 
 export type TokenRefreshMutation = { __typename?: 'Mutation', tokenRefresh?: { __typename?: 'RefreshToken', token?: string | null, errors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> } | null };
 
-export type OrganizationInviteLinkCreateFragmentFragment = { __typename?: 'OrganizationInviteLink', id: string, inviteLink: string };
+export type OrganizationInviteLinkCreateFragmentFragment = { __typename?: 'OrganizationInviteLink', inviteLink: string };
 
 export type OrganizationInviteCreateFragmentFragment = { __typename?: 'OrganizationInviteCreate', organizationInvite?: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel, createdAt: string, updatedAt: string, expired: boolean, inviter: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean }, organization: { __typename?: 'Organization', id: string } } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
 
@@ -912,7 +1690,7 @@ export type OrganizationInviteDetailsQuery = { __typename?: 'Query', organizatio
 export type OrganizationInviteLinkCreateQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type OrganizationInviteLinkCreateQuery = { __typename?: 'Query', organizationInviteLink?: { __typename?: 'OrganizationInviteLink', id: string, inviteLink: string } | null };
+export type OrganizationInviteLinkCreateQuery = { __typename?: 'Query', organizationInviteLink?: { __typename?: 'OrganizationInviteLink', inviteLink: string } | null };
 
 export type ProjectCreateFragmentFragment = { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
 
@@ -920,12 +1698,33 @@ export type ProjectErrorFragmentFragment = { __typename?: 'ProjectError', field?
 
 export type ProjectFragmentFragment = { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } };
 
+export type ProjectThemeFragmentFragment = { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } };
+
 export type ProjectCreateMutationVariables = Exact<{
   input: ProjectCreateInput;
 }>;
 
 
 export type ProjectCreateMutation = { __typename?: 'Mutation', projectCreate?: { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+
+export type SurveyQuestionFragmentFragment = { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string };
+
+export type SurveyChannelFragmentFragment = { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string };
+
+export type SurveyFragmentFragment = { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } };
+
+export type SurveyErrorFragmentFragment = { __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode };
+
+export type SurveyCreateFragmentFragment = { __typename?: 'SurveyCreate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null };
+
+export type SurveyCreateMutationVariables = Exact<{
+  input: SurveyCreateInput;
+}>;
+
+
+export type SurveyCreateMutation = { __typename?: 'Mutation', surveyCreate?: { __typename?: 'SurveyCreate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null } | null };
+
+export type UserFragmentFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null };
 
 export type ViewerQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1031,7 +1830,6 @@ ${AuthUserFragmentFragmentDoc}
 ${OrganizationErrorFragmentFragmentDoc}`;
 export const OrganizationInviteLinkCreateFragmentFragmentDoc = gql`
     fragment OrganizationInviteLinkCreateFragment on OrganizationInviteLink {
-  id
   inviteLink
 }
     `;
@@ -1138,6 +1936,140 @@ export const ProjectCreateFragmentFragmentDoc = gql`
 }
     ${ProjectFragmentFragmentDoc}
 ${ProjectErrorFragmentFragmentDoc}`;
+export const SurveyErrorFragmentFragmentDoc = gql`
+    fragment SurveyErrorFragment on SurveyError {
+  field
+  message
+  code
+}
+    `;
+export const UserFragmentFragmentDoc = gql`
+    fragment UserFragment on User {
+  id
+  email
+  firstName
+  lastName
+  isStaff
+  isActive
+  organization {
+    ...AuthOrganizationFragment
+  }
+  project {
+    ...ProjectFragment
+  }
+  organizations(first: 50) {
+    edges {
+      node {
+        id
+        slug
+        name
+        memberCount
+        projects(first: 100) {
+          edges {
+            node {
+              ...ProjectFragment
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    ${AuthOrganizationFragmentFragmentDoc}
+${ProjectFragmentFragmentDoc}`;
+export const ProjectThemeFragmentFragmentDoc = gql`
+    fragment ProjectThemeFragment on ProjectTheme {
+  id
+  reference
+  name
+  colorScheme
+  settings
+  project {
+    ...ProjectFragment
+  }
+  creator {
+    ...UserFragment
+  }
+  createdAt
+  updatedAt
+}
+    ${ProjectFragmentFragmentDoc}
+${UserFragmentFragmentDoc}`;
+export const SurveyQuestionFragmentFragmentDoc = gql`
+    fragment SurveyQuestionFragment on SurveyQuestion {
+  id
+  reference
+  label
+  description
+  type
+  options
+  settings
+  orderNumber
+  maxPath
+  createdAt
+}
+    `;
+export const SurveyChannelFragmentFragmentDoc = gql`
+    fragment SurveyChannelFragment on SurveyChannel {
+  id
+  reference
+  type
+  triggers
+  conditions
+  settings
+  createdAt
+}
+    `;
+export const SurveyFragmentFragmentDoc = gql`
+    fragment SurveyFragment on Survey {
+  id
+  reference
+  name
+  slug
+  type
+  status
+  settings
+  theme {
+    ...ProjectThemeFragment
+  }
+  creator {
+    ...UserFragment
+  }
+  questions(first: 50) {
+    edges {
+      node {
+        ...SurveyQuestionFragment
+      }
+    }
+  }
+  channels(first: 50) {
+    edges {
+      node {
+        ...SurveyChannelFragment
+      }
+    }
+  }
+  createdAt
+  updatedAt
+}
+    ${ProjectThemeFragmentFragmentDoc}
+${UserFragmentFragmentDoc}
+${SurveyQuestionFragmentFragmentDoc}
+${SurveyChannelFragmentFragmentDoc}`;
+export const SurveyCreateFragmentFragmentDoc = gql`
+    fragment SurveyCreateFragment on SurveyCreate {
+  surveyErrors {
+    ...SurveyErrorFragment
+  }
+  errors {
+    ...SurveyErrorFragment
+  }
+  survey {
+    ...SurveyFragment
+  }
+}
+    ${SurveyErrorFragmentFragmentDoc}
+${SurveyFragmentFragmentDoc}`;
 export const EmailTokenUserAuthDocument = gql`
     mutation emailTokenUserAuth($email: String!, $token: String!, $inviteLink: String) {
   emailTokenUserAuth(email: $email, token: $token, inviteLink: $inviteLink) {
@@ -1552,42 +2484,46 @@ export function useProjectCreateMutation(baseOptions?: Apollo.MutationHookOption
 export type ProjectCreateMutationHookResult = ReturnType<typeof useProjectCreateMutation>;
 export type ProjectCreateMutationResult = Apollo.MutationResult<ProjectCreateMutation>;
 export type ProjectCreateMutationOptions = Apollo.BaseMutationOptions<ProjectCreateMutation, ProjectCreateMutationVariables>;
+export const SurveyCreateDocument = gql`
+    mutation SurveyCreate($input: SurveyCreateInput!) {
+  surveyCreate(input: $input) {
+    ...SurveyCreateFragment
+  }
+}
+    ${SurveyCreateFragmentFragmentDoc}`;
+export type SurveyCreateMutationFn = Apollo.MutationFunction<SurveyCreateMutation, SurveyCreateMutationVariables>;
+
+/**
+ * __useSurveyCreateMutation__
+ *
+ * To run a mutation, you first call `useSurveyCreateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSurveyCreateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [surveyCreateMutation, { data, loading, error }] = useSurveyCreateMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSurveyCreateMutation(baseOptions?: Apollo.MutationHookOptions<SurveyCreateMutation, SurveyCreateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SurveyCreateMutation, SurveyCreateMutationVariables>(SurveyCreateDocument, options);
+      }
+export type SurveyCreateMutationHookResult = ReturnType<typeof useSurveyCreateMutation>;
+export type SurveyCreateMutationResult = Apollo.MutationResult<SurveyCreateMutation>;
+export type SurveyCreateMutationOptions = Apollo.BaseMutationOptions<SurveyCreateMutation, SurveyCreateMutationVariables>;
 export const ViewerDocument = gql`
     query viewer {
   viewer {
-    id
-    email
-    firstName
-    lastName
-    isStaff
-    isActive
-    organization {
-      ...AuthOrganizationFragment
-    }
-    project {
-      ...ProjectFragment
-    }
-    organizations(first: 50) {
-      edges {
-        node {
-          id
-          slug
-          name
-          memberCount
-          projects(first: 100) {
-            edges {
-              node {
-                ...ProjectFragment
-              }
-            }
-          }
-        }
-      }
-    }
+    ...UserFragment
   }
 }
-    ${AuthOrganizationFragmentFragmentDoc}
-${ProjectFragmentFragmentDoc}`;
+    ${UserFragmentFragmentDoc}`;
 
 /**
  * __useViewerQuery__
