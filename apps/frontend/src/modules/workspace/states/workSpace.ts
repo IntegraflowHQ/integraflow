@@ -13,7 +13,7 @@ export type WorkspaceState = {
 };
 
 export type WorkSpaceActions = {
-    leaveWorkspace: () => void;
+    clearWorkspace: () => void;
     updateWorkspace: (data: Workspace) => void;
 };
 
@@ -25,7 +25,7 @@ export const useWorkspaceStore = create<WorkspaceState & WorkSpaceActions>()(
     persist(
         (set) => ({
             ...initialState,
-            leaveWorkspace: () => set(initialState),
+            clearWorkspace: () => set(initialState),
             updateWorkspace: (data) =>
                 set({
                     workspace: {

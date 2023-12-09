@@ -4,7 +4,7 @@ import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
 import { useAuthToken } from "./useAuthToken";
 
 const useLogout = () => {
-    const { leaveWorkspace } = useWorkspaceState();
+    const { clearWorkspace } = useWorkspaceState();
     const { deleteUser } = useUserState();
     const { logout } = useAuthToken();
     const { clearDBs } = useDatabase();
@@ -13,7 +13,7 @@ const useLogout = () => {
         await clearDBs();
         deleteUser();
         logout();
-        leaveWorkspace();
+        clearWorkspace();
     };
 
     return {

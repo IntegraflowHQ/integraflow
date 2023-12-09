@@ -5,7 +5,7 @@ export default function useWorkspaceState() {
     const workspaceStore = createSelectors(useWorkspaceStore);
     const workspace = workspaceStore.use.workspace();
     const updateWorkspace = workspaceStore.use.updateWorkspace();
-    const leaveWorkspace = workspaceStore.use.leaveWorkspace();
+    const clearWorkspace = workspaceStore.use.clearWorkspace();
 
-    return { workspace, updateWorkspace, leaveWorkspace };
+    return { workspace, updateWorkspace, clearWorkspace };
 }
