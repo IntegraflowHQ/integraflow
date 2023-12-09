@@ -3,7 +3,8 @@ import * as Tabs from "@radix-ui/react-tabs";
 import { Pen } from "lucide-react";
 import React from "react";
 import { Preview } from "../preview-panel/index.tsx";
-import { UpdateDesignEditor } from "./components";
+import { UpdateDesignEditor } from "./DesignEditor";
+import { StudioTooltip } from "./components/Tooltip.tsx";
 
 const tabs = [
   {
@@ -36,11 +37,11 @@ export default function Create() {
           <Tabs.Trigger
             value={label}
             onClick={() => setActiveTab(id)}
-            className={`delay-50 rounded p-2 ease-in-out hover:bg-intg-bg-13  hover:transition-all ${
+            className={`rounded p-2 ease-in-out hover:bg-intg-bg-13  hover:transition-all ${
               activeTab === id ? "bg-intg-bg-13" : ""
             }`}
           >
-            {icon}
+            <StudioTooltip info={label} item={icon} />
           </Tabs.Trigger>
         ))}
       </Tabs.List>

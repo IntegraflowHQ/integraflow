@@ -1,8 +1,8 @@
 import * as Tabs from "@radix-ui/react-tabs";
 import { MoreHorizontal, X } from "lucide-react";
 import React from "react";
-import { DesignEditorContent } from "./EditorContent";
-import { ThemesMenu } from "./ThemesMenu";
+import { DesignEditorContent } from "./components/EditorContent";
+import { ThemesMenu } from "./components/ThemesMenu";
 
 const THEMES_INFO = [
   {
