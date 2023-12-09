@@ -1,9 +1,12 @@
-import { UserProfile } from "@/layout/partials/UserProfile";
 import { Project } from "@/generated/graphql";
+import { UserProfile } from "@/layout/partials/UserProfile";
+import { useOnboarding } from "@/modules/onboarding/hooks/useOnboarding";
 import { OrganizationInvite } from "@/modules/organizationInvite/components/OrganizationInvite";
 import { CreateNewProject } from "@/modules/projects/components/CreateNewProject";
-import useSession from "@/modules/users/hooks/useSession";
-import { Button } from "@/ui";
+import useUserState from "@/modules/users/hooks/useUserState";
+import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
+import { ROUTES } from "@/routes";
+import { Button, ProgressRadial } from "@/ui";
 import { JoinDiscord } from "@/ui/Banner/JoinDiscord";
 import {
     DropdownMenu,
@@ -18,7 +21,6 @@ import { NavItem } from "@/ui/NavItem/NavItem";
 import { NavLink } from "@/ui/NavItem/NavLink";
 import {
     CheckCircleIcon,
-    CircleIcon,
     CirclePlusIcon,
     CursorIcon,
     DocumentIcon,
@@ -30,40 +32,50 @@ import {
 import { DeepOmit } from "@apollo/client/utilities";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export const Navbar = () => {
+    const { workspace, projects, switchProject } = useWorkspace();
+
     const navItems = [
         {
             id: 1,
             title: "Home",
             icon: <HomeIcon />,
+            href: "",
         },
         {
             id: 2,
             title: "Surveys",
             icon: <DocumentIcon />,
+            href: ROUTES.SURVEY_LIST.replace(
+                ":orgSlug",
+                workspace?.organization.slug as string,
+            ).replace(":projectSlug", workspace?.project.slug as string),
         },
         {
             id: 3,
             title: "Events",
             icon: <CursorIcon />,
+            href: "",
         },
         {
             id: 4,
             title: "Audience",
             icon: <PeopleIcon />,
+            href: "",
         },
     ];
-
-    const { session, projects, switchProject } = useSession();
 
     const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
     const [openOrganizationInviteModal, setOpenOrganizationInviteModal] =
         useState(false);
+    const { user } = useUserState();
+    const { completionRate: onboardingCompletionRate } = useOnboarding();
 
     return (
         <div
-            className="flex h-screen w-[240px] flex-col  justify-between border-r border-intg-bg-4 bg-intg-black p-6"
+            className="scrollbar-hide flex h-screen w-[240px]  flex-col justify-between overflow-y-auto border-r border-intg-bg-4 bg-intg-black p-6"
             style={{
                 backgroundImage:
                     "radial-gradient(rgba(28, 15, 89, 0.30) 50%, rgba(5, 5, 5, 0.30))",
@@ -79,11 +91,12 @@ export const Navbar = () => {
                         <DropdownMenu>
                             <DropdownMenuTrigger className="w-[177px] select-none outline-none">
                                 <NavItem
-                                    text={session?.project?.name as string}
+                                    text={workspace?.project?.name as string}
                                     leftIcon={
                                         <AcronynmBox
                                             text={
-                                                session?.project?.name as string
+                                                workspace?.project
+                                                    ?.name as string
                                             }
                                         />
                                     }
@@ -122,7 +135,7 @@ export const Navbar = () => {
                                                     text={item.node.name}
                                                     rightIcon={
                                                         item.node.slug ===
-                                                            session?.project
+                                                            workspace?.project
                                                                 .slug && (
                                                             <CheckCircleIcon />
                                                         )
@@ -131,7 +144,7 @@ export const Navbar = () => {
                                                     ellipsisLength={
                                                         (item.node.name,
                                                         item.node.slug ===
-                                                        session?.project.slug
+                                                        workspace?.project.slug
                                                             ? 17
                                                             : 22)
                                                     }
@@ -178,19 +191,30 @@ export const Navbar = () => {
                             </span>
                             <span>Create new survey</span>
                         </button>
-                        <button className="flex w-[177px]  items-center  gap-2 rounded bg-intg-bg-8 px-3 py-2 text-sm text-intg-text-4">
-                            <span>
-                                <CircleIcon />
-                            </span>
-                            <span>Get started</span>
-                        </button>
+                        {!user?.isOnboarded && (
+                            <Link
+                                to={ROUTES.GET_STARTED.replace(
+                                    ":orgSlug",
+                                    workspace?.organization.slug as string,
+                                ).replace(
+                                    ":projectSlug",
+                                    workspace?.project.slug as string,
+                                )}
+                                className="flex w-[177px] items-center gap-2 rounded bg-intg-bg-8 px-3 py-2 text-sm text-intg-text-4"
+                            >
+                                <ProgressRadial
+                                    value={onboardingCompletionRate}
+                                />
+                                <span>Get started</span>
+                            </Link>
+                        )}
                     </div>
                     <hr className="border-intg-bg-4" />
                     <ul className="space-y-2 py-4 text-sm text-intg-text-4">
                         {navItems.map((item) => {
                             return (
                                 <NavLink
-                                    to=""
+                                    to={item.href}
                                     className={({ isActive }) =>
                                         isActive ? "bg-intg-bg-8" : ""
                                     }

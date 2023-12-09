@@ -1,8 +1,6 @@
 import { User, useOrganizationCreateMutation } from "@/generated/graphql";
 import { PrivateRoute } from "@/layout/PrivateRoute";
-import useSession from "@/modules/users/hooks/useSession";
-import useUserState from "@/modules/users/hooks/useUserState";
-import { Session } from "@/modules/users/states/session";
+import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import { omitTypename } from "@/utils";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -43,9 +41,8 @@ const WorkspaceRoles = [
     { label: "Other", value: "Other" },
 ];
 
-const Workspace = () => {
-    const { createSession } = useSession();
-    const { addWorkSpace } = useUserState();
+const CreateWorkspace = () => {
+    const { addWorkspace } = useWorkspace();
     const {
         watch,
         setValue,
@@ -79,11 +76,7 @@ const Workspace = () => {
     useEffect(() => {
         if (data && data.organizationCreate?.user) {
             const user = omitTypename(data.organizationCreate?.user as User);
-            addWorkSpace(user);
-            createSession({
-                organization: user.organization,
-                project: user.project,
-            } as Session);
+            addWorkspace(user);
         } else return;
     }, [data]);
 
@@ -257,4 +250,4 @@ const Workspace = () => {
     );
 };
 
-export default Workspace;
+export default CreateWorkspace;

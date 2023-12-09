@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useIsMatchingLocation, useUpdateEffect } from "@/hooks";
 
 import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
+import useLogout from "@/modules/auth/hooks/useLogout";
 import { ApolloFactory } from "../services/apollo.factory";
 
 const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
@@ -15,7 +16,8 @@ export const useApolloFactory = () => {
     const navigate = useNavigate();
     const isMatchingLocation = useIsMatchingLocation();
 
-    const { token, refresh, refreshToken, logout } = useAuthToken();
+    const { token, refresh, refreshToken } = useAuthToken();
+    const { handleLogout } = useLogout();
 
     const apolloClient = useMemo(() => {
         apolloRef.current = new ApolloFactory({
@@ -34,15 +36,7 @@ export const useApolloFactory = () => {
             },
             onAccessTokenChange: (token: string) => refresh(token),
             onUnauthenticatedError: () => {
-                logout();
-
-                // TODO: Extract all app paths in into an enum
-                if (
-                    !isMatchingLocation("/") &&
-                    !isMatchingLocation("/signup")
-                ) {
-                    navigate("/");
-                }
+                handleLogout();
             },
             extraLinks: [],
             isDebugMode,

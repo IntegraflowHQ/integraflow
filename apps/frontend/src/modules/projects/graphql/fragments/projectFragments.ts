@@ -34,3 +34,17 @@ export const PROJECT = gql`
         }
     }
 `;
+
+export const PROJECT_UPDATE = gql`
+    fragment ProjectUpdateFragment on ProjectUpdate {
+        project {
+            ...ProjectFragment
+        }
+        projectErrors {
+            ...ProjectErrorFragment
+        }
+        errors {
+            ...ProjectErrorFragment
+        }
+    }
+`;

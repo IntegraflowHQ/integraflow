@@ -1,10 +1,10 @@
 import useDatabase from "@/database/hooks/useDatabase";
-import useSessionState from "@/modules/users/hooks/useSessionState";
 import useUserState from "@/modules/users/hooks/useUserState";
+import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
 import { useAuthToken } from "./useAuthToken";
 
 const useLogout = () => {
-    const { clearSession } = useSessionState();
+    const { clearWorkspace } = useWorkspaceState();
     const { deleteUser } = useUserState();
     const { logout } = useAuthToken();
     const { clearDBs } = useDatabase();
@@ -13,7 +13,7 @@ const useLogout = () => {
         await clearDBs();
         deleteUser();
         logout();
-        clearSession();
+        clearWorkspace();
     };
 
     return {
