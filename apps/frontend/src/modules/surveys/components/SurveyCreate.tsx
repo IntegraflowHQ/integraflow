@@ -1,8 +1,8 @@
 import { CreateSurvey } from "@/types";
-import { Header } from "@/ui";
-import { List, PlusCircle } from "@/ui/icons";
 import { cn } from "@/utils";
 import { useSurvey } from "../hooks/useSurvey";
+import { Header } from "@/ui";
+import { List, PlusCircle } from "@/ui/icons";
 
 type Props = {
     className?: string;
@@ -39,7 +39,7 @@ export default function SurveyCreate({ className, size = "lg" }: Props) {
                 className ?? "",
             )}
         >
-            {surveyCreateOptions.map((option) => (
+            {surveyCreateOptions.map((option, index) => (
                 <div
                     key={option.title}
                     className="flex flex-1 flex-col items-center justify-center gap-3 rounded-lg bg-[#261F36]"
@@ -49,7 +49,10 @@ export default function SurveyCreate({ className, size = "lg" }: Props) {
                     <Header
                         title={option.title}
                         description={option.description}
-                        className="text-center"
+                        className={cn(
+                            "text-center",
+                            size === "sm" && index === 1 ? "px-8" : "",
+                        )}
                         variant={size === "sm" ? "3" : "2"}
                         font="medium"
                     />

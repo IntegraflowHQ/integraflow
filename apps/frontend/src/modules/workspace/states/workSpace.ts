@@ -3,38 +3,38 @@ import { DeepOmit } from "@apollo/client/utilities";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-export type Session = {
+export type Workspace = {
     organization: DeepOmit<AuthOrganization, "__typename">;
     project: DeepOmit<Project, "__typename">;
 };
 
-export type SessionState = {
-    session: Session | null;
+export type WorkspaceState = {
+    workspace: Workspace | null;
 };
 
-export type SessionActions = {
-    clearSession: () => void;
-    updateSession: (data: Session) => void;
+export type WorkSpaceActions = {
+    clearWorkspace: () => void;
+    updateWorkspace: (data: Workspace) => void;
 };
 
-const initialState: SessionState = {
-    session: null,
+const initialState: WorkspaceState = {
+    workspace: null,
 };
 
-export const useSessionStore = create<SessionState & SessionActions>()(
+export const useWorkspaceStore = create<WorkspaceState & WorkSpaceActions>()(
     persist(
         (set) => ({
             ...initialState,
-            clearSession: () => set(initialState),
-            updateSession: (data) =>
+            clearWorkspace: () => set(initialState),
+            updateWorkspace: (data) =>
                 set({
-                    session: {
+                    workspace: {
                         ...data,
                     },
                 }),
         }),
         {
-            name: "authSession",
+            name: "workspace",
             storage: createJSONStorage(() => sessionStorage),
         },
     ),

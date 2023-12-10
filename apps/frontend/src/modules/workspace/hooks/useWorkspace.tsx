@@ -1,4 +1,5 @@
 import {
+    AuthUser,
     Project,
     ProjectCountableEdge,
     User,
@@ -10,21 +11,21 @@ import { logDebug } from "@/utils/log";
 import { DeepOmit } from "@apollo/client/utilities";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Session } from "../states/session";
-import useSessionState from "./useSessionState";
-import useUserState from "./useUserState";
+import useUserState from "../../users/hooks/useUserState";
+import { Workspace } from "../states/workSpace";
+import useWorkspaceState from "./useWorkspaceState";
 
-export default function useSession() {
+export default function useWorkspace() {
     const [isValidating, setIsValidating] = useState(true);
     const { orgSlug, projectSlug } = useParams();
-    const { session, updateSession } = useSessionState();
+    const { workspace, updateWorkspace } = useWorkspaceState();
     const { user, lastUpdate: lastUserUpdate, updateUser } = useUserState();
     const [fetchUser] = useViewerLazyQuery();
     const redirect = useRedirect();
 
-    const createSession = useCallback(
-        (data: Session) => {
-            updateSession(data);
+    const switchWorkspace = useCallback(
+        (data: Workspace) => {
+            updateWorkspace(data);
             if (
                 orgSlug !== data.organization.slug ||
                 projectSlug !== data.project.slug
@@ -37,31 +38,30 @@ export default function useSession() {
 
     const isCurrentOrg = useMemo(() => {
         if (!orgSlug) return false;
-        return session?.organization.slug === orgSlug;
-    }, [session?.organization.slug, orgSlug]);
-
+        return workspace?.organization.slug === orgSlug.toLowerCase();
+    }, [workspace?.organization.slug, orgSlug]);
 
     const isValidProject = useMemo(() => {
         if (!projectSlug) {
             return (
-                session?.project.organization.slug ===
-                session?.organization.slug
+                workspace?.project.organization.slug ===
+                workspace?.organization.slug
             );
         } else {
             return (
-                session?.project.slug === projectSlug &&
-                session.project.organization.slug === session.organization.slug
+                workspace?.project.slug === projectSlug.toLowerCase() &&
+                workspace.project.organization.slug ===
+                    workspace.organization.slug
             );
         }
-    }, [projectSlug, orgSlug, session]);
+    }, [projectSlug, orgSlug, workspace]);
 
-
-    const isValidSession = useMemo(() => {
+    const isValidWorkspace = useMemo(() => {
         if (!projectSlug && !orgSlug) return true;
         return isCurrentOrg && isValidProject;
     }, [projectSlug, orgSlug, isCurrentOrg, isValidProject]);
 
-    const createValidSessionData = useCallback(async () => {
+    const createValidWorkspaceData = useCallback(async () => {
         let org = null;
         let project = null;
 
@@ -113,17 +113,17 @@ export default function useSession() {
         return {
             organization: org,
             project: project,
-        } as Session;
-    }, [orgSlug, projectSlug, session]);
+        } as Workspace;
+    }, [orgSlug, projectSlug, workspace]);
 
     const currentOrgData = useMemo(() => {
         const data =
             user?.organizations?.edges.find(
-                (edge) => edge.node.slug === session?.organization.slug,
+                (edge) => edge.node.slug === workspace?.organization.slug,
             )?.node || null;
 
         return data;
-    }, [user?.organizations, session?.organization.id]);
+    }, [user?.organizations, workspace?.organization.id]);
 
     const projects = useMemo(() => {
         return (
@@ -141,21 +141,25 @@ export default function useSession() {
         setIsValidating(true);
 
         if (isCurrentOrg && isValidProject) {
-            logDebug("Session is valid.");
+            logDebug("Workspace is valid.");
             if (!projectSlug) {
-                redirect(session as Session);
+                redirect(workspace as Workspace);
             }
             setIsValidating(false);
             return;
         } else {
+            logDebug("orgSlug", orgSlug);
+            logDebug("currentOrg", user?.organization);
             logDebug("isCurrentOrg: ", isCurrentOrg);
+            logDebug("projectSlug", projectSlug);
+            logDebug("currentProject", user?.project);
             logDebug("isValidProject: ", isValidProject);
-            logDebug("Creating valid session.");
-            createValidSessionData()
-                .then((newSession) => {
-                    logDebug("New session: ", newSession);
-                    if (newSession) {
-                        createSession(newSession);
+            logDebug("Creating valid workspace.");
+            createValidWorkspaceData()
+                .then((workspace) => {
+                    logDebug("New workspace: ", workspace);
+                    if (workspace) {
+                        switchWorkspace(workspace);
                     }
                     setIsValidating(false);
                 })
@@ -173,36 +177,68 @@ export default function useSession() {
         projectSlug,
         isCurrentOrg,
         isValidProject,
-        createValidSessionData,
+        createValidWorkspaceData,
     ]);
 
     useEffect(() => {
-        if (!session?.organization || !session?.project || !user) return;
+        if (!workspace?.organization || !workspace?.project || !user) return;
         updateUser({
             ...user,
-            organization: session.organization,
-            project: session.project,
+            organization: workspace.organization,
+            project: workspace.project,
         });
-    }, [session?.organization, session?.project]);
+    }, [workspace?.organization, workspace?.project]);
 
     const switchProject = useCallback(
         (project: DeepOmit<Project, "__typename">) => {
-            const newSession: Session = {
-                organization: session?.organization!,
+            const newWorkspace: Workspace = {
+                organization: workspace?.organization!,
                 project: project,
             };
-            createSession(newSession);
+            switchWorkspace(newWorkspace);
         },
-        [session, createSession],
+        [workspace, switchWorkspace],
+    );
+
+    const addWorkspace = useCallback(
+        (data: DeepOmit<AuthUser, "__typename">) => {
+            if (!user || !data.organization || !data.project) return;
+
+            const newUser = { ...user };
+            newUser.organization = data.organization;
+            newUser.project = data.project;
+            newUser?.organizations?.edges.unshift({
+                node: {
+                    ...data.organization,
+                    projects: {
+                        edges: [
+                            {
+                                node: {
+                                    ...data.project,
+                                },
+                            },
+                        ],
+                    },
+                },
+            });
+
+            updateUser(newUser);
+            switchWorkspace({
+                organization: data.organization,
+                project: data.project,
+            });
+        },
+        [user],
     );
 
     return {
-        session,
+        workspace,
         projects,
         isValidating,
-        isValidSession,
-        createSession,
+        isValidWorkspace,
+        switchWorkspace,
         switchProject,
-        createValidSessionData,
+        addWorkspace,
+        createValidWorkspaceData,
     };
 }

@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const PROJECT_THEME = gql`
+export const USER = gql`
     fragment UserFragment on User {
         id
         email
@@ -8,6 +8,7 @@ export const PROJECT_THEME = gql`
         lastName
         isStaff
         isActive
+        isOnboarded
         organization {
             ...AuthOrganizationFragment
         }

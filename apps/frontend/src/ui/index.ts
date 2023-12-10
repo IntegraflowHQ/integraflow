@@ -16,8 +16,10 @@ export {
 export { AcronynmBox } from "./NavItem/AcronynmBox";
 export { NavItem } from "./NavItem/NavItem";
 export { NavLink } from "./NavItem/NavLink";
+export { ProgressRadial } from "./ProgressRadial";
 export { Screen } from "./Screen/Screen";
 export { GlobalSpinner } from "./Spinner/GlobalSpinner";
+export { CodeBlock } from "./Typography/CodeBlock";
 export { Header } from "./Typography/Header";
 export { SelectInput } from "./input/SelectInput";
 export {SwitchButton} from './Switch/Switch'

@@ -1,7 +1,7 @@
 import useLogout from "@/modules/auth/hooks/useLogout";
-import useSession from "@/modules/users/hooks/useSession";
 import useUserState from "@/modules/users/hooks/useUserState";
 import { AcronynmBox, Button, NavItem, NavLink } from "@/ui";
+import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -45,7 +45,7 @@ export const UserProfile = () => {
     ];
 
     const { handleLogout } = useLogout();
-    const { session } = useSession();
+    const { workspace } = useWorkspace();
     const { user } = useUserState();
     const navigate = useNavigate();
 
@@ -100,10 +100,12 @@ export const UserProfile = () => {
                     <DropdownMenuSubTrigger>
                         <NavItem
                             uppercase={true}
-                            text={session?.organization?.name}
+                            text={workspace?.organization?.name}
                             leftIcon={
                                 <AcronynmBox
-                                    text={session?.organization?.name as string}
+                                    text={
+                                        workspace?.organization?.name as string
+                                    }
                                 />
                             }
                             rightIcon={<CheckCircleIcon />}
@@ -156,7 +158,7 @@ export const UserProfile = () => {
                 <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
                 {ProfileNavItems.map((item) => {
                     return (
-                        <DropdownMenuItem key={item.id}>
+                        <DropdownMenuItem key={item.title}>
                             <NavLink
                                 text={item.title}
                                 leftIcon={item.icon}
