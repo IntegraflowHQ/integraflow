@@ -1,5 +1,6 @@
 import { Tab } from "@/ui";
 import { ThemesMenu } from "../DesignEditor/components/ThemesMenu";
+import { MessagesTabContent } from "./components/Messages";
 import { SurveyExperience } from "./components/SurveyExperience";
 
 const SETTINGS_TAB = [
@@ -11,11 +12,7 @@ const SETTINGS_TAB = [
     {
         tabId: crypto.randomUUID(),
         tabName: "Messages",
-        tabContent: (
-            <p className="py-4 text-sm font-normal text-intg-text-2">
-                Proceed to next question
-            </p>
-        ),
+        tabContent: <MessagesTabContent />,
     },
 ];
 

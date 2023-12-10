@@ -11,13 +11,13 @@ export const PositionIcon = () => {
                 d="M17 6V16C17 20 16 21 12 21H6C2 21 1 20 1 16V6C1 2 2 1 6 1H12C16 1 17 2 17 6Z"
                 stroke="white"
                 strokeLInecap="round"
-                strokeLInejoin="round"
+                strokeLinejoin="round"
             />
             <path
                 d="M11 4.5H7"
                 stroke="white"
                 strokeLInecap="round"
-                strokeLInejoin="round"
+                strokeLinejoin="round"
             />
         </svg>
     );
