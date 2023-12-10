@@ -99,6 +99,19 @@ type Query {
   ): SurveyCountableConnection @doc(category: "Surveys")
 
   """
+  Look up a survey by ID or slug.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  survey(
+    """The ID of the survey."""
+    id: ID
+
+    """Slug of the survey."""
+    slug: String
+  ): Survey @doc(category: "Surveys")
+
+  """
   List of the project's themes.
   
   Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
