@@ -17,7 +17,7 @@ export default function UpdateQuestion() {
     const [openQuestion, setOpenquestion] = useState("");
 
     return (
-        <div className="h-full w-full space-y-4 overflow-y-scroll pt-2">
+        <div className="scrollbar-hide h-full w-full space-y-4 overflow-y-scroll pt-2">
             <div
                 className={cn(
                     `${
@@ -47,12 +47,12 @@ export default function UpdateQuestion() {
                                         onClick={() => setOpenquestion(item.id)}
                                     >
                                         <div>❤️</div>
-                                        <div className="text-intg-text-9 font-bold">
+                                        <div className="font-bold text-intg-text-9">
                                             {item.orderNumber < 10
                                                 ? `0${item.orderNumber}`
                                                 : item.orderNumber}
                                         </div>
-                                        <div className="bg-intg-bg-15 w-[415px] rounded-lg px-[16px] py-4 text-start text-intg-text-1 ">
+                                        <div className="w-[415px] rounded-lg bg-intg-bg-15 px-[16px] py-4 text-start text-intg-text-1 ">
                                             {addEllipsis(
                                                 "Lorem ipsum dolor sit, ametconsectetur adipisicing elit.",
                                                 40,
@@ -73,12 +73,12 @@ export default function UpdateQuestion() {
                     })}
                 </Accordion.Root>
             </div>
+
             <QuestionOptions
                 setOpenQuestion={setOpenquestion}
                 setIsAddingQuestion={setIsAddingQuestion}
                 setCurrentQuestionType={setCurrentQuestionType}
             />
-            edit
         </div>
     );
 }
