@@ -36,7 +36,7 @@ export const Tab = ({
             <Tabs.Root defaultValue={tabData[0].tabName}>
                 <Tabs.List
                     aria-label="settings tab"
-                    className="flex justify-between border-b border-[#261f36]"
+                    className="flex justify-between border-b border-intg-bg-14"
                 >
                     <div className="flex gap-2">
                         {tabData.map(({ tabId, tabName }) => {

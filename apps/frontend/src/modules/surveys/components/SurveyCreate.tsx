@@ -48,7 +48,7 @@ export default function SurveyCreate({ className, size = "lg" }: Props) {
             {surveyCreateOptions.map((option, index) => (
                 <Link
                     key={option.title}
-                    className="flex flex-1 flex-col items-center justify-center gap-3 rounded-lg bg-[#261F36]"
+                    className="flex flex-1 flex-col items-center justify-center gap-3 rounded-lg bg-intg-bg-14"
                     to={option.href}
                 >
                     {option.icon}

@@ -26,6 +26,8 @@ const config: Config = {
                         "14": "#261F36",
                         "15": "#272138",
                         "16": "#372e4f",
+                        "17": "#d9d9d9",
+                        "18": "#38304f",
                     },
                     text: {
                         "1": "#DBD4EB",
@@ -36,6 +38,7 @@ const config: Config = {
                         "6": "#B5A4DB",
                         "7": "#F1F1F1",
                         "8": "#7F76A9",
+                        "9": "#705F97",
                         DEFAULT: "#AFAAC7",
                     },
                     black: {

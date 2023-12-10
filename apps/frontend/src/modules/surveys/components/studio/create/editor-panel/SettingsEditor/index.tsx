@@ -11,7 +11,11 @@ const SETTINGS_TAB = [
     {
         tabId: crypto.randomUUID(),
         tabName: "Messages",
-        tabContent: <p className="text-sm font-normal text-white">Tab 2</p>,
+        tabContent: (
+            <p className="py-4 text-sm font-normal text-intg-text-2">
+                Proceed to next question
+            </p>
+        ),
     },
 ];
 
