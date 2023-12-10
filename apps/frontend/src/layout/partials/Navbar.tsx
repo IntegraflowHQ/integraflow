@@ -134,17 +134,16 @@ export const Navbar = () => {
                                                     }
                                                     text={item.node.name}
                                                     rightIcon={
-                                                        item.node.slug ===
-                                                            workspace?.project
-                                                                .slug && (
+                                                        item.node.slug.toLowerCase() ===
+                                                            workspace?.project.slug.toLowerCase() && (
                                                             <CheckCircleIcon />
                                                         )
                                                     }
                                                     ellipsis={true}
                                                     ellipsisLength={
                                                         (item.node.name,
-                                                        item.node.slug ===
-                                                        workspace?.project.slug
+                                                        item.node.slug.toLowerCase() ===
+                                                        workspace?.project.slug.toLowerCase()
                                                             ? 17
                                                             : 22)
                                                     }
