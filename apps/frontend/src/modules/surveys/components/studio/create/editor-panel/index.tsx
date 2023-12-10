@@ -2,6 +2,7 @@ import { HelpCircle, SettingsIcon } from "@/ui/icons";
 import * as Tabs from "@radix-ui/react-tabs";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { Pen } from "lucide-react";
+import UpdateQuestion from "../index.tsx";
 import React from "react";
 import { Preview } from "../preview-panel/index.tsx";
 import { UpdateDesignEditor } from "./DesignEditor";
@@ -12,7 +13,7 @@ const tabs = [
         id: crypto.randomUUID(),
         label: "Update questions",
         icon: <HelpCircle />,
-        content: <div>Question</div>,
+        content: <UpdateQuestion />,
     },
     {
         id: crypto.randomUUID(),

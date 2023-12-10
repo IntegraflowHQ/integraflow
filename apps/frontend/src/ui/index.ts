@@ -25,4 +25,5 @@ export { SwitchToggle } from "./ToggleSwitch";
 export { CodeBlock } from "./Typography/CodeBlock";
 export { Header } from "./Typography/Header";
 export { SelectInput } from "./input/SelectInput";
+export {SwitchButton} from './Switch/Switch'
 export { TextInput } from "./input/TextInput";

@@ -5,7 +5,10 @@ from integraflow.graphql.core.connection import (
     filter_connection_queryset
 )
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_SURVEYS
-from integraflow.graphql.core.fields import FilterConnectionField
+from integraflow.graphql.core.fields import (
+    FilterConnectionField,
+    PermissionsField
+)
 from integraflow.permission.auth_filters import AuthorizationFilters
 
 from .filters import SurveyFilterInput
@@ -23,10 +26,12 @@ from .mutations import (
 from .resolvers import (
     resolve_channels,
     resolve_questions,
+    resolve_survey,
     resolve_surveys
 )
 from .sorters import SurveySortingInput
 from .types import (
+    Survey,
     SurveyChannelCountableConnection,
     SurveyCountableConnection,
     SurveyQuestionCountableConnection
@@ -64,6 +69,22 @@ class SurveyQueries(graphene.ObjectType):
         permissions=[AuthorizationFilters.PROJECT_MEMBER_ACCESS],
         doc_category=DOC_CATEGORY_SURVEYS,
     )
+    survey = PermissionsField(
+        Survey,
+        id=graphene.Argument(
+            graphene.ID,
+            description="The ID of the survey.",
+            required=False
+        ),
+        slug=graphene.Argument(
+            graphene.String,
+            description="Slug of the survey.",
+            required=False
+        ),
+        description="Look up a survey by ID or slug.",
+        permissions=[AuthorizationFilters.PROJECT_MEMBER_ACCESS],
+        doc_category=DOC_CATEGORY_SURVEYS,
+    )
 
     @staticmethod
     def resolve_channels(_root, info, **kwargs):
@@ -95,6 +116,10 @@ class SurveyQueries(graphene.ObjectType):
             kwargs,
             SurveyQuestionCountableConnection
         )
+
+    @staticmethod
+    def resolve_survey(_root, info, *, id=None, slug=None):
+        return resolve_survey(info, id, slug)
 
 
 class SurveyMutations(graphene.ObjectType):

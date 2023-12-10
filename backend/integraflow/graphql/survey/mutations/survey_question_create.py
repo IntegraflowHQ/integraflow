@@ -9,6 +9,7 @@ from integraflow.graphql.core.types.common import SurveyError
 from integraflow.graphql.core.utils import from_global_ids_to_pks
 from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.survey import models
+from integraflow.survey.utils import calculate_max_paths
 
 from ..enums import SurveyQuestionTypeEnum
 from ..types import SurveyQuestion
@@ -76,10 +77,9 @@ class SurveyQuestionCreate(ModelMutation):
     def clean_input(cls, info: ResolveInfo, instance, data, **kwargs):
         cleaned_input = super().clean_input(info, instance, data, **kwargs)
 
-        settings = cleaned_input.get("settings")
-        if settings:
-            from_global_ids_to_pks(settings.get("logic", []), "destination")
-            cleaned_input["settings"] = settings
+        settings = cleaned_input.get("settings", {})
+        from_global_ids_to_pks(settings.get("logic", []), "destination")
+        cleaned_input["settings"] = settings
 
         cleaned_input["max_path"] = 0
 
@@ -88,3 +88,7 @@ class SurveyQuestionCreate(ModelMutation):
             cleaned_input["survey"] = survey
 
         return cleaned_input
+
+    @classmethod
+    def post_save_action(cls, info: ResolveInfo, instance, cleaned_input):
+        calculate_max_paths(instance.survey_id)
