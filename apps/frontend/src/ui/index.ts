@@ -20,4 +20,5 @@ export { Screen } from "./Screen/Screen";
 export { GlobalSpinner } from "./Spinner/GlobalSpinner";
 export { Header } from "./Typography/Header";
 export { SelectInput } from "./input/SelectInput";
+export {SwitchButton} from './Switch/Switch'
 export { TextInput } from "./input/TextInput";

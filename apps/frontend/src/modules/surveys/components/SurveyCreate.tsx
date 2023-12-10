@@ -1,14 +1,8 @@
-import { useSurveyCreateMutation } from "@/generated/graphql";
-import { ROUTES } from "@/routes";
+import { CreateSurvey } from "@/types";
 import { Header } from "@/ui";
 import { List, PlusCircle } from "@/ui/icons";
-import { cn, generateRandomString } from "@/utils";
-import { useNavigate, useParams } from "react-router-dom";
-
-enum CreateSurvey {
-    START_FROM_SCRATCH = "start from scratch",
-    USE_TEMPLATE = "use template",
-}
+import { cn } from "@/utils";
+import { useSurvey } from "../hooks/useSurvey";
 
 type Props = {
     className?: string;
@@ -16,9 +10,7 @@ type Props = {
 };
 
 export default function SurveyCreate({ className, size = "lg" }: Props) {
-    const { orgSlug, projectSlug } = useParams();
-    const [createSurvey] = useSurveyCreateMutation();
-    const navigate = useNavigate();
+    const { createSurvey } = useSurvey();
     const surveyCreateOptions = [
         {
             id: CreateSurvey.START_FROM_SCRATCH,
@@ -38,33 +30,6 @@ export default function SurveyCreate({ className, size = "lg" }: Props) {
             description: "Select one from our curated list of templates",
         },
     ];
-    const hadleCreateSurvey = async (option: string) => {
-        if (option === CreateSurvey.START_FROM_SCRATCH) {
-            const surveySlug = `survey-${generateRandomString(10)}`;
-            navigate(
-                ROUTES.STUDIO.replace(":orgSlug", orgSlug!)
-                    .replace(":projectSlug", projectSlug!)
-                    .replace(":surveySlug", surveySlug),
-            );
-
-            await createSurvey({
-                variables: {
-                    input: {
-                        id: crypto.randomUUID(),
-                        slug: surveySlug,
-                    },
-                },
-                onError: () => {
-                    navigate(
-                        ROUTES.SURVEY_LIST.replace(
-                            ":orgSlug",
-                            orgSlug!,
-                        ).replace(":projectSlug", projectSlug!),
-                    );
-                },
-            });
-        }
-    };
 
     return (
         <div
@@ -78,9 +43,7 @@ export default function SurveyCreate({ className, size = "lg" }: Props) {
                 <div
                     key={option.title}
                     className="flex flex-1 flex-col items-center justify-center gap-3 rounded-lg bg-[#261F36]"
-                    onClick={() => {
-                        hadleCreateSurvey(option.id);
-                    }}
+                    onClick={() => createSurvey(option.id)}
                 >
                     {option.icon}
                     <Header

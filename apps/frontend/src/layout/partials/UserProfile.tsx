@@ -156,7 +156,7 @@ export const UserProfile = () => {
                 <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
                 {ProfileNavItems.map((item) => {
                     return (
-                        <DropdownMenuItem>
+                        <DropdownMenuItem key={item.id}>
                             <NavLink
                                 text={item.title}
                                 leftIcon={item.icon}
