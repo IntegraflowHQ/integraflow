@@ -41,7 +41,7 @@
         "rxjs": "^7.8.1",
         "slugify": "^1.6.6",
         "sort-by": "^1.2.0",
-        "zustand": "^4.4.5",
+        "zustand": "^4.4.5"
     },
     "devDependencies": {
         "@graphql-codegen/cli": "^3.3.1",

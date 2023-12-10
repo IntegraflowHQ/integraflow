@@ -22,10 +22,8 @@ const initialState: SurveyState = {
 export const useSurveyStore = create<SurveyState & SurveyActions>()((set) => ({
     ...initialState,
     addSurveyDetails: (data) => {
-        const currentId = localStorage.getItem("currentSurveyId");
         return set({
             id: data.id,
-            // id: data.id ? currentId : data.id,
             slug: data.slug,
         });
     },
