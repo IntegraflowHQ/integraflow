@@ -2,7 +2,7 @@ import { Header } from "@/ui";
 import { CheckComplete, CheckPending } from "@/ui/icons";
 import * as Tabs from "@radix-ui/react-tabs";
 import { useState } from "react";
-import SharableLinks from "./SharableLinks";
+import SharableLinks from "./sharable-links";
 import WebSDK from "./web-sdk";
 
 const tabs = [
@@ -82,7 +82,7 @@ export default function Configure() {
                         <Tabs.Content
                             key={tab.id}
                             value={tab.id}
-                            className="h-full w-full text-center"
+                            className="h-full w-full"
                         >
                             {tab.content}
                         </Tabs.Content>
