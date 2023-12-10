@@ -1,3 +1,4 @@
+from django.db.models import Q
 from typing import cast
 
 from integraflow.graphql.core.context import get_database_connection_name
@@ -38,3 +39,27 @@ def resolve_surveys(info):
     return models.Survey.objects.using(
         get_database_connection_name(info.context)
     ).filter(project_id=project.pk)
+
+
+def resolve_survey(info, id=None, slug=None):
+    project = cast(Project, info.context.user.project)
+
+    lookup = None
+
+    if id:
+        _, survey_id = from_global_id_or_error(id)
+        lookup = Q(id=survey_id)
+
+    if slug:
+        lookup = Q(slug=slug)
+
+    if not lookup:
+        return None
+
+    return (
+        models.Survey.objects.using(
+            get_database_connection_name(info.context)
+        )
+        .filter(lookup & Q(project_id=project.pk))
+        .first()
+    )
