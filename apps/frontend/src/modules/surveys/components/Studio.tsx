@@ -9,15 +9,17 @@ import Create from "./studio/create/editor-panel";
 import Publish from "./studio/publish";
 
 const tabs = [
-    { label: "Create", screen: Create },
-    { label: "Configure", screen: Configure },
-    { label: "Publish", screen: Publish },
-    { label: "Analyze", screen: Analyze },
+    { id: crypto.randomUUID(), label: "Create", screen: Create },
+    { id: crypto.randomUUID(), label: "Configure", screen: Configure },
+    { id: crypto.randomUUID(), label: "Publish", screen: Publish },
+    { id: crypto.randomUUID(), label: "Analyze", screen: Analyze },
 ];
 
 export default function Studio() {
-    const { enableStudioMode, disableStudioMode } = useStudioState();
     const [title, setTitle] = useState("");
+
+    const { enableStudioMode, disableStudioMode } = useStudioState();
+
     useEffect(() => {
         enableStudioMode();
 
@@ -44,7 +46,7 @@ export default function Studio() {
                         <Tabs.Trigger
                             key={tab.label}
                             value={tab.label}
-                            className="px-2 py-1 text-sm text-intg-text data-[state=active]:text-white"
+                            className={`rounded-md px-3 py-2 text-sm text-intg-text transition-all ease-in hover:bg-[#272138] data-[state=active]:bg-[#272138] data-[state=active]:text-white`}
                         >
                             {tab.label}
                         </Tabs.Trigger>
@@ -60,7 +62,7 @@ export default function Studio() {
             </header>
 
             {tabs.map(({ screen: Screen }) => (
-                <Tabs.Content key={Screen.name} value={Screen.name} asChild>
+                <Tabs.Content key={Screen.name} value={Screen.name}>
                     <Screen />
                 </Tabs.Content>
             ))}
