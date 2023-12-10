@@ -1,7 +1,7 @@
 import useLogout from "@/modules/auth/hooks/useLogout";
 import useUserState from "@/modules/users/hooks/useUserState";
+import { AcronynmBox, Button, NavItem, NavLink } from "@/ui";
 import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
-import { Button } from "@/ui";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,9 +13,6 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/ui/Dropdown/DropdownMenu";
-import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
-import { NavItem } from "@/ui/NavItem/NavItem";
-import { NavLink } from "@/ui/NavItem/NavLink";
 import {
     CheckCircleIcon,
     CirclePlusIcon,

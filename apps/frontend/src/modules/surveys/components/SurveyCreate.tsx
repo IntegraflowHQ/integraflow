@@ -1,8 +1,8 @@
-import { ROUTES } from "@/routes";
+import { CreateSurvey } from "@/types";
+import { cn } from "@/utils";
+import { useSurvey } from "../hooks/useSurvey";
 import { Header } from "@/ui";
 import { List, PlusCircle } from "@/ui/icons";
-import { cn } from "@/utils";
-import { Link, useParams } from "react-router-dom";
 
 type Props = {
     className?: string;
@@ -10,9 +10,10 @@ type Props = {
 };
 
 export default function SurveyCreate({ className, size = "lg" }: Props) {
-    const { orgSlug, projectSlug } = useParams();
+    const { createSurvey } = useSurvey();
     const surveyCreateOptions = [
         {
+            id: CreateSurvey.START_FROM_SCRATCH,
             icon: (
                 <PlusCircle
                     color="#AFAAC7"
@@ -21,19 +22,12 @@ export default function SurveyCreate({ className, size = "lg" }: Props) {
             ),
             title: "Start form scratch",
             description: "Craft and design your unique survey",
-            href: ROUTES.STUDIO.replace(":orgSlug", orgSlug!).replace(
-                ":projectSlug",
-                projectSlug!,
-            ),
         },
         {
+            id: CreateSurvey.USE_TEMPLATE,
             icon: <List />,
             title: "Use a template",
             description: "Select one from our curated list of templates",
-            href: ROUTES.SURVEY_TEMPLATES.replace(":orgSlug", orgSlug!).replace(
-                ":projectSlug",
-                projectSlug!,
-            ),
         },
     ];
 
@@ -46,10 +40,10 @@ export default function SurveyCreate({ className, size = "lg" }: Props) {
             )}
         >
             {surveyCreateOptions.map((option, index) => (
-                <Link
+                <div
                     key={option.title}
                     className="flex flex-1 flex-col items-center justify-center gap-3 rounded-lg bg-[#261F36]"
-                    to={option.href}
+                    onClick={() => createSurvey(option.id)}
                 >
                     {option.icon}
                     <Header
@@ -62,7 +56,7 @@ export default function SurveyCreate({ className, size = "lg" }: Props) {
                         variant={size === "sm" ? "3" : "2"}
                         font="medium"
                     />
-                </Link>
+                </div>
             ))}
         </div>
     );
