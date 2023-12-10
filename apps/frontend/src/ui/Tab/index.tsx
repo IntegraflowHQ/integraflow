@@ -24,6 +24,16 @@ interface TabWithoutControls extends TabProps {
 // the tabOptionsMenu is present. You can't use one without the other.
 type FinalTabProps = TabWithControls | TabWithoutControls;
 
+/**
+ *
+ * @param {Array} tabData  accepts an array of objects containing the following properties `tabId`, `tabName`, `tabContent`. You can always transform your object property to match what the component expects.
+ * @param {tabControls}  a optional prop. When used, it renders the "more options" and "close" icons that trigger a popover depending on what you have designed and closes the current editor tab respectively.
+ * @info  When you add the `tabControls` prop, the component expects you to pass the `tabMoreOptionsMenu` prop, so it receives the component containing the tab options.
+ *
+ * @returns  a react component `<Tab tabData={data} />
+ * @see  [detailed guide on how to use](https://github.com/IntegraflowHQ/integraflow/pull/45#issue-2034380307)
+ */
+
 export const Tab = ({
     tabData,
     tabControls,

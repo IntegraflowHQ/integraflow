@@ -8,9 +8,9 @@ export interface ToggleProps {
 }
 
 /**
- * @param {string} variant - accepts either "solid", "soft" or "detailed"
- * @param {string} label  - accpets a string, but is optional. When you use it, it takes the `name` value from your data array.
- * @returns - a react component `<SwitchToggle />
+ * @param {string} variant accepts either "solid", "soft" or "detailed"
+ * @param {string} label  accpets a string, but is optional. When you use it, it takes the `name` value from your data array.
+ * @returns a react component `<SwitchToggle />
  * @example
  *
  * import {SwitchToggle, ToggleProps } from "@/ui/ToggleSwitch";
@@ -62,10 +62,10 @@ export const SwitchToggle = ({
             {variant === "detailed" ? (
                 <Switch.Root
                     id="toggle item"
-                    className={`bg-intg-bg-18 -mt-[10px] h-11 w-40 rounded-md px-1`}
+                    className={`bg-intg-bg-18mt-[10px] h-11 w-40 rounded-md px-1`}
                 >
                     <Switch.Thumb className="-mt-[4px] block h-8 w-[67px] translate-x-0.5 rounded-md bg-intg-bg-2 py-1 text-sm font-normal text-white transition-transform duration-100  will-change-transform data-[state=checked]:translate-x-[82px] data-[state=checked]:text-white" />
-                    <div className="sticky -mt-[28px] flex w-36 items-center justify-between gap-2 px-1">
+                    <div className="stickymt-[28px] flex w-36 items-center justify-between gap-2 px-1">
                         {BACKGROUND_THEMES.map(({ id, name, icon }, index) => {
                             return (
                                 <div
