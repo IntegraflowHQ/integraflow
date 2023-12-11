@@ -1766,6 +1766,20 @@ export type ProjectCreateMutationVariables = Exact<{
 
 export type ProjectCreateMutation = { __typename?: 'Mutation', projectCreate?: { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
 
+export type ProjectThemeCreateMutationVariables = Exact<{
+  input: ProjectThemeCreateInput;
+}>;
+
+
+export type ProjectThemeCreateMutation = { __typename?: 'Mutation', projectThemeCreate?: { __typename?: 'ProjectThemeCreate', projectTheme?: { __typename?: 'ProjectTheme', id: string, name: string, colorScheme?: any | null } | null } | null };
+
+export type ThemesQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type ThemesQuery = { __typename?: 'Query', themes?: { __typename?: 'ProjectThemeCountableConnection', totalCount?: number | null, edges: Array<{ __typename?: 'ProjectThemeCountableEdge', node: { __typename?: 'ProjectTheme', id: string, name: string, colorScheme?: any | null } }> } | null };
+
 export type SurveyQuestionFragmentFragment = { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string };
 
 export type SurveyChannelFragmentFragment = { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string };
@@ -2610,6 +2624,85 @@ export function useProjectCreateMutation(baseOptions?: Apollo.MutationHookOption
 export type ProjectCreateMutationHookResult = ReturnType<typeof useProjectCreateMutation>;
 export type ProjectCreateMutationResult = Apollo.MutationResult<ProjectCreateMutation>;
 export type ProjectCreateMutationOptions = Apollo.BaseMutationOptions<ProjectCreateMutation, ProjectCreateMutationVariables>;
+export const ProjectThemeCreateDocument = gql`
+    mutation ProjectThemeCreate($input: ProjectThemeCreateInput!) {
+  projectThemeCreate(input: $input) {
+    projectTheme {
+      id
+      name
+      colorScheme
+    }
+  }
+}
+    `;
+export type ProjectThemeCreateMutationFn = Apollo.MutationFunction<ProjectThemeCreateMutation, ProjectThemeCreateMutationVariables>;
+
+/**
+ * __useProjectThemeCreateMutation__
+ *
+ * To run a mutation, you first call `useProjectThemeCreateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useProjectThemeCreateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [projectThemeCreateMutation, { data, loading, error }] = useProjectThemeCreateMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useProjectThemeCreateMutation(baseOptions?: Apollo.MutationHookOptions<ProjectThemeCreateMutation, ProjectThemeCreateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ProjectThemeCreateMutation, ProjectThemeCreateMutationVariables>(ProjectThemeCreateDocument, options);
+      }
+export type ProjectThemeCreateMutationHookResult = ReturnType<typeof useProjectThemeCreateMutation>;
+export type ProjectThemeCreateMutationResult = Apollo.MutationResult<ProjectThemeCreateMutation>;
+export type ProjectThemeCreateMutationOptions = Apollo.BaseMutationOptions<ProjectThemeCreateMutation, ProjectThemeCreateMutationVariables>;
+export const ThemesDocument = gql`
+    query Themes($first: Int) {
+  themes(first: $first) {
+    edges {
+      node {
+        id
+        name
+        colorScheme
+      }
+    }
+    totalCount
+  }
+}
+    `;
+
+/**
+ * __useThemesQuery__
+ *
+ * To run a query within a React component, call `useThemesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useThemesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useThemesQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *   },
+ * });
+ */
+export function useThemesQuery(baseOptions?: Apollo.QueryHookOptions<ThemesQuery, ThemesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ThemesQuery, ThemesQueryVariables>(ThemesDocument, options);
+      }
+export function useThemesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ThemesQuery, ThemesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ThemesQuery, ThemesQueryVariables>(ThemesDocument, options);
+        }
+export type ThemesQueryHookResult = ReturnType<typeof useThemesQuery>;
+export type ThemesLazyQueryHookResult = ReturnType<typeof useThemesLazyQuery>;
+export type ThemesQueryResult = Apollo.QueryResult<ThemesQuery, ThemesQueryVariables>;
 export const SurveyQuestionCreateDocument = gql`
     mutation SurveyQuestionCreate($input: SurveyQuestionCreateInput!) {
   surveyQuestionCreate(input: $input) {
