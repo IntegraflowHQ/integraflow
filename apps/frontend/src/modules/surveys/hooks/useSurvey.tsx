@@ -1,5 +1,7 @@
 import {
+    Survey,
     SurveyQuestionTypeEnum,
+    useGetSurveyLazyQuery,
     useSurveyCreateMutation,
     useSurveyQuestionCreateMutation,
 } from "@/generated/graphql";
@@ -11,17 +13,22 @@ import { useScrollToBottom } from "react-scroll-to-bottom";
 import { useSurveyStore } from "../states/survey";
 
 export const useSurvey = () => {
-    const { orgSlug, projectSlug } = useParams();
+    const { orgSlug, projectSlug, surveySlug } = useParams();
     const scrollToBottom = useScrollToBottom();
     const navigate = useNavigate();
 
-    const [createSurveyMutation] = useSurveyCreateMutation();
-    const [createQuestionMutaton] = useSurveyQuestionCreateMutation();
-    const { addQuestion, setOpenQuestion, addSurveyDetails } = useSurveyStore();
-    
     const surveyStore = createSelectors(useSurveyStore);
     const id = surveyStore.use.id();
     const questions = surveyStore.use.questions();
+    const setOpenQuestion = surveyStore.use.setOpenQuestion();
+    const addQuestion = surveyStore.use.addQuestion();
+    const addSurveyDetails = surveyStore.use.addSurveyDetails();
+    const setSurvey = surveyStore.use.setSurvey();
+    const openQuestion = surveyStore.use.openQuestion();
+
+    const [createSurveyMutation] = useSurveyCreateMutation();
+    const [createQuestionMutaton] = useSurveyQuestionCreateMutation();
+    const [getSurveyQuery] = useGetSurveyLazyQuery();
 
     const createSurvey = async (_template?: string) => {
         const surveySlug = `survey-${generateRandomString(10)}`;
@@ -55,7 +62,7 @@ export const useSurvey = () => {
             },
         });
     };
-    const createQuestion = async (type:SurveyQuestionTypeEnum) => {
+    const createQuestion = async (type: SurveyQuestionTypeEnum) => {
         await createQuestionMutaton({
             variables: {
                 input: {
@@ -84,8 +91,26 @@ export const useSurvey = () => {
         });
     };
 
+    const getSurvey = async () => {
+        await getSurveyQuery({
+            variables: {
+                slug: surveySlug,
+            },
+            onCompleted: (data) => {
+                setSurvey(data.survey as Survey);
+                console.log("data:", data);
+            },
+        });
+    };
     return {
         createSurvey,
         createQuestion,
+        getSurvey,
+        questions,
+        surveySlug,
+        setSurvey,
+        addSurveyDetails,
+        setOpenQuestion,
+        openQuestion,
     };
 };

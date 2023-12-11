@@ -18,14 +18,12 @@ import { surveyTypes } from "../../../../../Templates";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
-    setIsAddingQuestion: Dispatch<SetStateAction<boolean>>;
     setCurrentQuestionType: Dispatch<
         SetStateAction<SurveyQuestionTypeEnum | undefined>
     >;
 }
 
 export const QuestionOptions = ({
-    setIsAddingQuestion,
     ...props
 }: Props) => {
     const [currentView, setCurrentView] = useState<string>("Welcome message");
@@ -35,7 +33,6 @@ export const QuestionOptions = ({
     const {createQuestion} = useSurvey()
 
     const handleCreateQuestion = async (type: SurveyQuestionTypeEnum) => {
-        setIsAddingQuestion(true);
 
         if (type) {
             createQuestion(type)
