@@ -1,6 +1,5 @@
 import {
     SurveyQuestionTypeEnum,
-    useSurveyQuestionCreateMutation,
 } from "@/generated/graphql";
 import { useSurveyStore } from "@/modules/surveys/states/survey";
 import {
@@ -16,67 +15,37 @@ import { questionTypes } from "@/utils/survey";
 import { PlusCircle } from "lucide-react";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { surveyTypes } from "../../../../../Templates";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
     setIsAddingQuestion: Dispatch<SetStateAction<boolean>>;
     setCurrentQuestionType: Dispatch<
         SetStateAction<SurveyQuestionTypeEnum | undefined>
     >;
-    setOpenQuestion: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const QuestionOptions = ({
     setIsAddingQuestion,
-    setOpenQuestion,
     ...props
 }: Props) => {
     const [currentView, setCurrentView] = useState<string>("Welcome message");
-    const [createQuestion] = useSurveyQuestionCreateMutation();
-    const { addQuestion, clear } = useSurveyStore();
+    const {  clear } = useSurveyStore();
     const surveyStore = createSelectors(useSurveyStore);
-    const id = surveyStore.use.id();
     const questions = surveyStore.use.questions();
+    const {createQuestion} = useSurvey()
 
     const handleCreateQuestion = async (type: SurveyQuestionTypeEnum) => {
         setIsAddingQuestion(true);
 
         if (type) {
-            await createQuestion({
-                variables: {
-                    input: {
-                        orderNumber: questions.length + 1,
-                        surveyId: id,
-                        id: crypto.randomUUID(),
-                        type: type,
-                    },
-                },
-                onCompleted: ({ surveyQuestionCreate }) => {
-                    const { surveyQuestion } = surveyQuestionCreate ?? {};
-                    setOpenQuestion(surveyQuestion?.id as string);
-                    addQuestion({
-                        id: surveyQuestion?.id as string,
-                        createdAt: surveyQuestion?.createdAt as string,
-                        description: surveyQuestion?.description as string,
-                        label: surveyQuestion?.label as string,
-                        maxPath: surveyQuestionCreate?.surveyQuestion
-                            ?.maxPath as number,
-                        orderNumber: surveyQuestion?.orderNumber as number,
-                        type: surveyQuestion?.type as SurveyQuestionTypeEnum,
-                    });
-
-                    window.scrollTo({
-                        top: document.body.scrollHeight,
-                        behavior: "smooth",
-                    });
-                },
-            });
+            createQuestion(type)
         } else {
             clear();
         }
     };
 
     return (
-        <div className={cn(`flex gap-2`)}>
+        <div className={"flex gap-2"}>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button className="flex items-center gap-2 px-[12px] py-[12px]">

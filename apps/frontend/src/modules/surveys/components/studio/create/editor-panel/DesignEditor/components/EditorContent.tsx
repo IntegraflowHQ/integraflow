@@ -1,5 +1,6 @@
 import React from "react";
 import { ThemeCard } from "./ThemeCard";
+import { useProjectThemeCreateMutation } from "@/generated/graphql";
 
 const PALETTE = ["#FF4A4A", "#FF9551", "#6FEDD6", "#B9FFF8"];
 const THEMES = [
@@ -38,6 +39,8 @@ interface ContentProp {
 }
 
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
+const [createTheme, {loading, data}] = useProjectThemeCreateMutation()
+
     return (
         <div>
             <p className="py-4 text-sm font-normal uppercase">Selected Theme</p>

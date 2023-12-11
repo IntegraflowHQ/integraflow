@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import useStudioState from "../hooks/useStudioState";
 import Analyze from "./studio/analyze";
 import Configure from "./studio/configure";
-import Create from "./studio/create/editor-panel";
+import Create from "./studio/create";
 import Publish from "./studio/publish";
 
 const tabs = [
