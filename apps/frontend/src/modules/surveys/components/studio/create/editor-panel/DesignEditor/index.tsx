@@ -33,7 +33,7 @@ export const UpdateDesignEditor = () => {
 
     const themeSettingsPanel = (
         <>
-            <div className="h-fit rounded-md bg-intg-bg-9 px-4 py-2">
+            <div className="delay-400 h-fit rounded-md bg-intg-bg-9 px-4 py-2 transition-all ease-in-out">
                 <Tabs.Root className="flex justify-between border-b border-intg-bg-14">
                     <Tabs.List aria-label="create a new theme">
                         <Tabs.Trigger

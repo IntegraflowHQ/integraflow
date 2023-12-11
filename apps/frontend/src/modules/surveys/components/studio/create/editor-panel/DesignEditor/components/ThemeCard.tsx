@@ -1,13 +1,13 @@
 interface CardProps {
-    themeData: { palette: string[]; themeName: string };
+    themeData: { colorPalette: string[]; name: string };
 }
 
-export const ThemeCard = ({ themeData: { themeName, palette } }: CardProps) => {
+export const ThemeCard = ({ themeData: { name, colorPalette } }: CardProps) => {
     return (
         <div className="my-3 mb-2 flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2">
             {/* color palete -- theme */}
             <div className="flex py-2">
-                {palette.map((color, index) => {
+                {colorPalette.map((color, index) => {
                     return (
                         <div
                             className={`h-8 w-8 rounded-full border-2 ${
@@ -22,7 +22,7 @@ export const ThemeCard = ({ themeData: { themeName, palette } }: CardProps) => {
 
             <div>
                 <p className="font-normal leading-6 first-letter:capitalize">
-                    {themeName}
+                    {name}
                 </p>
                 <p className="font-normal text-intg-text-4">Fetched theme</p>
             </div>
