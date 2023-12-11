@@ -38,20 +38,23 @@ export default function useWorkspace() {
 
     const isCurrentOrg = useMemo(() => {
         if (!orgSlug) return false;
-        return workspace?.organization.slug === orgSlug.toLowerCase();
+        return (
+            workspace?.organization.slug.toLowerCase() === orgSlug.toLowerCase()
+        );
     }, [workspace?.organization.slug, orgSlug]);
 
     const isValidProject = useMemo(() => {
         if (!projectSlug) {
             return (
-                workspace?.project.organization.slug ===
-                workspace?.organization.slug
+                workspace?.project.organization.slug.toLowerCase() ===
+                workspace?.organization.slug.toLowerCase()
             );
         } else {
             return (
-                workspace?.project.slug === projectSlug.toLowerCase() &&
-                workspace.project.organization.slug ===
-                    workspace.organization.slug
+                workspace?.project.slug.toLowerCase() ===
+                    projectSlug.toLowerCase() &&
+                workspace.project.organization.slug.toLowerCase() ===
+                    workspace.organization.slug.toLowerCase()
             );
         }
     }, [projectSlug, orgSlug, workspace]);
@@ -71,17 +74,21 @@ export default function useWorkspace() {
         } else {
             org =
                 user?.organizations?.edges.find(
-                    (edge) => edge.node.slug === orgSlug,
+                    (edge) =>
+                        edge.node.slug.toLowerCase() === orgSlug?.toLowerCase(),
                 )?.node || null;
             project = !projectSlug
                 ? org?.projects?.edges[0].node
                 : org?.projects?.edges.find(
-                      (edge) => edge.node.slug === projectSlug,
+                      (edge) =>
+                          edge.node.slug.toLowerCase() ===
+                          projectSlug?.toLowerCase(),
                   )?.node || null;
         }
 
         if ((!org || !project) && isOver24Hours(lastUserUpdate)) {
             logDebug("User might be stale\nUpdating user...");
+            // debugger;
             await fetchUser({
                 onCompleted: ({ viewer }) => {
                     const newUser = omitTypename(viewer as User);
@@ -93,12 +100,16 @@ export default function useWorkspace() {
                     } else {
                         org =
                             newUser?.organizations?.edges.find(
-                                (edge) => edge.node.slug === orgSlug,
+                                (edge) =>
+                                    edge.node.slug.toLowerCase() ===
+                                    orgSlug?.toLowerCase(),
                             )?.node || null;
                         project = !projectSlug
                             ? org?.projects?.edges[0].node
                             : org?.projects?.edges.find(
-                                  (edge) => edge.node.slug === projectSlug,
+                                  (edge) =>
+                                      edge.node.slug.toLowerCase() ===
+                                      projectSlug.toLowerCase(),
                               )?.node || null;
                     }
                 },
@@ -119,7 +130,9 @@ export default function useWorkspace() {
     const currentOrgData = useMemo(() => {
         const data =
             user?.organizations?.edges.find(
-                (edge) => edge.node.slug === workspace?.organization.slug,
+                (edge) =>
+                    edge.node.slug.toLowerCase() ===
+                    workspace?.organization.slug.toLowerCase(),
             )?.node || null;
 
         return data;

@@ -20,7 +20,9 @@ export const useProject = () => {
             if (!newUser || !newUser.organizations) return;
 
             const orgIndex = newUser.organizations?.edges.findIndex(
-                (edge) => edge.node.slug === project.organization.slug,
+                (edge) =>
+                    edge.node.slug.toLowerCase() ===
+                    project.organization.slug.toLowerCase(),
             );
             if (orgIndex === -1 || orgIndex === undefined) return;
 
@@ -30,7 +32,8 @@ export const useProject = () => {
             if (!org.projects) return;
 
             const projectIndex = org.projects?.edges?.findIndex(
-                (edge) => edge.node.slug === project.slug,
+                (edge) =>
+                    edge.node.slug.toLowerCase() === project.slug.toLowerCase(),
             );
             if (projectIndex === undefined) return;
 
