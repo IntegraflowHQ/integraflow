@@ -18,7 +18,7 @@ const SURVEY_EXPERIENCE_OPTIONS: SurveyProps[] = [
     },
     {
         id: crypto.randomUUID(),
-        name: "start minimized on mobile",
+        name: "Start minimized on mobile",
         variant: "soft",
     },
     {
@@ -58,7 +58,7 @@ export const SurveyExperience = () => {
                     return (
                         <div
                             key={id}
-                            className="bg-intg-bg-15 my-2 flex h-14 justify-between rounded-md px-6 py-4"
+                            className="my-2 flex h-14 justify-between rounded-md bg-intg-bg-15 px-6 py-4"
                         >
                             <p className="text-center text-sm font-normal text-intg-text-2">
                                 {name}
@@ -74,7 +74,7 @@ export const SurveyExperience = () => {
             <div>
                 <div
                     key={SURVEY_EXPERIENCE_OPTIONS[5].id}
-                    className="bg-intg-bg-15 my-2 flex h-14 justify-between rounded-md px-2 py-4"
+                    className="my-2 flex h-14 justify-between rounded-md bg-intg-bg-15 px-2 py-4"
                 >
                     <p className="text-center text-sm font-normal text-intg-text-2">
                         {SURVEY_EXPERIENCE_OPTIONS[5].name}
@@ -89,17 +89,17 @@ export const SurveyExperience = () => {
             <div className="py-2 text-intg-text-2">
                 <p className="py-2 text-sm font-normal">Survey position</p>
 
-                <div className="bg-intg-bg-15 flex cursor-pointer justify-between gap-2 rounded-md px-2 py-2">
+                <div className="flex cursor-pointer justify-between gap-2 rounded-md bg-intg-bg-15 px-2 py-2">
                     {SURVEY_POSITION?.map(({ id, name }) => {
                         return (
                             <div
                                 key={id}
-                                className="bg-intg-bg-18 whitespace-nowrap rounded-md px-3 py-3"
+                                className="whitespace-nowrap rounded-md bg-intg-bg-18 px-3 py-3"
                             >
                                 <div className="flex justify-center">
                                     <PositionIcon />
                                 </div>
-                                <p className="mt-2 text-[12px] font-normal capitalize">
+                                <p className="mt-2 text-[12px] font-normal first-letter:capitalize">
                                     {name}
                                 </p>
                             </div>

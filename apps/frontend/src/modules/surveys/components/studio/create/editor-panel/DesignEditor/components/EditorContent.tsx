@@ -1,7 +1,8 @@
+import { useThemes } from "@/modules/projects/hooks/useTheme";
+import { Button } from "@/ui";
 import React from "react";
 import { ThemeCard } from "./ThemeCard";
 
-const PALETTE = ["#FF4A4A", "#FF9551", "#6FEDD6", "#B9FFF8"];
 const THEMES = [
     {
         palette: ["#CCA8E9", "#C3BEF0", "#CADEFC", "#DEFCF9"],
@@ -38,25 +39,42 @@ interface ContentProp {
 }
 
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
+    const { themes, loading } = useThemes();
+    const { data } = themes;
+
+    const palettes = data?.map((theme) => theme.colorPalette);
+
+    console.log(palettes);
+
     return (
         <div>
             <p className="py-4 text-sm font-normal uppercase">Selected Theme</p>
 
-            <div className="bg-intg-bg-15 flex w-full gap-5 rounded-md px-3 py-2">
-                {/* color palete -- theme */}
-                <div className="flex py-2">
-                    {PALETTE.map((color, index) => {
-                        return (
-                            <div
-                                className={`h-8 w-8 rounded-full border-2 ${
-                                    index !== 0 ? "-ml-3" : ""
-                                }`}
-                                key={index}
-                                style={{ backgroundColor: `${color}` }}
-                            />
-                        );
-                    })}
-                </div>
+            <div className="flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2">
+                {/* color palette -- theme */}
+                {!loading ? (
+                    <div className="flex py-2">
+                        {palettes?.map((palette, index) => (
+                            <div className="flex" key={index}>
+                                {palette?.map((color, colorIndex) => (
+                                    <div
+                                        className={`h-8 w-8 rounded-full border-2 ${
+                                            colorIndex !== 0 ? "-ml-3" : ""
+                                        }`}
+                                        key={colorIndex}
+                                        style={{
+                                            backgroundColor: color,
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="flex py-2 text-sm font-normal text-intg-text-2">
+                        loading...
+                    </div>
+                )}
 
                 <div>
                     <p className="text-base font-normal leading-6">
@@ -74,12 +92,12 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                     all themes
                 </p>
 
-                <button
+                <Button
+                    text="new theme"
                     onClick={onOpen}
-                    className="my-4 h-12 w-full rounded-md border border-intg-bg-2 bg-[#322751] text-base font-normal focus:outline-none"
-                >
-                    New theme
-                </button>
+                    variant="secondary"
+                    className="text-sm font-normal first-letter:capitalize"
+                />
 
                 <div className="flex-col">
                     {THEMES?.map(

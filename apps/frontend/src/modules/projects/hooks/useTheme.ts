@@ -1,53 +1,57 @@
-import { useThemesLazyQuery } from "@/generated/graphql";
-import { useProjectThemesStore } from "../states/themes";
+import { useThemesQuery } from "@/generated/graphql";
+import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 
 export const useThemes = () => {
-    const themeStore = useProjectThemesStore();
-    const [fn, { loading, error }] = useThemesLazyQuery();
+    const { workspace } = useWorkspace();
 
-    const getThemes = async (first = 20) => {
-        themeStore.getAvailableThemes([], false, null, 0);
+    const { data: themes, loading } = useThemesQuery({
+        variables: { first: 20 },
+        context: {
+            headers: {
+                Project: workspace?.project.id,
+            },
+        },
+    });
 
-        try {
-            const { data } = await fn({
-                variables: { first },
-            });
+    const getThemeProperties = () => {
+        const data = themes?.themes;
 
-            const totalThemes = data?.themes?.totalCount;
-            const themes = data?.themes?.edges.map((edges) => edges.node || []);
+        const themeData = data?.edges?.map((theme) => {
+            return theme.node;
+        });
 
-            themeStore.getAvailableThemes(
-                themes || [],
-                false,
-                null,
-                totalThemes,
-            );
+        const themesInfo = themeData?.map((theme) => {
+            const { name, colorScheme } = theme || {};
+            const parsedColorScheme = colorScheme
+                ? JSON.parse(colorScheme)
+                : {};
+
+            const { answer, button, progress, question, background } =
+                parsedColorScheme;
+
+            const colorPalette = [
+                answer,
+                button,
+                progress,
+                question,
+                background,
+            ];
 
             return {
-                error,
-                loading,
-                themes: themes || [],
-                totalCount: totalThemes,
+                name,
+                colorScheme: parsedColorScheme,
+                colorPalette: colorPalette,
             };
-        } catch (err) {
-            themeStore.getAvailableThemes(
-                [],
-                false,
-                error?.message ||
-                    "An error occured while fetching your themes. Try refreshing",
-                0,
-            );
+        });
 
-            return {
-                error,
-                themes: [],
-                totalCount: 0,
-                loading: false,
-            };
-        }
+        return {
+            data: themesInfo,
+            totalCount: data?.totalCount,
+        };
     };
 
     return {
-        getThemes,
+        loading,
+        themes: getThemeProperties(),
     };
 };

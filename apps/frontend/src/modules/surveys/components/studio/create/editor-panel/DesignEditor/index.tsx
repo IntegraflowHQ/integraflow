@@ -1,4 +1,4 @@
-import { ColorPicker } from "@/ui";
+import { Button, ColorPicker } from "@/ui";
 import * as Tabs from "@radix-ui/react-tabs";
 import { MoreHorizontal, X } from "lucide-react";
 import React from "react";
@@ -12,6 +12,7 @@ const THEMES_INFO = [
         color: "linear-gradient(to right top, #299532, #7EE787)",
     },
     { id: crypto.randomUUID(), name: "answer", color: "#ECB22E" },
+    { id: crypto.randomUUID(), name: "progress", color: "#FF9551" },
     { id: crypto.randomUUID(), name: "button", color: "#36C5F0" },
     { id: crypto.randomUUID(), name: "background", color: "#E01E5A" },
 ];
@@ -59,7 +60,7 @@ export const UpdateDesignEditor = () => {
                         return (
                             <div
                                 key={index}
-                                className="bg-intg-bg-15 my-3 mb-3 flex w-full justify-between rounded-md px-3 py-3"
+                                className="my-3 mb-3 flex w-full justify-between rounded-md bg-intg-bg-15 px-3 py-3"
                             >
                                 <p className="py-1 text-sm font-normal capitalize text-intg-text-2">
                                     {name}
@@ -88,13 +89,15 @@ export const UpdateDesignEditor = () => {
             </div>
 
             <div className="mt-4 flex justify-end gap-2">
-                <button className="w-38 h-11 rounded-sm border border-intg-bg-2 bg-[#322751] px-3 text-sm font-normal text-white transition-all ease-in-out hover:border-2">
-                    Revert changes
-                </button>
-
-                <button className="w-38 h-11 rounded-sm bg-intg-bg-2 px-3 text-sm font-normal text-white transition-all ease-in-out hover:bg-gradient-button-hover">
-                    Update theme
-                </button>
+                <Button
+                    text="Revert changes"
+                    variant="secondary"
+                    className="w-max px-[12px] py-[12px] font-normal"
+                />
+                <Button
+                    text="Update theme"
+                    className="w-max px-[12px] py-[12px] font-normal"
+                />
             </div>
         </>
     );

@@ -4,7 +4,7 @@ interface CardProps {
 
 export const ThemeCard = ({ themeData: { themeName, palette } }: CardProps) => {
     return (
-        <div className="bg-intg-bg-15 my-3 mb-2 flex w-full gap-5 rounded-md px-3 py-2">
+        <div className="my-3 mb-2 flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2">
             {/* color palete -- theme */}
             <div className="flex py-2">
                 {palette.map((color, index) => {
@@ -21,7 +21,9 @@ export const ThemeCard = ({ themeData: { themeName, palette } }: CardProps) => {
             </div>
 
             <div>
-                <p className="font-normal leading-6 ">{themeName}</p>
+                <p className="font-normal leading-6 first-letter:capitalize">
+                    {themeName}
+                </p>
                 <p className="font-normal text-intg-text-4">Fetched theme</p>
             </div>
         </div>
