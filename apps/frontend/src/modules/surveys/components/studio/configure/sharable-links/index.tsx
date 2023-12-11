@@ -1,16 +1,10 @@
 import { Button, Header } from "@/ui";
 import { SendHorizontal } from "lucide-react";
 import { useState } from "react";
-import Link from "./Link";
+import Link, { LinkDetails } from "./Link";
 
 export default function SharableLinks() {
-    const [links, setLinks] = useState<
-        {
-            id: string;
-            name: string;
-            url: string;
-        }[]
-    >([]);
+    const [links, setLinks] = useState<LinkDetails[]>([]);
 
     const createLink = () => {
         setLinks([
@@ -19,9 +13,13 @@ export default function SharableLinks() {
                 id: crypto.randomUUID(),
                 name: `Link ${links.length + 1}`,
                 url: "https://useintegraflow.com",
-            },
+                singleUse: false,
+                startDate: "",
+                endDate: "",
+            } as LinkDetails,
         ]);
     };
+
     return (
         <div className="mx-auto h-full w-full p-4">
             {links.length ? (
@@ -43,7 +41,7 @@ export default function SharableLinks() {
                     <div className="scrollbar-hide flex h-full w-full flex-1 justify-center overflow-y-scroll">
                         <div className=" flex h-full w-full max-w-4xl flex-col gap-4">
                             {links.map((link) => (
-                                <Link key={link.id} {...link} />
+                                <Link key={link.id} link={link} />
                             ))}
                         </div>
                     </div>
