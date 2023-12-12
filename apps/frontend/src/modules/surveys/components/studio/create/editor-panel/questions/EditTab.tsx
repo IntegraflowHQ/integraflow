@@ -12,7 +12,7 @@ import SelectOptionBlock from "./attributes/SelectOptionBlock";
 type Props = {
     questionType: string;
     orderNumber?: number;
-    question: SurveyQuestion
+    question: SurveyQuestion;
 };
 
 export const EditTab = ({ orderNumber, question }: Props) => {
@@ -25,7 +25,7 @@ export const EditTab = ({ orderNumber, question }: Props) => {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-4">
                 <div>
                     <img
                         src={
@@ -53,7 +53,7 @@ export const EditTab = ({ orderNumber, question }: Props) => {
                     value={titleText}
                     characterCount={titleText.split("").length}
                 />
-                <div className="mt-4 flex justify-between space-x-4">
+                <div className="mt-4 flex justify-between gap-4">
                     <EditorTextInput
                         label={"Description"}
                         placeholder="Add description"
@@ -86,26 +86,26 @@ export const EditTab = ({ orderNumber, question }: Props) => {
             {/* MUltiple Selection */}
 
             {question.type === SurveyQuestionTypeEnum.Single ||
-                question.type === SurveyQuestionTypeEnum.Multiple ? (
-                    <div className="space-y-4">
-                        <div className="flex justify-between text-sm">
-                            <p>Answer Choices</p>
-                            <AddMultipleQuestions
-                                getValue={(value) => console.log(value)}
-                            />
-                        </div>
-                        <div>
-                            <SelectOptionBlock
-                                onChange={(e) => setChoiceInput(e.target.value)}
-                                characterCount={choiceInput.split("").length}
-                            />
-                        </div>
-                        <TextButton
-                            text={"Add an answer at choice"}
-                            onclick={() => {}}
+            question.type === SurveyQuestionTypeEnum.Multiple ? (
+                <div className="space-y-4">
+                    <div className="flex justify-between text-sm">
+                        <p>Answer Choices</p>
+                        <AddMultipleQuestions
+                            getValue={(value) => console.log(value)}
                         />
                     </div>
-                ): null}
+                    <div>
+                        <SelectOptionBlock
+                            onChange={(e) => setChoiceInput(e.target.value)}
+                            characterCount={choiceInput.split("").length}
+                        />
+                    </div>
+                    <TextButton
+                        text={"Add an answer at choice"}
+                        onclick={() => {}}
+                    />
+                </div>
+            ) : null}
 
             {/* Multiple Selection */}
 
