@@ -8,9 +8,9 @@ export enum CreateSurvey {
     USE_TEMPLATE = "use template",
 }
 
-export type LinkSettings = {
-    name: string | null;
-    singleUse: boolean;
-    startDate: string | null;
-    endDate: string | null;
+export type ChannelSettings = {
+    name?: string;
+    singleUse?: boolean;
+    startDate?: string;
+    endDate?: string;
 };

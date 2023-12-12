@@ -34,8 +34,9 @@ export default function EditLink({ link }: LinkProps) {
     });
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
-        console.log("link: ", link);
-        updateChannel(link.id, {
+        updateChannel(link, {
+            conditions: link.conditions,
+            triggers: link.triggers,
             settings: JSON.stringify(data),
         });
     };

@@ -1,4 +1,5 @@
 import {
+    SurveyChannel,
     SurveyChannelCountableEdge,
     SurveyChannelCreateInput,
     SurveyChannelTypeEnum,
@@ -9,7 +10,7 @@ import {
 } from "@/generated/graphql";
 import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
 import { createSelectors } from "@/utils/selectors";
-import { gql } from "@apollo/client";
+import { SURVEY_CHANNEL } from "../graphql/fragments/surveyFragment";
 import { useSurveyStore } from "../states/survey";
 
 export default function useChannels() {
@@ -32,12 +33,17 @@ export default function useChannels() {
     const createChannel = async (
         input: Omit<SurveyChannelCreateInput, "surveyId">,
     ) => {
+        const data: SurveyChannelCreateInput = {
+            type: input.type ?? SurveyChannelTypeEnum.InApp,
+            id: input.id ?? crypto.randomUUID(),
+            triggers: input.triggers ?? "{}",
+            conditions: input.conditions ?? "{}",
+            settings: input.settings ?? "{}",
+            surveyId,
+        };
         await createChannelMutation({
             variables: {
-                input: {
-                    ...input,
-                    surveyId,
-                },
+                input: data,
             },
             context,
             optimisticResponse: {
@@ -46,12 +52,8 @@ export default function useChannels() {
                     __typename: "SurveyChannelCreate",
                     surveyChannel: {
                         __typename: "SurveyChannel",
-                        id: "temp-id",
-                        reference: input.id,
-                        type: input.type ?? SurveyChannelTypeEnum.InApp,
-                        triggers: null,
-                        conditions: null,
-                        settings: null,
+                        ...data,
+                        reference: data.id,
                         createdAt: new Date().toISOString(),
                     },
                     surveyErrors: [],
@@ -65,17 +67,7 @@ export default function useChannels() {
                         channels(existingChannels = []) {
                             const newChannelRef = cache.writeFragment({
                                 data: data?.surveyChannelCreate?.surveyChannel,
-                                fragment: gql`
-                                    fragment NewChannel on SurveyChannel {
-                                        id
-                                        reference
-                                        type
-                                        triggers
-                                        conditions
-                                        settings
-                                        createdAt
-                                    }
-                                `,
+                                fragment: SURVEY_CHANNEL,
                             });
 
                             return {
@@ -98,12 +90,13 @@ export default function useChannels() {
 
     const [updateChannelMutation] = useSurveyChannelUpdateMutation();
     const updateChannel = async (
-        id: string,
+        channel: SurveyChannel,
         input: SurveyChannelUpdateInput,
     ) => {
+        console.log("id: ", channel.id);
         await updateChannelMutation({
             variables: {
-                id,
+                id: channel.id,
                 input,
             },
             context,
@@ -113,9 +106,12 @@ export default function useChannels() {
                     __typename: "SurveyChannelUpdate",
                     surveyChannel: {
                         __typename: "SurveyChannel",
-                        id,
-                        ...input,
-                        type: input.type ?? SurveyChannelTypeEnum.InApp,
+                        id: channel.id,
+                        type: input.type ?? channel.type,
+                        triggers: input.triggers ?? channel.triggers,
+                        conditions: input.conditions ?? channel.conditions,
+                        settings: input.settings ?? channel.settings,
+                        reference: channel.reference,
                         createdAt: new Date().toISOString(),
                     },
                     surveyErrors: [],
@@ -124,39 +120,10 @@ export default function useChannels() {
             },
             update: (cache, { data }) => {
                 if (!data?.surveyChannelUpdate?.surveyChannel) return;
-                cache.modify({
-                    fields: {
-                        channels(existingChannels = []) {
-                            const newChannelRef = cache.writeFragment({
-                                data: data?.surveyChannelUpdate?.surveyChannel,
-                                fragment: gql`
-                                    fragment NewChannel on SurveyChannel {
-                                        id
-                                        reference
-                                        type
-                                        triggers
-                                        conditions
-                                        settings
-                                        createdAt
-                                    }
-                                `,
-                            });
-
-                            const existingChannelIndex =
-                                existingChannels.edges.findIndex(
-                                    (edge) => edge.node.id === id,
-                                );
-
-                            if (existingChannelIndex > -1) {
-                                existingChannels.edges[existingChannelIndex] = {
-                                    __typename: "SurveyChannelCountableEdge",
-                                    node: newChannelRef,
-                                };
-                            }
-
-                            return existingChannels;
-                        },
-                    },
+                cache.writeFragment({
+                    id: `SurveyChannel:${channel.id}`,
+                    fragment: SURVEY_CHANNEL,
+                    data: data?.surveyChannelUpdate?.surveyChannel,
                 });
             },
         });
