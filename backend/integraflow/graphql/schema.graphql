@@ -146,6 +146,131 @@ type Query {
   Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
   """
   organizationInviteLink: OrganizationInviteLink @doc(category: "Organizations")
+
+  """
+  List of triggered events.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  events(
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): EventCountableConnection @doc(category: "Events")
+
+  """
+  List of event's definitions.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  eventDefinitions(
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): EventDefinitionCountableConnection @doc(category: "Events")
+
+  """
+  List of event's properties.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  eventProperties(
+    """
+    Filter properties by event. If not provided, all properties for the project will be returned.
+    """
+    event: String
+
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): EventPropertyCountableConnection @doc(category: "Events")
+
+  """
+  List of persons.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  persons(
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): PersonCountableConnection @doc(category: "Events")
+
+  """
+  List of the property definitions.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  propertyDefinitions(
+    """
+    Filter definitions by type. If not provided, all property definitions for the project will be returned.
+    """
+    definitionType: PropertyDefinitionTypeEnum
+
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): PropertyDefinitionCountableConnection @doc(category: "Events")
   _entities(representations: [_Any]): [_Entity]
   _service: _Service
 }
@@ -533,11 +658,12 @@ type SurveyChannel implements Node @doc(category: "Surveys") {
 }
 
 enum SurveyChannelTypeEnum {
-  IN_APP
   EMAIL
   LINK
   API
   CUSTOM
+  MOBILE_APP
+  WEB_APP
 }
 
 """
@@ -936,6 +1062,232 @@ type OrganizationInviteLink @doc(category: "Organizations") {
   inviteLink: String!
 }
 
+type EventCountableConnection @doc(category: "Events") {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+  edges: [EventCountableEdge!]!
+
+  """A total count of items in the collection."""
+  totalCount: Int
+}
+
+type EventCountableEdge @doc(category: "Events") {
+  """The item at the end of the edge."""
+  node: Event!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+"""Represents an event."""
+type Event implements Node @doc(category: "Events") {
+  """The ID of the event."""
+  id: ID!
+
+  """
+  The project the event belongs to
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  project: Project!
+
+  """The event name"""
+  event: String!
+
+  """The event name"""
+  distinctId: String!
+
+  """The event properties"""
+  properties: JSONString
+
+  """The time the event occurred"""
+  timestamp: DateTime
+
+  """The time the event was created"""
+  createdAt: DateTime
+}
+
+type EventDefinitionCountableConnection @doc(category: "Events") {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+  edges: [EventDefinitionCountableEdge!]!
+
+  """A total count of items in the collection."""
+  totalCount: Int
+}
+
+type EventDefinitionCountableEdge @doc(category: "Events") {
+  """The item at the end of the edge."""
+  node: EventDefinition!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+"""Represents an event definition."""
+type EventDefinition implements Node @doc(category: "Events") {
+  """The ID of the event definition."""
+  id: ID!
+
+  """
+  The project the event definition belongs to
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  project: Project!
+
+  """The name of the event definition"""
+  name: String!
+
+  """The time the event was created"""
+  createdAt: DateTime
+
+  """The time the event was last seen"""
+  lastSeenAt: DateTime
+}
+
+type EventPropertyCountableConnection @doc(category: "Events") {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+  edges: [EventPropertyCountableEdge!]!
+
+  """A total count of items in the collection."""
+  totalCount: Int
+}
+
+type EventPropertyCountableEdge @doc(category: "Events") {
+  """The item at the end of the edge."""
+  node: EventProperty!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+"""Represents an event property."""
+type EventProperty implements Node @doc(category: "Events") {
+  """The ID of the event property."""
+  id: ID!
+
+  """
+  The project the event property belongs to
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  project: Project!
+
+  """The name of the event"""
+  event: String!
+
+  """The property of the event"""
+  property: String!
+}
+
+type PersonCountableConnection @doc(category: "Events") {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+  edges: [PersonCountableEdge!]!
+
+  """A total count of items in the collection."""
+  totalCount: Int
+}
+
+type PersonCountableEdge @doc(category: "Events") {
+  """The item at the end of the edge."""
+  node: Person!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+"""Represents a person."""
+type Person implements Node @doc(category: "Events") {
+  """The ID of the event property."""
+  id: ID!
+
+  """
+  The project the person belongs to
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  project: Project!
+
+  """The person's uuid"""
+  uuid: UUID!
+
+  """The person's attributes"""
+  attributes: JSONString
+
+  """The person's distinct ids"""
+  distinctIds: [String!]
+
+  """Whether the person has been identified"""
+  isIdentified: Boolean!
+
+  """The time the person was created"""
+  createdAt: DateTime
+}
+
+"""
+Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
+in fields, resolvers and input.
+"""
+scalar UUID
+
+type PropertyDefinitionCountableConnection @doc(category: "Events") {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+  edges: [PropertyDefinitionCountableEdge!]!
+
+  """A total count of items in the collection."""
+  totalCount: Int
+}
+
+type PropertyDefinitionCountableEdge @doc(category: "Events") {
+  """The item at the end of the edge."""
+  node: PropertyDefinition!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+"""Represents a property definition."""
+type PropertyDefinition implements Node @doc(category: "Events") {
+  """The ID of the event property."""
+  id: ID!
+
+  """
+  The project the person belongs to
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  project: Project!
+
+  """The name of the property definition"""
+  name: String!
+
+  """Whether property accepts a numerical value"""
+  isNumerical: Boolean!
+
+  """The type of the property definition"""
+  type: PropertyDefinitionTypeEnum!
+
+  """The property type"""
+  propertyType: PropertyTypeEnum!
+}
+
+enum PropertyDefinitionTypeEnum {
+  EVENT
+  PERSON
+  GROUP
+}
+
+enum PropertyTypeEnum {
+  Datetime
+  String
+  Numeric
+  Boolean
+}
+
 type Mutation {
   """Authenticates a user account via email and authentication token."""
   emailTokenUserAuth(
@@ -1182,6 +1534,18 @@ type Mutation {
     """Organization details for the new organization."""
     input: OrganizationJoinInput!
   ): OrganizationJoin @doc(category: "Organizations")
+
+  """Captures event."""
+  eventCapture(
+    """Onboarding survey."""
+    batch: [EventCaptureInput!]
+
+    """Organization details for the new organization."""
+    input: EventCaptureInput
+
+    """The time the event(s) is/are sent."""
+    sentAt: DateTime
+  ): EventCapture @doc(category: "Events")
 }
 
 """Authenticates a user account via email and authentication token."""
@@ -1403,12 +1767,6 @@ input SurveyChannelCreateInput @doc(category: "Surveys") {
   """The survey ID the channel belongs to."""
   surveyId: ID!
 }
-
-"""
-Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
-in fields, resolvers and input.
-"""
-scalar UUID
 
 """
 Deletes a channel. 
@@ -1869,6 +2227,52 @@ type OrganizationJoin @doc(category: "Organizations") {
 input OrganizationJoinInput @doc(category: "Organizations") {
   """An invite link for an organization."""
   inviteLink: String!
+}
+
+"""Captures event."""
+type EventCapture @doc(category: "Events") {
+  """Whether the operation was successful."""
+  status: Boolean
+  eventErrors: [EventError!]!
+  errors: [EventError!]!
+}
+
+"""Represents errors in event mutations."""
+type EventError @doc(category: "Events") {
+  """
+  Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field.
+  """
+  field: String
+
+  """The error message."""
+  message: String
+
+  """The error code."""
+  code: EventErrorCode!
+}
+
+"""An enumeration."""
+enum EventErrorCode {
+  FORBIDDEN
+  GRAPHQL_ERROR
+  INVALID
+}
+
+input EventCaptureInput @doc(category: "Events") {
+  """The name of the event."""
+  event: String!
+
+  """The payload ID."""
+  uuid: UUID
+
+  """The distinct ID."""
+  userId: ID
+
+  """The event properties."""
+  properties: JSONString
+
+  """The time the event happened"""
+  timestamp: DateTime!
 }
 
 """_Any value scalar as defined by Federation spec."""

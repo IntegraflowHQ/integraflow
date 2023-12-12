@@ -50,6 +50,40 @@ class Event(models.Model):
     )
 
 
+class EventDefinition(UUIDModel):
+    project: models.ForeignKey = models.ForeignKey(
+        "project.Project",
+        on_delete=models.CASCADE,
+        related_name="event_definitions",
+        related_query_name="project",
+    )
+    name: models.CharField = models.CharField(max_length=400)
+    created_at: models.DateTimeField = models.DateTimeField(
+        auto_now_add=True,
+        blank=True
+    )
+    last_seen_at: models.DateTimeField = models.DateTimeField(
+        auto_now_add=True,
+        blank=True
+    )
+
+    class Meta:
+        verbose_name = "EventDefinition"
+        verbose_name_plural = "EventDefinitions"
+        db_table = "event_definitions"
+        unique_together = ("project", "name")
+        indexes = [
+            GinIndex(
+                name="index_event_definition_name",
+                fields=["name"],
+                opclasses=["gin_trgm_ops"],
+            )  # To speed up DB-based fuzzy searching
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.name} / {self.project.name}"
+
+
 class EventProperty(models.Model):
     project: models.ForeignKey = models.ForeignKey(
         "project.Project",
@@ -89,7 +123,7 @@ class PersonManager(models.Manager):
             return person
 
     @staticmethod
-    def distinct_ids_exist(project_id: int, distinct_ids: List[str]) -> bool:
+    def distinct_ids_exist(project_id: str, distinct_ids: List[str]) -> bool:
         return PersonDistinctId.objects.filter(
             project_id=project_id,
             distinct_id__in=distinct_ids

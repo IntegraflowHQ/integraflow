@@ -131,11 +131,12 @@ class SurveyQuestion(UUIDModel):
 
 class SurveyChannel(UUIDModel):
     class Type(models.TextChoices):
-        IN_APP = "in_app", "in app"
         EMAIL = "email", "email"
         LINK = "link", "link"
         API = "api", "api"
         CUSTOM = "custom", "custom"
+        MOBILE_SDK = "mobile_sdk", "mobile sdk"
+        WEB_SDK = "web_sdk", "web sdk"
 
     class Meta:
         verbose_name = "SurveyChannel"
@@ -151,7 +152,7 @@ class SurveyChannel(UUIDModel):
     type: models.CharField = models.CharField(
         max_length=40,
         choices=Type.choices,
-        default=Type.IN_APP
+        default=Type.LINK
     )
     triggers: models.JSONField = models.JSONField(blank=True, null=True)
     conditions: models.JSONField = models.JSONField(blank=True, null=True)

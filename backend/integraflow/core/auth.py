@@ -9,14 +9,17 @@ AUTH_HEADER_PREFIXES = ["JWT", "BEARER"]
 
 
 def get_token_from_request(request: HttpRequest) -> Optional[str]:
-    auth_token: Optional[str] = request.META.get(INTEGRAFLOW_AUTH_HEADER)
+    token: Optional[str] = request.META.get(INTEGRAFLOW_AUTH_HEADER)
 
-    if not auth_token:
+    if not token:
         auth = request.META.get(DEFAULT_AUTH_HEADER, "").split(maxsplit=1)
 
         if len(auth) == 2 and auth[0].upper() in AUTH_HEADER_PREFIXES:
-            auth_token = auth[1]
-    return auth_token
+            token = auth[1]
+
+    if not token:
+        token = request.META.get(DEFAULT_AUTH_HEADER)
+    return token
 
 
 def get_project_from_request(request: HttpRequest) -> Optional[str]:

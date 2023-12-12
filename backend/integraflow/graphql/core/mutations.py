@@ -28,8 +28,13 @@ from graphql.error import GraphQLError
 from integraflow.core.exceptions import PermissionDenied
 from integraflow.core.utils.events import call_event
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_MAP
-from integraflow.graphql.core.validators import validate_one_of_args_is_in_mutation
-from integraflow.graphql.utils import get_nodes, resolve_global_ids_to_primary_keys
+from integraflow.graphql.core.validators import (
+    validate_one_of_args_is_in_mutation
+)
+from integraflow.graphql.utils import (
+    get_nodes,
+    resolve_global_ids_to_primary_keys
+)
 from integraflow.permission.enums import BasePermissionEnum
 from integraflow.permission.utils import (
     all_permissions_required,
