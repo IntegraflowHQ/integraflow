@@ -31,3 +31,19 @@ export const SURVEY_CHANNEL_UPDATE = gql`
         }
     }
 `;
+
+export const SURVEY_CHANNEL_DELETE = gql`
+    mutation SurveyChannelDelete($id: ID!) {
+        surveyChannelDelete(id: $id) {
+            surveyChannel {
+                ...SurveyChannelFragment
+            }
+            surveyErrors {
+                ...SurveyErrorFragment
+            }
+            errors {
+                ...SurveyErrorFragment
+            }
+        }
+    }
+`;

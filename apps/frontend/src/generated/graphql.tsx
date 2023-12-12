@@ -1806,6 +1806,13 @@ export type SurveyChannelUpdateMutationVariables = Exact<{
 
 export type SurveyChannelUpdateMutation = { __typename?: 'Mutation', surveyChannelUpdate?: { __typename?: 'SurveyChannelUpdate', surveyChannel?: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } | null, surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
 
+export type SurveyChannelDeleteMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type SurveyChannelDeleteMutation = { __typename?: 'Mutation', surveyChannelDelete?: { __typename?: 'SurveyChannelDelete', surveyChannel?: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } | null, surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+
 export type SurveyCreateMutationVariables = Exact<{
   input: SurveyCreateInput;
 }>;
@@ -2825,6 +2832,48 @@ export function useSurveyChannelUpdateMutation(baseOptions?: Apollo.MutationHook
 export type SurveyChannelUpdateMutationHookResult = ReturnType<typeof useSurveyChannelUpdateMutation>;
 export type SurveyChannelUpdateMutationResult = Apollo.MutationResult<SurveyChannelUpdateMutation>;
 export type SurveyChannelUpdateMutationOptions = Apollo.BaseMutationOptions<SurveyChannelUpdateMutation, SurveyChannelUpdateMutationVariables>;
+export const SurveyChannelDeleteDocument = gql`
+    mutation SurveyChannelDelete($id: ID!) {
+  surveyChannelDelete(id: $id) {
+    surveyChannel {
+      ...SurveyChannelFragment
+    }
+    surveyErrors {
+      ...SurveyErrorFragment
+    }
+    errors {
+      ...SurveyErrorFragment
+    }
+  }
+}
+    ${SurveyChannelFragmentFragmentDoc}
+${SurveyErrorFragmentFragmentDoc}`;
+export type SurveyChannelDeleteMutationFn = Apollo.MutationFunction<SurveyChannelDeleteMutation, SurveyChannelDeleteMutationVariables>;
+
+/**
+ * __useSurveyChannelDeleteMutation__
+ *
+ * To run a mutation, you first call `useSurveyChannelDeleteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSurveyChannelDeleteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [surveyChannelDeleteMutation, { data, loading, error }] = useSurveyChannelDeleteMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSurveyChannelDeleteMutation(baseOptions?: Apollo.MutationHookOptions<SurveyChannelDeleteMutation, SurveyChannelDeleteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SurveyChannelDeleteMutation, SurveyChannelDeleteMutationVariables>(SurveyChannelDeleteDocument, options);
+      }
+export type SurveyChannelDeleteMutationHookResult = ReturnType<typeof useSurveyChannelDeleteMutation>;
+export type SurveyChannelDeleteMutationResult = Apollo.MutationResult<SurveyChannelDeleteMutation>;
+export type SurveyChannelDeleteMutationOptions = Apollo.BaseMutationOptions<SurveyChannelDeleteMutation, SurveyChannelDeleteMutationVariables>;
 export const SurveyCreateDocument = gql`
     mutation SurveyCreate($input: SurveyCreateInput!) {
   surveyCreate(input: $input) {

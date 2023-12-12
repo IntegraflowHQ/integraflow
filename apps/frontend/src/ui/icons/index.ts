@@ -21,3 +21,4 @@ export { PlusCircle } from "./PlusCircle";
 export { QuestionIcon } from "./QuestionIcon";
 export { SettingsIcon } from "./SettingsIcon";
 export { SpeakerIcon } from "./SpeakerIcon";
+export { Trash } from "./Trash";

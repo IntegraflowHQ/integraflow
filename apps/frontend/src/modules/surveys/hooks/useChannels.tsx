@@ -5,6 +5,7 @@ import {
     SurveyChannelTypeEnum,
     SurveyChannelUpdateInput,
     useSurveyChannelCreateMutation,
+    useSurveyChannelDeleteMutation,
     useSurveyChannelUpdateMutation,
 } from "@/generated/graphql";
 import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
@@ -58,7 +59,7 @@ export default function useChannels() {
                 cache.modify({
                     id: `Survey:${surveyId}`,
                     fields: {
-                        channels(existingChannels = []) {
+                        channels(existingChannels) {
                             const newChannelRef = cache.writeFragment({
                                 data: data?.surveyChannelCreate?.surveyChannel,
                                 fragment: SURVEY_CHANNEL,
@@ -122,6 +123,46 @@ export default function useChannels() {
         });
     };
 
+    const [deleteChannelMutation] = useSurveyChannelDeleteMutation();
+    const deleteChannel = async (channel: SurveyChannel) => {
+        await deleteChannelMutation({
+            variables: {
+                id: channel.id,
+            },
+            context,
+            optimisticResponse: {
+                __typename: "Mutation",
+                surveyChannelDelete: {
+                    __typename: "SurveyChannelDelete",
+                    surveyChannel: {
+                        __typename: "SurveyChannel",
+                        ...channel,
+                    },
+                    surveyErrors: [],
+                    errors: [],
+                },
+            },
+            update: (cache, { data }) => {
+                if (!data?.surveyChannelDelete?.surveyChannel) return;
+                cache.modify({
+                    id: `Survey:${surveyId}`,
+                    fields: {
+                        channels(existingChannels, { readField }) {
+                            return {
+                                __typeName: "SurveyChannelCountableConnection",
+                                edges: existingChannels.edges.filter(
+                                    (edge: SurveyChannelCountableEdge) =>
+                                        readField("id", edge.node) !==
+                                        channel.id,
+                                ),
+                            };
+                        },
+                    },
+                });
+            },
+        });
+    };
+
     const getChannels = (type: SurveyChannelTypeEnum) => {
         return (
             survey?.survey?.channels?.edges.filter(
@@ -134,5 +175,6 @@ export default function useChannels() {
         createChannel,
         getChannels,
         updateChannel,
+        deleteChannel,
     };
 }

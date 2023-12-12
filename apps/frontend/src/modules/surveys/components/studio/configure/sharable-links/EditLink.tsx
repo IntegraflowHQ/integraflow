@@ -1,4 +1,5 @@
 import useChannels from "@/modules/surveys/hooks/useChannels";
+import { ChannelSettings } from "@/types";
 import { Button, DatePicker, Switch, TextInput } from "@/ui";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { LinkProps } from "./Link";
@@ -10,26 +11,21 @@ type Inputs = {
     endDate?: Date;
 };
 
-export default function EditLink({ link }: LinkProps) {
+type Props = LinkProps & {
+    settings: ChannelSettings;
+    close: () => void;
+};
+
+export default function EditLink({ link, settings, close }: Props) {
     const { updateChannel } = useChannels();
-    const linkSettings = link.settings
-        ? JSON.parse(link.settings)
-        : {
-              name: "",
-              singleUse: false,
-              startDate: new Date().toISOString(),
-              endDate: new Date().toISOString(),
-          };
     const { register, handleSubmit, watch, setValue } = useForm<Inputs>({
         defaultValues: {
-            name: linkSettings.name,
-            singleUse: linkSettings.singleUse,
-            startDate: linkSettings.startDate
-                ? new Date(linkSettings.startDate)
-                : new Date(),
-            endDate: linkSettings.endDate
-                ? new Date(linkSettings.endDate)
-                : new Date(),
+            name: settings?.name ?? "",
+            singleUse: settings?.singleUse ?? false,
+            startDate: settings?.startDate
+                ? new Date(settings?.startDate)
+                : undefined,
+            endDate: settings?.endDate ? new Date(settings.endDate) : undefined,
         },
     });
 
@@ -39,6 +35,7 @@ export default function EditLink({ link }: LinkProps) {
             triggers: link.triggers,
             settings: JSON.stringify(data),
         });
+        close();
     };
 
     return (
@@ -72,8 +69,13 @@ export default function EditLink({ link }: LinkProps) {
             </div>
 
             <div className="flex justify-end gap-2">
-                <Button text="Cancel" variant="secondary" />
-                <Button text="Save" />
+                <Button
+                    text="Cancel"
+                    variant="secondary"
+                    type="button"
+                    onClick={close}
+                />
+                <Button text="Save" type="submit" />
             </div>
         </form>
     );

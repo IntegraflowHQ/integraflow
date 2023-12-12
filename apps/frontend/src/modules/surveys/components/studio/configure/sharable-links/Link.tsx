@@ -1,34 +1,22 @@
 import { SurveyChannelCountableEdge } from "@/generated/graphql";
+import useChannels from "@/modules/surveys/hooks/useChannels";
 import type { LinkSettings } from "@/types";
 import { Dialog, DialogContent, DialogTrigger } from "@/ui";
-import { Copy } from "@/ui/icons";
+import { Copy, Trash } from "@/ui/icons";
 import { cn, copyToClipboard } from "@/utils";
 import { QrCode, SendHorizontal, SettingsIcon } from "lucide-react";
 import QRCode from "qrcode.react";
+import { useState } from "react";
 import EditLink from "./EditLink";
-
-export type LinkDetails = {
-    name: string;
-    url: string;
-    id: string;
-    singleUse: boolean;
-    startDate: string;
-    endDate: string;
-};
 
 export type LinkProps = {
     link: SurveyChannelCountableEdge["node"];
 };
 
 export default function Link({ link }: LinkProps) {
-    const settings: LinkSettings = link.settings
-        ? JSON.parse(link.settings)
-        : {
-              name: "",
-              singleUse: false,
-              startDate: null,
-              endDate: null,
-          };
+    const [editing, setEditing] = useState(false);
+    const settings: LinkSettings = JSON.parse(link.settings) as LinkSettings;
+    const { deleteChannel } = useChannels();
 
     return (
         <div key={link.id} className="flex items-center justify-between">
@@ -49,6 +37,7 @@ export default function Link({ link }: LinkProps) {
                     </span>
                 </div>
             </div>
+
             <div
                 className={cn(
                     "flex gap-2 transition-opacity duration-300 ease-in",
@@ -64,6 +53,7 @@ export default function Link({ link }: LinkProps) {
                 >
                     <Copy />
                 </button>
+
                 <Dialog>
                     <DialogTrigger>
                         <QrCode className="text-intg-text" />
@@ -109,14 +99,25 @@ export default function Link({ link }: LinkProps) {
                     </DialogContent>
                 </Dialog>
 
-                <Dialog>
-                    <DialogTrigger>
+                <Dialog
+                    open={editing}
+                    onOpenChange={(value) => setEditing(value)}
+                >
+                    <DialogTrigger onClick={() => setEditing(true)}>
                         <SettingsIcon className="text-intg-text" />
                     </DialogTrigger>
                     <DialogContent>
-                        <EditLink link={link} />
+                        <EditLink
+                            link={link}
+                            settings={settings}
+                            close={() => setEditing(false)}
+                        />
                     </DialogContent>
                 </Dialog>
+
+                <button onClick={() => deleteChannel(link)}>
+                    <Trash />
+                </button>
             </div>
         </div>
     );
