@@ -2,14 +2,16 @@ import { CheckCircle, Pen } from "lucide-react";
 import React from "react";
 
 interface CardProps {
-    themeData: { colorPalette: string[]; name: string };
     onClick: () => void;
     activeTheme: boolean;
     toggleNewThemeModal: () => void;
+    name: string;
+    colors: string[];
 }
 
 export const ThemeCard = ({
-    themeData: { name, colorPalette },
+    name,
+    colors,
     onClick,
     activeTheme,
     toggleNewThemeModal,
@@ -41,7 +43,7 @@ export const ThemeCard = ({
 
             <div className="flex gap-5">
                 <div className="flex py-2">
-                    {colorPalette.map((color, index) => {
+                    {colors.map((color, index) => {
                         return (
                             <div
                                 className={`h-8 w-8 rounded-full border-2 ${

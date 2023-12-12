@@ -46,22 +46,10 @@ export const useThemes = () => {
                 ? JSON.parse(colorScheme)
                 : {};
 
-            const { answer, button, progress, question, background } =
-                parsedColorScheme;
-
-            const colorPalette = [
-                answer,
-                button,
-                progress,
-                question,
-                background,
-            ];
-
             return {
                 ...theme,
                 name,
                 colorScheme: parsedColorScheme,
-                colorPalette: colorPalette,
             };
         });
 
