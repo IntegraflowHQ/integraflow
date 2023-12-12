@@ -18,7 +18,7 @@ export const AppCore = () => {
                 }}
             >
                 {!studioModeIsActive && <Navbar />}
-                <div className="custom-scrollbar  h-screen flex-1 overflow-y-auto overflow-x-hidden">
+                <div className="custom-scrollbar h-screen flex-1 overflow-y-auto overflow-x-hidden">
                     <Outlet />
                 </div>
             </div>

@@ -1,12 +1,14 @@
 import { surveyConditions } from "@/utils/survey";
 import TextButton from "./attributes/Buttons/TextButton";
 import { ComboBox } from "./attributes/ComboBox";
+import { SurveyQuestion } from "@/generated/graphql";
 
 type Props = {
     questionType: string;
+    question: SurveyQuestion;
 };
 
-export const LogicTab = ({ questionType }: Props) => {
+export const LogicTab = ({ questionType, question }: Props) => {
     return (
         <div className="space-y-4">
             <div className="">
