@@ -6,7 +6,7 @@ import CreatableSelect from "react-select/creatable";
 type Props = {
     options?: Option[];
     enableUserOptions?: boolean;
-    getValue: (value: MultiValue<Option> | SingleValue<Option>) => void;
+    getValue?: (value: MultiValue<Option> | SingleValue<Option>) => void;
 };
 
 interface Option {
@@ -46,7 +46,7 @@ export const ComboBox = ({
                     options={userOptions}
                     onChange={(value) => {
                         setValue(value as Option[]);
-                        getValue(value);
+                        getValue && getValue(value);
                     }}
                 />
             ) : (
@@ -55,7 +55,7 @@ export const ComboBox = ({
                         options={options}
                         isMulti
                         onChange={(value) => {
-                            getValue(value);
+                            getValue && getValue(value);
                         }}
                     />
                 </div>

@@ -3,8 +3,8 @@ import { forwardRef } from "react";
 
 type Props = {
     label: string;
-    value: boolean;
-    onChange: (e: { target: { value: boolean } }) => void;
+    value?: boolean;
+    onChange?: (e: { target: { value: boolean } }) => void;
 };
 
 export const Switch = forwardRef<HTMLButtonElement, Props>(
@@ -27,7 +27,7 @@ export const Switch = forwardRef<HTMLButtonElement, Props>(
                     }}
                     checked={value}
                     onCheckedChange={(value: boolean) =>
-                        onChange({ target: { value } })
+                        onChange && onChange({ target: { value } })
                     }
                 >
                     <SwitchPrimitive.Thumb className="block h-[13px] w-[13px] translate-x-1 rounded-full bg-[#6941C6]  transition-transform duration-100 will-change-transform data-[state=checked]:translate-x-[15px]" />

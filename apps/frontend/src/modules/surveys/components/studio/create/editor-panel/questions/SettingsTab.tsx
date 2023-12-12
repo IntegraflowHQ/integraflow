@@ -1,11 +1,13 @@
 import { SelectInput, Switch } from "@/ui";
 import { EditorTextInput } from "../components/EditorTextInput";
+import { SurveyQuestion } from "@/generated/graphql";
 
 type Props = {
     questionType: string;
+    question: SurveyQuestion;
 };
 
-export const SettingsTab = ({ questionType }: Props) => {
+export const SettingsTab = ({ questionType , question}: Props) => {
     return (
         <div className="space-y-3">
             <div className="rounded bg-[#272138] p-3">

@@ -4,18 +4,15 @@ import {
     SurveyChannelCreateInput,
     SurveyChannelTypeEnum,
     SurveyChannelUpdateInput,
-    useChannelsQuery,
     useSurveyChannelCreateMutation,
     useSurveyChannelUpdateMutation,
 } from "@/generated/graphql";
 import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
-import { createSelectors } from "@/utils/selectors";
 import { SURVEY_CHANNEL } from "../graphql/fragments/surveyFragment";
-import { useSurveyStore } from "../states/survey";
+import { useSurvey } from "./useSurvey";
 
 export default function useChannels() {
-    const surveyStore = createSelectors(useSurveyStore);
-    const surveyId = surveyStore.use.id();
+    const { survey, surveyId } = useSurvey();
     const { workspace } = useWorkspaceState();
 
     const context = {
@@ -24,15 +21,11 @@ export default function useChannels() {
         },
     };
 
-    const { data: channels, loading } = useChannelsQuery({
-        variables: { surveyId },
-        context,
-    });
-
     const [createChannelMutation] = useSurveyChannelCreateMutation();
     const createChannel = async (
         input: Omit<SurveyChannelCreateInput, "surveyId">,
     ) => {
+        if (!surveyId) return;
         const data: SurveyChannelCreateInput = {
             type: input.type ?? SurveyChannelTypeEnum.InApp,
             id: input.id ?? crypto.randomUUID(),
@@ -63,6 +56,7 @@ export default function useChannels() {
             update: (cache, { data }) => {
                 if (!data?.surveyChannelCreate?.surveyChannel) return;
                 cache.modify({
+                    id: `Survey:${surveyId}`,
                     fields: {
                         channels(existingChannels = []) {
                             const newChannelRef = cache.writeFragment({
@@ -93,7 +87,6 @@ export default function useChannels() {
         channel: SurveyChannel,
         input: SurveyChannelUpdateInput,
     ) => {
-        console.log("id: ", channel.id);
         await updateChannelMutation({
             variables: {
                 id: channel.id,
@@ -131,15 +124,13 @@ export default function useChannels() {
 
     const getChannels = (type: SurveyChannelTypeEnum) => {
         return (
-            channels?.channels?.edges.filter(
+            survey?.survey?.channels?.edges.filter(
                 (edge) => edge.node.type === type,
             ) || ([] as SurveyChannelCountableEdge[])
         );
     };
 
     return {
-        loading,
-        channels,
         createChannel,
         getChannels,
         updateChannel,
