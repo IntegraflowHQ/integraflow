@@ -56,14 +56,17 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
                     {!loading ? (
                         <div
-                            className={`flex w-full gap-5 rounded-md border border-red-400 bg-intg-bg-15 px-3 py-2 transition-all ease-in-out`}
-                            style={{
-                                transform: `translateY(${
-                                    (selectedThemePosition ?? 0 + 1) > 1
-                                        ? (selectedThemePosition ?? 0 + 1) * 174
-                                        : (selectedThemePosition ?? 0 + 1) * 248
-                                }px)`,
-                            }}
+                            className={`flex w-full gap-5 rounded-md border border-red-400 bg-intg-bg-15 px-3 py-2 transition-all ease-in-out ${
+                                selectedTheme ? "translate-y-44" : ""
+                            }`}
+                            // style={{
+                            //     transform: `translateY(${
+                            //         (selectedThemePosition ?? 0 + 1) > 1
+                            //             ? -(selectedThemePosition ?? 0 + 1) *
+                            //               174
+                            //             : 174
+                            //     }px)`,
+                            // }}
                             onClick={() =>
                                 onSelectedTheme(
                                     parseInt(themes.data?.[1].id || ""),
