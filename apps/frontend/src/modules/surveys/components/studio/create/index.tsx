@@ -66,7 +66,7 @@ export default function Create() {
 
             <div className="flex flex-1 gap-[38px] pl-5 pr-12 pt-6">
                 {tabs.map(({ content, label, id }) => (
-                    <Tabs.Content key={id} value={label} className="" asChild>
+                    <Tabs.Content key={id} value={label}>
                         <ScrollToBottom
                             mode="top"
                             scrollViewClassName="scrollbar-hide overflow-y-auto"

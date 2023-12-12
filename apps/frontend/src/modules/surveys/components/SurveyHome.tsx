@@ -20,7 +20,9 @@ export default function SurveyHome() {
 
                     <Dialog>
                         <DialogTrigger asChild>
-                            <CreateSurveyButton />
+                            <div>
+                                <CreateSurveyButton />
+                            </div>
                         </DialogTrigger>
                         <DialogContent
                             title="Create new survey"
