@@ -8,26 +8,53 @@ interface ContentProp {
     onOpen: () => void;
 }
 
+// const THEMES = [
+//     {
+//         palette: ["#CCA8E9", "#C3BEF0", "#CADEFC", "#DEFCF9"],
+//         themeName: "Outer space",
+//     },
+//     {
+//         palette: ["#748DA6", "#9CB4CC", "#D3CEDF", "#F2D7D9"],
+//         themeName: "Tropical tone",
+//     },
+//     {
+//         palette: ["#EEF2E6", "#D6CDA4", "#3D8361", "#1C6758"],
+//         themeName: "Battle cat",
+//     },
+//     {
+//         palette: ["#BFACE0", "#BFACE0", "#A084CA", "#645CAA"],
+//         themeName: "Impressionist blue",
+//     },
+//     {
+//         palette: ["#7A4495", "#B270A2", "#FF8FB1", "#FCE2DB"],
+//         themeName: "Vanilla pudding",
+//     },
+//     {
+//         palette: ["#FFEEAF", "#E1FFEE", "#A5F1E9", "#7FBCD2"],
+//         themeName: "Azure blue",
+//     },
+//     {
+//         palette: ["#54BAB9", "#9ED2C6", "#E9DAC1", "#F7ECDE"],
+//         themeName: "Tint of rose",
+//     },
+// ];
+
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
     const [selectedTheme, setSelectedTheme] = React.useState<string>("");
 
     const { themes, error, loading } = useThemes();
     const { data, totalCount } = themes;
-    const THEMES = data;
+    const THEMES = data?.reverse();
 
     const palettes = data?.map((theme) => theme.colorPalette);
     const themeName = data?.map((theme) => theme.name);
     const themeId = data?.map((theme) => theme.id);
+    const selectedThemeIndex = themeId?.indexOf(selectedTheme ?? "");
 
     const onSelectedTheme = (index: number) => {
         const selectedTheme = themeId?.[index];
         setSelectedTheme(selectedTheme || "");
     };
-
-    const selectedThemePosition = THEMES?.findIndex(
-        (theme) => theme.id === selectedTheme,
-    );
-    console.log(`slected theme index ${selectedThemePosition}`);
 
     return (
         <div>
@@ -53,49 +80,38 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                     <p className="py-4 text-sm font-normal uppercase">
                         Selected Theme
                     </p>
-
                     {!loading ? (
                         <div
-                            className={`flex w-full gap-5 rounded-md border border-red-400 bg-intg-bg-15 px-3 py-2 transition-all ease-in-out ${
-                                selectedTheme ? "translate-y-44" : ""
-                            }`}
-                            // style={{
-                            //     transform: `translateY(${
-                            //         (selectedThemePosition ?? 0 + 1) > 1
-                            //             ? -(selectedThemePosition ?? 0 + 1) *
-                            //               174
-                            //             : 174
-                            //     }px)`,
-                            // }}
+                            className={`trans flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2 transition-all ease-in-out`}
                             onClick={() =>
-                                onSelectedTheme(
-                                    parseInt(themes.data?.[1].id || ""),
-                                )
+                                onSelectedTheme(selectedThemeIndex as number)
                             }
                         >
                             <div className="flex py-2">
-                                {palettes?.slice(1)?.map((palette, index) => (
-                                    <div className="flex" key={index}>
-                                        {palette?.map((color, colorIndex) => (
-                                            <div
-                                                className={`h-8 w-8 rounded-full border-2 ${
-                                                    colorIndex !== 0
-                                                        ? "-ml-3"
-                                                        : ""
-                                                }`}
-                                                key={colorIndex}
-                                                style={{
-                                                    backgroundColor: color,
-                                                }}
-                                            />
-                                        ))}
-                                    </div>
-                                ))}
+                                {palettes
+                                    ?.find(
+                                        (_, index) =>
+                                            index === selectedThemeIndex,
+                                    )
+                                    ?.map((color, colorIndex) => (
+                                        <div
+                                            className={`h-8 w-8 rounded-full border-2  ${
+                                                colorIndex !== 0 ? "-ml-3" : ""
+                                            }`}
+                                            key={colorIndex}
+                                            style={{
+                                                backgroundColor: color,
+                                            }}
+                                        />
+                                    ))}
                             </div>
 
                             <div>
                                 <p className="text-base font-normal leading-6">
-                                    {themeName?.slice(1)}
+                                    {themeName?.find(
+                                        (_, index) =>
+                                            index === selectedThemeIndex,
+                                    )}
                                 </p>
                                 <p className="text-sm font-normal text-intg-text-4">
                                     Fetched theme
@@ -129,31 +145,12 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                 {totalCount === 0 ? null : (
                     <div className="flex-col">
                         {THEMES?.map((theme, index: number) => {
-                            const themeCardPosition: number = index + 1;
-                            const isSelected = selectedTheme === theme.id;
-                            const translateY = isSelected
-                                ? themeCardPosition > 1
-                                    ? themeCardPosition * 125
-                                    : 174
-                                : 174;
-
                             return (
-                                <div
-                                    className={`${
-                                        isSelected ? "" : "translate-y-0"
-                                    } transition-all delay-300 ease-in-out`}
-                                    style={
-                                        isSelected
-                                            ? {
-                                                  transform: `translateY(-${translateY}px)`,
-                                              }
-                                            : {
-                                                  transform: `translateY(${0}px)`,
-                                              }
-                                    }
-                                    key={index}
-                                >
+                                <div key={index}>
                                     <ThemeCard
+                                        activeTheme={
+                                            index === selectedThemeIndex
+                                        }
                                         themeData={theme}
                                         onClick={() =>
                                             onSelectedTheme(index as number)

@@ -1,3 +1,4 @@
+import { useThemes } from "@/modules/projects/hooks/useTheme";
 import { Button, ColorPicker } from "@/ui";
 import * as Tabs from "@radix-ui/react-tabs";
 import { MoreHorizontal, X } from "lucide-react";
@@ -19,16 +20,57 @@ const THEMES_INFO = [
 
 export const UpdateDesignEditor = () => {
     const [newThemeOpenState, setOpenState] = React.useState<boolean>(false);
-    const [selectedColor, setSelectedColor] = React.useState<string>("");
-    const [themeOption, setThemeOption] = React.useState<string>("");
+    const [selectedColors, setSelectedColors] = React.useState<{
+        [Key: string]: string;
+    }>({});
+    const [, setThemeOption] = React.useState<string>("");
+
+    // query fields
+    const [themeName, setThemeName] = React.useState<string>("");
+    const [colorScheme, setColorScheme] = React.useState<string>("");
+
+    const { createTheme } = useThemes();
+
+    const handleCreateTheme = () => {
+        if (themeName && colorScheme) {
+            createTheme(themeName, JSON.parse(colorScheme));
+        }
+    };
+
+    const handleThemeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setThemeName(e.target.value);
+    };
 
     const handleSelectedOption = (index: number, color: string) => {
         const selectedThemeOption = THEMES_INFO[index];
         setThemeOption(selectedThemeOption.id);
 
-        if (themeOption) {
-            setSelectedColor(color);
+        const updatedTheme = THEMES_INFO.map((theme, i) => {
+            if (i === index) {
+                return {
+                    ...theme,
+                    color,
+                };
+            }
+            return theme;
+        });
+
+        const updatedThemeData = updatedTheme.map((theme) =>
+            theme.id === selectedThemeOption.id ? { ...theme, color } : theme,
+        );
+
+        const colors: { [key: string]: string } = {};
+        for (const theme of updatedThemeData) {
+            colors[theme.name] = theme.color;
         }
+
+        console.log(colors);
+
+        setSelectedColors({
+            ...selectedColors,
+            [selectedThemeOption?.name]: color,
+        });
+        setColorScheme(JSON.stringify(colors));
     };
 
     const themeSettingsPanel = (
@@ -38,9 +80,15 @@ export const UpdateDesignEditor = () => {
                     <Tabs.List aria-label="create a new theme">
                         <Tabs.Trigger
                             value="theme-name"
-                            className="border-b border-[#6941c6] px-3 py-2 text-sm  font-normal capitalize text-white"
+                            className="border-b border-[#6941c6]"
                         >
-                            theme name
+                            <input
+                                type="text"
+                                value={themeName}
+                                placeholder="Theme name"
+                                onChange={(e) => handleThemeName(e)}
+                                className="w-[120px] text-ellipsis bg-transparent px-3 py-2 text-sm font-normal capitalize text-intg-text-2 focus:outline-intg-bg-2"
+                            />
                         </Tabs.Trigger>
                     </Tabs.List>
 
@@ -56,7 +104,7 @@ export const UpdateDesignEditor = () => {
                 </Tabs.Root>
 
                 <>
-                    {THEMES_INFO.map(({ name, color, id }, index: number) => {
+                    {THEMES_INFO.map(({ name, color }, index: number) => {
                         return (
                             <div
                                 key={index}
@@ -75,8 +123,13 @@ export const UpdateDesignEditor = () => {
                                         className="h-8 w-8 cursor-pointer rounded-full"
                                         style={{
                                             background: `${
-                                                themeOption === id
-                                                    ? selectedColor
+                                                selectedColors[
+                                                    THEMES_INFO[index].name
+                                                ]
+                                                    ? selectedColors[
+                                                          THEMES_INFO[index]
+                                                              .name
+                                                      ]
                                                     : color
                                             }`,
                                         }}
@@ -95,6 +148,7 @@ export const UpdateDesignEditor = () => {
                     className="w-max px-[12px] py-[12px] font-normal"
                 />
                 <Button
+                    onClick={handleCreateTheme}
                     text="Update theme"
                     className="w-max px-[12px] py-[12px] font-normal"
                 />

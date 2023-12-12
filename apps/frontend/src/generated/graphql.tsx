@@ -1780,6 +1780,8 @@ export type ThemesQueryVariables = Exact<{
 
 export type ThemesQuery = { __typename?: 'Query', themes?: { __typename?: 'ProjectThemeCountableConnection', totalCount?: number | null, edges: Array<{ __typename?: 'ProjectThemeCountableEdge', node: { __typename?: 'ProjectTheme', id: string, name: string, colorScheme?: any | null } }> } | null };
 
+export type NewThemeFragment = { __typename?: 'ProjectTheme', id: string, name: string, colorScheme?: any | null };
+
 export type SurveyQuestionFragmentFragment = { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string };
 
 export type SurveyChannelFragmentFragment = { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string };
@@ -2038,6 +2040,13 @@ export const ProjectUpdateFragmentFragmentDoc = gql`
 }
     ${ProjectFragmentFragmentDoc}
 ${ProjectErrorFragmentFragmentDoc}`;
+export const NewThemeFragmentDoc = gql`
+    fragment NewTheme on ProjectTheme {
+  id
+  name
+  colorScheme
+}
+    `;
 export const SurveyErrorFragmentFragmentDoc = gql`
     fragment SurveyErrorFragment on SurveyError {
   field

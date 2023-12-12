@@ -9,6 +9,11 @@ export const useSurvey = () => {
     const { addSurveyDetails } = useSurveyStore();
     const [createSurveyMutation] = useSurveyCreateMutation();
     const { orgSlug, projectSlug } = useParams();
+    // use the updateSurveyTheme mutation
+    // const [updateSurveyTheme] = useSurvey
+
+    // get the current survey id from zustand
+    // const { id: currentSurveyId } = useSurveyStore();
 
     const createSurvey = async (_template?: string) => {
         const surveySlug = `survey-${generateRandomString(10)}`;
@@ -26,6 +31,7 @@ export const useSurvey = () => {
                     slug: surveySlug,
                 },
             },
+
             onCompleted: ({ surveyCreate }) => {
                 addSurveyDetails({
                     id: surveyCreate?.survey?.id as string,
@@ -43,7 +49,24 @@ export const useSurvey = () => {
         });
     };
 
+    // const updateSurveyTheme = async(id: string, colorScheme: ColorScheme) => {
+    //     await
+    // }
+
+    // const updateSurveyTheme = async (colorScheme: ColorScheme) => {
+    //     await createSurveyMutation({
+    //         variables: {
+    //             input: {
+    //                 id: currentSurveyId,
+
+    //             },
+    //         },
+    //     });
+    // };
+
     return {
+        // updateSurveyTheme: (colorScheme: ColorScheme) =>
+        //     updateSurveyTheme(colorScheme),
         createSurvey,
     };
 };
