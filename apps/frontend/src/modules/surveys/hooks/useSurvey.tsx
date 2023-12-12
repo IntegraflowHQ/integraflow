@@ -19,8 +19,8 @@ export const useSurvey = () => {
     const navigate = useNavigate();
 
     const surveyStore = createSelectors(useSurveyStore);
-    const setOpenQuestion = surveyStore.use.setOpenQuestion();
     const openQuestion = surveyStore.use.openQuestion();
+    const setOpenQuestion = surveyStore.use.setOpenQuestion();
 
     const [createSurveyMutation] = useSurveyCreateMutation();
     const [createQuestionMutaton] = useSurveyQuestionCreateMutation({});
@@ -28,6 +28,7 @@ export const useSurvey = () => {
 
     const questions = survey?.survey?.questions?.edges || [];
     const surveyId = survey?.survey?.id;
+    console.log(surveyId);
 
     useEffect(() => {
         const getSurvey = async () => {
