@@ -4,8 +4,13 @@ import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 export const useThemes = () => {
     const { workspace } = useWorkspace();
 
-    const { data: themes, loading } = useThemesQuery({
+    const {
+        data: themes,
+        loading,
+        error,
+    } = useThemesQuery({
         variables: { first: 20 },
+        notifyOnNetworkStatusChange: true,
         context: {
             headers: {
                 Project: workspace?.project.id,
@@ -22,6 +27,7 @@ export const useThemes = () => {
 
         const themesInfo = themeData?.map((theme) => {
             const { name, colorScheme } = theme || {};
+
             const parsedColorScheme = colorScheme
                 ? JSON.parse(colorScheme)
                 : {};
@@ -38,6 +44,7 @@ export const useThemes = () => {
             ];
 
             return {
+                ...theme,
                 name,
                 colorScheme: parsedColorScheme,
                 colorPalette: colorPalette,
@@ -51,6 +58,7 @@ export const useThemes = () => {
     };
 
     return {
+        error,
         loading,
         themes: getThemeProperties(),
     };
