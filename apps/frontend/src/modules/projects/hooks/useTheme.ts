@@ -21,6 +21,7 @@ export const useThemes = () => {
         data: themes,
         loading,
         error,
+        refetch,
     } = useThemesQuery({
         variables: { first: 20 },
         notifyOnNetworkStatusChange: true,
@@ -65,6 +66,7 @@ export const useThemes = () => {
         });
 
         return {
+            refetch,
             data: themesInfo,
             totalCount: data?.totalCount,
         };

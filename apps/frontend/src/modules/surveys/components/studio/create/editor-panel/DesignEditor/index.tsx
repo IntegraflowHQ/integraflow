@@ -3,6 +3,7 @@ import { Button, ColorPicker } from "@/ui";
 import * as Tabs from "@radix-ui/react-tabs";
 import { MoreHorizontal, X } from "lucide-react";
 import React from "react";
+import toast from "react-hot-toast";
 import { DesignEditorContent } from "./components/EditorContent";
 import { ThemesMenu } from "./components/ThemesMenu";
 
@@ -10,13 +11,18 @@ const THEMES_INFO = [
     {
         id: crypto.randomUUID(),
         name: "question",
-        color: "linear-gradient(to right top, #299532, #7EE787)",
+        color: "#A0EFF2",
     },
     { id: crypto.randomUUID(), name: "answer", color: "#ECB22E" },
     { id: crypto.randomUUID(), name: "progress", color: "#FF9551" },
     { id: crypto.randomUUID(), name: "button", color: "#36C5F0" },
     { id: crypto.randomUUID(), name: "background", color: "#E01E5A" },
 ];
+
+// const DEFAULT_THEME: { [Key: string]: string } = {};
+// THEMES_INFO.forEach((theme) => {
+//     DEFAULT_THEME[theme.name] = theme.color;
+// });
 
 export const UpdateDesignEditor = () => {
     const [newThemeOpenState, setOpenState] = React.useState<boolean>(false);
@@ -29,11 +35,17 @@ export const UpdateDesignEditor = () => {
     const [themeName, setThemeName] = React.useState<string>("");
     const [colorScheme, setColorScheme] = React.useState<string>("");
 
-    const { createTheme } = useThemes();
+    const {
+        createTheme,
+        themes: { refetch },
+    } = useThemes();
 
     const handleCreateTheme = () => {
-        if (themeName && colorScheme) {
+        if (themeName && colorScheme !== "") {
             createTheme(themeName, JSON.parse(colorScheme));
+            toast.success("Theme created successfully");
+        } else {
+            toast.error("Please fill all the fields");
         }
     };
 
@@ -64,14 +76,18 @@ export const UpdateDesignEditor = () => {
             colors[theme.name] = theme.color;
         }
 
-        console.log(colors);
-
         setSelectedColors({
             ...selectedColors,
             [selectedThemeOption?.name]: color,
         });
         setColorScheme(JSON.stringify(colors));
     };
+
+    React.useEffect(() => {
+        if (newThemeOpenState === false) {
+            refetch();
+        }
+    }, [newThemeOpenState, refetch]);
 
     const themeSettingsPanel = (
         <>
@@ -142,11 +158,6 @@ export const UpdateDesignEditor = () => {
             </div>
 
             <div className="mt-4 flex justify-end gap-2">
-                <Button
-                    text="Revert changes"
-                    variant="secondary"
-                    className="w-max px-[12px] py-[12px] font-normal"
-                />
                 <Button
                     onClick={handleCreateTheme}
                     text="Update theme"

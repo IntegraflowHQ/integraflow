@@ -1,9 +1,9 @@
 import { useThemes } from "@/modules/projects/hooks/useTheme";
 import { Button } from "@/ui";
 import React from "react";
+import { EditorSpinner } from "./EditorSpinner";
 import { Error } from "./Errors";
 import { ThemeCard } from "./ThemeCard";
-
 interface ContentProp {
     onOpen: () => void;
 }
@@ -77,91 +77,113 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                 />
             ) : (
                 <>
-                    <p className="py-4 text-sm font-normal uppercase">
-                        Selected Theme
-                    </p>
                     {!loading ? (
-                        <div
-                            className={`trans flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2 transition-all ease-in-out`}
-                            onClick={() =>
-                                onSelectedTheme(selectedThemeIndex as number)
-                            }
-                        >
-                            <div className="flex py-2">
-                                {palettes
-                                    ?.find(
-                                        (_, index) =>
-                                            index === selectedThemeIndex,
+                        <>
+                            <p className="py-4 text-sm font-normal uppercase">
+                                Selected Theme
+                            </p>
+
+                            <div
+                                className={`trans flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2 transition-all ease-in-out`}
+                                onClick={() =>
+                                    onSelectedTheme(
+                                        selectedThemeIndex as number,
                                     )
-                                    ?.map((color, colorIndex) => (
-                                        <div
-                                            className={`h-8 w-8 rounded-full border-2  ${
-                                                colorIndex !== 0 ? "-ml-3" : ""
-                                            }`}
-                                            key={colorIndex}
-                                            style={{
-                                                backgroundColor: color,
-                                            }}
-                                        />
-                                    ))}
+                                }
+                            >
+                                <div className="flex py-2">
+                                    {palettes
+                                        ?.find(
+                                            (_, index) =>
+                                                index === selectedThemeIndex,
+                                        )
+                                        ?.map((color, colorIndex) => (
+                                            <div
+                                                className={`h-8 w-8 rounded-full border-2  ${
+                                                    colorIndex !== 0
+                                                        ? "-ml-4"
+                                                        : ""
+                                                }`}
+                                                key={colorIndex}
+                                                style={{
+                                                    backgroundColor: color,
+                                                }}
+                                            />
+                                        ))}
+                                </div>
+
+                                <div>
+                                    <p className="text-base font-normal leading-6">
+                                        {themeName?.find(
+                                            (_, index) =>
+                                                index === selectedThemeIndex,
+                                        )}
+                                    </p>
+                                    <p className="text-sm font-normal text-intg-text-4">
+                                        Fetched theme
+                                    </p>
+                                </div>
                             </div>
 
-                            <div>
-                                <p className="text-base font-normal leading-6">
-                                    {themeName?.find(
-                                        (_, index) =>
-                                            index === selectedThemeIndex,
-                                    )}
-                                </p>
-                                <p className="text-sm font-normal text-intg-text-4">
-                                    Fetched theme
-                                </p>
-                            </div>
-                        </div>
+                            {totalCount === 0 ? (
+                                <Button
+                                    text="new theme"
+                                    onClick={onOpen}
+                                    variant="secondary"
+                                    className="mb-2 mt-4 text-sm font-normal first-letter:capitalize"
+                                />
+                            ) : (
+                                <div
+                                    className={`h-full py-6  ${
+                                        totalCount === 2 ? "-mt-4" : ""
+                                    } transition-all delay-300 ease-in-out`}
+                                >
+                                    <p className="py-2 text-sm font-normal capitalize">
+                                        all themes
+                                    </p>
+
+                                    <Button
+                                        text="new theme"
+                                        onClick={onOpen}
+                                        variant="secondary"
+                                        className="text-sm font-normal first-letter:capitalize"
+                                    />
+
+                                    <div className="flex-col">
+                                        {THEMES?.map((theme, index: number) => {
+                                            return (
+                                                <div key={index}>
+                                                    <ThemeCard
+                                                        activeTheme={
+                                                            index ===
+                                                            selectedThemeIndex
+                                                        }
+                                                        themeData={theme}
+                                                        onClick={() =>
+                                                            onSelectedTheme(
+                                                                index as number,
+                                                            )
+                                                        }
+                                                        toggleNewThemeModal={
+                                                            onOpen
+                                                        }
+                                                    />
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+                        </>
                     ) : (
-                        <div className="flex py-2 text-sm font-normal text-intg-text-2">
-                            loading...
-                        </div>
+                        <EditorSpinner
+                            startColor="#53389E"
+                            endColor="#d9d9d9"
+                            size="10"
+                        />
                     )}
                 </>
             )}
-
-            <div
-                className={`h-full py-6  ${
-                    totalCount === 2 ? "-mt-4" : ""
-                } transition-all delay-300 ease-in-out`}
-            >
-                <p className="py-2 text-sm font-normal capitalize">
-                    all themes
-                </p>
-
-                <Button
-                    text="new theme"
-                    onClick={onOpen}
-                    variant="secondary"
-                    className="text-sm font-normal first-letter:capitalize"
-                />
-
-                {totalCount === 0 ? null : (
-                    <div className="flex-col">
-                        {THEMES?.map((theme, index: number) => {
-                            return (
-                                <div key={index}>
-                                    <ThemeCard
-                                        activeTheme={
-                                            index === selectedThemeIndex
-                                        }
-                                        themeData={theme}
-                                        onClick={() =>
-                                            onSelectedTheme(index as number)
-                                        }
-                                    />
-                                </div>
-                            );
-                        })}
-                    </div>
-                )}
-            </div>
         </div>
     );
 };
