@@ -10,12 +10,24 @@ type Inputs = {
 };
 
 export default function EditLink({ link }: LinkProps) {
+    const linkSettings = link.settings
+        ? JSON.parse(link.settings)
+        : {
+              name: "",
+              singleUse: false,
+              startDate: new Date().toISOString(),
+              endDate: new Date().toISOString(),
+          };
     const { register, handleSubmit, watch, setValue } = useForm<Inputs>({
         defaultValues: {
-            name: link.name,
-            singleUse: link.singleUse,
-            startDate: link.startDate ? new Date(link.startDate) : new Date(),
-            endDate: link.endDate ? new Date(link.endDate) : new Date(),
+            name: linkSettings.name,
+            singleUse: linkSettings.singleUse,
+            startDate: linkSettings.startDate
+                ? new Date(linkSettings.startDate)
+                : new Date(),
+            endDate: linkSettings.endDate
+                ? new Date(linkSettings.endDate)
+                : new Date(),
         },
     });
 

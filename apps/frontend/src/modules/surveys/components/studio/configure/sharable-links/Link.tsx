@@ -1,3 +1,4 @@
+import { SurveyChannelCountableEdge } from "@/generated/graphql";
 import { Dialog, DialogContent, DialogTrigger } from "@/ui";
 import { Copy } from "@/ui/icons";
 import { cn, copyToClipboard } from "@/utils";
@@ -15,7 +16,7 @@ export type LinkDetails = {
 };
 
 export type LinkProps = {
-    link: LinkDetails;
+    link: SurveyChannelCountableEdge["node"];
 };
 
 export default function Link({ link }: LinkProps) {
@@ -30,8 +31,10 @@ export default function Link({ link }: LinkProps) {
                     />
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-sm text-intg-text">{link.name}</span>
-                    <span className="text-xs text-intg-text">{link.url}</span>
+                    <span className="text-sm text-intg-text">Link 1</span>
+                    <span className="text-xs text-intg-text">
+                        useintegraflow.com
+                    </span>
                 </div>
             </div>
             <div
@@ -41,7 +44,10 @@ export default function Link({ link }: LinkProps) {
             >
                 <button
                     onClick={() => {
-                        copyToClipboard(link.url, "Link copied to clipboard!");
+                        copyToClipboard(
+                            "useintegraflow.com",
+                            "Link copied to clipboard!",
+                        );
                     }}
                 >
                     <Copy />
@@ -54,7 +60,7 @@ export default function Link({ link }: LinkProps) {
                         <div className="flex flex-col gap-4">
                             <div className="flex flex-col items-center justify-center gap-2">
                                 <QRCode
-                                    value={link.url}
+                                    value={"useintegraflow.com"}
                                     className="bg-transparent"
                                     size={150}
                                     strokeWidth={1}
@@ -72,13 +78,13 @@ export default function Link({ link }: LinkProps) {
                                 </span>
 
                                 <span className="px-2 py-1 text-sm text-white">
-                                    {link.url}
+                                    {"useintegraflow.com"}
                                 </span>
 
                                 <button
                                     onClick={() => {
                                         copyToClipboard(
-                                            link.url,
+                                            "useintegraflow.com",
                                             "Link copied to clipboard!",
                                         );
                                     }}
