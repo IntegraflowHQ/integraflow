@@ -1,6 +1,6 @@
 import { addEllipsis, cn } from "@/utils";
 import * as Accordion from "@radix-ui/react-accordion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionOptions } from "./attributes/Options";
 
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
@@ -9,17 +9,20 @@ import { questionTypes } from "@/utils/survey";
 import { QuestionPanel } from "./QuestionPanel";
 
 export default function UpdateQuestion() {
-    const { getSurvey, questions, setOpenQuestion, openQuestion, surveySlug } = useSurvey();
-    console.log("Questions: ", questions);
+    const { getSurvey, questions, setOpenQuestion, openQuestion, surveySlug } =
+        useSurvey();
 
     const [currentQuestionType, setCurrentQuestionType] = useState<
         SurveyQuestionTypeEnum | undefined
     >();
 
-    useEffect(() => {
-        getSurvey();
-    }, [surveySlug]);
+    const sortedQuestions = useMemo(() => {
+        return [...questions].sort((a, b) => {
+            return a.node.orderNumber - b.node.orderNumber;
+        });
+    }, [questions]);
 
+ 
     return (
         <div className="h-full w-full space-y-4 pt-2">
             <div>
@@ -29,22 +32,28 @@ export default function UpdateQuestion() {
                     value={openQuestion}
                     className="space-y-4"
                 >
-                    {questions?.map((question) => {
+                    {sortedQuestions?.map((question) => {
                         return (
                             <Accordion.Item
-                                value={question.id}
-                                key={question.createdAt}
+                                onClick={() =>
+                                    setCurrentQuestionType(question.node.type)
+                                }
+                                value={question.node.id}
+                                key={question.node.createdAt}
                             >
                                 <Accordion.Header>
                                     <Accordion.Trigger
                                         className={cn(
                                             ` ${
-                                                openQuestion === question.id
+                                                openQuestion ===
+                                                question.node.id
                                                     ? "hidden"
                                                     : "block"
                                             } text-intg-text-7" flex w-full items-center justify-between gap-2 rounded-lg bg-intg-bg-9 p-4`,
                                         )}
-                                        onClick={() => setOpenQuestion(question.id)}
+                                        onClick={() =>
+                                            setOpenQuestion(question.node.id)
+                                        }
                                     >
                                         <div>
                                             <img
@@ -52,16 +61,16 @@ export default function UpdateQuestion() {
                                                     questionTypes.find(
                                                         (type) =>
                                                             type.type ===
-                                                            question.type,
+                                                            question.node.type,
                                                     )?.icon
                                                 }
                                                 alt=""
                                             />
                                         </div>
                                         <div className="font-bold text-intg-text-9">
-                                            {question.orderNumber < 10
-                                                ? `0${question.orderNumber}`
-                                                : question.orderNumber}
+                                            {question.node.orderNumber < 10
+                                                ? `0${question.node.orderNumber}`
+                                                : question.node.orderNumber}
                                         </div>
                                         <div className="w-[415px] rounded-lg bg-intg-bg-15 px-[16px] py-4 text-start text-intg-text-1 ">
                                             {addEllipsis(
@@ -76,6 +85,7 @@ export default function UpdateQuestion() {
                                         currentQuestionType={
                                             currentQuestionType
                                         }
+                                        question={question}
                                     />
                                 </Accordion.Content>
                             </Accordion.Item>
@@ -83,9 +93,7 @@ export default function UpdateQuestion() {
                     })}
                 </Accordion.Root>
             </div>
-            <QuestionOptions
-                setCurrentQuestionType={setCurrentQuestionType}
-            />
+            <QuestionOptions setCurrentQuestionType={setCurrentQuestionType} />
         </div>
     );
 }

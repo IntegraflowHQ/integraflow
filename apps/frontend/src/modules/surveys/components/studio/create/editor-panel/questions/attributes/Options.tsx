@@ -1,7 +1,5 @@
-import {
-    SurveyQuestionTypeEnum,
-} from "@/generated/graphql";
-import { useSurveyStore } from "@/modules/surveys/states/survey";
+import { SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import {
     Button,
     DropdownMenu,
@@ -10,12 +8,10 @@ import {
     DropdownMenuTrigger,
 } from "@/ui";
 import { cn } from "@/utils";
-import { createSelectors } from "@/utils/selectors";
 import { questionTypes } from "@/utils/survey";
 import { PlusCircle } from "lucide-react";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { surveyTypes } from "../../../../../Templates";
-import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
     setCurrentQuestionType: Dispatch<
@@ -24,20 +20,18 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const QuestionOptions = ({
+    setCurrentQuestionType,
     ...props
 }: Props) => {
     const [currentView, setCurrentView] = useState<string>("Welcome message");
-    const {  clear } = useSurveyStore();
-    const surveyStore = createSelectors(useSurveyStore);
-    const questions = surveyStore.use.questions();
-    const {createQuestion} = useSurvey()
+    const { questions } = useSurvey();
+    const { createQuestion } = useSurvey();
 
     const handleCreateQuestion = async (type: SurveyQuestionTypeEnum) => {
+        setCurrentQuestionType(type);
 
         if (type) {
-            createQuestion(type)
-        } else {
-            clear();
+            createQuestion(type);
         }
     };
 

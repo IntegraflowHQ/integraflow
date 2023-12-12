@@ -1,4 +1,4 @@
-import { SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useSurveyStore } from "@/modules/surveys/states/survey";
 import * as Tabs from "@radix-ui/react-tabs";
 import { MoreHorizontalIcon, XIcon } from "lucide-react";
@@ -8,11 +8,10 @@ import { SettingsTab } from "./SettingsTab";
 
 type Props = {
     currentQuestionType: SurveyQuestionTypeEnum | undefined;
+    question: SurveyQuestion;
 };
 
-export const QuestionPanel = ({
-    currentQuestionType,
-}: Props) => {
+export const QuestionPanel = ({ currentQuestionType, question }: Props) => {
     const { setOpenQuestion } = useSurveyStore();
 
     const tabs = [
@@ -22,6 +21,7 @@ export const QuestionPanel = ({
             content: (
                 <EditTab
                     questionType={currentQuestionType as SurveyQuestionTypeEnum}
+                    question={question}
                 />
             ),
         },
@@ -31,6 +31,7 @@ export const QuestionPanel = ({
             content: (
                 <LogicTab
                     questionType={currentQuestionType as SurveyQuestionTypeEnum}
+                    question={question}
                 />
             ),
         },
@@ -40,6 +41,7 @@ export const QuestionPanel = ({
             content: (
                 <SettingsTab
                     questionType={currentQuestionType as SurveyQuestionTypeEnum}
+                    question={question}
                 />
             ),
         },
@@ -65,7 +67,7 @@ export const QuestionPanel = ({
                 </Tabs.List>
                 <div className="flex gap-6">
                     <MoreHorizontalIcon />
-                    <XIcon onClick={() => setOpenQuestion('')} />
+                    <XIcon onClick={() => setOpenQuestion("")} />
                 </div>
             </div>
 

@@ -1,5 +1,4 @@
 import {
-    Survey,
     SurveyQuestionTypeEnum,
     useGetSurveyLazyQuery,
     useSurveyCreateMutation,
@@ -8,8 +7,10 @@ import {
 import { ROUTES } from "@/routes";
 import { generateRandomString } from "@/utils";
 import { createSelectors } from "@/utils/selectors";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useScrollToBottom } from "react-scroll-to-bottom";
+import { SURVEY_QUESTION } from "../graphql/fragments/surveyFragment";
 import { useSurveyStore } from "../states/survey";
 
 export const useSurvey = () => {
@@ -18,17 +19,30 @@ export const useSurvey = () => {
     const navigate = useNavigate();
 
     const surveyStore = createSelectors(useSurveyStore);
-    const id = surveyStore.use.id();
-    const questions = surveyStore.use.questions();
     const setOpenQuestion = surveyStore.use.setOpenQuestion();
-    const addQuestion = surveyStore.use.addQuestion();
-    const addSurveyDetails = surveyStore.use.addSurveyDetails();
-    const setSurvey = surveyStore.use.setSurvey();
     const openQuestion = surveyStore.use.openQuestion();
 
     const [createSurveyMutation] = useSurveyCreateMutation();
-    const [createQuestionMutaton] = useSurveyQuestionCreateMutation();
-    const [getSurveyQuery] = useGetSurveyLazyQuery();
+    const [createQuestionMutaton] = useSurveyQuestionCreateMutation({});
+    const [getSurveyQuery, { data: survey }] = useGetSurveyLazyQuery();
+
+    const questions = survey?.survey?.questions?.edges || [];
+    const surveyId = survey?.survey?.id;
+
+    useEffect(() => {
+        const getSurvey = async () => {
+            if (!surveySlug) return;
+            await getSurveyQuery({
+                variables: {
+                    slug: surveySlug,
+                },
+                onCompleted: (data) => {
+                    console.log("data:", data);
+                },
+            });
+        };
+        getSurvey();
+    }, [surveySlug]);
 
     const createSurvey = async (_template?: string) => {
         const surveySlug = `survey-${generateRandomString(10)}`;
@@ -46,12 +60,6 @@ export const useSurvey = () => {
                     slug: surveySlug,
                 },
             },
-            onCompleted: ({ surveyCreate }) => {
-                addSurveyDetails({
-                    id: surveyCreate?.survey?.id as string,
-                    slug: surveyCreate?.survey?.slug as string,
-                });
-            },
             onError: () => {
                 navigate(
                     ROUTES.SURVEY_LIST.replace(":orgSlug", orgSlug!).replace(
@@ -62,54 +70,80 @@ export const useSurvey = () => {
             },
         });
     };
+
     const createQuestion = async (type: SurveyQuestionTypeEnum) => {
+        const id = crypto.randomUUID();
+        if (!surveyId) return;
         await createQuestionMutaton({
             variables: {
                 input: {
                     orderNumber: questions.length + 1,
-                    surveyId: id,
-                    id: crypto.randomUUID(),
+                    surveyId: surveyId,
+                    id,
                     type: type,
                 },
+            },
+            optimisticResponse: {
+                __typename: "Mutation",
+                surveyQuestionCreate: {
+                    __typename: "SurveyQuestionCreate",
+                    surveyQuestion: {
+                        __typename: "SurveyQuestion",
+                        id: "temp-id",
+                        createdAt: new Date().toISOString(),
+                        description: "",
+                        label: "",
+                        maxPath: 0,
+                        orderNumber: questions.length + 1,
+                        reference: id,
+                        type: type,
+                        settings: null,
+                        options: null,
+                    },
+                    surveyErrors: [],
+                    errors: [],
+                },
+            },
+            update: (cache, { data }) => {
+                if (!data?.surveyQuestionCreate?.surveyQuestion) return;
+                console.log(cache);
+                cache.modify({
+                    id: `Survey:${surveyId}`,
+                    fields: {
+                        questions(existingQuestions = []) {
+                            const newQuestionRef = cache.writeFragment({
+                                data: data.surveyQuestionCreate?.surveyQuestion,
+                                fragment: SURVEY_QUESTION,
+                            });
+
+                            return {
+                                __typename: "SurveyQuestionCountableConnection",
+                                edges: [
+                                    ...existingQuestions.edges,
+                                    {
+                                        __typename:
+                                            "SurveyQuestionCountableEdge",
+                                        node: newQuestionRef,
+                                    },
+                                ],
+                            };
+                        },
+                    },
+                });
             },
             onCompleted: ({ surveyQuestionCreate }) => {
                 const { surveyQuestion } = surveyQuestionCreate ?? {};
                 setOpenQuestion(surveyQuestion?.id as string);
-                addQuestion({
-                    id: surveyQuestion?.id as string,
-                    createdAt: surveyQuestion?.createdAt as string,
-                    description: surveyQuestion?.description as string,
-                    label: surveyQuestion?.label as string,
-                    maxPath: surveyQuestionCreate?.surveyQuestion
-                        ?.maxPath as number,
-                    orderNumber: surveyQuestion?.orderNumber as number,
-                    type: surveyQuestion?.type as SurveyQuestionTypeEnum,
-                });
-
                 scrollToBottom();
             },
         });
     };
 
-    const getSurvey = async () => {
-        await getSurveyQuery({
-            variables: {
-                slug: surveySlug,
-            },
-            onCompleted: (data) => {
-                setSurvey(data.survey as Survey);
-                console.log("data:", data);
-            },
-        });
-    };
     return {
         createSurvey,
         createQuestion,
-        getSurvey,
         questions,
         surveySlug,
-        setSurvey,
-        addSurveyDetails,
         setOpenQuestion,
         openQuestion,
     };
