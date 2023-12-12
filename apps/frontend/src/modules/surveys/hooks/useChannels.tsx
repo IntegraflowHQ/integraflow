@@ -25,7 +25,7 @@ export default function useChannels() {
         context,
     });
 
-    const [createChannelMutation] = useSurveyChannelCreateMutation({});
+    const [createChannelMutation] = useSurveyChannelCreateMutation();
     const createChannel = async (
         input: Omit<SurveyChannelCreateInput, "surveyId">,
     ) => {
