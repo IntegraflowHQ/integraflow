@@ -22,6 +22,7 @@ export const EditTab = ({ orderNumber, question }: Props) => {
     const [descriptionText, setDescriptionText] = useState("");
     const [choiceInput, setChoiceInput] = useState("");
 
+
     return (
         <div className="space-y-6">
             <div className="flex items-center space-x-2">
@@ -32,10 +33,10 @@ export const EditTab = ({ orderNumber, question }: Props) => {
                                 (type) => type.type === question.type,
                             )?.icon
                         }
-                        alt=""
+                        alt="icon"
                     />
                 </div>
-                <span>
+                <span className="font-bold text-sm text-intg-text-9">
                     {question.orderNumber < 10
                         ? `0${question.orderNumber}`
                         : question.orderNumber}

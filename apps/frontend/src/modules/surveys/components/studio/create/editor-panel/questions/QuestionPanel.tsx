@@ -73,13 +73,15 @@ export const QuestionPanel = ({ currentQuestionType, question }: Props) => {
 
             <div>
                 {tabs.map(({ content, label }) => (
+                    <>
                     <Tabs.Content
                         value={label}
                         className="flex-1 pt-2"
                         key={label}
-                    >
+                        >
                         {content}
                     </Tabs.Content>
+                        </>
                 ))}
             </div>
         </Tabs.Root>

@@ -1,6 +1,6 @@
 import { addEllipsis, cn } from "@/utils";
 import * as Accordion from "@radix-ui/react-accordion";
-import { useEffect, useMemo, useState } from "react";
+import {  useMemo, useState } from "react";
 import { QuestionOptions } from "./attributes/Options";
 
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
@@ -9,7 +9,7 @@ import { questionTypes } from "@/utils/survey";
 import { QuestionPanel } from "./QuestionPanel";
 
 export default function UpdateQuestion() {
-    const { getSurvey, questions, setOpenQuestion, openQuestion, surveySlug } =
+    const {  questions, setOpenQuestion, openQuestion } =
         useSurvey();
 
     const [currentQuestionType, setCurrentQuestionType] = useState<
@@ -67,7 +67,7 @@ export default function UpdateQuestion() {
                                                 alt=""
                                             />
                                         </div>
-                                        <div className="font-bold text-intg-text-9">
+                                        <div className="font-bold text-sm text-intg-text-9">
                                             {question.node.orderNumber < 10
                                                 ? `0${question.node.orderNumber}`
                                                 : question.node.orderNumber}
@@ -85,7 +85,7 @@ export default function UpdateQuestion() {
                                         currentQuestionType={
                                             currentQuestionType
                                         }
-                                        question={question}
+                                        question={question.node}
                                     />
                                 </Accordion.Content>
                             </Accordion.Item>
