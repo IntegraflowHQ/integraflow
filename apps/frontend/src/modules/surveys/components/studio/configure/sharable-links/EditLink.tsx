@@ -1,3 +1,4 @@
+import useChannels from "@/modules/surveys/hooks/useChannels";
 import { Button, DatePicker, Switch, TextInput } from "@/ui";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { LinkProps } from "./Link";
@@ -10,6 +11,7 @@ type Inputs = {
 };
 
 export default function EditLink({ link }: LinkProps) {
+    const { updateChannel } = useChannels();
     const linkSettings = link.settings
         ? JSON.parse(link.settings)
         : {
@@ -31,7 +33,12 @@ export default function EditLink({ link }: LinkProps) {
         },
     });
 
-    const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+    const onSubmit: SubmitHandler<Inputs> = (data) => {
+        console.log("link: ", link);
+        updateChannel(link.id, {
+            settings: JSON.stringify(data),
+        });
+    };
 
     return (
         <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>

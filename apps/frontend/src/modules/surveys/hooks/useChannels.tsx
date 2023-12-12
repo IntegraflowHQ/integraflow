@@ -1,8 +1,11 @@
 import {
+    SurveyChannelCountableEdge,
     SurveyChannelCreateInput,
     SurveyChannelTypeEnum,
+    SurveyChannelUpdateInput,
     useChannelsQuery,
     useSurveyChannelCreateMutation,
+    useSurveyChannelUpdateMutation,
 } from "@/generated/graphql";
 import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
 import { createSelectors } from "@/utils/selectors";
@@ -60,7 +63,6 @@ export default function useChannels() {
                 cache.modify({
                     fields: {
                         channels(existingChannels = []) {
-                            console.log("existingChannels: ", existingChannels);
                             const newChannelRef = cache.writeFragment({
                                 data: data?.surveyChannelCreate?.surveyChannel,
                                 fragment: gql`
@@ -75,6 +77,7 @@ export default function useChannels() {
                                     }
                                 `,
                             });
+
                             return {
                                 __typeName: "SurveyChannelCountableConnection",
                                 edges: [
@@ -93,9 +96,85 @@ export default function useChannels() {
         });
     };
 
+    const [updateChannelMutation] = useSurveyChannelUpdateMutation();
+    const updateChannel = async (
+        id: string,
+        input: SurveyChannelUpdateInput,
+    ) => {
+        await updateChannelMutation({
+            variables: {
+                id,
+                input,
+            },
+            context,
+            optimisticResponse: {
+                __typename: "Mutation",
+                surveyChannelUpdate: {
+                    __typename: "SurveyChannelUpdate",
+                    surveyChannel: {
+                        __typename: "SurveyChannel",
+                        id,
+                        ...input,
+                        type: input.type ?? SurveyChannelTypeEnum.InApp,
+                        createdAt: new Date().toISOString(),
+                    },
+                    surveyErrors: [],
+                    errors: [],
+                },
+            },
+            update: (cache, { data }) => {
+                if (!data?.surveyChannelUpdate?.surveyChannel) return;
+                cache.modify({
+                    fields: {
+                        channels(existingChannels = []) {
+                            const newChannelRef = cache.writeFragment({
+                                data: data?.surveyChannelUpdate?.surveyChannel,
+                                fragment: gql`
+                                    fragment NewChannel on SurveyChannel {
+                                        id
+                                        reference
+                                        type
+                                        triggers
+                                        conditions
+                                        settings
+                                        createdAt
+                                    }
+                                `,
+                            });
+
+                            const existingChannelIndex =
+                                existingChannels.edges.findIndex(
+                                    (edge) => edge.node.id === id,
+                                );
+
+                            if (existingChannelIndex > -1) {
+                                existingChannels.edges[existingChannelIndex] = {
+                                    __typename: "SurveyChannelCountableEdge",
+                                    node: newChannelRef,
+                                };
+                            }
+
+                            return existingChannels;
+                        },
+                    },
+                });
+            },
+        });
+    };
+
+    const getChannels = (type: SurveyChannelTypeEnum) => {
+        return (
+            channels?.channels?.edges.filter(
+                (edge) => edge.node.type === type,
+            ) || ([] as SurveyChannelCountableEdge[])
+        );
+    };
+
     return {
         loading,
         channels,
         createChannel,
+        getChannels,
+        updateChannel,
     };
 }

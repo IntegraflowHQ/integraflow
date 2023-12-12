@@ -1776,6 +1776,14 @@ export type SurveyErrorFragmentFragment = { __typename?: 'SurveyError', field?: 
 
 export type SurveyCreateFragmentFragment = { __typename?: 'SurveyCreate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null };
 
+export type SurveyUpdateMutationVariables = Exact<{
+  id: Scalars['ID'];
+  input: SurveyUpdateInput;
+}>;
+
+
+export type SurveyUpdateMutation = { __typename?: 'Mutation', surveyUpdate?: { __typename?: 'SurveyUpdate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null } | null };
+
 export type SurveyQuestionCreateMutationVariables = Exact<{
   input: SurveyQuestionCreateInput;
 }>;
@@ -1790,6 +1798,14 @@ export type SurveyChannelCreateMutationVariables = Exact<{
 
 export type SurveyChannelCreateMutation = { __typename?: 'Mutation', surveyChannelCreate?: { __typename?: 'SurveyChannelCreate', surveyChannel?: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } | null, surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
 
+export type SurveyChannelUpdateMutationVariables = Exact<{
+  id: Scalars['ID'];
+  input: SurveyChannelUpdateInput;
+}>;
+
+
+export type SurveyChannelUpdateMutation = { __typename?: 'Mutation', surveyChannelUpdate?: { __typename?: 'SurveyChannelUpdate', surveyChannel?: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } | null, surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+
 export type SurveyCreateMutationVariables = Exact<{
   input: SurveyCreateInput;
 }>;
@@ -1803,6 +1819,8 @@ export type ChannelsQueryVariables = Exact<{
 
 
 export type ChannelsQuery = { __typename?: 'Query', channels?: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } | null };
+
+export type NewChannelFragment = { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string };
 
 export type UserFragmentFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null };
 
@@ -2173,6 +2191,17 @@ export const SurveyCreateFragmentFragmentDoc = gql`
 }
     ${SurveyErrorFragmentFragmentDoc}
 ${SurveyFragmentFragmentDoc}`;
+export const NewChannelFragmentDoc = gql`
+    fragment NewChannel on SurveyChannel {
+  id
+  reference
+  type
+  triggers
+  conditions
+  settings
+  createdAt
+}
+    `;
 export const EmailTokenUserAuthDocument = gql`
     mutation emailTokenUserAuth($email: String!, $token: String!, $inviteLink: String) {
   emailTokenUserAuth(email: $email, token: $token, inviteLink: $inviteLink) {
@@ -2624,6 +2653,49 @@ export function useProjectCreateMutation(baseOptions?: Apollo.MutationHookOption
 export type ProjectCreateMutationHookResult = ReturnType<typeof useProjectCreateMutation>;
 export type ProjectCreateMutationResult = Apollo.MutationResult<ProjectCreateMutation>;
 export type ProjectCreateMutationOptions = Apollo.BaseMutationOptions<ProjectCreateMutation, ProjectCreateMutationVariables>;
+export const SurveyUpdateDocument = gql`
+    mutation SurveyUpdate($id: ID!, $input: SurveyUpdateInput!) {
+  surveyUpdate(id: $id, input: $input) {
+    surveyErrors {
+      ...SurveyErrorFragment
+    }
+    errors {
+      ...SurveyErrorFragment
+    }
+    survey {
+      ...SurveyFragment
+    }
+  }
+}
+    ${SurveyErrorFragmentFragmentDoc}
+${SurveyFragmentFragmentDoc}`;
+export type SurveyUpdateMutationFn = Apollo.MutationFunction<SurveyUpdateMutation, SurveyUpdateMutationVariables>;
+
+/**
+ * __useSurveyUpdateMutation__
+ *
+ * To run a mutation, you first call `useSurveyUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSurveyUpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [surveyUpdateMutation, { data, loading, error }] = useSurveyUpdateMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSurveyUpdateMutation(baseOptions?: Apollo.MutationHookOptions<SurveyUpdateMutation, SurveyUpdateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SurveyUpdateMutation, SurveyUpdateMutationVariables>(SurveyUpdateDocument, options);
+      }
+export type SurveyUpdateMutationHookResult = ReturnType<typeof useSurveyUpdateMutation>;
+export type SurveyUpdateMutationResult = Apollo.MutationResult<SurveyUpdateMutation>;
+export type SurveyUpdateMutationOptions = Apollo.BaseMutationOptions<SurveyUpdateMutation, SurveyUpdateMutationVariables>;
 export const SurveyQuestionCreateDocument = gql`
     mutation SurveyQuestionCreate($input: SurveyQuestionCreateInput!) {
   surveyQuestionCreate(input: $input) {
@@ -2708,6 +2780,49 @@ export function useSurveyChannelCreateMutation(baseOptions?: Apollo.MutationHook
 export type SurveyChannelCreateMutationHookResult = ReturnType<typeof useSurveyChannelCreateMutation>;
 export type SurveyChannelCreateMutationResult = Apollo.MutationResult<SurveyChannelCreateMutation>;
 export type SurveyChannelCreateMutationOptions = Apollo.BaseMutationOptions<SurveyChannelCreateMutation, SurveyChannelCreateMutationVariables>;
+export const SurveyChannelUpdateDocument = gql`
+    mutation SurveyChannelUpdate($id: ID!, $input: SurveyChannelUpdateInput!) {
+  surveyChannelUpdate(id: $id, input: $input) {
+    surveyChannel {
+      ...SurveyChannelFragment
+    }
+    surveyErrors {
+      ...SurveyErrorFragment
+    }
+    errors {
+      ...SurveyErrorFragment
+    }
+  }
+}
+    ${SurveyChannelFragmentFragmentDoc}
+${SurveyErrorFragmentFragmentDoc}`;
+export type SurveyChannelUpdateMutationFn = Apollo.MutationFunction<SurveyChannelUpdateMutation, SurveyChannelUpdateMutationVariables>;
+
+/**
+ * __useSurveyChannelUpdateMutation__
+ *
+ * To run a mutation, you first call `useSurveyChannelUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSurveyChannelUpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [surveyChannelUpdateMutation, { data, loading, error }] = useSurveyChannelUpdateMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSurveyChannelUpdateMutation(baseOptions?: Apollo.MutationHookOptions<SurveyChannelUpdateMutation, SurveyChannelUpdateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SurveyChannelUpdateMutation, SurveyChannelUpdateMutationVariables>(SurveyChannelUpdateDocument, options);
+      }
+export type SurveyChannelUpdateMutationHookResult = ReturnType<typeof useSurveyChannelUpdateMutation>;
+export type SurveyChannelUpdateMutationResult = Apollo.MutationResult<SurveyChannelUpdateMutation>;
+export type SurveyChannelUpdateMutationOptions = Apollo.BaseMutationOptions<SurveyChannelUpdateMutation, SurveyChannelUpdateMutationVariables>;
 export const SurveyCreateDocument = gql`
     mutation SurveyCreate($input: SurveyCreateInput!) {
   surveyCreate(input: $input) {

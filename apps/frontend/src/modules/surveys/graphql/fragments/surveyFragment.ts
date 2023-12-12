@@ -82,3 +82,42 @@ export const SURVEY_CREATE = gql`
         }
     }
 `;
+
+export const SURVEY_CREATE_INPUT = gql`
+    input SurveyCreateInput {
+        name: String
+        slug: String
+        type: SurveyTypeEnum
+        status: SurveyStatusEnum
+        settings: JSONString
+        themeId: ID
+        id: UUID
+    }
+`;
+
+export const SURVEY_UPDATE_INPUT = gql`
+    input SurveyUpdateInput {
+        name: String
+        slug: String
+        type: SurveyTypeEnum
+        status: SurveyStatusEnum
+        settings: JSONString
+        themeId: ID
+    }
+`;
+
+export const SURVEY_UPDATE = gql`
+    mutation SurveyUpdate($id: ID!, $input: SurveyUpdateInput!) {
+        surveyUpdate(id: $id, input: $input) {
+            surveyErrors {
+                ...SurveyErrorFragment
+            }
+            errors {
+                ...SurveyErrorFragment
+            }
+            survey {
+                ...SurveyFragment
+            }
+        }
+    }
+`;

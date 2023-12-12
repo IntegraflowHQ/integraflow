@@ -1,23 +1,26 @@
-import {
-    SurveyChannelCountableEdge,
-    SurveyChannelTypeEnum,
-} from "@/generated/graphql";
+import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import useChannels from "@/modules/surveys/hooks/useChannels";
+import type { LinkSettings } from "@/types";
 import { Button, Header } from "@/ui";
 import { SendHorizontal } from "lucide-react";
 import Link from "./Link";
 
 export default function SharableLinks() {
-    const { channels, createChannel } = useChannels();
-    const linkChannels =
-        channels?.channels?.edges.filter(
-            (edge) => edge.node.type === SurveyChannelTypeEnum.Link,
-        ) || ([] as SurveyChannelCountableEdge[]);
+    const { createChannel, getChannels } = useChannels();
+    const linkChannels = getChannels(SurveyChannelTypeEnum.Link);
 
     const handleCreate = async () => {
         await createChannel({
             type: SurveyChannelTypeEnum.Link,
             id: crypto.randomUUID(),
+            settings: JSON.stringify({
+                name: `Link ${linkChannels.length + 1}`,
+                singleUse: false,
+                startDate: linkChannels.length
+                    ? null
+                    : new Date().toISOString(),
+                endDate: null,
+            } as LinkSettings),
         });
     };
 

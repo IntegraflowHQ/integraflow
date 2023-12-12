@@ -1,4 +1,5 @@
 import { SurveyChannelCountableEdge } from "@/generated/graphql";
+import type { LinkSettings } from "@/types";
 import { Dialog, DialogContent, DialogTrigger } from "@/ui";
 import { Copy } from "@/ui/icons";
 import { cn, copyToClipboard } from "@/utils";
@@ -20,6 +21,15 @@ export type LinkProps = {
 };
 
 export default function Link({ link }: LinkProps) {
+    const settings: LinkSettings = link.settings
+        ? JSON.parse(link.settings)
+        : {
+              name: "",
+              singleUse: false,
+              startDate: null,
+              endDate: null,
+          };
+
     return (
         <div key={link.id} className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -31,7 +41,9 @@ export default function Link({ link }: LinkProps) {
                     />
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-sm text-intg-text">Link 1</span>
+                    <span className="text-sm text-intg-text">
+                        {settings.name}
+                    </span>
                     <span className="text-xs text-intg-text">
                         useintegraflow.com
                     </span>
