@@ -1,33 +1,35 @@
-import { SelectInput, SwitchButton } from "@/ui";
+import { SelectInput, Switch } from "@/ui";
 import { EditorTextInput } from "../components/EditorTextInput";
+import { SurveyQuestion } from "@/generated/graphql";
 
 type Props = {
     questionType: string;
+    question: SurveyQuestion;
 };
 
-export const SettingsTab = ({ questionType }: Props) => {
+export const SettingsTab = ({ questionType , question}: Props) => {
     return (
         <div className="space-y-3">
             <div className="rounded bg-[#272138] p-3">
-                <SwitchButton label="Submit button" />
+                <Switch label="Submit button" />
             </div>
             <div className="rounded bg-[#272138] p-3">
-                <SwitchButton label="Require answer to comment field(s)" />
+                <Switch label="Require answer to comment field(s)" />
             </div>
             <div className="rounded bg-[#272138] p-3">
-                <SwitchButton label="Randomize answers" />
+                <Switch label="Randomize answers" />
             </div>
             <div className="rounded bg-[#272138] p-3">
-                <SwitchButton label="Randomize except last" />
+                <Switch label="Randomize except last" />
             </div>
             <div className="rounded bg-[#272138] p-3">
-                <SwitchButton label="Answer required" />
+                <Switch label="Answer required" />
             </div>
             <div className="rounded bg-[#272138] p-3">
-                <SwitchButton label="Consent checkbox" />
+                <Switch label="Consent checkbox" />
             </div>
             <div className="rounded bg-[#272138] p-3">
-                <SwitchButton label="Show Disclaimer" />
+                <Switch label="Show Disclaimer" />
             </div>
             <EditorTextInput
                 label={"Disclaimer content"}

@@ -35,7 +35,19 @@ export const PROJECT = gql`
     }
 `;
 
-
+export const PROJECT_UPDATE = gql`
+    fragment ProjectUpdateFragment on ProjectUpdate {
+        project {
+            ...ProjectFragment
+        }
+        projectErrors {
+            ...ProjectErrorFragment
+        }
+        errors {
+            ...ProjectErrorFragment
+        }
+    }
+`;
 
 export const PROJECT_THEME = gql`
     fragment ProjectThemeFragment on ProjectTheme {
@@ -52,19 +64,5 @@ export const PROJECT_THEME = gql`
         }
         createdAt
         updatedAt
-    }
-`;
-
-export const PROJECT_UPDATE = gql`
-    fragment ProjectUpdateFragment on ProjectUpdate {
-        project {
-            ...ProjectFragment
-        }
-        projectErrors {
-            ...ProjectErrorFragment
-        }
-        errors {
-            ...ProjectErrorFragment
-        }
     }
 `;

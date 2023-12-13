@@ -55,6 +55,11 @@ export const PresetThemes = () => {
     const presetThemes = getPresetThemes();
     const { createTheme } = useThemes();
 
+    const handleCreateTheme = (index: number) => {
+        const theme = presetThemes[index];
+        createTheme(theme.name, JSON.parse(JSON.stringify(theme.colors)));
+    };
+
     return (
         <div className="cursor:pointer py-4">
             <p className="text-md font-normal text-intg-text-1 first-letter:capitalize">
@@ -65,6 +70,7 @@ export const PresetThemes = () => {
                 {presetThemes.map((theme, index) => (
                     <div
                         key={index}
+                        onClick={() => handleCreateTheme(index)}
                         className="my-[6px] flex w-full rounded-md bg-intg-bg-15 px-2 py-2 transition-all ease-in-out"
                     >
                         <div className="flex gap-5">

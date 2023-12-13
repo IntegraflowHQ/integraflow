@@ -19,6 +19,8 @@ export { NewspaperIcon } from "./NewspaperIcon";
 export { PeopleIcon } from "./PeopleIcon";
 export { PlusCircle } from "./PlusCircle";
 export { PositionIcon } from "./PositionIcon";
+export { QRCode } from "./QRCode";
 export { QuestionIcon } from "./QuestionIcon";
 export { SettingsIcon } from "./SettingsIcon";
 export { SpeakerIcon } from "./SpeakerIcon";
+export { Trash } from "./Trash";
