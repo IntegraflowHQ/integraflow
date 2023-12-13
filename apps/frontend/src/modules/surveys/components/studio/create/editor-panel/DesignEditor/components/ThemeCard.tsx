@@ -7,6 +7,13 @@ interface CardProps {
     toggleNewThemeModal: () => void;
     name: string;
     colors: string[];
+    setThemeData: ({
+        name,
+        colors,
+    }: {
+        name: string;
+        colors: string[];
+    }) => void;
 }
 
 export const ThemeCard = ({
@@ -14,6 +21,7 @@ export const ThemeCard = ({
     colors,
     onClick,
     activeTheme,
+    setThemeData,
     toggleNewThemeModal,
     ...props
 }: CardProps) => {
@@ -21,6 +29,11 @@ export const ThemeCard = ({
 
     const togglePenVisibility = () => {
         setIsHovered(!isHovered);
+    };
+
+    const themeModalOpenState = () => {
+        setThemeData({ name, colors });
+        toggleNewThemeModal();
     };
 
     return (
@@ -69,7 +82,7 @@ export const ThemeCard = ({
 
             {isHovered ? (
                 <Pen
-                    onClick={toggleNewThemeModal}
+                    onClick={themeModalOpenState}
                     size={8}
                     color="#AFAAC7"
                     className={`mt-[6px] h-9 w-9 rounded-md bg-intg-bg-11 px-1 py-2 text-sm transition-all duration-500 ease-in-out hover:cursor-pointer hover:bg-intg-bg-9`}

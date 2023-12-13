@@ -19,11 +19,6 @@ const THEMES_INFO = [
     { id: crypto.randomUUID(), name: "background", color: "#E01E5A" },
 ];
 
-// const DEFAULT_THEME: { [Key: string]: string } = {};
-// THEMES_INFO.forEach((theme) => {
-//     DEFAULT_THEME[theme.name] = theme.color;
-// });
-
 export const UpdateDesignEditor = () => {
     const [newThemeOpenState, setOpenState] = React.useState<boolean>(false);
     const [selectedColors, setSelectedColors] = React.useState<{

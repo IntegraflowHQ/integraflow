@@ -197,6 +197,9 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                                                 onSelectedTheme(index)
                                             }
                                             toggleNewThemeModal={onOpen}
+                                            setThemeData={() => {
+                                                theme.name, theme.colors;
+                                            }}
                                         />
                                     </div>
                                 );
