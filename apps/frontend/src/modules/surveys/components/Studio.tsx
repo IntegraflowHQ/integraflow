@@ -4,22 +4,21 @@ import { XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import useStudioState from "../hooks/useStudioState";
 import Analyze from "./studio/analyze";
-import Configure from "./studio/configure";
 import Create from "./studio/create";
+import Distribute from "./studio/distribute";
 
 const tabs = [
     { id: crypto.randomUUID(), label: "Create", screen: Create },
     {
         id: crypto.randomUUID(),
-        label: "Configure/Distribute",
-        screen: Configure,
+        label: "Distribute",
+        screen: Distribute,
     },
     { id: crypto.randomUUID(), label: "Analyze", screen: Analyze },
 ];
 
 export default function Studio() {
     const [title, setTitle] = useState("");
-
     const { enableStudioMode, disableStudioMode } = useStudioState();
 
     useEffect(() => {

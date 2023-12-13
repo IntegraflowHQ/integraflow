@@ -42,7 +42,7 @@ const tabs = [
     },
 ];
 
-export default function Configure() {
+export default function Distribute() {
     const [currentTab, setCurrentTab] = useState(tabs[0].id);
     return (
         <Tabs.Root
@@ -72,20 +72,14 @@ export default function Configure() {
                 </Tabs.List>
             </div>
 
-            <div className="scrollbar-hide h-screen flex-1 overflow-y-scroll pb-[27px] pt-[155px]">
-                <div className="min-h-full w-full min-w-[660px] rounded-xl bg-intg-bg-9">
-                    {tabs.map((tab) => {
-                        return (
-                            <Tabs.Content
-                                key={tab.id}
-                                value={tab.id}
-                                className="h-full w-full"
-                            >
-                                {tab.content}
-                            </Tabs.Content>
-                        );
-                    })}
-                </div>
+            <div className=" scrollbar-hide h-screen flex-1 overflow-y-scroll pb-[27px] pt-[155px]">
+                {tabs.map((tab) => {
+                    return (
+                        <Tabs.Content key={tab.id} value={tab.id} asChild>
+                            {tab.content}
+                        </Tabs.Content>
+                    );
+                })}
             </div>
         </Tabs.Root>
     );
