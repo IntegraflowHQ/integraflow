@@ -2,7 +2,7 @@ import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import useChannels from "@/modules/surveys/hooks/useChannels";
 import type { LinkSettings } from "@/types";
 import { Button, Header } from "@/ui";
-import { SendHorizontal } from "lucide-react";
+import { LinkIcon } from "lucide-react";
 import Link from "./Link";
 
 export default function SharableLinks() {
@@ -27,50 +27,57 @@ export default function SharableLinks() {
     console.log("linkChannels", linkChannels);
 
     return (
-        <div className="mx-auto h-full w-full p-4">
-            {linkChannels.length ? (
-                <div className="flex h-full w-full flex-col gap-6">
-                    <div className="flex items-center justify-between border-b border-intg-bg-4 pb-2">
-                        <Header
-                            variant="2"
-                            title="Sharable links"
-                            font="medium"
-                            description="Create survey links or QR codes to distribute your survey."
-                        />
+        <div className="mx-auto h-full w-full p-12">
+            {/* {linkChannels.length ? ( */}
+            <div className="flex h-full w-full flex-col gap-6">
+                <div className="flex items-center justify-between">
+                    <Header
+                        title="Sharable links"
+                        font="medium"
+                        description="Create survey links or QR codes to distribute your survey."
+                    />
+                    {linkChannels.length ? (
                         <Button
-                            text="Create link"
-                            className="w-max px-[12px] py-[8px]"
+                            icon={<LinkIcon size={20} strokeWidth={1} />}
+                            text="Add link"
+                            className="w-max px-[24px] py-[12px] text-base font-normal"
                             onClick={handleCreate}
+                            variant="secondary"
                         />
-                    </div>
+                    ) : null}
+                </div>
 
+                {linkChannels.length ? (
                     <div className="scrollbar-hide flex h-full w-full flex-1 justify-center overflow-y-scroll">
-                        <div className=" flex h-full w-full max-w-4xl flex-col gap-4">
+                        <div className=" flex h-full w-full flex-col gap-2">
                             {linkChannels.map((link) => (
                                 <Link key={link.node.id} link={link.node} />
                             ))}
                         </div>
                     </div>
-                </div>
-            ) : (
-                <div className="flex h-full w-full flex-col items-center justify-center">
-                    <SendHorizontal
-                        className="text-intg-text"
-                        size={150}
-                        strokeWidth={1}
-                    />
-                    <Header
-                        title="Nothing to see here yet."
-                        description="Create your first link!"
-                        className="text-center"
-                    />
-                    <Button
-                        text="Create link"
-                        className="mt-4 w-max px-[12px] py-[8px]"
-                        onClick={handleCreate}
-                    />
-                </div>
-            )}
+                ) : (
+                    <div className="flex h-full w-full flex-col items-center justify-center gap-6">
+                        <div className="flex flex-col items-center">
+                            <LinkIcon
+                                className="text-intg-text"
+                                size={62}
+                                strokeWidth={2}
+                            />
+                            <p className="max-w-[371px] text-center text-sm text-intg-text">
+                                There is no link created. Click on 'Add link
+                                button to create your first shareable link for
+                                this survey.
+                            </p>
+                        </div>
+                        <Button
+                            icon={<LinkIcon size={20} strokeWidth={1} />}
+                            text="Add link"
+                            className="w-max px-[24px] py-[12px] text-base font-normal"
+                            onClick={handleCreate}
+                        />
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

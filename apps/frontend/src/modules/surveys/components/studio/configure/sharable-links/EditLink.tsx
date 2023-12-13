@@ -39,8 +39,11 @@ export default function EditLink({ link, settings, close }: Props) {
     };
 
     return (
-        <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex w-full max-w-lg flex-col gap-4">
+        <form
+            className="flex w-[572px] flex-col gap-5"
+            onSubmit={handleSubmit(onSubmit)}
+        >
+            <div className="flex flex-col gap-4">
                 <TextInput
                     label="Link name"
                     {...register("name", { required: true })}
@@ -74,8 +77,13 @@ export default function EditLink({ link, settings, close }: Props) {
                     variant="secondary"
                     type="button"
                     onClick={close}
+                    className="w-max px-[24px] py-[12px] font-normal"
                 />
-                <Button text="Save" type="submit" />
+                <Button
+                    text="Save"
+                    type="submit"
+                    className="w-max px-[24px] py-[12px] font-normal"
+                />
             </div>
         </form>
     );
