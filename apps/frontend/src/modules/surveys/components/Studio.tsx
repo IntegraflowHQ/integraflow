@@ -1,8 +1,9 @@
-import { Button } from "@/ui";
+import { Button, GlobalSpinner } from "@/ui";
 import * as Tabs from "@radix-ui/react-tabs";
 import { XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import useStudioState from "../hooks/useStudioState";
+import { useSurvey } from "../hooks/useSurvey";
 import Analyze from "./studio/analyze";
 import Create from "./studio/create";
 import Distribute from "./studio/distribute";
@@ -20,6 +21,7 @@ const tabs = [
 export default function Studio() {
     const [title, setTitle] = useState("");
     const { enableStudioMode, disableStudioMode } = useStudioState();
+    const { loading } = useSurvey();
 
     useEffect(() => {
         enableStudioMode();
@@ -28,6 +30,8 @@ export default function Studio() {
             disableStudioMode();
         };
     }, []);
+
+    if (loading) return <GlobalSpinner />;
 
     return (
         <Tabs.Root className="h-full w-full" defaultValue={tabs[0].id}>
