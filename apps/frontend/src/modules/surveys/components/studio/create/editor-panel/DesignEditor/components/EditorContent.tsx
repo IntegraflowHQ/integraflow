@@ -88,6 +88,13 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
         toast.error(error.message || error.networkError?.message || "");
     }
 
+    React.useEffect(() => {
+        if (currentSurveyTheme) {
+            setSelectedThemeId(currentSurveyTheme.id);
+            setSelectedTheme(currentSurveyTheme);
+        }
+    }, [currentSurveyTheme]);
+
     return (
         <>
             {allThemes.length === 0 ? (
@@ -132,7 +139,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                                                                 ? "-ml-4"
                                                                 : ""
                                                         }`}
-                                                        key={id}
+                                                        key={index}
                                                         style={{
                                                             backgroundColor: `${color}`,
                                                         }}
@@ -181,7 +188,8 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                                     <div key={index}>
                                         <ThemeCard
                                             activeTheme={
-                                                theme.id === selectedThemeId
+                                                theme.id ===
+                                                currentSurveyTheme?.id
                                             }
                                             name={theme.name}
                                             colors={theme.colors}
