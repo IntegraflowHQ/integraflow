@@ -27,7 +27,7 @@ export default function SharableLinks() {
     console.log("linkChannels", linkChannels);
 
     return (
-        <div className="mx-auto h-full w-full p-12">
+        <div className="h-full w-full p-12">
             {/* {linkChannels.length ? ( */}
             <div className="flex h-full w-full flex-col gap-6">
                 <div className="flex items-center justify-between">
@@ -48,7 +48,7 @@ export default function SharableLinks() {
                 </div>
 
                 {linkChannels.length ? (
-                    <div className="scrollbar-hide flex h-full w-full flex-1 justify-center overflow-y-scroll">
+                    <div className="flex h-full w-full flex-1 justify-center">
                         <div className=" flex h-full w-full flex-col gap-2">
                             {linkChannels.map((link) => (
                                 <Link key={link.node.id} link={link.node} />

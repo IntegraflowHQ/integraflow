@@ -49,7 +49,10 @@ export default function Link({ link }: LinkProps) {
                         <QRCode />
                     </DialogTrigger>
                     <DialogContent title={"QR Code"}>
-                        <QRCodeView url={"useintegraflow.com"} />
+                        <QRCodeView
+                            url={"useintegraflow.com"}
+                            name={settings.name || "Link"}
+                        />
                     </DialogContent>
                 </Dialog>
 
