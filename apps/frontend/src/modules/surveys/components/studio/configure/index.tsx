@@ -1,8 +1,7 @@
-import { Header } from "@/ui";
 import { CheckComplete, CheckPending } from "@/ui/icons";
 import * as Tabs from "@radix-ui/react-tabs";
 import { useState } from "react";
-import SharableLinks from "./SharableLinks";
+import SharableLinks from "./sharable-links";
 import WebSDK from "./web-sdk";
 
 const tabs = [
@@ -53,10 +52,6 @@ export default function Configure() {
             onValueChange={(value) => setCurrentTab(value)}
         >
             <div className="w-[386px]">
-                <Header
-                    title="Configure/Distribute"
-                    description="Integraflow enables you to understand your customers  To get started, we'll need to integrate your SDK product."
-                />
                 <Tabs.List className="flex max-w-[302px] flex-col gap-2 pt-[25px]">
                     {tabs.map((tab) => (
                         <Tabs.Trigger
@@ -82,7 +77,7 @@ export default function Configure() {
                         <Tabs.Content
                             key={tab.id}
                             value={tab.id}
-                            className="h-full w-full text-center"
+                            className="h-full w-full"
                         >
                             {tab.content}
                         </Tabs.Content>

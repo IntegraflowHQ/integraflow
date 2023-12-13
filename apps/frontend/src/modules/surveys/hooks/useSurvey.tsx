@@ -147,5 +147,7 @@ export const useSurvey = () => {
         surveySlug,
         setOpenQuestion,
         openQuestion,
+        surveyId,
+        survey,
     };
 };

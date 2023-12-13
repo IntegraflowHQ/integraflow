@@ -1,29 +1,40 @@
-import * as Switch from "@radix-ui/react-switch";
+import * as SwitchPrimitive from "@radix-ui/react-switch";
+import { forwardRef } from "react";
 
 type Props = {
     label: string;
+    value?: boolean;
+    onChange?: (e: { target: { value: boolean } }) => void;
 };
 
-export const SwitchButton = ({ label }: Props) => {
-    return (
-        <form>
-            <div className="flex items-center justify-between">
+export const Switch = forwardRef<HTMLButtonElement, Props>(
+    ({ label, value, onChange }, ref) => {
+        return (
+            <div className="flex items-center justify-between rounded-lg bg-intg-bg-15 px-4 py-3">
                 <label
-                    className="pr-[15px] text-[15px] leading-none text-white"
+                    className="pr-[15px] text-[15px] leading-none text-intg-text-1"
                     htmlFor={label}
                 >
                     {label}
                 </label>
-                <Switch.Root
-                    className="relative h-[24px] w-[35px] cursor-default rounded-xl border border-[#524770] bg-white outline-none data-[state=checked]:bg-black"
+
+                <SwitchPrimitive.Root
+                    ref={ref}
+                    className="relative h-[24px] w-[35px] cursor-default rounded-xl border border-[#524770] bg-[#372E4F] outline-none data-[state=checked]:bg-white"
                     id="airplane-mode"
                     style={{
-                        "-webkit-tap-highlight-color": "rgba(0, 0, 0, 0)",
+                        WebkitTapHighlightColor: "rgba(0, 0, 0, 0)",
                     }}
+                    checked={value}
+                    onCheckedChange={(value: boolean) =>
+                        onChange && onChange({ target: { value } })
+                    }
                 >
-                    <Switch.Thumb className="block h-[13px] w-[13px] translate-x-0.5 rounded-full bg-intg-bg-2  transition-transform duration-100 will-change-transform data-[state=checked]:translate-x-[15px]" />
-                </Switch.Root>
+                    <SwitchPrimitive.Thumb className="block h-[13px] w-[13px] translate-x-1 rounded-full bg-[#6941C6]  transition-transform duration-100 will-change-transform data-[state=checked]:translate-x-[15px]" />
+                </SwitchPrimitive.Root>
             </div>
-        </form>
-    );
-};
+        );
+    },
+);
+
+Switch.displayName = "Switch";
