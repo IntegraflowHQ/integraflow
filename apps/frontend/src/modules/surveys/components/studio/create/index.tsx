@@ -5,6 +5,7 @@ import { Pen } from "lucide-react";
 import React from "react";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { UpdateDesignEditor } from "./editor-panel/DesignEditor/index.tsx";
+import { UpdateSettingsEditor } from "./editor-panel/SettingsEditor/index.tsx";
 import UpdateQuestion from "./editor-panel/questions/index.tsx";
 import { Preview } from "./preview-panel/index.tsx";
 
@@ -25,7 +26,7 @@ const tabs = [
         id: crypto.randomUUID(),
         label: "Update settings",
         icon: <SettingsIcon />,
-        content: <div>Settings</div>,
+        content: <UpdateSettingsEditor />,
     },
 ];
 

@@ -106,17 +106,21 @@ export const useThemes = () => {
                                     }
                                 `,
                             });
-                            const existingThemeIds = existingThemeRefs.map(
-                                (
-                                    themeRef:
-                                        | Reference
-                                        | StoreObject
-                                        | undefined,
-                                ) => readField("id", themeRef),
-                            );
+                            const existingThemeIds = Array.isArray(
+                                existingThemeRefs,
+                            )
+                                ? existingThemeRefs.map(
+                                      (
+                                          themeRef:
+                                              | Reference
+                                              | StoreObject
+                                              | undefined,
+                                      ) => readField("id", themeRef),
+                                  )
+                                : null;
 
                             if (
-                                existingThemeIds.includes(
+                                existingThemeIds?.includes(
                                     data?.projectThemeCreate?.projectTheme?.id,
                                 )
                             ) {
@@ -129,7 +133,6 @@ export const useThemes = () => {
             },
         });
 
-        if (loading) "creating theme...";
         if (error)
             return {
                 error,

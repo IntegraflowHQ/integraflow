@@ -161,9 +161,9 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                                 className="text-sm font-normal first-letter:capitalize"
                             />
 
-                            {/* {totalCount === 0 ? <PresetThemes /> : null} */}
+                            {totalCount === 0 ? <PresetThemes /> : null}
 
-                            <PresetThemes />
+                            {/* <PresetThemes /> */}
 
                             <hr className="border-1 my-2 border-intg-bg-14" />
 
