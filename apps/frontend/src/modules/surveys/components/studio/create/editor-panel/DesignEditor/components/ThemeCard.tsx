@@ -35,8 +35,9 @@ export const ThemeCard = ({
         >
             {activeTheme && (
                 <CheckCircle
-                    color="#DAD1EE"
                     size={20}
+                    fill="#53389E"
+                    color="#DAD1EE"
                     className="absolute inset-x-[472px] -mt-[12px] hover:cursor-wait"
                 />
             )}

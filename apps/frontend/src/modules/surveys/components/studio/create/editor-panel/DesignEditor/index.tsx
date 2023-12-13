@@ -1,9 +1,9 @@
 import { useThemes } from "@/modules/projects/hooks/useTheme";
 import { Button, ColorPicker } from "@/ui";
+import { toast } from "@/utils/toast";
 import * as Tabs from "@radix-ui/react-tabs";
 import { MoreHorizontal, X } from "lucide-react";
 import React from "react";
-import toast from "react-hot-toast";
 import { DesignEditorContent } from "./components/EditorContent";
 import { ThemesMenu } from "./components/ThemesMenu";
 
@@ -35,10 +35,7 @@ export const UpdateDesignEditor = () => {
     const [themeName, setThemeName] = React.useState<string>("");
     const [colorScheme, setColorScheme] = React.useState<string>("");
 
-    const {
-        createTheme,
-        themes: { refetch },
-    } = useThemes();
+    const { createTheme } = useThemes();
 
     const handleCreateTheme = () => {
         if (themeName && colorScheme !== "") {
@@ -82,12 +79,6 @@ export const UpdateDesignEditor = () => {
         });
         setColorScheme(JSON.stringify(colors));
     };
-
-    React.useEffect(() => {
-        if (newThemeOpenState === false) {
-            refetch();
-        }
-    }, [newThemeOpenState, refetch]);
 
     const themeSettingsPanel = (
         <>

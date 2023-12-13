@@ -3,7 +3,7 @@ import {
     useThemesQuery,
 } from "@/generated/graphql";
 import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
-import { Reference, StoreObject, gql } from "@apollo/client";
+import { PROJECT_THEME } from "../graphql/fragments/projectFragments";
 
 export type ColorScheme = {
     answer: string;
@@ -21,7 +21,6 @@ export const useThemes = () => {
         data: themes,
         loading,
         error,
-        refetch,
     } = useThemesQuery({
         variables: { first: 20 },
         notifyOnNetworkStatusChange: true,
@@ -54,7 +53,7 @@ export const useThemes = () => {
         });
 
         return {
-            refetch,
+            themes: themeData,
             data: themesInfo,
             totalCount: data?.totalCount,
         };
@@ -95,38 +94,21 @@ export const useThemes = () => {
 
                 cache.modify({
                     fields: {
-                        themes(existingThemeRefs = [], { readField }) {
+                        themes(existingThemeRefs) {
                             const newThemeRef = cache.writeFragment({
                                 data: data?.projectThemeCreate?.projectTheme,
-                                fragment: gql`
-                                    fragment NewTheme on ProjectTheme {
-                                        id
-                                        name
-                                        colorScheme
-                                    }
-                                `,
+                                fragment: PROJECT_THEME,
                             });
-                            const existingThemeIds = Array.isArray(
-                                existingThemeRefs,
-                            )
-                                ? existingThemeRefs.map(
-                                      (
-                                          themeRef:
-                                              | Reference
-                                              | StoreObject
-                                              | undefined,
-                                      ) => readField("id", themeRef),
-                                  )
-                                : null;
-
-                            if (
-                                existingThemeIds?.includes(
-                                    data?.projectThemeCreate?.projectTheme?.id,
-                                )
-                            ) {
-                                return existingThemeRefs;
-                            }
-                            return [...existingThemeRefs, newThemeRef];
+                            return {
+                                ...existingThemeRefs,
+                                edges: [
+                                    ...existingThemeRefs.edges,
+                                    {
+                                        __typename: "ProjectTheme",
+                                        node: newThemeRef,
+                                    },
+                                ],
+                            };
                         },
                     },
                 });

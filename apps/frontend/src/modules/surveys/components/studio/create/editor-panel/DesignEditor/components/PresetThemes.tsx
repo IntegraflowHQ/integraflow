@@ -2,6 +2,16 @@ import { useThemes } from "@/modules/projects/hooks/useTheme";
 
 const PRESET_THEMES = [
     {
+        name: "Inferno Dragon",
+        colorScheme: {
+            question: "#ee9b0c",
+            answer: "#ec0b0b",
+            progress: "#ff2a05",
+            button: "#d0a689",
+            background: "#db420a",
+        },
+    },
+    {
         name: "Outer space",
         colorScheme: {
             question: "#9CB4CC",
@@ -12,13 +22,13 @@ const PRESET_THEMES = [
         },
     },
     {
-        name: "Tropical tone",
+        name: "Rain Forest",
         colorScheme: {
-            question: "#F7D6E0",
-            answer: "#CCA8E9",
-            progress: "#C3BEF0",
-            button: "#CADEFC",
-            background: "#DEFCF9",
+            question: "#7bfda2",
+            answer: "#78e510",
+            progress: "#d9e51a",
+            button: "#dbbe11",
+            background: "#ec7e0f",
         },
     },
     {
@@ -61,7 +71,7 @@ export const PresetThemes = () => {
     };
 
     return (
-        <div className="cursor:pointer py-4">
+        <div className="py-4">
             <p className="text-md font-normal text-intg-text-1 first-letter:capitalize">
                 preset themes
             </p>
@@ -71,13 +81,14 @@ export const PresetThemes = () => {
                     <div
                         key={index}
                         onClick={() => handleCreateTheme(index)}
-                        className="my-[6px] flex w-full rounded-md bg-intg-bg-15 px-2 py-2 transition-all ease-in-out"
+                        className="my-[6px] flex w-full rounded-md bg-intg-bg-15 px-2 py-2 transition-all ease-in-out hover:cursor-pointer"
                     >
                         <div className="flex gap-5">
                             <div className="flex py-2">
                                 {theme.colors.map((color, index) => {
                                     return (
                                         <div
+                                            key={index}
                                             className={`${
                                                 index !== 0 ? "-ml-4" : ""
                                             } h-8 w-8 rounded-full border-2 py-2`}

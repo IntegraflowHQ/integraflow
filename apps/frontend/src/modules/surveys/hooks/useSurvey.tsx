@@ -1,9 +1,15 @@
 import {
+    ProjectTheme,
     SurveyQuestionTypeEnum,
+    SurveyStatusEnum,
+    SurveyTypeEnum,
+    SurveyUpdateInput,
     useGetSurveyLazyQuery,
     useSurveyCreateMutation,
     useSurveyQuestionCreateMutation,
+    useSurveyUpdateMutation,
 } from "@/generated/graphql";
+import useUserState from "@/modules/users/hooks/useUserState";
 import { ROUTES } from "@/routes";
 import { generateRandomString } from "@/utils";
 import { createSelectors } from "@/utils/selectors";
@@ -17,6 +23,7 @@ export const useSurvey = () => {
     const { orgSlug, projectSlug, surveySlug } = useParams();
     const scrollToBottom = useScrollToBottom();
     const navigate = useNavigate();
+    const { user } = useUserState();
 
     const surveyStore = createSelectors(useSurveyStore);
     const openQuestion = surveyStore.use.openQuestion();
@@ -25,6 +32,7 @@ export const useSurvey = () => {
     const [createSurveyMutation] = useSurveyCreateMutation();
     const [createQuestionMutaton] = useSurveyQuestionCreateMutation({});
     const [getSurveyQuery, { data: survey }] = useGetSurveyLazyQuery();
+    const [updateSurveyMutation] = useSurveyUpdateMutation({});
 
     const questions = survey?.survey?.questions?.edges || [];
     const surveyId = survey?.survey?.id;
@@ -75,6 +83,7 @@ export const useSurvey = () => {
     const createQuestion = async (type: SurveyQuestionTypeEnum) => {
         const id = crypto.randomUUID();
         if (!surveyId) return;
+
         await createQuestionMutaton({
             variables: {
                 input: {
@@ -140,6 +149,61 @@ export const useSurvey = () => {
         });
     };
 
+    const updateSurvey = async (
+        input: SurveyUpdateInput,
+        newTheme?: ProjectTheme,
+    ) => {
+        if (!surveyId || !user || !survey) return;
+
+        await updateSurveyMutation({
+            variables: {
+                id: surveyId,
+                input: {
+                    ...input,
+                    themeId: input.themeId,
+                },
+            },
+            optimisticResponse: {
+                __typename: "Mutation",
+                surveyUpdate: {
+                    __typename: "SurveyUpdate",
+                    survey: {
+                        __typename: "Survey",
+                        id: surveyId,
+                        name: input.name ?? survey?.survey?.name,
+                        reference: survey?.survey?.reference ?? "",
+                        type:
+                            input.type ??
+                            survey?.survey?.type ??
+                            SurveyTypeEnum.Survey,
+                        status:
+                            input.status ??
+                            survey.survey?.status ??
+                            SurveyStatusEnum.Draft,
+                        slug: input.slug ?? surveySlug ?? "",
+                        questions: survey?.survey?.questions ?? {
+                            __typename: "SurveyQuestionCountableConnection",
+                            edges: [],
+                        },
+                        channels: survey?.survey?.channels ?? {
+                            __typename: "SurveyChannelCountableConnection",
+                            edges: [],
+                        },
+                        createdAt:
+                            survey?.survey?.createdAt ??
+                            new Date().toISOString(),
+                        updatedAt: new Date().toISOString(),
+
+                        creator: survey?.survey?.creator ?? user,
+                        theme: newTheme ?? survey?.survey?.theme ?? null,
+                    },
+                    surveyErrors: [],
+                    errors: [],
+                },
+            },
+        });
+    };
+
     return {
         createSurvey,
         createQuestion,
@@ -149,5 +213,6 @@ export const useSurvey = () => {
         openQuestion,
         surveyId,
         survey,
+        updateSurvey,
     };
 };

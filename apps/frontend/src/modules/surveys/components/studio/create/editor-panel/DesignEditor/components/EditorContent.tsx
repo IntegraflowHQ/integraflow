@@ -1,34 +1,45 @@
 import { useThemes } from "@/modules/projects/hooks/useTheme";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { Button } from "@/ui";
+import { toast } from "@/utils/toast";
 import React from "react";
-import toast from "react-hot-toast";
-import { EditorSpinner } from "./EditorSpinner";
 import { Error } from "./Errors";
 import { PresetThemes } from "./PresetThemes";
 import { ThemeCard } from "./ThemeCard";
+
 interface ContentProp {
     onOpen: () => void;
 }
 
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
-    const [selectedTheme, setSelectedTheme] = React.useState<string>("");
+    const { updateSurvey, survey } = useSurvey();
+    const currentSurveyTheme = survey?.survey?.theme;
+    const [selectedThemeId, setSelectedThemeId] = React.useState<string>("");
+    const [selectedTheme, setSelectedTheme] = React.useState<object>({});
 
-    const { themes, error, loading } = useThemes();
+    const { themes, error } = useThemes();
     const { data, totalCount } = themes;
 
-    const selectedThemeIndex = data?.findIndex(
-        (theme) => theme.id === selectedTheme,
-    );
-    const selectedThemeData = data?.[selectedThemeIndex ?? 0];
+    const onSelectedTheme = (index: number) => {
+        const selectedThemeIndex = data?.[index]?.id || "";
 
-    const onSlectedTheme = (index: number) => {
-        const selectedTheme = data?.[index]?.id || "";
-        setSelectedTheme(selectedTheme);
+        setSelectedThemeId(selectedThemeIndex);
+
+        const theme = themes?.themes?.find(
+            (theme) => theme.id === selectedThemeIndex,
+        );
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        setSelectedTheme(theme);
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        updateSurvey({ themeId: selectedThemeIndex }, theme);
     };
 
-    const customThemes = data?.map((theme) => theme);
-
     const getCustomThemes = () => {
+        const customThemes = data?.map((theme) => theme);
         const themes = [];
 
         for (const theme of customThemes ?? []) {
@@ -48,81 +59,92 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
     };
 
     const getSelectedTheme = () => {
-        if (!selectedTheme) return [];
+        if (!selectedThemeId) return [];
+        let colors: string[] = [];
 
-        const { name, id, colorScheme } = selectedThemeData;
-        const themeColors = Object.keys(colorScheme).map(
-            (key) => colorScheme[key],
-        );
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const { id, name } = selectedTheme;
+
+        if (currentSurveyTheme?.id === id) {
+            const colorScheme = JSON.parse(currentSurveyTheme?.colorScheme);
+            colors = Object.values(colorScheme).map((color) => color);
+        }
 
         return {
             id,
             name,
-            colors: themeColors,
+            colors,
         };
     };
 
-    const currentTheme = getSelectedTheme();
-    const { colors } = currentTheme;
-
     const allThemes = getCustomThemes().map((theme) => theme);
-    if (error) toast.error(error.message);
+    const currentTheme = getSelectedTheme();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const { id, name, colors } = currentTheme;
+
+    if (error) {
+        toast.error(error.message || error.networkError?.message || "");
+    }
 
     return (
         <>
-            {totalCount === 0 ? (
+            {allThemes.length === 0 ? (
                 <>
-                    <Error message="You don't have any theme. Click the button below to create one." />
+                    <Error message="You don't have any theme. Click the button below to create one or choose from our presets" />
+
+                    <Button
+                        text="new theme"
+                        onClick={onOpen}
+                        variant="secondary"
+                        className="mb-2 mt-4 text-sm font-normal first-letter:capitalize"
+                    />
+
+                    <div
+                        className={` ${
+                            totalCount !== 0
+                                ? "h-[400px] opacity-100"
+                                : "h-[0px] opacity-0"
+                        } transition-all delay-1000 duration-300 ease-in-out`}
+                    >
+                        <PresetThemes />
+                    </div>
                 </>
-            ) : error?.networkError ? (
-                <Error
-                    message={
-                        error?.networkError.message ||
-                        "An error occured while loading themes. Please check your internet connect and try again"
-                    }
-                />
-            ) : error ? (
-                <Error
-                    message={
-                        error.message
-                            ? error.message
-                            : "An error occured, try refreshing your browser. If the issue persists, contact support."
-                    }
-                />
-            ) : !loading ? (
+            ) : (
                 <>
-                    {selectedTheme ? (
+                    {selectedThemeId ? (
                         <>
                             <p className="py-4 text-sm font-normal uppercase">
                                 selected theme
                             </p>
-                            <div className="flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2 transition-all ease-in-out">
+                            <div
+                                className={`flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2 transition-all ease-in-out`}
+                            >
                                 <div className="flex gap-5">
                                     <div className="flex py-2">
-                                        {Array.isArray(colors)
-                                            ? colors.map((color, index) => {
-                                                  return (
-                                                      <div
-                                                          className={`h-8 w-8 rounded-full border-2 ${
-                                                              index !== 0
-                                                                  ? "-ml-4"
-                                                                  : ""
-                                                          }`}
-                                                          key={color}
-                                                          style={{
-                                                              backgroundColor: `${color}`,
-                                                          }}
-                                                      />
-                                                  );
-                                              })
-                                            : null}
+                                        {colors.map(
+                                            (color: string, index: number) => {
+                                                return (
+                                                    <div
+                                                        className={`h-8 w-8 rounded-full border-2 ${
+                                                            index !== 0
+                                                                ? "-ml-4"
+                                                                : ""
+                                                        }`}
+                                                        key={id}
+                                                        style={{
+                                                            backgroundColor: `${color}`,
+                                                        }}
+                                                    />
+                                                );
+                                            },
+                                        )}
                                     </div>
 
                                     <div>
                                         <p className="font-normal leading-6 first-letter:capitalize">
-                                            {Array.isArray(currentTheme)
-                                                ? null
-                                                : currentTheme.name}
+                                            {name}
                                         </p>
                                         <p className="font-normal text-intg-text-4">
                                             Fetched theme
@@ -137,67 +159,43 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                         </p>
                     )}
 
-                    {totalCount === 0 ? (
+                    <div
+                        className={`h-fit py-6 ${
+                            totalCount !== 0 ? "-mt-4" : ""
+                        } transition-all delay-100 duration-300 ease-in-out`}
+                    >
+                        <p className="py-2 text-sm font-normal capitalize">
+                            all themes
+                        </p>
+
                         <Button
                             text="new theme"
                             onClick={onOpen}
                             variant="secondary"
-                            className="mb-2 mt-4 text-sm font-normal first-letter:capitalize"
+                            className="text-sm font-normal first-letter:capitalize"
                         />
-                    ) : (
-                        <div
-                            className={`h-full py-6 ${
-                                totalCount !== 0 ? "-mt-4" : ""
-                            } transition-all delay-100 duration-300 ease-in-out`}
-                        >
-                            <p className="py-2 text-sm font-normal capitalize">
-                                all themes
-                            </p>
 
-                            <Button
-                                text="new theme"
-                                onClick={onOpen}
-                                variant="secondary"
-                                className="text-sm font-normal first-letter:capitalize"
-                            />
-
-                            {totalCount === 0 ? <PresetThemes /> : null}
-
-                            {/* <PresetThemes /> */}
-
-                            <hr className="border-1 my-2 border-intg-bg-14" />
-
-                            <div className="flex-col py-1">
-                                <p className="text-md py-1 font-normal text-intg-text-1 first-letter:capitalize">
-                                    custom themes
-                                </p>
-                                {allThemes?.map((theme, index: number) => {
-                                    return (
-                                        <div key={theme.id}>
-                                            <ThemeCard
-                                                activeTheme={
-                                                    theme.id === selectedTheme
-                                                }
-                                                name={theme.name}
-                                                colors={theme.colors}
-                                                onClick={() =>
-                                                    onSlectedTheme(index)
-                                                }
-                                                toggleNewThemeModal={onOpen}
-                                            />
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                        <div className="flex-col py-1 transition-all duration-300 ease-in-out">
+                            {allThemes?.map((theme, index: number) => {
+                                return (
+                                    <div key={index}>
+                                        <ThemeCard
+                                            activeTheme={
+                                                theme.id === selectedThemeId
+                                            }
+                                            name={theme.name}
+                                            colors={theme.colors}
+                                            onClick={() =>
+                                                onSelectedTheme(index)
+                                            }
+                                            toggleNewThemeModal={onOpen}
+                                        />
+                                    </div>
+                                );
+                            })}
                         </div>
-                    )}
+                    </div>
                 </>
-            ) : (
-                <EditorSpinner
-                    startColor="#53389E"
-                    endColor="#d9d9d9"
-                    size="10"
-                />
             )}
         </>
     );
