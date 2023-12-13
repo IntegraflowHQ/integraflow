@@ -38,6 +38,10 @@ class EventCaptureInput(BaseInputObjectType):
         description="The event properties.",
         required=False
     )
+    attributes = JSONString(
+        description="The user attributes.",
+        required=False
+    )
     timestamp = graphene.DateTime(
         required=True,
         description="The time the event happened",

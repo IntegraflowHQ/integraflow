@@ -21,11 +21,15 @@ from integraflow.event.models import (
 from integraflow.project.models import Project
 
 
-def _identify_user(
-    project_id: str,
-    distinct_id: str,
-    is_identified: bool = True
-) -> None:
+def _get_person(project_id: str, distinct_id: str):
+    return Person.objects.get(
+        project_id=project_id,
+        persondistinctid__project_id=project_id,
+        persondistinctid__distinct_id=distinct_id
+    )
+
+
+def _get_or_create_person(project_id: str, distinct_id: str):
     try:
         person = Person.objects.get(
             project_id=project_id,
@@ -46,9 +50,80 @@ def _identify_user(
                 persondistinctid__project_id=project_id,
                 persondistinctid__distinct_id=str(distinct_id)
             )
+
+    return person
+
+
+def _alias(
+    previous_distinct_id: str,
+    distinct_id: str,
+    project_id: str,
+    retry_if_failed: bool = True
+) -> None:
+    old_person: Optional[Person] = None
+    new_person: Optional[Person] = None
+
+    try:
+        old_person = _get_person(project_id, distinct_id=previous_distinct_id)
+    except Person.DoesNotExist:
+        pass
+
+    try:
+        new_person = _get_person(project_id, distinct_id)
+    except Person.DoesNotExist:
+        pass
+
+    if old_person and not new_person:
+        try:
+            old_person.add_distinct_id(distinct_id)
+        # Catch race case when somebody already added this distinct_id between
+        # .get and .add_distinct_id
+        except IntegrityError:
+            # run everything again to merge the users if needed
+            if retry_if_failed:
+                _alias(previous_distinct_id, distinct_id, project_id, False)
+        return
+
+    if not old_person and new_person:
+        try:
+            new_person.add_distinct_id(previous_distinct_id)
+        # Catch race case when somebody already added this distinct_id between
+        # .get and .add_distinct_id
+        except IntegrityError:
+            # run everything again to merge the users if needed
+            if retry_if_failed:
+                _alias(previous_distinct_id, distinct_id, project_id, False)
+        return
+
+    if not old_person and not new_person:
+        try:
+            Person.objects.create(
+                project_id=project_id,
+                distinct_ids=[str(distinct_id), str(previous_distinct_id)],
+            )
+        # Catch race condition where in between getting and creating,
+        # another request already created this user.
+        except IntegrityError:
+            if retry_if_failed:
+                # try once more, probably one of the two persons exists now
+                _alias(previous_distinct_id, distinct_id, project_id, False)
+        return
+
+    if old_person and new_person and old_person != new_person:
+        new_person.merge_people([old_person])
+
+
+def _set_is_identified(
+    project_id: str,
+    distinct_id: str,
+    is_identified: bool = True
+) -> Person:
+    person = _get_or_create_person(project_id, distinct_id)
     if not person.is_identified:
         person.is_identified = is_identified
         person.save()
+
+    return person
 
 
 def handle_timestamp(data: dict, now: str, sent_at: Optional[str]) -> datetime:
@@ -73,6 +148,23 @@ def handle_timestamp(data: dict, now: str, sent_at: Optional[str]) -> datetime:
     if data.get("offset"):
         return now_datetime - relativedelta(microseconds=data["offset"] * 1000)
     return now_datetime
+
+
+def handle_identify_or_alias(
+    properties: dict,
+    distinct_id: str,
+    project_id: str
+) -> Optional[Person]:
+    if properties.get("$anon_distinct_id"):
+        _alias(
+            previous_distinct_id=properties["$anon_distinct_id"],
+            distinct_id=distinct_id,
+            project_id=project_id,
+        )
+        return _set_is_identified(
+            project_id=project_id,
+            distinct_id=distinct_id
+        )
 
 
 def sanitize_event_name(event: Any) -> str:
@@ -183,18 +275,30 @@ def store_names_and_properties(
 def _capture(
     project_id: str,
     event: str,
+    uuid: str,
     distinct_id: str,
     properties: Dict,
+    attributes: Dict,
     timestamp: Union[datetime, str],
+    person: Optional[Person]
 ) -> None:
     project = Project.objects.get(pk=project_id)
 
     event = sanitize_event_name(event)
 
+    if not person:
+        person = _get_or_create_person(project_id, distinct_id)
+
+    person_attributes = person.attributes or {}
+    person_attributes.update(attributes)
+
     Event.objects.create(
         event=event,
+        uuid=uuid,
         distinct_id=distinct_id,
-        properties=properties,
+        person_id=person.uuid,
+        user_attributes=person_attributes,
+        properties=properties or {},
         project=project,
         **({"timestamp": timestamp} if timestamp else {})
     )
@@ -205,58 +309,11 @@ def _capture(
         properties=properties
     )
 
-    if not Person.objects.distinct_ids_exist(  # type: ignore
-        project_id=project_id,
-        distinct_ids=[str(distinct_id)]
-    ):
-        # Catch race condition where in between getting and creating,
-        # another request already created this user
-        try:
-            Person.objects.create(
-                project_id=project_id,
-                distinct_ids=[str(distinct_id)]
-            )
-        except IntegrityError:
-            pass
-
     if event == "$identify":
-        update_person_properties(
-            project_id=project_id,
-            distinct_id=distinct_id,
-            attributes=properties
-        )
+        person.attributes.update(properties)
+    else:
+        person.attributes = person_attributes
 
-
-def update_person_properties(
-    project_id: str,
-    distinct_id: str,
-    attributes: Dict
-) -> None:
-    if not isinstance(attributes, dict):
-        return
-
-    try:
-        person = Person.objects.get(
-            project_id=project_id,
-            persondistinctid__project_id=project_id,
-            persondistinctid__distinct_id=str(distinct_id)
-        )
-    except Person.DoesNotExist:
-        try:
-            person = Person.objects.create(
-                project_id=project_id,
-                distinct_ids=[str(distinct_id)]
-            )
-        # Catch race condition where in between getting and creating,
-        # another request already created this person
-        except Exception:
-            person = Person.objects.get(
-                project_id=project_id,
-                persondistinctid__project_id=project_id,
-                persondistinctid__distinct_id=str(distinct_id)
-            )
-
-    person.attributes.update(attributes)
     person.save()
 
 
@@ -270,14 +327,20 @@ def process_event(
     sent_at: Optional[str],
 ) -> None:
     properties = data.get("properties", {})
+    attributes = data.get("attributes", {})
 
+    person = None
     if data["event"] == "$identify":
-        _identify_user(project_id=project_id, distinct_id=distinct_id)
+        properties.update(attributes)
+        person = handle_identify_or_alias(properties, distinct_id, project_id)
 
     _capture(
         project_id=project_id,
+        uuid=event_uuid,
         event=data["event"],
         distinct_id=distinct_id,
         properties=properties,
+        attributes=attributes,
         timestamp=handle_timestamp(data, now, sent_at),
+        person=person
     )

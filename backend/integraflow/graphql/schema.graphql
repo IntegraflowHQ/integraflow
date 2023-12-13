@@ -662,8 +662,8 @@ enum SurveyChannelTypeEnum {
   LINK
   API
   CUSTOM
-  MOBILE_APP
-  WEB_APP
+  MOBILE_SDK
+  WEB_SDK
 }
 
 """
@@ -2270,6 +2270,9 @@ input EventCaptureInput @doc(category: "Events") {
 
   """The event properties."""
   properties: JSONString
+
+  """The user attributes."""
+  attributes: JSONString
 
   """The time the event happened"""
   timestamp: DateTime!
