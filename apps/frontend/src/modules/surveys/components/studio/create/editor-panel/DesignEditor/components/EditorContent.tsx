@@ -4,41 +4,11 @@ import React from "react";
 import toast from "react-hot-toast";
 import { EditorSpinner } from "./EditorSpinner";
 import { Error } from "./Errors";
+import { PresetThemes } from "./PresetThemes";
 import { ThemeCard } from "./ThemeCard";
 interface ContentProp {
     onOpen: () => void;
 }
-
-// const THEMES = [
-//     {
-//         palette: ["#CCA8E9", "#C3BEF0", "#CADEFC", "#DEFCF9"],
-//         themeName: "Outer space",
-//     },
-//     {
-//         palette: ["#748DA6", "#9CB4CC", "#D3CEDF", "#F2D7D9"],
-//         themeName: "Tropical tone",
-//     },
-//     {
-//         palette: ["#EEF2E6", "#D6CDA4", "#3D8361", "#1C6758"],
-//         themeName: "Battle cat",
-//     },
-//     {
-//         palette: ["#BFACE0", "#BFACE0", "#A084CA", "#645CAA"],
-//         themeName: "Impressionist blue",
-//     },
-//     {
-//         palette: ["#7A4495", "#B270A2", "#FF8FB1", "#FCE2DB"],
-//         themeName: "Vanilla pudding",
-//     },
-//     {
-//         palette: ["#FFEEAF", "#E1FFEE", "#A5F1E9", "#7FBCD2"],
-//         themeName: "Azure blue",
-//     },
-//     {
-//         palette: ["#54BAB9", "#9ED2C6", "#E9DAC1", "#F7ECDE"],
-//         themeName: "Tint of rose",
-//     },
-// ];
 
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
     const [selectedTheme, setSelectedTheme] = React.useState<string>("");
@@ -191,8 +161,16 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                                 className="text-sm font-normal first-letter:capitalize"
                             />
 
-                            {/* all themes */}
-                            <div className="flex-col">
+                            {/* {totalCount === 0 ? <PresetThemes /> : null} */}
+
+                            <PresetThemes />
+
+                            <hr className="border-1 my-2 border-intg-bg-14" />
+
+                            <div className="flex-col py-1">
+                                <p className="text-md py-1 font-normal text-intg-text-1 first-letter:capitalize">
+                                    custom themes
+                                </p>
                                 {allThemes?.map((theme, index: number) => {
                                     return (
                                         <div key={theme.id}>
