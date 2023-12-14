@@ -22,11 +22,10 @@ export const ThemeCard = ({
         setIsHovered(!isHovered);
     };
 
-    const getColorScheme = (theme, key) => {
-        console.log(key, theme);
-
+    const getColorScheme = (theme: Partial<ProjectTheme>, key: string) => {
         return theme.colorScheme[key];
     };
+
     return (
         <div
             className={`${
@@ -76,9 +75,9 @@ export const ThemeCard = ({
 
             {isHovered ? (
                 <Pen
-                    onClick={toggleNewThemeModal}
                     size={8}
                     color="#AFAAC7"
+                    onClick={toggleNewThemeModal}
                     className={`mt-[6px] h-9 w-9 rounded-md bg-intg-bg-11 px-1 py-2 text-sm transition-all duration-500 ease-in-out hover:cursor-pointer hover:bg-intg-bg-9`}
                 />
             ) : null}

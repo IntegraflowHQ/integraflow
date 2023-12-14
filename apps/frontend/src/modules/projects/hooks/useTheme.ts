@@ -5,9 +5,9 @@ import {
     useProjectThemeUpdateMutation,
     useThemesQuery,
 } from "@/generated/graphql";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import useUserState from "@/modules/users/hooks/useUserState";
 import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
-import { PROJECT_THEME } from "../graphql/fragments/projectFragments";
 
 export type ColorScheme = {
     answer: string;
@@ -22,6 +22,7 @@ export const useThemes = () => {
     const { workspace } = useWorkspace();
     const [createThemeMutation] = useProjectThemeCreateMutation();
     const [updateThemeMutation] = useProjectThemeUpdateMutation();
+    const { updateSurvey } = useSurvey();
 
     const {
         data: themes,
@@ -70,43 +71,58 @@ export const useThemes = () => {
                     Project: workspace?.project.id,
                 },
             },
-            optimisticResponse: {
-                __typename: "Mutation",
-                projectThemeCreate: {
-                    __typename: "ProjectThemeCreate",
-                    projectTheme: {
-                        __typename: "ProjectTheme",
-                        id: "temp-id",
-                        name: theme.name ?? "",
-                        colorScheme: JSON.stringify(theme.colorScheme ?? {}),
-                    },
-                },
-            },
-            // caching the mutation based on the available themes
-            update: (cache, { data }) => {
-                if (!data?.projectThemeCreate?.projectTheme) return;
+            onCompleted: (data) => {
+                console.log(data);
+                const themeData = {
+                    name: data.projectThemeCreate?.projectTheme?.name ?? "",
+                    colorScheme:
+                        data.projectThemeCreate?.projectTheme?.colorScheme ??
+                        "",
+                };
 
-                cache.modify({
-                    fields: {
-                        themes(existingThemeRefs) {
-                            const newThemeRef = cache.writeFragment({
-                                data: data?.projectThemeCreate?.projectTheme,
-                                fragment: PROJECT_THEME,
-                            });
-                            return {
-                                ...existingThemeRefs,
-                                edges: [
-                                    ...existingThemeRefs.edges,
-                                    {
-                                        __typename: "ProjectTheme",
-                                        node: newThemeRef,
-                                    },
-                                ],
-                            };
-                        },
-                    },
-                });
+                data.projectThemeCreate?.projectTheme?.id;
+                updateSurvey(
+                    { themeId: data.projectThemeCreate?.projectTheme?.id },
+                    themeData,
+                );
             },
+            // optimisticResponse: {
+            //     __typename: "Mutation",
+            //     projectThemeCreate: {
+            //         __typename: "ProjectThemeCreate",
+            //         projectTheme: {
+            //             __typename: "ProjectTheme",
+            //             id: "temp-id",
+            //             name: theme.name ?? "",
+            //             colorScheme: JSON.stringify(theme.colorScheme ?? {}),
+            //         },
+            //     },
+            // },
+            // // caching the mutation based on the available themes
+            // update: (cache, { data }) => {
+            //     if (!data?.projectThemeCreate?.projectTheme) return;
+
+            //     cache.modify({
+            //         fields: {
+            //             themes(existingThemeRefs) {
+            //                 const newThemeRef = cache.writeFragment({
+            //                     data: data?.projectThemeCreate?.projectTheme,
+            //                     fragment: PROJECT_THEME,
+            //                 });
+            //                 return {
+            //                     ...existingThemeRefs,
+            //                     edges: [
+            //                         ...existingThemeRefs.edges,
+            //                         {
+            //                             __typename: "ProjectTheme",
+            //                             node: newThemeRef,
+            //                         },
+            //                     ],
+            //                 };
+            //             },
+            //         },
+            //     });
+            // },
         });
 
         if (error)

@@ -47,6 +47,11 @@ export const UpdateDesignEditor = () => {
         });
     };
 
+    const onOpen = (theme?: Partial<ProjectTheme>) => {
+        transformTheme(theme);
+        setOpenState(true);
+    };
+
     const handleSelectedOption = (
         themeInfo: (typeof THEMES_INFO)[0],
         color: string,
@@ -133,21 +138,7 @@ export const UpdateDesignEditor = () => {
                                         handleSelectedOption(themeInfo, color);
                                     }}
                                 >
-                                    {/* <div
-                                        className="h-8 w-8 cursor-pointer rounded-full"
-                                        style={{
-                                            background: `${
-                                                selectedColors[
-                                                    THEMES_INFO[index].name
-                                                ]
-                                                    ? selectedColors[
-                                                          THEMES_INFO[index]
-                                                              .name
-                                                      ]
-                                                    : color
-                                            }`,
-                                        }}
-                                    /> */}
+                                    {" "}
                                     <div
                                         className="h-8 w-8 cursor-pointer rounded-full"
                                         style={{
@@ -173,11 +164,6 @@ export const UpdateDesignEditor = () => {
             </div>
         </>
     );
-
-    const onOpen = (theme?: Partial<ProjectTheme>) => {
-        transformTheme(theme);
-        setOpenState(true);
-    };
 
     return (
         <>

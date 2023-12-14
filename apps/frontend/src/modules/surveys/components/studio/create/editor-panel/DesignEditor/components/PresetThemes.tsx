@@ -1,4 +1,5 @@
 import { useThemes } from "@/modules/projects/hooks/useTheme";
+import { toast } from "@/utils/toast";
 
 const PRESET_THEMES = [
     {
@@ -44,30 +45,60 @@ const PRESET_THEMES = [
 ];
 
 const getPresetThemes = () => {
-    const themes = [];
-
-    for (const theme of PRESET_THEMES) {
-        const { name, colorScheme } = theme;
-        const themeColors = Object.keys(colorScheme).map(
-            (key) => theme?.colorScheme[key as keyof typeof theme.colorScheme],
-        );
-
-        themes.push({
-            name,
-            colors: themeColors,
-        });
-    }
+    const themes = PRESET_THEMES.map((theme) => ({
+        name: theme.name,
+        colorScheme: theme.colorScheme,
+        colors: Object.values(theme.colorScheme),
+    }));
 
     return themes;
 };
 
-export const PresetThemes = () => {
-    const presetThemes = getPresetThemes();
-    const { createTheme } = useThemes();
+interface PresetThemesProps {
+    customThemes: number;
+}
 
-    const handleCreateTheme = (index: number) => {
+export const PresetThemes = ({ customThemes }: PresetThemesProps) => {
+    const presetThemes = getPresetThemes();
+    const { createTheme, themes, error } = useThemes();
+
+    const handleCreateTheme = async (index: number) => {
         const theme = presetThemes[index];
-        createTheme(theme.name, JSON.parse(JSON.stringify(theme.colors)));
+
+        // if (customThemes === 0) {
+        //     try {
+        //         await createTheme({
+        //             name: theme.name,
+        //             colorScheme: theme.colorScheme,
+        //         });
+
+        //         const themeId = themes?.[0]?.id;
+
+        //         const themeData = {
+        //             name: theme.name,
+        //             colorScheme: theme.colorScheme,
+        //         };
+
+        //         console.log(themeData);
+
+        //         updateSurvey({ themeId });
+        //     } catch (err) {
+        //         toast.error(
+        //             error?.message || error?.networkError?.message || "",
+        //         );
+        //     }
+        // } else {
+        //     createTheme({
+        //         name: theme.name,
+        //         colorScheme: theme.colorScheme,
+        //     });
+        // }
+
+        try {
+            createTheme(theme);
+        } catch (err) {
+            toast.error(error?.message || error?.networkError?.message || "");
+        }
     };
 
     return (
@@ -104,7 +135,7 @@ export const PresetThemes = () => {
                                     {theme.name}
                                 </p>
                                 <p className="font-normal text-intg-text-4">
-                                    Fetched theme
+                                    Preset theme
                                 </p>
                             </div>
                         </div>
