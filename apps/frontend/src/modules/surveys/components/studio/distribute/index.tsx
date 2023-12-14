@@ -43,7 +43,7 @@ const tabs = [
 ];
 
 export default function Distribute() {
-    const [currentTab, setCurrentTab] = useState(tabs[0].id);
+    const [currentTab, setCurrentTab] = useState(tabs[0].id as string);
     return (
         <Tabs.Root
             className="flex w-full gap-12 pl-10 pr-[45px]"
