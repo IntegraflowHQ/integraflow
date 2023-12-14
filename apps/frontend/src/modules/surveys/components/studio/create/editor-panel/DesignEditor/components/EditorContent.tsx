@@ -13,14 +13,12 @@ interface ContentProp {
 }
 
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
-    const { survey } = useSurvey();
-    // const surveyTheme = survey?.survey?.theme ?? null;
+    const { survey, updateSurvey } = useSurvey();
+    const surveyTheme = survey?.survey?.theme ?? null;
 
     const [selectedTheme, setSelectedTheme] =
-        React.useState<Partial<ProjectTheme>>();
+        React.useState<Partial<ProjectTheme>>(surveyTheme);
     const { themes, error } = useThemes();
-
-    console.log("selected theme: ", selectedTheme);
 
     const colorScheme = React.useMemo(() => {
         let colorScheme = {};
@@ -34,10 +32,13 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
         return colorScheme;
     }, [selectedTheme?.colorScheme]);
 
-    console.log("color scheme: ", colorScheme);
-
     const handleSelectedTheme = (theme: Partial<ProjectTheme>) => {
         setSelectedTheme(theme);
+        console.log(selectedTheme);
+
+        if (selectedTheme?.id) {
+            updateSurvey({ themeId: selectedTheme?.id }, selectedTheme);
+        }
     };
 
     if (error) {
@@ -50,7 +51,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
         const theme = survey?.survey?.theme;
 
         setSelectedTheme(theme as Partial<ProjectTheme>);
-    }, [survey]);
+    }, [survey?.survey?.theme]);
 
     return (
         <>
@@ -76,10 +77,10 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                                     selected theme
                                 </p>
 
-                                {colorScheme || selectedTheme ? (
-                                    <div
-                                        className={` flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2`}
-                                    >
+                                <div
+                                    className={` flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2`}
+                                >
+                                    {selectedTheme && (
                                         <div className="flex gap-5">
                                             <div className="flex py-2">
                                                 {Object.keys(colorScheme).map(
@@ -123,8 +124,8 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                                                 </p>
                                             </div>
                                         </div>
-                                    </div>
-                                ) : null}
+                                    )}
+                                </div>
                             </>
 
                             <Button

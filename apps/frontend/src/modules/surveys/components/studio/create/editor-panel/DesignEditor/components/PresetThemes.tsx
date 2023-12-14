@@ -1,5 +1,4 @@
 import { useThemes } from "@/modules/projects/hooks/useTheme";
-import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { toast } from "@/utils/toast";
 
 const PRESET_THEMES = [
@@ -57,20 +56,13 @@ const getPresetThemes = () => {
 
 export const PresetThemes = () => {
     const presetThemes = getPresetThemes();
-    const { createTheme, themes, error } = useThemes();
-    const { updateSurvey } = useSurvey();
+    const { createTheme, error } = useThemes();
 
     const handleCreateTheme = async (index: number) => {
         const theme = presetThemes[index];
 
         try {
             createTheme(theme);
-
-            setTimeout(() => {
-                if (themes?.[0]?.id) {
-                    updateSurvey({ themeId: themes?.[0]?.id }, theme);
-                }
-            }, 400);
         } catch (err) {
             toast.error(error?.message || error?.networkError?.message || "");
         }

@@ -149,11 +149,7 @@ export const useSurvey = () => {
         input: SurveyUpdateInput,
         newTheme?: Partial<ProjectTheme>,
     ) => {
-        console.log(surveyId, user, survey);
         if (!surveyId || !user || !survey) return;
-        console.log("updateSurvey", newTheme);
-
-        console.log("inut", input);
 
         await updateSurveyMutation({
             variables: {

@@ -178,7 +178,7 @@ export const UpdateDesignEditor = () => {
                                 value="theme"
                                 className={`border border-x-0 border-t-0 border-[#6941c6] px-3 py-2 text-sm font-normal capitalize`}
                             >
-                                theme
+                                themes
                             </Tabs.Trigger>
                         </Tabs.List>
 
