@@ -1,26 +1,27 @@
-import { Button } from "@/ui";
+import { Button, GlobalSpinner } from "@/ui";
 import * as Tabs from "@radix-ui/react-tabs";
 import { XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import useStudioState from "../hooks/useStudioState";
+import { useSurvey } from "../hooks/useSurvey";
 import Analyze from "./studio/analyze";
-import Configure from "./studio/configure";
 import Create from "./studio/create";
+import Distribute from "./studio/distribute";
 
 const tabs = [
     { id: crypto.randomUUID(), label: "Create", screen: Create },
     {
         id: crypto.randomUUID(),
-        label: "Configure/Distribute",
-        screen: Configure,
+        label: "Distribute",
+        screen: Distribute,
     },
     { id: crypto.randomUUID(), label: "Analyze", screen: Analyze },
 ];
 
 export default function Studio() {
     const [title, setTitle] = useState("");
-
     const { enableStudioMode, disableStudioMode } = useStudioState();
+    const { loading } = useSurvey();
 
     useEffect(() => {
         enableStudioMode();
@@ -30,9 +31,11 @@ export default function Studio() {
         };
     }, []);
 
+    if (loading) return <GlobalSpinner />;
+
     return (
         <Tabs.Root className="h-full w-full" defaultValue={tabs[0].id}>
-            <header className="fixed flex w-full items-center justify-between border-b border-intg-bg-4 py-[22px] pl-10 pr-12">
+            <header className="fixed flex w-full items-center justify-between border-b border-intg-bg-4 bg-[#090713] py-[22px] pl-10 pr-12">
                 <input
                     type="text"
                     name="title"

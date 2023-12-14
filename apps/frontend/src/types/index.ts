@@ -14,3 +14,10 @@ export type ChannelSettings = {
     startDate?: string;
     endDate?: string;
 };
+
+export type LinkSettings = {
+    name: string | null;
+    singleUse: boolean;
+    startDate: string | null;
+    endDate: string | null;
+};

@@ -14,10 +14,12 @@ type DatePickerProps = {
     onChange?: (e: {
         target: { value: Date | undefined; name: string; type: string };
     }) => void;
+    fromDate?: Date;
+    toDate?: Date;
 };
 
 export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
-    ({ label, value, onChange }, ref) => {
+    ({ label, value, onChange, ...props }, ref) => {
         return (
             <Popover>
                 <PopoverTrigger asChild>
@@ -54,6 +56,7 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                         }
                         mode="single"
                         initialFocus
+                        {...props}
                     />
                 </PopoverContent>
             </Popover>

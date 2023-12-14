@@ -1,6 +1,7 @@
 import useChannels from "@/modules/surveys/hooks/useChannels";
 import { ChannelSettings } from "@/types";
 import { Button, DatePicker, Switch, TextInput } from "@/ui";
+import { addDays, subDays } from "date-fns";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { LinkProps } from "./Link";
 
@@ -61,6 +62,11 @@ export default function EditLink({ link, settings, close }: Props) {
                     onChange={(event) => {
                         setValue("startDate", event.target.value);
                     }}
+                    toDate={
+                        watch("endDate")
+                            ? subDays(new Date(watch("endDate") as Date), 1)
+                            : undefined
+                    }
                 />
                 <DatePicker
                     label="End date"
@@ -68,6 +74,11 @@ export default function EditLink({ link, settings, close }: Props) {
                         setValue("endDate", event.target.value);
                     }}
                     value={watch("endDate")}
+                    fromDate={
+                        watch("startDate")
+                            ? addDays(new Date(watch("startDate") as Date), 1)
+                            : undefined
+                    }
                 />
             </div>
 
