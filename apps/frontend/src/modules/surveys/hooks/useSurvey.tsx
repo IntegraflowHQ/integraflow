@@ -36,7 +36,6 @@ export const useSurvey = () => {
 
     const questions = survey?.survey?.questions?.edges || [];
     const surveyId = survey?.survey?.id;
-    console.log(surveyId);
 
     useEffect(() => {
         const getSurvey = async () => {
@@ -44,9 +43,6 @@ export const useSurvey = () => {
             await getSurveyQuery({
                 variables: {
                     slug: surveySlug,
-                },
-                onCompleted: (data) => {
-                    console.log("data:", data);
                 },
             });
         };

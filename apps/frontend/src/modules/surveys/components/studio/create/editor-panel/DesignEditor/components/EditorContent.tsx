@@ -14,11 +14,13 @@ interface ContentProp {
 
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
     const { survey } = useSurvey();
-    const surveyTheme = survey?.survey?.theme ?? null;
+    // const surveyTheme = survey?.survey?.theme ?? null;
 
     const [selectedTheme, setSelectedTheme] =
         React.useState<Partial<ProjectTheme>>();
     const { themes, error } = useThemes();
+
+    console.log("selected theme: ", selectedTheme);
 
     const colorScheme = React.useMemo(() => {
         let colorScheme = {};
@@ -31,6 +33,8 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
         return colorScheme;
     }, [selectedTheme?.colorScheme]);
+
+    console.log("color scheme: ", colorScheme);
 
     const handleSelectedTheme = (theme: Partial<ProjectTheme>) => {
         setSelectedTheme(theme);
@@ -67,13 +71,14 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
                     {count !== 0 ? (
                         <>
-                            {selectedTheme ? (
-                                <>
-                                    <p className="py-4 text-sm font-normal uppercase">
-                                        selected theme
-                                    </p>
+                            <>
+                                <p className="py-4 text-sm font-normal uppercase">
+                                    selected theme
+                                </p>
+
+                                {colorScheme || selectedTheme ? (
                                     <div
-                                        className={` flex h-[100px] w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2`}
+                                        className={` flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2`}
                                     >
                                         <div className="flex gap-5">
                                             <div className="flex py-2">
@@ -110,17 +115,17 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                                                     {selectedTheme?.name}
                                                 </p>
                                                 <p className="font-normal text-intg-text-4">
-                                                    {selectedTheme
+                                                    {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                                                    {/* @ts-ignore */}
+                                                    {colorScheme["question"]
                                                         ? "Fetched theme"
                                                         : null}
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
-                                </>
-                            ) : (
-                                <div className="`flex h-[100px] w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2" />
-                            )}
+                                ) : null}
+                            </>
 
                             <Button
                                 text="new theme"
@@ -173,7 +178,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
                     <div
                         className={`-mt-3 ${
-                            count !== 0 ? "h-[370px] translate-y-[20px]" : ""
+                            count !== 0 ? "h-[395px] translate-y-[20px]" : ""
                         } transition-all delay-100 duration-300 ease-in`}
                     >
                         {count !== 0 && (

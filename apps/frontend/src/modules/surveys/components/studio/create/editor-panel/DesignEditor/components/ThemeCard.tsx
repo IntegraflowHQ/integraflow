@@ -30,7 +30,7 @@ export const ThemeCard = ({
         <div
             className={`${
                 activeTheme ? "border border-intg-bg-2" : ""
-            } relative my-3 mb-2 flex w-full justify-between rounded-md bg-intg-bg-15 px-3 py-2 hover:cursor-pointer`}
+            } relative my-3 mb-2 flex w-full justify-between rounded bg-intg-bg-15 px-3 py-2 hover:cursor-pointer`}
             onClick={onClick}
             onMouseEnter={togglePenVisibility}
             onMouseLeave={togglePenVisibility}

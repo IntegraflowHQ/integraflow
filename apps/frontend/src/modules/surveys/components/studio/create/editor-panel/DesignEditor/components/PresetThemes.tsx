@@ -66,11 +66,11 @@ export const PresetThemes = () => {
         try {
             createTheme(theme);
 
-            // setTimeout(() => {
-            //     if (themes?.[0]?.id) {
-            //         updateSurvey({ themeId: themes?.[0]?.id }, theme);
-            //     }
-            // }, 400);
+            setTimeout(() => {
+                if (themes?.[0]?.id) {
+                    updateSurvey({ themeId: themes?.[0]?.id }, theme);
+                }
+            }, 400);
         } catch (err) {
             toast.error(error?.message || error?.networkError?.message || "");
         }
@@ -78,7 +78,7 @@ export const PresetThemes = () => {
 
     return (
         <div className="py-4">
-            <p className="text-md font-normal text-intg-text-1 first-letter:capitalize">
+            <p className="text-md py-3 font-normal text-intg-text-1 first-letter:capitalize">
                 preset themes
             </p>
 
