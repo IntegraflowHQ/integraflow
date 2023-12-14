@@ -8,6 +8,7 @@ import {
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import useUserState from "@/modules/users/hooks/useUserState";
 import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
+import { PROJECT_THEME } from "../graphql/fragments/projectFragments";
 
 export type ColorScheme = {
     answer: string;
@@ -72,7 +73,6 @@ export const useThemes = () => {
                 },
             },
             onCompleted: (data) => {
-                console.log(data);
                 const themeData = {
                     name: data.projectThemeCreate?.projectTheme?.name ?? "",
                     colorScheme:
@@ -86,43 +86,43 @@ export const useThemes = () => {
                     themeData,
                 );
             },
-            // optimisticResponse: {
-            //     __typename: "Mutation",
-            //     projectThemeCreate: {
-            //         __typename: "ProjectThemeCreate",
-            //         projectTheme: {
-            //             __typename: "ProjectTheme",
-            //             id: "temp-id",
-            //             name: theme.name ?? "",
-            //             colorScheme: JSON.stringify(theme.colorScheme ?? {}),
-            //         },
-            //     },
-            // },
-            // // caching the mutation based on the available themes
-            // update: (cache, { data }) => {
-            //     if (!data?.projectThemeCreate?.projectTheme) return;
+            optimisticResponse: {
+                __typename: "Mutation",
+                projectThemeCreate: {
+                    __typename: "ProjectThemeCreate",
+                    projectTheme: {
+                        __typename: "ProjectTheme",
+                        id: "temp-id",
+                        name: theme.name ?? "",
+                        colorScheme: JSON.stringify(theme.colorScheme ?? {}),
+                    },
+                },
+            },
+            // caching the mutation based on the available themes
+            update: (cache, { data }) => {
+                if (!data?.projectThemeCreate?.projectTheme) return;
 
-            //     cache.modify({
-            //         fields: {
-            //             themes(existingThemeRefs) {
-            //                 const newThemeRef = cache.writeFragment({
-            //                     data: data?.projectThemeCreate?.projectTheme,
-            //                     fragment: PROJECT_THEME,
-            //                 });
-            //                 return {
-            //                     ...existingThemeRefs,
-            //                     edges: [
-            //                         ...existingThemeRefs.edges,
-            //                         {
-            //                             __typename: "ProjectTheme",
-            //                             node: newThemeRef,
-            //                         },
-            //                     ],
-            //                 };
-            //             },
-            //         },
-            //     });
-            // },
+                cache.modify({
+                    fields: {
+                        themes(existingThemeRefs) {
+                            const newThemeRef = cache.writeFragment({
+                                data: data?.projectThemeCreate?.projectTheme,
+                                fragment: PROJECT_THEME,
+                            });
+                            return {
+                                ...existingThemeRefs,
+                                edges: [
+                                    ...existingThemeRefs.edges,
+                                    {
+                                        __typename: "ProjectTheme",
+                                        node: newThemeRef,
+                                    },
+                                ],
+                            };
+                        },
+                    },
+                });
+            },
         });
 
         if (error)

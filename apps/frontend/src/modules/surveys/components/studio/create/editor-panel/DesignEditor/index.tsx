@@ -31,9 +31,11 @@ export const UpdateDesignEditor = () => {
             if (theme.id) {
                 updateTheme(theme);
                 toast.success("Theme updated successfully");
+                setOpenState(!newThemeOpenState);
             } else {
                 createTheme(theme);
                 toast.success("Theme created successfully");
+                setOpenState(!newThemeOpenState);
             }
         } else {
             toast.error("Please fill all the fields");
@@ -82,8 +84,6 @@ export const UpdateDesignEditor = () => {
                 theme?.colorScheme?.[THEMES_INFO[i]?.name] ??
                 THEMES_INFO[i].color;
         }
-
-        console.log(colorScheme, theme?.colorScheme);
 
         setTheme({
             ...(theme ?? {}),

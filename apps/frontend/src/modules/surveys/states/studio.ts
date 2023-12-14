@@ -21,10 +21,7 @@ const initialState: StudioState = {
 export const useStudioStore = create<StudioState & StudioActions>()((set) => ({
     ...initialState,
     saveTheme: (themeName, colors) => {
-        // console.log("savedTheme", themeName, colors);
-        const colorsArr = Array.isArray(colors) ? colors : [];
-
-        set({ themeName, colors: colorsArr });
+        set({ themeName, colors });
     },
 
     enableStudioMode: () =>

@@ -31,8 +31,8 @@ export const useSurvey = () => {
 
     const [createSurveyMutation] = useSurveyCreateMutation();
     const [createQuestionMutaton] = useSurveyQuestionCreateMutation({});
-    const [getSurveyQuery, { data: survey }] = useGetSurveyLazyQuery();
     const [updateSurveyMutation] = useSurveyUpdateMutation({});
+    const [getSurveyQuery, { data: survey, loading }] = useGetSurveyLazyQuery();
 
     const questions = survey?.survey?.questions?.edges || [];
     const surveyId = survey?.survey?.id;
@@ -218,5 +218,6 @@ export const useSurvey = () => {
         surveyId,
         survey,
         updateSurvey,
+        loading,
     };
 };

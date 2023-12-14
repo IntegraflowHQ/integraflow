@@ -13,7 +13,9 @@ interface ContentProp {
 }
 
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
-    const { updateSurvey, survey } = useSurvey();
+    const { survey } = useSurvey();
+    const surveyTheme = survey?.survey?.theme ?? null;
+
     const [selectedTheme, setSelectedTheme] =
         React.useState<Partial<ProjectTheme>>();
     const { themes, error } = useThemes();
@@ -28,13 +30,10 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
         }
 
         return colorScheme;
-    }, [selectedTheme]);
+    }, [selectedTheme?.colorScheme]);
 
     const handleSelectedTheme = (theme: Partial<ProjectTheme>) => {
         setSelectedTheme(theme);
-
-        // theme.colorScheme = JSON.stringify(theme.colorScheme);
-        // updateSurvey({ themeId: theme.id }, theme);
     };
 
     if (error) {
@@ -45,10 +44,9 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
     React.useEffect(() => {
         const theme = survey?.survey?.theme;
-        if (theme) {
-            setSelectedTheme(theme as Partial<ProjectTheme>);
-        }
-    }, [count, survey]);
+
+        setSelectedTheme(theme as Partial<ProjectTheme>);
+    }, [survey]);
 
     return (
         <>
@@ -75,7 +73,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                                         selected theme
                                     </p>
                                     <div
-                                        className={`flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2 transition-all ease-in-out`}
+                                        className={` flex h-[100px] w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2`}
                                     >
                                         <div className="flex gap-5">
                                             <div className="flex py-2">
@@ -109,20 +107,28 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
                                             <div>
                                                 <p className="font-normal leading-6 first-letter:capitalize">
-                                                    {selectedTheme.name}
+                                                    {selectedTheme?.name}
                                                 </p>
                                                 <p className="font-normal text-intg-text-4">
-                                                    Fetched theme
+                                                    {selectedTheme
+                                                        ? "Fetched theme"
+                                                        : null}
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
                                 </>
                             ) : (
-                                <p className="py-4 text-sm font-normal text-intg-text-4 first-letter:capitalize">
-                                    You have not selected a theme yet
-                                </p>
+                                <div className="`flex h-[100px] w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2" />
                             )}
+
+                            <Button
+                                text="new theme"
+                                onClick={() => onOpen()}
+                                variant="secondary"
+                                className="mb-2 mt-4 text-sm font-normal first-letter:capitalize"
+                            />
+
                             <div
                                 className={`mt-1 py-2 ${
                                     count !== 0 ? "-mt-4 h-fit" : ""
@@ -174,7 +180,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                             <hr className="border-1 border-intg-bg-14" />
                         )}
 
-                        <PresetThemes customThemes={count} />
+                        <PresetThemes />
                     </div>
                 </>
             </>

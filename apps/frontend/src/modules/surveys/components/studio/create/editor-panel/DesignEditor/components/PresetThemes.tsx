@@ -1,4 +1,5 @@
 import { useThemes } from "@/modules/projects/hooks/useTheme";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { toast } from "@/utils/toast";
 
 const PRESET_THEMES = [
@@ -54,48 +55,22 @@ const getPresetThemes = () => {
     return themes;
 };
 
-interface PresetThemesProps {
-    customThemes: number;
-}
-
-export const PresetThemes = ({ customThemes }: PresetThemesProps) => {
+export const PresetThemes = () => {
     const presetThemes = getPresetThemes();
     const { createTheme, themes, error } = useThemes();
+    const { updateSurvey } = useSurvey();
 
     const handleCreateTheme = async (index: number) => {
         const theme = presetThemes[index];
 
-        // if (customThemes === 0) {
-        //     try {
-        //         await createTheme({
-        //             name: theme.name,
-        //             colorScheme: theme.colorScheme,
-        //         });
-
-        //         const themeId = themes?.[0]?.id;
-
-        //         const themeData = {
-        //             name: theme.name,
-        //             colorScheme: theme.colorScheme,
-        //         };
-
-        //         console.log(themeData);
-
-        //         updateSurvey({ themeId });
-        //     } catch (err) {
-        //         toast.error(
-        //             error?.message || error?.networkError?.message || "",
-        //         );
-        //     }
-        // } else {
-        //     createTheme({
-        //         name: theme.name,
-        //         colorScheme: theme.colorScheme,
-        //     });
-        // }
-
         try {
             createTheme(theme);
+
+            // setTimeout(() => {
+            //     if (themes?.[0]?.id) {
+            //         updateSurvey({ themeId: themes?.[0]?.id }, theme);
+            //     }
+            // }, 400);
         } catch (err) {
             toast.error(error?.message || error?.networkError?.message || "");
         }
