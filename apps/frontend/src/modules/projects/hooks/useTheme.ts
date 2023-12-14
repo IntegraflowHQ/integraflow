@@ -1,4 +1,6 @@
 import {
+    ProjectTheme,
+    ThemesQuery,
     useProjectThemeCreateMutation,
     useThemesQuery,
 } from "@/generated/graphql";
@@ -31,43 +33,31 @@ export const useThemes = () => {
         },
     });
 
-    const getThemeProperties = () => {
-        const data = themes?.themes;
+    const transformThemes = (themes: ThemesQuery) => {
+        const data = { ...(themes?.themes ?? {}) };
 
-        const themeData = data?.edges?.map((theme) => {
-            return theme.node;
+        return data?.edges?.map(({ node }) => {
+            let colorScheme = {};
+            if (node.colorScheme) {
+                try {
+                    colorScheme = JSON.parse(node.colorScheme) as ColorScheme;
+                } catch (error) {
+                    colorScheme = {};
+                }
+            }
+
+            node.colorScheme = colorScheme;
+
+            return node;
         });
-
-        const themesInfo = themeData?.map((theme) => {
-            const { name, colorScheme } = theme || {};
-
-            const parsedColorScheme = colorScheme
-                ? JSON.parse(colorScheme)
-                : {};
-
-            return {
-                ...theme,
-                name,
-                colorScheme: parsedColorScheme,
-            };
-        });
-
-        return {
-            themes: themeData,
-            data: themesInfo,
-            totalCount: data?.totalCount,
-        };
     };
 
-    const createSurveyTheme = async (
-        themeName: string,
-        colorScheme: ColorScheme,
-    ) => {
+    const createTheme = async (theme: Partial<ProjectTheme>) => {
         await createThemeMutation({
             variables: {
                 input: {
-                    name: themeName,
-                    colorScheme: JSON.stringify(colorScheme),
+                    name: theme.name ?? "",
+                    colorScheme: JSON.stringify(theme.colorScheme ?? {}),
                 },
             },
             notifyOnNetworkStatusChange: true,
@@ -83,8 +73,8 @@ export const useThemes = () => {
                     projectTheme: {
                         __typename: "ProjectTheme",
                         id: "temp-id",
-                        name: themeName,
-                        colorScheme: JSON.stringify(colorScheme),
+                        name: theme.name ?? "",
+                        colorScheme: JSON.stringify(theme.colorScheme ?? {}),
                     },
                 },
             },
@@ -124,8 +114,7 @@ export const useThemes = () => {
     return {
         error,
         loading,
-        themes: getThemeProperties(),
-        createTheme: (themeName: string, colorScheme: ColorScheme) =>
-            createSurveyTheme(themeName, colorScheme),
+        themes: transformThemes(JSON.parse(JSON.stringify(themes ?? {}))),
+        createTheme,
     };
 };

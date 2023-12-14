@@ -1,3 +1,4 @@
+import { ProjectTheme } from "@/generated/graphql";
 import { useThemes } from "@/modules/projects/hooks/useTheme";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { Button } from "@/ui";
@@ -8,37 +9,17 @@ import { PresetThemes } from "./PresetThemes";
 import { ThemeCard } from "./ThemeCard";
 
 interface ContentProp {
-    onOpen: () => void;
+    onOpen: (theme?: Partial<ProjectTheme>) => void;
 }
 
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
     const { updateSurvey, survey } = useSurvey();
-    const currentSurveyTheme = survey?.survey?.theme;
-    const [selectedThemeId, setSelectedThemeId] = React.useState<string>("");
-    const [selectedTheme, setSelectedTheme] = React.useState<object>({});
+    const [selectedTheme, setSelectedTheme] =
+        React.useState<Partial<ProjectTheme>>();
 
     const { themes, error } = useThemes();
-    const { data, totalCount } = themes;
 
-    const onSelectedTheme = (index: number) => {
-        const selectedThemeIndex = data?.[index]?.id || "";
-
-        setSelectedThemeId(selectedThemeIndex);
-
-        const theme = themes?.themes?.find(
-            (theme) => theme.id === selectedThemeIndex,
-        );
-
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        setSelectedTheme(theme);
-
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        updateSurvey({ themeId: selectedThemeIndex }, theme);
-    };
-
-    const getCustomThemes = () => {
+    /* const getCustomThemes = () => {
         const customThemes = data?.map((theme) => theme);
         const themes = [];
 
@@ -56,71 +37,74 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
         }
 
         return themes;
-    };
+    }; */
 
-    const getSelectedTheme = () => {
-        if (!selectedThemeId) return [];
-        let colors: string[] = [];
+    const colorScheme = React.useMemo(() => {
+        let colorScheme = {};
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const { id, name } = selectedTheme;
-
-        if (currentSurveyTheme?.id === id) {
-            const colorScheme = JSON.parse(currentSurveyTheme?.colorScheme);
-            colors = Object.values(colorScheme).map((color) => color);
+        try {
+            colorScheme = JSON.parse(selectedTheme?.colorScheme ?? "{}");
+        } catch (error) {
+            colorScheme = selectedTheme?.colorScheme ?? {};
         }
 
-        return {
-            id,
-            name,
-            colors,
-        };
+        return colorScheme;
+    }, [selectedTheme]);
+
+    const handleSelectedTheme = (theme: Partial<ProjectTheme>) => {
+        setSelectedTheme(theme);
+
+        theme.colorScheme = JSON.stringify(theme.colorScheme);
+        updateSurvey({ themeId: theme.id }, theme);
     };
 
-    const allThemes = getCustomThemes().map((theme) => theme);
-    const currentTheme = getSelectedTheme();
+    // const allThemes = getCustomThemes().map((theme) => theme);
+    // const currentTheme = getSelectedTheme();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const { id, name, colors } = currentTheme;
+    // const { name, colors } = getSelectedTheme();
+
+    console.log(themes);
 
     if (error) {
         toast.error(error.message || error.networkError?.message || "");
     }
 
     React.useEffect(() => {
-        if (currentSurveyTheme) {
-            setSelectedThemeId(currentSurveyTheme.id);
-            setSelectedTheme(currentSurveyTheme);
+        const theme = survey?.survey?.theme;
+        if (theme) {
+            setSelectedTheme(theme as Partial<ProjectTheme>);
         }
-    }, [currentSurveyTheme]);
+    }, [survey]);
+
+    const count = themes?.length ?? 0;
 
     return (
         <>
-            {allThemes.length === 0 ? (
+            {count === 0 ? (
                 <>
                     <Error message="You don't have any theme. Click the button below to create one or choose from our presets" />
 
                     <Button
                         text="new theme"
-                        onClick={onOpen}
+                        onClick={() => onOpen()}
                         variant="secondary"
                         className="mb-2 mt-4 text-sm font-normal first-letter:capitalize"
                     />
 
                     <div
                         className={` ${
-                            totalCount !== 0
-                                ? "h-[400px] opacity-100"
-                                : "h-[0px] opacity-0"
-                        } transition-all delay-1000 duration-300 ease-in-out`}
+                            count !== 0
+                                ? "h-[0px] opacity-0"
+                                : "h-[350px] opacity-100"
+                        } transition-all delay-200 duration-300 ease-in-out`}
                     >
                         <PresetThemes />
                     </div>
                 </>
             ) : (
                 <>
-                    {selectedThemeId ? (
+                    {selectedTheme ? (
                         <>
                             <p className="py-4 text-sm font-normal uppercase">
                                 selected theme
@@ -130,8 +114,8 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                             >
                                 <div className="flex gap-5">
                                     <div className="flex py-2">
-                                        {colors.map(
-                                            (color: string, index: number) => {
+                                        {Object.keys(colorScheme).map(
+                                            (key: string, index: number) => {
                                                 return (
                                                     <div
                                                         className={`h-8 w-8 rounded-full border-2 ${
@@ -141,7 +125,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                                                         }`}
                                                         key={index}
                                                         style={{
-                                                            backgroundColor: `${color}`,
+                                                            backgroundColor: `${colorScheme[key]}`,
                                                         }}
                                                     />
                                                 );
@@ -151,7 +135,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
                                     <div>
                                         <p className="font-normal leading-6 first-letter:capitalize">
-                                            {name}
+                                            {selectedTheme.name}
                                         </p>
                                         <p className="font-normal text-intg-text-4">
                                             Fetched theme
@@ -168,7 +152,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
                     <div
                         className={`h-fit py-6 ${
-                            totalCount !== 0 ? "-mt-4" : ""
+                            count !== 0 ? "-mt-4 h-fit" : ""
                         } transition-all delay-100 duration-300 ease-in-out`}
                     >
                         <p className="py-2 text-sm font-normal capitalize">
@@ -177,33 +161,36 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
                         <Button
                             text="new theme"
-                            onClick={onOpen}
+                            onClick={() => onOpen()}
                             variant="secondary"
                             className="text-sm font-normal first-letter:capitalize"
                         />
 
                         <div className="flex-col py-1 transition-all duration-300 ease-in-out">
-                            {allThemes?.map((theme, index: number) => {
-                                return (
-                                    <div key={index}>
-                                        <ThemeCard
-                                            activeTheme={
-                                                theme.id ===
-                                                currentSurveyTheme?.id
-                                            }
-                                            name={theme.name}
-                                            colors={theme.colors}
-                                            onClick={() =>
-                                                onSelectedTheme(index)
-                                            }
-                                            toggleNewThemeModal={onOpen}
-                                            setThemeData={() => {
-                                                theme.name, theme.colors;
-                                            }}
-                                        />
-                                    </div>
-                                );
-                            })}
+                            {themes?.map(
+                                (
+                                    theme: Partial<ProjectTheme>,
+                                    index: number,
+                                ) => {
+                                    return (
+                                        <div key={index}>
+                                            <ThemeCard
+                                                activeTheme={
+                                                    theme.id ===
+                                                    selectedTheme?.id
+                                                }
+                                                theme={theme}
+                                                onClick={() =>
+                                                    handleSelectedTheme(theme)
+                                                }
+                                                toggleNewThemeModal={() =>
+                                                    onOpen(theme)
+                                                }
+                                            />
+                                        </div>
+                                    );
+                                },
+                            )}
                         </div>
                     </div>
                 </>

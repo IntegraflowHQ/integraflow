@@ -151,9 +151,10 @@ export const useSurvey = () => {
 
     const updateSurvey = async (
         input: SurveyUpdateInput,
-        newTheme?: ProjectTheme,
+        newTheme?: Partial<ProjectTheme>,
     ) => {
         if (!surveyId || !user || !survey) return;
+        console.log("updateSurvey", newTheme);
 
         await updateSurveyMutation({
             variables: {

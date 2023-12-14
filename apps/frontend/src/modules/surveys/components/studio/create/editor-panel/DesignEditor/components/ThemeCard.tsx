@@ -1,3 +1,4 @@
+import { ProjectTheme } from "@/generated/graphql";
 import { CheckCircle, Pen } from "lucide-react";
 import React from "react";
 
@@ -5,23 +6,13 @@ interface CardProps {
     onClick: () => void;
     activeTheme: boolean;
     toggleNewThemeModal: () => void;
-    name: string;
-    colors: string[];
-    setThemeData: ({
-        name,
-        colors,
-    }: {
-        name: string;
-        colors: string[];
-    }) => void;
+    theme: Partial<ProjectTheme>;
 }
 
 export const ThemeCard = ({
-    name,
-    colors,
+    theme,
     onClick,
     activeTheme,
-    setThemeData,
     toggleNewThemeModal,
     ...props
 }: CardProps) => {
@@ -31,16 +22,16 @@ export const ThemeCard = ({
         setIsHovered(!isHovered);
     };
 
-    const themeModalOpenState = () => {
-        setThemeData({ name, colors });
-        toggleNewThemeModal();
-    };
+    const getColorScheme = (theme, key) => {
+        console.log(key, theme);
 
+        return theme.colorScheme[key];
+    };
     return (
         <div
             className={`${
                 activeTheme ? "border border-intg-bg-2" : ""
-            } trasition-all relative my-3 mb-2 flex w-full justify-between rounded-md bg-intg-bg-15 px-3 py-2 duration-300 ease-in-out hover:cursor-pointer`}
+            } relative my-3 mb-2 flex w-full justify-between rounded-md bg-intg-bg-15 px-3 py-2 hover:cursor-pointer`}
             onClick={onClick}
             onMouseEnter={togglePenVisibility}
             onMouseLeave={togglePenVisibility}
@@ -57,14 +48,19 @@ export const ThemeCard = ({
 
             <div className="flex gap-5">
                 <div className="flex py-2">
-                    {colors.map((color, index) => {
+                    {Object.keys(theme.colorScheme).map((key, index) => {
                         return (
                             <div
                                 className={`h-8 w-8 rounded-full border-2 ${
                                     index !== 0 ? "-ml-4" : ""
                                 }`}
                                 key={index}
-                                style={{ backgroundColor: `${color}` }}
+                                style={{
+                                    backgroundColor: `${getColorScheme(
+                                        theme,
+                                        key,
+                                    )}`,
+                                }}
                             />
                         );
                     })}
@@ -72,17 +68,15 @@ export const ThemeCard = ({
 
                 <div>
                     <p className="font-normal leading-6 first-letter:capitalize">
-                        {name}
+                        {theme.name}
                     </p>
-                    <p className="font-normal text-intg-text-4">
-                        Fetched theme
-                    </p>
+                    <p className="font-normal text-intg-text-4">Custom theme</p>
                 </div>
             </div>
 
             {isHovered ? (
                 <Pen
-                    onClick={themeModalOpenState}
+                    onClick={toggleNewThemeModal}
                     size={8}
                     color="#AFAAC7"
                     className={`mt-[6px] h-9 w-9 rounded-md bg-intg-bg-11 px-1 py-2 text-sm transition-all duration-500 ease-in-out hover:cursor-pointer hover:bg-intg-bg-9`}

@@ -1,3 +1,4 @@
+import { ProjectTheme } from "@/generated/graphql";
 import { useThemes } from "@/modules/projects/hooks/useTheme";
 import { Button, ColorPicker } from "@/ui";
 import { toast } from "@/utils/toast";
@@ -21,20 +22,16 @@ const THEMES_INFO = [
 
 export const UpdateDesignEditor = () => {
     const [newThemeOpenState, setOpenState] = React.useState<boolean>(false);
-    const [selectedColors, setSelectedColors] = React.useState<{
-        [Key: string]: string;
-    }>({});
-    const [, setThemeOption] = React.useState<string>("");
-
-    // query fields
-    const [themeName, setThemeName] = React.useState<string>("");
-    const [colorScheme, setColorScheme] = React.useState<string>("");
+    const [theme, setTheme] = React.useState<Partial<ProjectTheme>>();
 
     const { createTheme } = useThemes();
 
     const handleCreateTheme = () => {
-        if (themeName && colorScheme !== "") {
-            createTheme(themeName, JSON.parse(colorScheme));
+        console.log(theme);
+        if (theme?.name && theme.colorScheme) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            createTheme(theme);
             toast.success("Theme created successfully");
         } else {
             toast.error("Please fill all the fields");
@@ -42,37 +39,106 @@ export const UpdateDesignEditor = () => {
     };
 
     const handleThemeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setThemeName(e.target.value);
+        setTheme({
+            ...(theme ?? {}),
+            name: e.target.value,
+        });
     };
 
-    const handleSelectedOption = (index: number, color: string) => {
-        const selectedThemeOption = THEMES_INFO[index];
-        setThemeOption(selectedThemeOption.id);
+    // const handleSelectedOption = (index: number, color: string) => {
+    //     const selectedThemeOption = THEMES_INFO[index];
+    //     setThemeOption(selectedThemeOption.id);
 
-        const updatedTheme = THEMES_INFO.map((theme, i) => {
-            if (i === index) {
-                return {
-                    ...theme,
-                    color,
-                };
+    //     const updatedTheme = THEMES_INFO.map((theme, i) => {
+    //         if (i === index) {
+    //             return {
+    //                 ...theme,
+    //                 color,
+    //             };
+    //         }
+    //         return theme;
+    //     });
+
+    //     const updatedThemeData = updatedTheme.map((theme) =>
+    //         theme.id === selectedThemeOption.id ? { ...theme, color } : theme,
+    //     );
+
+    //     const newColors = updatedThemeData.map((theme) => theme.color);
+
+    //     // const colors: { [key: string]: string } = {};
+    //     // for (const theme of updatedThemeData) {
+    //     //     colors[theme.name] = theme.color;
+    //     // }
+
+    //     setSelectedColors((previousColors) => ({
+    //         ...previousColors,
+    //         [selectedThemeOption.name]: color,
+    //     }));
+
+    //     saveTheme(name, newColors);
+
+    //     setColorScheme(JSON.stringify(newColors));
+    // };
+
+    // const handleSelectedOption = (index: number, color: string) => {
+    //     const selectedThemeOption = THEMES_INFO[index];
+    //     setThemeOption(selectedThemeOption.id);
+
+    //     const updatedThemeData = THEMES_INFO.map((theme, i) =>
+    //         i === index ? { ...theme, color } : theme,
+    //     );
+
+    //     const newColors = updatedThemeData.map((theme) => theme.color);
+
+    //     setSelectedColors((prevColors) => ({
+    //         ...prevColors,
+    //         [selectedThemeOption?.name]: color,
+    //     }));
+
+    //     setColorScheme(JSON.stringify(newColors));
+
+    //     // Save updated colors to the store
+    //     saveTheme(name, newColors);
+    // };
+
+    const handleSelectedOption = (
+        themeInfo: (typeof THEMES_INFO)[0],
+        color: string,
+    ) => {
+        const colorScheme: { [key: string]: string } = {};
+
+        for (let i = 0; i < THEMES_INFO.length; i++) {
+            colorScheme[THEMES_INFO[i]?.name] =
+                theme?.colorScheme?.[THEMES_INFO[i]?.name] ??
+                THEMES_INFO[i].color;
+
+            if (THEMES_INFO[i]?.name === themeInfo.name) {
+                colorScheme[THEMES_INFO[i]?.name] = color;
             }
-            return theme;
-        });
-
-        const updatedThemeData = updatedTheme.map((theme) =>
-            theme.id === selectedThemeOption.id ? { ...theme, color } : theme,
-        );
-
-        const colors: { [key: string]: string } = {};
-        for (const theme of updatedThemeData) {
-            colors[theme.name] = theme.color;
         }
 
-        setSelectedColors({
-            ...selectedColors,
-            [selectedThemeOption?.name]: color,
+        setTheme({
+            ...(theme ?? {}),
+            colorScheme,
         });
-        setColorScheme(JSON.stringify(colors));
+    };
+
+    const transformTheme = (theme?: Partial<ProjectTheme>) => {
+        const colorScheme: { [key: string]: string } = {};
+
+        for (let i = 0; i < THEMES_INFO.length; i++) {
+            colorScheme[THEMES_INFO[i]?.name] =
+                theme?.colorScheme?.[THEMES_INFO[i]?.name] ??
+                THEMES_INFO[i].color;
+        }
+
+        console.log(colorScheme, theme?.colorScheme);
+
+        setTheme({
+            ...(theme ?? {}),
+            name: theme?.name ?? "",
+            colorScheme,
+        });
     };
 
     const themeSettingsPanel = (
@@ -86,7 +152,7 @@ export const UpdateDesignEditor = () => {
                         >
                             <input
                                 type="text"
-                                value={themeName}
+                                value={theme?.name ?? ""}
                                 placeholder="Theme name"
                                 onChange={(e) => handleThemeName(e)}
                                 className="w-[120px] text-ellipsis bg-transparent px-3 py-2 text-sm font-normal capitalize text-intg-text-2 focus:outline-intg-bg-2"
@@ -106,22 +172,22 @@ export const UpdateDesignEditor = () => {
                 </Tabs.Root>
 
                 <>
-                    {THEMES_INFO.map(({ name, color }, index: number) => {
+                    {THEMES_INFO.map((themeInfo) => {
                         return (
                             <div
-                                key={index}
+                                key={themeInfo.id}
                                 className="my-3 mb-3 flex w-full justify-between rounded-md bg-intg-bg-15 px-3 py-3"
                             >
                                 <p className="py-1 text-sm font-normal capitalize text-intg-text-2">
-                                    {name}
+                                    {themeInfo.name}
                                 </p>
 
                                 <ColorPicker
                                     onChange={(color) => {
-                                        handleSelectedOption(index, color);
+                                        handleSelectedOption(themeInfo, color);
                                     }}
                                 >
-                                    <div
+                                    {/* <div
                                         className="h-8 w-8 cursor-pointer rounded-full"
                                         style={{
                                             background: `${
@@ -134,6 +200,15 @@ export const UpdateDesignEditor = () => {
                                                       ]
                                                     : color
                                             }`,
+                                        }}
+                                    /> */}
+                                    <div
+                                        className="h-8 w-8 cursor-pointer rounded-full"
+                                        style={{
+                                            background:
+                                                theme?.colorScheme?.[
+                                                    themeInfo.name
+                                                ] ?? themeInfo.color,
                                         }}
                                     />
                                 </ColorPicker>
@@ -153,8 +228,9 @@ export const UpdateDesignEditor = () => {
         </>
     );
 
-    const onOpen = () => {
-        setOpenState(!false);
+    const onOpen = (theme?: Partial<ProjectTheme>) => {
+        transformTheme(theme);
+        setOpenState(true);
     };
 
     return (
