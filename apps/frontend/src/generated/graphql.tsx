@@ -1759,6 +1759,8 @@ export type ProjectUpdateFragmentFragment = { __typename?: 'ProjectUpdate', proj
 
 export type ProjectThemeFragmentFragment = { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } };
 
+export type ProjectThemeUpdateFragmentFragment = { __typename?: 'ProjectThemeUpdate', projectTheme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
+
 export type ProjectCreateMutationVariables = Exact<{
   input: ProjectCreateInput;
 }>;
@@ -1773,14 +1775,20 @@ export type ProjectThemeCreateMutationVariables = Exact<{
 
 export type ProjectThemeCreateMutation = { __typename?: 'Mutation', projectThemeCreate?: { __typename?: 'ProjectThemeCreate', projectTheme?: { __typename?: 'ProjectTheme', id: string, name: string, colorScheme?: any | null } | null } | null };
 
+export type ProjectThemeUpdateMutationVariables = Exact<{
+  id: Scalars['ID'];
+  input: ProjectThemeUpdateInput;
+}>;
+
+
+export type ProjectThemeUpdateMutation = { __typename?: 'Mutation', projectThemeUpdate?: { __typename?: 'ProjectThemeUpdate', projectTheme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+
 export type ThemesQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
 }>;
 
 
 export type ThemesQuery = { __typename?: 'Query', themes?: { __typename?: 'ProjectThemeCountableConnection', totalCount?: number | null, edges: Array<{ __typename?: 'ProjectThemeCountableEdge', node: { __typename?: 'ProjectTheme', id: string, name: string, colorScheme?: any | null } }> } | null };
-
-export type NewThemeFragment = { __typename?: 'ProjectTheme', id: string, name: string, colorScheme?: any | null };
 
 export type SurveyQuestionFragmentFragment = { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string };
 
@@ -2092,20 +2100,6 @@ export const ProjectUpdateFragmentFragmentDoc = gql`
 }
     ${ProjectFragmentFragmentDoc}
 ${ProjectErrorFragmentFragmentDoc}`;
-export const NewThemeFragmentDoc = gql`
-    fragment NewTheme on ProjectTheme {
-  id
-  name
-  colorScheme
-}
-    `;
-export const SurveyErrorFragmentFragmentDoc = gql`
-    fragment SurveyErrorFragment on SurveyError {
-  field
-  message
-  code
-}
-    `;
 export const UserFragmentFragmentDoc = gql`
     fragment UserFragment on User {
   id
@@ -2159,6 +2153,24 @@ export const ProjectThemeFragmentFragmentDoc = gql`
 }
     ${ProjectFragmentFragmentDoc}
 ${UserFragmentFragmentDoc}`;
+export const ProjectThemeUpdateFragmentFragmentDoc = gql`
+    fragment ProjectThemeUpdateFragment on ProjectThemeUpdate {
+  projectTheme {
+    ...ProjectThemeFragment
+  }
+  errors {
+    ...ProjectErrorFragment
+  }
+}
+    ${ProjectThemeFragmentFragmentDoc}
+${ProjectErrorFragmentFragmentDoc}`;
+export const SurveyErrorFragmentFragmentDoc = gql`
+    fragment SurveyErrorFragment on SurveyError {
+  field
+  message
+  code
+}
+    `;
 export const SurveyQuestionFragmentFragmentDoc = gql`
     fragment SurveyQuestionFragment on SurveyQuestion {
   id
@@ -2722,6 +2734,46 @@ export function useProjectThemeCreateMutation(baseOptions?: Apollo.MutationHookO
 export type ProjectThemeCreateMutationHookResult = ReturnType<typeof useProjectThemeCreateMutation>;
 export type ProjectThemeCreateMutationResult = Apollo.MutationResult<ProjectThemeCreateMutation>;
 export type ProjectThemeCreateMutationOptions = Apollo.BaseMutationOptions<ProjectThemeCreateMutation, ProjectThemeCreateMutationVariables>;
+export const ProjectThemeUpdateDocument = gql`
+    mutation ProjectThemeUpdate($id: ID!, $input: ProjectThemeUpdateInput!) {
+  projectThemeUpdate(id: $id, input: $input) {
+    projectTheme {
+      ...ProjectThemeFragment
+    }
+    projectErrors {
+      ...ProjectErrorFragment
+    }
+  }
+}
+    ${ProjectThemeFragmentFragmentDoc}
+${ProjectErrorFragmentFragmentDoc}`;
+export type ProjectThemeUpdateMutationFn = Apollo.MutationFunction<ProjectThemeUpdateMutation, ProjectThemeUpdateMutationVariables>;
+
+/**
+ * __useProjectThemeUpdateMutation__
+ *
+ * To run a mutation, you first call `useProjectThemeUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useProjectThemeUpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [projectThemeUpdateMutation, { data, loading, error }] = useProjectThemeUpdateMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useProjectThemeUpdateMutation(baseOptions?: Apollo.MutationHookOptions<ProjectThemeUpdateMutation, ProjectThemeUpdateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ProjectThemeUpdateMutation, ProjectThemeUpdateMutationVariables>(ProjectThemeUpdateDocument, options);
+      }
+export type ProjectThemeUpdateMutationHookResult = ReturnType<typeof useProjectThemeUpdateMutation>;
+export type ProjectThemeUpdateMutationResult = Apollo.MutationResult<ProjectThemeUpdateMutation>;
+export type ProjectThemeUpdateMutationOptions = Apollo.BaseMutationOptions<ProjectThemeUpdateMutation, ProjectThemeUpdateMutationVariables>;
 export const ThemesDocument = gql`
     query Themes($first: Int) {
   themes(first: $first) {

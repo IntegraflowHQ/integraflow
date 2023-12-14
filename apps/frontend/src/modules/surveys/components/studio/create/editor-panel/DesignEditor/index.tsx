@@ -24,15 +24,17 @@ export const UpdateDesignEditor = () => {
     const [newThemeOpenState, setOpenState] = React.useState<boolean>(false);
     const [theme, setTheme] = React.useState<Partial<ProjectTheme>>();
 
-    const { createTheme } = useThemes();
+    const { createTheme, updateTheme } = useThemes();
 
     const handleCreateTheme = () => {
-        console.log(theme);
         if (theme?.name && theme.colorScheme) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            createTheme(theme);
-            toast.success("Theme created successfully");
+            if (theme.id) {
+                updateTheme(theme);
+                toast.success("Theme updated successfully");
+            } else {
+                createTheme(theme);
+                toast.success("Theme created successfully");
+            }
         } else {
             toast.error("Please fill all the fields");
         }
@@ -44,62 +46,6 @@ export const UpdateDesignEditor = () => {
             name: e.target.value,
         });
     };
-
-    // const handleSelectedOption = (index: number, color: string) => {
-    //     const selectedThemeOption = THEMES_INFO[index];
-    //     setThemeOption(selectedThemeOption.id);
-
-    //     const updatedTheme = THEMES_INFO.map((theme, i) => {
-    //         if (i === index) {
-    //             return {
-    //                 ...theme,
-    //                 color,
-    //             };
-    //         }
-    //         return theme;
-    //     });
-
-    //     const updatedThemeData = updatedTheme.map((theme) =>
-    //         theme.id === selectedThemeOption.id ? { ...theme, color } : theme,
-    //     );
-
-    //     const newColors = updatedThemeData.map((theme) => theme.color);
-
-    //     // const colors: { [key: string]: string } = {};
-    //     // for (const theme of updatedThemeData) {
-    //     //     colors[theme.name] = theme.color;
-    //     // }
-
-    //     setSelectedColors((previousColors) => ({
-    //         ...previousColors,
-    //         [selectedThemeOption.name]: color,
-    //     }));
-
-    //     saveTheme(name, newColors);
-
-    //     setColorScheme(JSON.stringify(newColors));
-    // };
-
-    // const handleSelectedOption = (index: number, color: string) => {
-    //     const selectedThemeOption = THEMES_INFO[index];
-    //     setThemeOption(selectedThemeOption.id);
-
-    //     const updatedThemeData = THEMES_INFO.map((theme, i) =>
-    //         i === index ? { ...theme, color } : theme,
-    //     );
-
-    //     const newColors = updatedThemeData.map((theme) => theme.color);
-
-    //     setSelectedColors((prevColors) => ({
-    //         ...prevColors,
-    //         [selectedThemeOption?.name]: color,
-    //     }));
-
-    //     setColorScheme(JSON.stringify(newColors));
-
-    //     // Save updated colors to the store
-    //     saveTheme(name, newColors);
-    // };
 
     const handleSelectedOption = (
         themeInfo: (typeof THEMES_INFO)[0],

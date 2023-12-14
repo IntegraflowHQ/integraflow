@@ -2,8 +2,10 @@ import {
     ProjectTheme,
     ThemesQuery,
     useProjectThemeCreateMutation,
+    useProjectThemeUpdateMutation,
     useThemesQuery,
 } from "@/generated/graphql";
+import useUserState from "@/modules/users/hooks/useUserState";
 import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import { PROJECT_THEME } from "../graphql/fragments/projectFragments";
 
@@ -16,8 +18,10 @@ export type ColorScheme = {
 };
 
 export const useThemes = () => {
+    const { user } = useUserState();
     const { workspace } = useWorkspace();
     const [createThemeMutation] = useProjectThemeCreateMutation();
+    const [updateThemeMutation] = useProjectThemeUpdateMutation();
 
     const {
         data: themes,
@@ -111,10 +115,67 @@ export const useThemes = () => {
             };
     };
 
+    const updateTheme = async (theme: Partial<ProjectTheme>) => {
+        if (!theme.id) return;
+
+        await updateThemeMutation({
+            variables: {
+                id: theme.id,
+                input: {
+                    name: theme.name ?? "",
+                    colorScheme: JSON.stringify(theme.colorScheme ?? {}),
+                },
+            },
+            notifyOnNetworkStatusChange: true,
+            context: {
+                headers: {
+                    Project: workspace?.project.id,
+                },
+            },
+            optimisticResponse: {
+                __typename: "Mutation",
+                projectThemeUpdate: {
+                    __typename: "ProjectThemeUpdate",
+                    projectTheme: {
+                        __typename: "ProjectTheme",
+                        id: theme.id,
+                        name: theme.name ?? "",
+                        colorScheme: JSON.stringify(theme.colorScheme ?? {}),
+                        settings: [],
+                        project: {
+                            id: workspace?.project.id ?? "",
+                            name: workspace?.project.name ?? "",
+                            slug: workspace?.project.slug ?? "",
+                            hasCompletedOnboardingFor: [],
+                            timezone: workspace?.project.timezone ?? "",
+                            organization: {
+                                id: workspace?.project.organization.id ?? "",
+                                slug:
+                                    workspace?.project.organization.slug ?? "",
+                                name:
+                                    workspace?.project.organization.name ?? "",
+                                memberCount:
+                                    workspace?.project.organization
+                                        .memberCount ?? 0,
+                            },
+                        },
+                        createdAt:
+                            workspace?.project.createdAt ??
+                            new Date().toISOString(),
+                        creator: workspace?.project.creator ?? user,
+                        updatedAt: new Date().toISOString(),
+                    },
+                    projectErrors: [],
+                },
+            },
+        });
+    };
+
     return {
         error,
         loading,
-        themes: transformThemes(JSON.parse(JSON.stringify(themes ?? {}))),
         createTheme,
+        updateTheme,
+        themes: transformThemes(JSON.parse(JSON.stringify(themes ?? {}))),
     };
 };

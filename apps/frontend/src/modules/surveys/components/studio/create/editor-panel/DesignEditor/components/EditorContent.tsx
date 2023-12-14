@@ -16,28 +16,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
     const { updateSurvey, survey } = useSurvey();
     const [selectedTheme, setSelectedTheme] =
         React.useState<Partial<ProjectTheme>>();
-
     const { themes, error } = useThemes();
-
-    /* const getCustomThemes = () => {
-        const customThemes = data?.map((theme) => theme);
-        const themes = [];
-
-        for (const theme of customThemes ?? []) {
-            const { name, id, colorScheme } = theme;
-            const themeColors = Object.keys(colorScheme).map(
-                (key) => theme.colorScheme[key],
-            );
-
-            themes.push({
-                id,
-                name,
-                colors: themeColors,
-            });
-        }
-
-        return themes;
-    }; */
 
     const colorScheme = React.useMemo(() => {
         let colorScheme = {};
@@ -57,12 +36,6 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
         theme.colorScheme = JSON.stringify(theme.colorScheme);
         updateSurvey({ themeId: theme.id }, theme);
     };
-
-    // const allThemes = getCustomThemes().map((theme) => theme);
-    // const currentTheme = getSelectedTheme();
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // const { name, colors } = getSelectedTheme();
 
     console.log(themes);
 
