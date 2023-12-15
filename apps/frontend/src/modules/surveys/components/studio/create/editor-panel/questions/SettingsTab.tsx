@@ -1,5 +1,5 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { SelectInput, SwitchButton } from "@/ui";
+import { SelectInput, Switch } from "@/ui";
 import { EditorTextInput } from "../components/EditorTextInput";
 import { TabHeader } from "./TabHeader";
 import { ReactSelect } from "./attributes/ReactSelect";
@@ -60,7 +60,7 @@ export const SettingsTab = ({ question }: Props) => {
                 <>
                     <div>
                         <div className="rounded bg-[#272138] p-3">
-                            <SwitchButton label="Show Disclaimer" />
+                            <Switch label="Show Disclaimer" />
                         </div>
                         <EditorTextInput
                             label={"Disclaimer content"}
@@ -69,7 +69,7 @@ export const SettingsTab = ({ question }: Props) => {
                     </div>
                     <div>
                         <div className="rounded bg-[#272138] p-3">
-                            <SwitchButton label="Consent checkbox" />
+                            <Switch label="Consent checkbox" />
                         </div>
                         <EditorTextInput
                             label={"Consent Label"}
@@ -98,15 +98,41 @@ export const SettingsTab = ({ question }: Props) => {
                     />
                 </>
             ) : null}
-            <SelectInput
-                defaultValue=""
-                options={[]}
-                title="Number of answers"
-            />
-            <div className="rounded bg-[#272138] p-3">
-                <SwitchButton label="Answer required" />
-            </div>
-            {/* 
+            <div className="space-y-3">
+                <div className="rounded bg-[#272138] p-3">
+                    <Switch label="Submit button" />
+                </div>
+                <div className="rounded bg-[#272138] p-3">
+                    <Switch label="Require answer to comment field(s)" />
+                </div>
+                <div className="rounded bg-[#272138] p-3">
+                    <Switch label="Randomize answers" />
+                </div>
+                <div className="rounded bg-[#272138] p-3">
+                    <Switch label="Randomize except last" />
+                </div>
+                <div className="rounded bg-[#272138] p-3">
+                    <Switch label="Answer required" />
+                </div>
+                <div className="rounded bg-[#272138] p-3">
+                    <Switch label="Consent checkbox" />
+                </div>
+                <div className="rounded bg-[#272138] p-3">
+                    <Switch label="Show Disclaimer" />
+                </div>
+                <EditorTextInput
+                    label={"Disclaimer content"}
+                    placeholder="Type in your disclaimer here"
+                />
+                <SelectInput
+                    defaultValue=""
+                    options={[]}
+                    title="Number of answers"
+                />
+                <div className="rounded bg-[#272138] p-3">
+                    <Switch label="Answer required" />
+                </div>
+                {/* 
             {question.type === SurveyQuestionTypeEnum.Multiple && (
                 <div className="grid grid-cols-3 gap-2">
                     <div>
@@ -123,36 +149,37 @@ export const SettingsTab = ({ question }: Props) => {
                     </div>
                 </div>
             )} */}
-            {/* Thankyou CTA */}
-            <div className="space-y-6">
-                <div className="flex items-center justify-between gap-4">
-                    <p>Call to action</p>
-                    <div className="w-[330px]">
-                        <ReactSelect
-                            options={CTAThankyouOptions}
-                            onChange={(value) => {
-                                console.log(value);
-                            }}
-                        />
-                    </div>
-                </div>
-                <div className="flex items-center justify-between gap-4">
-                    <div>Link</div>
-                    <div className="w-[330px]">
-                        <EditorTextInput />
-                    </div>
-                </div>
-                <div>
+                {/* Thankyou CTA */}
+                <div className="space-y-6">
                     <div className="flex items-center justify-between gap-4">
-                        <p>Button label</p>
+                        <p>Call to action</p>
+                        <div className="w-[330px]">
+                            <ReactSelect
+                                options={CTAThankyouOptions}
+                                onChange={(value) => {
+                                    console.log(value);
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex items-center justify-between gap-4">
+                        <div>Link</div>
                         <div className="w-[330px]">
                             <EditorTextInput />
                         </div>
                     </div>
+                    <div>
+                        <div className="flex items-center justify-between gap-4">
+                            <p>Button label</p>
+                            <div className="w-[330px]">
+                                <EditorTextInput />
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <ChoiceSettings question={question} />
+                <ChoiceSettings question={question} />
+            </div>
         </div>
     );
 };

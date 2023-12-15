@@ -1,8 +1,7 @@
-import { Header } from "@/ui";
 import { CheckComplete, CheckPending } from "@/ui/icons";
 import * as Tabs from "@radix-ui/react-tabs";
 import { useState } from "react";
-import SharableLinks from "./SharableLinks";
+import SharableLinks from "./sharable-links";
 import WebSDK from "./web-sdk";
 
 const tabs = [
@@ -43,20 +42,16 @@ const tabs = [
     },
 ];
 
-export default function Configure() {
-    const [currentTab, setCurrentTab] = useState(tabs[0].id);
+export default function Distribute() {
+    const [currentTab, setCurrentTab] = useState(tabs[0].id as string);
     return (
         <Tabs.Root
-            className="flex h-screen w-full gap-12 pb-[27px] pl-10 pr-[45px] pt-[155px]"
+            className="flex w-full gap-12 pl-10 pr-[45px]"
             defaultValue={tabs[0].id}
             value={currentTab}
             onValueChange={(value) => setCurrentTab(value)}
         >
-            <div className="w-[386px]">
-                <Header
-                    title="Configure/Distribute"
-                    description="Integraflow enables you to understand your customers  To get started, we'll need to integrate your SDK product."
-                />
+            <div className="w-[386px] pt-[155px]">
                 <Tabs.List className="flex max-w-[302px] flex-col gap-2 pt-[25px]">
                     {tabs.map((tab) => (
                         <Tabs.Trigger
@@ -76,14 +71,11 @@ export default function Configure() {
                     ))}
                 </Tabs.List>
             </div>
-            <div className="h-full min-w-[660px] flex-1 rounded-xl bg-intg-bg-9">
+
+            <div className=" scrollbar-hide h-screen flex-1 overflow-y-scroll pb-[27px] pt-[155px]">
                 {tabs.map((tab) => {
                     return (
-                        <Tabs.Content
-                            key={tab.id}
-                            value={tab.id}
-                            className="h-full w-full text-center"
-                        >
+                        <Tabs.Content key={tab.id} value={tab.id} asChild>
                             {tab.content}
                         </Tabs.Content>
                     );

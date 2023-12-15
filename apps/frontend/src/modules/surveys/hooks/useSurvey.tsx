@@ -17,8 +17,8 @@ export const useSurvey = () => {
     const setOpenQuestion = surveyStore.use.setOpenQuestion();
     const [createSurveyMutation] = useSurveyCreateMutation();
     const openQuestion = surveyStore.use.openQuestion();
+    const [getSurveyQuery, { data: survey, loading }] = useGetSurveyLazyQuery();
 
-    const [getSurveyQuery, { data: survey }] = useGetSurveyLazyQuery();
     const questions = survey?.survey?.questions?.edges || [];
     const currentQuestion = questions.find(
         (question) => question?.node?.id === openQuestion,
@@ -70,5 +70,7 @@ export const useSurvey = () => {
         setOpenQuestion,
         openQuestion,
         currentQuestion,
+        survey,
+        loading,
     };
 };
