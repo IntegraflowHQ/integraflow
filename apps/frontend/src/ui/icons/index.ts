@@ -1,3 +1,6 @@
+export { BottomLeft } from "./BottomLeft";
+export { BottomRight } from "./BottomRight";
+export { Center } from "./Center";
 export { CheckCircleIcon } from "./CheckCircleIcon";
 export { CheckComplete } from "./CheckComplete";
 export { CheckPending } from "./CheckPending";
@@ -23,4 +26,6 @@ export { QRCode } from "./QRCode";
 export { QuestionIcon } from "./QuestionIcon";
 export { SettingsIcon } from "./SettingsIcon";
 export { SpeakerIcon } from "./SpeakerIcon";
+export { TopLeft } from "./TopLeft";
+export { TopRight } from "./TopRight";
 export { Trash } from "./Trash";

@@ -4,7 +4,7 @@ import {
     SurveyStatusEnum,
     SurveyTypeEnum,
     SurveyUpdateInput,
-    useGetSurveyLazyQuery,
+    useGetSurveyQuery,
     useSurveyCreateMutation,
     useSurveyQuestionCreateMutation,
     useSurveyUpdateMutation,
@@ -32,22 +32,24 @@ export const useSurvey = () => {
     const [createSurveyMutation] = useSurveyCreateMutation();
     const [createQuestionMutaton] = useSurveyQuestionCreateMutation({});
     const [updateSurveyMutation] = useSurveyUpdateMutation({});
-    const [getSurveyQuery, { data: survey, loading }] = useGetSurveyLazyQuery();
+
+    const {
+        data: survey,
+        loading,
+        refetch,
+    } = useGetSurveyQuery({
+        variables: {
+            slug: surveySlug,
+        },
+        skip: !surveySlug,
+    });
 
     const questions = survey?.survey?.questions?.edges || [];
     const surveyId = survey?.survey?.id;
 
     useEffect(() => {
-        const getSurvey = async () => {
-            if (!surveySlug) return;
-            await getSurveyQuery({
-                variables: {
-                    slug: surveySlug,
-                },
-            });
-        };
-        getSurvey();
-    }, [surveySlug]);
+        refetch();
+    }, [refetch, surveySlug]);
 
     const createSurvey = async (_template?: string) => {
         const surveySlug = `survey-${generateRandomString(10)}`;
@@ -112,7 +114,6 @@ export const useSurvey = () => {
             },
             update: (cache, { data }) => {
                 if (!data?.surveyQuestionCreate?.surveyQuestion) return;
-                console.log(cache);
                 cache.modify({
                     id: `Survey:${surveyId}`,
                     fields: {

@@ -16,10 +16,11 @@ type DatePickerProps = {
     }) => void;
     fromDate?: Date;
     toDate?: Date;
+    displayFormat?: string;
 };
 
 export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
-    ({ label, value, onChange, ...props }, ref) => {
+    ({ label, value, onChange, displayFormat = "PPP", ...props }, ref) => {
         return (
             <Popover>
                 <PopoverTrigger asChild>
@@ -34,7 +35,7 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                         >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {value ? (
-                                format(value, "PPP")
+                                format(value, displayFormat)
                             ) : (
                                 <span>Pick a date</span>
                             )}

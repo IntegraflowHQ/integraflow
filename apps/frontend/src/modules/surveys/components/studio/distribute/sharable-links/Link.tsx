@@ -1,6 +1,5 @@
-import { SurveyChannelCountableEdge } from "@/generated/graphql";
 import useChannels from "@/modules/surveys/hooks/useChannels";
-import { ChannelSettings } from "@/types";
+import { ParsedChannel } from "@/types";
 import { Dialog, DialogContent, DialogTrigger, Header } from "@/ui";
 import { Copy, QRCode, SettingsIcon, Trash } from "@/ui/icons";
 import { cn, copyToClipboard } from "@/utils";
@@ -9,14 +8,12 @@ import EditLink from "./EditLink";
 import QRCodeView from "./QRCodevie";
 
 export type LinkProps = {
-    link: SurveyChannelCountableEdge["node"];
+    link: ParsedChannel;
 };
 
 export default function Link({ link }: LinkProps) {
     const [editing, setEditing] = useState(false);
-    const settings: ChannelSettings = JSON.parse(
-        link.settings,
-    ) as ChannelSettings;
+    const settings = link.settings;
     const { deleteChannel } = useChannels();
 
     return (

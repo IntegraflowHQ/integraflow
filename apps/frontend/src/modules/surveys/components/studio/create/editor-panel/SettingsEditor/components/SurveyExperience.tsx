@@ -1,6 +1,7 @@
 import { SurveyUpdateInput } from "@/generated/graphql";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { Switch } from "@/ui";
+import { toast } from "@/utils/toast";
 import React from "react";
 import { EditorTextInput } from "../../components/EditorTextInput";
 
@@ -27,10 +28,12 @@ export const SurveyExperience = () => {
             submitText: "",
         });
 
-    const updateSurveyPreferences = () => {
+    const updateSurveyPreferences = (
+        updatedPrefernece: SurveyExperienceProps,
+    ) => {
         if (surveyId) {
             updateSurvey({
-                settings: surveyExperience as Partial<SurveyUpdateInput>,
+                settings: updatedPrefernece as Partial<SurveyUpdateInput>,
             });
         }
     };
@@ -38,29 +41,45 @@ export const SurveyExperience = () => {
     const handleSubmitText = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
 
-        setSurveyExperience((previousState) => ({
-            ...previousState,
-            [name]: value,
-        }));
+        setSurveyExperience((previousState) => {
+            const updatedState = {
+                ...previousState,
+                [name]: value,
+            };
 
-        updateSurveyPreferences();
+            try {
+                updateSurveyPreferences(updatedState);
+                toast.success("Survey experience updated successfully");
+            } catch (err) {
+                toast.error("Something went wrong. Try again later");
+            }
+
+            return updatedState;
+        });
     };
 
     const handleSwitches = (name: string, value: boolean) => {
-        setSurveyExperience((previousState) => ({
-            ...previousState,
-            [name]: value,
-        }));
+        setSurveyExperience((previousState) => {
+            const updatedState = {
+                ...previousState,
+                [name]: value,
+            };
 
-        updateSurveyPreferences();
+            try {
+                updateSurveyPreferences(updatedState);
+                toast.success("Survey experience updated successfully");
+            } catch (err) {
+                toast.error("Something went wrong. Try again later");
+            }
+
+            return updatedState;
+        });
     };
 
     React.useEffect(() => {
         // sometimes... the survey settings JSON is undefined
         // so we need to parse it first before we can use it
         if (surveySettings) {
-            console.log(`surveySettings: ${JSON.parse(surveySettings)}`);
-
             const parsedSettingsRes = JSON.parse(surveySettings);
 
             if (parsedSettingsRes) {
@@ -70,8 +89,6 @@ export const SurveyExperience = () => {
                 }));
             }
         }
-
-        console.log(`data from the server: ${surveySettings}`);
     }, []);
 
     return (

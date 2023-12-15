@@ -9,6 +9,9 @@ import {
     useSurveyChannelUpdateMutation,
 } from "@/generated/graphql";
 import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
+import { ParsedChannel } from "@/types";
+import { fromSurveyChannel, toSurveyChannel } from "@/utils";
+import { useCallback, useMemo } from "react";
 import { SURVEY_CHANNEL } from "../graphql/fragments/surveyFragment";
 import { useSurvey } from "./useSurvey";
 
@@ -85,9 +88,11 @@ export default function useChannels() {
 
     const [updateChannelMutation] = useSurveyChannelUpdateMutation();
     const updateChannel = async (
-        channel: SurveyChannel,
+        channel: ParsedChannel,
         input: SurveyChannelUpdateInput,
     ) => {
+        const surveyChannel = toSurveyChannel(channel);
+
         await updateChannelMutation({
             variables: {
                 id: channel.id,
@@ -101,11 +106,12 @@ export default function useChannels() {
                     surveyChannel: {
                         __typename: "SurveyChannel",
                         id: channel.id,
-                        type: input.type ?? channel.type,
-                        triggers: input.triggers ?? channel.triggers,
-                        conditions: input.conditions ?? channel.conditions,
-                        settings: input.settings ?? channel.settings,
-                        reference: channel.reference,
+                        type: input.type ?? surveyChannel.type,
+                        triggers: input.triggers ?? surveyChannel.triggers,
+                        conditions:
+                            input.conditions ?? surveyChannel.conditions,
+                        settings: input.settings ?? surveyChannel.settings,
+                        reference: surveyChannel.reference,
                         createdAt: new Date().toISOString(),
                     },
                     surveyErrors: [],
@@ -163,13 +169,23 @@ export default function useChannels() {
         });
     };
 
-    const getChannels = (type: SurveyChannelTypeEnum) => {
+    const channels = useMemo(() => {
         return (
-            survey?.survey?.channels?.edges.filter(
-                (edge) => edge.node.type === type,
-            ) || ([] as SurveyChannelCountableEdge[])
+            survey?.survey?.channels?.edges.map((edge) => {
+                return fromSurveyChannel(edge.node);
+            }) || ([] as ParsedChannel[])
         );
-    };
+    }, [survey?.survey?.channels?.edges]);
+
+    const getChannels = useCallback(
+        (type: SurveyChannelTypeEnum) => {
+            return (
+                channels.filter((channel) => channel.type === type) ||
+                ([] as ParsedChannel[])
+            );
+        },
+        [channels],
+    );
 
     return {
         createChannel,
