@@ -3,6 +3,7 @@ import graphene
 from .utils import str_to_enum
 
 from integraflow.app import error_codes as app_error_codes
+from integraflow.event import error_codes as event_error_codes
 from integraflow.organization import error_codes as organization_error_codes
 from integraflow.project import error_codes as project_error_codes
 from integraflow.user import error_codes as user_error_codes
@@ -104,6 +105,8 @@ ErrorPolicyEnum = to_enum(
 
 AppErrorCode = graphene.Enum.from_enum(app_error_codes.AppErrorCode)
 AppErrorCode.doc_category = DOC_CATEGORY_APPS
+
+EventErrorCode = graphene.Enum.from_enum(event_error_codes.EventErrorCode)
 
 JobStatusEnum = to_enum(JobStatus)
 

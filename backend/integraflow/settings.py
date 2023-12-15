@@ -12,6 +12,7 @@ import dj_email_url
 import django_cache_url
 import django_stubs_ext
 import jaeger_client.config
+from kombu import Exchange, Queue
 import sentry_sdk
 import sentry_sdk.utils
 from corsheaders.defaults import default_headers
@@ -569,6 +570,8 @@ CELERY_TASK_ROUTES = {
         "queue": "observability"
     },
 }
+CELERY_QUEUES = (Queue("celery", Exchange("celery"), "celery"),)
+CELERY_DEFAULT_QUEUE = "celery"
 
 # The maximum wait time between each is_due() call on schedulers
 # It needs to be higher than the frequency of the schedulers to avoid
