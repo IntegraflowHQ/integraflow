@@ -8,6 +8,9 @@ export const PROJECT_THEME_CREATE = gql`
                 name
                 colorScheme
             }
+            projectThemeErrors {
+                ...projectThemeErrorFragment
+            }
         }
     }
 `;

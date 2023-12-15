@@ -9,6 +9,9 @@ export const PROJECT_THEME_UPDATE = gql`
             projectErrors {
                 ...ProjectErrorFragment
             }
+            errors {
+                ...ProjectErrorFragment
+            }
         }
     }
 `;

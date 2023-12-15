@@ -72,6 +72,9 @@ export const PROJECT_THEME_UPDATE = gql`
         projectTheme {
             ...ProjectThemeFragment
         }
+        projectErrors {
+            ...ProjectErrorFragment
+        }
         errors {
             ...ProjectErrorFragment
         }
