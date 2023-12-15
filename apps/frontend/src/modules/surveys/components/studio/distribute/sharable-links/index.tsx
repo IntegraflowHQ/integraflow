@@ -1,6 +1,6 @@
 import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import useChannels from "@/modules/surveys/hooks/useChannels";
-import type { LinkSettings } from "@/types";
+import { ChannelSettings } from "@/types";
 import { Button, Header } from "@/ui";
 import { cn } from "@/utils";
 import { LinkIcon } from "lucide-react";
@@ -8,6 +8,10 @@ import Link from "./Link";
 
 export default function SharableLinks() {
     const { createChannel, getChannels } = useChannels();
+    // const linkChannels = useMemo(
+    //     () => getChannels(SurveyChannelTypeEnum.Link),
+    //     [getChannels],
+    // );
     const linkChannels = getChannels(SurveyChannelTypeEnum.Link);
 
     const handleCreate = async () => {
@@ -17,15 +21,11 @@ export default function SharableLinks() {
             settings: JSON.stringify({
                 name: `Link ${linkChannels.length + 1}`,
                 singleUse: false,
-                startDate: linkChannels.length
-                    ? null
-                    : new Date().toISOString(),
-                endDate: null,
-            } as LinkSettings),
+                startDate: linkChannels.length ? "" : new Date().toISOString(),
+                endDate: "",
+            } as ChannelSettings),
         });
     };
-
-    console.log("linkChannels", linkChannels);
 
     return (
         <div
@@ -55,7 +55,7 @@ export default function SharableLinks() {
                 <div className="flex h-full w-full flex-1 justify-center">
                     <div className=" flex h-full w-full flex-col gap-2">
                         {linkChannels.map((link) => (
-                            <Link key={link.node.id} link={link.node} />
+                            <Link key={link.id} link={link} />
                         ))}
                     </div>
                 </div>
