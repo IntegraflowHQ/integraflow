@@ -1,6 +1,6 @@
 import {
     SurveyQuestionTypeEnum,
-    useGetSurveyLazyQuery,
+    useGetSurveyQuery,
     useSurveyCreateMutation,
     useSurveyQuestionCreateMutation,
 } from "@/generated/graphql";
@@ -24,25 +24,22 @@ export const useSurvey = () => {
 
     const [createSurveyMutation] = useSurveyCreateMutation();
     const [createQuestionMutaton] = useSurveyQuestionCreateMutation({});
-    const [getSurveyQuery, { data: survey, loading }] = useGetSurveyLazyQuery();
+    const {
+        data: survey,
+        loading,
+        refetch,
+    } = useGetSurveyQuery({
+        variables: {
+            slug: surveySlug,
+        },
+        skip: !surveySlug,
+    });
 
     const questions = survey?.survey?.questions?.edges || [];
     const surveyId = survey?.survey?.id;
-    console.log(surveyId);
 
     useEffect(() => {
-        const getSurvey = async () => {
-            if (!surveySlug) return;
-            await getSurveyQuery({
-                variables: {
-                    slug: surveySlug,
-                },
-                onCompleted: (data) => {
-                    console.log("data:", data);
-                },
-            });
-        };
-        getSurvey();
+        refetch();
     }, [surveySlug]);
 
     const createSurvey = async (_template?: string) => {
@@ -107,7 +104,6 @@ export const useSurvey = () => {
             },
             update: (cache, { data }) => {
                 if (!data?.surveyQuestionCreate?.surveyQuestion) return;
-                console.log(cache);
                 cache.modify({
                     id: `Survey:${surveyId}`,
                     fields: {

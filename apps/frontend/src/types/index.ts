@@ -1,5 +1,6 @@
-import { User } from "@/generated/graphql";
+import { SurveyChannel, User } from "@/generated/graphql";
 import { DeepOmit } from "@apollo/client/utilities";
+import { PlacementType } from "@integraflow/web/src/types/index";
 
 export type CachedViewer = DeepOmit<User, "__typename">;
 
@@ -8,11 +9,23 @@ export enum CreateSurvey {
     USE_TEMPLATE = "use template",
 }
 
+export type BackgroundOverLayType = "none" | "dark" | "light";
+
 export type ChannelSettings = {
     name?: string;
+    recurring?: boolean;
+    recurringPeriod?: number;
+    startDate?: string | Date;
+    endDate?: string | Date;
+    backgroundOverlay?: BackgroundOverLayType;
+    placement?: PlacementType;
+    closeOnLimit?: boolean;
+    responseLimit?: number;
     singleUse?: boolean;
-    startDate?: string;
-    endDate?: string;
+};
+
+export type ParsedChannel = Omit<SurveyChannel, "settings"> & {
+    settings: ChannelSettings;
 };
 
 export type LinkSettings = {
