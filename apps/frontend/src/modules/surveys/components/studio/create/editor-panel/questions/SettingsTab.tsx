@@ -3,6 +3,7 @@ import { SelectInput, SwitchButton } from "@/ui";
 import { EditorTextInput } from "../components/EditorTextInput";
 import { TabHeader } from "./TabHeader";
 import { ReactSelect } from "./attributes/ReactSelect";
+import { ChoiceSettings } from "./attributes/SettingsField/ChoiceSettings";
 
 const CTAThankyouOptions = [
     {
@@ -77,7 +78,7 @@ export const SettingsTab = ({ question }: Props) => {
                     </div>
                 </>
             ) : null}
-            {question.type === SurveyQuestionTypeEnum.Single ||
+            {/* {question.type === SurveyQuestionTypeEnum.Single ||
             question.type === SurveyQuestionTypeEnum.Multiple ? (
                 <>
                     <div className="rounded bg-[#272138] p-3">
@@ -87,7 +88,7 @@ export const SettingsTab = ({ question }: Props) => {
                         <SwitchButton label="Randomize except last" />
                     </div>
                 </>
-            ) : null}
+            ) : null} */}
             {question.type === SurveyQuestionTypeEnum.SmileyScale ? (
                 <>
                     <SelectInput
@@ -105,7 +106,7 @@ export const SettingsTab = ({ question }: Props) => {
             <div className="rounded bg-[#272138] p-3">
                 <SwitchButton label="Answer required" />
             </div>
-
+            {/* 
             {question.type === SurveyQuestionTypeEnum.Multiple && (
                 <div className="grid grid-cols-3 gap-2">
                     <div>
@@ -121,7 +122,7 @@ export const SettingsTab = ({ question }: Props) => {
                         <SelectInput defaultValue="" options={[]} />
                     </div>
                 </div>
-            )}
+            )} */}
             {/* Thankyou CTA */}
             <div className="space-y-6">
                 <div className="flex items-center justify-between gap-4">
@@ -150,6 +151,8 @@ export const SettingsTab = ({ question }: Props) => {
                     </div>
                 </div>
             </div>
+
+            <ChoiceSettings question={question} />
         </div>
     );
 };
