@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.utils.functional import SimpleLazyObject
 from graphql import GraphQLScalarType
 
+from .event.schema import EventMutations, EventQueries
 from .organization.schema import OrganizationMutations, OrganizationQueries
 from .project.schema import ProjectMutations, ProjectQueries
 from .survey.schema import SurveyMutations, SurveyQueries
@@ -13,11 +14,18 @@ from .core.federation.schema import build_federated_schema
 API_PATH = SimpleLazyObject(lambda: reverse("api"))
 
 
-class Query(OrganizationQueries, ProjectQueries, SurveyQueries, UserQueries):
+class Query(
+    EventQueries,
+    OrganizationQueries,
+    ProjectQueries,
+    SurveyQueries,
+    UserQueries
+):
     pass
 
 
 class Mutation(
+    EventMutations,
     OrganizationMutations,
     ProjectMutations,
     SurveyMutations,
