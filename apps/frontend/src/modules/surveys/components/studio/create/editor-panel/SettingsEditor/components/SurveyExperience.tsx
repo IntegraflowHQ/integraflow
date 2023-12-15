@@ -2,6 +2,7 @@ import { SurveyUpdateInput } from "@/generated/graphql";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { Switch } from "@/ui";
 import { toast } from "@/utils/toast";
+import debounce from "lodash.debounce";
 import React from "react";
 import { EditorTextInput } from "../../components/EditorTextInput";
 
@@ -16,9 +17,6 @@ export const SurveyExperience = () => {
     const { updateSurvey, survey } = useSurvey();
     const surveyId = survey?.survey?.id;
     const surveySettings = survey?.survey?.settings;
-
-    // const parsedRes = JSON.parse(surveySettings);
-    // console.log(`parsed Response: ${parsedRes}`);
 
     const [surveyExperience, setSurveyExperience] =
         React.useState<SurveyExperienceProps>({
@@ -38,24 +36,32 @@ export const SurveyExperience = () => {
         }
     };
 
-    const handleSubmitText = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-
-        setSurveyExperience((previousState) => {
-            const updatedState = {
-                ...previousState,
-                [name]: value,
-            };
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const handleSubmitText = React.useCallback(
+        debounce((value: string) => {
             try {
-                updateSurveyPreferences(updatedState);
-                toast.success("Survey experience updated successfully");
+                if (value.trim() !== "") {
+                    updateSurveyPreferences({
+                        ...surveyExperience,
+                        submitText: value,
+                    });
+                    toast.success("Survey experience updated successfully");
+                }
             } catch (err) {
                 toast.error("Something went wrong. Try again later");
             }
+        }, 1000),
+        [],
+    );
 
-            return updatedState;
-        });
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.target;
+        setSurveyExperience((previousState) => ({
+            ...previousState,
+            submitText: value,
+        }));
+
+        handleSubmitText(value);
     };
 
     const handleSwitches = (name: string, value: boolean) => {
@@ -89,6 +95,7 @@ export const SurveyExperience = () => {
                 }));
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -134,8 +141,8 @@ export const SurveyExperience = () => {
                 name="submitText"
                 placeholder="Submit"
                 label="Proceed to next question"
+                onChange={handleChange}
                 value={surveyExperience.submitText}
-                onChange={(event) => handleSubmitText(event)}
                 characterCount={surveyExperience.submitText.length}
             />
         </div>

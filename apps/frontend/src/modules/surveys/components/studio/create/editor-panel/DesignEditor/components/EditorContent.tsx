@@ -14,9 +14,6 @@ interface ContentProp {
 
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
     const { survey, updateSurvey } = useSurvey();
-    // const surveyTheme = survey?.survey?.theme ?? {};
-
-    // // console.log(surveyTheme);
 
     const [selectedTheme, setSelectedTheme] =
         React.useState<Partial<ProjectTheme>>();
@@ -36,10 +33,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
     const handleSelectedTheme = (theme: Partial<ProjectTheme>) => {
         setSelectedTheme(theme);
-
-        if (selectedTheme?.id) {
-            updateSurvey({ themeId: selectedTheme?.id }, selectedTheme);
-        }
+        updateSurvey({ themeId: selectedTheme?.id }, selectedTheme);
     };
 
     if (error) {
@@ -73,61 +67,67 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
                     {count !== 0 ? (
                         <>
-                            <>
-                                <p className="py-4 text-sm font-normal uppercase">
-                                    selected theme
-                                </p>
+                            <p className="py-4 text-sm font-normal uppercase">
+                                selected theme
+                            </p>
+                            {selectedTheme ? (
+                                <div>
+                                    <div
+                                        className={`flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2`}
+                                    >
+                                        {selectedTheme && (
+                                            <div className="flex gap-5">
+                                                <div className="flex py-2">
+                                                    {Object.keys(
+                                                        colorScheme,
+                                                    ).map(
+                                                        (
+                                                            key: string,
+                                                            index: number,
+                                                        ) => {
+                                                            const color: {
+                                                                [
+                                                                    Key: string
+                                                                ]: string;
+                                                            } = colorScheme;
 
-                                <div
-                                    className={` flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2`}
-                                >
-                                    {selectedTheme && (
-                                        <div className="flex gap-5">
-                                            <div className="flex py-2">
-                                                {Object.keys(colorScheme).map(
-                                                    (
-                                                        key: string,
-                                                        index: number,
-                                                    ) => {
-                                                        const color: {
-                                                            [
-                                                                Key: string
-                                                            ]: string;
-                                                        } = colorScheme;
+                                                            return (
+                                                                <div
+                                                                    className={`h-8 w-8 rounded-full border-2 ${
+                                                                        index !==
+                                                                        0
+                                                                            ? "-ml-4"
+                                                                            : ""
+                                                                    }`}
+                                                                    key={index}
+                                                                    style={{
+                                                                        backgroundColor: `${color[key]}`,
+                                                                    }}
+                                                                />
+                                                            );
+                                                        },
+                                                    )}
+                                                </div>
 
-                                                        return (
-                                                            <div
-                                                                className={`h-8 w-8 rounded-full border-2 ${
-                                                                    index !== 0
-                                                                        ? "-ml-4"
-                                                                        : ""
-                                                                }`}
-                                                                key={index}
-                                                                style={{
-                                                                    backgroundColor: `${color[key]}`,
-                                                                }}
-                                                            />
-                                                        );
-                                                    },
-                                                )}
+                                                <div>
+                                                    <p className="font-normal leading-6 first-letter:capitalize">
+                                                        {selectedTheme?.name}
+                                                    </p>
+                                                    <p className="font-normal text-intg-text-4">
+                                                        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                                                        {/* @ts-ignore */}
+                                                        {colorScheme["question"]
+                                                            ? "Fetched theme"
+                                                            : null}
+                                                    </p>
+                                                </div>
                                             </div>
-
-                                            <div>
-                                                <p className="font-normal leading-6 first-letter:capitalize">
-                                                    {selectedTheme?.name}
-                                                </p>
-                                                <p className="font-normal text-intg-text-4">
-                                                    {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-                                                    {/* @ts-ignore */}
-                                                    {colorScheme["question"]
-                                                        ? "Fetched theme"
-                                                        : null}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
                                 </div>
-                            </>
+                            ) : (
+                                <div className="h-[64px]" />
+                            )}
 
                             <Button
                                 text="new theme"
