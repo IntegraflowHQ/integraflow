@@ -13,6 +13,11 @@ from ..types import SurveyQuestion
 
 
 class SurveyQuestionUpdateInput(SurveyQuestionInput):
+    order_number = graphene.Int(
+        required=False,
+        description="The settings of the question."
+    )
+
     class Meta:
         doc_category = DOC_CATEGORY_SURVEYS
 

@@ -21,6 +21,7 @@ from integraflow.graphql.core.enums import (
     JobStatusEnum,
     OrganizationErrorCode,
     ProjectErrorCode,
+    SurveyErrorCode,
     UserErrorCode,
     WebhookDryRunErrorCode,
     WebhookErrorCode,
@@ -47,11 +48,12 @@ class Error(BaseObjectType):
     field = graphene.String(
         description=(
             "Name of a field that caused the error. A value of `null` "
-            "ndicates that the error isn't associated with a particular field."
+            "indicates that the error isn't associated with a particular field."
         ),
         required=False,
     )
     message = graphene.String(description="The error message.")
+    code = graphene.String(description="The error code.")
 
     class Meta:
         description = "Represents an error in the input of a mutation."
@@ -96,7 +98,7 @@ class ProjectError(Error):
 
 
 class SurveyError(Error):
-    code = ProjectErrorCode(description="The error code.", required=True)
+    code = SurveyErrorCode(description="The error code.", required=True)
 
     class Meta:
         description = "Represents errors in survey mutations."

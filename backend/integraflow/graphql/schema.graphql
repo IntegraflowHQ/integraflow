@@ -1606,7 +1606,7 @@ type AuthUser implements Node @doc(category: "Users") {
 """Represents errors in user mutations."""
 type UserError @doc(category: "Users") {
   """
-  Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field.
+  Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
   """
   field: String
 
@@ -1726,7 +1726,7 @@ type SurveyChannelCreate @doc(category: "Surveys") {
 """Represents errors in survey mutations."""
 type SurveyError @doc(category: "Surveys") {
   """
-  Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field.
+  Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
   """
   field: String
 
@@ -1734,15 +1734,14 @@ type SurveyError @doc(category: "Surveys") {
   message: String
 
   """The error code."""
-  code: ProjectErrorCode!
+  code: SurveyErrorCode!
 }
 
 """An enumeration."""
-enum ProjectErrorCode @doc(category: "Projects") {
-  ALREADY_EXISTS
+enum SurveyErrorCode @doc(category: "Surveys") {
   GRAPHQL_ERROR
+  INACTIVE
   INVALID
-  INVALID_PERMISSION
   NOT_FOUND
   REQUIRED
   UNIQUE
@@ -1925,7 +1924,7 @@ input SurveyQuestionUpdateInput @doc(category: "Surveys") {
   options: JSONString
 
   """The settings of the question."""
-  orderNumber: Int!
+  orderNumber: Int
 }
 
 """
@@ -1969,7 +1968,7 @@ type ProjectCreate @doc(category: "Projects") {
 """Represents errors in project mutations."""
 type ProjectError @doc(category: "Projects") {
   """
-  Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field.
+  Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
   """
   field: String
 
@@ -1978,6 +1977,17 @@ type ProjectError @doc(category: "Projects") {
 
   """The error code."""
   code: ProjectErrorCode!
+}
+
+"""An enumeration."""
+enum ProjectErrorCode @doc(category: "Projects") {
+  ALREADY_EXISTS
+  GRAPHQL_ERROR
+  INVALID
+  INVALID_PERMISSION
+  NOT_FOUND
+  REQUIRED
+  UNIQUE
 }
 
 input ProjectCreateInput @doc(category: "Projects") {
@@ -2092,7 +2102,7 @@ type OrganizationCreate @doc(category: "Organizations") {
 """Represents errors in organization mutations."""
 type OrganizationError @doc(category: "Organizations") {
   """
-  Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field.
+  Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
   """
   field: String
 
@@ -2240,7 +2250,7 @@ type EventCapture @doc(category: "Events") {
 """Represents errors in event mutations."""
 type EventError @doc(category: "Events") {
   """
-  Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field.
+  Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
   """
   field: String
 
