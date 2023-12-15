@@ -6,6 +6,7 @@ from django.core.files.storage import default_storage
 
 from integraflow.core.utils import build_absolute_uri
 from integraflow.graphql.core.doc_category import (
+    DOC_CATEGORY_EVENTS,
     DOC_CATEGORY_ORGANIZATIONS,
     DOC_CATEGORY_PROJECTS,
     DOC_CATEGORY_SURVEYS,
@@ -15,11 +16,12 @@ from integraflow.graphql.core.doc_category import (
 )
 from integraflow.graphql.core.scalars import Decimal
 from integraflow.graphql.core.enums import (
+    AppErrorCode,
+    EventErrorCode,
+    JobStatusEnum,
     OrganizationErrorCode,
     ProjectErrorCode,
     UserErrorCode,
-    AppErrorCode,
-    JobStatusEnum,
     WebhookDryRunErrorCode,
     WebhookErrorCode,
     WebhookTriggerErrorCode,
@@ -67,6 +69,14 @@ class BulkError(BaseObjectType):
 
     class Meta:
         description = "Represents an error in the input of a mutation."
+
+
+class EventError(Error):
+    code = EventErrorCode(description="The error code.", required=True)
+
+    class Meta:
+        description = "Represents errors in event mutations."
+        doc_category = DOC_CATEGORY_EVENTS
 
 
 class OrganizationError(Error):
