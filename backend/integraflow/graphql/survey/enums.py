@@ -36,8 +36,9 @@ class SurveyQuestionTypeEnum(graphene.Enum):
 
 
 class SurveyChannelTypeEnum(graphene.Enum):
-    IN_APP = "in_app"
     EMAIL = "email"
     LINK = "link"
     API = "api"
     CUSTOM = "custom"
+    MOBILE_SDK = "mobile_sdk"
+    WEB_SDK = "web_sdk"

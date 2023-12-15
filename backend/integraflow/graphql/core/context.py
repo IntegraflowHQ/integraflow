@@ -7,6 +7,7 @@ from django.utils.functional import empty
 
 from integraflow.app.models import App
 from integraflow.user.models import User
+from integraflow.project.models import Project
 
 if TYPE_CHECKING:
     from .dataloaders import DataLoader
@@ -18,8 +19,9 @@ class IntegraflowContext(HttpRequest):
     allow_replica: bool = True
     dataloaders: Dict[str, "DataLoader"]
     app: Optional[App]
-    user: Optional[User]  # type: ignore[assignment]
-    requestor: Union[App, User, None]
+    user: Optional[User]
+    project: Optional[Project]
+    requestor: Union[App, User, Project, None]
     request_time: datetime.datetime
 
 

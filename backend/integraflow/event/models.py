@@ -28,6 +28,11 @@ class Event(models.Model):
         null=True,
         blank=True
     )
+    uuid: models.UUIDField = models.UUIDField(
+        db_index=True,
+        default=uuidt.UUIDT,
+        editable=False
+    )
     project: models.ForeignKey = models.ForeignKey(
         "project.Project",
         on_delete=models.CASCADE
@@ -38,7 +43,13 @@ class Event(models.Model):
         blank=True
     )
     distinct_id: models.CharField = models.CharField(max_length=200)
+    person_id: models.UUIDField = models.UUIDField(
+        db_index=True,
+        blank=True,
+        null=True
+    )
     properties: models.JSONField = models.JSONField(default=dict)
+    user_attributes: models.JSONField = models.JSONField(default=dict)
     timestamp: models.DateTimeField = models.DateTimeField(
         default=timezone.now,
         blank=True
@@ -48,6 +59,40 @@ class Event(models.Model):
         null=True,
         blank=True
     )
+
+
+class EventDefinition(UUIDModel):
+    project: models.ForeignKey = models.ForeignKey(
+        "project.Project",
+        on_delete=models.CASCADE,
+        related_name="event_definitions",
+        related_query_name="project",
+    )
+    name: models.CharField = models.CharField(max_length=400)
+    created_at: models.DateTimeField = models.DateTimeField(
+        auto_now_add=True,
+        blank=True
+    )
+    last_seen_at: models.DateTimeField = models.DateTimeField(
+        auto_now_add=True,
+        blank=True
+    )
+
+    class Meta:
+        verbose_name = "EventDefinition"
+        verbose_name_plural = "EventDefinitions"
+        db_table = "event_definitions"
+        unique_together = ("project", "name")
+        indexes = [
+            GinIndex(
+                name="index_event_definition_name",
+                fields=["name"],
+                opclasses=["gin_trgm_ops"],
+            )  # To speed up DB-based fuzzy searching
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.name} / {self.project.name}"
 
 
 class EventProperty(models.Model):
@@ -89,7 +134,7 @@ class PersonManager(models.Manager):
             return person
 
     @staticmethod
-    def distinct_ids_exist(project_id: int, distinct_ids: List[str]) -> bool:
+    def distinct_ids_exist(project_id: str, distinct_ids: List[str]) -> bool:
         return PersonDistinctId.objects.filter(
             project_id=project_id,
             distinct_id__in=distinct_ids
@@ -127,6 +172,32 @@ class Person(models.Model):
     def _add_distinct_ids(self, distinct_ids: List[str]) -> None:
         for distinct_id in distinct_ids:
             self.add_distinct_id(distinct_id)
+
+    def merge_people(self, people_to_merge: List["Person"]):
+        first_seen = self.created_at
+
+        # merge the properties
+        for other_person in people_to_merge:
+            self.properties = {**other_person.properties, **self.properties}
+            if other_person.created_at < first_seen:
+                # Keep the oldest created_at (i.e. the first time we've
+                # seen this person)
+                first_seen = other_person.created_at
+        self.created_at = first_seen
+        self.save()
+
+        # merge the distinct_ids
+        for other_person in people_to_merge:
+            other_person_distinct_ids = PersonDistinctId.objects.filter(
+                person=other_person,
+                project_id=self.project_id
+            )
+
+            for person_distinct_id in other_person_distinct_ids:
+                person_distinct_id.person = self
+                person_distinct_id.save()
+
+            other_person.delete()
 
     objects = PersonManager()
     created_at: models.DateTimeField = models.DateTimeField(
