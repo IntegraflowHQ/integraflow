@@ -13,6 +13,7 @@ from integraflow.user.models import User
 from .api import API_PATH
 from .app.dataloaders import get_app_promise
 from .core import IntegraflowContext
+from .project.dataloaders import get_project_promise
 
 
 def get_context_value(request: HttpRequest) -> IntegraflowContext:
@@ -21,6 +22,7 @@ def get_context_value(request: HttpRequest) -> IntegraflowContext:
     request.allow_replica = getattr(request, "allow_replica", True)
     request.request_time = timezone.now()
     set_app_on_context(request)
+    set_project_on_context(request)
     set_auth_on_context(request)
     set_decoded_auth_token(request)
     return request
@@ -44,6 +46,11 @@ def set_decoded_auth_token(request: IntegraflowContext):
 def set_app_on_context(request: IntegraflowContext):
     if request.path == API_PATH and not hasattr(request, "app"):
         request.app = get_app_promise(request).get()
+
+
+def set_project_on_context(request: IntegraflowContext):
+    if request.path == API_PATH and not hasattr(request, "project"):
+        request.project = get_project_promise(request).get()
 
 
 def get_user(request: IntegraflowContext) -> Optional[User]:

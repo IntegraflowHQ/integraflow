@@ -10,10 +10,11 @@ from .jwt import (
 )
 
 if TYPE_CHECKING:
-    from integraflow.user.models import User
     from integraflow.app.models import App
+    from integraflow.project.models import Project
+    from integraflow.user.models import User
 
-Requestor = Union["User", "App"]
+Requestor = Union["User", "App", "Project"]
 
 logger = logging.getLogger(__name__)
 

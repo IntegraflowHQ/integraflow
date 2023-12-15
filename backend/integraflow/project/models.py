@@ -91,6 +91,7 @@ class Project(UUIDModel):
         blank=True
     )
     ingested_event: models.BooleanField = models.BooleanField(default=False)
+    identified_user: models.BooleanField = models.BooleanField(default=False)
     access_control: models.BooleanField = models.BooleanField(default=False)
     timezone: models.CharField = models.CharField(
         max_length=240,

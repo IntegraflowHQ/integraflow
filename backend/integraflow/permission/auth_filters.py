@@ -11,6 +11,10 @@ def is_app(context: IntegraflowContext):
     return bool(context.app)
 
 
+def is_api(context: IntegraflowContext):
+    return bool(context.project)
+
+
 def is_user(context: IntegraflowContext):
     user = context.user
     return user and user.is_authenticated
@@ -84,6 +88,9 @@ class AuthorizationFilters(BasePermissionEnum):
     # Grants access to any authenticated app.
     AUTHENTICATED_APP = "authorization_filters.authenticated_app"
 
+    # Grants access to any authenticated api.
+    AUTHENTICATED_API = "authorization_filters.authenticated_api"
+
     # Grants access to any authenticated user.
     AUTHENTICATED_USER = "authorization_filters.authenticated_user"
 
@@ -118,6 +125,7 @@ class AuthorizationFilters(BasePermissionEnum):
 
 AUTHORIZATION_FILTER_MAP = {
     AuthorizationFilters.AUTHENTICATED_APP: is_app,
+    AuthorizationFilters.AUTHENTICATED_API: is_api,
     AuthorizationFilters.AUTHENTICATED_USER: is_user,
     AuthorizationFilters.ORGANIZATION_ADMIN_ACCESS: is_organization_admin,
     AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS: is_organization_member,
