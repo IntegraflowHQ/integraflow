@@ -31,7 +31,7 @@ export default function useChannels() {
     ) => {
         if (!surveyId) return;
         const data: SurveyChannelCreateInput = {
-            type: input.type ?? SurveyChannelTypeEnum.InApp,
+            type: input.type ?? SurveyChannelTypeEnum.WebSdk,
             id: input.id ?? crypto.randomUUID(),
             triggers: input.triggers ?? "{}",
             conditions: input.conditions ?? "{}",

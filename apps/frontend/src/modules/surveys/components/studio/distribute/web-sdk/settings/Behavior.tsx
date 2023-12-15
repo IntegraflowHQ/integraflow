@@ -72,10 +72,10 @@ export default function Behavior() {
     const { getChannels, updateChannel, createChannel } = useChannels();
 
     const channel =
-        getChannels(SurveyChannelTypeEnum.InApp)[0] ??
+        getChannels(SurveyChannelTypeEnum.WebSdk)[0] ??
         ({
             id: "",
-            type: SurveyChannelTypeEnum.InApp,
+            type: SurveyChannelTypeEnum.WebSdk,
             createdAt: "",
             settings: {
                 placement: "bottomRight",
@@ -111,7 +111,7 @@ export default function Behavior() {
             if (!channel.id) {
                 logDebug("create channel", value);
                 createChannel({
-                    type: SurveyChannelTypeEnum.InApp,
+                    type: SurveyChannelTypeEnum.WebSdk,
                     id: crypto.randomUUID(),
                     settings: JSON.stringify(value),
                 });
