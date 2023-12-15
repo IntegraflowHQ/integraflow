@@ -67,11 +67,11 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
                     {count !== 0 ? (
                         <>
-                            <p className="py-4 text-sm font-normal uppercase">
-                                selected theme
-                            </p>
                             {selectedTheme ? (
                                 <div>
+                                    <p className="py-4 text-sm font-normal uppercase">
+                                        selected theme
+                                    </p>
                                     <div
                                         className={`flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2`}
                                     >
@@ -126,7 +126,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="h-[64px]" />
+                                <Error message="You have selected any theme" />
                             )}
 
                             <Button

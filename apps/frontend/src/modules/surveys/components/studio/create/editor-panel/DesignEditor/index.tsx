@@ -3,7 +3,7 @@ import { useThemes } from "@/modules/projects/hooks/useTheme";
 import { Button, ColorPicker } from "@/ui";
 import { toast } from "@/utils/toast";
 import * as Tabs from "@radix-ui/react-tabs";
-import { MoreHorizontal, X } from "lucide-react";
+import { X } from "lucide-react";
 import React from "react";
 import { DesignEditorContent } from "./components/EditorContent";
 import { ThemesMenu } from "./components/ThemesMenu";
@@ -106,7 +106,7 @@ export const UpdateDesignEditor = () => {
                                 value={theme?.name ?? ""}
                                 placeholder="Theme name"
                                 onChange={(e) => handleThemeName(e)}
-                                className="w-[120px] text-ellipsis bg-transparent px-3 py-2 text-sm font-normal capitalize text-intg-text-2 focus:outline-intg-bg-2"
+                                className="w-[130px] text-ellipsis bg-transparent px-3 py-2 text-sm font-normal capitalize text-intg-text-2 focus:outline-intg-bg-2"
                             />
                         </Tabs.Trigger>
                     </Tabs.List>
@@ -181,16 +181,6 @@ export const UpdateDesignEditor = () => {
                                 themes
                             </Tabs.Trigger>
                         </Tabs.List>
-
-                        {/* tab controls */}
-                        <div className="mt-2 flex gap-2">
-                            <div className="hover:cursor-pointer">
-                                <MoreHorizontal size={25} color="#AFAAC7" />
-                            </div>
-                            <div className="hover:cursor-pointer">
-                                <X size={25} color="#AFAAC7" />
-                            </div>
-                        </div>
                     </Tabs.Root>
 
                     <div className="mt-4">

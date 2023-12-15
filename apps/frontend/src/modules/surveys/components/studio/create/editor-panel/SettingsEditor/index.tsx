@@ -1,5 +1,4 @@
 import { Tab } from "@/ui";
-import { ThemesMenu } from "../DesignEditor/components/ThemesMenu";
 import { SurveyExperience } from "./components/SurveyExperience";
 
 const SETTINGS_TAB = [
@@ -18,11 +17,7 @@ const SETTINGS_TAB = [
 export const UpdateSettingsEditor = () => {
     return (
         <div className="h-fit rounded-md bg-intg-bg-9 px-4 py-2">
-            <Tab
-                tabControls
-                tabData={SETTINGS_TAB}
-                tabMoreOptionsMenu={<ThemesMenu />}
-            />
+            <Tab tabData={SETTINGS_TAB} />
         </div>
     );
 };
