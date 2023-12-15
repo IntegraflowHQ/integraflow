@@ -157,6 +157,7 @@ export const useSurvey = () => {
                 input: {
                     ...input,
                     themeId: input.themeId,
+                    settings: JSON.stringify(input?.settings ?? {}),
                 },
             },
             optimisticResponse: {
@@ -192,6 +193,8 @@ export const useSurvey = () => {
 
                         creator: survey?.survey?.creator ?? user,
                         theme: newTheme ?? survey?.survey?.theme ?? null,
+                        settings:
+                            input.settings ?? survey?.survey?.settings ?? null,
                     },
                     surveyErrors: [],
                     errors: [],

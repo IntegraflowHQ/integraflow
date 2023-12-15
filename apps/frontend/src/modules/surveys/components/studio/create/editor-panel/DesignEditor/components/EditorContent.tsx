@@ -14,10 +14,12 @@ interface ContentProp {
 
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
     const { survey, updateSurvey } = useSurvey();
-    const surveyTheme = survey?.survey?.theme ?? null;
+    // const surveyTheme = survey?.survey?.theme ?? {};
+
+    // // console.log(surveyTheme);
 
     const [selectedTheme, setSelectedTheme] =
-        React.useState<Partial<ProjectTheme>>(surveyTheme);
+        React.useState<Partial<ProjectTheme>>();
     const { themes, error } = useThemes();
 
     const colorScheme = React.useMemo(() => {
@@ -34,7 +36,6 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
     const handleSelectedTheme = (theme: Partial<ProjectTheme>) => {
         setSelectedTheme(theme);
-        console.log(selectedTheme);
 
         if (selectedTheme?.id) {
             updateSurvey({ themeId: selectedTheme?.id }, selectedTheme);

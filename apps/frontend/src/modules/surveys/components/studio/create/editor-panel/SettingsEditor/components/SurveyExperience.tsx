@@ -1,112 +1,126 @@
-import { SwitchToggle, ToggleProps } from "@/ui/ToggleSwitch";
-import { PositionIcon } from "@/ui/icons";
-interface SurveyProps extends ToggleProps {
-    id: string;
-    name: string;
+import { SurveyUpdateInput } from "@/generated/graphql";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
+import { Switch } from "@/ui";
+import React from "react";
+import { EditorTextInput } from "../../components/EditorTextInput";
+
+interface SurveyExperienceProps {
+    close: boolean;
+    showProgressBar: boolean;
+    showBranding: boolean;
+    submitText: string;
 }
 
-const SURVEY_EXPERIENCE_OPTIONS: SurveyProps[] = [
-    {
-        id: crypto.randomUUID(),
-        name: "Progress bar",
-        variant: "soft",
-    },
-    {
-        id: crypto.randomUUID(),
-        name: "Remove Integraflow branding",
-        variant: "soft",
-    },
-    {
-        id: crypto.randomUUID(),
-        name: "Start minimized on mobile",
-        variant: "soft",
-    },
-    {
-        id: crypto.randomUUID(),
-        name: "Close button",
-        variant: "solid",
-    },
-    {
-        id: crypto.randomUUID(),
-        name: "Minimize button",
-        variant: "solid",
-    },
-    {
-        id: crypto.randomUUID(),
-        name: "Background overlay",
-        variant: "detailed",
-    },
-];
-
-const SURVEY_POSITION_OPTIONS = [
-    "Lower left corner",
-    "Center",
-    "Upper right corner",
-    "Upper left corner",
-];
-
-const SURVEY_POSITION = SURVEY_POSITION_OPTIONS.map((name) => ({
-    name: name,
-    id: `${name.toLocaleLowerCase().split(" ").join("-")}`,
-}));
-
 export const SurveyExperience = () => {
+    const { updateSurvey, survey } = useSurvey();
+    const surveyId = survey?.survey?.id;
+    const surveySettings = survey?.survey?.settings;
+
+    // const parsedRes = JSON.parse(surveySettings);
+    // console.log(`parsed Response: ${parsedRes}`);
+
+    const [surveyExperience, setSurveyExperience] =
+        React.useState<SurveyExperienceProps>({
+            close: false,
+            showProgressBar: false,
+            showBranding: false,
+            submitText: "",
+        });
+
+    const updateSurveyPreferences = () => {
+        if (surveyId) {
+            updateSurvey({
+                settings: surveyExperience as Partial<SurveyUpdateInput>,
+            });
+        }
+    };
+
+    const handleSubmitText = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+
+        setSurveyExperience((previousState) => ({
+            ...previousState,
+            [name]: value,
+        }));
+
+        updateSurveyPreferences();
+    };
+
+    const handleSwitches = (name: string, value: boolean) => {
+        setSurveyExperience((previousState) => ({
+            ...previousState,
+            [name]: value,
+        }));
+
+        updateSurveyPreferences();
+    };
+
+    React.useEffect(() => {
+        // sometimes... the survey settings JSON is undefined
+        // so we need to parse it first before we can use it
+        if (surveySettings) {
+            console.log(`surveySettings: ${JSON.parse(surveySettings)}`);
+
+            const parsedSettingsRes = JSON.parse(surveySettings);
+
+            if (parsedSettingsRes) {
+                setSurveyExperience((previousState) => ({
+                    ...previousState,
+                    ...parsedSettingsRes,
+                }));
+            }
+        }
+
+        console.log(`data from the server: ${surveySettings}`);
+    }, []);
+
     return (
         <div className="w-full flex-col py-3">
-            {SURVEY_EXPERIENCE_OPTIONS.slice(0, 5).map(
-                ({ id, name, variant }) => {
-                    return (
-                        <div
-                            key={id}
-                            className="my-2 flex h-14 justify-between rounded-md bg-intg-bg-15 px-6 py-4"
-                        >
-                            <p className="text-center text-sm font-normal text-intg-text-2">
-                                {name}
-                            </p>
-                            <SwitchToggle label={name} variant={variant} />
-                        </div>
-                    );
-                },
-            )}
+            <div className="flex flex-col gap-4">
+                <Switch
+                    name="showProgressBar"
+                    label="progress bar"
+                    value={surveyExperience.showProgressBar}
+                    onChange={(event) =>
+                        handleSwitches(
+                            "showProgressBar",
+                            event?.target.value as boolean,
+                        )
+                    }
+                />
+
+                <Switch
+                    name="showBranding"
+                    value={surveyExperience.showBranding}
+                    label="remove integraflow branding"
+                    onChange={(event) =>
+                        handleSwitches(
+                            "showBranding",
+                            event.target.value as boolean,
+                        )
+                    }
+                />
+
+                <Switch
+                    name="close"
+                    label="close button"
+                    value={surveyExperience.close}
+                    onChange={(event) =>
+                        handleSwitches("close", event.target.value as boolean)
+                    }
+                />
+            </div>
 
             <hr className="border-1 my-6 border-intg-bg-14" />
 
-            <div>
-                <div
-                    key={SURVEY_EXPERIENCE_OPTIONS[5].id}
-                    className="my-2 flex h-14 justify-between rounded-md bg-intg-bg-15 px-2 py-4"
-                >
-                    <p className="text-center text-sm font-normal text-intg-text-2">
-                        {SURVEY_EXPERIENCE_OPTIONS[5].name}
-                    </p>
-                    <SwitchToggle
-                        label={SURVEY_EXPERIENCE_OPTIONS[5].name}
-                        variant={SURVEY_EXPERIENCE_OPTIONS[5].variant}
-                    />
-                </div>
-            </div>
-
-            <div className="py-2 text-intg-text-2">
-                <p className="py-2 text-sm font-normal">Survey position</p>
-
-                <div className="flex cursor-pointer justify-between gap-2 rounded-md bg-intg-bg-15 px-2 py-2">
-                    {SURVEY_POSITION?.map(({ id, name }) => {
-                        return (
-                            <div
-                                key={id}
-                                className="whitespace-nowrap rounded-md bg-intg-bg-18 px-3 py-3"
-                            >
-                                <div className="flex justify-center">
-                                    <PositionIcon />
-                                </div>
-                                <p className="mt-2 text-[12px] font-normal first-letter:capitalize">
-                                    {name}
-                                </p>
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
+            <EditorTextInput
+                name="submitText"
+                placeholder="Submit"
+                label="Proceed to next question"
+                value={surveyExperience.submitText}
+                onChange={(event) => handleSubmitText(event)}
+                characterCount={surveyExperience.submitText.length}
+            />
         </div>
     );
 };

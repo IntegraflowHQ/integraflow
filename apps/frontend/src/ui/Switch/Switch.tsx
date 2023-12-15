@@ -3,22 +3,24 @@ import { forwardRef } from "react";
 
 type Props = {
     label: string;
+    name: string;
     value?: boolean;
     onChange?: (e: { target: { value: boolean } }) => void;
 };
 
 export const Switch = forwardRef<HTMLButtonElement, Props>(
-    ({ label, value, onChange }, ref) => {
+    ({ label, value, name, onChange }, ref) => {
         return (
             <div className="flex items-center justify-between rounded-lg bg-intg-bg-15 px-4 py-3">
                 <label
-                    className="pr-[15px] text-[15px] leading-none text-intg-text-1"
+                    className="pr-[15px] text-[15px] leading-none text-intg-text-1 first-letter:capitalize"
                     htmlFor={label}
                 >
                     {label}
                 </label>
 
                 <SwitchPrimitive.Root
+                    name={name}
                     ref={ref}
                     className="relative h-[24px] w-[35px] cursor-default rounded-xl border border-[#524770] bg-[#372E4F] outline-none data-[state=checked]:bg-white"
                     id="airplane-mode"

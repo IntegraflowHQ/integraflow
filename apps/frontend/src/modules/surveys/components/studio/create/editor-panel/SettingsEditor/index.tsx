@@ -1,6 +1,5 @@
 import { Tab } from "@/ui";
 import { ThemesMenu } from "../DesignEditor/components/ThemesMenu";
-import { MessagesTabContent } from "./components/Messages";
 import { SurveyExperience } from "./components/SurveyExperience";
 
 const SETTINGS_TAB = [
@@ -9,11 +8,11 @@ const SETTINGS_TAB = [
         tabName: "Survey experience",
         tabContent: <SurveyExperience />,
     },
-    {
-        tabId: crypto.randomUUID(),
-        tabName: "Messages",
-        tabContent: <MessagesTabContent />,
-    },
+    // {
+    //     tabId: crypto.randomUUID(),
+    //     tabName: "Messages",
+    //     tabContent: <MessagesTabContent />,
+    // },
 ];
 
 export const UpdateSettingsEditor = () => {
