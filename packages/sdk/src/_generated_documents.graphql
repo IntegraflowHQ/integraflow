@@ -1,0 +1,1758 @@
+# An object with an ID
+fragment Node on Node {
+    __typename
+    # The ID of the object.
+    id
+}
+
+# Authenticates a user account via email and authentication token.
+fragment EmailTokenUserAuth on EmailTokenUserAuth {
+    __typename
+    # A user that has access to the the resources of an organization.
+    user {
+        ...AuthUser
+    }
+    # Access token to authenticate the user.
+    token
+    # CSRF token required to re-generate access token.
+    csrfToken
+    # JWT refresh token, required to re-generate access token.
+    refreshToken
+    errors {
+        ...UserError
+    }
+    userErrors {
+        ...UserError
+    }
+}
+
+# Captures event.
+fragment EventCapture on EventCapture {
+    __typename
+    # Whether the operation was successful.
+    status
+    errors {
+        ...EventError
+    }
+    eventErrors {
+        ...EventError
+    }
+}
+
+# Creates a new distibution channel
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+fragment SurveyChannelCreate on SurveyChannelCreate {
+    __typename
+    errors {
+        ...SurveyError
+    }
+    surveyChannel {
+        ...SurveyChannel
+    }
+    surveyErrors {
+        ...SurveyError
+    }
+}
+
+# Creates a new organization invite.
+#
+# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+fragment OrganizationInviteCreate on OrganizationInviteCreate {
+    __typename
+    errors {
+        ...OrganizationError
+    }
+    organizationErrors {
+        ...OrganizationError
+    }
+    organizationInvite {
+        ...OrganizationInvite
+    }
+}
+
+# Creates a new project
+fragment ProjectCreate on ProjectCreate {
+    __typename
+    errors {
+        ...ProjectError
+    }
+    project {
+        ...Project
+    }
+    projectErrors {
+        ...ProjectError
+    }
+}
+
+# Creates a new question
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+fragment SurveyQuestionCreate on SurveyQuestionCreate {
+    __typename
+    errors {
+        ...SurveyError
+    }
+    surveyErrors {
+        ...SurveyError
+    }
+    surveyQuestion {
+        ...SurveyQuestion
+    }
+}
+
+# Creates a new survey
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+fragment SurveyCreate on SurveyCreate {
+    __typename
+    errors {
+        ...SurveyError
+    }
+    survey {
+        ...Survey
+    }
+    surveyErrors {
+        ...SurveyError
+    }
+}
+
+# Creates a new theme
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+fragment ProjectThemeCreate on ProjectThemeCreate {
+    __typename
+    errors {
+        ...ProjectError
+    }
+    projectErrors {
+        ...ProjectError
+    }
+    projectTheme {
+        ...ProjectTheme
+    }
+}
+
+# Creates new organization.
+#
+# Requires one of the following permissions: AUTHENTICATED_USER.
+fragment OrganizationCreate on OrganizationCreate {
+    __typename
+    # A user that has access to the the resources of an organization.
+    user {
+        ...AuthUser
+    }
+    # An organization. Organizations are root-level objects that contain users and projects.
+    organization {
+        ...AuthOrganization
+    }
+    errors {
+        ...OrganizationError
+    }
+    organizationErrors {
+        ...OrganizationError
+    }
+}
+
+# Deactivate all JWT tokens of the currently authenticated user.
+#
+# Requires one of the following permissions: AUTHENTICATED_USER.
+fragment Logout on Logout {
+    __typename
+    errors {
+        ...UserError
+    }
+    userErrors {
+        ...UserError
+    }
+}
+
+# Deletes a channel.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+fragment SurveyChannelDelete on SurveyChannelDelete {
+    __typename
+    errors {
+        ...SurveyError
+    }
+    surveyChannel {
+        ...SurveyChannel
+    }
+    surveyErrors {
+        ...SurveyError
+    }
+}
+
+# Deletes a question.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+fragment SurveyQuestionDelete on SurveyQuestionDelete {
+    __typename
+    errors {
+        ...SurveyError
+    }
+    surveyErrors {
+        ...SurveyError
+    }
+    surveyQuestion {
+        ...SurveyQuestion
+    }
+}
+
+# Deletes a survey.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+fragment SurveyDelete on SurveyDelete {
+    __typename
+    errors {
+        ...SurveyError
+    }
+    survey {
+        ...Survey
+    }
+    surveyErrors {
+        ...SurveyError
+    }
+}
+
+# Deletes a theme.
+#
+# Requires one of the following permissions: PROJECT_ADMIN_ACCESS.
+fragment ProjectThemeDelete on ProjectThemeDelete {
+    __typename
+    errors {
+        ...ProjectError
+    }
+    projectErrors {
+        ...ProjectError
+    }
+    projectTheme {
+        ...ProjectTheme
+    }
+}
+
+# Finds or creates a new user account by email and sends an email with token.
+fragment EmailUserAuthChallenge on EmailUserAuthChallenge {
+    __typename
+    # Supported challenge for this user.
+    authType
+    # Whether the operation was successful.
+    success
+    errors {
+        ...UserError
+    }
+    userErrors {
+        ...UserError
+    }
+}
+
+# Finds or creates a new user account from google auth credentials.
+fragment GoogleUserAuth on GoogleUserAuth {
+    __typename
+    # A user that has access to the the resources of an organization.
+    user {
+        ...AuthUser
+    }
+    # Access token to authenticate the user.
+    token
+    # CSRF token required to re-generate access token.
+    csrfToken
+    # JWT refresh token, required to re-generate access token.
+    refreshToken
+    # Whether the operation was successful.
+    success
+    errors {
+        ...UserError
+    }
+    userErrors {
+        ...UserError
+    }
+}
+
+# Joins an organization
+#
+# Requires one of the following permissions: AUTHENTICATED_USER.
+fragment OrganizationJoin on OrganizationJoin {
+    __typename
+    # A user that has access to the the resources of an organization.
+    user {
+        ...AuthUser
+    }
+    errors {
+        ...OrganizationError
+    }
+    organizationErrors {
+        ...OrganizationError
+    }
+}
+
+# Refresh JWT token. Mutation tries to take refreshToken from the input. If it fails it will try to
+# take `refreshToken` from the http-only cookie `refreshToken`. `csrfToken` is required when
+# `refreshToken` is provided as a cookie.
+fragment RefreshToken on RefreshToken {
+    __typename
+    # Acess token to authenticate the user.
+    token
+    errors {
+        ...UserError
+    }
+    userErrors {
+        ...UserError
+    }
+}
+
+# Represents a person.
+fragment Person on Person {
+    __typename
+    # The ID of the event property.
+    id
+    # The person's attributes
+    attributes
+    # The person's distinct ids
+    distinctIds
+    # The person's uuid
+    uuid
+    # The project the person belongs to
+    #
+    # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    project {
+        ...Project
+    }
+    # The time the person was created
+    createdAt
+    # Whether the person has been identified
+    isIdentified
+}
+
+# Represents a project.
+fragment Project on Project {
+    __typename
+    # Name of the project.
+    name
+    # Organization the project belongs to.
+    organization {
+        ...AuthOrganization
+    }
+    # Slug of the project.
+    slug
+    # The ID of the project.
+    id
+    # The data required for the onboarding process
+    hasCompletedOnboardingFor
+    # The timezone of the project.
+    timezone
+    # Whether the project is private or not.
+    accessControl
+}
+
+# Represents a property definition.
+fragment PropertyDefinition on PropertyDefinition {
+    __typename
+    # The ID of the event property.
+    id
+    # The name of the property definition
+    name
+    # The project the person belongs to
+    #
+    # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    project {
+        ...Project
+    }
+    # The property type
+    propertyType
+    # The type of the property definition
+    type
+    # Whether property accepts a numerical value
+    isNumerical
+}
+
+# Represents a question.
+fragment SurveyQuestion on SurveyQuestion {
+    __typename
+    # Description of the question.
+    description
+    # For internal purpose.
+    reference
+    # Label of the question.
+    label
+    # The ID of the question.
+    id
+    # The options of the question.
+    options
+    # The position of the question.
+    maxPath
+    # The position of the question.
+    orderNumber
+    # The project the survey belongs to
+    #
+    # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    survey {
+        ...Survey
+    }
+    # The settings of the question.
+    settings
+    # The time at which the question was created.
+    createdAt
+    # The type of the question
+    type
+}
+
+# Represents a survey channel.
+fragment SurveyChannel on SurveyChannel {
+    __typename
+    # For internal purpose.
+    reference
+    # The ID of the channel.
+    id
+    # The options of the question.
+    triggers
+    # The project the survey belongs to
+    #
+    # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    survey {
+        ...Survey
+    }
+    # The settings of the question.
+    conditions
+    # The settings of the question.
+    settings
+    # The time at which the channel was created.
+    createdAt
+    # The type of the survey channel
+    type
+}
+
+# Represents a survey.
+fragment Survey on Survey {
+    __typename
+    # For internal purpose.
+    reference
+    # Name of the survey.
+    name
+    # Slug of the survey.
+    slug
+    # The ID of the survey.
+    id
+    # The last time at which the survey was updated.
+    updatedAt
+    # The project the survey belongs to
+    #
+    # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    project {
+        ...Project
+    }
+    # The settings of the survey.
+    settings
+    # The status of the survey
+    status
+    # The theme of the survey.
+    #
+    # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    theme {
+        ...ProjectTheme
+    }
+    # The time at which the survey was created.
+    createdAt
+    # The type of the survey
+    type
+    # The user who created the theme.
+    #
+    # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    creator {
+        ...User
+    }
+}
+
+# Represents a theme.
+fragment ProjectTheme on ProjectTheme {
+    __typename
+    # For internal purpose.
+    reference
+    # Name of the theme.
+    name
+    # The ID of the theme.
+    id
+    # The last time at which the invite was updated.
+    updatedAt
+    # The project the theme belongs to.
+    #
+    # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    project {
+        ...Project
+    }
+    # The settings of the theme.
+    colorScheme
+    # The settings of the theme.
+    settings
+    # The time at which the invite was created.
+    createdAt
+    # The user who created the theme.
+    #
+    # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    creator {
+        ...User
+    }
+}
+
+# Represents an authenticated user data.
+fragment AuthUser on AuthUser {
+    __typename
+    # Determine if the user has finished onboarding.
+    isOnboarded
+    # Determine if the user is a staff admin.
+    isStaff
+    # Determine if the user is active.
+    isActive
+    # The ID of the user.
+    id
+    # The current organization of the user.
+    #
+    # Requires one of the following permissions: AUTHENTICATED_USER.
+    organization {
+        ...AuthOrganization
+    }
+    # The current project of the user.
+    #
+    # Requires one of the following permissions: AUTHENTICATED_USER.
+    project {
+        ...Project
+    }
+    # The email address of the user.
+    email
+    # The family name of the user.
+    lastName
+    # The given name of the user.
+    firstName
+}
+
+# Represents an event definition.
+fragment EventDefinition on EventDefinition {
+    __typename
+    # The ID of the event definition.
+    id
+    # The name of the event definition
+    name
+    # The project the event definition belongs to
+    #
+    # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    project {
+        ...Project
+    }
+    # The time the event was created
+    createdAt
+    # The time the event was last seen
+    lastSeenAt
+}
+
+# Represents an event property.
+fragment EventProperty on EventProperty {
+    __typename
+    # The ID of the event property.
+    id
+    # The name of the event
+    event
+    # The project the event property belongs to
+    #
+    # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    project {
+        ...Project
+    }
+    # The property of the event
+    property
+}
+
+# Represents an event.
+fragment Event on Event {
+    __typename
+    # The ID of the event.
+    id
+    # The event name
+    distinctId
+    # The event name
+    event
+    # The event properties
+    properties
+    # The project the event belongs to
+    #
+    # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    project {
+        ...Project
+    }
+    # The time the event occurred
+    timestamp
+    # The time the event was created
+    createdAt
+}
+
+# Represents an organization.
+fragment AuthOrganization on AuthOrganization {
+    __typename
+    # Member count
+    #
+    # Requires one of the following permissions: AUTHENTICATED_USER.
+    memberCount
+    # Name of the organization.
+    #
+    # Requires one of the following permissions: AUTHENTICATED_USER.
+    name
+    # Slug of the organization.
+    slug
+    # The ID of the organization.
+    id
+}
+
+# Represents an organization.
+fragment Organization on Organization {
+    __typename
+    # Member count
+    #
+    # Requires one of the following permissions: AUTHENTICATED_USER.
+    memberCount
+    # Name of the organization.
+    #
+    # Requires one of the following permissions: AUTHENTICATED_USER.
+    name
+    # Slug of the organization.
+    slug
+    # The ID of the organization.
+    id
+}
+
+# Represents errors in event mutations.
+fragment EventError on EventError {
+    __typename
+    # Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
+    field
+    # The error code.
+    code
+    # The error message.
+    message
+}
+
+# Represents errors in organization mutations.
+fragment OrganizationError on OrganizationError {
+    __typename
+    # Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
+    field
+    # The error code.
+    code
+    # The error message.
+    message
+}
+
+# Represents errors in project mutations.
+fragment ProjectError on ProjectError {
+    __typename
+    # Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
+    field
+    # The error code.
+    code
+    # The error message.
+    message
+}
+
+# Represents errors in survey mutations.
+fragment SurveyError on SurveyError {
+    __typename
+    # Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
+    field
+    # The error code.
+    code
+    # The error message.
+    message
+}
+
+# Represents errors in user mutations.
+fragment UserError on UserError {
+    __typename
+    # Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
+    field
+    # The error code.
+    code
+    # The error message.
+    message
+}
+
+# Represents user data.
+fragment User on User {
+    __typename
+    # Determine if the user has finished onboarding.
+    isOnboarded
+    # Determine if the user is a staff admin.
+    isStaff
+    # Determine if the user is active.
+    isActive
+    # The ID of the user.
+    id
+    # The current organization of the user.
+    #
+    # Requires one of the following permissions: AUTHENTICATED_USER.
+    organization {
+        ...AuthOrganization
+    }
+    # The current project of the user.
+    #
+    # Requires one of the following permissions: AUTHENTICATED_USER.
+    project {
+        ...Project
+    }
+    # The email address of the user.
+    email
+    # The family name of the user.
+    lastName
+    # The given name of the user.
+    firstName
+}
+
+# Reset the current organization invite link..
+#
+# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+fragment OrganizationInviteLinkReset on OrganizationInviteLinkReset {
+    __typename
+    # The current organization invite link.
+    inviteLink
+    # Whether the operation was successful.
+    success
+    errors {
+        ...OrganizationError
+    }
+    organizationErrors {
+        ...OrganizationError
+    }
+}
+
+# The Relay compliant `PageInfo` type, containing data necessary to paginate this connection.
+fragment PageInfo on PageInfo {
+    __typename
+    # When paginating backwards, are there more items?
+    hasPreviousPage
+    # When paginating backwards, the cursor to continue.
+    startCursor
+    # When paginating forwards, are there more items?
+    hasNextPage
+    # When paginating forwards, the cursor to continue.
+    endCursor
+}
+
+# The organization invite link.
+fragment OrganizationInviteLink on OrganizationInviteLink {
+    __typename
+    # The link of the organization the invite is for.
+    #
+    # Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    inviteLink
+}
+
+# The organization invite that was created or updated.
+fragment OrganizationInvite on OrganizationInvite {
+    __typename
+    # First name of the invite.
+    firstName
+    # If the invite has expired.
+    expired
+    # The current project of the user.
+    #
+    # Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    organization {
+        ...Organization
+    }
+    # The invitees email address.
+    email
+    # The last time at which the invite was updated.
+    updatedAt
+    # The time at which the invite was created.
+    createdAt
+    # The unique identifier of the invite.
+    id
+    # The user role that the invitee will receive upon accepting the invite.
+    role
+    # The user who created the invitation.
+    #
+    # Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    inviter {
+        ...User
+    }
+}
+
+# The organization invite that was created or updated.
+fragment OrganizationInviteDetails on OrganizationInviteDetails {
+    __typename
+    # First name of the invite.
+    firstName
+    # If the invite has expired.
+    expired
+    # The ID of the organization the invite is for.
+    organizationId
+    # The invitees email address.
+    email
+    # The last time at which the invite was updated.
+    updatedAt
+    # The logo of the organization the invite is for.
+    organizationLogo
+    # The name of the organization the invite is for.
+    organizationName
+    # The name/email of the inviter.
+    inviter
+    # The time at which the invite was created.
+    createdAt
+    # The unique identifier of the invite.
+    id
+    # The user role that the invitee will receive upon accepting the invite.
+    role
+}
+
+# The organization invite that was created or updated.
+fragment OrganizationInviteLinkDetails on OrganizationInviteLinkDetails {
+    __typename
+    # The ID of the object.
+    id
+    # The ID of the organization the invite is for.
+    organizationId
+    # The logo of the organization the invite is for.
+    organizationLogo
+    # The name of the organization the invite is for.
+    organizationName
+}
+
+# Updates a channel
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+fragment SurveyChannelUpdate on SurveyChannelUpdate {
+    __typename
+    errors {
+        ...SurveyError
+    }
+    surveyChannel {
+        ...SurveyChannel
+    }
+    surveyErrors {
+        ...SurveyError
+    }
+}
+
+# Updates a project.
+fragment ProjectUpdate on ProjectUpdate {
+    __typename
+    errors {
+        ...ProjectError
+    }
+    project {
+        ...Project
+    }
+    projectErrors {
+        ...ProjectError
+    }
+}
+
+# Updates a question
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+fragment SurveyQuestionUpdate on SurveyQuestionUpdate {
+    __typename
+    errors {
+        ...SurveyError
+    }
+    surveyErrors {
+        ...SurveyError
+    }
+    surveyQuestion {
+        ...SurveyQuestion
+    }
+}
+
+# Updates a survey
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+fragment SurveyUpdate on SurveyUpdate {
+    __typename
+    errors {
+        ...SurveyError
+    }
+    survey {
+        ...Survey
+    }
+    surveyErrors {
+        ...SurveyError
+    }
+}
+
+# Updates a user.
+#
+# Requires one of the following permissions: AUTHENTICATED_USER.
+fragment UserUpdate on UserUpdate {
+    __typename
+    errors {
+        ...UserError
+    }
+    user {
+        ...User
+    }
+    userErrors {
+        ...UserError
+    }
+}
+
+# Updates an existing theme
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+fragment ProjectThemeUpdate on ProjectThemeUpdate {
+    __typename
+    errors {
+        ...ProjectError
+    }
+    projectErrors {
+        ...ProjectError
+    }
+    projectTheme {
+        ...ProjectTheme
+    }
+}
+
+# _Service manifest as defined by Federation spec.
+fragment _Service on _Service {
+    __typename
+    sdl
+}
+
+fragment EventCountableConnection on EventCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+}
+
+fragment EventDefinitionCountableConnection on EventDefinitionCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+}
+
+fragment EventPropertyCountableConnection on EventPropertyCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+}
+
+fragment OrganizationCountableConnection on OrganizationCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+}
+
+fragment PersonCountableConnection on PersonCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+}
+
+fragment ProjectCountableConnection on ProjectCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+}
+
+fragment ProjectThemeCountableConnection on ProjectThemeCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+}
+
+fragment PropertyDefinitionCountableConnection on PropertyDefinitionCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+}
+
+fragment SurveyChannelCountableConnection on SurveyChannelCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+}
+
+fragment SurveyCountableConnection on SurveyCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+}
+
+fragment SurveyQuestionCountableConnection on SurveyQuestionCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+}
+
+fragment UserCountableConnection on UserCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+}
+
+# Authenticates a user account via email and authentication token.
+mutation emailTokenUserAuth(
+    # The email which to login via the magic login code.
+    $email: String!
+    # An optional invite link for an organization.
+    $inviteLink: String
+    # The magic login code.
+    $token: String!
+) {
+    emailTokenUserAuth(email: $email, inviteLink: $inviteLink, token: $token) {
+        ...EmailTokenUserAuth
+    }
+}
+# Finds or creates a new user account by email and sends an email with token.
+mutation emailUserAuthChallenge(
+    # The email for which to generate the magic login code.
+    $email: String!
+    # An optional invite link for an organization.
+    $inviteLink: String
+) {
+    emailUserAuthChallenge(email: $email, inviteLink: $inviteLink) {
+        ...EmailUserAuthChallenge
+    }
+}
+# Captures event.
+mutation captureEvent(
+    # Onboarding survey.
+    $batch: [EventCaptureInput!]
+    # Organization details for the new organization.
+    $input: EventCaptureInput
+    # The time the event(s) is/are sent.
+    $sentAt: DateTime
+) {
+    eventCapture(batch: $batch, input: $input, sentAt: $sentAt) {
+        ...EventCapture
+    }
+}
+# Finds or creates a new user account from google auth credentials.
+mutation googleUserAuth(
+    # Code gotten from google auth consent screen.
+    $code: String!
+    # An optional invite link for an organization.
+    $inviteLink: String
+) {
+    googleUserAuth(code: $code, inviteLink: $inviteLink) {
+        ...GoogleUserAuth
+    }
+}
+# Deactivate all JWT tokens of the currently authenticated user.
+#
+# Requires one of the following permissions: AUTHENTICATED_USER.
+mutation logout {
+    logout {
+        ...Logout
+    }
+}
+# Creates new organization.
+#
+# Requires one of the following permissions: AUTHENTICATED_USER.
+mutation createOrganization(
+    # Organization details for the new organization.
+    $input: OrganizationCreateInput!
+    # Onboarding survey.
+    $survey: OnboardingCustomerSurvey
+) {
+    organizationCreate(input: $input, survey: $survey) {
+        ...OrganizationCreate
+    }
+}
+# Creates a new organization invite.
+#
+# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+mutation createOrganizationInvite(
+    # The organization invite object to create.
+    $input: OrganizationInviteCreateInput!
+) {
+    organizationInviteCreate(input: $input) {
+        ...OrganizationInviteCreate
+    }
+}
+# Reset the current organization invite link..
+#
+# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+mutation resetOrganizationInviteLink {
+    organizationInviteLinkReset {
+        ...OrganizationInviteLinkReset
+    }
+}
+# Joins an organization
+#
+# Requires one of the following permissions: AUTHENTICATED_USER.
+mutation joinOrganization(
+    # Organization details for the new organization.
+    $input: OrganizationJoinInput!
+) {
+    organizationJoin(input: $input) {
+        ...OrganizationJoin
+    }
+}
+# Creates a new project
+mutation createProject(
+    # The project object to create.
+    $input: ProjectCreateInput!
+) {
+    projectCreate(input: $input) {
+        ...ProjectCreate
+    }
+}
+# Creates a new theme
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+mutation createProjectTheme(
+    # The theme object to create.
+    $input: ProjectThemeCreateInput!
+) {
+    projectThemeCreate(input: $input) {
+        ...ProjectThemeCreate
+    }
+}
+# Deletes a theme.
+#
+# Requires one of the following permissions: PROJECT_ADMIN_ACCESS.
+mutation deleteProjectTheme(
+    # ID of a theme to delete.
+    $id: ID!
+) {
+    projectThemeDelete(id: $id) {
+        ...ProjectThemeDelete
+    }
+}
+# Updates an existing theme
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+mutation updateProjectTheme(
+    # ID of a theme to update.
+    $id: ID!
+    # The theme object to create.
+    $input: ProjectThemeUpdateInput!
+) {
+    projectThemeUpdate(id: $id, input: $input) {
+        ...ProjectThemeUpdate
+    }
+}
+# Updates a project.
+mutation updateProject(
+    # A partial object to update the project with.
+    $input: ProjectUpdateInput!
+) {
+    projectUpdate(input: $input) {
+        ...ProjectUpdate
+    }
+}
+# Creates a new distibution channel
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+mutation createSurveyChannel(
+    # The channel object to create.
+    $input: SurveyChannelCreateInput!
+) {
+    surveyChannelCreate(input: $input) {
+        ...SurveyChannelCreate
+    }
+}
+# Deletes a channel.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+mutation deleteSurveyChannel(
+    # ID of a channel to delete.
+    $id: ID!
+) {
+    surveyChannelDelete(id: $id) {
+        ...SurveyChannelDelete
+    }
+}
+# Updates a channel
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+mutation updateSurveyChannel(
+    # ID of a channel to update.
+    $id: ID!
+    # A partial object to update the channel with.
+    $input: SurveyChannelUpdateInput!
+) {
+    surveyChannelUpdate(id: $id, input: $input) {
+        ...SurveyChannelUpdate
+    }
+}
+# Creates a new survey
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+mutation createSurvey(
+    # The survey object to create.
+    $input: SurveyCreateInput!
+) {
+    surveyCreate(input: $input) {
+        ...SurveyCreate
+    }
+}
+# Deletes a survey.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+mutation deleteSurvey(
+    # ID of a survey to delete.
+    $id: ID!
+) {
+    surveyDelete(id: $id) {
+        ...SurveyDelete
+    }
+}
+# Creates a new question
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+mutation createSurveyQuestion(
+    # The question object to create.
+    $input: SurveyQuestionCreateInput!
+) {
+    surveyQuestionCreate(input: $input) {
+        ...SurveyQuestionCreate
+    }
+}
+# Deletes a question.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+mutation deleteSurveyQuestion(
+    # ID of a question to delete.
+    $id: ID!
+) {
+    surveyQuestionDelete(id: $id) {
+        ...SurveyQuestionDelete
+    }
+}
+# Updates a question
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+mutation updateSurveyQuestion(
+    # ID of a question to update.
+    $id: ID!
+    # A partial object to update the question with.
+    $input: SurveyQuestionUpdateInput!
+) {
+    surveyQuestionUpdate(id: $id, input: $input) {
+        ...SurveyQuestionUpdate
+    }
+}
+# Updates a survey
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+mutation updateSurvey(
+    # ID of a survey to update.
+    $id: ID!
+    # A partial object to update the survey with.
+    $input: SurveyUpdateInput!
+) {
+    surveyUpdate(id: $id, input: $input) {
+        ...SurveyUpdate
+    }
+}
+# Refresh JWT token. Mutation tries to take refreshToken from the input. If it fails it will try to
+# take `refreshToken` from the http-only cookie `refreshToken`. `csrfToken` is required when
+# `refreshToken` is provided as a cookie.
+mutation refreshToken(
+    # CSRF token required to refresh token. This argument is required when `refreshToken` is provided as a cookie.
+    $csrfToken: String
+    # Refresh token.
+    $refreshToken: String
+) {
+    tokenRefresh(csrfToken: $csrfToken, refreshToken: $refreshToken) {
+        ...RefreshToken
+    }
+}
+# Updates a user.
+#
+# Requires one of the following permissions: AUTHENTICATED_USER.
+mutation updateUser(
+    # A partial object to update the user with.
+    $input: UserInput!
+) {
+    userUpdate(input: $input) {
+        ...UserUpdate
+    }
+}
+query _service {
+    _service {
+        ..._Service
+    }
+}
+# List of channels for a specific survey.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query channels(
+    # Return the elements in the list that come after the specified cursor.
+    $after: String
+    # Return the elements in the list that come before the specified cursor.
+    $before: String
+    # Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $first: Int
+    # The ID of the survey.
+    $id: ID!
+    # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $last: Int
+) {
+    channels(
+        after: $after
+        before: $before
+        first: $first
+        id: $id
+        last: $last
+    ) {
+        ...SurveyChannelCountableConnection
+    }
+}
+# List of event's definitions.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query eventDefinitions(
+    # Return the elements in the list that come after the specified cursor.
+    $after: String
+    # Return the elements in the list that come before the specified cursor.
+    $before: String
+    # Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $first: Int
+    # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $last: Int
+) {
+    eventDefinitions(
+        after: $after
+        before: $before
+        first: $first
+        last: $last
+    ) {
+        ...EventDefinitionCountableConnection
+    }
+}
+# List of event's properties.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query eventProperties(
+    # Return the elements in the list that come after the specified cursor.
+    $after: String
+    # Return the elements in the list that come before the specified cursor.
+    $before: String
+    # Filter properties by event. If not provided, all properties for the project will be returned.
+    $event: String
+    # Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $first: Int
+    # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $last: Int
+) {
+    eventProperties(
+        after: $after
+        before: $before
+        event: $event
+        first: $first
+        last: $last
+    ) {
+        ...EventPropertyCountableConnection
+    }
+}
+# List of triggered events.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query events(
+    # Return the elements in the list that come after the specified cursor.
+    $after: String
+    # Return the elements in the list that come before the specified cursor.
+    $before: String
+    # Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $first: Int
+    # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $last: Int
+) {
+    events(after: $after, before: $before, first: $first, last: $last) {
+        ...EventCountableConnection
+    }
+}
+# The current organization invite link.
+#
+# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+query organizationInviteLink {
+    organizationInviteLink {
+        ...OrganizationInviteLink
+    }
+}
+# List of persons.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query persons(
+    # Return the elements in the list that come after the specified cursor.
+    $after: String
+    # Return the elements in the list that come before the specified cursor.
+    $before: String
+    # Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $first: Int
+    # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $last: Int
+) {
+    persons(after: $after, before: $before, first: $first, last: $last) {
+        ...PersonCountableConnection
+    }
+}
+# List of the property definitions.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query propertyDefinitions(
+    # Return the elements in the list that come after the specified cursor.
+    $after: String
+    # Return the elements in the list that come before the specified cursor.
+    $before: String
+    # Filter definitions by type. If not provided, all property definitions for the project will be returned.
+    $definitionType: PropertyDefinitionTypeEnum
+    # Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $first: Int
+    # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $last: Int
+) {
+    propertyDefinitions(
+        after: $after
+        before: $before
+        definitionType: $definitionType
+        first: $first
+        last: $last
+    ) {
+        ...PropertyDefinitionCountableConnection
+    }
+}
+# List of questions for a specific survey.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query questions(
+    # Return the elements in the list that come after the specified cursor.
+    $after: String
+    # Return the elements in the list that come before the specified cursor.
+    $before: String
+    # Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $first: Int
+    # The ID of the survey.
+    $id: ID!
+    # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $last: Int
+) {
+    questions(
+        after: $after
+        before: $before
+        first: $first
+        id: $id
+        last: $last
+    ) {
+        ...SurveyQuestionCountableConnection
+    }
+}
+# Look up a survey by ID or slug.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query survey(
+    # The ID of the survey.
+    $id: ID
+    # Slug of the survey.
+    $slug: String
+) {
+    survey(id: $id, slug: $slug) {
+        ...Survey
+    }
+}
+# The distribution channels supported by the survey
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query survey_channels(
+    # The ID of the survey.
+    $id: ID
+    # Slug of the survey.
+    $slug: String
+    # Return the elements in the list that come after the specified cursor.
+    $after: String
+    # Return the elements in the list that come before the specified cursor.
+    $before: String
+    # Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $first: Int
+    # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $last: Int
+) {
+    survey(id: $id, slug: $slug) {
+        channels(after: $after, before: $before, first: $first, last: $last) {
+            ...SurveyChannelCountableConnection
+        }
+    }
+}
+# The project the survey belongs to
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query survey_project(
+    # The ID of the survey.
+    $id: ID
+    # Slug of the survey.
+    $slug: String
+) {
+    survey(id: $id, slug: $slug) {
+        project {
+            ...Project
+        }
+    }
+}
+# Organization the project belongs to.
+query survey_project_organization(
+    # The ID of the survey.
+    $id: ID
+    # Slug of the survey.
+    $slug: String
+) {
+    survey(id: $id, slug: $slug) {
+        project {
+            organization {
+                ...AuthOrganization
+            }
+        }
+    }
+}
+# The questions in the the survey
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query survey_questions(
+    # The ID of the survey.
+    $id: ID
+    # Slug of the survey.
+    $slug: String
+    # Return the elements in the list that come after the specified cursor.
+    $after: String
+    # Return the elements in the list that come before the specified cursor.
+    $before: String
+    # Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $first: Int
+    # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $last: Int
+) {
+    survey(id: $id, slug: $slug) {
+        questions(after: $after, before: $before, first: $first, last: $last) {
+            ...SurveyQuestionCountableConnection
+        }
+    }
+}
+# The theme of the survey.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query survey_theme(
+    # The ID of the survey.
+    $id: ID
+    # Slug of the survey.
+    $slug: String
+) {
+    survey(id: $id, slug: $slug) {
+        theme {
+            ...ProjectTheme
+        }
+    }
+}
+# The project the theme belongs to.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query survey_theme_project(
+    # The ID of the survey.
+    $id: ID
+    # Slug of the survey.
+    $slug: String
+) {
+    survey(id: $id, slug: $slug) {
+        theme {
+            project {
+                ...Project
+            }
+        }
+    }
+}
+# Organization the project belongs to.
+query survey_theme_project_organization(
+    # The ID of the survey.
+    $id: ID
+    # Slug of the survey.
+    $slug: String
+) {
+    survey(id: $id, slug: $slug) {
+        theme {
+            project {
+                organization {
+                    ...AuthOrganization
+                }
+            }
+        }
+    }
+}
+# List of the project's surveys.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query surveys(
+    # Return the elements in the list that come after the specified cursor.
+    $after: String
+    # Return the elements in the list that come before the specified cursor.
+    $before: String
+    # Filtering options for surveys.
+    $filter: SurveyFilterInput
+    # Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $first: Int
+    # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $last: Int
+    # Sort surveys.
+    $sortBy: SurveySortingInput
+) {
+    surveys(
+        after: $after
+        before: $before
+        filter: $filter
+        first: $first
+        last: $last
+        sortBy: $sortBy
+    ) {
+        ...SurveyCountableConnection
+    }
+}
+# List of the project's themes.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query themes(
+    # Return the elements in the list that come after the specified cursor.
+    $after: String
+    # Return the elements in the list that come before the specified cursor.
+    $before: String
+    # Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $first: Int
+    # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $last: Int
+) {
+    themes(after: $after, before: $before, first: $first, last: $last) {
+        ...ProjectThemeCountableConnection
+    }
+}
+# Return the currently authenticated user.
+#
+# Requires one of the following permissions: AUTHENTICATED_USER.
+query viewer {
+    viewer {
+        ...User
+    }
+}
+# The current organization of the user.
+#
+# Requires one of the following permissions: AUTHENTICATED_USER.
+query viewer_organization {
+    viewer {
+        organization {
+            ...AuthOrganization
+        }
+    }
+}
+# Organizations the user is part of.
+#
+# Requires one of the following permissions: AUTHENTICATED_USER.
+query viewer_organizations(
+    # Return the elements in the list that come after the specified cursor.
+    $after: String
+    # Return the elements in the list that come before the specified cursor.
+    $before: String
+    # Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $first: Int
+    # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $last: Int
+) {
+    viewer {
+        organizations(
+            after: $after
+            before: $before
+            first: $first
+            last: $last
+        ) {
+            ...OrganizationCountableConnection
+        }
+    }
+}
+# The current project of the user.
+#
+# Requires one of the following permissions: AUTHENTICATED_USER.
+query viewer_project {
+    viewer {
+        project {
+            ...Project
+        }
+    }
+}
+# Organization the project belongs to.
+query viewer_project_organization {
+    viewer {
+        project {
+            organization {
+                ...AuthOrganization
+            }
+        }
+    }
+}
+# Projects the user has access to.
+#
+# Requires one of the following permissions: AUTHENTICATED_USER.
+query viewer_projects(
+    # Return the elements in the list that come after the specified cursor.
+    $after: String
+    # Return the elements in the list that come before the specified cursor.
+    $before: String
+    # Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $first: Int
+    # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $last: Int
+    # By which field should the pagination order by.
+    $orderBy: ProjectSortingInput
+) {
+    viewer {
+        projects(
+            after: $after
+            before: $before
+            first: $first
+            last: $last
+            orderBy: $orderBy
+        ) {
+            ...ProjectCountableConnection
+        }
+    }
+}
