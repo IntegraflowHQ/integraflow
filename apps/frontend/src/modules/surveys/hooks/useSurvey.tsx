@@ -3,6 +3,7 @@ import {
     useGetSurveyLazyQuery,
     useSurveyCreateMutation,
     useSurveyQuestionCreateMutation,
+    useSurveyQuestionUpdateMutation,
 } from "@/generated/graphql";
 import { ROUTES } from "@/routes";
 import { generateRandomString } from "@/utils";
@@ -24,11 +25,14 @@ export const useSurvey = () => {
 
     const [createSurveyMutation] = useSurveyCreateMutation();
     const [createQuestionMutaton] = useSurveyQuestionCreateMutation({});
+    const [updateQuestion] = useSurveyQuestionUpdateMutation();
+
     const [getSurveyQuery, { data: survey }] = useGetSurveyLazyQuery();
 
     const questions = survey?.survey?.questions?.edges || [];
     const surveyId = survey?.survey?.id;
     console.log(surveyId);
+    console.log(openQuestion);
 
     useEffect(() => {
         const getSurvey = async () => {
@@ -140,6 +144,32 @@ export const useSurvey = () => {
         });
     };
 
+    const updateQuestionMutation = async (
+        type: SurveyQuestionTypeEnum,
+        options: {
+            description?: string;
+            label?: string;
+            settings?: any;
+            options?: any;
+        },
+    ) => {
+        if (!surveyId) return;
+        const result = await updateQuestion({
+            variables: {
+                id: openQuestion,
+                input: {
+                    orderNumber: 0,
+                    description: options.description,
+                    label: options.label,
+                    options: options.options,
+                    settings: options.settings,
+                    type,
+                },
+            },
+        });
+        console.log(result);
+    };
+
     return {
         createSurvey,
         createQuestion,
@@ -147,5 +177,6 @@ export const useSurvey = () => {
         surveySlug,
         setOpenQuestion,
         openQuestion,
+        updateQuestionMutation,
     };
 };
