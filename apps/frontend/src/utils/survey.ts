@@ -1,6 +1,5 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import {
-    AnswerType,
     FormFieldType,
     LogicBooleanCondition,
     LogicFormCondition,
@@ -12,6 +11,7 @@ import {
 import BirthdayIcon from "assets/icons/studio/birthday.png";
 import BooleanIcon from "assets/icons/studio/boolean.png";
 import ContactIcon from "assets/icons/studio/contact.png";
+import DropdownIcon from "assets/icons/studio/dropdown.png";
 import MultipleIcon from "assets/icons/studio/multiple.png";
 import NPSIcon from "assets/icons/studio/nps.png";
 import RatingIcon from "assets/icons/studio/rating.png";
@@ -35,7 +35,7 @@ export const questionTypes = [
     {
         name: "Single answer selection",
         icon: SingleIcon,
-        type:SurveyQuestionTypeEnum.Single,
+        type: SurveyQuestionTypeEnum.Single,
     },
     {
         name: "Dropdown list",
@@ -50,7 +50,7 @@ export const questionTypes = [
     {
         name: "Text answer",
         icon: TextIcon,
-        type:SurveyQuestionTypeEnum.Text,
+        type: SurveyQuestionTypeEnum.Text,
     },
     {
         name: "Smiley scale",
@@ -80,7 +80,7 @@ export const questionTypes = [
     {
         name: "Birthday",
         icon: BirthdayIcon,
-        type:SurveyQuestionTypeEnum.Date,
+        type: SurveyQuestionTypeEnum.Date,
     },
     {
         name: "Thank you",

@@ -11,39 +11,24 @@ type Props = {
     question: SurveyQuestion;
 };
 
-export const QuestionPanel = ({ currentQuestionType, question }: Props) => {
+export const QuestionPanel = ({ question }: Props) => {
     const { setOpenQuestion } = useSurveyStore();
 
     const tabs = [
         {
             id: 1,
             label: "Edit",
-            content: (
-                <EditTab
-                    questionType={currentQuestionType as SurveyQuestionTypeEnum}
-                    question={question}
-                />
-            ),
+            content: <EditTab question={question} />,
         },
         {
             id: 2,
             label: "Logic",
-            content: (
-                <LogicTab
-                    questionType={currentQuestionType as SurveyQuestionTypeEnum}
-                    question={question}
-                />
-            ),
+            content: <LogicTab question={question} />,
         },
         {
             id: 3,
             label: "Settings",
-            content: (
-                <SettingsTab
-                    questionType={currentQuestionType as SurveyQuestionTypeEnum}
-                    question={question}
-                />
-            ),
+            content: <SettingsTab question={question} />,
         },
     ];
 
@@ -73,15 +58,15 @@ export const QuestionPanel = ({ currentQuestionType, question }: Props) => {
 
             <div>
                 {tabs.map(({ content, label }) => (
-                    <>
-                    <Tabs.Content
-                        value={label}
-                        className="flex-1 pt-2"
-                        key={label}
+                    <div key={label}>
+                        <Tabs.Content
+                            value={label}
+                            className="flex-1 pt-2"
+                            key={label}
                         >
-                        {content}
-                    </Tabs.Content>
-                        </>
+                            {content}
+                        </Tabs.Content>
+                    </div>
                 ))}
             </div>
         </Tabs.Root>

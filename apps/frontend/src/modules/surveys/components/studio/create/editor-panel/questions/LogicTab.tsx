@@ -2,15 +2,16 @@ import { surveyConditions } from "@/utils/survey";
 import TextButton from "./attributes/Buttons/TextButton";
 import { ComboBox } from "./attributes/ComboBox";
 import { SurveyQuestion } from "@/generated/graphql";
+import { TabHeader } from "./TabHeader";
 
 type Props = {
-    questionType: string;
     question: SurveyQuestion;
 };
 
-export const LogicTab = ({ questionType, question }: Props) => {
+export const LogicTab = ({  question }: Props) => {
     return (
         <div className="space-y-4">
+            <TabHeader question={question} />
             <div className="">
                 <h3 className="text-sm font-semibold">Add logic</h3>
                 <p className="text-sm">

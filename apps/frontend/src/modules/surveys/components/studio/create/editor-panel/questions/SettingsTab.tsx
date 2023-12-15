@@ -1,15 +1,32 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { SelectInput, SwitchButton } from "@/ui";
 import { EditorTextInput } from "../components/EditorTextInput";
+import { TabHeader } from "./TabHeader";
+import { ReactSelect } from "./attributes/ReactSelect";
+
+const CTAThankyouOptions = [
+    {
+        label: "Link",
+        value: "link",
+    },
+    {
+        label: "Hide",
+        value: "hidden",
+    },
+    {
+        label: "Close",
+        value: "close",
+    },
+];
 
 type Props = {
-    questionType: string;
     question: SurveyQuestion;
 };
 
-export const SettingsTab = ({ questionType, question }: Props) => {
+export const SettingsTab = ({ question }: Props) => {
     return (
-        <div className="space-y-3">
+        <div className="space-y-3 text-sm">
+            <TabHeader question={question} />
             {question.type === SurveyQuestionTypeEnum.SmileyScale ? (
                 <>
                     <EditorTextInput
@@ -22,7 +39,10 @@ export const SettingsTab = ({ questionType, question }: Props) => {
                     />
                 </>
             ) : null}
-            {question.type === SurveyQuestionTypeEnum.Rating ? (
+            {question.type === SurveyQuestionTypeEnum.Rating ||
+            question.type === SurveyQuestionTypeEnum.Nps ||
+            question.type === SurveyQuestionTypeEnum.SmileyScale ||
+            question.type ? (
                 <>
                     <EditorTextInput
                         label={"Text on the very left"}
@@ -34,7 +54,6 @@ export const SettingsTab = ({ questionType, question }: Props) => {
                     />
                 </>
             ) : null}
-
             {question.type === SurveyQuestionTypeEnum.Form ? (
                 // DISCLAIMER
                 <>
@@ -87,18 +106,48 @@ export const SettingsTab = ({ questionType, question }: Props) => {
                 <SwitchButton label="Answer required" />
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
-                <div>
-                    <p className="text-sm">Selection limit Range</p>
-                    <SelectInput defaultValue="" options={[]} />
+            {question.type === SurveyQuestionTypeEnum.Multiple && (
+                <div className="grid grid-cols-3 gap-2">
+                    <div>
+                        <p className="text-sm">Selection limit Range</p>
+                        <SelectInput defaultValue="" options={[]} />
+                    </div>
+                    <div>
+                        <p className="text-sm">Min</p>
+                        <SelectInput defaultValue="" options={[]} />
+                    </div>
+                    <div>
+                        <p className="text-sm">Max</p>
+                        <SelectInput defaultValue="" options={[]} />
+                    </div>
+                </div>
+            )}
+            {/* Thankyou CTA */}
+            <div className="space-y-6">
+                <div className="flex items-center justify-between gap-4">
+                    <p>Call to action</p>
+                    <div className="w-[330px]">
+                        <ReactSelect
+                            options={CTAThankyouOptions}
+                            onChange={(value) => {
+                                console.log(value);
+                            }}
+                        />
+                    </div>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                    <div>Link</div>
+                    <div className="w-[330px]">
+                        <EditorTextInput />
+                    </div>
                 </div>
                 <div>
-                    <p className="text-sm">Min</p>
-                    <SelectInput defaultValue="" options={[]} />
-                </div>
-                <div>
-                    <p className="text-sm">Max</p>
-                    <SelectInput defaultValue="" options={[]} />
+                    <div className="flex items-center justify-between gap-4">
+                        <p>Button label</p>
+                        <div className="w-[330px]">
+                            <EditorTextInput />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

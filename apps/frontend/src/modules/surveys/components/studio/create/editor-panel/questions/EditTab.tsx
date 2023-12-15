@@ -1,123 +1,95 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { cn } from "@/utils";
-import { questionTypes } from "@/utils/survey";
-import { useState } from "react";
-import { EditorTextInput } from "../components/EditorTextInput";
-import { AddMultipleQuestions } from "./attributes/AddMultipleQuestions";
-import MinimizeButton from "./attributes/Buttons/MinimizeButton";
-import TextButton from "./attributes/Buttons/TextButton";
-import { FormOptionBlock } from "./attributes/FormOptionBlock";
-import SelectOptionBlock from "./attributes/SelectOptionBlock";
+import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
+import { formOptions } from "@/utils/survey";
+import { FormFieldType } from "@integraflow/web/src/types";
+import { useEffect } from "react";
+import { TabHeader } from "./TabHeader";
+import { CTAFields } from "./attributes/EditFields/CTAFields";
+import { FormFieldList } from "./attributes/EditFields/FormFieldList";
+import { OptionsList } from "./attributes/EditFields/OptionsList";
 
 type Props = {
-    questionType: string;
     orderNumber?: number;
     question: SurveyQuestion;
 };
+type ParsedOptions = {
+    id: number;
+    orderNumber: number;
+    label: string;
+    comment?: string;
+    required?: boolean;
+    type?: FormFieldType;
+};
 
-export const EditTab = ({ orderNumber, question }: Props) => {
-    console.log(question);
-    const [showDescription, setShowDescription] = useState(false);
-    const [titleText, setTitleText] = useState("");
-    const [descriptionText, setDescriptionText] = useState("");
-    const [choiceInput, setChoiceInput] = useState("");
+const defaultOptions = [
+    {
+        id: 1,
+        orderNumber: 1,
+        label: "Answer 1",
+        comment: "false",
+    },
+    {
+        id: 2,
+        orderNumber: 2,
+        label: "Answer 2",
+        comment: "false",
+    },
+];
 
+const defaultFormOptions = [
+    {
+        id: 1,
+        orderNumber: 1,
+        label: formOptions[2].label,
+        type: formOptions[2].value,
+        required: false,
+    },
+    {
+        id: 2,
+        orderNumber: 2,
+        label: formOptions[1].label,
+        type: formOptions[1].value,
+        required: false,
+    },
+];
+
+export const EditTab = ({ question }: Props) => {
+    const { updateQuestionMutation, currentQuestion } = useQuestion();
+
+    useEffect(() => {
+        if (
+            (currentQuestion?.node.type === SurveyQuestionTypeEnum.Single ||
+                currentQuestion?.node.type ===
+                    SurveyQuestionTypeEnum.Multiple ||
+                currentQuestion?.node.type ===
+                    SurveyQuestionTypeEnum.Dropdown) &&
+            (!currentQuestion.node.options ||
+                JSON.parse(currentQuestion?.node.options).length === 0)
+        ) {
+            updateQuestionMutation({
+                options: JSON.stringify(defaultOptions, null, 2),
+            });
+        }
+        if (
+            currentQuestion?.node.type === SurveyQuestionTypeEnum.Form &&
+            (!currentQuestion.node.options ||
+                JSON.parse(currentQuestion?.node.options).length === 0)
+        ) {
+            updateQuestionMutation({
+                options: JSON.stringify(defaultFormOptions, null, 2),
+            });
+        }
+    }, [currentQuestion]);
+    console.log(currentQuestion?.node.options);
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center gap-4">
-                <div>
-                    <img
-                        src={
-                            questionTypes.find(
-                                (type) => type.type === question.type,
-                            )?.icon
-                        }
-                        alt="icon"
-                    />
-                </div>
-                <span className="font-bold text-sm text-intg-text-9">
-                    {question.orderNumber < 10
-                        ? `0${question.orderNumber}`
-                        : question.orderNumber}
-                </span>
-                <span className="text-sm font-bold">Question</span>
-            </div>
-            {/* CTA */}
-            <div>
-                <EditorTextInput
-                    placeholder="Could you please fill out our quick survey"
-                    onChange={(e) => {
-                        setTitleText(e.target.value);
-                    }}
-                    value={titleText}
-                    characterCount={titleText.split("").length}
-                />
-                <div className="mt-4 flex justify-between gap-4">
-                    <EditorTextInput
-                        label={"Description"}
-                        placeholder="Add description"
-                        className="flex-1"
-                        value={descriptionText}
-                        characterCount={descriptionText.split("").length}
-                        onChange={(e) => setDescriptionText(e.target.value)}
-                        classname={cn(
-                            `${showDescription ? "block" : "hidden"}`,
-                        )}
-                    />
-                    <div
-                        className={cn(
-                            ` ${showDescription ? "block" : "hidden"} mt-6 w-6`,
-                        )}
-                    >
-                        <MinimizeButton
-                            onclick={() => setShowDescription(false)}
-                        />
-                    </div>
-                </div>
-                <TextButton
-                    classname={`${showDescription ? "hidden" : "block"}`}
-                    text="Add description"
-                    onclick={() => setShowDescription(true)}
-                />
-            </div>
-            {/* CTA */}
+            <TabHeader question={question} />
+            <CTAFields />
 
-            {/* MUltiple Selection */}
+            <OptionsList question={question} />
 
-            {question.type === SurveyQuestionTypeEnum.Single ||
-            question.type === SurveyQuestionTypeEnum.Multiple ? (
-                <div className="space-y-4">
-                    <div className="flex justify-between text-sm">
-                        <p>Answer Choices</p>
-                        <AddMultipleQuestions
-                            getValue={(value) => console.log(value)}
-                        />
-                    </div>
-                    <div>
-                        <SelectOptionBlock
-                            onChange={(e) => setChoiceInput(e.target.value)}
-                            characterCount={choiceInput.split("").length}
-                        />
-                    </div>
-                    <TextButton
-                        text={"Add an answer at choice"}
-                        onclick={() => {}}
-                    />
-                </div>
-            ) : null}
-
-            {/* Multiple Selection */}
-
-            {question.type === SurveyQuestionTypeEnum.Form && (
-                <div>
-                    <div className="flex justify-between">
-                        <p className="flex-1">Form Type</p>
-                        <p className="flex-1">Label</p>
-                    </div>
-                    <FormOptionBlock />
-                </div>
-            )}
+            <FormFieldList question={question} />
         </div>
     );
 };

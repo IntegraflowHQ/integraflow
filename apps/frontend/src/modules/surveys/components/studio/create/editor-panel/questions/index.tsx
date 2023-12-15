@@ -1,17 +1,22 @@
 import { addEllipsis, cn } from "@/utils";
 import * as Accordion from "@radix-ui/react-accordion";
-import {  useMemo, useState } from "react";
-import { QuestionOptions } from "./attributes/Options";
+import { useMemo, useState } from "react";
+import { QuestionOptions } from "./attributes/QuestionTypes";
 
-import { SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { questionTypes } from "@/utils/survey";
+import { LucideTrash2 } from "lucide-react";
 import { QuestionPanel } from "./QuestionPanel";
 
 export default function UpdateQuestion() {
-    const {  questions, setOpenQuestion, openQuestion } =
-        useSurvey();
+    const { questions, setOpenQuestion, openQuestion } = useSurvey();
 
+    const { deleteQuestionMutation } = useQuestion();
+    const [showDeleteButton, setShowDeleteButton] = useState<
+        SurveyQuestion | undefined
+    >(undefined);
     const [currentQuestionType, setCurrentQuestionType] = useState<
         SurveyQuestionTypeEnum | undefined
     >();
@@ -22,7 +27,6 @@ export default function UpdateQuestion() {
         });
     }, [questions]);
 
- 
     return (
         <div className="h-full w-full space-y-4 pt-2">
             <div>
@@ -39,10 +43,16 @@ export default function UpdateQuestion() {
                                     setCurrentQuestionType(question.node.type)
                                 }
                                 value={question.node.id}
-                                key={question.node.createdAt}
+                                key={question.node.id}
                             >
                                 <Accordion.Header>
                                     <Accordion.Trigger
+                                        onMouseEnter={() => {
+                                            setShowDeleteButton(question.node);
+                                        }}
+                                        onMouseLeave={() => {
+                                            setShowDeleteButton(undefined);
+                                        }}
                                         className={cn(
                                             ` ${
                                                 openQuestion ===
@@ -51,33 +61,55 @@ export default function UpdateQuestion() {
                                                     : "block"
                                             } text-intg-text-7" flex w-full items-center justify-between gap-2 rounded-lg bg-intg-bg-9 p-4`,
                                         )}
-                                        onClick={() =>
-                                            setOpenQuestion(question.node.id)
-                                        }
                                     >
-                                        <div>
-                                            <img
-                                                src={
-                                                    questionTypes.find(
-                                                        (type) =>
-                                                            type.type ===
-                                                            question.node.type,
-                                                    )?.icon
-                                                }
-                                                alt=""
-                                            />
+                                        <div
+                                            className="flex items-center gap-4"
+                                            onClick={() =>
+                                                setOpenQuestion(
+                                                    question.node.id,
+                                                )
+                                            }
+                                        >
+                                            <div>
+                                                <img
+                                                    src={
+                                                        questionTypes.find(
+                                                            (type) =>
+                                                                type.type ===
+                                                                question.node
+                                                                    .type,
+                                                        )?.icon
+                                                    }
+                                                    alt="icon"
+                                                />
+                                            </div>
+                                            <div className="text-sm font-bold text-intg-text-9">
+                                                {question.node.orderNumber < 10
+                                                    ? `0${question.node.orderNumber}`
+                                                    : question.node.orderNumber}
+                                            </div>
+                                            <div className="w-[415px] rounded-lg bg-intg-bg-15 px-[16px] py-4 text-start text-intg-text-1 ">
+                                                {addEllipsis(
+                                                    "Lorem ipsum dolor sit, ametconsectetur adipisicing elit.",
+                                                    40,
+                                                )}
+                                            </div>
                                         </div>
-                                        <div className="font-bold text-sm text-intg-text-9">
-                                            {question.node.orderNumber < 10
-                                                ? `0${question.node.orderNumber}`
-                                                : question.node.orderNumber}
-                                        </div>
-                                        <div className="w-[415px] rounded-lg bg-intg-bg-15 px-[16px] py-4 text-start text-intg-text-1 ">
-                                            {addEllipsis(
-                                                "Lorem ipsum dolor sit, ametconsectetur adipisicing elit.",
-                                                40,
-                                            )}
-                                        </div>
+
+                                        {showDeleteButton?.id ===
+                                            question.node.id && (
+                                            <div className="flex gap-6">
+                                                <LucideTrash2
+                                                    color="purple"
+                                                    onClick={() => {
+                                                        deleteQuestionMutation(
+                                                            showDeleteButton,
+                                                        );
+                                                        setOpenQuestion("");
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
                                     </Accordion.Trigger>
                                 </Accordion.Header>
                                 <Accordion.Content>
