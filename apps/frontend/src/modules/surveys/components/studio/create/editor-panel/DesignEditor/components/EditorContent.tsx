@@ -2,9 +2,9 @@ import { ProjectTheme } from "@/generated/graphql";
 import { useThemes } from "@/modules/projects/hooks/useTheme";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { Button } from "@/ui";
+import { Info } from "@/ui/Info";
 import { toast } from "@/utils/toast";
 import React from "react";
-import { Error } from "./Errors";
 import { PresetThemes } from "./PresetThemes";
 import { ThemeCard } from "./ThemeCard";
 
@@ -53,7 +53,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
             <>
                 <>
                     {count === 0 ? (
-                        <Error message="You don't have any theme. Click the button below to create one or choose from our presets" />
+                        <Info message="You don't have any theme. Click the button below to create one or choose from our presets" />
                     ) : null}
 
                     {count === 0 && (
@@ -126,7 +126,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                                     </div>
                                 </div>
                             ) : (
-                                <Error message="You have selected any theme" />
+                                <Info message="You have selected any theme" />
                             )}
 
                             <Button

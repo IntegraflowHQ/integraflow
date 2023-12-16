@@ -1,11 +1,11 @@
 import { Project } from "@/generated/graphql";
 import { UserProfile } from "@/layout/partials/UserProfile";
-import { ROUTES } from "@/routes";
 import { useOnboarding } from "@/modules/onboarding/hooks/useOnboarding";
 import { OrganizationInvite } from "@/modules/organizationInvite/components/OrganizationInvite";
 import { CreateNewProject } from "@/modules/projects/components/CreateNewProject";
 import useUserState from "@/modules/users/hooks/useUserState";
 import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
+import { ROUTES } from "@/routes";
 import { Button, ProgressRadial } from "@/ui";
 import { JoinDiscord } from "@/ui/Banner/JoinDiscord";
 import {

@@ -14,6 +14,7 @@ export {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "./Dropdown/DropdownMenu";
+export { Info } from "./Info";
 export { AcronynmBox } from "./NavItem/AcronynmBox";
 export { NavItem } from "./NavItem/NavItem";
 export { NavLink } from "./NavItem/NavLink";
