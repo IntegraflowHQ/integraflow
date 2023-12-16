@@ -1,7 +1,9 @@
 import { Button, GlobalSpinner } from "@/ui";
+import { toast } from "@/utils/toast";
 import * as Tabs from "@radix-ui/react-tabs";
+import debounce from "lodash.debounce";
 import { XIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import React from "react";
 import useStudioState from "../hooks/useStudioState";
 import { useSurvey } from "../hooks/useSurvey";
 import Analyze from "./studio/analyze";
@@ -19,12 +21,40 @@ const tabs = [
 ];
 
 export default function Studio() {
-    const [title, setTitle] = useState("");
+    const { loading, survey, updateSurvey } = useSurvey();
+    const [surveyTitle, setSurveyTitle] = React.useState<string>("");
     const { enableStudioMode, disableStudioMode } = useStudioState();
-    const { loading } = useSurvey();
 
-    useEffect(() => {
+    const surveyName = survey?.survey?.name;
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.target;
+        setSurveyTitle(value);
+
+        updateSurveyTitle(value);
+    };
+
+    const updateSurveyTitle = React.useCallback(
+        debounce((value: string) => {
+            try {
+                if (value.trim() !== "") {
+                    updateSurvey({
+                        name: value,
+                    });
+                }
+                toast.success("Survey title updated successfully");
+            } catch (err) {
+                toast.error(
+                    "Something went wrong while you were trying to update the survey title. Try again later",
+                );
+            }
+        }, 1000),
+        [],
+    );
+
+    React.useEffect(() => {
         enableStudioMode();
+        if (survey) setSurveyTitle(surveyName as string);
 
         return () => {
             disableStudioMode();
@@ -41,8 +71,8 @@ export default function Studio() {
                     name="title"
                     id="title"
                     placeholder="Enter Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
+                    value={surveyTitle}
+                    onChange={(e) => handleChange(e)}
                     className="w-[96px] bg-transparent px-2 py-1 text-sm text-white"
                 />
 
