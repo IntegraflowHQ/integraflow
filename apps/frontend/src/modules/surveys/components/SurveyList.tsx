@@ -1,3 +1,4 @@
+import { ROUTES } from "@/routes";
 import { Dialog, DialogContent, DialogTrigger } from "@/ui";
 import {
     Badge,
@@ -10,17 +11,22 @@ import {
 } from "@tremor/react";
 import { format } from "date-fns";
 import { Archive, PencilLine, Radio } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 import SurveyCreate from "./SurveyCreate";
 import CreateSurveyButton from "./partials/CreateSurveyButton";
 
 interface SurveyListData {
-    id: string;
-    name: string;
-    responses: number;
-    createdAt: string;
-    creatorEmail: string;
-    creatorFullName: string;
-    status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+    surveys: {
+        id: string;
+        slug: string;
+        name: string;
+        createdAt: string;
+        creator: {
+            email: string;
+            fullName: string;
+        };
+        status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+    }[];
 }
 
 const headers = [
@@ -31,64 +37,18 @@ const headers = [
     { id: crypto.randomUUID(), title: "Response" },
 ];
 
-const surveyListData: SurveyListData[] = [
-    {
-        id: crypto.randomUUID(),
-        name: "Product Feedback",
-        status: "DRAFT",
-        responses: 0,
-        createdAt: "2021-09-30",
-        creatorEmail: "kman@oni.com",
-        creatorFullName: "Kolapo Oni",
-    },
-    {
-        id: crypto.randomUUID(),
-        name: "Replit Transformers",
-        status: "ARCHIVED",
-        responses: 0,
-        createdAt: "2021-09-30",
-        creatorEmail: "helsing@outlook.com",
-        creatorFullName: "Van Helsing",
-    },
-    {
-        id: crypto.randomUUID(),
-        name: "Customer Satisfaction Survey",
-        status: "DRAFT",
-        responses: 0,
-        createdAt: "2021-09-30",
-        creatorEmail: "customer@survey.com",
-        creatorFullName: "Customer Service Team",
-    },
-    {
-        id: crypto.randomUUID(),
-        name: "Marketing Campaign Feedback",
-        status: "PUBLISHED",
-        responses: 235,
-        createdAt: "2021-09-30",
-        creatorEmail: "marketing@company.com",
-        creatorFullName: "Marketing Team",
-    },
-    {
-        id: crypto.randomUUID(),
-        name: "Employee Engagement Survey",
-        status: "ARCHIVED",
-        responses: 102,
-        createdAt: "2021-09-30",
-        creatorEmail: "hr@company.com",
-        creatorFullName: "HR Department",
-    },
-    {
-        id: crypto.randomUUID(),
-        name: "Product Usage Feedback",
-        status: "PUBLISHED",
-        responses: 54,
-        createdAt: "2021-09-30",
-        creatorEmail: "product@feedback.com",
-        creatorFullName: "Product Management Team",
-    },
-];
+export const SurveyList = ({ surveys }: SurveyListData) => {
+    const navigate = useNavigate();
+    const { orgSlug, projectSlug } = useParams();
 
-export const SurveyList = () => {
+    const handleGetSurvey = (slug: string) => {
+        navigate(
+            ROUTES.STUDIO.replace(":orgSlug", orgSlug!)
+                .replace(":projectSlug", projectSlug!)
+                .replace(":surveySlug", slug),
+        );
+    };
+
     return (
         <div className="h-full w-full px-6 py-4 text-white">
             <div className="flex justify-between">
@@ -127,10 +87,11 @@ export const SurveyList = () => {
                     </TableHead>
 
                     <TableBody>
-                        {surveyListData.map((survey) => {
+                        {surveys?.map((survey) => {
                             return (
                                 <TableRow
                                     key={survey.id}
+                                    onClick={() => handleGetSurvey(survey.slug)}
                                     className="border-intg-bg-7 text-center transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1"
                                 >
                                     <TableCell>{survey.name}</TableCell>
@@ -158,10 +119,10 @@ export const SurveyList = () => {
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
-                                        {survey.creatorFullName}
+                                        {survey?.creator?.fullName}
                                         <br />
-                                        <span className="text-sm text-intg-text-4">
-                                            {survey.creatorEmail}
+                                        <span className="text-[12px] text-intg-text-4">
+                                            {survey?.creator.email}
                                         </span>
                                     </TableCell>
                                     <TableCell>
@@ -170,9 +131,7 @@ export const SurveyList = () => {
                                             "MMM dd, yyyy",
                                         )}
                                     </TableCell>
-                                    <TableCell className="text-center">
-                                        {survey.responses}
-                                    </TableCell>
+                                    <TableCell>0</TableCell>
                                 </TableRow>
                             );
                         })}

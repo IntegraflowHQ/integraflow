@@ -15,6 +15,8 @@ import CreateSurveyButton from "./partials/CreateSurveyButton";
 export default function SurveyHome() {
     const { surveyList, loading, error } = useSurveyList();
 
+    console.log(surveyList);
+
     return (
         <main className="flex h-full w-full flex-col">
             {error && <Info message={error.message} />}
@@ -24,7 +26,9 @@ export default function SurveyHome() {
             ) : (
                 <>
                     {surveyList ? (
-                        <SurveyList />
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        <SurveyList surveys={surveyList} />
                     ) : (
                         <>
                             <div className="flex max-w-[386px] flex-col items-center justify-center  gap-[7px]">

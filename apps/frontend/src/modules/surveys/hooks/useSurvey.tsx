@@ -78,74 +78,6 @@ export const useSurvey = () => {
         });
     };
 
-    const createQuestion = async (type: SurveyQuestionTypeEnum) => {
-        const id = crypto.randomUUID();
-        if (!surveyId) return;
-
-        await createQuestionMutaton({
-            variables: {
-                input: {
-                    orderNumber: questions.length + 1,
-                    surveyId: surveyId,
-                    id,
-                    type: type,
-                },
-            },
-            optimisticResponse: {
-                __typename: "Mutation",
-                surveyQuestionCreate: {
-                    __typename: "SurveyQuestionCreate",
-                    surveyQuestion: {
-                        __typename: "SurveyQuestion",
-                        id: "temp-id",
-                        createdAt: new Date().toISOString(),
-                        description: "",
-                        label: "",
-                        maxPath: 0,
-                        orderNumber: questions.length + 1,
-                        reference: id,
-                        type: type,
-                        settings: null,
-                        options: null,
-                    },
-                    surveyErrors: [],
-                    errors: [],
-                },
-            },
-            update: (cache, { data }) => {
-                if (!data?.surveyQuestionCreate?.surveyQuestion) return;
-                cache.modify({
-                    id: `Survey:${surveyId}`,
-                    fields: {
-                        questions(existingQuestions = []) {
-                            const newQuestionRef = cache.writeFragment({
-                                data: data.surveyQuestionCreate?.surveyQuestion,
-                                fragment: SURVEY_QUESTION,
-                            });
-
-                            return {
-                                __typename: "SurveyQuestionCountableConnection",
-                                edges: [
-                                    ...existingQuestions.edges,
-                                    {
-                                        __typename:
-                                            "SurveyQuestionCountableEdge",
-                                        node: newQuestionRef,
-                                    },
-                                ],
-                            };
-                        },
-                    },
-                });
-            },
-            onCompleted: ({ surveyQuestionCreate }) => {
-                const { surveyQuestion } = surveyQuestionCreate ?? {};
-                setOpenQuestion(surveyQuestion?.id as string);
-                scrollToBottom();
-            },
-        });
-    };
-
     const updateSurvey = async (
         input: SurveyUpdateInput,
         newTheme?: Partial<ProjectTheme>,
@@ -215,6 +147,74 @@ export const useSurvey = () => {
                         },
                     },
                 });
+            },
+        });
+    };
+
+    const createQuestion = async (type: SurveyQuestionTypeEnum) => {
+        const id = crypto.randomUUID();
+        if (!surveyId) return;
+
+        await createQuestionMutaton({
+            variables: {
+                input: {
+                    orderNumber: questions.length + 1,
+                    surveyId: surveyId,
+                    id,
+                    type: type,
+                },
+            },
+            optimisticResponse: {
+                __typename: "Mutation",
+                surveyQuestionCreate: {
+                    __typename: "SurveyQuestionCreate",
+                    surveyQuestion: {
+                        __typename: "SurveyQuestion",
+                        id: "temp-id",
+                        createdAt: new Date().toISOString(),
+                        description: "",
+                        label: "",
+                        maxPath: 0,
+                        orderNumber: questions.length + 1,
+                        reference: id,
+                        type: type,
+                        settings: null,
+                        options: null,
+                    },
+                    surveyErrors: [],
+                    errors: [],
+                },
+            },
+            update: (cache, { data }) => {
+                if (!data?.surveyQuestionCreate?.surveyQuestion) return;
+                cache.modify({
+                    id: `Survey:${surveyId}`,
+                    fields: {
+                        questions(existingQuestions = []) {
+                            const newQuestionRef = cache.writeFragment({
+                                data: data.surveyQuestionCreate?.surveyQuestion,
+                                fragment: SURVEY_QUESTION,
+                            });
+
+                            return {
+                                __typename: "SurveyQuestionCountableConnection",
+                                edges: [
+                                    ...existingQuestions.edges,
+                                    {
+                                        __typename:
+                                            "SurveyQuestionCountableEdge",
+                                        node: newQuestionRef,
+                                    },
+                                ],
+                            };
+                        },
+                    },
+                });
+            },
+            onCompleted: ({ surveyQuestionCreate }) => {
+                const { surveyQuestion } = surveyQuestionCreate ?? {};
+                setOpenQuestion(surveyQuestion?.id as string);
+                scrollToBottom();
             },
         });
     };

@@ -1,9 +1,11 @@
+import { ROUTES } from "@/routes";
 import { Button, GlobalSpinner } from "@/ui";
 import { toast } from "@/utils/toast";
 import * as Tabs from "@radix-ui/react-tabs";
 import debounce from "lodash.debounce";
 import { XIcon } from "lucide-react";
 import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import useStudioState from "../hooks/useStudioState";
 import { useSurvey } from "../hooks/useSurvey";
 import Analyze from "./studio/analyze";
@@ -21,11 +23,14 @@ const tabs = [
 ];
 
 export default function Studio() {
+    const params = useParams();
+    const navigate = useNavigate();
     const { loading, survey, updateSurvey } = useSurvey();
     const [surveyTitle, setSurveyTitle] = React.useState<string>("");
     const { enableStudioMode, disableStudioMode } = useStudioState();
-
     const surveyName = survey?.survey?.name;
+
+    const { orgSlug, projectSlug } = params;
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.target;
@@ -52,14 +57,25 @@ export default function Studio() {
         [],
     );
 
+    // using the disableStudioMode state value alone doesn't cut it. We still need to navigate to the survey list page
+    const closeStudio = () => {
+        disableStudioMode();
+        navigate(
+            ROUTES.SURVEY_LIST.replace(":orgSlug", orgSlug!).replace(
+                ":projectSlug",
+                projectSlug!,
+            ),
+        );
+    };
+
     React.useEffect(() => {
         enableStudioMode();
-        if (survey) setSurveyTitle(surveyName as string);
+        setSurveyTitle(surveyName as string);
 
         return () => {
             disableStudioMode();
         };
-    }, []);
+    }, [disableStudioMode, enableStudioMode, survey, surveyName]);
 
     if (loading) return <GlobalSpinner />;
 
@@ -73,7 +89,7 @@ export default function Studio() {
                     placeholder="Enter Title"
                     value={surveyTitle}
                     onChange={(e) => handleChange(e)}
-                    className="w-[96px] bg-transparent px-2 py-1 text-sm text-white"
+                    className="w-[120px] text-ellipsis bg-transparent px-2 py-1 text-sm text-white"
                 />
 
                 <Tabs.List className="flex gap-[15px]">
@@ -90,7 +106,7 @@ export default function Studio() {
 
                 <div className="flex gap-[35px]">
                     <Button text="Next" className="px-[16px] py-[8px]" />
-                    <button>
+                    <button onClick={closeStudio}>
                         <XIcon color="#AFAAC7" />
                     </button>
                 </div>
