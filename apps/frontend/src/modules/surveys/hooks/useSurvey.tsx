@@ -201,6 +201,38 @@ export const useSurvey = () => {
                     errors: [],
                 },
             },
+            update: (cache, { data }) => {
+                if (!data?.surveyUpdate?.survey) return;
+
+                cache.modify({
+                    fields: {
+                        survey(existingSurveyRefs) {
+                            const newSurveyRef = cache.writeFragment({
+                                data: {
+                                    ...(data?.surveyUpdate?.survey ?? {}),
+                                    createdAt: new Date().toISOString(),
+                                    updatedAt: new Date().toISOString(),
+                                    creator: null,
+                                    reference: null,
+                                    setttings: null,
+                                    project: null,
+                                },
+                                fragment: SURVEY_QUESTION,
+                            });
+                            return {
+                                ...existingSurveyRefs,
+                                edges: [
+                                    ...existingSurveyRefs.edges,
+                                    {
+                                        __typename: "SurveyCountableEdge",
+                                        node: newSurveyRef,
+                                    },
+                                ],
+                            };
+                        },
+                    },
+                });
+            },
         });
     };
 

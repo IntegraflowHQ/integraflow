@@ -96,6 +96,7 @@ export const useThemes = () => {
                         name: theme.name ?? "",
                         colorScheme: JSON.stringify(theme.colorScheme ?? {}),
                     },
+                    projectErrors: [],
                 },
             },
             // caching the mutation based on the available themes
@@ -106,7 +107,16 @@ export const useThemes = () => {
                     fields: {
                         themes(existingThemeRefs) {
                             const newThemeRef = cache.writeFragment({
-                                data: data?.projectThemeCreate?.projectTheme,
+                                data: {
+                                    ...(data?.projectThemeCreate
+                                        ?.projectTheme ?? {}),
+                                    setttings: "{}",
+                                    project: null,
+                                    creator: null,
+                                    reference: null,
+                                    createdAt: new Date().toISOString(),
+                                    updatedAt: new Date().toISOString(),
+                                },
                                 fragment: PROJECT_THEME,
                             });
                             return {
