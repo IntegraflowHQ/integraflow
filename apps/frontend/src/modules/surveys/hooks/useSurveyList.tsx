@@ -20,9 +20,28 @@ export const useSurveyList = () => {
         },
     });
 
+    const totalCount = surveyList?.surveys?.totalCount;
+    const pageInfo = surveyList?.surveys?.pageInfo;
+
+    const transformedSurveyList = surveyList?.surveys?.edges?.map((edge) => {
+        return {
+            id: edge?.node?.id,
+            name: edge?.node?.name,
+            slug: edge?.node?.slug,
+            status: edge?.node?.status,
+            createdAt: edge?.node?.createdAt,
+            creator: {
+                email: edge?.node?.creator.email,
+                fullName: `${edge?.node?.creator.firstName} ${edge?.node?.creator.lastName}`,
+            },
+        };
+    });
+
     return {
-        surveyList,
-        loading,
         error,
+        loading,
+        pageInfo,
+        totalSurveys: totalCount,
+        surveyList: transformedSurveyList,
     };
 };

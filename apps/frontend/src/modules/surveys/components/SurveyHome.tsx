@@ -1,29 +1,33 @@
-import { Dialog, DialogContent, DialogTrigger, Header, Info } from "@/ui";
+import {
+    Dialog,
+    DialogContent,
+    DialogTrigger,
+    GlobalSpinner,
+    Header,
+    Info,
+} from "@/ui";
 import { Document } from "@/ui/icons";
 import { useSurveyList } from "../hooks/useSurveyList";
 import SurveyCreate from "./SurveyCreate";
+import { SurveyList } from "./SurveyList";
 import CreateSurveyButton from "./partials/CreateSurveyButton";
 
 export default function SurveyHome() {
     const { surveyList, loading, error } = useSurveyList();
 
-    console.log(surveyList);
-
     return (
-        <main className="flex h-full w-full flex-col items-center justify-center">
+        <main className="flex h-full w-full flex-col">
             {error && <Info message={error.message} />}
 
             {loading ? (
-                <p>Loading...</p>
+                <GlobalSpinner />
             ) : (
                 <>
                     {surveyList ? (
-                        <p className="text-2xl font-bold text-white">
-                            Holla Surveys!
-                        </p>
+                        <SurveyList />
                     ) : (
                         <>
-                            <div className="flex max-w-[386px] flex-col items-center gap-[7px]">
+                            <div className="flex max-w-[386px] flex-col items-center justify-center  gap-[7px]">
                                 <Document size="62" color="#AFAAC7" />
 
                                 <div className="flex flex-col items-center gap-6">
