@@ -1,8 +1,8 @@
-interface ErrorProps {
+interface InfoProps {
     message: string;
 }
 
-export const Info = ({ message }: ErrorProps) => {
+export const Info = ({ message }: InfoProps) => {
     return (
         <div>
             <p

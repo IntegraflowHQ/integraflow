@@ -7,11 +7,6 @@ const SETTINGS_TAB = [
         tabName: "Survey experience",
         tabContent: <SurveyExperience />,
     },
-    // {
-    //     tabId: crypto.randomUUID(),
-    //     tabName: "Messages",
-    //     tabContent: <MessagesTabContent />,
-    // },
 ];
 
 export const UpdateSettingsEditor = () => {
