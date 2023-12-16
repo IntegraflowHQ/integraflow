@@ -1,8 +1,7 @@
 import { InMemoryCache, NormalizedCacheObject } from "@apollo/client";
 import { useMemo, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 
-import { useIsMatchingLocation, useUpdateEffect } from "@/hooks";
+import { useUpdateEffect } from "@/hooks";
 
 import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
 import useLogout from "@/modules/auth/hooks/useLogout";
@@ -12,9 +11,6 @@ const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
 
 export const useApolloFactory = () => {
     const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
-
-    const navigate = useNavigate();
-    const isMatchingLocation = useIsMatchingLocation();
 
     const { token, refresh, refreshToken } = useAuthToken();
     const { handleLogout } = useLogout();

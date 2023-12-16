@@ -13,7 +13,7 @@ export default function useRedirect() {
             | User
             | AuthUser,
     ) => {
-        if (!user.organization) {
+        if (!user.organization || !user.project) {
             navigate("/create-workspace");
         } else if (
             (user.organization &&
@@ -25,7 +25,7 @@ export default function useRedirect() {
                 ROUTES.SURVEY_LIST.replace(
                     ":orgSlug",
                     user.organization.slug,
-                ).replace(":projectSlug", user.project.slug),
+                ).replace(":projectSlug", user?.project?.slug),
             );
         } else if (
             user.organization &&

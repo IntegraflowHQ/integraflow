@@ -19,7 +19,7 @@ export default function useDatabase() {
             if (!user || !workspace) return null;
 
             const org = user.organizations?.edges.find(
-                ({ node }) => node.slug === workspace.organization.slug,
+                ({ node }) => node.slug.toLowerCase() === workspace.organization.slug.toLowerCase(),
             )?.node;
             if (!org) return null;
 

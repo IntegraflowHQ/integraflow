@@ -48,3 +48,35 @@ export const PROJECT_UPDATE = gql`
         }
     }
 `;
+
+export const PROJECT_THEME = gql`
+    fragment ProjectThemeFragment on ProjectTheme {
+        id
+        reference
+        name
+        colorScheme
+        settings
+        project {
+            ...ProjectFragment
+        }
+        creator {
+            ...UserFragment
+        }
+        createdAt
+        updatedAt
+    }
+`;
+
+export const PROJECT_THEME_UPDATE = gql`
+    fragment ProjectThemeUpdateFragment on ProjectThemeUpdate {
+        projectTheme {
+            ...ProjectThemeFragment
+        }
+        projectErrors {
+            ...ProjectErrorFragment
+        }
+        errors {
+            ...ProjectErrorFragment
+        }
+    }
+`;

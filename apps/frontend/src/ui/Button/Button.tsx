@@ -33,11 +33,11 @@ const Button = React.forwardRef(
                     "w-full rounded-lg text-base font-medium",
                     textAlign === "left" ? "" : "flex justify-center",
                     size === "full" ? "px-8 py-4" : "p-3",
-                    icon ? "flex  items-center space-x-2" : "",
+                    icon ? "flex items-center gap-2" : "",
                     variant === "primary"
-                        ? "bg-gradient-button text-white hover:bg-gradient-button-hover"
+                        ? "bg-gradient-button text-white transition-all ease-in-out hover:bg-gradient-button-hover"
                         : variant === "secondary"
-                        ? "border border-intg-bg-2 bg-intg-bg-3 text-white hover:bg-gradient-button-hover"
+                        ? "border border-intg-bg-2 bg-intg-bg-3 text-white transition-all ease-in-out hover:bg-gradient-button-hover"
                         : "",
                     className ?? "",
                 )}
