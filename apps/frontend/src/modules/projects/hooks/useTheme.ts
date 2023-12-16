@@ -185,12 +185,19 @@ export const useThemes = () => {
                                         .memberCount ?? 0,
                             },
                         },
-                        createdAt:
-                            workspace?.project.createdAt ??
-                            new Date().toISOString(),
-                        creator: workspace?.project.creator ?? user,
+                        createdAt: new Date().toISOString(),
+                        creator: {
+                            id: user?.id ?? "",
+                            firstName: user?.firstName ?? "",
+                            lastName: user?.lastName ?? "",
+                            email: user?.email ?? "",
+                            isActive: user?.isActive ?? false,
+                            isOnboarded: user?.isOnboarded ?? false,
+                            isStaff: user?.isStaff ?? false,
+                        },
                         updatedAt: new Date().toISOString(),
                     },
+                    errors: [],
                     projectErrors: [],
                 },
             },

@@ -61,6 +61,34 @@ export const SURVEY = gql`
     }
 `;
 
+export const SURVEYS = gql`
+    fragment SurveyListFragment on SurveyCountableConnection {
+        edges {
+            node {
+                id
+                slug
+                name
+                status
+                createdAt
+                updatedAt
+                reference
+                creator {
+                    firstName
+                    lastName
+                    email
+                }
+            }
+        }
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+            endCursor
+            startCursor
+        }
+        totalCount
+    }
+`;
+
 export const SURVEY_ERROR = gql`
     fragment SurveyErrorFragment on SurveyError {
         field
