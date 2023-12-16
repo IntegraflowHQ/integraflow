@@ -205,29 +205,12 @@ export const useSurvey = () => {
                 if (!data?.surveyUpdate?.survey) return;
 
                 cache.modify({
+                    id: cache.identify(survey),
                     fields: {
-                        survey(existingSurveyRefs) {
-                            const newSurveyRef = cache.writeFragment({
-                                data: {
-                                    ...(data?.surveyUpdate?.survey ?? {}),
-                                    createdAt: new Date().toISOString(),
-                                    updatedAt: new Date().toISOString(),
-                                    creator: null,
-                                    reference: null,
-                                    setttings: null,
-                                    project: null,
-                                },
-                                fragment: SURVEY_QUESTION,
-                            });
+                        survey(existingSurvey = {}) {
                             return {
-                                ...existingSurveyRefs,
-                                edges: [
-                                    ...existingSurveyRefs.edges,
-                                    {
-                                        __typename: "SurveyCountableEdge",
-                                        node: newSurveyRef,
-                                    },
-                                ],
+                                ...existingSurvey,
+                                edges: [...existingSurvey.edges],
                             };
                         },
                     },
