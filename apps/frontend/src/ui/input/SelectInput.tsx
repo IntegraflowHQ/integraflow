@@ -55,7 +55,7 @@ export const SelectInput = forwardRef<HTMLDivElement, SelectFieldProps>(
                                     disabled={f === options[0]}
                                     key={`${f.label}-${i}`}
                                     value={f.value}
-                                    className="radix-disabled:opacity-50 relative flex select-none items-center rounded-md px-2 py-2 text-sm 
+                                    className="radix-disabled:opacity-50 relative flex select-none items-center rounded-md px-2 py-2 text-sm
                   font-medium text-intg-text-3 focus:bg-intg-bg-6 focus:outline-none"
                                 >
                                     <Select.ItemText>{f.label}</Select.ItemText>

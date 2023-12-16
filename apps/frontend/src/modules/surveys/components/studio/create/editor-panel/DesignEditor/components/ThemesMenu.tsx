@@ -12,10 +12,7 @@ export const ThemesMenu = () => {
 
             <DropdownMenu.Portal>
                 <DropdownMenu.Content className="-mt-2 mr-16 rounded-md border border-intg-bg-10 bg-intg-bg-9 px-3 py-3">
-                    <DropdownMenu.Item className="cursor-pointer rounded-md px-2 py-2 text-sm font-light text-intg-text-4 transition-all ease-in-out hover:bg-[#272138]">
-                        Duplicate
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item className="cursor-pointer rounded-md px-2 py-2 text-sm font-light text-intg-text-4 transition-all ease-in-out hover:bg-[#272138]">
+                    <DropdownMenu.Item className="cursor-pointer rounded-md px-2 py-2 text-sm font-light text-intg-text-4 transition-all ease-in-out hover:bg-intg-bg-15">
                         Delete
                     </DropdownMenu.Item>
                 </DropdownMenu.Content>
