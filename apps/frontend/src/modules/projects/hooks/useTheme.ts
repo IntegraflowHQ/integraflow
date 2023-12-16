@@ -110,7 +110,7 @@ export const useThemes = () => {
                                 data: {
                                     ...(data?.projectThemeCreate
                                         ?.projectTheme ?? {}),
-                                    settings: "{}",
+                                    setttings: "{}",
                                     project: null,
                                     creator: null,
                                     reference: null,
