@@ -6,7 +6,6 @@ import * as Tabs from "@radix-ui/react-tabs";
 import { X } from "lucide-react";
 import React from "react";
 import { DesignEditorContent } from "./components/EditorContent";
-import { ThemesMenu } from "./components/ThemesMenu";
 
 const THEMES_INFO = [
     {
@@ -112,7 +111,6 @@ export const UpdateDesignEditor = () => {
                     </Tabs.List>
 
                     <div className="mt-2 flex gap-2">
-                        <ThemesMenu />
                         <div
                             className="hover:cursor-pointer"
                             onClick={() => setOpenState(!true)}
@@ -156,6 +154,11 @@ export const UpdateDesignEditor = () => {
             </div>
 
             <div className="mt-4 flex justify-end gap-2">
+                <Button
+                    text="Delete theme"
+                    variant="secondary"
+                    className="w-max px-[12px] py-[12px] font-normal"
+                />
                 <Button
                     onClick={handleCreateTheme}
                     text="Update theme"
