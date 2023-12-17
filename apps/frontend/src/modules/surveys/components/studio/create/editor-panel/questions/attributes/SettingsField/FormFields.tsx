@@ -1,5 +1,5 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { SwitchButton } from "@/ui";
+import { Switch } from "@/ui";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 
 type Props = {
@@ -13,7 +13,7 @@ export const FormFields = ({ question }: Props) => {
                 <>
                     <div>
                         <div className="rounded bg-[#272138] p-3">
-                            <SwitchButton label="Show Disclaimer" />
+                            <Switch label="Show Disclaimer" />
                         </div>
                         <EditorTextInput
                             label={"Disclaimer content"}
@@ -22,7 +22,7 @@ export const FormFields = ({ question }: Props) => {
                     </div>
                     <div>
                         <div className="rounded bg-[#272138] p-3">
-                            <SwitchButton label="Consent checkbox" />
+                            <Switch label="Consent checkbox" />
                         </div>
                         <EditorTextInput
                             label={"Consent Label"}

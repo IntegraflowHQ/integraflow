@@ -1,6 +1,6 @@
 import { addEllipsis, cn } from "@/utils";
 import * as Accordion from "@radix-ui/react-accordion";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { QuestionOptions } from "./attributes/QuestionTypes";
 
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
@@ -11,9 +11,10 @@ import { LucideTrash2 } from "lucide-react";
 import { QuestionPanel } from "./QuestionPanel";
 
 export default function UpdateQuestion() {
-    const { questions, setOpenQuestion, openQuestion } = useSurvey();
+    const { parsedQuestions } = useSurvey();
 
-    const { deleteQuestionMutation } = useQuestion();
+    const { deleteQuestionMutation, openQuestion, setOpenQuestion } =
+        useQuestion();
     const [showDeleteButton, setShowDeleteButton] = useState<
         SurveyQuestion | undefined
     >(undefined);
@@ -21,11 +22,6 @@ export default function UpdateQuestion() {
         SurveyQuestionTypeEnum | undefined
     >();
 
-    const sortedQuestions = useMemo(() => {
-        return [...questions].sort((a, b) => {
-            return a.node.orderNumber - b.node.orderNumber;
-        });
-    }, [questions]);
 
     return (
         <div className="h-full w-full space-y-4 pt-2">
@@ -33,42 +29,45 @@ export default function UpdateQuestion() {
                 <Accordion.Root
                     type="single"
                     collapsible={true}
-                    value={openQuestion}
+                    value={openQuestion?.id}
                     className="space-y-4"
+                    defaultValue={parsedQuestions?.[0]?.id}
                 >
-                    {sortedQuestions?.map((question) => {
+                    {parsedQuestions?.map((question) => {
                         return (
                             <Accordion.Item
-                                onClick={() =>
-                                    setCurrentQuestionType(question.node.type)
-                                }
-                                value={question.node.id}
-                                key={question.node.id}
+                                onClick={() => {
+                                    // setCurrentQuestionType(question.type);
+                                    setOpenQuestion(question);
+                                }}
+                                value={question.id}
+                                key={question.id}
                             >
                                 <Accordion.Header>
                                     <Accordion.Trigger
-                                        onMouseEnter={() => {
-                                            setShowDeleteButton(question.node);
-                                        }}
-                                        onMouseLeave={() => {
-                                            setShowDeleteButton(undefined);
+                                        value={question.id}
+                                        // onMouseEnter={() => {
+                                        //     setShowDeleteButton(question);
+                                        // }}
+                                        // onMouseLeave={() => {
+                                        //     setShowDeleteButton(undefined);
+                                        // }}
+                                        onClick={() => {
+                                            // setOpenQuestion(question);
                                         }}
                                         className={cn(
                                             ` ${
-                                                openQuestion ===
-                                                question.node.id
+                                                openQuestion?.id === question.id
                                                     ? "hidden"
                                                     : "block"
                                             } text-intg-text-7" flex w-full items-center justify-between gap-2 rounded-lg bg-intg-bg-9 p-4`,
                                         )}
                                     >
                                         <div
-                                            className="flex items-center gap-4"
-                                            onClick={() =>
-                                                setOpenQuestion(
-                                                    question.node.id,
-                                                )
-                                            }
+                                            className="flex items-center gap-4 border"
+                                            // onClick={() =>
+                                            //     setOpenQuestion(question)
+                                            // }
                                         >
                                             <div>
                                                 <img
@@ -76,17 +75,16 @@ export default function UpdateQuestion() {
                                                         questionTypes.find(
                                                             (type) =>
                                                                 type.type ===
-                                                                question.node
-                                                                    .type,
+                                                                question.type,
                                                         )?.icon
                                                     }
                                                     alt="icon"
                                                 />
                                             </div>
                                             <div className="text-sm font-bold text-intg-text-9">
-                                                {question.node.orderNumber < 10
-                                                    ? `0${question.node.orderNumber}`
-                                                    : question.node.orderNumber}
+                                                {question.orderNumber < 10
+                                                    ? `0${question.orderNumber}`
+                                                    : question.orderNumber}
                                             </div>
                                             <div className="w-[415px] rounded-lg bg-intg-bg-15 px-[16px] py-4 text-start text-intg-text-1 ">
                                                 {addEllipsis(
@@ -97,7 +95,7 @@ export default function UpdateQuestion() {
                                         </div>
 
                                         {showDeleteButton?.id ===
-                                            question.node.id && (
+                                            question.id && (
                                             <div className="flex gap-6">
                                                 <LucideTrash2
                                                     color="purple"
@@ -105,7 +103,9 @@ export default function UpdateQuestion() {
                                                         deleteQuestionMutation(
                                                             showDeleteButton,
                                                         );
-                                                        setOpenQuestion("");
+                                                        // setOpenQuestion(
+                                                        //     undefined,
+                                                        // );
                                                     }}
                                                 />
                                             </div>
@@ -117,7 +117,7 @@ export default function UpdateQuestion() {
                                         currentQuestionType={
                                             currentQuestionType
                                         }
-                                        question={question.node}
+                                        question={question}
                                     />
                                 </Accordion.Content>
                             </Accordion.Item>

@@ -7,21 +7,14 @@ import { TabHeader } from "./TabHeader";
 import { CTAFields } from "./attributes/EditFields/CTAFields";
 import { FormFieldList } from "./attributes/EditFields/FormFieldList";
 import { OptionsList } from "./attributes/EditFields/OptionsList";
+import { QuestionOption } from "@/types";
 
 type Props = {
     orderNumber?: number;
     question: SurveyQuestion;
 };
-type ParsedOptions = {
-    id: number;
-    orderNumber: number;
-    label: string;
-    comment?: string;
-    required?: boolean;
-    type?: FormFieldType;
-};
 
-const defaultOptions = [
+const defaultOptions: QuestionOption[] = [
     {
         id: 1,
         orderNumber: 1,
@@ -36,7 +29,7 @@ const defaultOptions = [
     },
 ];
 
-const defaultFormOptions = [
+const defaultFormOptions: QuestionOption[] = [
     {
         id: 1,
         orderNumber: 1,
@@ -54,37 +47,34 @@ const defaultFormOptions = [
 ];
 
 export const EditTab = ({ question }: Props) => {
-    const { updateQuestionMutation, currentQuestion } = useQuestion();
+    const { updateQuestionMutation, openQuestion } = useQuestion();
+    console.log(question.options);
 
-    useEffect(() => {
-        if (
-            (currentQuestion?.node.type === SurveyQuestionTypeEnum.Single ||
-                currentQuestion?.node.type ===
-                    SurveyQuestionTypeEnum.Multiple ||
-                currentQuestion?.node.type ===
-                    SurveyQuestionTypeEnum.Dropdown) &&
-            (!currentQuestion.node.options ||
-                JSON.parse(currentQuestion?.node.options).length === 0)
-        ) {
-            updateQuestionMutation({
-                options: JSON.stringify(defaultOptions, null, 2),
-            });
-        }
-        if (
-            currentQuestion?.node.type === SurveyQuestionTypeEnum.Form &&
-            (!currentQuestion.node.options ||
-                JSON.parse(currentQuestion?.node.options).length === 0)
-        ) {
-            updateQuestionMutation({
-                options: JSON.stringify(defaultFormOptions, null, 2),
-            });
-        }
-    }, [currentQuestion]);
-    console.log(currentQuestion?.node.options);
+    // useEffect(() => {
+    //     if (
+    //         (openQuestion?.type === SurveyQuestionTypeEnum.Single ||
+    //             openQuestion?.type === SurveyQuestionTypeEnum.Multiple ||
+    //             openQuestion?.type === SurveyQuestionTypeEnum.Dropdown) &&
+    //         (!openQuestion?.options || openQuestion?.options.length === 0)
+    //     ) {
+    //         updateQuestionMutation({
+    //             options: defaultOptions,
+    //         });
+    //     }
+    //     if (
+    //         openQuestion?.type === SurveyQuestionTypeEnum.Form &&
+    //         (!openQuestion?.options || openQuestion?.options.length === 0)
+    //     ) {
+    //         updateQuestionMutation({
+    //             options: defaultFormOptions,
+    //         });
+    //     }
+    // }, [openQuestion]);
 
     return (
         <div className="space-y-6">
             <TabHeader question={question} />
+
             <CTAFields />
 
             <OptionsList question={question} />

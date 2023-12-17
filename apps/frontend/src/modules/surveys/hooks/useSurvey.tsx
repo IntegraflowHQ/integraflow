@@ -3,26 +3,43 @@ import {
     useSurveyCreateMutation,
 } from "@/generated/graphql";
 import { ROUTES } from "@/routes";
+import { ParsedQuestion } from "@/types";
 import { generateRandomString } from "@/utils";
-import { createSelectors } from "@/utils/selectors";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSurveyStore } from "../states/survey";
 
 export const useSurvey = () => {
     const { orgSlug, projectSlug, surveySlug } = useParams();
-    const navigate = useNavigate();
 
-    const surveyStore = createSelectors(useSurveyStore);
-    const setOpenQuestion = surveyStore.use.setOpenQuestion();
+    const navigate = useNavigate();
     const [createSurveyMutation] = useSurveyCreateMutation();
-    const openQuestion = surveyStore.use.openQuestion();
+
     const [getSurveyQuery, { data: survey, loading }] = useGetSurveyLazyQuery();
 
-    const questions = survey?.survey?.questions?.edges || [];
-    const currentQuestion = questions.find(
-        (question) => question?.node?.id === openQuestion,
-    );
+    const parsedQuestions = useMemo(() => {
+        const questions = survey?.survey?.questions?.edges || [];
+
+        return questions
+            .sort((a, b) => a.node.orderNumber - b.node.orderNumber)
+            .map(({ node: question }) => {
+                let parsedSettings = question.settings ?? {};
+                let parsedOptions = question.options ?? [];
+
+                if (typeof parsedSettings === "string") {
+                    parsedSettings = JSON.parse(parsedSettings);
+                }
+
+                if (typeof parsedOptions === "string") {
+                    parsedOptions = JSON.parse(parsedOptions);
+                }
+
+                return {
+                    ...question,
+                    settings: parsedSettings,
+                    options: parsedOptions,
+                } as ParsedQuestion;
+            });
+    }, [survey]);
 
     useEffect(() => {
         const getSurvey = async () => {
@@ -36,7 +53,7 @@ export const useSurvey = () => {
         getSurvey();
     }, [surveySlug]);
 
-    const createSurvey = async (_template?: string) => {
+    const createSurvey = async () => {
         const surveySlug = `survey-${generateRandomString(10)}`;
         navigate(
             ROUTES.STUDIO.replace(":orgSlug", orgSlug!)
@@ -65,12 +82,10 @@ export const useSurvey = () => {
 
     return {
         createSurvey,
-        questions,
         surveySlug,
-        setOpenQuestion,
-        openQuestion,
-        currentQuestion,
         survey,
         loading,
+        parsedQuestions,
+        getSurveyQuery,
     };
 };

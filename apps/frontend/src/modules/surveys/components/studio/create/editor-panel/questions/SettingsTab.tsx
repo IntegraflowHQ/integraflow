@@ -78,17 +78,7 @@ export const SettingsTab = ({ question }: Props) => {
                     </div>
                 </>
             ) : null}
-            {/* {question.type === SurveyQuestionTypeEnum.Single ||
-            question.type === SurveyQuestionTypeEnum.Multiple ? (
-                <>
-                    <div className="rounded bg-[#272138] p-3">
-                        <SwitchButton label="Randomize answers" />
-                    </div>
-                    <div className="rounded bg-[#272138] p-3">
-                        <SwitchButton label="Randomize except last" />
-                    </div>
-                </>
-            ) : null} */}
+
             {question.type === SurveyQuestionTypeEnum.SmileyScale ? (
                 <>
                     <SelectInput
@@ -132,23 +122,7 @@ export const SettingsTab = ({ question }: Props) => {
                 <div className="rounded bg-[#272138] p-3">
                     <Switch label="Answer required" />
                 </div>
-                {/* 
-            {question.type === SurveyQuestionTypeEnum.Multiple && (
-                <div className="grid grid-cols-3 gap-2">
-                    <div>
-                        <p className="text-sm">Selection limit Range</p>
-                        <SelectInput defaultValue="" options={[]} />
-                    </div>
-                    <div>
-                        <p className="text-sm">Min</p>
-                        <SelectInput defaultValue="" options={[]} />
-                    </div>
-                    <div>
-                        <p className="text-sm">Max</p>
-                        <SelectInput defaultValue="" options={[]} />
-                    </div>
-                </div>
-            )} */}
+
                 {/* Thankyou CTA */}
                 <div className="space-y-6">
                     <div className="flex items-center justify-between gap-4">
@@ -156,9 +130,9 @@ export const SettingsTab = ({ question }: Props) => {
                         <div className="w-[330px]">
                             <ReactSelect
                                 options={CTAThankyouOptions}
-                                onChange={(value) => {
-                                    console.log(value);
-                                }}
+                                // onChange={(value) => {
+                                //     console.log(value);
+                                // }}
                             />
                         </div>
                     </div>

@@ -6,7 +6,7 @@ import { forwardRef } from "react";
 interface SelectFieldProps extends SelectProps {
     title?: string;
     defaultValue?: string;
-    options: { label: string; value: string }[];
+    options: { label: string| number; value: string|number }[];
     onChange?: (value: { target: { name?: string; value: string } }) => void;
     name?: string;
     error?: string;

@@ -1,62 +1,48 @@
 import {
     SurveyQuestion,
     SurveyQuestionCountableEdge,
+    SurveyQuestionCreateInput,
     SurveyQuestionTypeEnum,
     SurveyQuestionUpdateInput,
-    useGetSurveyLazyQuery,
     useSurveyQuestionCreateMutation,
     useSurveyQuestionDeleteMutation,
     useSurveyQuestionUpdateMutation,
 } from "@/generated/graphql";
 import { createSelectors } from "@/utils/selectors";
-import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useScrollToBottom } from "react-scroll-to-bottom";
 import { SURVEY_QUESTION } from "../graphql/fragments/surveyFragment";
 import { useSurveyStore } from "../states/survey";
+import { useSurvey } from "./useSurvey";
 
 export const useQuestion = () => {
     const { surveySlug } = useParams();
     const scrollToBottom = useScrollToBottom();
+    const { survey, parsedQuestions } = useSurvey();
 
     const surveyStore = createSelectors(useSurveyStore);
-    const openQuestion = surveyStore.use.openQuestion();
     const setOpenQuestion = surveyStore.use.setOpenQuestion();
+    const openQuestion = surveyStore.use.openQuestion();
 
-    const [createQuestionMutaton] = useSurveyQuestionCreateMutation({});
+    const surveyId = survey?.survey?.id;
+
+    const [createQuestion] = useSurveyQuestionCreateMutation();
     const [deleteQuestion] = useSurveyQuestionDeleteMutation();
     const [updateQuestion] = useSurveyQuestionUpdateMutation();
 
-    const [getSurveyQuery, { data: survey }] = useGetSurveyLazyQuery();
-
-    const questions = survey?.survey?.questions?.edges || [];
-    const currentQuestion = questions.find(
-        (question) => question?.node?.id === openQuestion,
-    );
-    const surveyId = survey?.survey?.id;
-
-    useEffect(() => {
-        const getSurvey = async () => {
-            if (!surveySlug) return;
-            await getSurveyQuery({
-                variables: {
-                    slug: surveySlug,
-                },
-            });
-        };
-        getSurvey();
-    }, [surveySlug]);
-
-    const createQuestion = async (type: SurveyQuestionTypeEnum) => {
+    const createQuestionMutation = async (
+        input: Partial<SurveyQuestionCreateInput>,
+    ) => {
         const id = crypto.randomUUID();
-        if (!surveyId) return;
-        await createQuestionMutaton({
+        if (input.options) input.options = JSON.stringify([...input.options]);
+        if (input.settings)
+            input.settings = JSON.stringify({ ...input.settings });
+        await createQuestion({
             variables: {
                 input: {
-                    orderNumber: questions.length + 1,
-                    surveyId: surveyId,
-                    id,
-                    type: type,
+                    ...input,
+                    orderNumber: parsedQuestions.length + 1,
+                    surveyId: surveyId ?? "",
                 },
             },
             optimisticResponse: {
@@ -67,24 +53,26 @@ export const useQuestion = () => {
                         __typename: "SurveyQuestion",
                         id: id,
                         createdAt: new Date().toISOString(),
-                        description: "",
-                        label: "",
+                        description:input.description ?? "",
+                        label: input.label ?? "",
                         maxPath: 0,
-                        orderNumber: questions.length + 1,
+                        orderNumber: parsedQuestions.length + 1,
                         reference: id,
-                        type: type,
-                        settings: null,
-                        options: null,
+                        type: input.type!,
+                        settings: input.settings ?? {},
+                        options: input.options ?? [],
                     },
                     surveyErrors: [],
                     errors: [],
                 },
             },
             update: (cache, { data }) => {
-                setOpenQuestion(id);
+                setOpenQuestion(
+                    data?.surveyQuestionCreate
+                        ?.surveyQuestion as SurveyQuestion,
+                );
 
                 if (!data?.surveyQuestionCreate?.surveyQuestion) return;
-                console.log(cache);
                 cache.modify({
                     id: `Survey:${surveyId}`,
                     fields: {
@@ -110,21 +98,23 @@ export const useQuestion = () => {
                 });
             },
             onCompleted: ({ surveyQuestionCreate }) => {
-                const { surveyQuestion } = surveyQuestionCreate ?? {};
-                setOpenQuestion(surveyQuestion?.id as string);
-                scrollToBottom();
+                setOpenQuestion(surveyQuestionCreate?.surveyQuestion);
             },
         });
     };
 
     const updateQuestionMutation = async (input: SurveyQuestionUpdateInput) => {
-        if (!surveyId) return;
+        if (input.options) input.options = JSON.stringify([...input.options]);
+
+        if (input.settings)
+            input.settings = JSON.stringify({ ...input.settings });
 
         await updateQuestion({
             variables: {
-                id: openQuestion,
+                id: openQuestion?.id ?? "",
                 input: {
                     ...input,
+                    orderNumber: openQuestion?.orderNumber,
                 },
             },
             optimisticResponse: {
@@ -133,28 +123,21 @@ export const useQuestion = () => {
                     __typename: "SurveyQuestionUpdate",
                     surveyQuestion: {
                         __typename: "SurveyQuestion",
-                        ...currentQuestion?.node,
-                        id: openQuestion,
+                        ...openQuestion,
+                        id: openQuestion?.id ?? "",
                         createdAt:
-                            currentQuestion?.node?.createdAt ??
-                            new Date().toISOString(),
+                            openQuestion?.createdAt ?? new Date().toISOString(),
                         description:
                             input.description ??
-                            currentQuestion?.node?.description ??
+                            openQuestion?.description ??
                             "",
-                        label:
-                            input.label ?? currentQuestion?.node?.label ?? "",
-                        maxPath: currentQuestion?.node?.maxPath ?? 0,
-                        orderNumber:
-                            input.orderNumber ??
-                            currentQuestion?.node?.orderNumber,
-                        reference: currentQuestion?.node?.reference,
-                        type: currentQuestion?.node
-                            ?.type as SurveyQuestionTypeEnum,
-                        settings:
-                            input.settings ?? currentQuestion?.node?.settings,
-                        options:
-                            input.options ?? currentQuestion?.node?.options,
+                        label: openQuestion?.label ?? "",
+                        maxPath: openQuestion?.maxPath ?? 0,
+                        orderNumber: openQuestion?.orderNumber ?? 0,
+                        reference: openQuestion?.reference,
+                        type: openQuestion?.type as SurveyQuestionTypeEnum,
+                        settings: input.settings ?? openQuestion?.settings,
+                        options: input.options ?? openQuestion?.options,
                     },
                     surveyErrors: [],
                     errors: [],
@@ -172,7 +155,6 @@ export const useQuestion = () => {
     };
 
     const deleteQuestionMutation = async (question: SurveyQuestion) => {
-        console.log(currentQuestion?.node);
         if (!surveyId) return;
         await deleteQuestion({
             variables: {
@@ -185,7 +167,7 @@ export const useQuestion = () => {
                     surveyQuestion: {
                         __typename: "SurveyQuestion",
                         ...question,
-                        ...currentQuestion?.node,
+                        ...openQuestion,
                     },
 
                     surveyErrors: [],
@@ -216,13 +198,11 @@ export const useQuestion = () => {
     };
 
     return {
-        createQuestion,
-        questions,
+        createQuestionMutation,
         surveySlug,
-        setOpenQuestion,
         openQuestion,
+        setOpenQuestion,
         updateQuestionMutation,
-        currentQuestion,
         deleteQuestionMutation,
     };
 };

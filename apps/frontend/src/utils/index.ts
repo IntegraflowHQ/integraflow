@@ -1,3 +1,4 @@
+import { QuestionOption } from "@/types";
 import { DeepOmit } from "@apollo/client/utilities";
 import { toast } from "./toast";
 
@@ -56,4 +57,9 @@ export const generateRandomString = (length: number) => {
         );
     }
     return result;
+};
+
+export const getHighestOrderNumber = (array: QuestionOption[]) => {
+    const orderNumbers = array.map((item) => item.orderNumber);
+    return Math.max(...orderNumbers);
 };

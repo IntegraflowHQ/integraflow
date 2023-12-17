@@ -1,25 +1,16 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { SelectInput } from "@/ui";
+import { getHighestOrderNumber } from "@/utils";
 import { formOptions } from "@/utils/survey";
-import { FormField, FormFieldType } from "@integraflow/web/src/types";
+import { FormField } from "@integraflow/web/src/types";
 import { EditorTextInput } from "../../../components/EditorTextInput";
-import MinusButton from "../Buttons/MinimizeButton";
 import { MoreButton } from "../Buttons/MoreButton";
 import { StarBtn } from "../Buttons/StarBtn";
 import TextButton from "../Buttons/TextButton";
 
 type Props = {
     question: SurveyQuestion;
-};
-
-type ParsedOptions = {
-    id: number;
-    orderNumber: number;
-    label: string;
-    comment?: string;
-    required?: boolean;
-    type?: FormFieldType;
 };
 
 export const FormFieldList = ({ question }: Props) => {
@@ -33,8 +24,8 @@ export const FormFieldList = ({ question }: Props) => {
                             <p className="flex-1 text-sm">Form Type</p>
                             <p className="flex-1 text-sm">Label</p>
                         </div>
-                        {JSON.parse(question.options).map(
-                            (option: FormField) => {
+                        {question.options.map(
+                            (option: FormField, index: number) => {
                                 return (
                                     <div>
                                         <div className="flex items-center justify-between">
@@ -45,41 +36,22 @@ export const FormFieldList = ({ question }: Props) => {
                                                     value={option.type}
                                                     defaultValue={option.type}
                                                     onChange={(value) => {
-                                                        const editedOption =
-                                                            JSON.parse(
-                                                                question.options,
-                                                            ).findIndex(
-                                                                (
-                                                                    item: ParsedOptions,
-                                                                ) =>
-                                                                    item.id ===
-                                                                    option.id,
-                                                            );
                                                         const newOptions =
-                                                            JSON.parse(
-                                                                question.options,
-                                                            );
+                                                            question.options;
+                                                        newOptions[index].type =
+                                                            value;
                                                         newOptions[
-                                                            editedOption
-                                                        ].type =
-                                                            value.target.value;
-                                                        newOptions[
-                                                            editedOption
+                                                            index
                                                         ].label =
                                                             formOptions.find(
-                                                                (item) =>
-                                                                    item.value ===
+                                                                (option) =>
+                                                                    option.value ===
                                                                     value.target
                                                                         .value,
                                                             )?.label;
 
                                                         updateQuestionMutation({
-                                                            options:
-                                                                JSON.stringify(
-                                                                    newOptions,
-                                                                    null,
-                                                                    2,
-                                                                ),
+                                                            options: newOptions,
                                                         });
                                                     }}
                                                 />
@@ -87,68 +59,18 @@ export const FormFieldList = ({ question }: Props) => {
                                                     showCharacterCount={false}
                                                     value={option.label ?? ""}
                                                     onChange={(e) => {
-                                                        const editedOption =
-                                                            JSON.parse(
-                                                                question.options,
-                                                            ).findIndex(
-                                                                (
-                                                                    item: ParsedOptions,
-                                                                ) =>
-                                                                    item.id ===
-                                                                    option.id,
-                                                            );
                                                         const newOptions =
-                                                            JSON.parse(
-                                                                question.options,
-                                                            );
+                                                            question.options;
                                                         newOptions[
-                                                            editedOption
+                                                            index
                                                         ].label =
                                                             e.target.value;
                                                         updateQuestionMutation({
-                                                            options:
-                                                                JSON.stringify(
-                                                                    newOptions,
-                                                                    null,
-                                                                    2,
-                                                                ),
+                                                            options: newOptions,
                                                         });
                                                     }}
                                                 />
                                             </div>
-                                            {JSON.parse(question.options)
-                                                .length < 3 ? null : (
-                                                <MinusButton
-                                                    onclick={() => {
-                                                        const editedOption =
-                                                            JSON.parse(
-                                                                question.options,
-                                                            ).findIndex(
-                                                                (
-                                                                    item: ParsedOptions,
-                                                                ) =>
-                                                                    item.id ===
-                                                                    option.id,
-                                                            );
-                                                        const newOptions =
-                                                            JSON.parse(
-                                                                question.options,
-                                                            );
-                                                        newOptions.splice(
-                                                            editedOption,
-                                                            1,
-                                                        );
-                                                        updateQuestionMutation({
-                                                            options:
-                                                                JSON.stringify(
-                                                                    newOptions,
-                                                                    null,
-                                                                    2,
-                                                                ),
-                                                        });
-                                                    }}
-                                                />
-                                            )}
 
                                             <StarBtn
                                                 color={
@@ -157,32 +79,12 @@ export const FormFieldList = ({ question }: Props) => {
                                                         : "default"
                                                 }
                                                 onClick={() => {
-                                                    const editedOption =
-                                                        JSON.parse(
-                                                            question.options,
-                                                        ).findIndex(
-                                                            (
-                                                                item: ParsedOptions,
-                                                            ) =>
-                                                                item.id ===
-                                                                option.id,
-                                                        );
                                                     const newOptions =
-                                                        JSON.parse(
-                                                            question.options,
-                                                        );
-                                                    newOptions[
-                                                        editedOption
-                                                    ].required =
-                                                        !newOptions[
-                                                            editedOption
-                                                        ].required;
+                                                        question.options;
+                                                    newOptions[index].required =
+                                                        !option.required;
                                                     updateQuestionMutation({
-                                                        options: JSON.stringify(
-                                                            newOptions,
-                                                            null,
-                                                            2,
-                                                        ),
+                                                        options: newOptions,
                                                     });
                                                 }}
                                             />
@@ -194,29 +96,18 @@ export const FormFieldList = ({ question }: Props) => {
                         <TextButton
                             text={"Add next field"}
                             onclick={() => {
-                                const higestOrderNumber = JSON.parse(
-                                    question.options,
-                                ).reduce((prev: number, current: any) => {
-                                    return prev > current.orderNumber
-                                        ? prev
-                                        : current.orderNumber;
-                                }, 0);
+                                const highestOrderNumber =
+                                    getHighestOrderNumber(question.options);
+                                const newOptions = question.options;
+                                newOptions.push({
+                                    id: highestOrderNumber + 1,
+                                    orderNumber: highestOrderNumber + 1,
+                                    label: formOptions[0].label,
+                                    type: formOptions[0].value,
+                                    required: false,
+                                });
                                 updateQuestionMutation({
-                                    options: JSON.stringify(
-                                        [
-                                            ...JSON.parse(question.options),
-                                            {
-                                                id: higestOrderNumber + 1,
-                                                orderNumber:
-                                                    higestOrderNumber + 1,
-                                                label: "",
-                                                type: "",
-                                                required: false,
-                                            },
-                                        ],
-                                        null,
-                                        2,
-                                    ),
+                                    options: newOptions,
                                 });
                             }}
                         />

@@ -1,4 +1,3 @@
-import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { Button, Dialog, DialogContent, DialogTrigger } from "@/ui";
 import { FormField, QuestionOption } from "@integraflow/web/src/types";
 import type { DialogProps } from "@radix-ui/react-dialog";
@@ -12,7 +11,6 @@ interface Props extends DialogProps {
         orderNumber: number;
     }) => void;
     question?: QuestionOption[] | FormField[];
-  
 }
 
 export const AddMultipleQuestions = ({ getValue, question }: Props) => {

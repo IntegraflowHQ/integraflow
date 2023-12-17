@@ -6,49 +6,47 @@ import MinusButton from "../Buttons/MinimizeButton";
 import TextButton from "../Buttons/TextButton";
 
 export const CTAFields = () => {
-    const { updateQuestionMutation, currentQuestion } = useQuestion();
+    const { updateQuestionMutation, openQuestion } = useQuestion();
 
     const [showDescription, setShowDescription] = useState(false);
-    const [titleText, setTitleText] = useState("");
-    const [descriptionText, setDescriptionText] = useState("");
+    const [titleText, setTitleText] = useState(openQuestion?.label);
+    const [descriptionText, setDescriptionText] = useState(
+        openQuestion?.description,
+    );
 
-    useEffect(() => {
-        if (currentQuestion?.node.description) {
-            setShowDescription(true);
-        }
-    }, [showDescription, currentQuestion?.node.description]);
+    console.log(openQuestion?.description);
+
+    // useEffect(() => {
+    //     if (openQuestion?.description) {
+    //         setShowDescription(true);
+    //     }
+    // }, [showDescription, openQuestion?.description]);
 
     return (
         <>
             <div>
                 <EditorTextInput
-                    placeholder="Could you please fill out our quick survey"
+                    placeholder=""
                     onChange={(e) => {
-                        const newTitleText = e.target.value;
-                        setTitleText(newTitleText);
+                        setTitleText(e.target.value);
                         updateQuestionMutation({
-                            label: newTitleText,
+                            label: e.target.value,
                         });
-                        // updateQuestionMutation({
-                        //     label: newTitleText,
-                        //     orderNumber: currentQuestion?.node.orderNumber,
-                        // });
                     }}
-                    value={currentQuestion?.node.label || ""}
-                    characterCount={titleText.split("").length}
+                    value={titleText}
+                    characterCount={titleText?.split("").length}
                 />
                 <div className="mt-4 flex justify-between gap-4">
                     <EditorTextInput
                         label={"Description"}
-                        placeholder="Add description"
+                        placeholder=""
                         className="flex-1"
-                        value={currentQuestion?.node.description || ""}
-                        characterCount={descriptionText.split("").length}
+                        value={descriptionText}
+                        characterCount={descriptionText?.split("").length}
                         onChange={(e) => {
-                            const newDescriptionText = e.target.value;
-                            setDescriptionText(newDescriptionText);
+                            setDescriptionText(e.target.value);
                             updateQuestionMutation({
-                                description: newDescriptionText,
+                                description: e.target.value,
                             });
                         }}
                         classname={cn(
@@ -62,10 +60,11 @@ export const CTAFields = () => {
                     >
                         <MinusButton
                             onclick={() => {
+                                setDescriptionText("");
+                                setShowDescription(false);
                                 updateQuestionMutation({
                                     description: "",
                                 });
-                                setShowDescription(false);
                             }}
                         />
                     </div>

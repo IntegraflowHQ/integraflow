@@ -1,7 +1,7 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { cn } from "@/utils";
-import { FormFieldType, QuestionOption } from "@integraflow/web/src/types";
+import { cn, getHighestOrderNumber } from "@/utils";
+import { FormFieldType } from "@integraflow/web/src/types";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import { AddMultipleQuestions } from "../AddMultipleQuestions";
 import { CommentButton } from "../Buttons/CommentButton";
@@ -13,7 +13,7 @@ type Props = {
     question: SurveyQuestion;
 };
 
-type ParsedOptions = {
+type DefaultOption = {
     id: number;
     orderNumber: number;
     label: string;
@@ -24,6 +24,7 @@ type ParsedOptions = {
 
 export const OptionsList = ({ question }: Props) => {
     const { updateQuestionMutation } = useQuestion();
+
     return (
         <>
             {question.type === SurveyQuestionTypeEnum.Single ||
@@ -34,32 +35,29 @@ export const OptionsList = ({ question }: Props) => {
                         <p>Answer Choices</p>
                         <AddMultipleQuestions
                             getValue={(value) => {
-                                // Check all orderNumber and look for the highest one
-                                const higestOrderNumber = JSON.parse(
-                                    question.options,
-                                ).reduce((prev: number, current: any) => {
-                                    return prev > current.orderNumber
-                                        ? prev
-                                        : current.orderNumber;
-                                }, 0);
-
-                                const jsonData = value.map((label, index) => ({
-                                    id: higestOrderNumber + index + 1,
-                                    orderNumber: higestOrderNumber + index + 1,
-                                    label: label,
-                                    comment: "false",
-                                }));
-
-                                updateQuestionMutation({
-                                    options: JSON.stringify(jsonData, null, 2),
-                                });
+                                // const highestOrderNumber = getHighestOrderNumber(
+                                //     question.options,
+                                // );
+                                // const newOptions = question.options;
+                                // value.forEach((option: string) => {
+                                //     newOptions.push({
+                                //         id: highestOrderNumber + 1,
+                                //         orderNumber: highestOrderNumber + 1,
+                                //         label: option,
+                                //         comment: "false",
+                                //     });
+                                // });
+                                // updateQuestionMutation({
+                                //     options: newOptions,
+                                // });
                             }}
                         />
                     </div>
+
                     {question.options ? (
                         <div className="space-y-4">
-                            {JSON.parse(question.options).map(
-                                (option: QuestionOption) => (
+                            {question.options.map(
+                                (option: DefaultOption, index: number) => (
                                     <div
                                         key={option.id}
                                         className="flex items-center gap-2"
@@ -68,23 +66,12 @@ export const OptionsList = ({ question }: Props) => {
                                         <EditorTextInput
                                             value={option.label || ""}
                                             onChange={(e) => {
-                                                const editedOption = JSON.parse(
-                                                    question.options,
-                                                ).findIndex(
-                                                    (item: ParsedOptions) =>
-                                                        item.id === option.id,
-                                                );
-                                                const newOptions = JSON.parse(
-                                                    question.options,
-                                                );
-                                                newOptions[editedOption].label =
+                                                const newOptions =
+                                                    question.options;
+                                                newOptions[index].label =
                                                     e.target.value;
                                                 updateQuestionMutation({
-                                                    options: JSON.stringify(
-                                                        newOptions,
-                                                        null,
-                                                        2,
-                                                    ),
+                                                    options: newOptions,
                                                 });
                                             }}
                                         />
@@ -100,71 +87,35 @@ export const OptionsList = ({ question }: Props) => {
                                         >
                                             <CommentButton
                                                 color={
-                                                    option.comment === "true"
+                                                    option.comment
                                                         ? "active"
                                                         : "default"
                                                 }
                                                 onClick={() => {
-                                                    const editedOption =
-                                                        JSON.parse(
-                                                            question.options,
-                                                        ).findIndex(
-                                                            (
-                                                                item: ParsedOptions,
-                                                            ) =>
-                                                                item.id ===
-                                                                option.id,
-                                                        );
                                                     const newOptions =
-                                                        JSON.parse(
-                                                            question.options,
-                                                        );
-                                                    newOptions[
-                                                        editedOption
-                                                    ].comment =
-                                                        newOptions[editedOption]
-                                                            .comment === "true"
-                                                            ? "false"
-                                                            : "true";
+                                                        question.options;
+
+                                                    newOptions[index].comment =
+                                                        !option.comment;
+
                                                     updateQuestionMutation({
-                                                        options: JSON.stringify(
-                                                            newOptions,
-                                                            null,
-                                                            2,
-                                                        ),
+                                                        options: newOptions,
                                                     });
                                                 }}
                                             />
 
-                                            {JSON.parse(question.options)
-                                                .length < 3 ? null : (
+                                            {question.options.length <
+                                            3 ? null : (
                                                 <MinusButton
                                                     onclick={() => {
-                                                        const editedOption =
-                                                            JSON.parse(
-                                                                question.options,
-                                                            ).findIndex(
-                                                                (
-                                                                    item: ParsedOptions,
-                                                                ) =>
-                                                                    item.id ===
-                                                                    option.id,
-                                                            );
                                                         const newOptions =
-                                                            JSON.parse(
-                                                                question.options,
-                                                            );
+                                                            question.options;
                                                         newOptions.splice(
-                                                            editedOption,
+                                                            index,
                                                             1,
                                                         );
                                                         updateQuestionMutation({
-                                                            options:
-                                                                JSON.stringify(
-                                                                    newOptions,
-                                                                    null,
-                                                                    2,
-                                                                ),
+                                                            options: newOptions,
                                                         });
                                                     }}
                                                 />
@@ -179,27 +130,18 @@ export const OptionsList = ({ question }: Props) => {
                     <TextButton
                         text={"Add an answer at choice"}
                         onclick={() => {
-                            const higestOrderNumber = JSON.parse(
+                            const highestOrderNumber = getHighestOrderNumber(
                                 question.options,
-                            ).reduce((prev: number, current: any) => {
-                                return prev > current.orderNumber
-                                    ? prev
-                                    : current.orderNumber;
-                            }, 0);
+                            );
+                            const newOptions = question.options;
+                            newOptions.push({
+                                id: highestOrderNumber + 1,
+                                orderNumber: highestOrderNumber + 1,
+                                label: "",
+                                comment: "false",
+                            });
                             updateQuestionMutation({
-                                options: JSON.stringify(
-                                    [
-                                        ...JSON.parse(question.options),
-                                        {
-                                            id: higestOrderNumber + 1,
-                                            orderNumber: higestOrderNumber + 1,
-                                            label: "",
-                                            comment: "false",
-                                        },
-                                    ],
-                                    null,
-                                    2,
-                                ),
+                                options: newOptions,
                             });
                         }}
                     />

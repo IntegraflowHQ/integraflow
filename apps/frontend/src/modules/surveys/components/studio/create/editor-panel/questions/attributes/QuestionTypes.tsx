@@ -21,15 +21,84 @@ export const QuestionOptions = ({
 }: Props) => {
     const [currentView, setCurrentView] = useState<string>("Welcome message");
     const [showQuestionTypes, setShowQuestionTypes] = useState<boolean>(false);
-    const { questions } = useSurvey();
-    const { createQuestion } = useQuestion();
+    const { parsedQuestions } = useSurvey();
+    const { createQuestionMutation } = useQuestion();
     const scrollToBottom = useScrollToBottom();
+    const getQuestionOptions = (type: SurveyQuestionTypeEnum) => {
+        if (
+            type === SurveyQuestionTypeEnum.Single ||
+            type === SurveyQuestionTypeEnum.Multiple ||
+            type === SurveyQuestionTypeEnum.Dropdown
+        ) {
+            return {
+                options: [
+                    {
+                        id: 1,
+                        orderNumber: 1,
+                        label: "Answer 1",
+                        comment: "false",
+                    },
+                    {
+                        id: 2,
+                        orderNumber: 2,
+                        label: "Answer 2",
+                        comment: "false",
+                    },
+                ],
+            };
+        } else if (type === SurveyQuestionTypeEnum.Form) {
+            return {
+                options: [
+                    {
+                        id: 1,
+                        orderNumber: 1,
+                        label: "Answer 1",
+                        comment: "false",
+                        required: false,
+                        type: "text",
+                    },
+                    {
+                        id: 2,
+                        orderNumber: 2,
+                        label: "Answer 2",
+                        comment: "false",
+                        required: false,
+                        type: "text",
+                    },
+                ],
+            };
+        } else if (type === SurveyQuestionTypeEnum.Rating) {
+            return {
+                options: [
+                    {
+                        orderNumber: 1,
+                        label: "1",
+                    },
+                    {
+                        orderNumber: 2,
+                        label: "2",
+                    },
+                    {
+                        orderNumber: 3,
+                        label: "3",
+                    },
+                    {
+                        orderNumber: 4,
+                        label: "4",
+                    },
+                    {
+                        orderNumber: 5,
+                        label: "5",
+                    },
+                ],
+            };
+        }
+    };
 
     const handleCreateQuestion = async (type: SurveyQuestionTypeEnum) => {
         setCurrentQuestionType(type);
-        if (type) {
-            createQuestion(type);
-        }
+        const options = getQuestionOptions(type);
+        createQuestionMutation({ type, options: options?.options });
     };
 
     return (
@@ -44,7 +113,7 @@ export const QuestionOptions = ({
                 >
                     <PlusCircle />
                     <span className="w-max text-base font-normal">
-                        {questions.length > 0
+                        {parsedQuestions.length > 0
                             ? "Add your next question"
                             : "Add your first question"}
                     </span>
