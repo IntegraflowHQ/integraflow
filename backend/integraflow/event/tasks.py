@@ -126,6 +126,14 @@ def _set_is_identified(
     return person
 
 
+def is_valid_datetime(date):
+    try:
+        parser.isoparse(date)
+        return True
+    except ValueError:
+        return False
+
+
 def handle_timestamp(data: dict, now: str, sent_at: Optional[str]) -> datetime:
     if data.get("timestamp"):
         if sent_at:
@@ -184,7 +192,7 @@ def _from_value_get_property_type(value):
     if isinstance(value, Number):
         return PropertyType.Numeric
 
-    if isinstance(value, datetime):
+    if is_valid_datetime(value):
         return PropertyType.Datetime
 
     return PropertyType.String
