@@ -1,6 +1,7 @@
 import * as Accordion from "@radix-ui/react-accordion";
 import { ChevronRight } from "lucide-react";
 import Behavior from "./Behavior";
+import Triggers from "./Triggers";
 
 const sections = [
     {
@@ -11,7 +12,7 @@ const sections = [
     {
         id: crypto.randomUUID(),
         name: "Triggers",
-        content: <div className="text-white">Triggers</div>,
+        content: <Triggers />,
     },
     {
         id: crypto.randomUUID(),
