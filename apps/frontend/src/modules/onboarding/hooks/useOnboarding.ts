@@ -54,10 +54,6 @@ export const useOnboarding = () => {
                         redirect(newUser);
                     }
                 },
-                onError: (err) => {
-                    console.log("an error occured while updating user");
-                    console.error(err);
-                },
             });
         }
     }, [completionRate, user]);

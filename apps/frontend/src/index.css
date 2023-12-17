@@ -39,3 +39,7 @@
     left: 23px;
     top: 10px;
 }
+
+.editor-input__placeholder::placeholder {
+    color: red !important;
+}

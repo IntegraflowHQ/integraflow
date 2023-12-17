@@ -66,3 +66,17 @@ export const PROJECT_THEME = gql`
         updatedAt
     }
 `;
+
+export const PROJECT_THEME_UPDATE = gql`
+    fragment ProjectThemeUpdateFragment on ProjectThemeUpdate {
+        projectTheme {
+            ...ProjectThemeFragment
+        }
+        projectErrors {
+            ...ProjectErrorFragment
+        }
+        errors {
+            ...ProjectErrorFragment
+        }
+    }
+`;

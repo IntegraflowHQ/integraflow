@@ -13,10 +13,25 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /**
+   * The `Date` scalar type represents a Date
+   * value as specified by
+   * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+   */
   Date: any;
+  /**
+   * The `DateTime` scalar type represents a DateTime
+   * value as specified by
+   * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+   */
   DateTime: string;
   JSONString: any;
+  /**
+   * Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
+   * in fields, resolvers and input.
+   */
   UUID: any;
+  /** _Any value scalar as defined by Federation spec. */
   _Any: any;
 };
 
@@ -217,7 +232,7 @@ export type EventError = {
   __typename?: 'EventError';
   /** The error code. */
   code: EventErrorCode;
-  /** Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field. */
+  /** Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field. */
   field?: Maybe<Scalars['String']>;
   /** The error message. */
   message?: Maybe<Scalars['String']>;
@@ -666,7 +681,7 @@ export type OrganizationError = {
   __typename?: 'OrganizationError';
   /** The error code. */
   code: OrganizationErrorCode;
-  /** Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field. */
+  /** Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field. */
   field?: Maybe<Scalars['String']>;
   /** The error message. */
   message?: Maybe<Scalars['String']>;
@@ -933,7 +948,7 @@ export type ProjectError = {
   __typename?: 'ProjectError';
   /** The error code. */
   code: ProjectErrorCode;
-  /** Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field. */
+  /** Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field. */
   field?: Maybe<Scalars['String']>;
   /** The error message. */
   message?: Maybe<Scalars['String']>;
@@ -1572,22 +1587,12 @@ export type SurveyDelete = {
 export type SurveyError = {
   __typename?: 'SurveyError';
   /** The error code. */
-  code: SurveyErrorCode;
-  /** Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field. */
+  code: ProjectErrorCode;
+  /** Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field. */
   field?: Maybe<Scalars['String']>;
   /** The error message. */
   message?: Maybe<Scalars['String']>;
 };
-
-/** An enumeration. */
-export enum SurveyErrorCode {
-  GraphqlError = 'GRAPHQL_ERROR',
-  Inactive = 'INACTIVE',
-  Invalid = 'INVALID',
-  NotFound = 'NOT_FOUND',
-  Required = 'REQUIRED',
-  Unique = 'UNIQUE'
-}
 
 export type SurveyFilterInput = {
   createdAt?: InputMaybe<DateRangeInput>;
@@ -1668,7 +1673,7 @@ export type SurveyQuestionCreateInput = {
   id?: InputMaybe<Scalars['UUID']>;
   /** The label of the question. */
   label?: InputMaybe<Scalars['String']>;
-  /** The options of the question.  */
+  /** The options of the question. */
   options?: InputMaybe<Scalars['JSONString']>;
   /** The settings of the question. */
   orderNumber: Scalars['Int'];
@@ -1727,10 +1732,10 @@ export type SurveyQuestionUpdateInput = {
   description?: InputMaybe<Scalars['String']>;
   /** The label of the question. */
   label?: InputMaybe<Scalars['String']>;
-  /** The options of the question.  */
+  /** The options of the question. */
   options?: InputMaybe<Scalars['JSONString']>;
   /** The settings of the question. */
-  orderNumber?: InputMaybe<Scalars['Int']>;
+  orderNumber: Scalars['Int'];
   /** The settings of the question. */
   settings?: InputMaybe<Scalars['JSONString']>;
   /** The type of the question */
@@ -1884,7 +1889,7 @@ export type UserError = {
   __typename?: 'UserError';
   /** The error code. */
   code: UserErrorCode;
-  /** Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field. */
+  /** Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field. */
   field?: Maybe<Scalars['String']>;
   /** The error message. */
   message?: Maybe<Scalars['String']>;
@@ -2079,6 +2084,8 @@ export type ProjectUpdateFragmentFragment = { __typename?: 'ProjectUpdate', proj
 
 export type ProjectThemeFragmentFragment = { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } };
 
+export type ProjectThemeUpdateFragmentFragment = { __typename?: 'ProjectThemeUpdate', projectTheme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
+
 export type ProjectCreateMutationVariables = Exact<{
   input: ProjectCreateInput;
 }>;
@@ -2086,15 +2093,37 @@ export type ProjectCreateMutationVariables = Exact<{
 
 export type ProjectCreateMutation = { __typename?: 'Mutation', projectCreate?: { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
 
+export type ProjectThemeCreateMutationVariables = Exact<{
+  input: ProjectThemeCreateInput;
+}>;
+
+
+export type ProjectThemeCreateMutation = { __typename?: 'Mutation', projectThemeCreate?: { __typename?: 'ProjectThemeCreate', projectTheme?: { __typename?: 'ProjectTheme', id: string, name: string, colorScheme?: any | null } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+
+export type ProjectThemeUpdateMutationVariables = Exact<{
+  id: Scalars['ID'];
+  input: ProjectThemeUpdateInput;
+}>;
+
+
+export type ProjectThemeUpdateMutation = { __typename?: 'Mutation', projectThemeUpdate?: { __typename?: 'ProjectThemeUpdate', projectTheme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+
+export type ThemesQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type ThemesQuery = { __typename?: 'Query', themes?: { __typename?: 'ProjectThemeCountableConnection', totalCount?: number | null, edges: Array<{ __typename?: 'ProjectThemeCountableEdge', node: { __typename?: 'ProjectTheme', id: string, name: string, colorScheme?: any | null } }> } | null };
+
 export type SurveyQuestionFragmentFragment = { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string };
 
 export type SurveyChannelFragmentFragment = { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string };
 
 export type SurveyFragmentFragment = { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } };
 
-export type SurveyErrorFragmentFragment = { __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode };
+export type SurveyErrorFragmentFragment = { __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode };
 
-export type SurveyCreateFragmentFragment = { __typename?: 'SurveyCreate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null };
+export type SurveyCreateFragmentFragment = { __typename?: 'SurveyCreate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null };
 
 export type SurveyUpdateMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -2102,21 +2131,21 @@ export type SurveyUpdateMutationVariables = Exact<{
 }>;
 
 
-export type SurveyUpdateMutation = { __typename?: 'Mutation', surveyUpdate?: { __typename?: 'SurveyUpdate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null } | null };
+export type SurveyUpdateMutation = { __typename?: 'Mutation', surveyUpdate?: { __typename?: 'SurveyUpdate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null } | null };
 
 export type SurveyQuestionCreateMutationVariables = Exact<{
   input: SurveyQuestionCreateInput;
 }>;
 
 
-export type SurveyQuestionCreateMutation = { __typename?: 'Mutation', surveyQuestionCreate?: { __typename?: 'SurveyQuestionCreate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, surveyQuestion?: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } | null } | null };
+export type SurveyQuestionCreateMutation = { __typename?: 'Mutation', surveyQuestionCreate?: { __typename?: 'SurveyQuestionCreate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, surveyQuestion?: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } | null } | null };
 
 export type SurveyChannelCreateMutationVariables = Exact<{
   input: SurveyChannelCreateInput;
 }>;
 
 
-export type SurveyChannelCreateMutation = { __typename?: 'Mutation', surveyChannelCreate?: { __typename?: 'SurveyChannelCreate', surveyChannel?: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } | null, surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }> } | null };
+export type SurveyChannelCreateMutation = { __typename?: 'Mutation', surveyChannelCreate?: { __typename?: 'SurveyChannelCreate', surveyChannel?: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } | null, surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
 
 export type SurveyChannelUpdateMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -2124,28 +2153,28 @@ export type SurveyChannelUpdateMutationVariables = Exact<{
 }>;
 
 
-export type SurveyChannelUpdateMutation = { __typename?: 'Mutation', surveyChannelUpdate?: { __typename?: 'SurveyChannelUpdate', surveyChannel?: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } | null, surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }> } | null };
+export type SurveyChannelUpdateMutation = { __typename?: 'Mutation', surveyChannelUpdate?: { __typename?: 'SurveyChannelUpdate', surveyChannel?: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } | null, surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
 
 export type SurveyChannelDeleteMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type SurveyChannelDeleteMutation = { __typename?: 'Mutation', surveyChannelDelete?: { __typename?: 'SurveyChannelDelete', surveyChannel?: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } | null, surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }> } | null };
+export type SurveyChannelDeleteMutation = { __typename?: 'Mutation', surveyChannelDelete?: { __typename?: 'SurveyChannelDelete', surveyChannel?: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } | null, surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
 
 export type SurveyCreateMutationVariables = Exact<{
   input: SurveyCreateInput;
 }>;
 
 
-export type SurveyCreateMutation = { __typename?: 'Mutation', surveyCreate?: { __typename?: 'SurveyCreate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null } | null };
+export type SurveyCreateMutation = { __typename?: 'Mutation', surveyCreate?: { __typename?: 'SurveyCreate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null } | null };
 
 export type SurveyQuestionDeleteMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type SurveyQuestionDeleteMutation = { __typename?: 'Mutation', surveyQuestionDelete?: { __typename?: 'SurveyQuestionDelete', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, surveyQuestion?: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } | null } | null };
+export type SurveyQuestionDeleteMutation = { __typename?: 'Mutation', surveyQuestionDelete?: { __typename?: 'SurveyQuestionDelete', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, surveyQuestion?: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } | null } | null };
 
 export type SurveyQuestionUpdateMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -2153,7 +2182,7 @@ export type SurveyQuestionUpdateMutationVariables = Exact<{
 }>;
 
 
-export type SurveyQuestionUpdateMutation = { __typename?: 'Mutation', surveyQuestionUpdate?: { __typename?: 'SurveyQuestionUpdate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, surveyQuestion?: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } | null } | null };
+export type SurveyQuestionUpdateMutation = { __typename?: 'Mutation', surveyQuestionUpdate?: { __typename?: 'SurveyQuestionUpdate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, surveyQuestion?: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } | null } | null };
 
 export type ChannelsQueryVariables = Exact<{
   surveyId: Scalars['ID'];
@@ -2411,13 +2440,6 @@ export const ProjectUpdateFragmentFragmentDoc = gql`
 }
     ${ProjectFragmentFragmentDoc}
 ${ProjectErrorFragmentFragmentDoc}`;
-export const SurveyErrorFragmentFragmentDoc = gql`
-    fragment SurveyErrorFragment on SurveyError {
-  field
-  message
-  code
-}
-    `;
 export const UserFragmentFragmentDoc = gql`
     fragment UserFragment on User {
   id
@@ -2471,6 +2493,27 @@ export const ProjectThemeFragmentFragmentDoc = gql`
 }
     ${ProjectFragmentFragmentDoc}
 ${UserFragmentFragmentDoc}`;
+export const ProjectThemeUpdateFragmentFragmentDoc = gql`
+    fragment ProjectThemeUpdateFragment on ProjectThemeUpdate {
+  projectTheme {
+    ...ProjectThemeFragment
+  }
+  projectErrors {
+    ...ProjectErrorFragment
+  }
+  errors {
+    ...ProjectErrorFragment
+  }
+}
+    ${ProjectThemeFragmentFragmentDoc}
+${ProjectErrorFragmentFragmentDoc}`;
+export const SurveyErrorFragmentFragmentDoc = gql`
+    fragment SurveyErrorFragment on SurveyError {
+  field
+  message
+  code
+}
+    `;
 export const SurveyQuestionFragmentFragmentDoc = gql`
     fragment SurveyQuestionFragment on SurveyQuestion {
   id
@@ -2997,6 +3040,131 @@ export function useProjectCreateMutation(baseOptions?: Apollo.MutationHookOption
 export type ProjectCreateMutationHookResult = ReturnType<typeof useProjectCreateMutation>;
 export type ProjectCreateMutationResult = Apollo.MutationResult<ProjectCreateMutation>;
 export type ProjectCreateMutationOptions = Apollo.BaseMutationOptions<ProjectCreateMutation, ProjectCreateMutationVariables>;
+export const ProjectThemeCreateDocument = gql`
+    mutation ProjectThemeCreate($input: ProjectThemeCreateInput!) {
+  projectThemeCreate(input: $input) {
+    projectTheme {
+      id
+      name
+      colorScheme
+    }
+    projectErrors {
+      ...ProjectErrorFragment
+    }
+  }
+}
+    ${ProjectErrorFragmentFragmentDoc}`;
+export type ProjectThemeCreateMutationFn = Apollo.MutationFunction<ProjectThemeCreateMutation, ProjectThemeCreateMutationVariables>;
+
+/**
+ * __useProjectThemeCreateMutation__
+ *
+ * To run a mutation, you first call `useProjectThemeCreateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useProjectThemeCreateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [projectThemeCreateMutation, { data, loading, error }] = useProjectThemeCreateMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useProjectThemeCreateMutation(baseOptions?: Apollo.MutationHookOptions<ProjectThemeCreateMutation, ProjectThemeCreateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ProjectThemeCreateMutation, ProjectThemeCreateMutationVariables>(ProjectThemeCreateDocument, options);
+      }
+export type ProjectThemeCreateMutationHookResult = ReturnType<typeof useProjectThemeCreateMutation>;
+export type ProjectThemeCreateMutationResult = Apollo.MutationResult<ProjectThemeCreateMutation>;
+export type ProjectThemeCreateMutationOptions = Apollo.BaseMutationOptions<ProjectThemeCreateMutation, ProjectThemeCreateMutationVariables>;
+export const ProjectThemeUpdateDocument = gql`
+    mutation ProjectThemeUpdate($id: ID!, $input: ProjectThemeUpdateInput!) {
+  projectThemeUpdate(id: $id, input: $input) {
+    projectTheme {
+      ...ProjectThemeFragment
+    }
+    projectErrors {
+      ...ProjectErrorFragment
+    }
+    errors {
+      ...ProjectErrorFragment
+    }
+  }
+}
+    ${ProjectThemeFragmentFragmentDoc}
+${ProjectErrorFragmentFragmentDoc}`;
+export type ProjectThemeUpdateMutationFn = Apollo.MutationFunction<ProjectThemeUpdateMutation, ProjectThemeUpdateMutationVariables>;
+
+/**
+ * __useProjectThemeUpdateMutation__
+ *
+ * To run a mutation, you first call `useProjectThemeUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useProjectThemeUpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [projectThemeUpdateMutation, { data, loading, error }] = useProjectThemeUpdateMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useProjectThemeUpdateMutation(baseOptions?: Apollo.MutationHookOptions<ProjectThemeUpdateMutation, ProjectThemeUpdateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ProjectThemeUpdateMutation, ProjectThemeUpdateMutationVariables>(ProjectThemeUpdateDocument, options);
+      }
+export type ProjectThemeUpdateMutationHookResult = ReturnType<typeof useProjectThemeUpdateMutation>;
+export type ProjectThemeUpdateMutationResult = Apollo.MutationResult<ProjectThemeUpdateMutation>;
+export type ProjectThemeUpdateMutationOptions = Apollo.BaseMutationOptions<ProjectThemeUpdateMutation, ProjectThemeUpdateMutationVariables>;
+export const ThemesDocument = gql`
+    query Themes($first: Int) {
+  themes(first: $first) {
+    edges {
+      node {
+        id
+        name
+        colorScheme
+      }
+    }
+    totalCount
+  }
+}
+    `;
+
+/**
+ * __useThemesQuery__
+ *
+ * To run a query within a React component, call `useThemesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useThemesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useThemesQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *   },
+ * });
+ */
+export function useThemesQuery(baseOptions?: Apollo.QueryHookOptions<ThemesQuery, ThemesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ThemesQuery, ThemesQueryVariables>(ThemesDocument, options);
+      }
+export function useThemesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ThemesQuery, ThemesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ThemesQuery, ThemesQueryVariables>(ThemesDocument, options);
+        }
+export type ThemesQueryHookResult = ReturnType<typeof useThemesQuery>;
+export type ThemesLazyQueryHookResult = ReturnType<typeof useThemesLazyQuery>;
+export type ThemesQueryResult = Apollo.QueryResult<ThemesQuery, ThemesQueryVariables>;
 export const SurveyUpdateDocument = gql`
     mutation SurveyUpdate($id: ID!, $input: SurveyUpdateInput!) {
   surveyUpdate(id: $id, input: $input) {

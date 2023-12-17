@@ -32,8 +32,6 @@ export default function EditLink({ link, settings, close }: Props) {
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
         updateChannel(link, {
-            conditions: link.conditions,
-            triggers: link.triggers,
             settings: JSON.stringify(data),
         });
         close();

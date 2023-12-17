@@ -1,4 +1,5 @@
-import { QuestionOption } from "@/types";
+import { SurveyChannel } from "@/generated/graphql";
+import { ParsedChannel, QuestionOption } from "@/types";
 import { DeepOmit } from "@apollo/client/utilities";
 import { toast } from "./toast";
 
@@ -62,4 +63,22 @@ export const generateRandomString = (length: number) => {
 export const getHighestOrderNumber = (array: QuestionOption[]) => {
     const orderNumbers = array.map((item) => item.orderNumber);
     return Math.max(...orderNumbers);
+};
+
+export const toSurveyChannel = (channel: ParsedChannel): SurveyChannel => {
+    return {
+        ...channel,
+        settings: JSON.stringify(channel.settings ?? {}),
+        triggers: JSON.stringify(channel.triggers ?? {}),
+        conditions: JSON.stringify(channel.conditions ?? {}),
+    };
+};
+
+export const fromSurveyChannel = (channel: SurveyChannel): ParsedChannel => {
+    return {
+        ...channel,
+        settings: JSON.parse(channel.settings ?? "{}"),
+        triggers: JSON.parse(channel.triggers ?? "{}"),
+        conditions: JSON.parse(channel.conditions ?? "{}"),
+    };
 };

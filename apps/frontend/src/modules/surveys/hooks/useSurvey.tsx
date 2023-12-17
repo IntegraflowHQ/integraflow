@@ -10,8 +10,8 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export const useSurvey = () => {
     const { orgSlug, projectSlug, surveySlug } = useParams();
-
     const navigate = useNavigate();
+
     const [createSurveyMutation] = useSurveyCreateMutation();
 
     const [getSurveyQuery, { data: survey, loading }] = useGetSurveyLazyQuery();

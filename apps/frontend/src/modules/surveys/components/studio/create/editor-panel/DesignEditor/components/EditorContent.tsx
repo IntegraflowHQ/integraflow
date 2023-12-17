@@ -1,94 +1,178 @@
+import { ProjectTheme } from "@/generated/graphql";
+import { useThemes } from "@/modules/projects/hooks/useTheme";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
+import { Button } from "@/ui";
+import { Info } from "@/ui/Info";
+import { toast } from "@/utils/toast";
 import React from "react";
+import { PresetThemes } from "./PresetThemes";
 import { ThemeCard } from "./ThemeCard";
 
-const PALETTE = ["#FF4A4A", "#FF9551", "#6FEDD6", "#B9FFF8"];
-const THEMES = [
-    {
-        palette: ["#CCA8E9", "#C3BEF0", "#CADEFC", "#DEFCF9"],
-        themeName: "Outer space",
-    },
-    {
-        palette: ["#748DA6", "#9CB4CC", "#D3CEDF", "#F2D7D9"],
-        themeName: "Tropical tone",
-    },
-    {
-        palette: ["#EEF2E6", "#D6CDA4", "#3D8361", "#1C6758"],
-        themeName: "Battle cat",
-    },
-    {
-        palette: ["#BFACE0", "#BFACE0", "#A084CA", "#645CAA"],
-        themeName: "Impressionist blue",
-    },
-    {
-        palette: ["#7A4495", "#B270A2", "#FF8FB1", "#FCE2DB"],
-        themeName: "Vanilla pudding",
-    },
-    {
-        palette: ["#FFEEAF", "#E1FFEE", "#A5F1E9", "#7FBCD2"],
-        themeName: "Azure blue",
-    },
-    {
-        palette: ["#54BAB9", "#9ED2C6", "#E9DAC1", "#F7ECDE"],
-        themeName: "Tint of rose",
-    },
-];
-
 interface ContentProp {
-    onOpen: () => void;
+    onOpen: (theme?: Partial<ProjectTheme>) => void;
 }
 
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
+    const { survey, updateSurvey } = useSurvey();
+
+    const [selectedTheme, setSelectedTheme] =
+        React.useState<Partial<ProjectTheme>>();
+    const { themes, error } = useThemes();
+
+    const colorScheme = React.useMemo(() => {
+        let colorScheme = {};
+
+        try {
+            colorScheme = JSON.parse(selectedTheme?.colorScheme ?? "{}");
+        } catch (error) {
+            colorScheme = selectedTheme?.colorScheme ?? {};
+        }
+
+        return colorScheme;
+    }, [selectedTheme?.colorScheme]);
+
+    const handleSelectedTheme = (theme: Partial<ProjectTheme>) => {
+        setSelectedTheme(theme);
+        updateSurvey({ themeId: selectedTheme?.id }, selectedTheme);
+    };
+
+    if (error) {
+        toast.error(error.message || error.networkError?.message || "");
+    }
+
+    const count = themes?.length ?? 0;
+
+    React.useEffect(() => {
+        const theme = survey?.survey?.theme;
+
+        setSelectedTheme(theme as Partial<ProjectTheme>);
+    }, [survey?.survey?.theme]);
+
     return (
-        <div>
-            <p className="py-4 text-sm font-normal uppercase">Selected Theme</p>
+        <>
+            {count === 0 ? (
+                <Info message="You don't have any theme. Click the button below to create one or choose from our presets" />
+            ) : null}
 
-            <div className="flex w-full gap-5 rounded-md bg-[#272138] px-3 py-2">
-                {/* color palete -- theme */}
-                <div className="flex py-2">
-                    {PALETTE.map((color, index) => {
-                        return (
+            {count === 0 && (
+                <Button
+                    text="new theme"
+                    onClick={() => onOpen()}
+                    variant="secondary"
+                    className="mb-2 mt-4 text-sm font-normal first-letter:capitalize"
+                />
+            )}
+
+            {count !== 0 ? (
+                <>
+                    {selectedTheme ? (
+                        <div>
+                            <p className="py-4 text-sm font-normal uppercase">
+                                selected theme
+                            </p>
                             <div
-                                className={`h-8 w-8 rounded-full border-2 ${
-                                    index !== 0 ? "-ml-3" : ""
-                                }`}
-                                key={index}
-                                style={{ backgroundColor: `${color}` }}
-                            />
-                        );
-                    })}
-                </div>
+                                className={`flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2`}
+                            >
+                                <div className="flex gap-5">
+                                    <div className="flex py-2">
+                                        {Object.keys(colorScheme).map(
+                                            (key: string, index: number) => {
+                                                const color: {
+                                                    [Key: string]: string;
+                                                } = colorScheme;
 
-                <div>
-                    <p className="text-base font-normal leading-6">
-                        Your branded dark theme
-                    </p>
-                    <p className="text-sm font-normal text-intg-text-4">
-                        Fetched theme
-                    </p>
-                </div>
-            </div>
+                                                return (
+                                                    <div
+                                                        className={`h-8 w-8 rounded-full border-2 ${
+                                                            index !== 0
+                                                                ? "-ml-4"
+                                                                : ""
+                                                        }`}
+                                                        key={index}
+                                                        style={{
+                                                            backgroundColor: `${color[key]}`,
+                                                        }}
+                                                    />
+                                                );
+                                            },
+                                        )}
+                                    </div>
 
-            {/* all themes */}
-            <div className="h-full py-6">
-                <p className="py-2 text-sm font-normal capitalize">
-                    all themes
-                </p>
-
-                <button
-                    onClick={onOpen}
-                    className="my-4 h-12 w-full rounded-md border border-intg-bg-2 bg-[#322751] text-base font-normal focus:outline-none"
-                >
-                    New theme
-                </button>
-
-                <div className="flex-col">
-                    {THEMES?.map(
-                        (theme, index: React.Key | number | number) => {
-                            return <ThemeCard themeData={theme} key={index} />;
-                        },
+                                    <div>
+                                        <p className="font-normal leading-6 first-letter:capitalize">
+                                            {selectedTheme?.name}
+                                        </p>
+                                        <p className="font-normal text-intg-text-4">
+                                            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                                            {/* @ts-ignore */}
+                                            {colorScheme["question"]
+                                                ? "Fetched theme"
+                                                : null}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <Info message="You have not selected any theme" />
                     )}
-                </div>
+
+                    <Button
+                        text="new theme"
+                        onClick={() => onOpen()}
+                        variant="secondary"
+                        className="mb-2 mt-4 text-sm font-normal first-letter:capitalize"
+                    />
+
+                    <div
+                        className={`mt-1 py-2 ${
+                            count !== 0 ? "-mt-4 h-fit" : ""
+                        } transition-all delay-100 duration-300 ease-in`}
+                    >
+                        <p className="text-sm font-normal capitalize">
+                            all themes
+                        </p>
+                        <div
+                            className={`flex-col py-1 transition duration-300 ease-in`}
+                        >
+                            {themes?.map(
+                                (
+                                    theme: Partial<ProjectTheme>,
+                                    index: number,
+                                ) => {
+                                    return (
+                                        <div key={index}>
+                                            <ThemeCard
+                                                activeTheme={
+                                                    theme.id ===
+                                                    selectedTheme?.id
+                                                }
+                                                theme={theme}
+                                                onClick={() =>
+                                                    handleSelectedTheme(theme)
+                                                }
+                                                toggleNewThemeModal={() =>
+                                                    onOpen(theme)
+                                                }
+                                            />
+                                        </div>
+                                    );
+                                },
+                            )}
+                        </div>
+                    </div>
+                </>
+            ) : null}
+
+            <div
+                className={`-mt-3 ${
+                    count !== 0 ? "h-[395px] translate-y-[20px]" : ""
+                } transition-all delay-100 duration-300 ease-in`}
+            >
+                {count !== 0 && <hr className="border-1 border-intg-bg-14" />}
+
+                <PresetThemes />
             </div>
-        </div>
+        </>
     );
 };
