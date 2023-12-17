@@ -8,7 +8,7 @@ from integraflow.project.models import Project
 
 
 def resolve_events(info):
-    project = cast(Project, info.context.user.project)
+    project = cast(Project, info.context.project)
 
     return models.Event.objects.using(
         get_database_connection_name(info.context)
@@ -16,7 +16,7 @@ def resolve_events(info):
 
 
 def resolve_event_definitions(info):
-    project = cast(Project, info.context.user.project)
+    project = cast(Project, info.context.project)
 
     return models.EventDefinition.objects.using(
         get_database_connection_name(info.context)
@@ -24,7 +24,7 @@ def resolve_event_definitions(info):
 
 
 def resolve_event_properties(info, event=None):
-    project = cast(Project, info.context.user.project)
+    project = cast(Project, info.context.project)
 
     lookup = Q(project_id=project.pk)
 
@@ -37,7 +37,7 @@ def resolve_event_properties(info, event=None):
 
 
 def resolve_persons(info):
-    project = cast(Project, info.context.user.project)
+    project = cast(Project, info.context.project)
 
     return models.Person.objects.using(
         get_database_connection_name(info.context)
@@ -45,7 +45,7 @@ def resolve_persons(info):
 
 
 def resolve_property_definitions(info, type=None):
-    project = cast(Project, info.context.user.project)
+    project = cast(Project, info.context.project)
 
     lookup = Q(project_id=project.pk)
 

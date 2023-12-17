@@ -131,8 +131,11 @@ class EventCapture(BaseMutation):
     ):
         if not cls.check_permissions(
             info.context,
-            [AuthorizationFilters.AUTHENTICATED_API],
-            require_all_permissions=True
+            [
+                AuthorizationFilters.AUTHENTICATED_API,
+                AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS
+            ],
+            require_all_permissions=False
         ):
             raise PermissionDenied(
                 "API key not provided. You can find your project API key "

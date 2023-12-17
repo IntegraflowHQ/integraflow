@@ -11,7 +11,6 @@ from graphql.error import GraphQLError
 from graphql.error import format_error as format_graphql_error
 from jwt import InvalidTokenError
 
-from integraflow.user.models import User
 from integraflow.app.models import App
 from integraflow.core.exceptions import (
     CircularSubscriptionSyncEvent,
@@ -19,6 +18,7 @@ from integraflow.core.exceptions import (
     ReadOnlyException,
 )
 from integraflow.graphql.core.utils import from_global_id_or_error
+from integraflow.user.models import User
 
 if TYPE_CHECKING:
     from integraflow.graphql.core import IntegraflowContext

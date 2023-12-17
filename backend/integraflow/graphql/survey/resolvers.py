@@ -8,7 +8,7 @@ from integraflow.survey import models
 
 
 def resolve_channels(info, id: str):
-    project = cast(Project, info.context.user.project)
+    project = cast(Project, info.context.project)
 
     _, survey_id = from_global_id_or_error(id)
 
@@ -21,7 +21,7 @@ def resolve_channels(info, id: str):
 
 
 def resolve_questions(info, id: str):
-    project = cast(Project, info.context.user.project)
+    project = cast(Project, info.context.project)
 
     _, survey_id = from_global_id_or_error(id)
 
@@ -34,7 +34,7 @@ def resolve_questions(info, id: str):
 
 
 def resolve_surveys(info):
-    project = cast(Project, info.context.user.project)
+    project = cast(Project, info.context.project)
 
     return models.Survey.objects.using(
         get_database_connection_name(info.context)
@@ -42,7 +42,7 @@ def resolve_surveys(info):
 
 
 def resolve_survey(info, id=None, slug=None):
-    project = cast(Project, info.context.user.project)
+    project = cast(Project, info.context.project)
 
     lookup = None
 

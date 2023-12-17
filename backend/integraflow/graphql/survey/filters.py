@@ -17,6 +17,12 @@ from integraflow.survey.models import Survey
 from .enums import SurveyStatusEnum, SurveyTypeEnum
 
 
+def filter_survey_search(qs, _, value):
+    if value:
+        qs = qs.filter(name__ilike=value)
+    return qs
+
+
 def filter_type(qs, _, value):
     if value in [
         Survey.Type.SURVEY,
@@ -62,6 +68,7 @@ class SurveyFilter(django_filters.FilterSet):
         field_name="id",
         help_text="Filter by ids."
     )
+    search = django_filters.CharFilter(method=filter_survey_search)
     type = EnumFilter(
         input_class=SurveyTypeEnum,
         method=filter_type,
@@ -87,6 +94,7 @@ class SurveyFilter(django_filters.FilterSet):
     class Meta:
         model = Survey
         fields = [
+            "search",
             "type",
             "status",
             "start_date",
