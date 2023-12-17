@@ -88,9 +88,11 @@ export const useSurvey = () => {
             variables: {
                 id: surveyId,
                 input: {
-                    ...input,
                     themeId: input.themeId,
-                    settings: JSON.stringify(input?.settings ?? {}),
+                    name: input.name,
+                    settings:
+                        JSON.stringify(input?.settings) ??
+                        survey?.survey?.settings,
                 },
             },
             optimisticResponse: {

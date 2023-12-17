@@ -32,30 +32,28 @@ export default function Studio() {
 
     const { orgSlug, projectSlug } = params;
 
+    const updateSurveyTitle = React.useCallback(
+        debounce((value: string) => {
+            try {
+                if (value.trim() !== "" && value !== surveyName) {
+                    updateSurvey({ name: value });
+                    toast.success("Survey title updated successfully");
+                }
+            } catch (err) {
+                toast.error(
+                    "Failed to update survey title. Please try again later.",
+                );
+            }
+        }, 1000),
+        [],
+    );
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.target;
         setSurveyTitle(value);
 
         updateSurveyTitle(value);
     };
-
-    const updateSurveyTitle = React.useCallback(
-        debounce((value: string) => {
-            try {
-                if (value.trim() !== "") {
-                    updateSurvey({
-                        name: value,
-                    });
-                }
-                toast.success("Survey title updated successfully");
-            } catch (err) {
-                toast.error(
-                    "Something went wrong while you were trying to update the survey title. Try again later",
-                );
-            }
-        }, 1000),
-        [],
-    );
 
     // using the disableStudioMode state value alone doesn't cut it. We still need to navigate to the survey list page
     const closeStudio = () => {
@@ -69,13 +67,18 @@ export default function Studio() {
     };
 
     React.useEffect(() => {
+        if (surveyName) {
+            setSurveyTitle(surveyName);
+        }
+    }, [survey, surveyName]);
+
+    React.useEffect(() => {
         enableStudioMode();
-        setSurveyTitle(surveyName as string);
 
         return () => {
             disableStudioMode();
         };
-    }, [disableStudioMode, enableStudioMode, survey, surveyName]);
+    }, []);
 
     if (loading) return <GlobalSpinner />;
 

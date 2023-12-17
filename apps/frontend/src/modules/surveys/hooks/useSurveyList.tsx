@@ -18,6 +18,7 @@ export const useSurveyList = () => {
                 Project: workspace?.project.id,
             },
         },
+        // fetchPolicy: "network-only",
     });
 
     const totalCount = surveyList?.surveys?.totalCount;

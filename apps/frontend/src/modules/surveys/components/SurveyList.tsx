@@ -1,3 +1,4 @@
+import { SurveyStatusEnum } from "@/generated/graphql";
 import { ROUTES } from "@/routes";
 import { Dialog, DialogContent, DialogTrigger } from "@/ui";
 import {
@@ -15,12 +16,15 @@ import {
 import { format, formatDistance, subDays } from "date-fns";
 import {
     Archive,
+    CheckCircle,
     ChevronFirst,
     ChevronLast,
     ChevronLeft,
     ChevronRight,
+    PauseCircle,
     PencilLine,
     Radio,
+    RefreshCcw,
 } from "lucide-react";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -37,7 +41,7 @@ interface SurveyListData {
             email: string;
             fullName: string;
         };
-        status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+        status: SurveyStatusEnum;
     }[];
 }
 
@@ -135,20 +139,39 @@ export const SurveyList = ({ surveys }: SurveyListData) => {
                                             <Badge
                                                 className={`${
                                                     survey.status ===
-                                                    "PUBLISHED"
-                                                        ? "border border-green-700 bg-green-300/[.05] text-green-800"
+                                                    SurveyStatusEnum.Active
+                                                        ? "border border-green-700 bg-teal-300/[.05] text-teal-800"
                                                         : survey.status ===
-                                                          "DRAFT"
+                                                          SurveyStatusEnum.Draft
                                                         ? "border border-blue-700 bg-blue-300/[.05] text-blue-800"
+                                                        : survey.status ===
+                                                          SurveyStatusEnum.InProgress
+                                                        ? "border border-teal-700 bg-teal-300/[.05] text-teal-700"
+                                                        : survey.status ===
+                                                          SurveyStatusEnum.Paused
+                                                        ? "border border-gray-700 bg-gray-300/[.05] text-gray-800"
+                                                        : survey.status ===
+                                                          SurveyStatusEnum.Completed
+                                                        ? "border border-purple-700 bg-purple-300/[0.5] text-purple-800"
                                                         : "border border-yellow-700 bg-yellow-300/[.05] text-yellow-800"
                                                 } rounded-2xl`}
                                                 icon={
-                                                    survey.status === "DRAFT"
+                                                    survey.status ===
+                                                    SurveyStatusEnum.Active
+                                                        ? Radio
+                                                        : survey.status ===
+                                                          SurveyStatusEnum.Draft
                                                         ? PencilLine
                                                         : survey.status ===
-                                                          "ARCHIVED"
-                                                        ? Archive
-                                                        : Radio
+                                                          SurveyStatusEnum.Completed
+                                                        ? CheckCircle
+                                                        : survey.status ===
+                                                          SurveyStatusEnum.InProgress
+                                                        ? RefreshCcw
+                                                        : survey.status ===
+                                                          SurveyStatusEnum.Paused
+                                                        ? PauseCircle
+                                                        : Archive
                                                 }
                                             >
                                                 <span className="text-[12px]">
