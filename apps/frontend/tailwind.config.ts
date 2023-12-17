@@ -88,9 +88,7 @@ const config: Config = {
                     "linear-gradient(27deg, #299532 8.33%, #7EE787 91.67%)",
             },
             borderRadius: {
-                tremor: {
-                    DEFAULT: "8px",
-                },
+                "tremor-default": "8px",
             },
         },
     },
