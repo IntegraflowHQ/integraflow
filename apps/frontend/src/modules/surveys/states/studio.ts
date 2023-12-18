@@ -15,9 +15,11 @@ const initialState: StudioState = {
 
 export const useStudioStore = create<StudioState & StudioActions>()((set) => ({
     ...initialState,
+
     enableStudioMode: () =>
         set({
             studioModeIsActive: true,
         }),
+
     disableStudioMode: () => set({ studioModeIsActive: false }),
 }));

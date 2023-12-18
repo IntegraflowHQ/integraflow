@@ -1,6 +1,5 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import {
-    AnswerType,
     FormFieldType,
     LogicBooleanCondition,
     LogicFormCondition,
@@ -35,7 +34,7 @@ export const questionTypes = [
     {
         name: "Single answer selection",
         icon: SingleIcon,
-        type:SurveyQuestionTypeEnum.Single,
+        type: SurveyQuestionTypeEnum.Single,
     },
     {
         name: "Dropdown list",
@@ -50,7 +49,7 @@ export const questionTypes = [
     {
         name: "Text answer",
         icon: TextIcon,
-        type:SurveyQuestionTypeEnum.Text,
+        type: SurveyQuestionTypeEnum.Text,
     },
     {
         name: "Smiley scale",
@@ -80,7 +79,7 @@ export const questionTypes = [
     {
         name: "Birthday",
         icon: BirthdayIcon,
-        type:SurveyQuestionTypeEnum.Date,
+        type: SurveyQuestionTypeEnum.Date,
     },
     {
         name: "Thank you",

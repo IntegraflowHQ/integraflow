@@ -2,12 +2,11 @@ import { HelpCircle, SettingsIcon } from "@/ui/icons";
 import * as Tabs from "@radix-ui/react-tabs";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { Pen } from "lucide-react";
+import UpdateQuestion from "../index.tsx";
 import React from "react";
-import ScrollToBottom from "react-scroll-to-bottom";
-import { UpdateDesignEditor } from "./editor-panel/DesignEditor/index.tsx";
-import { UpdateSettingsEditor } from "./editor-panel/SettingsEditor/index.tsx";
-import UpdateQuestion from "./editor-panel/questions/index.tsx";
-import { Preview } from "./preview-panel/index.tsx";
+import { Preview } from "../preview-panel/index.tsx";
+import { UpdateDesignEditor } from "./DesignEditor";
+import { UpdateSettingsEditor } from "./SettingsEditor";
 
 const tabs = [
     {
@@ -41,13 +40,13 @@ export default function Create() {
                     <Tabs.Trigger
                         value={label}
                         key={index}
-                        className="data-[state=active]:rounded-md data-[state=active]:bg-[#272138]"
+                        className="data-[state=active]:bg-intg-bg-15 data-[state=active]:rounded-md"
                         asChild
                     >
                         <div>
                             <Tooltip.Provider>
                                 <Tooltip.Root key={id}>
-                                    <Tooltip.Trigger className="h-9 rounded px-2 ease-in-out hover:bg-[#272138] hover:transition-all">
+                                    <Tooltip.Trigger className="hover:bg-intg-bg-15 h-9 rounded px-2 ease-in-out hover:transition-all">
                                         {icon}
                                     </Tooltip.Trigger>
 
@@ -65,18 +64,16 @@ export default function Create() {
                 ))}
             </Tabs.List>
 
-            <div className="flex max-h-[calc(100vh-110px)] flex-1 gap-[38px] pl-5 pr-12 pt-6">
-                <ScrollToBottom
-                    mode="top"
-                    scrollViewClassName="scrollbar-hide overflow-y-auto max-h-[calc(100vh-110px)] h-full"
-                    className="max-h-[calc(100vh-110px)] w-[519px] pb-8"
-                >
-                    {tabs.map(({ content, label, id }) => (
-                        <Tabs.Content key={id} value={label}>
-                            {content}
-                        </Tabs.Content>
-                    ))}
-                </ScrollToBottom>
+            <div className="flex flex-1 gap-[38px] pl-5 pr-12 pt-6">
+                {tabs.map(({ content, label, id }) => (
+                    <Tabs.Content
+                        key={id}
+                        value={label}
+                        className="scrollbar-hide w-[519px] overflow-y-auto pb-8"
+                    >
+                        {content}
+                    </Tabs.Content>
+                ))}
                 <div className="min-w-[580px] flex-1 pb-8">
                     <Preview />
                 </div>
