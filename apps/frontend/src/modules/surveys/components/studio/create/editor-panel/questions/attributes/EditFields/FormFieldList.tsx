@@ -1,6 +1,5 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { SelectInput } from "@/ui";
 import { getHighestOrderNumber } from "@/utils";
 import { formOptions } from "@/utils/survey";
 import { FormField } from "@integraflow/web/src/types";
@@ -8,6 +7,7 @@ import { EditorTextInput } from "../../../components/EditorTextInput";
 import { MoreButton } from "../Buttons/MoreButton";
 import { StarBtn } from "../Buttons/StarBtn";
 import TextButton from "../Buttons/TextButton";
+import { ReactSelect } from "../ReactSelect";
 
 type Props = {
     question: SurveyQuestion;
@@ -30,25 +30,20 @@ export const FormFieldList = ({ question }: Props) => {
                                     <div>
                                         <div className="flex items-center justify-between">
                                             <MoreButton />
-                                            <div className="grid flex-1 grid-cols-2 gap-2">
-                                                <SelectInput
+                                            <div className=" grid flex-1 grid-cols-2 items-center gap-2">
+                                                <ReactSelect
                                                     options={formOptions}
-                                                    value={option.type}
-                                                    defaultValue={option.type}
-                                                    onChange={(value) => {
+                                                    defaultValue={
+                                                        question.options[index]
+                                                    }
+                                                    onchange={(value) => {
                                                         const newOptions =
                                                             question.options;
                                                         newOptions[index].type =
-                                                            value;
+                                                            value?.value;
                                                         newOptions[
                                                             index
-                                                        ].label =
-                                                            formOptions.find(
-                                                                (option) =>
-                                                                    option.value ===
-                                                                    value.target
-                                                                        .value,
-                                                            )?.label;
+                                                        ].label = value?.label;
 
                                                         updateQuestionMutation({
                                                             options: newOptions,

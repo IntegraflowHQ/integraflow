@@ -35,7 +35,7 @@ export default function Studio() {
 
     return (
         <Tabs.Root className="h-full w-full" defaultValue={tabs[0].id}>
-            <header className="fixed z-10 flex w-full items-center justify-between border-b border-intg-bg-4 bg-[#090713] py-[22px] pl-10 pr-12">
+            <header className="fixed flex w-full items-center justify-between border-b border-intg-bg-4 bg-[#090713] py-[22px] pl-10 pr-12">
                 <input
                     type="text"
                     name="title"

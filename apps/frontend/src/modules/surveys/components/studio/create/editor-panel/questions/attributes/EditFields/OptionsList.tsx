@@ -24,9 +24,10 @@ type DefaultOption = {
 
 export const OptionsList = ({ question }: Props) => {
     const { updateQuestionMutation } = useQuestion();
+    console.log(question.options)
 
     return (
-        <>
+        <div>
             {question.type === SurveyQuestionTypeEnum.Single ||
             question.type === SurveyQuestionTypeEnum.Multiple ||
             question.type === SurveyQuestionTypeEnum.Dropdown ? (
@@ -34,28 +35,13 @@ export const OptionsList = ({ question }: Props) => {
                     <div className="flex justify-between text-sm">
                         <p>Answer Choices</p>
                         <AddMultipleQuestions
-                            getValue={(value) => {
-                                // const highestOrderNumber = getHighestOrderNumber(
-                                //     question.options,
-                                // );
-                                // const newOptions = question.options;
-                                // value.forEach((option: string) => {
-                                //     newOptions.push({
-                                //         id: highestOrderNumber + 1,
-                                //         orderNumber: highestOrderNumber + 1,
-                                //         label: option,
-                                //         comment: "false",
-                                //     });
-                                // });
-                                // updateQuestionMutation({
-                                //     options: newOptions,
-                                // });
-                            }}
+                          
+                            question={question.options}
                         />
                     </div>
 
                     {question.options ? (
-                        <div className="space-y-4">
+                        <div className="space-y-1">
                             {question.options.map(
                                 (option: DefaultOption, index: number) => (
                                     <div
@@ -138,7 +124,7 @@ export const OptionsList = ({ question }: Props) => {
                                 id: highestOrderNumber + 1,
                                 orderNumber: highestOrderNumber + 1,
                                 label: "",
-                                comment: "false",
+                                comment: false,
                             });
                             updateQuestionMutation({
                                 options: newOptions,
@@ -147,6 +133,6 @@ export const OptionsList = ({ question }: Props) => {
                     />
                 </div>
             ) : null}
-        </>
+        </div>
     );
 };

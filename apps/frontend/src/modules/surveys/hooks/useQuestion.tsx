@@ -53,7 +53,7 @@ export const useQuestion = () => {
                         __typename: "SurveyQuestion",
                         id: id,
                         createdAt: new Date().toISOString(),
-                        description:input.description ?? "",
+                        description: input.description ?? "",
                         label: input.label ?? "",
                         maxPath: 0,
                         orderNumber: parsedQuestions.length + 1,
@@ -97,13 +97,12 @@ export const useQuestion = () => {
                     },
                 });
             },
-            onCompleted: ({ surveyQuestionCreate }) => {
-                setOpenQuestion(surveyQuestionCreate?.surveyQuestion);
-            },
         });
     };
 
-    const updateQuestionMutation = async (input: SurveyQuestionUpdateInput) => {
+    const updateQuestionMutation = async (
+        input: Partial<SurveyQuestionUpdateInput>,
+    ) => {
         if (input.options) input.options = JSON.stringify([...input.options]);
 
         if (input.settings)
@@ -114,7 +113,7 @@ export const useQuestion = () => {
                 id: openQuestion?.id ?? "",
                 input: {
                     ...input,
-                    orderNumber: openQuestion?.orderNumber,
+                    orderNumber: openQuestion?.orderNumber ?? 0,
                 },
             },
             optimisticResponse: {

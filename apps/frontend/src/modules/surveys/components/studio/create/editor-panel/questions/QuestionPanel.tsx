@@ -1,4 +1,6 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
+import { Popover, PopoverContent, PopoverTrigger } from "@/ui/Popover";
 import * as Tabs from "@radix-ui/react-tabs";
 import { MoreHorizontalIcon, XIcon } from "lucide-react";
 import { EditTab } from "./EditTab";
@@ -8,9 +10,10 @@ import { SettingsTab } from "./SettingsTab";
 type Props = {
     question: SurveyQuestion;
     currentQuestionType: SurveyQuestionTypeEnum | undefined;
+    setOpenAccordion: (values: string) => void;
 };
 
-export const QuestionPanel = ({ question }: Props) => {
+export const QuestionPanel = ({ question, setOpenAccordion }: Props) => {
     const tabs = [
         {
             id: 1,
@@ -28,6 +31,8 @@ export const QuestionPanel = ({ question }: Props) => {
             content: <SettingsTab question={question} />,
         },
     ];
+
+    const { deleteQuestionMutation, openQuestion } = useQuestion();
 
     return (
         <Tabs.Root
@@ -48,11 +53,31 @@ export const QuestionPanel = ({ question }: Props) => {
                     ))}
                 </Tabs.List>
                 <div className="flex gap-6">
-                    <MoreHorizontalIcon />
+                    <Popover>
+                        <PopoverTrigger>
+                            <MoreHorizontalIcon />
+                        </PopoverTrigger>
+                        <PopoverContent className=" w-fit border text-intg-text">
+                            <div className="flex flex-col gap-2">
+                                <p className="cursor-pointer text-sm">
+                                    Duplicate
+                                </p>
+                                <p
+                                    className="cursor-pointer text-sm"
+                                    onClick={() =>
+                                        deleteQuestionMutation(
+                                            openQuestion as SurveyQuestion,
+                                        )
+                                    }
+                                >
+                                    Delete
+                                </p>
+                            </div>
+                        </PopoverContent>
+                    </Popover>
                     <XIcon
                         onClick={() => {
-                            console.log("first");
-                            // setOpenQuestion(undefined);
+                            setOpenAccordion("");
                         }}
                     />
                 </div>

@@ -8,6 +8,7 @@ import { PlusCircle } from "lucide-react";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import ScrollToBottom, { useScrollToBottom } from "react-scroll-to-bottom";
 import { surveyTypes } from "../../../../../Templates";
+import { getDefaultValues } from "../../../../../../../../utils/defaultOptions";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
     setCurrentQuestionType: Dispatch<
@@ -24,81 +25,11 @@ export const QuestionOptions = ({
     const { parsedQuestions } = useSurvey();
     const { createQuestionMutation } = useQuestion();
     const scrollToBottom = useScrollToBottom();
-    const getQuestionOptions = (type: SurveyQuestionTypeEnum) => {
-        if (
-            type === SurveyQuestionTypeEnum.Single ||
-            type === SurveyQuestionTypeEnum.Multiple ||
-            type === SurveyQuestionTypeEnum.Dropdown
-        ) {
-            return {
-                options: [
-                    {
-                        id: 1,
-                        orderNumber: 1,
-                        label: "Answer 1",
-                        comment: "false",
-                    },
-                    {
-                        id: 2,
-                        orderNumber: 2,
-                        label: "Answer 2",
-                        comment: "false",
-                    },
-                ],
-            };
-        } else if (type === SurveyQuestionTypeEnum.Form) {
-            return {
-                options: [
-                    {
-                        id: 1,
-                        orderNumber: 1,
-                        label: "Answer 1",
-                        comment: "false",
-                        required: false,
-                        type: "text",
-                    },
-                    {
-                        id: 2,
-                        orderNumber: 2,
-                        label: "Answer 2",
-                        comment: "false",
-                        required: false,
-                        type: "text",
-                    },
-                ],
-            };
-        } else if (type === SurveyQuestionTypeEnum.Rating) {
-            return {
-                options: [
-                    {
-                        orderNumber: 1,
-                        label: "1",
-                    },
-                    {
-                        orderNumber: 2,
-                        label: "2",
-                    },
-                    {
-                        orderNumber: 3,
-                        label: "3",
-                    },
-                    {
-                        orderNumber: 4,
-                        label: "4",
-                    },
-                    {
-                        orderNumber: 5,
-                        label: "5",
-                    },
-                ],
-            };
-        }
-    };
 
     const handleCreateQuestion = async (type: SurveyQuestionTypeEnum) => {
         setCurrentQuestionType(type);
-        const options = getQuestionOptions(type);
-        createQuestionMutation({ type, options: options?.options });
+        const options = getDefaultValues(type);
+        createQuestionMutation({ type, ...options });
     };
 
     return (

@@ -44,9 +44,33 @@ export type QuestionOption = {
     id: number;
     orderNumber: number;
     label: string;
-    comment?: string;
+    comment?: boolean;
     required?: boolean;
     type?: FormFieldType;
+};
+
+export type QuestionSettings = {
+    label?: string;
+    comment?: boolean;
+    type?: FormFieldType;
+    randomize?: boolean;
+    randomizeExceptLast?: boolean;
+    disclaimer?: boolean;
+    disclaimerText?: string;
+    consent?: boolean;
+    consentText?: string;
+    rightText?: string;
+    leftText?: string;
+    count?: number;
+    shape?: "star" | "thumb" | "heart"| "button";
+    positiveText?: string;
+    negativeText?: string;
+    singleLine?: boolean;
+    choice?: {
+        min?: number;
+        max?: number;
+    };
+
 };
 
 export type ParsedQuestion = Omit<
