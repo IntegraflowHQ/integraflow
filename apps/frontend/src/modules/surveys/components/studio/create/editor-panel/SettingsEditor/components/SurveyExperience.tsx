@@ -14,7 +14,7 @@ interface SurveyExperienceProps {
 }
 
 export const SurveyExperience = () => {
-    const { updateSurvey, survey } = useSurvey();
+    const { updateSurvey, survey, error } = useSurvey();
     const surveyId = survey?.survey?.id;
     const surveySettings = survey?.survey?.settings;
 
@@ -26,13 +26,20 @@ export const SurveyExperience = () => {
             submitText: "",
         });
 
-    const updateSurveyPreferences = (
-        updatedPrefernece: SurveyExperienceProps,
+    const updateSurveyPreferences = async (
+        updatedPreferences: SurveyExperienceProps,
     ) => {
-        if (surveyId) {
-            updateSurvey({
-                settings: updatedPrefernece as Partial<SurveyUpdateInput>,
-            });
+        if (surveyId && error === undefined) {
+            try {
+                updateSurvey(surveyId, {
+                    settings: JSON.stringify(
+                        updatedPreferences,
+                    ) as Partial<SurveyUpdateInput>,
+                });
+                toast.success("Survey experience updated successfully");
+            } catch (err) {
+                toast.error("Something went wrong. Try again later");
+            }
         }
     };
 
@@ -45,7 +52,6 @@ export const SurveyExperience = () => {
                         ...surveyExperience,
                         submitText: value,
                     });
-                    toast.success("Survey experience updated successfully");
                 }
             } catch (err) {
                 toast.error("Something went wrong. Try again later");

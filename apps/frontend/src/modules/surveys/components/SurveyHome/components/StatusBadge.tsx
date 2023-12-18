@@ -21,9 +21,9 @@ export const StatusBadge = ({ survey }: { survey: any }) => {
                     : survey.status === SurveyStatusEnum.InProgress
                     ? "border border-teal-700 bg-teal-300/[.05] text-teal-700"
                     : survey.status === SurveyStatusEnum.Paused
-                    ? "border border-gray-700 bg-gray-300/[.05] text-gray-800"
+                    ? "border border-gray-700 bg-slate-300/[.05] text-slate-400"
                     : survey.status === SurveyStatusEnum.Completed
-                    ? "border border-purple-700 bg-purple-300/[0.5] text-purple-800"
+                    ? "border border-purple-700 bg-purple-800/[0.5] text-white"
                     : "border border-yellow-700 bg-yellow-300/[.05] text-yellow-800"
             } rounded-2xl`}
             icon={

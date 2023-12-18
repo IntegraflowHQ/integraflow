@@ -62,7 +62,7 @@ export const PresetThemes = () => {
         const theme = presetThemes[index];
 
         try {
-            createTheme(theme);
+            await createTheme(theme);
         } catch (err) {
             toast.error(error?.message || error?.networkError?.message || "");
         }

@@ -23,7 +23,7 @@ export const useThemes = () => {
     const { workspace } = useWorkspace();
     const [createThemeMutation] = useProjectThemeCreateMutation();
     const [updateThemeMutation] = useProjectThemeUpdateMutation();
-    const { updateSurvey } = useSurvey();
+    const { updateSurvey, survey } = useSurvey();
 
     const {
         data: themes,
@@ -73,7 +73,10 @@ export const useThemes = () => {
                 },
             },
             onCompleted: (data) => {
+                const surveyId = survey?.survey?.id ?? "";
+
                 const themeData = {
+                    id: data.projectThemeCreate?.projectTheme?.id ?? "",
                     name: data.projectThemeCreate?.projectTheme?.name ?? "",
                     colorScheme:
                         data.projectThemeCreate?.projectTheme?.colorScheme ??
@@ -81,10 +84,7 @@ export const useThemes = () => {
                 };
 
                 data.projectThemeCreate?.projectTheme?.id;
-                updateSurvey(
-                    { themeId: data.projectThemeCreate?.projectTheme?.id },
-                    themeData,
-                );
+                updateSurvey(surveyId, { themeId: themeData.id });
             },
             optimisticResponse: {
                 __typename: "Mutation",

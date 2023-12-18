@@ -34,9 +34,10 @@ export default function Studio() {
 
     const updateSurveyTitle = React.useCallback(
         debounce((value: string) => {
+            const surveyId = survey?.survey?.id;
             try {
-                if (value.trim() !== "" && value !== surveyName) {
-                    updateSurvey({ name: value });
+                if (surveyId && value.trim() !== "" && value !== surveyName) {
+                    updateSurvey(surveyId, { name: value });
                     toast.success("Survey title updated successfully");
                 }
             } catch (err) {

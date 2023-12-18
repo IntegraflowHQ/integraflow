@@ -31,7 +31,7 @@ export const DialogContent = forwardRef<HTMLDivElement, Props>(
                                 {title}
                             </DialogPrimitive.Title>
                             <DialogPrimitive.Close aria-label="Close">
-                                <XIcon />
+                                <XIcon className="absolute right-[18px] top-[14px] inline-flex" />
                             </DialogPrimitive.Close>
                         </div>
                         <DialogPrimitive.Description className="text-sm text-intg-text">
@@ -43,7 +43,7 @@ export const DialogContent = forwardRef<HTMLDivElement, Props>(
                     <>
                         <div className="flex justify-end">
                             <DialogPrimitive.Close aria-label="Close">
-                                <XIcon />
+                                <XIcon className="absolute right-[18px] top-[14px] inline-flex" />
                             </DialogPrimitive.Close>
                         </div>
                         <div className="text-center">

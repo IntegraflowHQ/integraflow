@@ -1,15 +1,14 @@
 import {
-    ProjectTheme,
     SurveyQuestionTypeEnum,
-    SurveyStatusEnum,
     SurveyTypeEnum,
     SurveyUpdateInput,
     useGetSurveyQuery,
     useSurveyCreateMutation,
+    useSurveyDeleteMutation,
     useSurveyQuestionCreateMutation,
     useSurveyUpdateMutation,
 } from "@/generated/graphql";
-import useUserState from "@/modules/users/hooks/useUserState";
+import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import { ROUTES } from "@/routes";
 import { generateRandomString } from "@/utils";
 import { createSelectors } from "@/utils/selectors";
@@ -23,7 +22,8 @@ export const useSurvey = () => {
     const { orgSlug, projectSlug, surveySlug } = useParams();
     const scrollToBottom = useScrollToBottom();
     const navigate = useNavigate();
-    const { user } = useUserState();
+    const { workspace } = useWorkspace();
+    // const client = useApolloClient();
 
     const surveyStore = createSelectors(useSurveyStore);
     const openQuestion = surveyStore.use.openQuestion();
@@ -31,7 +31,9 @@ export const useSurvey = () => {
 
     const [createSurveyMutation] = useSurveyCreateMutation();
     const [createQuestionMutaton] = useSurveyQuestionCreateMutation({});
-    const [updateSurveyMutation] = useSurveyUpdateMutation({});
+    const [updateSurveyMutation, { error }] = useSurveyUpdateMutation({});
+    const [deleteSurveyMutation, { loading: deleteLoading }] =
+        useSurveyDeleteMutation();
 
     const {
         data: survey,
@@ -67,6 +69,23 @@ export const useSurvey = () => {
                     slug: surveySlug,
                 },
             },
+            optimisticResponse: {
+                __typename: "Mutation",
+                surveyCreate: {
+                    __typename: "SurveyCreate",
+
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    survey: {
+                        __typename: "Survey",
+                        id: surveyId,
+                        slug: surveySlug,
+                    },
+                    surveyErrors: [],
+                    errors: [],
+                },
+            },
+
             onError: () => {
                 navigate(
                     ROUTES.SURVEY_LIST.replace(":orgSlug", orgSlug!).replace(
@@ -78,58 +97,23 @@ export const useSurvey = () => {
         });
     };
 
-    const updateSurvey = async (
-        input: SurveyUpdateInput,
-        newTheme?: Partial<ProjectTheme>,
-    ) => {
-        if (!surveyId || !user || !survey) return;
-
-        await updateSurveyMutation({
+    const updateSurvey = async (id: string, input: SurveyUpdateInput) => {
+        const response = await updateSurveyMutation({
             variables: {
-                id: surveyId,
-                input: {
-                    themeId: input.themeId,
-                    name: input.name,
-                    settings:
-                        JSON.stringify(input?.settings) ??
-                        survey?.survey?.settings,
-                },
+                id,
+                input,
             },
             optimisticResponse: {
                 __typename: "Mutation",
                 surveyUpdate: {
                     __typename: "SurveyUpdate",
+
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     survey: {
                         __typename: "Survey",
-                        id: surveyId,
-                        name: input.name ?? survey?.survey?.name,
-                        reference: survey?.survey?.reference ?? "",
-                        type:
-                            input.type ??
-                            survey?.survey?.type ??
-                            SurveyTypeEnum.Survey,
-                        status:
-                            input.status ??
-                            survey.survey?.status ??
-                            SurveyStatusEnum.Draft,
-                        slug: input.slug ?? surveySlug ?? "",
-                        questions: survey?.survey?.questions ?? {
-                            __typename: "SurveyQuestionCountableConnection",
-                            edges: [],
-                        },
-                        channels: survey?.survey?.channels ?? {
-                            __typename: "SurveyChannelCountableConnection",
-                            edges: [],
-                        },
-                        createdAt:
-                            survey?.survey?.createdAt ??
-                            new Date().toISOString(),
-                        updatedAt: new Date().toISOString(),
-
-                        creator: survey?.survey?.creator ?? user,
-                        theme: newTheme ?? survey?.survey?.theme ?? null,
-                        settings:
-                            input.settings ?? survey?.survey?.settings ?? null,
+                        id,
+                        ...input,
                     },
                     surveyErrors: [],
                     errors: [],
@@ -139,7 +123,7 @@ export const useSurvey = () => {
                 if (!data?.surveyUpdate?.survey) return;
 
                 cache.modify({
-                    id: cache.identify(survey),
+                    id: cache.identify(data?.surveyUpdate?.survey),
                     fields: {
                         survey(existingSurvey = {}) {
                             return {
@@ -151,6 +135,11 @@ export const useSurvey = () => {
                 });
             },
         });
+
+        return {
+            response,
+            error: response.errors,
+        };
     };
 
     const createQuestion = async (type: SurveyQuestionTypeEnum) => {
@@ -221,16 +210,64 @@ export const useSurvey = () => {
         });
     };
 
+    const deleteSurvey = async (surveyId: string) => {
+        await deleteSurveyMutation({
+            variables: {
+                id: surveyId,
+            },
+            context: {
+                headers: {
+                    Project: workspace?.project.id,
+                },
+            },
+
+            optimisticResponse: {
+                __typename: "Mutation",
+                surveyDelete: {
+                    __typename: "SurveyDelete",
+
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    survey: {
+                        ...survey,
+                        __typename: "Survey",
+                        id: surveyId,
+                        type: survey?.survey?.type ?? SurveyTypeEnum.Survey,
+                    },
+                },
+            },
+
+            update: (cache, { data }) => {
+                if (!data) return;
+
+                cache.modify({
+                    fields: {
+                        surveys(existingSurveys = [], { readField }) {
+                            return existingSurveys.filter(
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                (surveyRef: any) =>
+                                    surveyId !== readField("id", surveyRef),
+                            );
+                        },
+                    },
+                });
+            },
+        });
+    };
+
     return {
+        error,
         createSurvey,
         createQuestion,
         questions,
         surveySlug,
+        deleteLoading,
         setOpenQuestion,
         openQuestion,
         surveyId,
         survey,
-        updateSurvey,
         loading,
+        deleteSurvey,
+        updateSurvey,
     };
 };

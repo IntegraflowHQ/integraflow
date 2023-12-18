@@ -1,6 +1,8 @@
 import { SurveyStatusEnum } from "@/generated/graphql";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ROUTES } from "@/routes";
 import { Dialog, DialogContent, DialogTrigger } from "@/ui";
+import { toast } from "@/utils/toast";
 import * as Popover from "@radix-ui/react-popover";
 import {
     Icon,
@@ -21,6 +23,7 @@ import {
     ClipboardCheck,
     Edit,
     MoreHorizontal,
+    PauseCircle,
     Radio,
     Trash2,
 } from "lucide-react";
@@ -57,7 +60,12 @@ const headers = [
 export const SurveyList = () => {
     const navigate = useNavigate();
     const { orgSlug, projectSlug } = useParams();
+    const { updateSurvey, deleteSurvey, deleteLoading, error } = useSurvey();
+
+    const [selectedSurveyId, setSelectedSurveyId] = React.useState<string>("");
     const [page, setPage] = React.useState<number>(1);
+    const [selectedSurveyName, setSelectedSurveyName] =
+        React.useState<string>("");
 
     const {
         getMoreSurveys,
@@ -66,6 +74,7 @@ export const SurveyList = () => {
         surveysOnPage,
         pageInfo,
     } = useSurveyList();
+
     // const [nameFilter, setNameFilter] = React.useState<string>("");
     const [currentSurveys, setCurrentSurveys] = React.useState<
         SurveyListData["surveys"]
@@ -94,9 +103,58 @@ export const SurveyList = () => {
         );
     };
 
-    // const getSurveyId = (id: string) => {
+    const getSurveyNameOnSelect = (
+        id: string,
+        e: React.MouseEvent<HTMLDivElement>,
+    ) => {
+        e.stopPropagation();
 
-    // }
+        const findSurvey = surveyList?.find((survey) => survey.id === id);
+        const surveyName = findSurvey?.name;
+        setSelectedSurveyName(surveyName ?? "");
+    };
+
+    const getSurveyIdOnPopoverTrigger = (
+        event: React.MouseEvent,
+        id: string,
+    ) => {
+        event.stopPropagation();
+
+        const surveyId = id
+            ? surveyList?.find((survey) => survey.id === id)?.id
+            : "";
+
+        console.log(surveyId);
+
+        setSelectedSurveyId(surveyId ?? "");
+    };
+
+    const handleSurveyDelete = (
+        id: string,
+        event: React.MouseEvent<HTMLButtonElement>,
+    ) => {
+        event.stopPropagation();
+        event.preventDefault();
+
+        try {
+            deleteSurvey(id);
+            toast.success("Survey deleted successfully");
+        } catch (err) {
+            toast.error(error?.message ?? "");
+        }
+    };
+
+    const setSurveyStatus = (status: SurveyStatusEnum) => {
+        if (selectedSurveyId) {
+            try {
+                console.log(status);
+                updateSurvey(selectedSurveyId, { status });
+                toast.success("Survey status updated successfully");
+            } catch (err) {
+                toast.error(error?.message ?? "");
+            }
+        }
+    };
 
     const surveyStartIndex = (page - 1) * surveysOnPage + 1;
     const surveyEndIndex = Math.min(
@@ -155,7 +213,6 @@ export const SurveyList = () => {
                             return (
                                 <TableRow
                                     key={survey.id}
-                                    onClick={() => handleGetSurvey(survey.slug)}
                                     className="border-intg-bg-7 text-center font-light transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-8"
                                 >
                                     <TableCell>{survey.name}</TableCell>
@@ -192,7 +249,10 @@ export const SurveyList = () => {
                                             <Popover.Trigger asChild>
                                                 <button
                                                     onClick={(e) =>
-                                                        e.stopPropagation()
+                                                        getSurveyIdOnPopoverTrigger(
+                                                            e,
+                                                            survey.id,
+                                                        )
                                                     }
                                                     className="w-fit rounded-md px-1 py-1 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 data-[state=a]:bg-intg-bg-1"
                                                 >
@@ -206,14 +266,62 @@ export const SurveyList = () => {
                                                     alignOffset={5}
                                                     className="w-[140px] rounded-md border border-intg-bg-7 bg-intg-bg-8 px-3 py-4 uppercase"
                                                 >
-                                                    <div className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]">
-                                                        <Trash2
-                                                            size="18"
-                                                            color="#AFAAC7"
-                                                        />
-                                                        Delete
-                                                    </div>
-                                                    <div className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]">
+                                                    <Dialog>
+                                                        <DialogTrigger asChild>
+                                                            <div
+                                                                onClick={(
+                                                                    event,
+                                                                ) =>
+                                                                    getSurveyNameOnSelect(
+                                                                        survey.id,
+                                                                        event,
+                                                                    )
+                                                                }
+                                                                className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
+                                                            >
+                                                                <Trash2
+                                                                    size="18"
+                                                                    color="#AFAAC7"
+                                                                />
+                                                                Delete
+                                                            </div>
+                                                        </DialogTrigger>
+
+                                                        <DialogContent
+                                                            alignHeader="left"
+                                                            title={`Delete ${selectedSurveyName}`}
+                                                            description="Are you sure you want to delete this survey?"
+                                                        >
+                                                            <button
+                                                                disabled={
+                                                                    deleteLoading
+                                                                }
+                                                                onClick={(e) =>
+                                                                    handleSurveyDelete(
+                                                                        survey.id,
+                                                                        e,
+                                                                    )
+                                                                }
+                                                                className={`${
+                                                                    deleteLoading
+                                                                        ? "opacity-50"
+                                                                        : ""
+                                                                } mt-[30px] w-full rounded-md bg-red-600 py-3 text-center transition-all duration-300 ease-in hover:cursor-pointer`}
+                                                            >
+                                                                {deleteLoading
+                                                                    ? "Deleting..."
+                                                                    : "Delete"}
+                                                            </button>
+                                                        </DialogContent>
+                                                    </Dialog>
+                                                    <div
+                                                        onClick={() =>
+                                                            setSurveyStatus(
+                                                                SurveyStatusEnum.Archived,
+                                                            )
+                                                        }
+                                                        className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
+                                                    >
                                                         <span>
                                                             <Archive
                                                                 size="18"
@@ -222,21 +330,56 @@ export const SurveyList = () => {
                                                         </span>
                                                         Archive
                                                     </div>
-                                                    <div className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]">
+                                                    <div
+                                                        onClick={() =>
+                                                            handleGetSurvey(
+                                                                survey.slug,
+                                                            )
+                                                        }
+                                                        className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
+                                                    >
                                                         <Edit
                                                             size="18"
                                                             color="#AFAAC7"
                                                         />
                                                         Edit
                                                     </div>
-                                                    <div className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]">
+                                                    <div
+                                                        onClick={() =>
+                                                            setSurveyStatus(
+                                                                SurveyStatusEnum.Paused,
+                                                            )
+                                                        }
+                                                        className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
+                                                    >
+                                                        <PauseCircle
+                                                            size="18"
+                                                            color="#AFAAC7"
+                                                        />
+                                                        pause
+                                                    </div>
+                                                    <div
+                                                        onClick={() =>
+                                                            setSurveyStatus(
+                                                                SurveyStatusEnum.Active,
+                                                            )
+                                                        }
+                                                        className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
+                                                    >
                                                         <Radio
                                                             size="18"
                                                             color="#AFAAC7"
                                                         />
                                                         Publish
                                                     </div>
-                                                    <div className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]">
+                                                    <div
+                                                        onClick={() =>
+                                                            setSurveyStatus(
+                                                                SurveyStatusEnum.Completed,
+                                                            )
+                                                        }
+                                                        className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
+                                                    >
                                                         <ClipboardCheck
                                                             size="18"
                                                             color="#AFAAC7"
