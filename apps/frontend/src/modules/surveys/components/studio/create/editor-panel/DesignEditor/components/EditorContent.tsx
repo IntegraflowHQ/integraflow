@@ -114,7 +114,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                             </div>
                         </div>
                     ) : (
-                        <Info message="You have not selected any theme" />
+                        <Info message="You have not selected any theme for this survey." />
                     )}
 
                     <Button

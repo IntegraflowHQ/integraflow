@@ -7,10 +7,10 @@ import {
     Info,
 } from "@/ui";
 import { Document } from "@/ui/icons";
-import { useSurveyList } from "../hooks/useSurveyList";
-import SurveyCreate from "./SurveyCreate";
-import { SurveyList } from "./SurveyList";
-import CreateSurveyButton from "./partials/CreateSurveyButton";
+import { useSurveyList } from "../../hooks/useSurveyList";
+import SurveyCreate from "../SurveyCreate";
+import CreateSurveyButton from "../partials/CreateSurveyButton";
+import { SurveyList } from "./components/SurveyList";
 
 export default function SurveyHome() {
     const { surveyList, loading, error } = useSurveyList();

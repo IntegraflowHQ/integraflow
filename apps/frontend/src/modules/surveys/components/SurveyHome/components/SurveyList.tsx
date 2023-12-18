@@ -1,8 +1,8 @@
 import { SurveyStatusEnum } from "@/generated/graphql";
 import { ROUTES } from "@/routes";
 import { Dialog, DialogContent, DialogTrigger } from "@/ui";
+import * as Popover from "@radix-ui/react-popover";
 import {
-    Badge,
     Icon,
     Table,
     TableBody,
@@ -16,19 +16,20 @@ import {
 import { format, formatDistanceToNow, parseISO } from "date-fns";
 import {
     Archive,
-    CheckCircle,
     ChevronLeft,
     ChevronRight,
-    PauseCircle,
-    PencilLine,
+    ClipboardCheck,
+    Edit,
+    MoreHorizontal,
     Radio,
-    RefreshCcw,
+    Trash2,
 } from "lucide-react";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSurveyList } from "../hooks/useSurveyList";
-import SurveyCreate from "./SurveyCreate";
-import CreateSurveyButton from "./partials/CreateSurveyButton";
+import { useSurveyList } from "../../../hooks/useSurveyList";
+import SurveyCreate from "../../SurveyCreate";
+import CreateSurveyButton from "../../partials/CreateSurveyButton";
+import { StatusBadge } from "./StatusBadge";
 
 interface SurveyListData {
     surveys: {
@@ -50,6 +51,7 @@ const headers = [
     { id: crypto.randomUUID(), title: "Creator" },
     { id: crypto.randomUUID(), title: "Date Created" },
     { id: crypto.randomUUID(), title: "Responses" },
+    { id: crypto.randomUUID(), title: "" },
 ];
 
 export const SurveyList = () => {
@@ -91,6 +93,10 @@ export const SurveyList = () => {
                 .replace(":surveySlug", slug),
         );
     };
+
+    // const getSurveyId = (id: string) => {
+
+    // }
 
     const surveyStartIndex = (page - 1) * surveysOnPage + 1;
     const surveyEndIndex = Math.min(
@@ -154,48 +160,7 @@ export const SurveyList = () => {
                                 >
                                     <TableCell>{survey.name}</TableCell>
                                     <TableCell>
-                                        <Badge
-                                            className={`${
-                                                survey.status ===
-                                                SurveyStatusEnum.Active
-                                                    ? "border border-green-700 bg-teal-300/[.05] text-teal-800"
-                                                    : survey.status ===
-                                                      SurveyStatusEnum.Draft
-                                                    ? "border border-blue-700 bg-blue-300/[.05] text-blue-800"
-                                                    : survey.status ===
-                                                      SurveyStatusEnum.InProgress
-                                                    ? "border border-teal-700 bg-teal-300/[.05] text-teal-700"
-                                                    : survey.status ===
-                                                      SurveyStatusEnum.Paused
-                                                    ? "border border-gray-700 bg-gray-300/[.05] text-gray-800"
-                                                    : survey.status ===
-                                                      SurveyStatusEnum.Completed
-                                                    ? "border border-purple-700 bg-purple-300/[0.5] text-purple-800"
-                                                    : "border border-yellow-700 bg-yellow-300/[.05] text-yellow-800"
-                                            } rounded-2xl`}
-                                            icon={
-                                                survey.status ===
-                                                SurveyStatusEnum.Active
-                                                    ? Radio
-                                                    : survey.status ===
-                                                      SurveyStatusEnum.Draft
-                                                    ? PencilLine
-                                                    : survey.status ===
-                                                      SurveyStatusEnum.Completed
-                                                    ? CheckCircle
-                                                    : survey.status ===
-                                                      SurveyStatusEnum.InProgress
-                                                    ? RefreshCcw
-                                                    : survey.status ===
-                                                      SurveyStatusEnum.Paused
-                                                    ? PauseCircle
-                                                    : Archive
-                                            }
-                                        >
-                                            <span className="text-[12px]">
-                                                {survey.status}
-                                            </span>
-                                        </Badge>
+                                        <StatusBadge survey={survey} />
                                     </TableCell>
                                     <TableCell>
                                         {survey?.creator?.fullName}
@@ -221,7 +186,67 @@ export const SurveyList = () => {
                                             )}
                                         </span>
                                     </TableCell>
-                                    <TableCell>0</TableCell>
+                                    <TableCell className="px-12">0</TableCell>
+                                    <TableCell className="text-center">
+                                        <Popover.Root>
+                                            <Popover.Trigger asChild>
+                                                <button
+                                                    onClick={(e) =>
+                                                        e.stopPropagation()
+                                                    }
+                                                    className="w-fit rounded-md px-1 py-1 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 data-[state=a]:bg-intg-bg-1"
+                                                >
+                                                    <MoreHorizontal color="#AFAAC7" />
+                                                </button>
+                                            </Popover.Trigger>
+
+                                            <Popover.Portal>
+                                                <Popover.Content
+                                                    align="end"
+                                                    alignOffset={5}
+                                                    className="w-[140px] rounded-md border border-intg-bg-7 bg-intg-bg-8 px-3 py-4 uppercase"
+                                                >
+                                                    <div className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]">
+                                                        <Trash2
+                                                            size="18"
+                                                            color="#AFAAC7"
+                                                        />
+                                                        Delete
+                                                    </div>
+                                                    <div className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]">
+                                                        <span>
+                                                            <Archive
+                                                                size="18"
+                                                                color="#AFAAC7"
+                                                            />
+                                                        </span>
+                                                        Archive
+                                                    </div>
+                                                    <div className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]">
+                                                        <Edit
+                                                            size="18"
+                                                            color="#AFAAC7"
+                                                        />
+                                                        Edit
+                                                    </div>
+                                                    <div className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]">
+                                                        <Radio
+                                                            size="18"
+                                                            color="#AFAAC7"
+                                                        />
+                                                        Publish
+                                                    </div>
+                                                    <div className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]">
+                                                        <ClipboardCheck
+                                                            size="18"
+                                                            color="#AFAAC7"
+                                                        />
+                                                        Complete
+                                                    </div>
+                                                </Popover.Content>
+                                            </Popover.Portal>
+                                        </Popover.Root>
+                                    </TableCell>
                                 </TableRow>
                             );
                         })}
@@ -241,7 +266,7 @@ export const SurveyList = () => {
                                 <Icon
                                     size="md"
                                     icon={ChevronLeft}
-                                    className="font-light text-intg-text-4 hover:cursor-pointer"
+                                    className="font-normal text-intg-text-4 hover:cursor-pointer"
                                 />
                             </button>
                             <button
@@ -256,19 +281,19 @@ export const SurveyList = () => {
                                 <Icon
                                     size="md"
                                     icon={ChevronRight}
-                                    className="font-light text-intg-text-4 hover:cursor-pointer"
+                                    className="font-normal text-intg-text-4 hover:cursor-pointer"
                                 />
                             </button>
                         </TableFooterCell>
                         <TableFooterCell />
                         <TableFooterCell />
                         <TableFooterCell>
-                            <span className="text-sm font-light text-intg-text-4">
+                            <span className="text-sm font-normal text-intg-text-4">
                                 Rows per page: {surveysOnPage}
                             </span>
                         </TableFooterCell>
                         <TableFooterCell>
-                            <span className="text-sm font-light text-intg-text-4">
+                            <span className="text-sm font-normal text-intg-text-4">
                                 {surveyStartIndex} - {surveyEndIndex} of{" "}
                                 {totalSurveys} Surveys
                             </span>
