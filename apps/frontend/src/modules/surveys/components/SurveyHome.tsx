@@ -24,7 +24,7 @@ export default function SurveyHome() {
             ) : (
                 <>
                     {surveyList ? (
-                        <SurveyList surveys={surveyList} />
+                        <SurveyList />
                     ) : (
                         <>
                             <div className="flex max-w-[386px] flex-col items-center justify-center  gap-[7px]">

@@ -2195,6 +2195,11 @@ export type GetSurveyQuery = { __typename?: 'Query', survey?: { __typename?: 'Su
 
 export type GetSurveyListQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<SurveyFilterInput>;
+  sortBy?: InputMaybe<SurveySortingInput>;
 }>;
 
 
@@ -3553,8 +3558,15 @@ export type GetSurveyQueryHookResult = ReturnType<typeof useGetSurveyQuery>;
 export type GetSurveyLazyQueryHookResult = ReturnType<typeof useGetSurveyLazyQuery>;
 export type GetSurveyQueryResult = Apollo.QueryResult<GetSurveyQuery, GetSurveyQueryVariables>;
 export const GetSurveyListDocument = gql`
-    query GetSurveyList($first: Int) {
-  surveys(first: $first) {
+    query GetSurveyList($first: Int, $last: Int, $after: String, $before: String, $filter: SurveyFilterInput, $sortBy: SurveySortingInput) {
+  surveys(
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+    filter: $filter
+    sortBy: $sortBy
+  ) {
     ...SurveyListFragment
   }
 }
@@ -3573,6 +3585,11 @@ export const GetSurveyListDocument = gql`
  * const { data, loading, error } = useGetSurveyListQuery({
  *   variables: {
  *      first: // value for 'first'
+ *      last: // value for 'last'
+ *      after: // value for 'after'
+ *      before: // value for 'before'
+ *      filter: // value for 'filter'
+ *      sortBy: // value for 'sortBy'
  *   },
  * });
  */

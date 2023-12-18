@@ -45,7 +45,7 @@ export default function Studio() {
                 );
             }
         }, 1000),
-        [],
+        [survey],
     );
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
