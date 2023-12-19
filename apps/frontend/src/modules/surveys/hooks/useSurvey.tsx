@@ -12,6 +12,7 @@ import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import { ROUTES } from "@/routes";
 import { generateRandomString } from "@/utils";
 import { createSelectors } from "@/utils/selectors";
+import { Reference } from "@apollo/client";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useScrollToBottom } from "react-scroll-to-bottom";
@@ -244,8 +245,7 @@ export const useSurvey = () => {
                     fields: {
                         surveys(existingSurveys = [], { readField }) {
                             return existingSurveys.filter(
-                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                (surveyRef: any) =>
+                                (surveyRef: Reference) =>
                                     surveyId !== readField("id", surveyRef),
                             );
                         },

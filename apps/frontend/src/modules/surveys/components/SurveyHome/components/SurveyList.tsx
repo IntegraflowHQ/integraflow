@@ -50,8 +50,8 @@ interface SurveyListData {
 
 const headers = [
     { id: crypto.randomUUID(), title: "Name" },
-    { id: crypto.randomUUID(), title: "Status" },
     { id: crypto.randomUUID(), title: "Creator" },
+    { id: crypto.randomUUID(), title: "Status" },
     { id: crypto.randomUUID(), title: "Date Created" },
     { id: crypto.randomUUID(), title: "Responses" },
     { id: crypto.randomUUID(), title: "" },
@@ -217,14 +217,14 @@ export const SurveyList = () => {
                                 >
                                     <TableCell>{survey.name}</TableCell>
                                     <TableCell>
-                                        <StatusBadge survey={survey} />
-                                    </TableCell>
-                                    <TableCell>
                                         {survey?.creator?.fullName}
                                         <br />
                                         <span className="text-[12px] text-intg-text-4">
                                             {survey?.creator.email}
                                         </span>
+                                    </TableCell>
+                                    <TableCell>
+                                        <StatusBadge survey={survey} />
                                     </TableCell>
                                     <TableCell>
                                         <span className="first-letter:capitalize">

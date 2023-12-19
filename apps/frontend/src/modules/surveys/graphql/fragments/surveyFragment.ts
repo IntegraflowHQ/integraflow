@@ -133,19 +133,3 @@ export const SURVEY_UPDATE_INPUT = gql`
         themeId: ID
     }
 `;
-
-export const SURVEY_UPDATE = gql`
-    mutation SurveyUpdate($id: ID!, $input: SurveyUpdateInput!) {
-        surveyUpdate(id: $id, input: $input) {
-            surveyErrors {
-                ...SurveyErrorFragment
-            }
-            errors {
-                ...SurveyErrorFragment
-            }
-            survey {
-                ...SurveyFragment
-            }
-        }
-    }
-`;

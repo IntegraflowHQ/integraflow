@@ -2,12 +2,14 @@ import {
     ProjectTheme,
     ThemesQuery,
     useProjectThemeCreateMutation,
+    useProjectThemeDeleteMutation,
     useProjectThemeUpdateMutation,
     useThemesQuery,
 } from "@/generated/graphql";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import useUserState from "@/modules/users/hooks/useUserState";
 import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
+import { Reference } from "@apollo/client";
 import { PROJECT_THEME } from "../graphql/fragments/projectFragments";
 
 export type ColorScheme = {
@@ -23,12 +25,14 @@ export const useThemes = () => {
     const { workspace } = useWorkspace();
     const [createThemeMutation] = useProjectThemeCreateMutation();
     const [updateThemeMutation] = useProjectThemeUpdateMutation();
-    const { updateSurvey, survey } = useSurvey();
+    const { updateSurvey } = useSurvey();
+    const [deleteThemeMutation] = useProjectThemeDeleteMutation();
 
     const {
         data: themes,
         loading,
         error,
+        refetch,
     } = useThemesQuery({
         variables: { first: 20 },
         notifyOnNetworkStatusChange: true,
@@ -58,7 +62,7 @@ export const useThemes = () => {
         });
     };
 
-    const createTheme = async (theme: Partial<ProjectTheme>) => {
+    const createTheme = async (id: string, theme: Partial<ProjectTheme>) => {
         await createThemeMutation({
             variables: {
                 input: {
@@ -73,8 +77,6 @@ export const useThemes = () => {
                 },
             },
             onCompleted: (data) => {
-                const surveyId = survey?.survey?.id ?? "";
-
                 const themeData = {
                     id: data.projectThemeCreate?.projectTheme?.id ?? "",
                     name: data.projectThemeCreate?.projectTheme?.name ?? "",
@@ -84,8 +86,9 @@ export const useThemes = () => {
                 };
 
                 data.projectThemeCreate?.projectTheme?.id;
-                updateSurvey(surveyId, { themeId: themeData.id });
+                updateSurvey(id, { themeId: themeData.id });
             },
+
             optimisticResponse: {
                 __typename: "Mutation",
                 projectThemeCreate: {
@@ -99,6 +102,7 @@ export const useThemes = () => {
                     projectErrors: [],
                 },
             },
+
             // caching the mutation based on the available themes
             update: (cache, { data }) => {
                 if (!data?.projectThemeCreate?.projectTheme) return;
@@ -204,11 +208,74 @@ export const useThemes = () => {
         });
     };
 
+    const deleteTheme = async (surveyId: string, themeId: string) => {
+        await deleteThemeMutation({
+            variables: {
+                id: themeId,
+            },
+            context: {
+                headers: {
+                    Project: workspace?.project.id,
+                },
+            },
+            notifyOnNetworkStatusChange: true,
+
+            onCompleted: () => {
+                updateSurvey(surveyId, { themeId: undefined });
+            },
+
+            optimisticResponse: {
+                __typename: "Mutation",
+                projectThemeDelete: {
+                    __typename: "ProjectThemeDelete",
+
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    projectTheme: {
+                        __typename: "ProjectTheme",
+                        id: themeId,
+                    },
+                    errors: [],
+                    projectErrors: [],
+                },
+            },
+
+            update: (cache, { data }) => {
+                console.log(
+                    "data from useThemes",
+                    data?.projectThemeDelete?.projectTheme,
+                );
+
+                if (!data?.projectThemeDelete?.projectTheme) return;
+
+                cache.modify({
+                    fields: {
+                        themes(existingThemeRefs, { readField }) {
+                            return {
+                                ...existingThemeRefs,
+                                edges: existingThemeRefs.edges.filter(
+                                    (themeRef: Reference) => {
+                                        return (
+                                            themeId !==
+                                            readField("id", themeRef)
+                                        );
+                                    },
+                                ),
+                            };
+                        },
+                    },
+                });
+            },
+        });
+    };
+
     return {
         error,
+        refetch,
         loading,
         createTheme,
         updateTheme,
+        deleteTheme,
         themes: transformThemes(JSON.parse(JSON.stringify(themes ?? {}))),
     };
 };

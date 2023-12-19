@@ -1,5 +1,6 @@
 import { ProjectTheme } from "@/generated/graphql";
 import { useThemes } from "@/modules/projects/hooks/useTheme";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { Button, ColorPicker } from "@/ui";
 import { toast } from "@/utils/toast";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -20,22 +21,41 @@ const THEMES_INFO = [
 ];
 
 export const UpdateDesignEditor = () => {
+    const { survey } = useSurvey();
     const [newThemeOpenState, setOpenState] = React.useState<boolean>(false);
     const [theme, setTheme] = React.useState<Partial<ProjectTheme>>();
 
-    const { createTheme, updateTheme } = useThemes();
+    const { createTheme, updateTheme, refetch, deleteTheme } = useThemes();
 
     const handleCreateTheme = () => {
-        if (theme?.name && theme.colorScheme) {
+        const surveyId = survey?.survey?.id;
+
+        if (theme?.name && theme.colorScheme && surveyId) {
             if (theme.id) {
                 updateTheme(theme);
                 toast.success("Theme updated successfully");
                 setOpenState(!newThemeOpenState);
             } else {
-                createTheme(theme);
+                createTheme(surveyId ?? "", {
+                    name: theme.name,
+                    colorScheme: theme.colorScheme,
+                });
                 toast.success("Theme created successfully");
                 setOpenState(!newThemeOpenState);
             }
+        } else {
+            toast.error("Please fill all the fields");
+        }
+    };
+
+    const handleDeleteTheme = () => {
+        const surveyId = survey?.survey?.id;
+
+        if (theme?.id && surveyId) {
+            deleteTheme(surveyId, theme.id);
+            toast.success("Theme deleted successfully");
+            refetch();
+            setOpenState(!newThemeOpenState);
         } else {
             toast.error("Please fill all the fields");
         }
@@ -157,6 +177,7 @@ export const UpdateDesignEditor = () => {
                 <Button
                     text="Delete theme"
                     variant="secondary"
+                    onClick={() => handleDeleteTheme()}
                     className="w-max px-[12px] py-[12px] font-normal"
                 />
                 <Button
