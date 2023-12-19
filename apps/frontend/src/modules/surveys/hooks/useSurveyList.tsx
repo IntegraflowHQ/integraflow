@@ -37,19 +37,26 @@ export const useSurveyList = () => {
     const totalCount = surveyList?.surveys?.totalCount;
     const pageInfo = surveyList?.surveys?.pageInfo;
 
-    const transformedSurveyList = surveyList?.surveys?.edges?.map((edge) => {
-        return {
-            id: edge?.node?.id,
-            slug: edge?.node?.slug,
-            status: edge?.node?.status,
-            createdAt: edge?.node?.createdAt,
-            name: edge?.node?.name ? edge?.node?.name : "Untitled survey",
-            creator: {
-                email: edge?.node?.creator.email,
-                fullName: `${edge?.node?.creator.firstName} ${edge?.node?.creator.lastName}`,
-            },
-        };
-    });
+    const transformedSurveyList = surveyList?.surveys?.edges
+        ?.map((edge) => {
+            return {
+                id: edge?.node?.id,
+                slug: edge?.node?.slug,
+                status: edge?.node?.status,
+                createdAt: edge?.node?.createdAt,
+                name: edge?.node?.name ? edge?.node?.name : "Untitled survey",
+                creator: {
+                    email: edge?.node?.creator.email,
+                    fullName: `${edge?.node?.creator.firstName} ${edge?.node?.creator.lastName}`,
+                },
+            };
+        })
+        .sort((a, b) => {
+            const firstDate = new Date(a.createdAt);
+            const secondDate = new Date(b.createdAt);
+
+            return secondDate.getTime() - firstDate.getTime();
+        });
 
     const getMoreSurveys = (direction: string) => {
         let paginationVariables = {};
