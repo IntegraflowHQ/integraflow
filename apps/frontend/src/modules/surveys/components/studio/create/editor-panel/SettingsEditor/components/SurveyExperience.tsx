@@ -77,12 +77,7 @@ export const SurveyExperience = () => {
                 [name]: value,
             };
 
-            try {
-                updateSurveyPreferences(updatedState);
-                toast.success("Survey experience updated successfully");
-            } catch (err) {
-                toast.error("Something went wrong. Try again later");
-            }
+            updateSurveyPreferences(updatedState);
 
             return updatedState;
         });

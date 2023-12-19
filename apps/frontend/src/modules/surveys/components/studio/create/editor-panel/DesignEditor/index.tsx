@@ -36,10 +36,13 @@ export const UpdateDesignEditor = () => {
                 toast.success("Theme updated successfully");
                 setOpenState(!newThemeOpenState);
             } else {
-                createTheme(surveyId ?? "", {
-                    name: theme.name,
-                    colorScheme: theme.colorScheme,
-                });
+                createTheme(
+                    {
+                        name: theme.name,
+                        colorScheme: theme.colorScheme,
+                    },
+                    surveyId ?? "",
+                );
                 toast.success("Theme created successfully");
                 setOpenState(!newThemeOpenState);
             }
@@ -53,8 +56,9 @@ export const UpdateDesignEditor = () => {
 
         if (theme?.id && surveyId) {
             deleteTheme(surveyId, theme.id);
-            toast.success("Theme deleted successfully");
             refetch();
+
+            toast.success("Theme deleted successfully");
             setOpenState(!newThemeOpenState);
         } else {
             toast.error("Please fill all the fields");
@@ -177,7 +181,7 @@ export const UpdateDesignEditor = () => {
                 <Button
                     text="Delete theme"
                     variant="secondary"
-                    onClick={() => handleDeleteTheme()}
+                    onClick={handleDeleteTheme}
                     className="w-max px-[12px] py-[12px] font-normal"
                 />
                 <Button

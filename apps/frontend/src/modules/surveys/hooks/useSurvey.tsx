@@ -87,6 +87,32 @@ export const useSurvey = () => {
                 },
             },
 
+            update: (cache, { data }) => {
+                if (!data?.surveyCreate?.survey) return;
+
+                cache.modify({
+                    fields: {
+                        surveys(existingSurveys = []) {
+                            const newSurveyRef = cache.writeFragment({
+                                data: data.surveyCreate?.survey,
+                                fragment: SURVEY_QUESTION,
+                            });
+
+                            return {
+                                __typename: "SurveyCountableConnection",
+                                edges: [
+                                    ...existingSurveys.edges,
+                                    {
+                                        __typename: "SurveyCountableEdge",
+                                        node: newSurveyRef,
+                                    },
+                                ],
+                            };
+                        },
+                    },
+                });
+            },
+
             onError: () => {
                 navigate(
                     ROUTES.SURVEY_LIST.replace(":orgSlug", orgSlug!).replace(

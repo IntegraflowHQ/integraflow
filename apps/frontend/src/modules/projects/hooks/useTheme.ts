@@ -7,7 +7,6 @@ import {
     useThemesQuery,
 } from "@/generated/graphql";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import useUserState from "@/modules/users/hooks/useUserState";
 import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import { Reference } from "@apollo/client";
 import { PROJECT_THEME } from "../graphql/fragments/projectFragments";
@@ -21,7 +20,6 @@ export type ColorScheme = {
 };
 
 export const useThemes = () => {
-    const { user } = useUserState();
     const { workspace } = useWorkspace();
     const [createThemeMutation] = useProjectThemeCreateMutation();
     const [updateThemeMutation] = useProjectThemeUpdateMutation();
@@ -62,7 +60,11 @@ export const useThemes = () => {
         });
     };
 
-    const createTheme = async (id: string, theme: Partial<ProjectTheme>) => {
+    // make id optional for preset themes
+    const createTheme = async (
+        theme: Partial<ProjectTheme>,
+        surveyId: string,
+    ) => {
         await createThemeMutation({
             variables: {
                 input: {
@@ -70,12 +72,14 @@ export const useThemes = () => {
                     colorScheme: JSON.stringify(theme.colorScheme ?? {}),
                 },
             },
+
             notifyOnNetworkStatusChange: true,
             context: {
                 headers: {
                     Project: workspace?.project.id,
                 },
             },
+
             onCompleted: (data) => {
                 const themeData = {
                     id: data.projectThemeCreate?.projectTheme?.id ?? "",
@@ -85,8 +89,7 @@ export const useThemes = () => {
                         "",
                 };
 
-                data.projectThemeCreate?.projectTheme?.id;
-                updateSurvey(id, { themeId: themeData.id });
+                updateSurvey(surveyId ?? "", { themeId: themeData.id });
             },
 
             optimisticResponse: {
@@ -103,7 +106,6 @@ export const useThemes = () => {
                 },
             },
 
-            // caching the mutation based on the available themes
             update: (cache, { data }) => {
                 if (!data?.projectThemeCreate?.projectTheme) return;
 
@@ -166,44 +168,34 @@ export const useThemes = () => {
                 __typename: "Mutation",
                 projectThemeUpdate: {
                     __typename: "ProjectThemeUpdate",
+
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     projectTheme: {
                         __typename: "ProjectTheme",
                         id: theme.id,
                         name: theme.name ?? "",
                         colorScheme: JSON.stringify(theme.colorScheme ?? {}),
-                        settings: [],
-                        project: {
-                            id: workspace?.project.id ?? "",
-                            name: workspace?.project.name ?? "",
-                            slug: workspace?.project.slug ?? "",
-                            hasCompletedOnboardingFor: [],
-                            timezone: workspace?.project.timezone ?? "",
-                            organization: {
-                                id: workspace?.project.organization.id ?? "",
-                                slug:
-                                    workspace?.project.organization.slug ?? "",
-                                name:
-                                    workspace?.project.organization.name ?? "",
-                                memberCount:
-                                    workspace?.project.organization
-                                        .memberCount ?? 0,
-                            },
-                        },
-                        createdAt: new Date().toISOString(),
-                        creator: {
-                            id: user?.id ?? "",
-                            firstName: user?.firstName ?? "",
-                            lastName: user?.lastName ?? "",
-                            email: user?.email ?? "",
-                            isActive: user?.isActive ?? false,
-                            isOnboarded: user?.isOnboarded ?? false,
-                            isStaff: user?.isStaff ?? false,
-                        },
-                        updatedAt: new Date().toISOString(),
                     },
                     errors: [],
                     projectErrors: [],
                 },
+            },
+
+            update: (cache, { data }) => {
+                if (!data?.projectThemeUpdate?.projectTheme) return;
+
+                cache.modify({
+                    id: cache.identify(data?.projectThemeUpdate?.projectTheme),
+                    fields: {
+                        themes(existingTheme = {}) {
+                            return {
+                                ...existingTheme,
+                                edges: [...existingTheme.edges],
+                            };
+                        },
+                    },
+                });
             },
         });
     };
@@ -232,8 +224,9 @@ export const useThemes = () => {
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     projectTheme: {
-                        __typename: "ProjectTheme",
+                        ...themes,
                         id: themeId,
+                        __typename: "ProjectTheme",
                     },
                     errors: [],
                     projectErrors: [],
@@ -241,27 +234,16 @@ export const useThemes = () => {
             },
 
             update: (cache, { data }) => {
-                console.log(
-                    "data from useThemes",
-                    data?.projectThemeDelete?.projectTheme,
-                );
-
-                if (!data?.projectThemeDelete?.projectTheme) return;
+                if (!data) return;
 
                 cache.modify({
                     fields: {
-                        themes(existingThemeRefs, { readField }) {
-                            return {
-                                ...existingThemeRefs,
-                                edges: existingThemeRefs.edges.filter(
-                                    (themeRef: Reference) => {
-                                        return (
-                                            themeId !==
-                                            readField("id", themeRef)
-                                        );
-                                    },
-                                ),
-                            };
+                        themes(existingThemes = [], { readField }) {
+                            return existingThemes.filter(
+                                (themeRef: Reference) => {
+                                    themeId !== readField("id", themeRef);
+                                },
+                            );
                         },
                     },
                 });
