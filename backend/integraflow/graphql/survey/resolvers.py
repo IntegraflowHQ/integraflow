@@ -46,6 +46,8 @@ def resolve_survey(info, id=None, slug=None):
 
     lookup = None
 
+    print("SLUG", id, slug, project.pk)
+
     if id:
         _, survey_id = from_global_id_or_error(id)
         lookup = Q(id=survey_id)

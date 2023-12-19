@@ -1,18 +1,18 @@
 import {
-    ProjectTheme,
     SurveyQuestionTypeEnum,
-    SurveyStatusEnum,
     SurveyTypeEnum,
     SurveyUpdateInput,
     useGetSurveyQuery,
     useSurveyCreateMutation,
+    useSurveyDeleteMutation,
     useSurveyQuestionCreateMutation,
     useSurveyUpdateMutation,
 } from "@/generated/graphql";
-import useUserState from "@/modules/users/hooks/useUserState";
+import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import { ROUTES } from "@/routes";
 import { generateRandomString } from "@/utils";
 import { createSelectors } from "@/utils/selectors";
+import { Reference } from "@apollo/client";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useScrollToBottom } from "react-scroll-to-bottom";
@@ -23,7 +23,8 @@ export const useSurvey = () => {
     const { orgSlug, projectSlug, surveySlug } = useParams();
     const scrollToBottom = useScrollToBottom();
     const navigate = useNavigate();
-    const { user } = useUserState();
+    const { workspace } = useWorkspace();
+    // const client = useApolloClient();
 
     const surveyStore = createSelectors(useSurveyStore);
     const openQuestion = surveyStore.use.openQuestion();
@@ -31,7 +32,9 @@ export const useSurvey = () => {
 
     const [createSurveyMutation] = useSurveyCreateMutation();
     const [createQuestionMutaton] = useSurveyQuestionCreateMutation({});
-    const [updateSurveyMutation] = useSurveyUpdateMutation({});
+    const [updateSurveyMutation, { error }] = useSurveyUpdateMutation({});
+    const [deleteSurveyMutation, { loading: deleteLoading }] =
+        useSurveyDeleteMutation();
 
     const {
         data: survey,
@@ -67,6 +70,49 @@ export const useSurvey = () => {
                     slug: surveySlug,
                 },
             },
+            optimisticResponse: {
+                __typename: "Mutation",
+                surveyCreate: {
+                    __typename: "SurveyCreate",
+
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    survey: {
+                        __typename: "Survey",
+                        id: surveyId,
+                        slug: surveySlug,
+                    },
+                    surveyErrors: [],
+                    errors: [],
+                },
+            },
+
+            update: (cache, { data }) => {
+                if (!data?.surveyCreate?.survey) return;
+
+                cache.modify({
+                    fields: {
+                        surveys(existingSurveys = []) {
+                            const newSurveyRef = cache.writeFragment({
+                                data: data.surveyCreate?.survey,
+                                fragment: SURVEY_QUESTION,
+                            });
+
+                            return {
+                                __typename: "SurveyCountableConnection",
+                                edges: [
+                                    ...existingSurveys.edges,
+                                    {
+                                        __typename: "SurveyCountableEdge",
+                                        node: newSurveyRef,
+                                    },
+                                ],
+                            };
+                        },
+                    },
+                });
+            },
+
             onError: () => {
                 navigate(
                     ROUTES.SURVEY_LIST.replace(":orgSlug", orgSlug!).replace(
@@ -76,6 +122,51 @@ export const useSurvey = () => {
                 );
             },
         });
+    };
+
+    const updateSurvey = async (id: string, input: SurveyUpdateInput) => {
+        const response = await updateSurveyMutation({
+            variables: {
+                id,
+                input,
+            },
+            optimisticResponse: {
+                __typename: "Mutation",
+                surveyUpdate: {
+                    __typename: "SurveyUpdate",
+
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    survey: {
+                        __typename: "Survey",
+                        id,
+                        ...input,
+                    },
+                    surveyErrors: [],
+                    errors: [],
+                },
+            },
+            update: (cache, { data }) => {
+                if (!data?.surveyUpdate?.survey) return;
+
+                cache.modify({
+                    id: cache.identify(data?.surveyUpdate?.survey),
+                    fields: {
+                        survey(existingSurvey = {}) {
+                            return {
+                                ...existingSurvey,
+                                edges: [...existingSurvey.edges],
+                            };
+                        },
+                    },
+                });
+            },
+        });
+
+        return {
+            response,
+            error: response.errors,
+        };
     };
 
     const createQuestion = async (type: SurveyQuestionTypeEnum) => {
@@ -146,72 +237,43 @@ export const useSurvey = () => {
         });
     };
 
-    const updateSurvey = async (
-        input: SurveyUpdateInput,
-        newTheme?: Partial<ProjectTheme>,
-    ) => {
-        if (!surveyId || !user || !survey) return;
-
-        await updateSurveyMutation({
+    const deleteSurvey = async (surveyId: string) => {
+        await deleteSurveyMutation({
             variables: {
                 id: surveyId,
-                input: {
-                    ...input,
-                    themeId: input.themeId,
-                    settings: JSON.stringify(input?.settings ?? {}),
+            },
+            context: {
+                headers: {
+                    Project: workspace?.project.id,
                 },
             },
+
             optimisticResponse: {
                 __typename: "Mutation",
-                surveyUpdate: {
-                    __typename: "SurveyUpdate",
+                surveyDelete: {
+                    __typename: "SurveyDelete",
+
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     survey: {
+                        ...survey,
                         __typename: "Survey",
                         id: surveyId,
-                        name: input.name ?? survey?.survey?.name,
-                        reference: survey?.survey?.reference ?? "",
-                        type:
-                            input.type ??
-                            survey?.survey?.type ??
-                            SurveyTypeEnum.Survey,
-                        status:
-                            input.status ??
-                            survey.survey?.status ??
-                            SurveyStatusEnum.Draft,
-                        slug: input.slug ?? surveySlug ?? "",
-                        questions: survey?.survey?.questions ?? {
-                            __typename: "SurveyQuestionCountableConnection",
-                            edges: [],
-                        },
-                        channels: survey?.survey?.channels ?? {
-                            __typename: "SurveyChannelCountableConnection",
-                            edges: [],
-                        },
-                        createdAt:
-                            survey?.survey?.createdAt ??
-                            new Date().toISOString(),
-                        updatedAt: new Date().toISOString(),
-
-                        creator: survey?.survey?.creator ?? user,
-                        theme: newTheme ?? survey?.survey?.theme ?? null,
-                        settings:
-                            input.settings ?? survey?.survey?.settings ?? null,
+                        type: survey?.survey?.type ?? SurveyTypeEnum.Survey,
                     },
-                    surveyErrors: [],
-                    errors: [],
                 },
             },
+
             update: (cache, { data }) => {
-                if (!data?.surveyUpdate?.survey) return;
+                if (!data) return;
 
                 cache.modify({
-                    id: cache.identify(survey),
                     fields: {
-                        survey(existingSurvey = {}) {
-                            return {
-                                ...existingSurvey,
-                                edges: [...existingSurvey.edges],
-                            };
+                        surveys(existingSurveys = [], { readField }) {
+                            return existingSurveys.filter(
+                                (surveyRef: Reference) =>
+                                    surveyId !== readField("id", surveyRef),
+                            );
                         },
                     },
                 });
@@ -220,15 +282,18 @@ export const useSurvey = () => {
     };
 
     return {
+        error,
         createSurvey,
         createQuestion,
         questions,
         surveySlug,
+        deleteLoading,
         setOpenQuestion,
         openQuestion,
         surveyId,
         survey,
-        updateSurvey,
         loading,
+        deleteSurvey,
+        updateSurvey,
     };
 };

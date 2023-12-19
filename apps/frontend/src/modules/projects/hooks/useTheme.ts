@@ -2,12 +2,13 @@ import {
     ProjectTheme,
     ThemesQuery,
     useProjectThemeCreateMutation,
+    useProjectThemeDeleteMutation,
     useProjectThemeUpdateMutation,
     useThemesQuery,
 } from "@/generated/graphql";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import useUserState from "@/modules/users/hooks/useUserState";
 import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
+import { Reference } from "@apollo/client";
 import { PROJECT_THEME } from "../graphql/fragments/projectFragments";
 
 export type ColorScheme = {
@@ -19,16 +20,17 @@ export type ColorScheme = {
 };
 
 export const useThemes = () => {
-    const { user } = useUserState();
     const { workspace } = useWorkspace();
     const [createThemeMutation] = useProjectThemeCreateMutation();
     const [updateThemeMutation] = useProjectThemeUpdateMutation();
     const { updateSurvey } = useSurvey();
+    const [deleteThemeMutation] = useProjectThemeDeleteMutation();
 
     const {
         data: themes,
         loading,
         error,
+        refetch,
     } = useThemesQuery({
         variables: { first: 20 },
         notifyOnNetworkStatusChange: true,
@@ -58,7 +60,11 @@ export const useThemes = () => {
         });
     };
 
-    const createTheme = async (theme: Partial<ProjectTheme>) => {
+    // make id optional for preset themes
+    const createTheme = async (
+        theme: Partial<ProjectTheme>,
+        surveyId: string,
+    ) => {
         await createThemeMutation({
             variables: {
                 input: {
@@ -66,26 +72,26 @@ export const useThemes = () => {
                     colorScheme: JSON.stringify(theme.colorScheme ?? {}),
                 },
             },
+
             notifyOnNetworkStatusChange: true,
             context: {
                 headers: {
                     Project: workspace?.project.id,
                 },
             },
+
             onCompleted: (data) => {
                 const themeData = {
+                    id: data.projectThemeCreate?.projectTheme?.id ?? "",
                     name: data.projectThemeCreate?.projectTheme?.name ?? "",
                     colorScheme:
                         data.projectThemeCreate?.projectTheme?.colorScheme ??
                         "",
                 };
 
-                data.projectThemeCreate?.projectTheme?.id;
-                updateSurvey(
-                    { themeId: data.projectThemeCreate?.projectTheme?.id },
-                    themeData,
-                );
+                updateSurvey(surveyId ?? "", { themeId: themeData.id });
             },
+
             optimisticResponse: {
                 __typename: "Mutation",
                 projectThemeCreate: {
@@ -99,7 +105,7 @@ export const useThemes = () => {
                     projectErrors: [],
                 },
             },
-            // caching the mutation based on the available themes
+
             update: (cache, { data }) => {
                 if (!data?.projectThemeCreate?.projectTheme) return;
 
@@ -162,46 +168,96 @@ export const useThemes = () => {
                 __typename: "Mutation",
                 projectThemeUpdate: {
                     __typename: "ProjectThemeUpdate",
+
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     projectTheme: {
                         __typename: "ProjectTheme",
                         id: theme.id,
                         name: theme.name ?? "",
                         colorScheme: JSON.stringify(theme.colorScheme ?? {}),
-                        settings: [],
-                        project: {
-                            id: workspace?.project.id ?? "",
-                            name: workspace?.project.name ?? "",
-                            slug: workspace?.project.slug ?? "",
-                            hasCompletedOnboardingFor: [],
-                            timezone: workspace?.project.timezone ?? "",
-                            organization: {
-                                id: workspace?.project.organization.id ?? "",
-                                slug:
-                                    workspace?.project.organization.slug ?? "",
-                                name:
-                                    workspace?.project.organization.name ?? "",
-                                memberCount:
-                                    workspace?.project.organization
-                                        .memberCount ?? 0,
-                            },
-                        },
-                        createdAt:
-                            workspace?.project.createdAt ??
-                            new Date().toISOString(),
-                        creator: workspace?.project.creator ?? user,
-                        updatedAt: new Date().toISOString(),
                     },
+                    errors: [],
                     projectErrors: [],
                 },
+            },
+
+            update: (cache, { data }) => {
+                if (!data?.projectThemeUpdate?.projectTheme) return;
+
+                cache.modify({
+                    id: cache.identify(data?.projectThemeUpdate?.projectTheme),
+                    fields: {
+                        themes(existingTheme = {}) {
+                            return {
+                                ...existingTheme,
+                                edges: [...existingTheme.edges],
+                            };
+                        },
+                    },
+                });
+            },
+        });
+    };
+
+    const deleteTheme = async (surveyId: string, themeId: string) => {
+        await deleteThemeMutation({
+            variables: {
+                id: themeId,
+            },
+            context: {
+                headers: {
+                    Project: workspace?.project.id,
+                },
+            },
+            notifyOnNetworkStatusChange: true,
+
+            onCompleted: () => {
+                updateSurvey(surveyId, { themeId: undefined });
+            },
+
+            optimisticResponse: {
+                __typename: "Mutation",
+                projectThemeDelete: {
+                    __typename: "ProjectThemeDelete",
+
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    projectTheme: {
+                        ...themes,
+                        id: themeId,
+                        __typename: "ProjectTheme",
+                    },
+                    errors: [],
+                    projectErrors: [],
+                },
+            },
+
+            update: (cache, { data }) => {
+                if (!data) return;
+
+                cache.modify({
+                    fields: {
+                        themes(existingThemes = [], { readField }) {
+                            return existingThemes.filter(
+                                (themeRef: Reference) => {
+                                    themeId !== readField("id", themeRef);
+                                },
+                            );
+                        },
+                    },
+                });
             },
         });
     };
 
     return {
         error,
+        refetch,
         loading,
         createTheme,
         updateTheme,
+        deleteTheme,
         themes: transformThemes(JSON.parse(JSON.stringify(themes ?? {}))),
     };
 };

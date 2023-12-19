@@ -61,6 +61,34 @@ export const SURVEY = gql`
     }
 `;
 
+export const SURVEYS = gql`
+    fragment SurveyListFragment on SurveyCountableConnection {
+        edges {
+            node {
+                id
+                slug
+                name
+                status
+                createdAt
+                updatedAt
+                reference
+                creator {
+                    firstName
+                    lastName
+                    email
+                }
+            }
+        }
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+            endCursor
+            startCursor
+        }
+        totalCount
+    }
+`;
+
 export const SURVEY_ERROR = gql`
     fragment SurveyErrorFragment on SurveyError {
         field
@@ -103,21 +131,5 @@ export const SURVEY_UPDATE_INPUT = gql`
         status: SurveyStatusEnum
         settings: JSONString
         themeId: ID
-    }
-`;
-
-export const SURVEY_UPDATE = gql`
-    mutation SurveyUpdate($id: ID!, $input: SurveyUpdateInput!) {
-        surveyUpdate(id: $id, input: $input) {
-            surveyErrors {
-                ...SurveyErrorFragment
-            }
-            errors {
-                ...SurveyErrorFragment
-            }
-            survey {
-                ...SurveyFragment
-            }
-        }
     }
 `;

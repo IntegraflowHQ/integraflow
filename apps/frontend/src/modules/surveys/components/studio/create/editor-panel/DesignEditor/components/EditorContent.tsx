@@ -33,7 +33,11 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
     const handleSelectedTheme = (theme: Partial<ProjectTheme>) => {
         setSelectedTheme(theme);
-        updateSurvey({ themeId: selectedTheme?.id }, selectedTheme);
+        const surveyId = survey?.survey?.id;
+
+        if (surveyId) {
+            updateSurvey(surveyId, { themeId: theme.id });
+        }
     };
 
     if (error) {
@@ -114,7 +118,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                             </div>
                         </div>
                     ) : (
-                        <Info message="You have not selected any theme" />
+                        <Info message="You have not selected any theme for this survey." />
                     )}
 
                     <Button
