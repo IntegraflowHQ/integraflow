@@ -112,10 +112,11 @@ export const useSurveyList = () => {
         });
     };
 
+    // Future work... PR that extends this feature isn't merged yet.
     const filterSurveyList = async (input: SurveyFilterInput) => {
         if (!surveyList) return;
 
-        console.log("here's your input", input);
+        // console.log("here's your input", input);
 
         await refetch({
             filter: input,

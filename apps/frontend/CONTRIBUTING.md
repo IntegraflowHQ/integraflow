@@ -18,6 +18,11 @@ In the root directory, run the command below to build the database/server It may
 docker compose build
 ```
 
+You need to install docker to be able to use the command above on your machine. The links below should get you up and running.
+
+-   [How to install docker on Linux](https://gcore.com/learning/how-to-install-docker-ubuntu/)
+-   [Docker setup](https://github.com/triggerdotdev/trigger.dev/blob/main/DOCKER_INSTALLATION.md) - this one contains setup for windows and Mac OS.
+
 If you're on any distro of Linux/Ubuntu, you need to append `sudo` right before `docker compose build`. When the build is complete, use the command below to start the server.
 
 ```shell
@@ -31,7 +36,7 @@ If you want to stop docker from requesting for permission everytime, you can add
 -   Run the command to add your user to the docker group. You can replace `$USER` with your actual user name if doesn't work at first.
 
 ```shell
-  sudo usermod -aG $USER
+  sudo usermod -aG docker $USER
 ```
 
 -   After running this command, you'll need to log out and log back in for the changes to take effect. Alternatively, you can run the following command to apply the changes to your current session:
