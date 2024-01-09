@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 export type StudioState = {
     studioModeIsActive: boolean;
+    editTheme: boolean;
 };
 
 export type StudioActions = {
@@ -11,6 +12,7 @@ export type StudioActions = {
 
 const initialState: StudioState = {
     studioModeIsActive: false,
+    editTheme: false,
 };
 
 export const useStudioStore = create<StudioState & StudioActions>()((set) => ({

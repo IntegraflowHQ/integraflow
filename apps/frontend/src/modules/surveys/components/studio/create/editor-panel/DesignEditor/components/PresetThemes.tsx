@@ -1,4 +1,4 @@
-import { useThemes } from "@/modules/projects/hooks/useTheme";
+import { useTheme } from "@/modules/projects/hooks/useTheme";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { toast } from "@/utils/toast";
 
@@ -58,7 +58,7 @@ const getPresetThemes = () => {
 export const PresetThemes = () => {
     const presetThemes = getPresetThemes();
     const { survey } = useSurvey();
-    const { createTheme, error } = useThemes();
+    const { createTheme, error } = useTheme();
 
     const handleCreateTheme = async (index: number) => {
         const theme = presetThemes[index];
@@ -73,6 +73,11 @@ export const PresetThemes = () => {
                     },
                     surveyId ?? "",
                 );
+
+                // call update survey
+                // trigger a callback to update the survey
+                // with a prop onUpdateSurvey
+                // on creation of a new theme, it returns a themeID which we'd pass
             }
 
             toast.success("Theme created successfully");

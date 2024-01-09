@@ -4,7 +4,7 @@ import {
     useProjectThemeCreateMutation,
     useProjectThemeDeleteMutation,
     useProjectThemeUpdateMutation,
-    useThemesQuery,
+    useThemeQuery,
 } from "@/generated/graphql";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
@@ -19,7 +19,7 @@ export type ColorScheme = {
     background: string;
 };
 
-export const useThemes = () => {
+export const useTheme = () => {
     const { workspace } = useWorkspace();
     const [createThemeMutation] = useProjectThemeCreateMutation();
     const [updateThemeMutation] = useProjectThemeUpdateMutation();
@@ -31,7 +31,7 @@ export const useThemes = () => {
         loading,
         error,
         refetch,
-    } = useThemesQuery({
+    } = useThemeQuery({
         variables: { first: 20 },
         notifyOnNetworkStatusChange: true,
         context: {
@@ -60,7 +60,6 @@ export const useThemes = () => {
         });
     };
 
-    // make id optional for preset themes
     const createTheme = async (
         theme: Partial<ProjectTheme>,
         surveyId: string,
@@ -221,12 +220,23 @@ export const useThemes = () => {
                 projectThemeDelete: {
                     __typename: "ProjectThemeDelete",
 
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
                     projectTheme: {
-                        ...themes,
+                        // ...themes,
                         id: themeId,
+                        reference: "",
                         __typename: "ProjectTheme",
+                        name: "",
+                        colorScheme: "",
+                        settings: "",
+
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        project: {
+                            __typename: "Project",
+                            id: "",
+                            name: "",
+                            slug: "",
+                        },
                     },
                     errors: [],
                     projectErrors: [],
@@ -234,16 +244,22 @@ export const useThemes = () => {
             },
 
             update: (cache, { data }) => {
-                if (!data) return;
+                if (!data?.projectThemeDelete?.projectTheme) return;
 
                 cache.modify({
                     fields: {
-                        themes(existingThemes = [], { readField }) {
-                            return existingThemes.filter(
-                                (themeRef: Reference) => {
-                                    themeId !== readField("id", themeRef);
-                                },
-                            );
+                        ProjectTheme(existingThemeRefs, { readField }) {
+                            return {
+                                ...existingThemeRefs,
+                                edges: existingThemeRefs.edges.filter(
+                                    (themeRef: Reference) => {
+                                        return (
+                                            themeId !==
+                                            readField("id", themeRef)
+                                        );
+                                    },
+                                ),
+                            };
                         },
                     },
                 });

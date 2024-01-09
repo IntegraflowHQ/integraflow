@@ -1,6 +1,7 @@
 import { ProjectTheme } from "@/generated/graphql";
-import { useThemes } from "@/modules/projects/hooks/useTheme";
+import { useTheme } from "@/modules/projects/hooks/useTheme";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
+import { useStudioStore } from "@/modules/surveys/states/studio";
 import { Button } from "@/ui";
 import { Info } from "@/ui/Info";
 import { toast } from "@/utils/toast";
@@ -17,7 +18,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
     const [selectedTheme, setSelectedTheme] =
         React.useState<Partial<ProjectTheme>>();
-    const { themes, error } = useThemes();
+    const { themes, error } = useTheme();
 
     const colorScheme = React.useMemo(() => {
         let colorScheme = {};
@@ -46,6 +47,11 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
     const count = themes?.length ?? 0;
 
+    const createNewTheme = () => {
+        useStudioStore.setState({ editTheme: false });
+        onOpen();
+    };
+
     React.useEffect(() => {
         const theme = survey?.survey?.theme;
 
@@ -61,7 +67,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
             {count === 0 && (
                 <Button
                     text="new theme"
-                    onClick={() => onOpen()}
+                    onClick={() => createNewTheme()}
                     variant="secondary"
                     className="mb-2 mt-4 text-sm font-normal first-letter:capitalize"
                 />
@@ -123,7 +129,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
                     <Button
                         text="new theme"
-                        onClick={() => onOpen()}
+                        onClick={() => createNewTheme()}
                         variant="secondary"
                         className="mb-2 mt-4 text-sm font-normal first-letter:capitalize"
                     />

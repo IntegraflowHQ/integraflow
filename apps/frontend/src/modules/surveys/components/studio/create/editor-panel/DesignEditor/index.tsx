@@ -1,6 +1,7 @@
 import { ProjectTheme } from "@/generated/graphql";
-import { useThemes } from "@/modules/projects/hooks/useTheme";
+import { useTheme } from "@/modules/projects/hooks/useTheme";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
+import { useStudioStore } from "@/modules/surveys/states/studio";
 import { Button, ColorPicker } from "@/ui";
 import { toast } from "@/utils/toast";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -25,7 +26,8 @@ export const UpdateDesignEditor = () => {
     const [newThemeOpenState, setOpenState] = React.useState<boolean>(false);
     const [theme, setTheme] = React.useState<Partial<ProjectTheme>>();
 
-    const { createTheme, updateTheme, refetch, deleteTheme } = useThemes();
+    const { createTheme, updateTheme, refetch, deleteTheme } = useTheme();
+    const editThemeState = useStudioStore((state) => state.editTheme);
 
     const handleCreateTheme = () => {
         const surveyId = survey?.survey?.id;
@@ -178,12 +180,14 @@ export const UpdateDesignEditor = () => {
             </div>
 
             <div className="mt-4 flex justify-end gap-2">
-                <Button
-                    text="Delete theme"
-                    variant="secondary"
-                    onClick={handleDeleteTheme}
-                    className="w-max px-[12px] py-[12px] font-normal"
-                />
+                {editThemeState === true ? (
+                    <Button
+                        text="Delete theme"
+                        variant="secondary"
+                        onClick={handleDeleteTheme}
+                        className="w-max px-[12px] py-[12px] font-normal"
+                    />
+                ) : null}
                 <Button
                     onClick={handleCreateTheme}
                     text="Update theme"
