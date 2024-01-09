@@ -190,7 +190,11 @@ export const UpdateDesignEditor = () => {
                 ) : null}
                 <Button
                     onClick={handleCreateTheme}
-                    text="Update theme"
+                    text={
+                        editThemeState === true
+                            ? "Update theme"
+                            : "Create theme"
+                    }
                     className="w-max px-[12px] py-[12px] font-normal"
                 />
             </div>

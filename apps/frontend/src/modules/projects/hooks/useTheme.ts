@@ -228,14 +228,31 @@ export const useTheme = () => {
                         name: "",
                         colorScheme: "",
                         settings: "",
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString(),
 
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-ignore
+                        creator: {
+                            firstName: "",
+                            lastName: "",
+                            email: "",
+                        },
+
                         project: {
                             __typename: "Project",
                             id: "",
                             name: "",
                             slug: "",
+                            hasCompletedOnboardingFor: null,
+                            timezone: "",
+                            organization: {
+                                id: workspace?.organization.id ?? "",
+                                slug: workspace?.organization.slug ?? "",
+                                name: workspace?.organization.name ?? "",
+                                memberCount:
+                                    workspace?.organization.memberCount ?? 0,
+                            },
                         },
                     },
                     errors: [],
@@ -248,7 +265,7 @@ export const useTheme = () => {
 
                 cache.modify({
                     fields: {
-                        ProjectTheme(existingThemeRefs, { readField }) {
+                        themes(existingThemeRefs, { readField }) {
                             return {
                                 ...existingThemeRefs,
                                 edges: existingThemeRefs.edges.filter(

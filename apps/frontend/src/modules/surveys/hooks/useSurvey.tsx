@@ -1,5 +1,6 @@
 import {
     SurveyQuestionTypeEnum,
+    SurveyStatusEnum,
     SurveyTypeEnum,
     SurveyUpdateInput,
     useGetSurveyQuery,
@@ -75,12 +76,35 @@ export const useSurvey = () => {
                 surveyCreate: {
                     __typename: "SurveyCreate",
 
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
                     survey: {
                         __typename: "Survey",
-                        id: surveyId,
-                        slug: surveySlug,
+                        id: surveyId ?? "",
+                        slug: surveySlug ?? "",
+                        reference: "",
+                        name: survey?.survey?.name ?? "",
+                        type: SurveyTypeEnum.Survey,
+                        status: SurveyStatusEnum.Draft,
+                        settings: survey?.survey?.settings ?? "",
+                        theme: survey?.survey?.theme,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString(),
+
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        creator: {
+                            email: survey?.survey?.creator.email ?? "",
+                            firstName: survey?.survey?.creator.firstName ?? "",
+                            lastName: survey?.survey?.creator.lastName ?? "",
+                        },
+
+                        questions: {
+                            __typename: "SurveyQuestionCountableConnection",
+                            edges: [],
+                        },
+                        channels: {
+                            __typename: "SurveyChannelCountableConnection",
+                            edges: [],
+                        },
                     },
                     surveyErrors: [],
                     errors: [],
@@ -140,7 +164,39 @@ export const useSurvey = () => {
                     survey: {
                         __typename: "Survey",
                         id,
-                        ...input,
+                        // ...input,
+                        reference: "",
+                        name: input?.name ?? "",
+                        slug: input?.slug ?? "",
+                        type: SurveyTypeEnum.Survey,
+                        status: SurveyStatusEnum.Draft,
+                        settings: input?.settings ?? "",
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString(),
+
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        theme: {
+                            id: input?.themeId ?? "",
+                            name: "",
+                            colorScheme: "",
+                            reference: "",
+                        },
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        creator: {
+                            lastName: "",
+                            firstName: "",
+                            email: "",
+                        },
+                        questions: {
+                            __typename: "SurveyQuestionCountableConnection",
+                            edges: [],
+                        },
+                        channels: {
+                            __typename: "SurveyChannelCountableConnection",
+                            edges: [],
+                        },
                     },
                     surveyErrors: [],
                     errors: [],

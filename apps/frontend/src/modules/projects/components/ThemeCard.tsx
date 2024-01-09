@@ -32,11 +32,6 @@ export const ThemeCard = ({
         toggleNewThemeModal();
     };
 
-    // const onSelectTheme = (event: React.MouseEvent<HTMLDivElement>) => {
-    //     event.stopPropagation();
-    //     onClick();
-    // };
-
     return (
         <div
             className={`${

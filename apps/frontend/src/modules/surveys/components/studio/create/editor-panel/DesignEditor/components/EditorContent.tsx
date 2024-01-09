@@ -1,4 +1,6 @@
 import { ProjectTheme } from "@/generated/graphql";
+import { PresetThemes } from "@/modules/projects/components/PresetThemes";
+import { ThemeCard } from "@/modules/projects/components/ThemeCard";
 import { useTheme } from "@/modules/projects/hooks/useTheme";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { useStudioStore } from "@/modules/surveys/states/studio";
@@ -6,8 +8,6 @@ import { Button } from "@/ui";
 import { Info } from "@/ui/Info";
 import { toast } from "@/utils/toast";
 import React from "react";
-import { PresetThemes } from "./PresetThemes";
-import { ThemeCard } from "./ThemeCard";
 
 interface ContentProp {
     onOpen: (theme?: Partial<ProjectTheme>) => void;

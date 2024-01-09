@@ -10,7 +10,6 @@ import {
     TableBody,
     TableCell,
     TableFoot,
-    TableFooterCell,
     TableHead,
     TableHeaderCell,
     TableRow,
@@ -124,8 +123,6 @@ export const SurveyList = () => {
             ? surveyList?.find((survey) => survey.id === id)?.id
             : "";
 
-        console.log(surveyId);
-
         setSelectedSurveyId(surveyId ?? "");
     };
 
@@ -147,7 +144,6 @@ export const SurveyList = () => {
     const setSurveyStatus = (status: SurveyStatusEnum) => {
         if (selectedSurveyId) {
             try {
-                console.log(status);
                 updateSurvey(selectedSurveyId, { status });
                 toast.success("Survey status updated successfully");
             } catch (err) {
@@ -396,7 +392,7 @@ export const SurveyList = () => {
                     </TableBody>
 
                     <TableFoot className="h-[50px] border-t border-intg-bg-7">
-                        <TableFooterCell className="flex justify-between">
+                        <TableCell className="flex justify-between">
                             <button
                                 disabled={!pageInfo?.hasPreviousPage}
                                 onClick={() => handleGetMoreSurveys("backward")}
@@ -427,20 +423,20 @@ export const SurveyList = () => {
                                     className="font-normal text-intg-text-4 hover:cursor-pointer"
                                 />
                             </button>
-                        </TableFooterCell>
-                        <TableFooterCell />
-                        <TableFooterCell />
-                        <TableFooterCell>
+                        </TableCell>
+                        <TableCell />
+                        <TableCell />
+                        <TableCell>
                             <span className="text-sm font-normal text-intg-text-4">
                                 Rows per page: {surveysOnPage}
                             </span>
-                        </TableFooterCell>
-                        <TableFooterCell>
+                        </TableCell>
+                        <TableCell>
                             <span className="text-sm font-normal text-intg-text-4">
                                 {surveyStartIndex} - {surveyEndIndex} of{" "}
                                 {totalSurveys} Surveys
                             </span>
-                        </TableFooterCell>
+                        </TableCell>
                     </TableFoot>
                 </Table>
             </div>
