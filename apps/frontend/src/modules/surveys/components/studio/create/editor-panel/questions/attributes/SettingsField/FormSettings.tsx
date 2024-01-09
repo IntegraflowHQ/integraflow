@@ -27,11 +27,11 @@ export const FormSettings = ({ question }: Props) => {
         if (question.settings.consentText) {
             setShowConsent(true);
         } else {
-            const newSettings = question.settings;
-            newSettings.consentText = "";
-            updateQuestionMutation({
-                settings: newSettings,
-            });
+            // const newSettings = question.settings;
+            // newSettings.consentText = "";
+            // updateQuestionMutation({
+            //     settings: newSettings,
+            // });
         }
     }, [question.settings.disclaimerText, question.settings.consentText]);
 
@@ -39,16 +39,16 @@ export const FormSettings = ({ question }: Props) => {
         if (!showDisclaimer) {
             const newSettings = question.settings;
             newSettings.disclaimerText = "";
-            updateQuestionMutation({
-                settings: newSettings,
-            });
+            // updateQuestionMutation({
+            //     settings: newSettings,
+            // });
         }
         if (!showConsent) {
             const newSettings = question.settings;
             newSettings.consentText = "";
-            updateQuestionMutation({
-                settings: newSettings,
-            });
+            // updateQuestionMutation({
+            //     settings: newSettings,
+            // });
         }
     }, [showDisclaimer, showConsent]);
     return (

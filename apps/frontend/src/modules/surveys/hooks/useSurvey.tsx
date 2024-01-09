@@ -1,11 +1,11 @@
 import {
-    useGetSurveyLazyQuery,
+    useGetSurveyQuery,
     useSurveyCreateMutation,
 } from "@/generated/graphql";
 import { ROUTES } from "@/routes";
 import { ParsedQuestion } from "@/types";
 import { generateRandomString } from "@/utils";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export const useSurvey = () => {
@@ -14,7 +14,11 @@ export const useSurvey = () => {
 
     const [createSurveyMutation] = useSurveyCreateMutation();
 
-    const [getSurveyQuery, { data: survey, loading }] = useGetSurveyLazyQuery();
+    const { data: survey, loading } = useGetSurveyQuery({
+        variables: {
+            slug: surveySlug,
+        },
+    });
 
     const parsedQuestions = useMemo(() => {
         const questions = survey?.survey?.questions?.edges || [];
@@ -40,18 +44,6 @@ export const useSurvey = () => {
                 } as ParsedQuestion;
             });
     }, [survey]);
-
-    useEffect(() => {
-        const getSurvey = async () => {
-            if (!surveySlug) return;
-            await getSurveyQuery({
-                variables: {
-                    slug: surveySlug,
-                },
-            });
-        };
-        getSurvey();
-    }, [surveySlug]);
 
     const createSurvey = async () => {
         const surveySlug = `survey-${generateRandomString(10)}`;
@@ -86,6 +78,6 @@ export const useSurvey = () => {
         survey,
         loading,
         parsedQuestions,
-        getSurveyQuery,
+        // getSurveyQuery,
     };
 };

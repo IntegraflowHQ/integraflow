@@ -35,7 +35,6 @@ export const OptionsList = ({ question }: Props) => {
                     <div className="flex justify-between text-sm">
                         <p>Answer Choices</p>
                         <AddMultipleQuestions
-                          
                             question={question.options}
                         />
                     </div>

@@ -4,7 +4,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/ui/Popover";
 import * as Tabs from "@radix-ui/react-tabs";
 import { MoreHorizontalIcon, XIcon } from "lucide-react";
 import { EditTab } from "./EditTab";
-import { LogicTab } from "./LogicTab";
 import { SettingsTab } from "./SettingsTab";
 
 type Props = {
@@ -20,11 +19,11 @@ export const QuestionPanel = ({ question, setOpenAccordion }: Props) => {
             label: "Edit",
             content: <EditTab question={question} />,
         },
-        {
-            id: 2,
-            label: "Logic",
-            content: <LogicTab question={question} />,
-        },
+        // {
+        //     id: 2,
+        //     label: "Logic",
+        //     content: <LogicTab question={question} />,
+        // },
         {
             id: 3,
             label: "Settings",

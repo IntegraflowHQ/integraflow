@@ -12,6 +12,17 @@ export const SURVEY_QUESTION = gql`
         orderNumber
         maxPath
         createdAt
+        survey {
+            id
+            reference
+            slug
+            name
+            project {
+                id
+                slug
+                name
+            }
+        }
     }
 `;
 
@@ -41,6 +52,9 @@ export const SURVEY = gql`
         }
         creator {
             ...UserFragment
+        }
+        project {
+            ...ProjectFragment
         }
         questions(first: 50) {
             edges {

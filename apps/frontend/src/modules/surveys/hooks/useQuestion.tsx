@@ -67,6 +67,10 @@ export const useQuestion = () => {
                 },
             },
             update: (cache, { data }) => {
+                console.log(
+                    "QUESTION",
+                    data?.surveyQuestionCreate?.surveyQuestion,
+                );
                 setOpenQuestion(
                     data?.surveyQuestionCreate
                         ?.surveyQuestion as SurveyQuestion,

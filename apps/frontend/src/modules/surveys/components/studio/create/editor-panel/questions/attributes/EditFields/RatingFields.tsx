@@ -107,8 +107,6 @@ export const RatingFields = ({ question }: Props) => {
     const [scaleStyle, setScaleStyle] = useState<string | number | undefined>(
         scaleStyleOptions[0].value,
     );
-    console.log(question.options);
-
     return (
         <div>
             {question.type === SurveyQuestionTypeEnum.Rating ||

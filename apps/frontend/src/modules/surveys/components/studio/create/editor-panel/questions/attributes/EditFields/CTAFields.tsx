@@ -24,13 +24,13 @@ export const CTAFields = ({ question }: Props) => {
         }
     }, [question?.description]);
 
-    useEffect(() => {
-        if (!showDescription) {
-            updateQuestionMutation({
-                description: "",
-            });
-        }
-    }, [showDescription]);
+    // useEffect(() => {
+    //     if (!showDescription) {
+    //         updateQuestionMutation({
+    //             description: "",
+    //         });
+    //     }
+    // }, [showDescription]);
 
     return (
         <>
