@@ -4,12 +4,12 @@ import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
 import { cn } from "@/utils";
-import { forwardRef } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { Calendar } from "../Calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../Popover";
 
 type DatePickerProps = {
-    label: string;
+    label?: string;
     value?: Date;
     onChange?: (e: {
         target: { value: Date | undefined; name: string; type: string };
@@ -21,21 +21,36 @@ type DatePickerProps = {
 
 export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
     ({ label, value, onChange, displayFormat = "PPP", ...props }, ref) => {
+        const [date, setDate] = useState<Date | undefined>();
+        useEffect(() => {
+            if (onChange) {
+                onChange({
+                    target: {
+                        value: date,
+                        name: label ?? "date",
+                        type: "datetime-local",
+                    },
+                });
+            }
+        }, [date]);
+
         return (
             <Popover>
                 <PopoverTrigger asChild>
                     <button className="flex w-full flex-col gap-2">
-                        <p className="block text-sm font-medium text-intg-text-2">
-                            {label}
-                        </p>
+                        {label ? (
+                            <p className="block text-sm font-medium text-intg-text-2">
+                                {label}
+                            </p>
+                        ) : null}
                         <div
                             className={cn(
                                 "flex w-full items-center rounded-lg bg-intg-bg-15 px-4 py-3 text-intg-text",
                             )}
                         >
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {value ? (
-                                format(value, displayFormat)
+                            {date ? (
+                                format(date, displayFormat)
                             ) : (
                                 <span>Pick a date</span>
                             )}
@@ -44,17 +59,8 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                 </PopoverTrigger>
                 <PopoverContent className="w-auto bg-intg-bg-15  p-0" ref={ref}>
                     <Calendar
-                        selected={value}
-                        onSelect={(value) =>
-                            onChange &&
-                            onChange({
-                                target: {
-                                    value,
-                                    name: label,
-                                    type: "datetime-local",
-                                },
-                            })
-                        }
+                        selected={date}
+                        onSelect={(value) => setDate(value)}
                         mode="single"
                         initialFocus
                         {...props}

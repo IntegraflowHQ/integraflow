@@ -1,9 +1,14 @@
 import {
+    EventDefinition,
+    PersonCountableEdge,
+    PropertyDefinition,
     SurveyChannel,
     SurveyChannelCountableEdge,
     SurveyChannelCreateInput,
     SurveyChannelTypeEnum,
     SurveyChannelUpdateInput,
+    usePersonsQuery,
+    useProjectEventsDataQuery,
     useSurveyChannelCreateMutation,
     useSurveyChannelDeleteMutation,
     useSurveyChannelUpdateMutation,
@@ -11,6 +16,7 @@ import {
 import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
 import { ParsedChannel } from "@/types";
 import { fromSurveyChannel, toSurveyChannel } from "@/utils";
+import { EventProperties } from "@integraflow/web/src/types";
 import { useCallback, useMemo } from "react";
 import { SURVEY_CHANNEL } from "../graphql/fragments/surveyFragment";
 import { useSurvey } from "./useSurvey";
@@ -19,11 +25,11 @@ export default function useChannels() {
     const { survey, surveyId } = useSurvey();
     const { workspace } = useWorkspaceState();
 
-    const context = {
-        headers: {
-            Project: workspace?.project.id,
-        },
-    };
+    const { data: eventsData } = useProjectEventsDataQuery({
+        skip: !workspace?.project.id,
+    });
+
+    const { data: personsData } = usePersonsQuery();
 
     const [createChannelMutation] = useSurveyChannelCreateMutation();
     const createChannel = async (
@@ -42,7 +48,6 @@ export default function useChannels() {
             variables: {
                 input: data,
             },
-            context,
             optimisticResponse: {
                 __typename: "Mutation",
                 surveyChannelCreate: {
@@ -98,7 +103,6 @@ export default function useChannels() {
                 id: channel.id,
                 input,
             },
-            context,
             optimisticResponse: {
                 __typename: "Mutation",
                 surveyChannelUpdate: {
@@ -135,7 +139,6 @@ export default function useChannels() {
             variables: {
                 id: channel.id,
             },
-            context,
             optimisticResponse: {
                 __typename: "Mutation",
                 surveyChannelDelete: {
@@ -187,7 +190,75 @@ export default function useChannels() {
         [channels],
     );
 
+    const eventDefinitions = useMemo(() => {
+        return (
+            eventsData?.eventDefinitions?.edges.map(({ node }) => node) ||
+            ([] as EventDefinition[])
+        );
+    }, [eventsData?.eventDefinitions]);
+
+    const eventProperties = useMemo(() => {
+        return (
+            eventsData?.eventProperties?.edges.map(({ node }) => node) ||
+            ([] as EventProperties[])
+        );
+    }, [eventsData?.eventProperties]);
+
+    const propertyDefinitions = useMemo(() => {
+        return (
+            eventsData?.propertyDefinitions?.edges.map(({ node }) => node) ||
+            ([] as PropertyDefinition[])
+        );
+    }, [eventsData?.propertyDefinitions]);
+
+    const getPropertyDefinition = useCallback(
+        (property: string) => {
+            return propertyDefinitions.find((p) => p.name === property);
+        },
+        [propertyDefinitions],
+    );
+
+    const getProperties = useCallback(
+        (event: string) => {
+            const properties = eventProperties.filter((p) => p.event === event);
+            return properties.map((p) => {
+                const definition = p.property
+                    ? getPropertyDefinition(p.property as string)
+                    : undefined;
+
+                return definition;
+            });
+        },
+        [eventProperties, getPropertyDefinition],
+    );
+
+    const personProperties = useMemo(() => {
+        const persons =
+            personsData?.persons?.edges || ([] as PersonCountableEdge[]);
+        const attributeKeysSet = new Set<string>();
+
+        persons.forEach((person) => {
+            const attributes = JSON.parse(person.node.attributes);
+            const keys = Object.keys(attributes);
+
+            keys.forEach((key) => attributeKeysSet.add(key));
+        });
+
+        const attributes = Array.from(attributeKeysSet);
+        return attributes.map((attribute) => {
+            return getPropertyDefinition(attribute);
+        });
+    }, [getPropertyDefinition, personsData?.persons?.edges]);
+
+    console.log("personProperties: ", personProperties);
+
     return {
+        eventDefinitions,
+        eventProperties,
+        propertyDefinitions,
+        personProperties,
+        getProperties,
+        getPropertyDefinition,
         createChannel,
         getChannels,
         updateChannel,

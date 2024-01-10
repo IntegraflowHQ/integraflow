@@ -4,7 +4,7 @@ import {
 } from "@/generated/graphql";
 import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import { EventProperties } from "@integraflow/web/src/types";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 export const useEvents = () => {
     const { workspace } = useWorkspace();
@@ -38,9 +38,41 @@ export const useEvents = () => {
         );
     }, [data?.propertyDefinitions]);
 
+    const getPropertyDefinition = useCallback(
+        (property: string) => {
+            return propertyDefinitions.find((p) => p.name === property);
+        },
+        [propertyDefinitions],
+    );
+
+    const getProperties = useCallback(
+        (event: string) => {
+            const properties = eventProperties.filter((p) => p.event === event);
+            return properties.map((p) => {
+                const definition = p.property
+                    ? getPropertyDefinition(p.property as string)
+                    : undefined;
+                return {
+                    ...p,
+                    definition,
+                };
+            });
+        },
+        [eventProperties],
+    );
+
+    // const eventOptions = useMemo(() => {
+    //     return eventDefinitions.map((e) => ({
+    //         ...e,
+    //         properties: getProperties(e.name),
+    //     }));
+    // }, [getProperties, eventDefinitions]);
+
     return {
         eventDefinitions,
         eventProperties,
         propertyDefinitions,
+        // eventOptions,
+        getProperties,
     };
 };

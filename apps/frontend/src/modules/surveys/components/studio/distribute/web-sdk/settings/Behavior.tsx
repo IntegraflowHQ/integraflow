@@ -4,7 +4,7 @@ import webviewLight from "@/assets/images/surveys/studio/webview-light.svg";
 import webview from "@/assets/images/surveys/studio/webview.svg";
 import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import useChannels from "@/modules/surveys/hooks/useChannels";
-import { ChannelSettings, ParsedChannel } from "@/types";
+import { ChannelSettings, WebChannelAccordionProps } from "@/types";
 import { DatePicker, Switch, TextInput } from "@/ui";
 import { BottomLeft, BottomRight, Center, TopLeft, TopRight } from "@/ui/icons";
 import { cn } from "@/utils";
@@ -68,26 +68,8 @@ const backgrounds: Background[] = [
     },
 ];
 
-export default function Behavior() {
-    const { getChannels, updateChannel, createChannel } = useChannels();
-
-    const channel =
-        getChannels(SurveyChannelTypeEnum.WebSdk)[0] ??
-        ({
-            id: "",
-            type: SurveyChannelTypeEnum.WebSdk,
-            createdAt: "",
-            settings: {
-                placement: "bottomRight",
-                recurring: false,
-                recurringPeriod: 0,
-                startDate: "",
-                endDate: "",
-                backgroundOverlay: "light",
-                closeOnLimit: false,
-                responseLimit: 0,
-            },
-        } as ParsedChannel);
+export default function Behavior({channel}: WebChannelAccordionProps) {
+    const { updateChannel, createChannel } = useChannels();
 
     const { register, watch, setValue } = useForm<ChannelSettings>({
         defaultValues: {

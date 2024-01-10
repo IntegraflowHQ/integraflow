@@ -1,6 +1,14 @@
 import { SurveyChannel, User } from "@/generated/graphql";
+import { PROPERTY_FIELDS } from "@/modules/surveys/components/studio/distribute/web-sdk/settings/constants";
 import { DeepOmit } from "@apollo/client/utilities";
-import { PlacementType } from "@integraflow/web/src/types/index";
+import {
+    Audience,
+    FilterOperator,
+    FilterValue,
+    LogicOperator,
+    PlacementType,
+    Trigger,
+} from "@integraflow/web/src/types/index";
 
 export type CachedViewer = DeepOmit<User, "__typename">;
 
@@ -24,8 +32,13 @@ export type ChannelSettings = {
     singleUse?: boolean;
 };
 
-export type ParsedChannel = Omit<SurveyChannel, "settings"> & {
+export type ParsedChannel = Omit<
+    SurveyChannel,
+    "settings" | "triggers" | "conditions"
+> & {
     settings: ChannelSettings;
+    triggers: Trigger;
+    conditions: Audience;
 };
 
 export type LinkSettings = {
@@ -33,4 +46,35 @@ export type LinkSettings = {
     singleUse: boolean;
     startDate: string | null;
     endDate: string | null;
+};
+
+// export type EventPropertyWithDefinition = EventProperty & {
+//     definition?: PropertyDefinition;
+// };
+
+export type EventFilter = {
+    property: string;
+    operator: FilterOperator;
+    value: FilterValue;
+};
+
+// export type AudienceFilter = {
+//     attribute: string;
+//     operator: FilterOperator;
+//     value: FilterValue;
+// };
+
+export type TriggerCondition = {
+    event: string;
+    operator: LogicOperator;
+    filters?: EventFilter[];
+};
+
+export type TriggerConditionInput = {
+    type: keyof typeof PROPERTY_FIELDS;
+    property: string;
+};
+
+export type WebChannelAccordionProps = {
+    channel: ParsedChannel;
 };

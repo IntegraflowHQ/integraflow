@@ -10,10 +10,14 @@ interface SelectFieldProps extends SelectProps {
     onChange?: (value: { target: { name?: string; value: string } }) => void;
     name?: string;
     error?: string;
+    className?: string;
 }
 
 export const SelectInput = forwardRef<HTMLDivElement, SelectFieldProps>(
-    ({ defaultValue, options, title, name, onChange, error }, ref) => {
+    (
+        { defaultValue, options, title, name, onChange, error, className },
+        ref,
+    ) => {
         return (
             <div ref={ref} className="w-full">
                 <label className="mb-1.5 text-sm font-medium text-intg-text-2">
@@ -30,9 +34,9 @@ export const SelectInput = forwardRef<HTMLDivElement, SelectFieldProps>(
                         aria-label={title}
                         placeholder={title}
                         className={`flex w-full items-center justify-between rounded-lg border border-transparent bg-intg-bg-1 px-3 py-3.5
-           text-sm font-medium text-intg-text-3 focus:border-intg-text-3 focus:outline-none  ${
-               error ? "border-intg-error-text" : ""
-           }`}
+           text-sm font-medium text-intg-text-3 focus:border-intg-text-3 focus:outline-none ${
+               className ?? ""
+           }  ${error ? "border-intg-error-text" : ""}`}
                     >
                         <Select.Value />
                         <Select.Icon>

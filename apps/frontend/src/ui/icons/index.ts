@@ -1,3 +1,4 @@
+export { Audience } from "./Audience";
 export { BottomLeft } from "./BottomLeft";
 export { BottomRight } from "./BottomRight";
 export { Center } from "./Center";
@@ -30,3 +31,4 @@ export { SpeakerIcon } from "./SpeakerIcon";
 export { TopLeft } from "./TopLeft";
 export { TopRight } from "./TopRight";
 export { Trash } from "./Trash";
+export { X } from "./X";
