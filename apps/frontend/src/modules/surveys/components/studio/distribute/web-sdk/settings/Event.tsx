@@ -4,9 +4,10 @@ import { EventFilter, TriggerCondition, TriggerConditionInput } from "@/types";
 import { PlusCircle, X } from "@/ui/icons";
 import { FilterOperator, LogicOperator } from "@integraflow/web/src/types";
 import { Ampersand, Zap } from "lucide-react";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import FilterDetails from "./FilterDetails";
 import FilterOperators from "./FilterOperators";
+import Filters from "./Filters";
 import PropertySelect from "./PropertySelect";
 
 export default function Event({
@@ -22,7 +23,7 @@ export default function Event({
     onRemove: () => void;
     onAddFilter: (data: EventFilter) => void;
     onOperatorChange: (operator: LogicOperator) => void;
-    onRemoveFilter: (filter: EventFilter) => void;
+    onRemoveFilter: (index: number) => void;
 }) {
     const { currentEvent, updateStudio } = useStudioState();
     const [filterInput, setFilterInput] = useState<EventFilter | null>(null);
@@ -46,29 +47,13 @@ export default function Event({
                 </div>
             ) : null}
 
-            {condition.filters?.map((filter, index) => (
-                <Fragment key={index}>
-                    {index > 0 ? (
-                        <select
-                            className="bg-intg-bg-19 p-2 text-intg-text"
-                            value={condition.operator}
-                            onChange={(e) => {
-                                onOperatorChange(
-                                    e.target.value as LogicOperator,
-                                );
-                            }}
-                        >
-                            <option value={LogicOperator.AND}>and</option>
-                            <option value={LogicOperator.OR}>or</option>
-                        </select>
-                    ) : null}
-
-                    <FilterDetails
-                        filter={filter}
-                        onRemoveFilter={() => onRemoveFilter(filter)}
-                    />
-                </Fragment>
-            ))}
+            <Filters
+                variant="event"
+                filters={condition.filters ?? ([] as EventFilter[])}
+                onOperatorChange={onOperatorChange}
+                onRemoveFilter={onRemoveFilter}
+                operator={condition.operator}
+            />
 
             <FilterOperators
                 conditionDetails={conditionInput}

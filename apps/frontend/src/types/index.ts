@@ -58,6 +58,12 @@ export type EventFilter = {
     value: FilterValue;
 };
 
+export type AudienceFilter = {
+    attribute: string;
+    operator: FilterOperator;
+    value: FilterValue;
+};
+
 // export type AudienceFilter = {
 //     attribute: string;
 //     operator: FilterOperator;

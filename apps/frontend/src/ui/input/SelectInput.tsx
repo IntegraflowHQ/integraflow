@@ -5,7 +5,6 @@ import { forwardRef } from "react";
 
 interface SelectFieldProps extends SelectProps {
     title?: string;
-    defaultValue: string;
     options: { label: string; value: string }[];
     onChange?: (value: { target: { name?: string; value: string } }) => void;
     name?: string;
@@ -15,7 +14,16 @@ interface SelectFieldProps extends SelectProps {
 
 export const SelectInput = forwardRef<HTMLDivElement, SelectFieldProps>(
     (
-        { defaultValue, options, title, name, onChange, error, className },
+        {
+            defaultValue,
+            value,
+            options,
+            title,
+            name,
+            onChange,
+            error,
+            className,
+        },
         ref,
     ) => {
         return (
@@ -25,6 +33,7 @@ export const SelectInput = forwardRef<HTMLDivElement, SelectFieldProps>(
                 </label>
 
                 <Select.Root
+                    value={value}
                     defaultValue={defaultValue}
                     onValueChange={(value) =>
                         onChange && onChange({ target: { name, value } })

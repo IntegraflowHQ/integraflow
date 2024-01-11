@@ -97,19 +97,17 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
         });
     };
 
-    const handleRemoveFilter = (event: string, filter: EventFilter) => {
+    const handleRemoveFilter = (event: string, index: number) => {
         const conditions = channel?.triggers?.conditions?.map((condition) => {
             if (condition.event !== event) return condition;
+            if (!condition.filters) return condition;
+
+            const filters = [...condition?.filters];
+            filters.splice(index, 1);
 
             return {
                 ...condition,
-                filters: condition.filters?.filter((f) => {
-                    console.log(f, filter);
-                    if (f.property !== filter.property) return true;
-                    if (f.value !== filter.value) return true;
-                    if (f.operator !== filter.operator) return true;
-                    return false;
-                }),
+                filters,
             };
         });
 
@@ -169,10 +167,10 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
                                             operator,
                                         )
                                     }
-                                    onRemoveFilter={(filter) =>
+                                    onRemoveFilter={(index) =>
                                         handleRemoveFilter(
                                             condition.event,
-                                            filter,
+                                            index,
                                         )
                                     }
                                 />

@@ -6,45 +6,98 @@ import {
     WebChannelAccordionProps,
 } from "@/types";
 import { Audience as AudienceIcon, Info } from "@/ui/icons";
-import { FilterOperator } from "@integraflow/web/src/types";
+import { FilterOperator, LogicOperator } from "@integraflow/web/src/types";
 import { useState } from "react";
 import FilterDetails from "./FilterDetails";
 import FilterOperators from "./FilterOperators";
+import Filters from "./Filters";
 import PropertySelect from "./PropertySelect";
 
 export default function Audience({ channel }: WebChannelAccordionProps) {
     const { addingAudienceProperty, updateStudio } = useStudioState();
-    const { personProperties } = useChannels();
+    const { personProperties, updateChannel } = useChannels();
     const [filterInput, setFilterInput] = useState<EventFilter | null>(null);
     const [conditionInput, setConditionInput] = useState<
         TriggerConditionInput | undefined
     >();
 
+    console.log("channel: ", channel);
+
+    console.log("conditions: ", channel?.conditions?.filters);
+
+    const handleOperatorChange = (operator: LogicOperator) => {
+        const conditions = {
+            ...channel.conditions,
+            operator,
+        };
+        updateChannel(channel, {
+            conditions: JSON.stringify(conditions),
+        });
+    };
+
+    const handleAddFilter = (filter: EventFilter) => {
+        if (!channel.id) return;
+        if (
+            !channel.conditions ||
+            !channel.conditions.filters ||
+            !channel.conditions.operator
+        ) {
+            const conditions = {
+                operator: LogicOperator.AND,
+                filters: [{ ...filter, attribute: filter.property }],
+            };
+            updateChannel(channel, {
+                conditions: JSON.stringify(conditions),
+            });
+        } else {
+            const conditions = {
+                ...channel.conditions,
+                filters: [
+                    ...channel?.conditions?.filters,
+                    { ...filter, attribute: filter.property },
+                ],
+            };
+            updateChannel(channel, {
+                conditions: JSON.stringify(conditions),
+            });
+        }
+    };
+
+    const handleRemoveFilter = (index: number) => {
+        const filters = [...channel.conditions.filters];
+        filters.splice(index, 1);
+        const conditions = {
+            ...channel.conditions,
+            filters,
+        };
+        updateChannel(channel, {
+            conditions: JSON.stringify(conditions),
+        });
+    };
+
     return (
         <div className="px-4 pb-6 text-intg-text">
-            <div className="space-y-[26px] rounded-lg bg-intg-bg-9 p-6">
-                <header className="flex items-center gap-2">
+            <div className="flex flex-col gap-[26px] rounded-lg bg-intg-bg-9 p-6">
+                <header className="inline-flex items-center gap-2">
                     <h3 className="text-base font-medium text-white">
                         Audience
                     </h3>
                     <Info />
                 </header>
 
-                <div className="flex flex-wrap items-center gap-4 ">
-                    <div className="inline-flex items-center gap-2 rounded-[4px] bg-intg-bg-19 p-2">
+                <div className="inline-flex flex-wrap gap-1 [&>*]:mb-4">
+                    <div className="mr-4 inline-flex items-center gap-2 rounded-[4px] bg-intg-bg-19 p-2">
                         <AudienceIcon />
                         <span>User</span>
                     </div>
 
-                    {channel?.conditions?.filters?.map((filter, index) => (
-                        <FilterDetails
-                            key={index}
-                            filter={{ ...filter, property: filter.attribute }}
-                            onRemoveFilter={() => {
-                                // onRemoveFilter(index);
-                            }}
-                        />
-                    ))}
+                    <Filters
+                        variant="audience"
+                        filters={channel.conditions.filters}
+                        onOperatorChange={handleOperatorChange}
+                        onRemoveFilter={handleRemoveFilter}
+                        operator={channel.conditions.operator}
+                    />
 
                     {conditionInput && (
                         <FilterOperators
@@ -52,9 +105,8 @@ export default function Audience({ channel }: WebChannelAccordionProps) {
                             defaultOpen={true}
                             onEnter={() => {
                                 if (filterInput) {
-                                    // onAddFilter(filterInput);
+                                    handleAddFilter(filterInput);
                                 }
-                                console.log("ENTER");
                                 setFilterInput(null);
                                 setConditionInput(undefined);
                             }}
@@ -88,7 +140,7 @@ export default function Audience({ channel }: WebChannelAccordionProps) {
                         }}
                     >
                         <button
-                            className="underline"
+                            className="p-2 underline"
                             onClick={() =>
                                 updateStudio({ addingAudienceProperty: true })
                             }
