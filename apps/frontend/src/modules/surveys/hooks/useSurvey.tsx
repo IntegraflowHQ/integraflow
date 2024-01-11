@@ -154,6 +154,7 @@ export const useSurvey = () => {
                 id,
                 input,
             },
+
             optimisticResponse: {
                 __typename: "Mutation",
                 surveyUpdate: {
@@ -164,7 +165,6 @@ export const useSurvey = () => {
                     survey: {
                         __typename: "Survey",
                         id,
-                        // ...input,
                         reference: "",
                         name: input?.name ?? "",
                         slug: input?.slug ?? "",

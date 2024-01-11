@@ -1,5 +1,4 @@
 import { useTheme } from "@/modules/projects/hooks/useTheme";
-import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { toast } from "@/utils/toast";
 
 const PRESET_THEMES = [
@@ -55,32 +54,33 @@ const getPresetThemes = () => {
     return themes;
 };
 
-export const PresetThemes = () => {
+export interface PresetThemesProps {
+    onThemeSelectUpdateSurvey: (surveyId: string, themeId: string) => void;
+    surveyId: string;
+}
+
+export const PresetThemes = ({
+    surveyId,
+    onThemeSelectUpdateSurvey,
+}: PresetThemesProps) => {
     const presetThemes = getPresetThemes();
-    const { survey } = useSurvey();
     const { createTheme, error } = useTheme();
 
     const handleCreateTheme = async (index: number) => {
         const theme = presetThemes[index];
-        const surveyId = survey?.survey?.id;
 
         try {
-            if (surveyId) {
-                await createTheme(
-                    {
-                        name: theme.name,
-                        colorScheme: theme.colorScheme,
-                    },
-                    surveyId ?? "",
-                );
+            const response = await createTheme({
+                name: theme.name,
+                colorScheme: theme.colorScheme,
+            });
 
-                // call update survey
-                // trigger a callback to update the survey
-                // with a prop onUpdateSurvey
-                // on creation of a new theme, it returns a themeID which we'd pass
+            const newThemeId = response.newThemeData?.id;
+
+            if (newThemeId) {
+                onThemeSelectUpdateSurvey(surveyId, newThemeId);
+                toast.success("Theme created successfully");
             }
-
-            toast.success("Theme created successfully");
         } catch (err) {
             toast.error(error?.message || error?.networkError?.message || "");
         }

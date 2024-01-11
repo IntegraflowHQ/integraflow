@@ -22,43 +22,54 @@ const THEMES_INFO = [
 ];
 
 export const UpdateDesignEditor = () => {
-    const { survey } = useSurvey();
-    const [newThemeOpenState, setOpenState] = React.useState<boolean>(false);
-    const [theme, setTheme] = React.useState<Partial<ProjectTheme>>();
-
-    const { createTheme, updateTheme, refetch, deleteTheme } = useTheme();
+    const { survey, updateSurvey } = useSurvey();
     const editThemeState = useStudioStore((state) => state.editTheme);
+    const { createTheme, updateTheme, refetch, deleteTheme } = useTheme();
 
-    const handleCreateTheme = () => {
-        const surveyId = survey?.survey?.id;
+    const [theme, setTheme] = React.useState<Partial<ProjectTheme>>();
+    const [newThemeOpenState, setOpenState] = React.useState<boolean>(false);
 
-        if (theme?.name && theme.colorScheme && surveyId) {
+    // triggered when the 'Create theme' button in the colorPicker is clicked
+    const handleCreateTheme = async () => {
+        const surveyId = survey?.survey?.id ?? "";
+
+        if (theme?.name && theme?.colorScheme && surveyId) {
             if (theme.id) {
                 updateTheme(theme);
                 toast.success("Theme updated successfully");
                 setOpenState(!newThemeOpenState);
             } else {
-                createTheme(
-                    {
-                        name: theme.name,
-                        colorScheme: theme.colorScheme,
-                    },
-                    surveyId ?? "",
-                );
-                toast.success("Theme created successfully");
+                const response = await createTheme({
+                    name: theme.name,
+                    colorScheme: theme.colorScheme,
+                });
+
+                if (response) {
+                    updateSurvey(surveyId, {
+                        themeId: response.newThemeData?.id ?? "",
+                    });
+                } else {
+                    toast.error("Error creating the theme");
+                    return;
+                }
                 setOpenState(!newThemeOpenState);
             }
         } else {
-            toast.error("Please fill all the fields");
+            toast.error("Error updating the survey with your selected theme");
         }
     };
 
-    const handleDeleteTheme = () => {
+    const handleDeleteTheme = async () => {
         const surveyId = survey?.survey?.id;
 
         if (theme?.id && surveyId) {
-            deleteTheme(surveyId, theme.id);
-            refetch();
+            try {
+                await deleteTheme(theme.id);
+                await updateSurvey(surveyId, { themeId: undefined });
+                refetch();
+            } catch (error) {
+                toast.error(error as string);
+            }
 
             toast.success("Theme deleted successfully");
             setOpenState(!newThemeOpenState);
@@ -79,7 +90,7 @@ export const UpdateDesignEditor = () => {
         setOpenState(true);
     };
 
-    const handleSelectedOption = (
+    const handleSelectedThemeOption = (
         themeInfo: (typeof THEMES_INFO)[0],
         color: string,
     ) => {
@@ -159,7 +170,10 @@ export const UpdateDesignEditor = () => {
 
                                 <ColorPicker
                                     onChange={(color) => {
-                                        handleSelectedOption(themeInfo, color);
+                                        handleSelectedThemeOption(
+                                            themeInfo,
+                                            color,
+                                        );
                                     }}
                                 >
                                     {" "}
@@ -189,7 +203,7 @@ export const UpdateDesignEditor = () => {
                     />
                 ) : null}
                 <Button
-                    onClick={handleCreateTheme}
+                    onClick={() => handleCreateTheme()}
                     text={
                         editThemeState === true
                             ? "Update theme"
@@ -220,7 +234,10 @@ export const UpdateDesignEditor = () => {
                     </Tabs.Root>
 
                     <div className="mt-4">
-                        <DesignEditorContent onOpen={onOpen} />
+                        <DesignEditorContent
+                            onOpen={onOpen}
+                            // onPresetThemeSelect={() => createPresetTheme()}
+                        />
                     </div>
                 </div>
             ) : (

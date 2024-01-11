@@ -6,7 +6,7 @@ import {
     useProjectThemeUpdateMutation,
     useThemeQuery,
 } from "@/generated/graphql";
-import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
+import useUserState from "@/modules/users/hooks/useUserState";
 import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import { Reference } from "@apollo/client";
 import { PROJECT_THEME } from "../graphql/fragments/projectFragments";
@@ -21,9 +21,9 @@ export type ColorScheme = {
 
 export const useTheme = () => {
     const { workspace } = useWorkspace();
+    const { user } = useUserState();
     const [createThemeMutation] = useProjectThemeCreateMutation();
     const [updateThemeMutation] = useProjectThemeUpdateMutation();
-    const { updateSurvey } = useSurvey();
     const [deleteThemeMutation] = useProjectThemeDeleteMutation();
 
     const {
@@ -60,11 +60,8 @@ export const useTheme = () => {
         });
     };
 
-    const createTheme = async (
-        theme: Partial<ProjectTheme>,
-        surveyId: string,
-    ) => {
-        await createThemeMutation({
+    const createTheme = async (theme: Partial<ProjectTheme>) => {
+        const { data } = await createThemeMutation({
             variables: {
                 input: {
                     name: theme.name ?? "",
@@ -80,7 +77,7 @@ export const useTheme = () => {
             },
 
             onCompleted: (data) => {
-                const themeData = {
+                const newThemeData = {
                     id: data.projectThemeCreate?.projectTheme?.id ?? "",
                     name: data.projectThemeCreate?.projectTheme?.name ?? "",
                     colorScheme:
@@ -88,7 +85,7 @@ export const useTheme = () => {
                         "",
                 };
 
-                updateSurvey(surveyId ?? "", { themeId: themeData.id });
+                return newThemeData;
             },
 
             optimisticResponse: {
@@ -97,7 +94,7 @@ export const useTheme = () => {
                     __typename: "ProjectThemeCreate",
                     projectTheme: {
                         __typename: "ProjectTheme",
-                        id: "temp-id",
+                        id: theme?.id ?? "",
                         name: theme.name ?? "",
                         colorScheme: JSON.stringify(theme.colorScheme ?? {}),
                     },
@@ -144,6 +141,10 @@ export const useTheme = () => {
             return {
                 error,
             };
+
+        return {
+            newThemeData: data?.projectThemeCreate?.projectTheme,
+        };
     };
 
     const updateTheme = async (theme: Partial<ProjectTheme>) => {
@@ -168,12 +169,66 @@ export const useTheme = () => {
                 projectThemeUpdate: {
                     __typename: "ProjectThemeUpdate",
 
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
                     projectTheme: {
                         __typename: "ProjectTheme",
                         id: theme.id,
                         name: theme.name ?? "",
+                        reference: "",
+                        settings: "",
+                        project: {
+                            __typename: "Project",
+                            id: "",
+                            name: "",
+                            slug: "",
+                            hasCompletedOnboardingFor: null,
+                            timezone: "",
+                            organization: {
+                                id: workspace?.organization.id ?? "",
+                                slug: workspace?.organization.slug ?? "",
+                                name: workspace?.organization.name ?? "",
+                                memberCount:
+                                    workspace?.organization.memberCount ?? 0,
+                            },
+                        },
+
+                        creator: {
+                            __typename: "User",
+                            firstName: user?.firstName ?? "",
+                            lastName: user?.lastName ?? "",
+                            email: user?.email ?? "",
+                            id: user?.id ?? "",
+                            isActive: user?.isActive ?? false,
+                            isStaff: user?.isStaff ?? false,
+                            isOnboarded: user?.isOnboarded ?? false,
+                            organization: {
+                                id: workspace?.organization.id ?? "",
+                                slug: workspace?.organization.slug ?? "",
+                                name: workspace?.organization.name ?? "",
+                                memberCount:
+                                    workspace?.organization.memberCount ?? 0,
+                            },
+                            project: {
+                                id: workspace?.project.id ?? "",
+                                name: workspace?.project.name ?? "",
+                                slug: workspace?.project.slug ?? "",
+                                hasCompletedOnboardingFor: null,
+                                timezone: "",
+                                organization: {
+                                    id: workspace?.organization.id ?? "",
+                                    slug: workspace?.organization.slug ?? "",
+                                    name: workspace?.organization.name ?? "",
+                                    memberCount:
+                                        workspace?.organization.memberCount ??
+                                        0,
+                                },
+                            },
+                            organizations: {
+                                __typename: "OrganizationCountableConnection",
+                                edges: [],
+                            },
+                        },
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString(),
                         colorScheme: JSON.stringify(theme.colorScheme ?? {}),
                     },
                     errors: [],
@@ -199,7 +254,7 @@ export const useTheme = () => {
         });
     };
 
-    const deleteTheme = async (surveyId: string, themeId: string) => {
+    const deleteTheme = async (themeId: string) => {
         await deleteThemeMutation({
             variables: {
                 id: themeId,
@@ -210,10 +265,6 @@ export const useTheme = () => {
                 },
             },
             notifyOnNetworkStatusChange: true,
-
-            onCompleted: () => {
-                updateSurvey(surveyId, { themeId: undefined });
-            },
 
             optimisticResponse: {
                 __typename: "Mutation",

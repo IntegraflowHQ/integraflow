@@ -34,7 +34,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
     const handleSelectedTheme = (theme: Partial<ProjectTheme>) => {
         setSelectedTheme(theme);
-        const surveyId = survey?.survey?.id;
+        const surveyId = survey?.survey?.id ?? "";
 
         if (surveyId) {
             updateSurvey(surveyId, { themeId: theme.id });
@@ -46,7 +46,6 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
     }
 
     const count = themes?.length ?? 0;
-
     const createNewTheme = () => {
         useStudioStore.setState({ editTheme: false });
         onOpen();
@@ -181,7 +180,14 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
             >
                 {count !== 0 && <hr className="border-1 border-intg-bg-14" />}
 
-                <PresetThemes />
+                <PresetThemes
+                    surveyId={survey?.survey?.id ?? ""}
+                    onThemeSelectUpdateSurvey={async (surveyId, themeId) =>
+                        await updateSurvey(surveyId, {
+                            themeId: themeId,
+                        })
+                    }
+                />
             </div>
         </>
     );
