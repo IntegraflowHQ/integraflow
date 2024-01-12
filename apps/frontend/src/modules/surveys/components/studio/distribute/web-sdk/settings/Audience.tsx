@@ -21,10 +21,6 @@ export default function Audience({ channel }: WebChannelAccordionProps) {
         TriggerConditionInput | undefined
     >();
 
-    console.log("channel: ", channel);
-
-    console.log("conditions: ", channel?.conditions?.filters);
-
     const handleOperatorChange = (operator: LogicOperator) => {
         const conditions = {
             ...channel.conditions,
@@ -102,7 +98,6 @@ export default function Audience({ channel }: WebChannelAccordionProps) {
                     {conditionInput && (
                         <FilterOperators
                             conditionDetails={conditionInput}
-                            defaultOpen={true}
                             onEnter={() => {
                                 if (filterInput) {
                                     handleAddFilter(filterInput);

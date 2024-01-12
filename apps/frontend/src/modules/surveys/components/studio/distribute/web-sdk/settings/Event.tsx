@@ -32,7 +32,7 @@ export default function Event({
     >();
 
     return (
-        <div className="flex w-max max-w-full flex-wrap items-center rounded-lg bg-intg-bg-15 py-[9px] pl-[6px] pr-6">
+        <div className="flex w-max max-w-full flex-wrap items-center gap-1 rounded-lg bg-intg-bg-15 py-[9px] pl-[6px] pr-6">
             <div className="flex flex-wrap gap-2 rounded bg-intg-bg-19 p-2">
                 <Zap className="text-intg-text" fill="#AFAAC7" />
                 <span className="text-intg-text">{condition.event}</span>
@@ -42,7 +42,7 @@ export default function Event({
             </div>
 
             {condition.filters?.length ? (
-                <div className="mx-1 rounded bg-intg-bg-19 p-[10px]">
+                <div className="rounded bg-intg-bg-19 p-[10px]">
                     <Ampersand className="text-intg-text" size={20} />
                 </div>
             ) : null}
@@ -55,26 +55,27 @@ export default function Event({
                 operator={condition.operator}
             />
 
-            <FilterOperators
-                conditionDetails={conditionInput}
-                defaultOpen={!!conditionInput}
-                onEnter={() => {
-                    if (filterInput) {
-                        onAddFilter(filterInput);
-                    }
-                    updateStudio({ currentEvent: "" });
-                    setFilterInput(null);
-                    setConditionInput(undefined);
-                }}
-                onInput={setFilterInput}
-            >
-                {filterInput ? (
-                    <FilterDetails
-                        filter={filterInput}
-                        onRemoveFilter={() => setFilterInput(null)}
-                    />
-                ) : null}
-            </FilterOperators>
+            {conditionInput && (
+                <FilterOperators
+                    conditionDetails={conditionInput}
+                    onEnter={() => {
+                        if (filterInput) {
+                            onAddFilter(filterInput);
+                        }
+                        updateStudio({ currentEvent: "" });
+                        setFilterInput(null);
+                        setConditionInput(undefined);
+                    }}
+                    onInput={setFilterInput}
+                >
+                    {filterInput ? (
+                        <FilterDetails
+                            filter={filterInput}
+                            onRemoveFilter={() => setFilterInput(null)}
+                        />
+                    ) : null}
+                </FilterOperators>
+            )}
 
             <PropertySelect
                 options={properties}

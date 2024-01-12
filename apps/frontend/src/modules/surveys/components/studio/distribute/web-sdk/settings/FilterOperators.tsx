@@ -19,13 +19,11 @@ export default function FilterOperators({
     onEnter,
     onInput,
     children,
-    defaultOpen,
 }: {
     conditionDetails?: TriggerConditionInput;
     onEnter?: () => void;
     onInput?: (data: EventFilter) => void;
     children?: React.ReactNode;
-    defaultOpen?: boolean;
 }) {
     const [focused, setFocused] = useState(FilterOperator.HAS_ANY_VALUE);
 
@@ -45,7 +43,7 @@ export default function FilterOperators({
 
     return (
         <Popover.Root
-            open={defaultOpen}
+            open={true}
             onOpenChange={(value) => {
                 if (conditionDetails && value === false) {
                     onEnter?.();
