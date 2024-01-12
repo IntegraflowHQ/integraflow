@@ -5,10 +5,10 @@ import { PlusCircle, X } from "@/ui/icons";
 import { FilterOperator, LogicOperator } from "@integraflow/web/src/types";
 import { Ampersand, Zap } from "lucide-react";
 import { useState } from "react";
-import FilterDetails from "./FilterDetails";
-import FilterOperators from "./FilterOperators";
-import Filters from "./Filters";
-import PropertySelect from "./PropertySelect";
+import FilterDetails from "./filters/FilterDetails";
+import FilterOperators from "./filters/FilterOperators";
+import Filters from "./filters/Filters";
+import PropertySelect from "./filters/PropertySelect";
 
 export default function Event({
     condition,

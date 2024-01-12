@@ -98,12 +98,3 @@ export const PROPERTY_FIELDS = {
         },
     ],
 };
-
-export const getLabel = (operator: FilterOperator) => {
-    const operators = Object.values(PROPERTY_FIELDS).reduce(
-        (acc, curr) => [...acc, ...curr],
-        [],
-    );
-    const operatorObj = operators.find((o) => o.operator === operator);
-    return operatorObj?.label;
-};

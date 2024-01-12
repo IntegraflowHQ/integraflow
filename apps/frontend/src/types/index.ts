@@ -1,5 +1,5 @@
+import { PROPERTY_FIELDS } from "@/constants";
 import { SurveyChannel, User } from "@/generated/graphql";
-import { PROPERTY_FIELDS } from "@/modules/surveys/components/studio/distribute/web-sdk/settings/constants";
 import { DeepOmit } from "@apollo/client/utilities";
 import {
     Audience,

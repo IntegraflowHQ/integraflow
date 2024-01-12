@@ -1,3 +1,4 @@
+import { PROPERTY_FIELDS } from "@/constants";
 import { EventFilter, TriggerConditionInput } from "@/types";
 import { DatePicker } from "@/ui";
 import { CheckComplete, CheckPending } from "@/ui/icons";
@@ -5,7 +6,6 @@ import { cn } from "@/utils";
 import { FilterOperator } from "@integraflow/web/src/types";
 import * as Popover from "@radix-ui/react-popover";
 import { useEffect, useState } from "react";
-import { PROPERTY_FIELDS } from "./constants";
 
 const booleanOperators = [
     FilterOperator.HAS_ANY_VALUE,

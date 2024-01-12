@@ -1,22 +1,16 @@
 import useChannels from "@/modules/surveys/hooks/useChannels";
 import { EventFilter } from "@/types";
 import { X } from "@/ui/icons";
-import { cn } from "@/utils";
+import { getFilterLabel } from "@/utils";
 import { FilterValue } from "@integraflow/web/src/types";
 import { format } from "date-fns";
-import { getLabel } from "./constants";
 
 type Props = {
     filter: EventFilter;
     onRemoveFilter: () => void;
-    rounded?: "left" | "right";
 };
 
-export default function FilterDetails({
-    filter,
-    onRemoveFilter,
-    rounded,
-}: Props) {
+export default function FilterDetails({ filter, onRemoveFilter }: Props) {
     const { getPropertyDefinition } = useChannels();
     const definition = getPropertyDefinition(filter.property);
 
@@ -34,12 +28,13 @@ export default function FilterDetails({
 
     return (
         <div
-            className={cn(
-                "inline-flex w-max items-center gap-2 rounded-lg bg-intg-bg-19 p-2 text-intg-text",
-            )}
+            className={
+                "inline-flex w-max items-center gap-2 rounded-lg bg-intg-bg-19 p-2 text-intg-text"
+            }
         >
             <span>
-                {filter.property} {getLabel(filter.operator)?.toLowerCase()}{" "}
+                {filter.property}{" "}
+                {getFilterLabel(filter.operator)?.toLowerCase()}{" "}
                 {formatIfDate(filter.value)}
             </span>
             <button onClick={onRemoveFilter}>

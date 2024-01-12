@@ -68,7 +68,7 @@ const backgrounds: Background[] = [
     },
 ];
 
-export default function Behavior({channel}: WebChannelAccordionProps) {
+export default function Behavior({ channel }: WebChannelAccordionProps) {
     const { updateChannel, createChannel } = useChannels();
 
     const { register, watch, setValue } = useForm<ChannelSettings>({
@@ -173,6 +173,7 @@ export default function Behavior({channel}: WebChannelAccordionProps) {
 
                 <div className="flex w-full flex-col gap-3">
                     <Switch
+                        name={"recurring"}
                         label="Recurring"
                         value={watch("recurring")}
                         onChange={(e) => setValue("recurring", e.target.value)}
@@ -185,6 +186,7 @@ export default function Behavior({channel}: WebChannelAccordionProps) {
                         />
                     )}
                     <Switch
+                        name={"closeOnLimit"}
                         label="Close survey on response limit"
                         value={watch("closeOnLimit")}
                         onChange={(e) =>
