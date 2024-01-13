@@ -46,16 +46,23 @@ export default function Create() {
                     >
                         <div>
                             <Tooltip.Provider>
-                                <Tooltip.Root key={id}>
-                                    <Tooltip.Trigger className="h-9 rounded px-2 ease-in-out hover:bg-[#272138] hover:transition-all">
+                                <Tooltip.Root key={id} delayDuration={200}>
+                                    <Tooltip.Trigger className="h-9 rounded px-2 ease-in-out hover:bg-intg-bg-15 hover:transition-all">
                                         {icon}
                                     </Tooltip.Trigger>
 
                                     <Tooltip.Portal>
-                                        <Tooltip.Content className="tooltip__arrow">
-                                            <div className="absolute -left-6 top-1 ml-16 rounded-md border border-intg-text-4 bg-intg-bg-9 px-1 py-2 text-xs text-intg-text-4">
-                                                <p className="w-28">{label}</p>
-                                            </div>
+                                        <Tooltip.Content
+                                            side="right"
+                                            align="center"
+                                            className="rounded border border-intg-bg-10 bg-intg-bg-9 px-2 py-3 text-xs leading-[18px] text-intg-text"
+                                        >
+                                            {label}
+                                            <Tooltip.Arrow
+                                                width={18}
+                                                height={16}
+                                                className="-mt-[1px] fill-[#181325] stroke-intg-bg-10"
+                                            />
                                         </Tooltip.Content>
                                     </Tooltip.Portal>
                                 </Tooltip.Root>
