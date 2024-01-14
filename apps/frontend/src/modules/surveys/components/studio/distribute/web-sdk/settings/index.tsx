@@ -54,7 +54,7 @@ export default function Settings() {
         >
             {sections.map(({ name, id, content: Content }) => (
                 <Accordion.Item
-                    key={id}
+                    key={`${channel.id}-${name}`}
                     value={id}
                     className="rounded-lg bg-intg-bg-15"
                 >

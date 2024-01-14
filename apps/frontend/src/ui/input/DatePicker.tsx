@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
 import { cn } from "@/utils";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef } from "react";
 import { Calendar } from "../Calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../Popover";
 
@@ -21,19 +21,6 @@ type DatePickerProps = {
 
 export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
     ({ label, value, onChange, displayFormat = "PPP", ...props }, ref) => {
-        const [date, setDate] = useState<Date | undefined>();
-        useEffect(() => {
-            if (onChange) {
-                onChange({
-                    target: {
-                        value: date,
-                        name: label ?? "date",
-                        type: "datetime-local",
-                    },
-                });
-            }
-        }, [date]);
-
         return (
             <Popover>
                 <PopoverTrigger asChild>
@@ -49,8 +36,8 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                             )}
                         >
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {date ? (
-                                format(date, displayFormat)
+                            {value ? (
+                                format(value, displayFormat)
                             ) : (
                                 <span>Pick a date</span>
                             )}
@@ -59,8 +46,16 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                 </PopoverTrigger>
                 <PopoverContent className="w-auto bg-intg-bg-15  p-0" ref={ref}>
                     <Calendar
-                        selected={date}
-                        onSelect={(value) => setDate(value)}
+                        selected={value}
+                        onSelect={(value) => {
+                            onChange?.({
+                                target: {
+                                    value,
+                                    name: label ?? "date",
+                                    type: "datetime-local",
+                                },
+                            });
+                        }}
                         mode="single"
                         initialFocus
                         {...props}

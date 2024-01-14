@@ -23,8 +23,8 @@ export type ChannelSettings = {
     name?: string;
     recurring?: boolean;
     recurringPeriod?: number;
-    startDate?: string | Date;
-    endDate?: string | Date;
+    startDate?: string;
+    endDate?: string;
     backgroundOverlay?: BackgroundOverLayType;
     placement?: PlacementType;
     closeOnLimit?: boolean;

@@ -72,19 +72,14 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
     const { updateChannel, createChannel } = useChannels();
 
     const { register, watch, setValue } = useForm<ChannelSettings>({
-        defaultValues: {
+        values: {
             ...channel.settings,
-            startDate: channel.settings?.startDate
-                ? new Date(channel.settings?.startDate)
-                : undefined,
-            endDate: channel.settings?.endDate
-                ? new Date(channel.settings.endDate)
-                : undefined,
         },
     });
 
     useEffect(() => {
         const subscription = watch((value) => {
+            console.log("values: ", value);
             if (!value) return;
             if (value.recurring && !value.recurringPeriod)
                 return toast.error("Please enter recurring period");
@@ -203,15 +198,26 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
                     <div className="flex gap-1">
                         <DatePicker
                             label="Start date"
-                            value={watch("startDate") as Date | undefined}
+                            value={
+                                watch("startDate")
+                                    ? new Date(watch("startDate") as string)
+                                    : undefined
+                            }
                             onChange={(e) => {
-                                setValue("startDate", e.target.value);
+                                if (e.target.value) {
+                                    setValue(
+                                        "startDate",
+                                        e.target.value.toISOString(),
+                                    );
+                                } else {
+                                    setValue("startDate", "");
+                                }
                             }}
                             displayFormat="dd/MM/yyyy"
                             toDate={
                                 watch("endDate")
                                     ? subDays(
-                                          new Date(watch("endDate") as Date),
+                                          new Date(watch("endDate") as string),
                                           1,
                                       )
                                     : undefined
@@ -219,15 +225,28 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
                         />
                         <DatePicker
                             label="End date"
-                            value={watch("endDate") as Date | undefined}
-                            onChange={(e) =>
-                                setValue("endDate", e.target.value)
+                            value={
+                                watch("endDate")
+                                    ? new Date(watch("endDate") as string)
+                                    : undefined
                             }
+                            onChange={(e) => {
+                                if (e.target.value) {
+                                    setValue(
+                                        "endDate",
+                                        e.target.value.toISOString(),
+                                    );
+                                } else {
+                                    setValue("endDate", "");
+                                }
+                            }}
                             displayFormat="dd/MM/yyyy"
                             fromDate={
                                 watch("startDate")
                                     ? addDays(
-                                          new Date(watch("startDate") as Date),
+                                          new Date(
+                                              watch("startDate") as string,
+                                          ),
                                           1,
                                       )
                                     : undefined
