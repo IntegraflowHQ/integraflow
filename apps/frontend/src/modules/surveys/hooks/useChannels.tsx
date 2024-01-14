@@ -250,8 +250,6 @@ export default function useChannels() {
         });
     }, [getPropertyDefinition, personsData?.persons?.edges]);
 
-    console.log("personProperties: ", personProperties);
-
     return {
         eventDefinitions,
         eventProperties,

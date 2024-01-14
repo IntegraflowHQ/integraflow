@@ -79,7 +79,6 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
 
     useEffect(() => {
         const subscription = watch((value) => {
-            console.log("values: ", value);
             if (!value) return;
             if (value.recurring && !value.recurringPeriod)
                 return toast.error("Please enter recurring period");
