@@ -72,15 +72,19 @@ export default function Distribute() {
                 </Tabs.List>
             </div>
 
-            <div className=" scrollbar-hide h-screen flex-1 overflow-y-scroll pb-[27px] pt-[155px]">
+            <>
                 {tabs.map((tab) => {
                     return (
-                        <Tabs.Content key={tab.id} value={tab.id} asChild>
+                        <Tabs.Content
+                            key={tab.id}
+                            value={tab.id}
+                            className="scrollbar-hide h-screen flex-1 overflow-y-scroll pb-[27px] pt-[155px]"
+                        >
                             {tab.content}
                         </Tabs.Content>
                     );
                 })}
-            </div>
+            </>
         </Tabs.Root>
     );
 }
