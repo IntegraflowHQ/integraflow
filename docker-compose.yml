@@ -28,7 +28,7 @@ services:
     ports:
       - 8000:8000
     environment:
-      - DATABASE_URL=postgres://postgres.ugojraljnvusodkofopv:m9BBOv64a9rtvA2g@aws-0-us-west-1.pooler.supabase.com:6543/postgres
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CACHE_URL=redis://redis:6379/0
     restart: always
