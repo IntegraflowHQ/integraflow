@@ -1,39 +1,44 @@
-import { User } from "@/generated/graphql";
-import { DeepOmit } from "@apollo/client/utilities";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { DeepPartial, mergeDeep } from "@apollo/client/utilities";
 
-export type UserState = {
-    user: DeepOmit<User, "__typename"> | null;
-    lastUpdate: number;
-};
+import { User } from "@/generated/graphql";
+import { userCache } from "@/utils/cache";
+
+export type UserState = DeepPartial<User>;
 
 export type UserActions = {
-    deleteUser: () => void;
-    updateUser: (data: DeepOmit<User, "__typename">) => void;
+    updateUser: (user: UserState) => void;
+    reset: () => void;
 };
 
-const initialState: UserState = {
-    user: null,
-    lastUpdate: 0,
-};
+const initialState: UserState = {};
 
 export const useUserStore = create<UserState & UserActions>()(
     persist(
         (set) => ({
             ...initialState,
-            deleteUser: () => set(initialState),
-            updateUser: (data) =>
-                set({
-                    user: {
-                        ...data,
-                    },
-                    lastUpdate: Date.now(),
-                }),
+            updateUser: (data) => set(data),
+            reset: () => set(initialState),
         }),
         {
-            name: "authUser",
-            storage: createJSONStorage(() => localStorage),
+            name: "user-cache",
+            storage: createJSONStorage(() => userCache),
+            partialize: (state): UserState => ({
+                id: state.id,
+                isOnboarded: state.isOnboarded,
+                project: state.project ? {
+                    id: state.project.id,
+                    slug: state.project.slug,
+                    hasCompletedOnboardingFor: state.project.hasCompletedOnboardingFor
+                } : undefined,
+                organization: state.organization ? {
+                    id: state.organization.id,
+                    slug: state.organization.slug
+                } : undefined
+            }),
+            merge: (persistedState, currentState) => mergeDeep(currentState, persistedState),
         },
     ),
 );
+

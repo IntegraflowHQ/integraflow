@@ -1,244 +1,104 @@
 import {
+    AuthOrganization,
     AuthUser,
     Project,
-    ProjectCountableEdge,
-    User,
-    useViewerLazyQuery,
 } from "@/generated/graphql";
 import useRedirect from "@/modules/auth/hooks/useRedirect";
-import { isOver24Hours, omitTypename } from "@/utils";
-import { logDebug } from "@/utils/log";
 import { DeepOmit } from "@apollo/client/utilities";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import useUserState from "../../users/hooks/useUserState";
-import { Workspace } from "../states/workSpace";
-import useWorkspaceState from "./useWorkspaceState";
+import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
+import { omitTypename } from "@/utils";
 
-export default function useWorkspace() {
-    const [isValidating, setIsValidating] = useState(true);
+export const useWorkspace = () => {
     const { orgSlug, projectSlug } = useParams();
-    const { workspace, updateWorkspace } = useWorkspaceState();
-    const { user, lastUpdate: lastUserUpdate, updateUser } = useUserState();
-    const [fetchUser] = useViewerLazyQuery();
+    const { user, updateUser } = useCurrentUser();
+    const { organizations } = useCurrentUser();
     const redirect = useRedirect();
 
-    const switchWorkspace = useCallback(
-        (data: Workspace) => {
-            updateWorkspace(data);
-            if (
-                orgSlug !== data.organization.slug ||
-                projectSlug !== data.project.slug
-            ) {
-                redirect(data);
-            }
-        },
-        [orgSlug, projectSlug],
-    );
+    const workspace = useMemo(() => {
+        const slug = orgSlug ?? user?.organization?.slug;
 
-    const isCurrentOrg = useMemo(() => {
-        if (!orgSlug) return false;
-        return workspace?.organization.slug === orgSlug.toLowerCase();
-    }, [workspace?.organization.slug, orgSlug]);
+        return organizations.find(organization => organization.slug === slug) ?? null;
+    }, [orgSlug, user?.organization?.slug, organizations]);
 
-    const isValidProject = useMemo(() => {
-        if (!projectSlug) {
-            return (
-                workspace?.project.organization.slug ===
-                workspace?.organization.slug
-            );
-        } else {
-            return (
-                workspace?.project.slug === projectSlug.toLowerCase() &&
-                workspace.project.organization.slug ===
-                    workspace.organization.slug
-            );
-        }
-    }, [projectSlug, orgSlug, workspace]);
-
-    const isValidWorkspace = useMemo(() => {
-        if (!projectSlug && !orgSlug) return true;
-        return isCurrentOrg && isValidProject;
-    }, [projectSlug, orgSlug, isCurrentOrg, isValidProject]);
-
-    const createValidWorkspaceData = useCallback(async () => {
-        let org = null;
-        let project = null;
-
-        if (!orgSlug) {
-            org = user?.organization;
-            project = user?.project;
-        } else {
-            org =
-                user?.organizations?.edges.find(
-                    (edge) => edge.node.slug === orgSlug,
-                )?.node || null;
-            project = !projectSlug
-                ? org?.projects?.edges[0].node
-                : org?.projects?.edges.find(
-                      (edge) => edge.node.slug === projectSlug,
-                  )?.node || null;
+    const projects = useMemo(() => {
+        if (!workspace || !workspace.projects?.edges) {
+            return [];
         }
 
-        if ((!org || !project) && isOver24Hours(lastUserUpdate)) {
-            logDebug("User might be stale\nUpdating user...");
-            await fetchUser({
-                onCompleted: ({ viewer }) => {
-                    const newUser = omitTypename(viewer as User);
-                    updateUser(newUser);
+        return workspace.projects.edges.map(edge => omitTypename(edge.node));
+    }, [workspace]);
 
-                    if (!orgSlug) {
-                        org = newUser?.organization;
-                        project = newUser?.project;
-                    } else {
-                        org =
-                            newUser?.organizations?.edges.find(
-                                (edge) => edge.node.slug === orgSlug,
-                            )?.node || null;
-                        project = !projectSlug
-                            ? org?.projects?.edges[0].node
-                            : org?.projects?.edges.find(
-                                  (edge) => edge.node.slug === projectSlug,
-                              )?.node || null;
-                    }
-                },
-            });
-        }
-
-        if (!org || !project) {
-            logDebug("Couldn't find valid org or project\n404 Error.");
+    const project = useMemo(() => {
+        if (!workspace) {
             return null;
         }
 
-        return {
-            organization: org,
-            project: project,
-        } as Workspace;
-    }, [orgSlug, projectSlug, workspace]);
-
-    const currentOrgData = useMemo(() => {
-        const data =
-            user?.organizations?.edges.find(
-                (edge) => edge.node.slug === workspace?.organization.slug,
-            )?.node || null;
-
-        return data;
-    }, [user?.organizations, workspace?.organization.id]);
-
-    const projects = useMemo(() => {
-        return (
-            currentOrgData?.projects?.edges || ([] as ProjectCountableEdge[])
-        );
-    }, [currentOrgData]);
-
-    useEffect(() => {
-        if (!orgSlug) {
-            logDebug("No orgSlug, No validation required.");
-            setIsValidating(false);
-            return;
+        if (orgSlug && !projectSlug) {
+            return omitTypename(projects?.[0]) ?? null;
         }
 
-        setIsValidating(true);
+        const slug = projectSlug ?? user?.project?.slug;
 
-        if (isCurrentOrg && isValidProject) {
-            logDebug("Workspace is valid.");
-            if (!projectSlug) {
-                redirect(workspace as Workspace);
+        const project = projects?.find(project => project.slug === slug);
+        return project ? omitTypename(project) : null;
+    }, [user?.project?.slug, orgSlug, projectSlug, projects, workspace]);
+
+    useEffect(() => {
+        const newProject = project ?? omitTypename(projects?.[0]);
+
+        if (
+            workspace &&
+            newProject &&
+            (workspace.id !== user?.organization?.id || newProject.id !== user?.project?.id)
+        ) {
+            updateUser({
+                organization: workspace,
+                project: newProject
+            }, true);
+        }
+    }, [user, project, projects, workspace, updateUser]);
+
+    const handleSwitchWorkspace = useCallback(
+        (organization: DeepOmit<AuthOrganization, "__typename">, project: DeepOmit<Project, "__typename">) => {
+            updateUser({
+                organization: workspace,
+                project: project
+            }, true);
+
+            if (
+                user &&
+                (orgSlug !== organization.slug || projectSlug !== project.slug)
+            ) {
+                redirect(user);
             }
-            setIsValidating(false);
-            return;
-        } else {
-            logDebug("orgSlug", orgSlug);
-            logDebug("currentOrg", user?.organization);
-            logDebug("isCurrentOrg: ", isCurrentOrg);
-            logDebug("projectSlug", projectSlug);
-            logDebug("currentProject", user?.project);
-            logDebug("isValidProject: ", isValidProject);
-            logDebug("Creating valid workspace.");
-            createValidWorkspaceData()
-                .then((workspace) => {
-                    logDebug("New workspace: ", workspace);
-                    if (workspace) {
-                        switchWorkspace(workspace);
-                    }
-                    setIsValidating(false);
-                })
-                .catch(() => {
-                    logDebug("Failed to fetch");
-                    setIsValidating(false);
-                });
-        }
-
-        return () => {
-            setIsValidating(true);
-        };
-    }, [
-        orgSlug,
-        projectSlug,
-        isCurrentOrg,
-        isValidProject,
-        createValidWorkspaceData,
-    ]);
-
-    useEffect(() => {
-        if (!workspace?.organization || !workspace?.project || !user) return;
-        updateUser({
-            ...user,
-            organization: workspace.organization,
-            project: workspace.project,
-        });
-    }, [workspace?.organization, workspace?.project]);
-
-    const switchProject = useCallback(
-        (project: DeepOmit<Project, "__typename">) => {
-            const newWorkspace: Workspace = {
-                organization: workspace?.organization!,
-                project: project,
-            };
-            switchWorkspace(newWorkspace);
         },
-        [workspace, switchWorkspace],
+        [updateUser, workspace, user, orgSlug, projectSlug, redirect],
     );
 
-    const addWorkspace = useCallback(
-        (data: DeepOmit<AuthUser, "__typename">) => {
-            if (!user || !data.organization || !data.project) return;
-
-            const newUser = { ...user };
-            newUser.organization = data.organization;
-            newUser.project = data.project;
-            newUser?.organizations?.edges.unshift({
-                node: {
-                    ...data.organization,
-                    projects: {
-                        edges: [
-                            {
-                                node: {
-                                    ...data.project,
-                                },
-                            },
-                        ],
-                    },
-                },
-            });
-
-            updateUser(newUser);
-            switchWorkspace({
-                organization: data.organization,
-                project: data.project,
-            });
+    const handleSwitchProject = useCallback(
+        (project: DeepOmit<Project, "__typename">) => {
+            handleSwitchWorkspace(project.organization, project);
         },
-        [user],
+        [handleSwitchWorkspace],
+    );
+
+    const handleAddWorkspace = useCallback(
+        (data: DeepOmit<AuthUser, "__typename">) => {
+            if (!data.organization || !data.project) return;
+
+            handleSwitchWorkspace(data.organization, data.project);
+        },
+        [handleSwitchWorkspace],
     );
 
     return {
         workspace,
         projects,
-        isValidating,
-        isValidWorkspace,
-        switchWorkspace,
-        switchProject,
-        addWorkspace,
-        createValidWorkspaceData,
+        project,
+        switchWorkspace: handleSwitchWorkspace,
+        switchProject: handleSwitchProject,
+        addWorkspace: handleAddWorkspace
     };
 }

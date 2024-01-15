@@ -1,17 +1,15 @@
-import {
-    useEmailUserAuthChallengeMutation,
-    useGoogleUserAuthMutation,
-} from "@/generated/graphql";
+import { useGoogleLogin } from "@react-oauth/google";
+import { useCallback, useEffect } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { Link, createSearchParams, useNavigate } from "react-router-dom";
+
 import { Button, GlobalSpinner, TextInput } from "@/ui";
 import { Google } from "@/ui/icons";
 import { emailRegex } from "@/utils";
 import { toast } from "@/utils/toast";
-import { useGoogleLogin } from "@react-oauth/google";
-import { useEffect } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { Link, createSearchParams, useNavigate } from "react-router-dom";
-import { useAuthToken } from "../hooks/useAuthToken";
-import { usePersistUser } from "../hooks/usePersistUser";
+
+import { useAuth } from "../hooks/useAuth";
+import useRedirect from "../hooks/useRedirect";
 
 type Inputs = {
     email: string;
@@ -21,7 +19,6 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
     const {
         register,
         handleSubmit,
-        watch,
         setValue,
         formState: { errors },
     } = useForm<Inputs>({
@@ -29,61 +26,40 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
             email: "",
         },
     });
-    const email = watch("email");
     const navigate = useNavigate();
-    const { login } = useAuthToken();
-    const [googleAuth, { loading }] = useGoogleUserAuthMutation();
-    const [persistUser, { loading: persistingUser }] = usePersistUser();
+    const { loading, authenticateWithGoogle, generateMagicLink } = useAuth();
+    const redirect = useRedirect();
 
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const inviteLink = urlParams.get("inviteLink");
+    const inviteLink = urlParams.get("inviteLink") ?? undefined;
     const inviteEmail = urlParams.get("email");
 
-    const onSubmit: SubmitHandler<Inputs> = (data) => {
-        getToken({
-            variables: {
-                email: data.email,
-                inviteLink,
-            },
+    const onSubmit: SubmitHandler<Inputs> = useCallback(async (data) => {
+        await generateMagicLink(data.email, inviteLink);
+        navigate({
+            pathname: `/auth/magic-sign-in/`,
+            search: createSearchParams(
+                !inviteLink ?
+                    { email: data.email  } :
+                    { email: data.email, inviteLink }
+            ).toString(),
         });
-    };
+    }, [generateMagicLink, inviteLink, navigate]);
 
     useEffect(() => {
         if (inviteLink) {
-            setValue("email", inviteEmail || "");
+            setValue("email", inviteEmail ?? "");
         }
-    }, [inviteEmail]);
+    }, [inviteEmail, inviteLink, setValue]);
 
     const loginWithGoogle = useGoogleLogin({
         flow: "auth-code",
         ux_mode: "popup",
         onSuccess: async (codeResponse) => {
-            const result = await googleAuth({
-                variables: {
-                    code: codeResponse.code,
-                    inviteLink,
-                },
-            });
-
-            if (result.data?.googleUserAuth) {
-                if (
-                    !result.data?.googleUserAuth?.token ||
-                    !result.data?.googleUserAuth?.refreshToken ||
-                    !result.data?.googleUserAuth?.csrfToken
-                ) {
-                    return;
-                }
-
-                login(
-                    result.data?.googleUserAuth?.token,
-                    result.data?.googleUserAuth?.refreshToken,
-                    result.data?.googleUserAuth?.csrfToken,
-                );
-
-                if (result.data?.googleUserAuth?.user) {
-                    await persistUser();
-                }
+            const response = await authenticateWithGoogle(codeResponse.code, inviteLink);
+            if (response && response.user) {
+                redirect(response.user);
             }
         },
         onError: () => {
@@ -93,26 +69,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
         },
     });
 
-    const [getToken, { loading: gettingToken }] =
-        useEmailUserAuthChallengeMutation({
-            onCompleted: ({ emailUserAuthChallenge }) => {
-                if (emailUserAuthChallenge?.success) {
-                    navigate({
-                        pathname: `/auth/magic-sign-in/`,
-                        search: createSearchParams(
-                            !inviteLink ? { email } : { email, inviteLink },
-                        ).toString(),
-                    });
-                }
-            },
-            onError: () => {
-                toast.error("Something went wrong, please try again later.", {
-                    position: "bottom-left",
-                });
-            },
-        });
-
-    if (loading || gettingToken || persistingUser) {
+    if (loading) {
         return <GlobalSpinner />;
     }
 
