@@ -9,7 +9,6 @@ import {
     Table,
     TableBody,
     TableCell,
-    TableFoot,
     TableHead,
     TableHeaderCell,
     TableRow,
@@ -391,53 +390,59 @@ export const SurveyList = () => {
                         })}
                     </TableBody>
 
-                    <TableFoot className="h-[50px] border-t border-intg-bg-7">
-                        <TableCell className="flex justify-between">
-                            <button
-                                disabled={!pageInfo?.hasPreviousPage}
-                                onClick={() => handleGetMoreSurveys("backward")}
-                                className={`${
-                                    !pageInfo?.hasPreviousPage
-                                        ? "cursor-not-allowed opacity-50"
-                                        : ""
-                                } hover:bg-intg-bg-8} rounded-md border border-intg-bg-7 transition-all duration-300 ease-in`}
-                            >
-                                <Icon
-                                    size="md"
-                                    icon={ChevronLeft}
-                                    className="font-normal text-intg-text-4 hover:cursor-pointer"
-                                />
-                            </button>
-                            <button
-                                disabled={!pageInfo?.hasNextPage}
-                                onClick={() => handleGetMoreSurveys("forward")}
-                                className={`${
-                                    !pageInfo?.hasNextPage
-                                        ? "cursor-not-allowed opacity-50"
-                                        : ""
-                                } rounded-md border border-intg-bg-7  transition-all duration-300 ease-in hover:bg-intg-bg-8`}
-                            >
-                                <Icon
-                                    size="md"
-                                    icon={ChevronRight}
-                                    className="font-normal text-intg-text-4 hover:cursor-pointer"
-                                />
-                            </button>
-                        </TableCell>
-                        <TableCell />
-                        <TableCell />
-                        <TableCell>
-                            <span className="text-sm font-normal text-intg-text-4">
+                    <tfoot className="table-footer-group h-[50px] border-t border-intg-bg-7">
+                        <tr className="">
+                            <td className="table-cell px-4 py-4">
+                                <button
+                                    disabled={!pageInfo?.hasPreviousPage}
+                                    onClick={() =>
+                                        handleGetMoreSurveys("backward")
+                                    }
+                                    className={`${
+                                        !pageInfo?.hasPreviousPage
+                                            ? "cursor-not-allowed opacity-50"
+                                            : ""
+                                    } hover:bg-intg-bg-8} rounded-md border border-intg-bg-7 transition-all duration-300 ease-in`}
+                                >
+                                    <Icon
+                                        size="md"
+                                        icon={ChevronLeft}
+                                        className="font-normal text-intg-text-4 hover:cursor-pointer"
+                                    />
+                                </button>
+                            </td>
+                            <td className="table-cell">
+                                <button
+                                    disabled={!pageInfo?.hasNextPage}
+                                    onClick={() =>
+                                        handleGetMoreSurveys("forward")
+                                    }
+                                    className={`${
+                                        !pageInfo?.hasNextPage
+                                            ? "cursor-not-allowed opacity-50"
+                                            : ""
+                                    } rounded-md border border-intg-bg-7  transition-all duration-300 ease-in hover:bg-intg-bg-8`}
+                                >
+                                    <Icon
+                                        size="md"
+                                        icon={ChevronRight}
+                                        className="font-normal text-intg-text-4 hover:cursor-pointer"
+                                    />
+                                </button>
+                            </td>
+
+                            <td className="table-cell" />
+
+                            <td className="table-cell px-4 py-4 text-sm font-normal text-intg-text-4">
                                 Rows per page: {surveysOnPage}
-                            </span>
-                        </TableCell>
-                        <TableCell>
-                            <span className="text-sm font-normal text-intg-text-4">
+                            </td>
+
+                            <td className="table-cell px-4 py-4 text-sm font-normal text-intg-text-4 ">
                                 {surveyStartIndex} - {surveyEndIndex} of{" "}
                                 {totalSurveys} Surveys
-                            </span>
-                        </TableCell>
-                    </TableFoot>
+                            </td>
+                        </tr>
+                    </tfoot>
                 </Table>
             </div>
         </div>
