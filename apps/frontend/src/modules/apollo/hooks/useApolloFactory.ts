@@ -1,11 +1,12 @@
 import { InMemoryCache, NormalizedCacheObject } from "@apollo/client";
 import { useMemo, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 
-import { useIsMatchingLocation, useUpdateEffect } from "@/hooks";
+import { useUpdateEffect } from "@/hooks";
 
-import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
-import useLogout from "@/modules/auth/hooks/useLogout";
+import { useLogout } from "@/modules/auth/hooks/useLogout";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
+
 import { ApolloFactory } from "../services/apollo.factory";
 
 const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
@@ -13,11 +14,11 @@ const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
 export const useApolloFactory = () => {
     const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
 
-    const navigate = useNavigate();
-    const isMatchingLocation = useIsMatchingLocation();
+    const { token, refresh, refreshToken } = useAuth();
+    const { user } = useCurrentUser();
+    const { logout } = useLogout();
 
-    const { token, refresh, refreshToken } = useAuthToken();
-    const { handleLogout } = useLogout();
+    const currentProjectId = user.project?.id;
 
     const apolloClient = useMemo(() => {
         apolloRef.current = new ApolloFactory({
@@ -30,27 +31,31 @@ export const useApolloFactory = () => {
             },
             connectToDevTools: isDebugMode,
             // We don't want to re-create the client on token change or it will cause infinite loop
-            initialAuthToken: {
+            initialAuthParams: {
                 token,
                 refreshToken,
+                currentProjectId,
+                refresh
             },
-            onAccessTokenChange: (token: string) => refresh(token),
-            onUnauthenticatedError: () => {
-                handleLogout();
-            },
+            onUnauthenticatedError: () => logout(),
             extraLinks: [],
             isDebugMode,
         });
 
         return apolloRef.current.getClient();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token, refreshToken]);
+    }, [token, refreshToken, currentProjectId, refresh, logout]);
 
     useUpdateEffect(() => {
         if (apolloRef.current) {
-            apolloRef.current.updateAuthToken({ token, refreshToken });
+            apolloRef.current.updateAuthParams({
+                token,
+                refreshToken,
+                currentProjectId: user?.project?.id,
+                refresh
+            });
         }
-    }, [token, refreshToken]);
+    }, [token, refreshToken, user, refresh]);
 
     return apolloClient;
 };

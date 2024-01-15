@@ -3,8 +3,8 @@ import { UserProfile } from "@/layout/partials/UserProfile";
 import { useOnboarding } from "@/modules/onboarding/hooks/useOnboarding";
 import { OrganizationInvite } from "@/modules/organizationInvite/components/OrganizationInvite";
 import { CreateNewProject } from "@/modules/projects/components/CreateNewProject";
-import useUserState from "@/modules/users/hooks/useUserState";
-import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
+import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
+import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { ROUTES } from "@/routes";
 import { Button, ProgressRadial } from "@/ui";
 import { JoinDiscord } from "@/ui/Banner/JoinDiscord";
@@ -35,7 +35,11 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export const Navbar = () => {
-    const { workspace, projects, switchProject } = useWorkspace();
+    const { user } = useCurrentUser();
+    const { workspace, project, projects, switchProject } = useWorkspace();
+    const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
+    const [openOrganizationInviteModal, setOpenOrganizationInviteModal] = useState(false);
+    const { completionRate: onboardingCompletionRate } = useOnboarding();
 
     const navItems = [
         {
@@ -50,8 +54,8 @@ export const Navbar = () => {
             icon: <DocumentIcon />,
             href: ROUTES.SURVEY_LIST.replace(
                 ":orgSlug",
-                workspace?.organization.slug as string,
-            ).replace(":projectSlug", workspace?.project.slug as string),
+                workspace?.slug as string,
+            ).replace(":projectSlug", project?.slug as string),
         },
         {
             id: 3,
@@ -66,12 +70,6 @@ export const Navbar = () => {
             href: "",
         },
     ];
-
-    const [openCreateProjectModal, setOpenCreateProjectModal] = useState(false);
-    const [openOrganizationInviteModal, setOpenOrganizationInviteModal] =
-        useState(false);
-    const { user } = useUserState();
-    const { completionRate: onboardingCompletionRate } = useOnboarding();
 
     return (
         <div
@@ -91,12 +89,11 @@ export const Navbar = () => {
                         <DropdownMenu>
                             <DropdownMenuTrigger className="w-[177px] select-none outline-none">
                                 <NavItem
-                                    text={workspace?.project?.name as string}
+                                    text={project?.name as string}
                                     leftIcon={
                                         <AcronynmBox
                                             text={
-                                                workspace?.project
-                                                    ?.name as string
+                                                project?.name as string
                                             }
                                         />
                                     }
@@ -114,10 +111,10 @@ export const Navbar = () => {
                                     {projects.map((item) => {
                                         return (
                                             <DropdownMenuItem
-                                                key={item.node.id}
+                                                key={item?.id}
                                                 onClick={() => {
                                                     switchProject(
-                                                        item.node as DeepOmit<
+                                                        item as DeepOmit<
                                                             Project,
                                                             "__typename"
                                                         >,
@@ -128,26 +125,18 @@ export const Navbar = () => {
                                                     leftIcon={
                                                         <AcronynmBox
                                                             text={
-                                                                item.node.name
+                                                                item.name
                                                             }
                                                         />
                                                     }
-                                                    text={item.node.name}
+                                                    text={item.name}
                                                     rightIcon={
-                                                        item.node.slug ===
-                                                            workspace?.project
-                                                                .slug && (
+                                                        item.slug === project?.slug && (
                                                             <CheckCircleIcon />
                                                         )
                                                     }
                                                     ellipsis={true}
-                                                    ellipsisLength={
-                                                        (item.node.name,
-                                                        item.node.slug ===
-                                                        workspace?.project.slug
-                                                            ? 17
-                                                            : 22)
-                                                    }
+                                                    ellipsisLength={item.slug === project?.slug ? 17 : 22}
                                                     classnames="overflow-x-hidden w-[205px] hover:bg-intg-bg-10 rounded p-2"
                                                 />
                                             </DropdownMenuItem>
@@ -195,10 +184,10 @@ export const Navbar = () => {
                             <Link
                                 to={ROUTES.GET_STARTED.replace(
                                     ":orgSlug",
-                                    workspace?.organization.slug as string,
+                                    workspace?.slug as string
                                 ).replace(
                                     ":projectSlug",
-                                    workspace?.project.slug as string,
+                                    project?.slug as string
                                 )}
                                 className="flex w-[177px] items-center gap-2 rounded bg-intg-bg-8 px-3 py-2 text-sm text-intg-text-4"
                             >

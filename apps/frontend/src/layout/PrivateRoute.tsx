@@ -1,28 +1,45 @@
 import { NotFound } from "@/components/NotFound";
-import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
-import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
+import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
+import { ROUTES } from "@/routes";
 import { GlobalSpinner } from "@/ui";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
 type Props = {
     children: React.ReactNode;
 };
 
 export const PrivateRoute = ({ children }: Props) => {
-    const { token } = useAuthToken();
+    const { isAuthenticated } = useAuth();
+    const { loading } = useCurrentUser();
+    const { workspace, project } = useWorkspace();
+    const { orgSlug, projectSlug } = useParams();
 
-    const { isValidating, isValidWorkspace } = useWorkspace();
-
-    if (!token) {
+    if (!isAuthenticated) {
         return <Navigate to="/" />;
     }
 
-    if (isValidating) {
+    if (loading) {
         return <GlobalSpinner />;
     }
 
-    if (!isValidating && !isValidWorkspace) {
+    if (orgSlug && !workspace) {
         return <NotFound />;
+    }
+
+    if (orgSlug && projectSlug && (!workspace || !project)) {
+        return <NotFound />;
+    }
+
+    if (orgSlug && !projectSlug && workspace && project) {
+        return (
+            <Navigate
+                to={
+                    ROUTES.SURVEY_LIST.replace(":orgSlug", workspace.slug).replace(":projectSlug", project.slug)
+                }
+            />
+        );
     }
 
     return <>{children}</>;

@@ -127,6 +127,158 @@ export type EmailUserAuthChallenge = {
   userErrors: Array<UserError>;
 };
 
+/** Represents an event. */
+export type Event = Node & {
+  __typename?: 'Event';
+  /** The time the event was created */
+  createdAt?: Maybe<Scalars['DateTime']>;
+  /** The event name */
+  distinctId: Scalars['String'];
+  /** The event name */
+  event: Scalars['String'];
+  /** The ID of the event. */
+  id: Scalars['ID'];
+  /**
+   * The project the event belongs to
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  project: Project;
+  /** The event properties */
+  properties?: Maybe<Scalars['JSONString']>;
+  /** The time the event occurred */
+  timestamp?: Maybe<Scalars['DateTime']>;
+};
+
+/** Captures event. */
+export type EventCapture = {
+  __typename?: 'EventCapture';
+  errors: Array<EventError>;
+  eventErrors: Array<EventError>;
+  /** Whether the operation was successful. */
+  status?: Maybe<Scalars['Boolean']>;
+};
+
+export type EventCaptureInput = {
+  /** The user attributes. */
+  attributes?: InputMaybe<Scalars['JSONString']>;
+  /** The name of the event. */
+  event: Scalars['String'];
+  /** The event properties. */
+  properties?: InputMaybe<Scalars['JSONString']>;
+  /** The time the event happened */
+  timestamp: Scalars['DateTime'];
+  /** The distinct ID. */
+  userId?: InputMaybe<Scalars['ID']>;
+  /** The payload ID. */
+  uuid?: InputMaybe<Scalars['UUID']>;
+};
+
+export type EventCountableConnection = {
+  __typename?: 'EventCountableConnection';
+  edges: Array<EventCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type EventCountableEdge = {
+  __typename?: 'EventCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: Event;
+};
+
+/** Represents an event definition. */
+export type EventDefinition = Node & {
+  __typename?: 'EventDefinition';
+  /** The time the event was created */
+  createdAt?: Maybe<Scalars['DateTime']>;
+  /** The ID of the event definition. */
+  id: Scalars['ID'];
+  /** The time the event was last seen */
+  lastSeenAt?: Maybe<Scalars['DateTime']>;
+  /** The name of the event definition */
+  name: Scalars['String'];
+  /**
+   * The project the event definition belongs to
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  project: Project;
+};
+
+export type EventDefinitionCountableConnection = {
+  __typename?: 'EventDefinitionCountableConnection';
+  edges: Array<EventDefinitionCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type EventDefinitionCountableEdge = {
+  __typename?: 'EventDefinitionCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: EventDefinition;
+};
+
+/** Represents errors in event mutations. */
+export type EventError = {
+  __typename?: 'EventError';
+  /** The error code. */
+  code: EventErrorCode;
+  /** Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field. */
+  field?: Maybe<Scalars['String']>;
+  /** The error message. */
+  message?: Maybe<Scalars['String']>;
+};
+
+/** An enumeration. */
+export enum EventErrorCode {
+  Forbidden = 'FORBIDDEN',
+  GraphqlError = 'GRAPHQL_ERROR',
+  Invalid = 'INVALID'
+}
+
+/** Represents an event property. */
+export type EventProperty = Node & {
+  __typename?: 'EventProperty';
+  /** The name of the event */
+  event: Scalars['String'];
+  /** The ID of the event property. */
+  id: Scalars['ID'];
+  /**
+   * The project the event property belongs to
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  project: Project;
+  /** The property of the event */
+  property: Scalars['String'];
+};
+
+export type EventPropertyCountableConnection = {
+  __typename?: 'EventPropertyCountableConnection';
+  edges: Array<EventPropertyCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type EventPropertyCountableEdge = {
+  __typename?: 'EventPropertyCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: EventProperty;
+};
+
 /** Finds or creates a new user account from google auth credentials. */
 export type GoogleUserAuth = {
   __typename?: 'GoogleUserAuth';
@@ -163,6 +315,8 @@ export type Mutation = {
   emailTokenUserAuth?: Maybe<EmailTokenUserAuth>;
   /** Finds or creates a new user account by email and sends an email with token. */
   emailUserAuthChallenge?: Maybe<EmailUserAuthChallenge>;
+  /** Captures event. */
+  eventCapture?: Maybe<EventCapture>;
   /** Finds or creates a new user account from google auth credentials. */
   googleUserAuth?: Maybe<GoogleUserAuth>;
   /**
@@ -292,6 +446,13 @@ export type MutationEmailTokenUserAuthArgs = {
 export type MutationEmailUserAuthChallengeArgs = {
   email: Scalars['String'];
   inviteLink?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationEventCaptureArgs = {
+  batch?: InputMaybe<Array<EventCaptureInput>>;
+  input?: InputMaybe<EventCaptureInput>;
+  sentAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 
@@ -520,7 +681,7 @@ export type OrganizationError = {
   __typename?: 'OrganizationError';
   /** The error code. */
   code: OrganizationErrorCode;
-  /** Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field. */
+  /** Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field. */
   field?: Maybe<Scalars['String']>;
   /** The error message. */
   message?: Maybe<Scalars['String']>;
@@ -687,6 +848,46 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['String']>;
 };
 
+/** Represents a person. */
+export type Person = Node & {
+  __typename?: 'Person';
+  /** The person's attributes */
+  attributes?: Maybe<Scalars['JSONString']>;
+  /** The time the person was created */
+  createdAt?: Maybe<Scalars['DateTime']>;
+  /** The person's distinct ids */
+  distinctIds?: Maybe<Array<Scalars['String']>>;
+  /** The ID of the event property. */
+  id: Scalars['ID'];
+  /** Whether the person has been identified */
+  isIdentified: Scalars['Boolean'];
+  /**
+   * The project the person belongs to
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  project: Project;
+  /** The person's uuid */
+  uuid: Scalars['UUID'];
+};
+
+export type PersonCountableConnection = {
+  __typename?: 'PersonCountableConnection';
+  edges: Array<PersonCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type PersonCountableEdge = {
+  __typename?: 'PersonCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: Person;
+};
+
 /** Represents a project. */
 export type Project = Node & {
   __typename?: 'Project';
@@ -747,7 +948,7 @@ export type ProjectError = {
   __typename?: 'ProjectError';
   /** The error code. */
   code: ProjectErrorCode;
-  /** Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field. */
+  /** Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field. */
   field?: Maybe<Scalars['String']>;
   /** The error message. */
   message?: Maybe<Scalars['String']>;
@@ -901,6 +1102,57 @@ export type ProjectUpdateInput = {
   timezone?: InputMaybe<Scalars['String']>;
 };
 
+/** Represents a property definition. */
+export type PropertyDefinition = Node & {
+  __typename?: 'PropertyDefinition';
+  /** The ID of the event property. */
+  id: Scalars['ID'];
+  /** Whether property accepts a numerical value */
+  isNumerical: Scalars['Boolean'];
+  /** The name of the property definition */
+  name: Scalars['String'];
+  /**
+   * The project the person belongs to
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  project: Project;
+  /** The property type */
+  propertyType: PropertyTypeEnum;
+  /** The type of the property definition */
+  type: PropertyDefinitionTypeEnum;
+};
+
+export type PropertyDefinitionCountableConnection = {
+  __typename?: 'PropertyDefinitionCountableConnection';
+  edges: Array<PropertyDefinitionCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type PropertyDefinitionCountableEdge = {
+  __typename?: 'PropertyDefinitionCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: PropertyDefinition;
+};
+
+export enum PropertyDefinitionTypeEnum {
+  Event = 'EVENT',
+  Group = 'GROUP',
+  Person = 'PERSON'
+}
+
+export enum PropertyTypeEnum {
+  Boolean = 'Boolean',
+  Datetime = 'Datetime',
+  Numeric = 'Numeric',
+  String = 'String'
+}
+
 export type Query = {
   __typename?: 'Query';
   _entities?: Maybe<Array<Maybe<_Entity>>>;
@@ -911,6 +1163,24 @@ export type Query = {
    * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
    */
   channels?: Maybe<SurveyChannelCountableConnection>;
+  /**
+   * List of event's definitions.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  eventDefinitions?: Maybe<EventDefinitionCountableConnection>;
+  /**
+   * List of event's properties.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  eventProperties?: Maybe<EventPropertyCountableConnection>;
+  /**
+   * List of triggered events.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  events?: Maybe<EventCountableConnection>;
   /** One specific organization invite. */
   organizationInviteDetails?: Maybe<InviteDetails>;
   /**
@@ -920,11 +1190,29 @@ export type Query = {
    */
   organizationInviteLink?: Maybe<OrganizationInviteLink>;
   /**
+   * List of persons.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  persons?: Maybe<PersonCountableConnection>;
+  /**
+   * List of the property definitions.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  propertyDefinitions?: Maybe<PropertyDefinitionCountableConnection>;
+  /**
    * List of questions for a specific survey.
    *
    * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
    */
   questions?: Maybe<SurveyQuestionCountableConnection>;
+  /**
+   * Look up a survey by ID or slug.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  survey?: Maybe<Survey>;
   /**
    * List of the project's surveys.
    *
@@ -960,8 +1248,50 @@ export type QueryChannelsArgs = {
 };
 
 
+export type QueryEventDefinitionsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryEventPropertiesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  event?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryEventsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryOrganizationInviteDetailsArgs = {
   inviteLink: Scalars['String'];
+};
+
+
+export type QueryPersonsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryPropertyDefinitionsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  definitionType?: InputMaybe<PropertyDefinitionTypeEnum>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -971,6 +1301,12 @@ export type QueryQuestionsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   id: Scalars['ID'];
   last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QuerySurveyArgs = {
+  id?: InputMaybe<Scalars['ID']>;
+  slug?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1161,8 +1497,9 @@ export enum SurveyChannelTypeEnum {
   Api = 'API',
   Custom = 'CUSTOM',
   Email = 'EMAIL',
-  InApp = 'IN_APP',
-  Link = 'LINK'
+  Link = 'LINK',
+  MobileSdk = 'MOBILE_SDK',
+  WebSdk = 'WEB_SDK'
 }
 
 /**
@@ -1250,12 +1587,22 @@ export type SurveyDelete = {
 export type SurveyError = {
   __typename?: 'SurveyError';
   /** The error code. */
-  code: ProjectErrorCode;
-  /** Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field. */
+  code: SurveyErrorCode;
+  /** Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field. */
   field?: Maybe<Scalars['String']>;
   /** The error message. */
   message?: Maybe<Scalars['String']>;
 };
+
+/** An enumeration. */
+export enum SurveyErrorCode {
+  GraphqlError = 'GRAPHQL_ERROR',
+  Inactive = 'INACTIVE',
+  Invalid = 'INVALID',
+  NotFound = 'NOT_FOUND',
+  Required = 'REQUIRED',
+  Unique = 'UNIQUE'
+}
 
 export type SurveyFilterInput = {
   createdAt?: InputMaybe<DateRangeInput>;
@@ -1398,7 +1745,7 @@ export type SurveyQuestionUpdateInput = {
   /** The options of the question. */
   options?: InputMaybe<Scalars['JSONString']>;
   /** The settings of the question. */
-  orderNumber: Scalars['Int'];
+  orderNumber?: InputMaybe<Scalars['Int']>;
   /** The settings of the question. */
   settings?: InputMaybe<Scalars['JSONString']>;
   /** The type of the question */
@@ -1552,7 +1899,7 @@ export type UserError = {
   __typename?: 'UserError';
   /** The error code. */
   code: UserErrorCode;
-  /** Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field. */
+  /** Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field. */
   field?: Maybe<Scalars['String']>;
   /** The error message. */
   message?: Maybe<Scalars['String']>;
@@ -1625,17 +1972,17 @@ export type _Service = {
   sdl?: Maybe<Scalars['String']>;
 };
 
-export type AuthUserFragmentFragment = { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null };
+export type AuthUserFragmentFragment = { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null };
 
 export type AuthOrganizationFragmentFragment = { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number };
 
 export type UserErrorFragmentFragment = { __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode };
 
-export type GoogleUserAuthFragmentFragment = { __typename?: 'GoogleUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> };
+export type GoogleUserAuthFragmentFragment = { __typename?: 'GoogleUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> };
 
-export type EmailTokenUserAuthFragmentFragment = { __typename?: 'EmailTokenUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> };
+export type EmailTokenUserAuthFragmentFragment = { __typename?: 'EmailTokenUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> };
 
-export type OrganizationCreateFragmentFragment = { __typename?: 'OrganizationCreate', organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
+export type OrganizationCreateFragmentFragment = { __typename?: 'OrganizationCreate', organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
 
 export type OrganizationErrorFragmentFragment = { __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode };
 
@@ -1646,7 +1993,7 @@ export type EmailTokenUserAuthMutationVariables = Exact<{
 }>;
 
 
-export type EmailTokenUserAuthMutation = { __typename?: 'Mutation', emailTokenUserAuth?: { __typename?: 'EmailTokenUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> } | null };
+export type EmailTokenUserAuthMutation = { __typename?: 'Mutation', emailTokenUserAuth?: { __typename?: 'EmailTokenUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> } | null };
 
 export type EmailUserAuthChallengeMutationVariables = Exact<{
   email: Scalars['String'];
@@ -1662,7 +2009,7 @@ export type GoogleUserAuthMutationVariables = Exact<{
 }>;
 
 
-export type GoogleUserAuthMutation = { __typename?: 'Mutation', googleUserAuth?: { __typename?: 'GoogleUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> } | null };
+export type GoogleUserAuthMutation = { __typename?: 'Mutation', googleUserAuth?: { __typename?: 'GoogleUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> } | null };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1675,7 +2022,7 @@ export type OrganizationCreateMutationVariables = Exact<{
 }>;
 
 
-export type OrganizationCreateMutation = { __typename?: 'Mutation', organizationCreate?: { __typename?: 'OrganizationCreate', organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
+export type OrganizationCreateMutation = { __typename?: 'Mutation', organizationCreate?: { __typename?: 'OrganizationCreate', organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
 
 export type TokenRefreshMutationVariables = Exact<{
   csrfToken?: InputMaybe<Scalars['String']>;
@@ -1702,7 +2049,7 @@ export type OrganizationInviteDetailsFragmentFragment = { __typename?: 'Organiza
 
 export type OrganizationInviteLinkDetailsFragmentFragment = { __typename?: 'OrganizationInviteLinkDetails', id: string, organizationId: string, organizationName: string, organizationLogo?: string | null };
 
-export type OrganizationJoinFragmentFragment = { __typename?: 'OrganizationJoin', user: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null }, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
+export type OrganizationJoinFragmentFragment = { __typename?: 'OrganizationJoin', user: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null }, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
 
 export type RefreshOrganizationInviteLinkFragmentFragment = { __typename?: 'OrganizationInviteLinkReset', inviteLink?: string | null, success?: boolean | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
 
@@ -1718,7 +2065,7 @@ export type OrganizationJoinMutationVariables = Exact<{
 }>;
 
 
-export type OrganizationJoinMutation = { __typename?: 'Mutation', organizationJoin?: { __typename?: 'OrganizationJoin', user: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null }, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
+export type OrganizationJoinMutation = { __typename?: 'Mutation', organizationJoin?: { __typename?: 'OrganizationJoin', user: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null }, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
 
 export type OrganizationInviteLinkResetMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1737,22 +2084,22 @@ export type OrganizationInviteLinkCreateQueryVariables = Exact<{ [key: string]: 
 
 export type OrganizationInviteLinkCreateQuery = { __typename?: 'Query', organizationInviteLink?: { __typename?: 'OrganizationInviteLink', inviteLink: string } | null };
 
-export type ProjectCreateFragmentFragment = { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
+export type ProjectCreateFragmentFragment = { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
 
 export type ProjectErrorFragmentFragment = { __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode };
 
-export type ProjectFragmentFragment = { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } };
+export type ProjectFragmentFragment = { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } };
 
-export type ProjectUpdateFragmentFragment = { __typename?: 'ProjectUpdate', project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
+export type ProjectUpdateFragmentFragment = { __typename?: 'ProjectUpdate', project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
 
 export type ProjectCreateMutationVariables = Exact<{
   input: ProjectCreateInput;
 }>;
 
 
-export type ProjectCreateMutation = { __typename?: 'Mutation', projectCreate?: { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+export type ProjectCreateMutation = { __typename?: 'Mutation', projectCreate?: { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
 
-export type UserFragmentFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null };
+export type UserFragmentFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null };
 
 export type UserUpdateMutationVariables = Exact<{
   input: UserInput;
@@ -1764,7 +2111,7 @@ export type UserUpdateMutation = { __typename?: 'Mutation', userUpdate?: { __typ
 export type ViewerQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ViewerQuery = { __typename?: 'Query', viewer?: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } | null };
+export type ViewerQuery = { __typename?: 'Query', viewer?: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } | null };
 
 export const AuthOrganizationFragmentFragmentDoc = gql`
     fragment AuthOrganizationFragment on AuthOrganization {
@@ -1779,6 +2126,7 @@ export const ProjectFragmentFragmentDoc = gql`
   id
   name
   slug
+  accessControl
   hasCompletedOnboardingFor
   timezone
   organization {

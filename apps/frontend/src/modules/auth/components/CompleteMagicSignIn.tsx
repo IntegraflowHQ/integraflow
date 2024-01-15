@@ -1,20 +1,20 @@
-import {
-    useEmailTokenUserAuthMutation,
-    useEmailUserAuthChallengeMutation,
-} from "@/generated/graphql";
-import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
+import { useCallback, useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
 import { Button, GlobalSpinner, Screen, TextInput } from "@/ui";
 import { cn } from "@/utils";
 import { toast } from "@/utils/toast";
 import CheckInbox from "assets/images/check-inbox.gif";
-import { useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { usePersistUser } from "../hooks/usePersistUser";
+
+import { useAuth } from "../hooks/useAuth";
+import useRedirect from "../hooks/useRedirect";
 
 type Inputs = {
     code: string;
 };
+
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export default function CompleteMagicSignIn() {
     const {
@@ -30,61 +30,33 @@ export default function CompleteMagicSignIn() {
     });
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const email = searchParams.get("email");
+    const email = searchParams.get("email") ?? '';
     const tokenParam = searchParams.get("token");
     const [showCodeInput, setShowCodeInput] = useState(false);
-    const { login } = useAuthToken();
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const { authenticateWithMagicLink, generateMagicLink, loading } = useAuth();
+    const redirect = useRedirect();
     const code = watch("code");
-    const [persistUser, { loading: persistingUser }] = usePersistUser();
 
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const inviteLink = urlParams.get("inviteLink") ?? undefined;
 
-    const [verifyToken, { loading: isVerifyingToken }] =
-        useEmailTokenUserAuthMutation({
-            onCompleted: async ({ emailTokenUserAuth }) => {
-                if (
-                    emailTokenUserAuth?.token &&
-                    emailTokenUserAuth.refreshToken &&
-                    emailTokenUserAuth.csrfToken
-                ) {
-                    login(
-                        emailTokenUserAuth.token,
-                        emailTokenUserAuth.refreshToken,
-                        emailTokenUserAuth.csrfToken,
-                    );
-
-                    if (emailTokenUserAuth.user) {
-                        await persistUser();
-                    }
-                } else if (emailTokenUserAuth?.userErrors?.length) {
-                    toast.error(
-                        emailTokenUserAuth?.userErrors[0].message ?? "",
-                    );
-                }
-            },
-            onError: () => {
-                toast.error("Something went wrong, please try again later.");
-            },
-        });
+    const handleAuthenticateWithMagicLink = useCallback(async (email: string, token: string, inviteLink?: string) => {
+        const response = await authenticateWithMagicLink(email, token, inviteLink);
+        if (response && response.user) {
+            redirect(response.user)
+        }
+    }, [authenticateWithMagicLink, redirect]);
 
     useEffect(() => {
-        if (!email || !emailRegex.test(email)) {
+        if (!email || !EMAIL_REGEX.test(email)) {
             navigate("/");
         }
 
         if (email && tokenParam) {
-            verifyToken({
-                variables: {
-                    email,
-                    token: tokenParam,
-                    inviteLink,
-                },
-            });
+            handleAuthenticateWithMagicLink(email, tokenParam, inviteLink);
         }
-    }, []);
+    }, [handleAuthenticateWithMagicLink, email, inviteLink, navigate, tokenParam]);
 
     useEffect(() => {
         const addDash = () => {
@@ -97,40 +69,29 @@ export default function CompleteMagicSignIn() {
         return () => {
             clearTimeout(timeOutId);
         };
-    }, [code]);
+    }, [code, setValue]);
 
-    const [resendMagicLink, { loading: isResendingMagicLink }] =
-        useEmailUserAuthChallengeMutation({
-            onCompleted: ({ emailUserAuthChallenge }) => {
-                if (emailUserAuthChallenge?.success) {
-                    toast.success(
-                        "We've sent you a new magic link, check your email.",
-                    );
-                } else {
-                    toast.error(
-                        "Something went wrong, please try again later.",
-                    );
-                }
-            },
-        });
-
-    const onSubmit: SubmitHandler<Inputs> = (data) => {
-        if (!emailRegex.test(email as string)) {
+    const onSubmit: SubmitHandler<Inputs> = useCallback(async (data) => {
+        if (!EMAIL_REGEX.test(email as string)) {
             return;
         }
         if (!email || !data.code) {
             return;
         }
 
-        verifyToken({
-            variables: {
-                email,
-                token: data.code,
-            },
-        });
-    };
+        await handleAuthenticateWithMagicLink(email, data.code, inviteLink);
+    }, [handleAuthenticateWithMagicLink, email, inviteLink]);
 
-    if (isVerifyingToken || isResendingMagicLink || persistingUser) {
+    const onGenerateBtnClicked = useCallback(async () => {
+        const generated = await generateMagicLink(email, inviteLink);
+        if (generated) {
+            toast.success(
+                "We've sent you a new magic link, check your email.",
+            );
+        }
+    }, [email, generateMagicLink, inviteLink])
+
+    if (loading) {
         return <GlobalSpinner />;
     }
 
@@ -206,14 +167,7 @@ export default function CompleteMagicSignIn() {
                             <Button
                                 variant="secondary"
                                 text={"Resend magic link"}
-                                onClick={() => {
-                                    resendMagicLink({
-                                        variables: {
-                                            email: email!,
-                                            inviteLink,
-                                        },
-                                    });
-                                }}
+                                onClick={onGenerateBtnClicked}
                             />
                         </div>
                     </div>
