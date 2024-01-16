@@ -33,11 +33,15 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
     }, [selectedTheme?.colorScheme]);
 
     const handleSelectedTheme = (theme: Partial<ProjectTheme>) => {
-        setSelectedTheme(theme);
         const surveyId = survey?.survey?.id ?? "";
 
         if (surveyId) {
-            updateSurvey(surveyId, { themeId: theme.id });
+            try {
+                setSelectedTheme(theme);
+                updateSurvey(surveyId, { themeId: theme.id });
+            } catch (error) {
+                toast.error("Something went wrong. Please try again.");
+            }
         }
     };
 
@@ -80,7 +84,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                                 selected theme
                             </p>
                             <div
-                                className={`flex w-full gap-5 rounded-md bg-intg-bg-15 px-3 py-2`}
+                                className={`flex h-16 w-full gap-5 rounded-md  bg-intg-bg-15 px-3 py-2`}
                             >
                                 <div className="flex gap-5">
                                     <div className="flex py-2">

@@ -25,16 +25,15 @@ const tabs = [
 export default function Studio() {
     const params = useParams();
     const navigate = useNavigate();
-    const { loading, survey, updateSurvey } = useSurvey();
+    const { surveyLoading, survey, surveyName, surveyId, updateSurvey } =
+        useSurvey();
     const [surveyTitle, setSurveyTitle] = React.useState<string>("");
     const { enableStudioMode, disableStudioMode } = useStudioState();
-    const surveyName = survey?.survey?.name;
 
     const { orgSlug, projectSlug } = params;
 
     const updateSurveyTitle = React.useCallback(
         debounce((value: string) => {
-            const surveyId = survey?.survey?.id;
             try {
                 if (surveyId && value.trim() !== "" && value !== surveyName) {
                     updateSurvey(surveyId, { name: value });
@@ -81,7 +80,7 @@ export default function Studio() {
         };
     }, []);
 
-    if (loading) return <GlobalSpinner />;
+    if (surveyLoading) return <GlobalSpinner />;
 
     return (
         <Tabs.Root className="h-full w-full" defaultValue={tabs[0].id}>
