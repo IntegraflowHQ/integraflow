@@ -195,7 +195,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             });
         },
 
-        // why we're this amount od dependencies here is due to the optimisticResponse needing them.
+        // why we're having this amount of dependencies here is due to optimisticResponse needing them.
         [
             createSurveyMutation,
             navigate,
