@@ -1,13 +1,12 @@
 import {
     EventDefinition,
-    PersonCountableEdge,
     PropertyDefinition,
+    PropertyDefinitionTypeEnum,
     SurveyChannel,
     SurveyChannelCountableEdge,
     SurveyChannelCreateInput,
     SurveyChannelTypeEnum,
     SurveyChannelUpdateInput,
-    usePersonsQuery,
     useProjectEventsDataQuery,
     useSurveyChannelCreateMutation,
     useSurveyChannelDeleteMutation,
@@ -28,8 +27,6 @@ function useChannelContextFactory() {
     const { data: eventsData } = useProjectEventsDataQuery({
         skip: !workspace?.project.id,
     });
-
-    const { data: personsData } = usePersonsQuery();
 
     const [createChannelMutation] = useSurveyChannelCreateMutation();
     const createChannel = async (
@@ -232,23 +229,13 @@ function useChannelContextFactory() {
         [eventProperties, getPropertyDefinition],
     );
 
-    const personProperties = useMemo(() => {
-        const persons =
-            personsData?.persons?.edges || ([] as PersonCountableEdge[]);
-        const attributeKeysSet = new Set<string>();
-
-        persons.forEach((person) => {
-            const attributes = JSON.parse(person.node.attributes);
-            const keys = Object.keys(attributes);
-
-            keys.forEach((key) => attributeKeysSet.add(key));
-        });
-
-        const attributes = Array.from(attributeKeysSet);
-        return attributes.map((attribute) => {
-            return getPropertyDefinition(attribute);
-        });
-    }, [getPropertyDefinition, personsData?.persons?.edges]);
+    const personProperties = useMemo(
+        () =>
+            propertyDefinitions.filter((item) => {
+                return item.type === PropertyDefinitionTypeEnum.Person;
+            }),
+        [propertyDefinitions],
+    );
 
     return {
         eventDefinitions,
