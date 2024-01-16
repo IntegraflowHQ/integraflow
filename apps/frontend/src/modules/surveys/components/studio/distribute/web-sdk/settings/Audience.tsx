@@ -5,7 +5,7 @@ import {
     TriggerConditionInput,
     WebChannelAccordionProps,
 } from "@/types";
-import { Audience as AudienceIcon, Info } from "@/ui/icons";
+import { Info } from "@/ui/icons";
 import { FilterOperator, LogicOperator } from "@integraflow/web/src/types";
 import { useState } from "react";
 import FilterDetails from "./filters/FilterDetails";
@@ -82,11 +82,6 @@ export default function Audience({ channel }: WebChannelAccordionProps) {
                 </header>
 
                 <div className="inline-flex flex-wrap gap-1 [&>*]:mb-4">
-                    <div className="mr-4 inline-flex items-center gap-2 rounded-[4px] bg-intg-bg-19 p-2">
-                        <AudienceIcon />
-                        <span>User</span>
-                    </div>
-
                     <Filters
                         variant="audience"
                         filters={channel.conditions.filters}

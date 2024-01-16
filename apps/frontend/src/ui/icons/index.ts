@@ -1,4 +1,3 @@
-export { Audience } from "./Audience";
 export { BottomLeft } from "./BottomLeft";
 export { BottomRight } from "./BottomRight";
 export { Center } from "./Center";
