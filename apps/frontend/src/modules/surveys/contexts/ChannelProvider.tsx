@@ -1,12 +1,12 @@
 import {
     EventDefinition,
     PropertyDefinition,
-    PropertyDefinitionTypeEnum,
     SurveyChannel,
     SurveyChannelCountableEdge,
     SurveyChannelCreateInput,
     SurveyChannelTypeEnum,
     SurveyChannelUpdateInput,
+    useAudiencePropertiesQuery,
     useProjectEventsDataQuery,
     useSurveyChannelCreateMutation,
     useSurveyChannelDeleteMutation,
@@ -25,6 +25,10 @@ function useChannelContextFactory() {
     const { workspace } = useWorkspaceState();
 
     const { data: eventsData } = useProjectEventsDataQuery({
+        skip: !workspace?.project.id,
+    });
+
+    const { data: audienceProperties } = useAudiencePropertiesQuery({
         skip: !workspace?.project.id,
     });
 
@@ -229,13 +233,13 @@ function useChannelContextFactory() {
         [eventProperties, getPropertyDefinition],
     );
 
-    const personProperties = useMemo(
-        () =>
-            propertyDefinitions.filter((item) => {
-                return item.type === PropertyDefinitionTypeEnum.Person;
-            }),
-        [propertyDefinitions],
-    );
+    const personProperties = useMemo(() => {
+        return (
+            audienceProperties?.propertyDefinitions?.edges.map(
+                (edge) => edge.node,
+            ) || ([] as PropertyDefinition[])
+        );
+    }, [audienceProperties]);
 
     return {
         eventDefinitions,

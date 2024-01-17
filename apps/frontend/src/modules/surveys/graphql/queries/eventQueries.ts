@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 export const EVENT_DEFINITIONS = gql`
     query projectEventsData {
-        eventDefinitions(first: 50) {
+        eventDefinitions(first: 100) {
             edges {
                 node {
                     id
@@ -12,7 +12,7 @@ export const EVENT_DEFINITIONS = gql`
                 }
             }
         }
-        eventProperties(first: 50) {
+        eventProperties(first: 100) {
             edges {
                 node {
                     id
@@ -21,7 +21,7 @@ export const EVENT_DEFINITIONS = gql`
                 }
             }
         }
-        propertyDefinitions(first: 50) {
+        propertyDefinitions(first: 100, definitionType: EVENT) {
             edges {
                 node {
                     id
