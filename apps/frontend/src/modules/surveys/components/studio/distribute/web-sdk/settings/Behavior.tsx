@@ -16,37 +16,32 @@ import { Ban, Moon, Sun } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
-type Position = {
-    value: PlacementType;
-    icon: React.ReactNode;
-};
-
 type Background = {
     label: string;
     value: "dark" | "light" | "none";
     icon: React.ReactNode;
 };
 
-const positions: Position[] = [
+const positions = [
     {
         value: "bottomRight",
-        icon: <BottomRight />,
+        icon: BottomRight,
     },
     {
         value: "bottomLeft",
-        icon: <BottomLeft />,
+        icon: BottomLeft,
     },
     {
         value: "center",
-        icon: <Center />,
+        icon: Center,
     },
     {
         value: "topRight",
-        icon: <TopRight />,
+        icon: TopRight,
     },
     {
         value: "topLeft",
-        icon: <TopLeft />,
+        icon: TopLeft,
     },
 ];
 
@@ -112,20 +107,29 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
                             Survey position
                         </span>
                         <div className="flex w-full justify-between">
-                            {positions.map((position) => (
+                            {positions.map(({ value, icon: Icon }) => (
                                 <button
-                                    key={position.value}
+                                    key={value}
                                     className={cn(
                                         "w-max rounded bg-intg-bg-18 px-[14px] py-[8px] hover:bg-gradient-button hover:text-white",
-                                        watch("placement") === position.value
-                                            ? "bg-gradient-button text-white"
+                                        watch("placement") === value
+                                            ? "bg-gradient-button"
                                             : "",
                                     )}
                                     onClick={() =>
-                                        setValue("placement", position.value)
+                                        setValue(
+                                            "placement",
+                                            value as PlacementType,
+                                        )
                                     }
                                 >
-                                    {position.icon}
+                                    <Icon
+                                        color={
+                                            watch("placement") === value
+                                                ? "#FFFFFF"
+                                                : "#AFAAC7"
+                                        }
+                                    />
                                 </button>
                             ))}
                         </div>

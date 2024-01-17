@@ -48,10 +48,6 @@ export type LinkSettings = {
     endDate: string | null;
 };
 
-// export type EventPropertyWithDefinition = EventProperty & {
-//     definition?: PropertyDefinition;
-// };
-
 export type EventFilter = {
     property: string;
     operator: FilterOperator;
@@ -63,12 +59,6 @@ export type AudienceFilter = {
     operator: FilterOperator;
     value: FilterValue;
 };
-
-// export type AudienceFilter = {
-//     attribute: string;
-//     operator: FilterOperator;
-//     value: FilterValue;
-// };
 
 export type TriggerCondition = {
     event: string;
@@ -83,4 +73,9 @@ export type TriggerConditionInput = {
 
 export type WebChannelAccordionProps = {
     channel: ParsedChannel;
+};
+
+export type IntegraflowIconProps = {
+    color?: string;
+    size?: number;
 };
