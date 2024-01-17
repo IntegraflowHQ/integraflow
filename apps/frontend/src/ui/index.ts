@@ -13,5 +13,7 @@ export { Tab } from "./Tab";
 export { CodeBlock } from "./Typography/CodeBlock";
 export { Header } from "./Typography/Header";
 export { DatePicker } from "./input/DatePicker";
+export { NumberInput } from "./input/NumberInput";
 export { SelectInput } from "./input/SelectInput";
 export { TextInput } from "./input/TextInput";
+

@@ -47,6 +47,7 @@ export default function EditLink({ link, settings, close }: Props) {
                     {...register("name", { required: true })}
                 />
                 <Switch
+                    name="singleUse"
                     label="Allow multiple response from the same device"
                     onChange={(event) => {
                         setValue("singleUse", event.target.value);

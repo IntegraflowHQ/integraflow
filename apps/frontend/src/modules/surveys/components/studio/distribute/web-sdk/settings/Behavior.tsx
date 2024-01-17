@@ -5,7 +5,7 @@ import webview from "@/assets/images/surveys/studio/webview.svg";
 import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import useChannels from "@/modules/surveys/hooks/useChannels";
 import { ChannelSettings, WebChannelAccordionProps } from "@/types";
-import { DatePicker, Switch, TextInput } from "@/ui";
+import { DatePicker, NumberInput, Switch } from "@/ui";
 import { BottomLeft, BottomRight, Center, TopLeft, TopRight } from "@/ui/icons";
 import { cn } from "@/utils";
 import { logDebug } from "@/utils/log";
@@ -177,8 +177,7 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
                         onChange={(e) => setValue("recurring", e.target.value)}
                     />
                     {watch("recurring") && (
-                        <TextInput
-                            type="number"
+                        <NumberInput
                             label="Recurring period"
                             {...register("recurringPeriod")}
                         />
@@ -192,8 +191,7 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
                         }
                     />
                     {watch("closeOnLimit") && (
-                        <TextInput
-                            type="number"
+                        <NumberInput
                             label="Response limit"
                             {...register("responseLimit")}
                         />
