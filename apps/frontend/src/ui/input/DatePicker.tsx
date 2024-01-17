@@ -22,14 +22,15 @@ type DatePickerProps = {
 export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
     ({ label, value, onChange, displayFormat = "PPP", ...props }, ref) => {
         return (
-            <Popover>
-                <PopoverTrigger asChild>
-                    <button className="flex w-full flex-col gap-2">
-                        {label ? (
-                            <p className="block text-sm font-medium text-intg-text-2">
-                                {label}
-                            </p>
-                        ) : null}
+            <div className="flex w-full flex-col gap-2">
+                {label ? (
+                    <p className="block text-sm font-medium text-intg-text-2">
+                        {label}
+                    </p>
+                ) : null}
+
+                <Popover>
+                    <PopoverTrigger>
                         <div
                             className={cn(
                                 "flex w-full items-center rounded-lg bg-intg-bg-15 px-4 py-3 text-intg-text",
@@ -42,26 +43,29 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                                 <span>Pick a date</span>
                             )}
                         </div>
-                    </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto bg-intg-bg-15  p-0" ref={ref}>
-                    <Calendar
-                        selected={value}
-                        onSelect={(value) => {
-                            onChange?.({
-                                target: {
-                                    value,
-                                    name: label ?? "date",
-                                    type: "datetime-local",
-                                },
-                            });
-                        }}
-                        mode="single"
-                        initialFocus
-                        {...props}
-                    />
-                </PopoverContent>
-            </Popover>
+                    </PopoverTrigger>
+                    <PopoverContent
+                        className="w-auto bg-intg-bg-15  p-0"
+                        ref={ref}
+                    >
+                        <Calendar
+                            selected={value}
+                            onSelect={(value) => {
+                                onChange?.({
+                                    target: {
+                                        value,
+                                        name: label ?? "date",
+                                        type: "datetime-local",
+                                    },
+                                });
+                            }}
+                            mode="single"
+                            initialFocus
+                            {...props}
+                        />
+                    </PopoverContent>
+                </Popover>
+            </div>
         );
     },
 );
