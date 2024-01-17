@@ -7,13 +7,13 @@ import {
     Info,
 } from "@/ui";
 import { Document } from "@/ui/icons";
-import { useSurveyList } from "../../hooks/useSurveyList";
+import { useSurvey } from "../../hooks/useSurvey";
 import SurveyCreate from "../SurveyCreate";
 import CreateSurveyButton from "../partials/CreateSurveyButton";
 import { SurveyList } from "./components/SurveyList";
 
 export default function SurveyHome() {
-    const { surveyList, loading, error } = useSurveyList();
+    const { surveyList, loading, error } = useSurvey();
 
     return (
         <main className="flex h-full w-full flex-col">
