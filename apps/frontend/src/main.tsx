@@ -17,6 +17,7 @@ import "./index.css";
 import { AppCore } from "./layout/AppCore";
 import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
+import { SurveyProvider } from "./modules/surveys/SurveyProvider";
 import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
 import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
 
@@ -63,21 +64,42 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "projects/:projectSlug/surveys",
-                        element: <Surveys />,
+                        element: (
+                            <SurveyProvider>
+                                <Surveys />
+                            </SurveyProvider>
+                        ),
                     },
                     {
                         path: "projects/:projectSlug/surveys/templates",
-                        element: <SurveyTemplates />,
+                        element: (
+                            <SurveyProvider>
+                                <SurveyTemplates />
+                            </SurveyProvider>
+                        ),
                     },
                     {
                         path: "/:orgSlug/projects/:projectSlug/survey/:surveySlug",
-                        element: <SurveyStudio />,
+                        element: (
+                            <SurveyProvider>
+                                <SurveyStudio />
+                            </SurveyProvider>
+                        ),
                     },
                     {
                         path: "/:orgSlug/projects/:projectSlug/surveys",
-                        element: <Surveys />,
+                        element: (
+                            <SurveyProvider>
+                                <Surveys />
+                            </SurveyProvider>
+                        ),
                     },
                 ],
+            },
+            {
+                path: "/surveys",
+                element: <SurveyProvider children />,
+                children: [],
             },
             {
                 path: "/:workspaceName/join/:inviteLink",

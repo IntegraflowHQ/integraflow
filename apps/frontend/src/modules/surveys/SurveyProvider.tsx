@@ -1,12 +1,18 @@
 import {
+    OrderDirection,
+    PageInfo,
     Survey,
+    SurveyCountableConnection,
     SurveyError,
+    SurveyFilterInput,
     SurveyQuestionCountableEdge,
     SurveyQuestionTypeEnum,
+    SurveySortField,
     SurveyStatusEnum,
     SurveyTypeEnum,
     SurveyUpdateInput,
-    useGetSurveyQuery,
+    useGetSurveyLazyQuery,
+    useGetSurveyListQuery,
     useSurveyCreateMutation,
     useSurveyDeleteMutation,
     useSurveyQuestionCreateMutation,
@@ -15,7 +21,8 @@ import {
 import { ROUTES } from "@/routes";
 import { generateRandomString } from "@/utils";
 import { createSelectors } from "@/utils/selectors";
-import { ApolloError, Reference } from "@apollo/client";
+import { ApolloError, InMemoryCache, Reference } from "@apollo/client";
+import { relayStylePagination } from "@apollo/client/utilities";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useScrollToBottom } from "react-scroll-to-bottom";
@@ -33,10 +40,12 @@ export type SurveyResponse = {
 };
 
 export type SurveyContextValues = {
+    surveysOnPage: number;
+    totalSurveys: number | null | undefined;
+    pageInfo: PageInfo | undefined;
+    loading: boolean;
     error: ApolloError | undefined;
     openQuestion: string;
-    pendingDeletion: boolean;
-    surveyLoading: boolean;
     surveyName: string | undefined;
     surveyId: string | undefined;
     surveySlug: string | undefined;
@@ -47,8 +56,10 @@ export type SurveyContextValues = {
         input: SurveyUpdateInput,
     ) => Promise<SurveyResponse>;
     survey: Survey;
+    surveyList: SurveyCountableConnection | undefined;
     questions: SurveyQuestionCountableEdge | undefined;
     deleteSurvey: (id: string) => Promise<void | undefined>;
+    getMoreSurveys: (direction: string) => Promise<void | undefined>;
     createQuestion: (type: SurveyQuestionTypeEnum) => Promise<void | undefined>;
 };
 
@@ -58,6 +69,8 @@ const createSurveyContext = () =>
 export const SurveyContext = createSurveyContext();
 
 export const SurveyProvider = ({ children }: SurveyProviderProp) => {
+    const SURVEYS_PER_PAGE = 10;
+
     const navigate = useNavigate();
     const { workspace } = useWorkspace();
     const scrollToBottom = useScrollToBottom();
@@ -73,19 +86,60 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     const [deleteSurveyMutation, { loading: pendingDeletion }] =
         useSurveyDeleteMutation();
 
+    const [getSurvey, { loading: loadingSurvey, data: survey }] =
+        useGetSurveyLazyQuery({
+            variables: {
+                slug: surveySlug,
+            },
+        });
+
     const {
-        data: survey,
-        loading: loadingSurvey,
         refetch,
-    } = useGetSurveyQuery({
+        fetchMore,
+        data: surveyList,
+        loading: surveyListLoading,
+    } = useGetSurveyListQuery({
         variables: {
-            slug: surveySlug,
+            first: SURVEYS_PER_PAGE,
+            sortBy: {
+                field: SurveySortField.Name,
+                direction: OrderDirection.Desc,
+            },
         },
-        skip: !surveySlug,
+        context: {
+            headers: {
+                Project: workspace?.project.id,
+            },
+        },
+        notifyOnNetworkStatusChange: true,
     });
 
     const surveyName = survey?.survey?.name ?? "";
     const surveyId = survey?.survey?.id ?? "";
+
+    const totalCount = surveyList?.surveys?.totalCount;
+    const pageInfo = surveyList?.surveys?.pageInfo;
+
+    const transformedSurveyList = surveyList?.surveys?.edges
+        ?.map((edge) => {
+            return {
+                id: edge?.node?.id,
+                slug: edge?.node?.slug,
+                status: edge?.node?.status,
+                createdAt: edge?.node?.createdAt,
+                name: edge?.node?.name ? edge?.node?.name : "Untitled survey",
+                creator: {
+                    email: edge?.node?.creator.email,
+                    fullName: `${edge?.node?.creator.firstName} ${edge?.node?.creator.lastName}`,
+                },
+            };
+        })
+        .sort((a, b) => {
+            const firstDate = new Date(a.createdAt);
+            const secondDate = new Date(b.createdAt);
+
+            return secondDate.getTime() - firstDate.getTime();
+        });
 
     // this could make the dependencies of the createQuestion callback
     // change on every render. Wrapping it in a Memo fixes it i guess.
@@ -95,8 +149,8 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     );
 
     React.useEffect(() => {
-        refetch();
-    }, [refetch, surveySlug]);
+        getSurvey();
+    }, [getSurvey, surveySlug, surveyName]);
 
     const createSurvey = React.useCallback(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -126,22 +180,20 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                             id: surveyId ?? "",
                             slug: surveySlug ?? "",
                             reference: "",
-                            name: survey?.survey?.name ?? "",
+                            name: "",
                             type: SurveyTypeEnum.Survey,
                             status: SurveyStatusEnum.Draft,
-                            settings: survey?.survey?.settings ?? "",
-                            theme: survey?.survey?.theme,
+                            settings: "",
+                            theme: null,
                             createdAt: new Date().toISOString(),
                             updatedAt: new Date().toISOString(),
 
                             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                             // @ts-ignore
                             creator: {
-                                email: survey?.survey?.creator.email ?? "",
-                                firstName:
-                                    survey?.survey?.creator.firstName ?? "",
-                                lastName:
-                                    survey?.survey?.creator.lastName ?? "",
+                                email: "",
+                                firstName: "",
+                                lastName: "",
                             },
 
                             questions: {
@@ -194,20 +246,76 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                 },
             });
         },
+        [createSurveyMutation, navigate, orgSlug, projectSlug],
+    );
 
-        // why we're having this amount of dependencies here is due to optimisticResponse needing them.
-        [
-            createSurveyMutation,
-            navigate,
-            orgSlug,
-            projectSlug,
-            survey?.survey?.creator.email,
-            survey?.survey?.creator.firstName,
-            survey?.survey?.creator.lastName,
-            survey?.survey?.name,
-            survey?.survey?.settings,
-            survey?.survey?.theme,
-        ],
+    const getMoreSurveys = React.useCallback(
+        async (direction: string) => {
+            let paginationVariables = {};
+
+            if (direction === "forward") {
+                paginationVariables = {
+                    first: SURVEYS_PER_PAGE,
+                    after: pageInfo?.endCursor,
+                };
+            } else if (direction === "backward") {
+                paginationVariables = {
+                    first: undefined,
+                    last: SURVEYS_PER_PAGE,
+                    before: pageInfo?.startCursor,
+                };
+            }
+
+            fetchMore({
+                variables: paginationVariables,
+
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                updateQuery: (prevResult, { fetchMoreResult }) => {
+                    if (!fetchMoreResult) return prevResult;
+
+                    const newEdges = fetchMoreResult.surveys?.edges;
+                    const pageInfo = fetchMoreResult.surveys?.pageInfo;
+
+                    return newEdges?.length
+                        ? {
+                              surveys: {
+                                  pageInfo,
+                                  edges: newEdges,
+                                  __typename: prevResult.surveys?.__typename,
+                                  totalCount: prevResult.surveys?.totalCount,
+                              },
+                          }
+                        : prevResult;
+                },
+            });
+
+            new InMemoryCache({
+                typePolicies: {
+                    Query: {
+                        fields: {
+                            // its better to use Relay's pagination style to handle our cache
+                            // save us the burden of writing a cache logic and worrying about which edges nodes
+                            // to merge with the existing cache
+                            surveys: relayStylePagination(),
+                        },
+                    },
+                },
+            });
+        },
+        [fetchMore, pageInfo?.endCursor, pageInfo?.startCursor],
+    );
+
+    // Future work...
+    const filterSurveyList = React.useCallback(
+        async (input: SurveyFilterInput) => {
+            // console.log("here's your input", input);
+
+            await refetch({
+                filter: input,
+            });
+        },
+        [refetch],
     );
 
     const updateSurvey = React.useCallback(
@@ -427,26 +535,32 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
         () => ({
             error,
             surveyId,
-
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             questions,
 
             surveyName,
+            pageInfo,
             surveySlug,
             createSurvey,
             openQuestion,
             createQuestion,
-            pendingDeletion,
             setOpenQuestion,
+            totalSurveys: totalCount,
+            surveysOnPage: SURVEYS_PER_PAGE,
 
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             survey,
-
-            loadingSurvey,
             deleteSurvey,
             updateSurvey,
+            getMoreSurveys,
+            filterSurveyByName: filterSurveyList,
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            surveyList: transformedSurveyList,
+            loading: loadingSurvey || pendingDeletion || surveyListLoading,
         }),
         [
             error,
@@ -455,18 +569,22 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             questions,
             surveyName,
             surveySlug,
+            totalCount,
+            pageInfo,
+            filterSurveyList,
             updateSurvey,
             createSurvey,
             deleteSurvey,
             openQuestion,
             loadingSurvey,
             createQuestion,
+            transformedSurveyList,
             pendingDeletion,
             setOpenQuestion,
+            surveyListLoading,
+            getMoreSurveys,
         ],
     );
-
-    console.log("provider values", values);
 
     return (
         <SurveyContext.Provider value={values}>
