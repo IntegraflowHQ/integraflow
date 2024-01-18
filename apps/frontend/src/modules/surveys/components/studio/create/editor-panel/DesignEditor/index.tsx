@@ -22,7 +22,7 @@ const THEMES_INFO = [
 ];
 
 export const UpdateDesignEditor = () => {
-    const { survey, updateSurvey } = useSurvey();
+    const { updateSurvey, surveyId } = useSurvey();
     const editThemeState = useStudioStore((state) => state.editTheme);
     const { createTheme, updateTheme, refetch, deleteTheme } = useTheme();
 
@@ -31,8 +31,6 @@ export const UpdateDesignEditor = () => {
 
     // triggered when the 'Create theme' button in the colorPicker is clicked
     const handleCreateTheme = async () => {
-        const surveyId = survey?.survey?.id ?? "";
-
         if (theme?.name && theme?.colorScheme && surveyId) {
             if (theme.id) {
                 updateTheme(theme);
@@ -44,9 +42,11 @@ export const UpdateDesignEditor = () => {
                     colorScheme: theme.colorScheme,
                 });
 
+                console.log("response", response);
+
                 if (response) {
                     updateSurvey(surveyId, {
-                        themeId: response.newThemeData?.id ?? "",
+                        themeId: response.newThemeData?.id,
                     });
                 } else {
                     toast.error("Error creating the theme");
@@ -60,8 +60,6 @@ export const UpdateDesignEditor = () => {
     };
 
     const handleDeleteTheme = async () => {
-        const surveyId = survey?.survey?.id;
-
         if (theme?.id && surveyId) {
             try {
                 await deleteTheme(theme.id);
@@ -234,10 +232,7 @@ export const UpdateDesignEditor = () => {
                     </Tabs.Root>
 
                     <div className="mt-4">
-                        <DesignEditorContent
-                            onOpen={onOpen}
-                            // onPresetThemeSelect={() => createPresetTheme()}
-                        />
+                        <DesignEditorContent onOpen={onOpen} />
                     </div>
                 </div>
             ) : (

@@ -108,6 +108,8 @@ export const SurveyList = () => {
     ) => {
         e.stopPropagation();
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         const findSurvey = surveyList?.find((survey) => survey.id === id);
         const surveyName = findSurvey?.name;
         setSelectedSurveyName(surveyName ?? "");
@@ -119,6 +121,8 @@ export const SurveyList = () => {
     ) => {
         event.stopPropagation();
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         const surveyId = id
             ? surveyList?.find((survey) => survey.id === id)?.id
             : "";

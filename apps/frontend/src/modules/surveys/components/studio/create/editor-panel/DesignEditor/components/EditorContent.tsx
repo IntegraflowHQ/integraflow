@@ -14,7 +14,9 @@ interface ContentProp {
 }
 
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
-    const { survey, updateSurvey } = useSurvey();
+    const { survey, updateSurvey, surveyId } = useSurvey();
+
+    console.log(survey?.theme?.name ?? "");
 
     const [selectedTheme, setSelectedTheme] =
         React.useState<Partial<ProjectTheme>>();
@@ -33,8 +35,6 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
     }, [selectedTheme?.colorScheme]);
 
     const handleSelectedTheme = (theme: Partial<ProjectTheme>) => {
-        const surveyId = survey?.survey?.id ?? "";
-
         if (surveyId) {
             try {
                 setSelectedTheme(theme);
@@ -56,10 +56,10 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
     };
 
     React.useEffect(() => {
-        const theme = survey?.survey?.theme;
+        const theme = survey?.theme;
 
         setSelectedTheme(theme as Partial<ProjectTheme>);
-    }, [survey?.survey?.theme]);
+    }, [survey?.theme]);
 
     return (
         <>
@@ -185,7 +185,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                 {count !== 0 && <hr className="border-1 border-intg-bg-14" />}
 
                 <PresetThemes
-                    surveyId={survey?.survey?.id ?? ""}
+                    surveyId={surveyId ?? ""}
                     onThemeSelectUpdateSurvey={async (surveyId, themeId) =>
                         await updateSurvey(surveyId, {
                             themeId: themeId,

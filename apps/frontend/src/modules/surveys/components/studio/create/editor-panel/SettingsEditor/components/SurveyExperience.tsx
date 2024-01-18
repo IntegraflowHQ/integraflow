@@ -14,9 +14,8 @@ interface SurveyExperienceProps {
 }
 
 export const SurveyExperience = () => {
-    const { updateSurvey, survey, error } = useSurvey();
-    const surveyId = survey?.survey?.id;
-    const surveySettings = survey?.survey?.settings;
+    const { updateSurvey, survey, surveyId, error } = useSurvey();
+    const surveySettings = survey?.settings;
 
     const [surveyExperience, setSurveyExperience] =
         React.useState<SurveyExperienceProps>({

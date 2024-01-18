@@ -17,6 +17,7 @@ import "./index.css";
 import { AppCore } from "./layout/AppCore";
 import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
+import { SurveyShell } from "./layout/SurveyShell";
 import { SurveyProvider } from "./modules/surveys/SurveyProvider";
 import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
 import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
@@ -59,40 +60,26 @@ const router = createBrowserRouter([
                 element: <AppCore />,
                 children: [
                     {
-                        path: "projects/:projectSlug/get-started",
-                        element: <Onboarding />,
-                    },
-                    {
-                        path: "projects/:projectSlug/surveys",
-                        element: (
-                            <SurveyProvider>
-                                <Surveys />
-                            </SurveyProvider>
-                        ),
-                    },
-                    {
-                        path: "projects/:projectSlug/surveys/templates",
-                        element: (
-                            <SurveyProvider>
-                                <SurveyTemplates />
-                            </SurveyProvider>
-                        ),
-                    },
-                    {
-                        path: "/:orgSlug/projects/:projectSlug/survey/:surveySlug",
-                        element: (
-                            <SurveyProvider>
-                                <SurveyStudio />
-                            </SurveyProvider>
-                        ),
-                    },
-                    {
-                        path: "/:orgSlug/projects/:projectSlug/surveys",
-                        element: (
-                            <SurveyProvider>
-                                <Surveys />
-                            </SurveyProvider>
-                        ),
+                        path: "projects/:projectSlug",
+                        element: <SurveyShell />,
+                        children: [
+                            {
+                                path: "get-started",
+                                element: <Onboarding />,
+                            },
+                            {
+                                path: "surveys",
+                                element: <Surveys />,
+                            },
+                            {
+                                path: "templates",
+                                element: <SurveyTemplates />,
+                            },
+                            {
+                                path: "survey/:surveySlug",
+                                element: <SurveyStudio />,
+                            },
+                        ],
                     },
                 ],
             },

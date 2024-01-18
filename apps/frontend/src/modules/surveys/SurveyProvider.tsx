@@ -11,8 +11,8 @@ import {
     SurveyStatusEnum,
     SurveyTypeEnum,
     SurveyUpdateInput,
-    useGetSurveyLazyQuery,
     useGetSurveyListQuery,
+    useGetSurveyQuery,
     useSurveyCreateMutation,
     useSurveyDeleteMutation,
     useSurveyQuestionCreateMutation,
@@ -86,12 +86,16 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     const [deleteSurveyMutation, { loading: pendingDeletion }] =
         useSurveyDeleteMutation();
 
-    const [getSurvey, { loading: loadingSurvey, data: survey }] =
-        useGetSurveyLazyQuery({
-            variables: {
-                slug: surveySlug,
-            },
-        });
+    const {
+        data: survey,
+        loading: loadingSurvey,
+        refetch: refetchSurvey,
+    } = useGetSurveyQuery({
+        variables: {
+            slug: surveySlug,
+        },
+        skip: !surveySlug,
+    });
 
     const {
         refetch,
@@ -102,7 +106,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
         variables: {
             first: SURVEYS_PER_PAGE,
             sortBy: {
-                field: SurveySortField.Name,
+                field: SurveySortField.CreatedAt,
                 direction: OrderDirection.Desc,
             },
         },
@@ -120,26 +124,19 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     const totalCount = surveyList?.surveys?.totalCount;
     const pageInfo = surveyList?.surveys?.pageInfo;
 
-    const transformedSurveyList = surveyList?.surveys?.edges
-        ?.map((edge) => {
-            return {
-                id: edge?.node?.id,
-                slug: edge?.node?.slug,
-                status: edge?.node?.status,
-                createdAt: edge?.node?.createdAt,
-                name: edge?.node?.name ? edge?.node?.name : "Untitled survey",
-                creator: {
-                    email: edge?.node?.creator.email,
-                    fullName: `${edge?.node?.creator.firstName} ${edge?.node?.creator.lastName}`,
-                },
-            };
-        })
-        .sort((a, b) => {
-            const firstDate = new Date(a.createdAt);
-            const secondDate = new Date(b.createdAt);
-
-            return secondDate.getTime() - firstDate.getTime();
-        });
+    const transformedSurveyList = surveyList?.surveys?.edges?.map((edge) => {
+        return {
+            id: edge?.node?.id,
+            slug: edge?.node?.slug,
+            status: edge?.node?.status,
+            createdAt: edge?.node?.createdAt,
+            name: edge?.node?.name ? edge?.node?.name : "Untitled survey",
+            creator: {
+                email: edge?.node?.creator.email,
+                fullName: `${edge?.node?.creator.firstName} ${edge?.node?.creator.lastName}`,
+            },
+        };
+    });
 
     // this could make the dependencies of the createQuestion callback
     // change on every render. Wrapping it in a Memo fixes it i guess.
@@ -148,9 +145,16 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
         [survey?.survey?.questions.edges],
     );
 
+    // unique survey
     React.useEffect(() => {
-        getSurvey();
-    }, [getSurvey, surveySlug, surveyName]);
+        refetchSurvey();
+    }, [refetchSurvey, surveySlug, surveyName]);
+
+    // when there's a switch between projects... return the survey list
+    // unique to that selected project.
+    React.useEffect(() => {
+        refetch();
+    }, [refetch, projectSlug]);
 
     const createSurvey = React.useCallback(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
