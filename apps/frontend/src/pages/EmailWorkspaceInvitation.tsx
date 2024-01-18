@@ -1,101 +1,57 @@
-import {
-    OrganizationInviteDetails,
-    User,
-    useOrganizationInviteDetailsLazyQuery,
-    useOrganizationJoinMutation,
-} from "@/generated/graphql";
-import useLogout from "@/modules/auth/hooks/useLogout";
-import { ExpiredInviteLink } from "@/modules/organizationInvite/components/ExpiredInviteLink";
-import useUserState from "@/modules/users/hooks/useUserState";
-import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
+import { OrganizationInviteDetails } from "@/generated/graphql";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
+import { ExpiredInviteLink } from "@/modules/workspace/components/invite/ExpiredInviteLink";
+import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { Button, GlobalSpinner, Screen } from "@/ui";
 import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
-import { getAcronym, omitTypename } from "@/utils";
-import { useEffect } from "react";
+import { getAcronym } from "@/utils";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export const EmailWorkspaceInvitation = () => {
     const { inviteLink } = useParams();
-    const { user } = useUserState();
-    const { addWorkspace } = useWorkspace();
+    const { user } = useCurrentUser();
+    const { loading, getInviteDetails, joinWorkspace } = useWorkspace();
+    const { logout } = useAuth();
+    const navigate = useNavigate();
 
-    const { handleLogout } = useLogout();
-
-    const [joinOrganization, { loading }] = useOrganizationJoinMutation();
-
-    const [
-        fetchInviteDetails,
-        { data: inviteDetails, loading: inviteDetailsLoading },
-    ] = useOrganizationInviteDetailsLazyQuery({
-        variables: {
-            inviteLink: window.location.href,
-        },
-    });
+    const [inviteDetails, setInviteDetails] =
+        useState<OrganizationInviteDetails>();
 
     useEffect(() => {
-        const getInviteDetails = async () => {
-            await fetchInviteDetails();
+        const fetchInviteDetails = async () => {
+            const response = await getInviteDetails(window.location.href);
+            if (response) {
+                setInviteDetails(response as OrganizationInviteDetails);
+            }
         };
-        getInviteDetails();
-    }, [inviteLink]);
-    const navigate = useNavigate();
+
+        fetchInviteDetails();
+    }, [getInviteDetails, inviteLink]);
 
     const handleAcceptInvitation = async () => {
         if (!user) {
             navigate(
-                `/?email=${
-                    (
-                        inviteDetails?.organizationInviteDetails as OrganizationInviteDetails
-                    ).email
-                }&inviteLink=${window.location.pathname}`,
+                `/?email=${inviteDetails?.email}&inviteLink=${window.location.pathname}`,
             );
             return;
-        } else if (
-            user?.email !==
-            (
-                inviteDetails?.organizationInviteDetails as OrganizationInviteDetails
-            )?.email
-        ) {
-            handleLogout();
+        } else if (user?.email !== inviteDetails?.email) {
+            await logout();
             navigate(
-                `/?email=${
-                    (
-                        inviteDetails?.organizationInviteDetails as OrganizationInviteDetails
-                    ).email
-                }&inviteLink=${window.location.pathname}`,
+                `/?email=${inviteDetails?.email}&inviteLink=${window.location.pathname}`,
             );
             return;
-        } else if (
-            user?.email ===
-            (
-                inviteDetails?.organizationInviteDetails as OrganizationInviteDetails
-            )?.email
-        ) {
-            const result = await joinOrganization({
-                variables: {
-                    input: {
-                        inviteLink: window.location.pathname,
-                    },
-                },
-            });
-
-            const userWorkspace = omitTypename(
-                result.data?.organizationJoin?.user as User,
-            );
-
-            addWorkspace(userWorkspace);
+        } else if (user?.email === inviteDetails?.email) {
+            await joinWorkspace(window.location.pathname);
         }
     };
 
-    if (loading || inviteDetailsLoading) {
+    if (loading) {
         return <GlobalSpinner />;
     }
 
-    if (
-        (inviteDetails?.organizationInviteDetails as OrganizationInviteDetails)
-            ?.expired ||
-        !inviteDetails?.organizationInviteDetails
-    ) {
+    if (!inviteDetails || inviteDetails?.expired) {
         return <ExpiredInviteLink />;
     }
 
@@ -107,31 +63,14 @@ export const EmailWorkspaceInvitation = () => {
                         <AcronynmBox
                             size="md"
                             text={getAcronym(
-                                inviteDetails?.organizationInviteDetails
-                                    ?.organizationName
-                                    ? inviteDetails?.organizationInviteDetails
-                                          .organizationName
-                                    : "",
+                                inviteDetails?.organizationName ?? "",
                             )}
                         />
                     </div>
                     <p className="text-center text-3xl font-semibold text-white">
-                        <span>
-                            {
-                                (
-                                    inviteDetails?.organizationInviteDetails as OrganizationInviteDetails
-                                )?.inviter
-                            }{" "}
-                            invited you to
-                        </span>
+                        <span>{inviteDetails?.inviter} invited you to</span>
                         <br />
-                        <span>
-                            {
-                                (
-                                    inviteDetails?.organizationInviteDetails as OrganizationInviteDetails
-                                )?.organizationName
-                            }
-                        </span>
+                        <span>{inviteDetails?.organizationName}</span>
                     </p>
                     <p>
                         Redefine customer experience with organic feedback and
@@ -143,21 +82,12 @@ export const EmailWorkspaceInvitation = () => {
                     <p>
                         To accept the invitation, please login as
                         <br />
-                        <b>
-                            {
-                                (
-                                    inviteDetails?.organizationInviteDetails as OrganizationInviteDetails
-                                )?.email
-                            }
-                        </b>
+                        <b>{inviteDetails?.email}</b>
                     </p>
                     <div className="m-auto w-[80%]">
                         <Button
                             text={
-                                user?.email ===
-                                (
-                                    inviteDetails?.organizationInviteDetails as OrganizationInviteDetails
-                                )?.email
+                                user?.email === inviteDetails?.email
                                     ? "Accept"
                                     : "Login"
                             }

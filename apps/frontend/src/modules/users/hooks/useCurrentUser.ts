@@ -1,62 +1,55 @@
-import { DeepOmit, DeepPartial } from "@apollo/client/utilities";
+import { DeepPartial } from "@apollo/client/utilities";
 import { useCallback, useEffect, useMemo } from "react";
 
-import { Organization, User, useUserUpdateMutation, useViewerLazyQuery } from "@/generated/graphql";
+import { User, useUserUpdateMutation, useViewerLazyQuery } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
-import { omitTypename } from "@/utils";
 
-import { useUserStore } from "../states/user";
+import { convertToAuthOrganization, useUserStore } from "../states/user";
 
 export const useCurrentUser = () => {
     const { isAuthenticated } = useAuth();
-    const { updateUser: updateUserCache, reset, ...user } = useUserStore();
+    const { updateUser: updateUserCache, reset, hydrated, ...user } = useUserStore();
 
     const [getUser, { loading }] = useViewerLazyQuery({
         onCompleted: ({ viewer }) => {
             if (viewer) {
+                const organization = viewer.organizations?.edges.find(({ node }) => node.id === user.organization?.id)?.node;
+                const project = organization?.projects?.edges.find(({ node }) => node.id === user.project?.id)?.node;
 
-                updateUserCache(omitTypename({
+                updateUserCache({
                     ...viewer,
-                    project: {
-                        ...viewer.project,
-                        ...(user.project ?? {})
-                    },
-                    organization: {
-                        ...viewer.organization,
-                        ...(user.organization ?? {})
-                    }
-                }));
+                    organization: convertToAuthOrganization(organization),
+                    project
+                });
             }
         }
     });
     const [updateUser] = useUserUpdateMutation();
 
     useEffect(() => {
-        if (isAuthenticated) {
+        if (isAuthenticated && !hydrated) {
             getUser();
         }
-    }, [getUser, isAuthenticated]);
+    }, [getUser, hydrated, isAuthenticated]);
 
     const organizations = useMemo(() => {
         if (!user || !user.organizations?.edges) {
             return [];
         }
 
-        return user.organizations.edges.map(
-            edge => omitTypename(edge!.node)
-        ) as DeepOmit<Organization, "__typename">[];
+        return user.organizations.edges.map(edge => edge?.node);
     }, [user]);
 
-    const handleUserUpdate = useCallback(async (user: DeepPartial<User>, cacheOnly = false) => {
-        updateUserCache(omitTypename(user));
+    const handleUserUpdate = useCallback(async (updatedUser: DeepPartial<User>, cacheOnly = false) => {
+        updateUserCache(updatedUser);
 
         if (!cacheOnly) {
             await updateUser({
                 variables: {
                     input: {
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        isOnboarded: user.isOnboarded
+                        firstName: updatedUser.firstName,
+                        lastName: updatedUser.lastName,
+                        isOnboarded: updatedUser.isOnboarded
                     }
                 }
             });
@@ -64,7 +57,7 @@ export const useCurrentUser = () => {
     }, [updateUser, updateUserCache]);
 
     return {
-        loading: loading && !user,
+        loading,
         user,
         organizations,
         getUser,

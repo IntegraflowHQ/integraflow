@@ -1,5 +1,6 @@
 import { NotFound } from "@/components/NotFound";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useProject } from "@/modules/projects/hooks/useProject";
 import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { ROUTES } from "@/routes";
@@ -13,7 +14,8 @@ type Props = {
 export const PrivateRoute = ({ children }: Props) => {
     const { isAuthenticated } = useAuth();
     const { loading } = useCurrentUser();
-    const { workspace, project } = useWorkspace();
+    const { workspace } = useWorkspace();
+    const { project } = useProject();
     const { orgSlug, projectSlug } = useParams();
 
     if (!isAuthenticated) {
@@ -32,12 +34,13 @@ export const PrivateRoute = ({ children }: Props) => {
         return <NotFound />;
     }
 
-    if (orgSlug && !projectSlug && workspace && project) {
+    if (orgSlug && !projectSlug && workspace?.slug && project?.slug) {
         return (
             <Navigate
-                to={
-                    ROUTES.SURVEY_LIST.replace(":orgSlug", workspace.slug).replace(":projectSlug", project.slug)
-                }
+                to={ROUTES.SURVEY_LIST.replace(
+                    ":orgSlug",
+                    workspace.slug,
+                ).replace(":projectSlug", project.slug)}
             />
         );
     }

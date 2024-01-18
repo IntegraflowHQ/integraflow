@@ -1,104 +1,228 @@
+import { DeepPartial } from "@apollo/client/utilities";
+import { useCallback, useMemo } from "react";
+import { useParams } from "react-router-dom";
+
 import {
     AuthOrganization,
     AuthUser,
+    OnboardingCustomerSurvey,
+    Organization,
+    OrganizationCreateInput,
     Project,
+    useOrganizationCreateMutation,
+    useOrganizationInviteDetailsLazyQuery,
+    useOrganizationJoinMutation,
 } from "@/generated/graphql";
-import useRedirect from "@/modules/auth/hooks/useRedirect";
-import { DeepOmit } from "@apollo/client/utilities";
-import { useCallback, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useRedirect } from "@/modules/auth/hooks/useRedirect";
 import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
-import { omitTypename } from "@/utils";
+import { convertToAuthOrganization } from "@/modules/users/states/user";
 
 export const useWorkspace = () => {
-    const { orgSlug, projectSlug } = useParams();
-    const { user, updateUser } = useCurrentUser();
-    const { organizations } = useCurrentUser();
+    const { orgSlug } = useParams();
+    const { user, organizations, updateUser } = useCurrentUser();
     const redirect = useRedirect();
+    const [createOrganization, { loading: creatingOrg }] =
+        useOrganizationCreateMutation();
+    const [joinOrganization, { loading: joiningOrg }] =
+        useOrganizationJoinMutation();
+    const [getInviteDetails, { loading: inviteDetailsLoading }] =
+        useOrganizationInviteDetailsLazyQuery();
 
     const workspace = useMemo(() => {
         const slug = orgSlug ?? user?.organization?.slug;
 
-        return organizations.find(organization => organization.slug === slug) ?? null;
-    }, [orgSlug, user?.organization?.slug, organizations]);
+        return (
+            organizations.find((organization) => organization?.slug === slug) ??
+            null
+        );
+    }, [orgSlug, user, organizations]);
 
     const projects = useMemo(() => {
         if (!workspace || !workspace.projects?.edges) {
             return [];
         }
 
-        return workspace.projects.edges.map(edge => omitTypename(edge.node));
+        return workspace.projects.edges.map((edge) => edge?.node);
     }, [workspace]);
 
-    const project = useMemo(() => {
-        if (!workspace) {
-            return null;
-        }
-
-        if (orgSlug && !projectSlug) {
-            return omitTypename(projects?.[0]) ?? null;
-        }
-
-        const slug = projectSlug ?? user?.project?.slug;
-
-        const project = projects?.find(project => project.slug === slug);
-        return project ? omitTypename(project) : null;
-    }, [user?.project?.slug, orgSlug, projectSlug, projects, workspace]);
-
-    useEffect(() => {
-        const newProject = project ?? omitTypename(projects?.[0]);
-
-        if (
-            workspace &&
-            newProject &&
-            (workspace.id !== user?.organization?.id || newProject.id !== user?.project?.id)
-        ) {
-            updateUser({
-                organization: workspace,
-                project: newProject
-            }, true);
-        }
-    }, [user, project, projects, workspace, updateUser]);
-
     const handleSwitchWorkspace = useCallback(
-        (organization: DeepOmit<AuthOrganization, "__typename">, project: DeepOmit<Project, "__typename">) => {
-            updateUser({
-                organization: workspace,
-                project: project
-            }, true);
+        (organization: AuthOrganization, project: Project) => {
+            const updatedUser = {
+                organization,
+                project,
+            };
 
-            if (
-                user &&
-                (orgSlug !== organization.slug || projectSlug !== project.slug)
-            ) {
-                redirect(user);
+            updateUser(updatedUser, true);
+
+            if (orgSlug !== organization.slug) {
+                redirect({
+                    ...(user ?? {}),
+                    ...updatedUser,
+                });
             }
         },
-        [updateUser, workspace, user, orgSlug, projectSlug, redirect],
-    );
-
-    const handleSwitchProject = useCallback(
-        (project: DeepOmit<Project, "__typename">) => {
-            handleSwitchWorkspace(project.organization, project);
-        },
-        [handleSwitchWorkspace],
+        [orgSlug, redirect, updateUser, user],
     );
 
     const handleAddWorkspace = useCallback(
-        (data: DeepOmit<AuthUser, "__typename">) => {
-            if (!data.organization || !data.project) return;
+        (organization: DeepPartial<Organization>) => {
+            updateUser(
+                {
+                    organizations: {
+                        ...user.organizations,
+                        totalCount: (user.organizations?.totalCount ?? 0) + 1,
+                        edges: [
+                            ...(user.organizations?.edges ?? []),
+                            {
+                                node: organization,
+                            },
+                        ],
+                    },
+                },
+                true,
+            );
 
-            handleSwitchWorkspace(data.organization, data.project);
+            const project = organization.projects?.edges?.[0]?.node as Project;
+            if (organization && project) {
+                handleSwitchWorkspace(
+                    convertToAuthOrganization(organization) as AuthOrganization,
+                    project,
+                );
+            }
         },
-        [handleSwitchWorkspace],
+        [handleSwitchWorkspace, updateUser, user.organizations],
+    );
+
+    const handleUpdateWorkspace = useCallback(
+        (organization: DeepPartial<Organization>) => {
+            const organizations = {
+                ...user.organizations,
+                edges: (user.organizations?.edges ?? []).map((edge) => {
+                    if (edge?.node?.id === organization.id) {
+                        return {
+                            ...edge,
+                            node: organization,
+                        };
+                    }
+
+                    return edge;
+                }),
+            };
+            updateUser(
+                {
+                    organization: convertToAuthOrganization(organization),
+                    organizations,
+                },
+                true,
+            );
+        },
+        [updateUser, user],
+    );
+
+    const handleCreateWorkspace = useCallback(
+        async (
+            input: OrganizationCreateInput,
+            survey?: OnboardingCustomerSurvey,
+        ) => {
+            try {
+                const response = await createOrganization({
+                    variables: {
+                        input,
+                        survey,
+                    },
+                });
+
+                if (response.errors) {
+                    return response.errors[0];
+                }
+
+                const { data } = response;
+
+                if (
+                    data &&
+                    data.organizationCreate &&
+                    data.organizationCreate.user
+                ) {
+                    const { organization, project } = data.organizationCreate
+                        .user as AuthUser;
+
+                    if (organization && project) {
+                        handleAddWorkspace({
+                            id: organization?.id,
+                            name: organization?.name,
+                            slug: organization?.slug,
+                            memberCount: organization?.memberCount,
+                            projects: {
+                                edges: [{ node: project }],
+                            },
+                        });
+                    }
+                }
+
+                return data?.organizationCreate;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        [createOrganization, handleAddWorkspace],
+    );
+
+    const handleJoinWorkspace = useCallback(
+        async (inviteLink: string) => {
+            try {
+                const response = await joinOrganization({
+                    variables: {
+                        input: { inviteLink },
+                    },
+                });
+
+                if (response.errors) {
+                    return response.errors[0];
+                }
+
+                const { data } = response;
+
+                if (
+                    data &&
+                    data.organizationJoin?.user.organization &&
+                    data.organizationJoin.user.project
+                ) {
+                    handleSwitchWorkspace(
+                        data.organizationJoin.user.organization,
+                        data.organizationJoin.user.project,
+                    );
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        [handleSwitchWorkspace, joinOrganization],
+    );
+
+    const handleGetInviteDetails = useCallback(
+        async (inviteLink: string) => {
+            try {
+                const response = await getInviteDetails({
+                    variables: { inviteLink },
+                });
+
+                return response.data?.organizationInviteDetails;
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        [getInviteDetails],
     );
 
     return {
+        loading: joiningOrg || creatingOrg || inviteDetailsLoading,
         workspace,
         projects,
-        project,
+        createWorkspace: handleCreateWorkspace,
+        addWorkspace: handleAddWorkspace,
+        getInviteDetails: handleGetInviteDetails,
+        joinWorkspace: handleJoinWorkspace,
+        updateWorkspace: handleUpdateWorkspace,
         switchWorkspace: handleSwitchWorkspace,
-        switchProject: handleSwitchProject,
-        addWorkspace: handleAddWorkspace
     };
-}
+};

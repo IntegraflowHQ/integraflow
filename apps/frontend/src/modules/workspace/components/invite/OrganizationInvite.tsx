@@ -3,7 +3,7 @@ import {
     useOrganizationInviteLinkCreateLazyQuery,
     useOrganizationInviteLinkResetMutation,
 } from "@/generated/graphql";
-import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
+import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { Button, Dialog, DialogContent, TextInput } from "@/ui";
 import { CopyIcon } from "@/ui/icons";
 import { addEllipsis, copyToClipboard } from "@/utils";
@@ -20,7 +20,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
     const [fetchInviteLink, { data: inviteLink, loading: loadingInviteLink }] =
         useOrganizationInviteLinkCreateLazyQuery();
     const [emailInvite] = useOrganizationInviteCreateMutation();
-    const { workspace } = useWorkspaceState();
+    const { workspace } = useWorkspace();
     const [resetInviteLink, { loading: loadingLinkReset, data }] =
         useOrganizationInviteLinkResetMutation();
 
@@ -119,7 +119,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent
                 alignHeader="left"
-                title={`Invite others to '${workspace?.organization?.name}'`}
+                title={`Invite others to '${workspace?.name}'`}
                 description="Invite others to your project to collaborate together in intergraflow. An invite is specific to an email address and expires after 3 days."
             >
                 {!toggleInviteType ? (

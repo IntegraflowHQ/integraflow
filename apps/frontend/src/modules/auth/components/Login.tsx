@@ -9,7 +9,7 @@ import { emailRegex } from "@/utils";
 import { toast } from "@/utils/toast";
 
 import { useAuth } from "../hooks/useAuth";
-import useRedirect from "../hooks/useRedirect";
+import { useRedirect } from "../hooks/useRedirect";
 
 type Inputs = {
     email: string;

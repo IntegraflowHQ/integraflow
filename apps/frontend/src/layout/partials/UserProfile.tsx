@@ -127,16 +127,16 @@ export const UserProfile = () => {
                             return (
                                 <DropdownMenuItem
                                     className="px-3 py-2"
-                                    key={item.name}
+                                    key={item?.name}
                                     onClick={() => {
-                                        navigate(`/${item.slug}`);
+                                        navigate(`/${item?.slug}`);
                                     }}
                                 >
                                     <NavItem
-                                        text={item.name}
+                                        text={item?.name}
                                         leftIcon={
                                             <AcronynmBox
-                                                text={item.name}
+                                                text={item?.name ?? ""}
                                             />
                                         }
                                     />
