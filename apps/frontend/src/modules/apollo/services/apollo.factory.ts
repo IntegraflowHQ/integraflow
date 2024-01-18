@@ -48,15 +48,26 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
 
         const buildApolloLink = (): ApolloLink => {
             const authLink = setContext(async (_, { headers }) => {
+                let newHeaders = {};
+
+                if (this.authParams?.token) {
+                    newHeaders = {
+                        ...newHeaders,
+                        authorization: `Bearer ${this.authParams?.token}`,
+                    };
+                }
+
+                if (this.authParams?.currentProjectId) {
+                    newHeaders = {
+                        ...newHeaders,
+                        project: this.authParams?.currentProjectId,
+                    };
+                }
+
                 return {
                     headers: {
                         ...headers,
-                        authorization: this.authParams?.token
-                            ? `Bearer ${this.authParams?.token}`
-                            : undefined,
-                        project: this.authParams?.currentProjectId
-                            ? this.authParams?.currentProjectId
-                            : undefined,
+                        ...newHeaders
                     },
                 };
             });
@@ -101,14 +112,12 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                                 default:
                                     if (isDebugMode) {
                                         logDebug(
-                                            `[GraphQL error]: Message: ${
-                                                graphQLError.message
-                                            }, Location: ${
-                                                graphQLError.locations
-                                                    ? JSON.stringify(
-                                                          graphQLError.locations,
-                                                      )
-                                                    : graphQLError.locations
+                                            `[GraphQL error]: Message: ${graphQLError.message
+                                            }, Location: ${graphQLError.locations
+                                                ? JSON.stringify(
+                                                    graphQLError.locations,
+                                                )
+                                                : graphQLError.locations
                                             }, Path: ${graphQLError.path}`,
                                         );
                                     }

@@ -10,6 +10,9 @@ import {
     GoogleUserAuthDocument,
     GoogleUserAuthMutation,
     GoogleUserAuthMutationVariables,
+    LogoutDocument,
+    LogoutMutation,
+    LogoutMutationVariables,
     TokenRefreshDocument,
     TokenRefreshMutation,
     TokenRefreshMutationVariables,
@@ -21,6 +24,7 @@ const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
 
 // Create an apollo client to call auth graphql mutations
 const client = new ApolloFactory({
+    uri: `${import.meta.env.VITE_SERVER_BASE_URL}/graphql`,
     cache: new InMemoryCache(),
     defaultOptions: {
         mutate: {
@@ -98,4 +102,31 @@ export const refreshToken = async (token: string) => {
     }
 
     return data.tokenRefresh?.token;
+};
+
+/**
+ * Logout user
+ * @param refreshToken string
+ * @returns string
+ */
+export const logout = async (token: string) => {
+    const { data, errors } = await client.mutate<
+        LogoutMutation,
+        LogoutMutationVariables
+    >({
+        mutation: LogoutDocument,
+        context: {
+            authorization: `Bearer ${token}`
+        }
+    });
+
+    if (
+        errors ||
+        !data ||
+        data.logout?.userErrors?.length
+    ) {
+        throw new Error("Something went wrong during token renewal");
+    }
+
+    return true;
 };

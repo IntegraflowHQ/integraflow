@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/routes";
 import { AuthUser, User } from "@/generated/graphql";
 
-export default function useRedirect() {
+export const useRedirect = () => {
     const navigate = useNavigate();
 
     const handleRedirect = (user: DeepPartial<User | AuthUser>) => {
@@ -13,7 +13,7 @@ export default function useRedirect() {
         } else if (
             user.organization.slug &&
             user.project?.slug &&
-            (user.project.hasCompletedOnboardingFor || user.isOnboarded)
+            user.isOnboarded
         ) {
             navigate(
                 ROUTES.SURVEY_LIST.replace(
@@ -24,7 +24,7 @@ export default function useRedirect() {
         } else if (
             user.organization.slug &&
             user.project?.slug &&
-            !user.project.hasCompletedOnboardingFor
+            !user.isOnboarded
         ) {
             navigate(
                 ROUTES.GET_STARTED.replace(

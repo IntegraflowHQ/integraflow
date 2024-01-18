@@ -1,8 +1,6 @@
-import { User, useOrganizationCreateMutation } from "@/generated/graphql";
 import { PrivateRoute } from "@/layout/PrivateRoute";
-import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
-import { omitTypename } from "@/utils";
-import { useEffect } from "react";
+import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import slugify from "slugify";
 import Logo from "../assets/images/logo.png";
@@ -42,7 +40,7 @@ const WorkspaceRoles = [
 ];
 
 const CreateWorkspace = () => {
-    const { addWorkspace } = useWorkspace();
+    const { createWorkspace } = useWorkspace();
     const {
         watch,
         setValue,
@@ -57,8 +55,9 @@ const CreateWorkspace = () => {
             workspaceUrl: "",
         },
     });
-
+    const [workspaceError, setWorkspaceError] = useState<string>();
     const [name] = watch(["workspaceName"]);
+
     useEffect(() => {
         if (name && !touchedFields.workspaceUrl) {
             setValue(
@@ -69,16 +68,7 @@ const CreateWorkspace = () => {
         if (!name && !touchedFields.workspaceUrl) {
             setValue("workspaceUrl", "");
         }
-    }, [name]);
-
-    const [createOrganization, { data }] = useOrganizationCreateMutation();
-
-    useEffect(() => {
-        if (data && data.organizationCreate?.user) {
-            const user = omitTypename(data.organizationCreate?.user as User);
-            addWorkspace(user);
-        } else return;
-    }, [data]);
+    }, [name, setValue, touchedFields.workspaceUrl]);
 
     const onSubmit = async (formInfo: WorkSpaceData) => {
         const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -98,12 +88,17 @@ const CreateWorkspace = () => {
                 companySize: formInfo.workspaceSize,
             };
 
-            await createOrganization({
-                variables: {
-                    input: input,
-                    survey: survey,
-                },
-            });
+            const response = await createWorkspace(input, survey);
+
+            if (response instanceof Error) {
+                setWorkspaceError(response.message);
+                return;
+            }
+
+            if (response?.organizationErrors?.length) {
+                setWorkspaceError(response.organizationErrors[0].message ?? "");
+                return;
+            }
         }
     };
 
@@ -190,19 +185,13 @@ const CreateWorkspace = () => {
                                             error={
                                                 !!errors.workspaceUrl
                                                     ?.message ||
-                                                !!data?.organizationCreate
-                                                    ?.errors
+                                                !!workspaceError
                                             }
                                             errorMessage={
                                                 errors.workspaceUrl?.message
                                                     ? errors.workspaceUrl
                                                           ?.message
-                                                    : data?.organizationCreate
-                                                          ?.errors.length > 0
-                                                    ? (data?.organizationCreate
-                                                          ?.errors[0]
-                                                          .message as string)
-                                                    : undefined
+                                                    : workspaceError
                                             }
                                         />
                                     </div>

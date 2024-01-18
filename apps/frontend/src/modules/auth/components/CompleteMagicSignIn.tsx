@@ -8,7 +8,7 @@ import { toast } from "@/utils/toast";
 import CheckInbox from "assets/images/check-inbox.gif";
 
 import { useAuth } from "../hooks/useAuth";
-import useRedirect from "../hooks/useRedirect";
+import { useRedirect } from "../hooks/useRedirect";
 
 type Inputs = {
     code: string;

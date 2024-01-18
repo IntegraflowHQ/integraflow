@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 
 import { useAuth } from "@/modules/auth/hooks/useAuth";
-import useRedirect from "@/modules/auth/hooks/useRedirect";
-import { GlobalSpinner } from "@/ui";
+import { useRedirect } from "@/modules/auth/hooks/useRedirect";
 import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
+import { GlobalSpinner } from "@/ui";
 
 export default function PublicRoute({
     children,
@@ -16,19 +16,15 @@ export default function PublicRoute({
     const redirect = useRedirect();
 
     useEffect(() => {
-        const onMount = async () => {
-            if (!isAuthenticated) {
-                setReady(true);
-                return;
-            }
-
-            if (isAuthenticated && user) {
-                redirect(user);
-            }
+        if (!isAuthenticated) {
             setReady(true);
-        };
+            return;
+        }
 
-        onMount();
+        if (isAuthenticated && user) {
+            redirect(user);
+        }
+        setReady(true);
     }, [isAuthenticated, redirect, user]);
 
     if (!ready) {
