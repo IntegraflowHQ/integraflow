@@ -47,14 +47,16 @@ export type SurveyContextValues = {
     error: ApolloError | undefined;
     openQuestion: string;
     surveyName: string | undefined;
+    selectedSurveyTheme: string | undefined;
     surveyId: string | undefined;
+    surveyExperienceSettings: string | undefined;
     surveySlug: string | undefined;
     createSurvey: (template?: string) => Promise<void>;
     setOpenQuestion: (value: string) => void;
     updateSurvey: (
         id: string,
         input: SurveyUpdateInput,
-    ) => Promise<SurveyResponse>;
+    ) => Promise<SurveyResponse | undefined>;
     survey: Survey;
     surveyList: SurveyCountableConnection | undefined;
     questions: SurveyQuestionCountableEdge | undefined;
@@ -120,6 +122,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
 
     const surveyName = survey?.survey?.name ?? "";
     const surveyId = survey?.survey?.id ?? "";
+    const surveyExperienceSettings = survey?.survey?.settings ?? "";
 
     const totalCount = surveyList?.surveys?.totalCount;
     const pageInfo = surveyList?.surveys?.pageInfo;
@@ -560,6 +563,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             updateSurvey,
             getMoreSurveys,
             filterSurveyByName: filterSurveyList,
+            surveyExperienceSettings,
 
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
@@ -587,6 +591,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             setOpenQuestion,
             surveyListLoading,
             getMoreSurveys,
+            surveyExperienceSettings,
         ],
     );
 

@@ -14,8 +14,12 @@ interface SurveyExperienceProps {
 }
 
 export const SurveyExperience = () => {
-    const { updateSurvey, survey, surveyId, error } = useSurvey();
-    const surveySettings = survey?.settings;
+    const {
+        updateSurvey,
+        surveyId,
+        error,
+        surveyExperienceSettings: settings,
+    } = useSurvey();
 
     const [surveyExperience, setSurveyExperience] =
         React.useState<SurveyExperienceProps>({
@@ -83,10 +87,8 @@ export const SurveyExperience = () => {
     };
 
     React.useEffect(() => {
-        // sometimes... the survey settings JSON is undefined
-        // so we need to parse it first before we can use it
-        if (surveySettings) {
-            const parsedSettingsRes = JSON.parse(surveySettings);
+        if (settings) {
+            const parsedSettingsRes = JSON.parse(settings);
 
             if (parsedSettingsRes) {
                 setSurveyExperience((previousState) => ({
@@ -95,8 +97,7 @@ export const SurveyExperience = () => {
                 }));
             }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [settings]);
 
     return (
         <div className="w-full flex-col py-3">

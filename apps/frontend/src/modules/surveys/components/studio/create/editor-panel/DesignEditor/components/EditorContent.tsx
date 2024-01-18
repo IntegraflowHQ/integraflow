@@ -16,8 +16,6 @@ interface ContentProp {
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
     const { survey, updateSurvey, surveyId } = useSurvey();
 
-    console.log(survey?.theme?.name ?? "");
-
     const [selectedTheme, setSelectedTheme] =
         React.useState<Partial<ProjectTheme>>();
     const { themes, error } = useTheme();
