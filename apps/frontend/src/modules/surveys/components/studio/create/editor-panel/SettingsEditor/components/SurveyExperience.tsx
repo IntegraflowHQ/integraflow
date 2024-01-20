@@ -97,7 +97,8 @@ export const SurveyExperience = () => {
                 }));
             }
         }
-    }, [settings]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <div className="w-full flex-col py-3">

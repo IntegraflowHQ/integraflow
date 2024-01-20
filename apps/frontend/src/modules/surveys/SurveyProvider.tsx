@@ -1,6 +1,7 @@
 import {
     OrderDirection,
     PageInfo,
+    ProjectTheme,
     Survey,
     SurveyCountableConnection,
     SurveyError,
@@ -11,7 +12,7 @@ import {
     SurveyStatusEnum,
     SurveyTypeEnum,
     SurveyUpdateInput,
-    useGetSurveyListQuery,
+    useGetSurveyListLazyQuery,
     useGetSurveyQuery,
     useSurveyCreateMutation,
     useSurveyDeleteMutation,
@@ -51,6 +52,7 @@ export type SurveyContextValues = {
     surveyId: string | undefined;
     surveyExperienceSettings: string | undefined;
     surveySlug: string | undefined;
+    surveyTheme: ProjectTheme | null | undefined;
     createSurvey: (template?: string) => Promise<void>;
     setOpenQuestion: (value: string) => void;
     updateSurvey: (
@@ -99,30 +101,15 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
         skip: !surveySlug,
     });
 
-    const {
-        refetch,
-        fetchMore,
-        data: surveyList,
-        loading: surveyListLoading,
-    } = useGetSurveyListQuery({
-        variables: {
-            first: SURVEYS_PER_PAGE,
-            sortBy: {
-                field: SurveySortField.CreatedAt,
-                direction: OrderDirection.Desc,
-            },
-        },
-        context: {
-            headers: {
-                Project: workspace?.project.id,
-            },
-        },
-        notifyOnNetworkStatusChange: true,
-    });
+    const [
+        getSurveyList,
+        { refetch, fetchMore, data: surveyList, loading: surveyListLoading },
+    ] = useGetSurveyListLazyQuery();
 
     const surveyName = survey?.survey?.name ?? "";
     const surveyId = survey?.survey?.id ?? "";
     const surveyExperienceSettings = survey?.survey?.settings ?? "";
+    const surveyTheme = survey?.survey?.theme
 
     const totalCount = surveyList?.surveys?.totalCount;
     const pageInfo = surveyList?.surveys?.pageInfo;
@@ -151,13 +138,27 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     // unique survey
     React.useEffect(() => {
         refetchSurvey();
-    }, [refetchSurvey, surveySlug, surveyName]);
+    }, [surveySlug, refetchSurvey]);
 
-    // when there's a switch between projects... return the survey list
-    // unique to that selected project.
     React.useEffect(() => {
-        refetch();
-    }, [refetch, projectSlug]);
+        getSurveyList({
+            variables: {
+                first: SURVEYS_PER_PAGE,
+                sortBy: {
+                    field: SurveySortField.CreatedAt,
+                    direction: OrderDirection.Desc,
+                },
+            },
+            // TODO: Remove context later on. Apollo should handle this.
+            context: {
+                headers: {
+                    Project: workspace?.project.id,
+                },
+            },
+            notifyOnNetworkStatusChange: true,
+            fetchPolicy: "network-only",
+        });
+    }, [getSurveyList, projectSlug, workspace?.project?.id]);
 
     const createSurvey = React.useCallback(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -286,13 +287,13 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
 
                     return newEdges?.length
                         ? {
-                              surveys: {
-                                  pageInfo,
-                                  edges: newEdges,
-                                  __typename: prevResult.surveys?.__typename,
-                                  totalCount: prevResult.surveys?.totalCount,
-                              },
-                          }
+                            surveys: {
+                                pageInfo,
+                                edges: newEdges,
+                                __typename: prevResult.surveys?.__typename,
+                                totalCount: prevResult.surveys?.totalCount,
+                            },
+                        }
                         : prevResult;
                 },
             });
@@ -546,6 +547,10 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             // @ts-ignore
             questions,
 
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            surveyTheme,
+
             surveyName,
             pageInfo,
             surveySlug,
@@ -576,6 +581,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             surveyId,
             questions,
             surveyName,
+            surveyTheme,
             surveySlug,
             totalCount,
             pageInfo,
