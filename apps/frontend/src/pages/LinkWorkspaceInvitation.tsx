@@ -1,7 +1,7 @@
 import { OrganizationInviteLinkDetails } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { ExpiredInviteLink } from "@/modules/workspace/components/invite/ExpiredInviteLink";
-import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
+import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
 import { Button, GlobalSpinner, Screen } from "@/ui";
 import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
 import { getAcronym } from "@/utils";
@@ -10,7 +10,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export const LinkWorkspaceInvitation = () => {
     const { inviteLink } = useParams();
-    const { loading, getInviteDetails, joinWorkspace } = useWorkspace();
+    const { loading, getInviteDetails, joinWorkspace } = useWorkspaceInvite();
     const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
 

@@ -10,8 +10,6 @@ import {
     OrganizationCreateInput,
     Project,
     useOrganizationCreateMutation,
-    useOrganizationInviteDetailsLazyQuery,
-    useOrganizationJoinMutation,
 } from "@/generated/graphql";
 import { useRedirect } from "@/modules/auth/hooks/useRedirect";
 import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
@@ -21,12 +19,8 @@ export const useWorkspace = () => {
     const { orgSlug } = useParams();
     const { user, organizations, updateUser } = useCurrentUser();
     const redirect = useRedirect();
-    const [createOrganization, { loading: creatingOrg }] =
+    const [createOrganization, { loading }] =
         useOrganizationCreateMutation();
-    const [joinOrganization, { loading: joiningOrg }] =
-        useOrganizationJoinMutation();
-    const [getInviteDetails, { loading: inviteDetailsLoading }] =
-        useOrganizationInviteDetailsLazyQuery();
 
     const workspace = useMemo(() => {
         const slug = orgSlug ?? user?.organization?.slug;
@@ -167,61 +161,12 @@ export const useWorkspace = () => {
         [createOrganization, handleAddWorkspace],
     );
 
-    const handleJoinWorkspace = useCallback(
-        async (inviteLink: string) => {
-            try {
-                const response = await joinOrganization({
-                    variables: {
-                        input: { inviteLink },
-                    },
-                });
-
-                if (response.errors) {
-                    return response.errors[0];
-                }
-
-                const { data } = response;
-
-                if (
-                    data &&
-                    data.organizationJoin?.user.organization &&
-                    data.organizationJoin.user.project
-                ) {
-                    handleSwitchWorkspace(
-                        data.organizationJoin.user.organization,
-                        data.organizationJoin.user.project,
-                    );
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        },
-        [handleSwitchWorkspace, joinOrganization],
-    );
-
-    const handleGetInviteDetails = useCallback(
-        async (inviteLink: string) => {
-            try {
-                const response = await getInviteDetails({
-                    variables: { inviteLink },
-                });
-
-                return response.data?.organizationInviteDetails;
-            } catch (error) {
-                console.error(error);
-            }
-        },
-        [getInviteDetails],
-    );
-
     return {
-        loading: joiningOrg || creatingOrg || inviteDetailsLoading,
+        loading,
         workspace,
         projects,
         createWorkspace: handleCreateWorkspace,
         addWorkspace: handleAddWorkspace,
-        getInviteDetails: handleGetInviteDetails,
-        joinWorkspace: handleJoinWorkspace,
         updateWorkspace: handleUpdateWorkspace,
         switchWorkspace: handleSwitchWorkspace,
     };
