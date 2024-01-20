@@ -15,6 +15,7 @@ function parseClientOptions({
     apiKey,
     accessToken,
     apiUrl,
+    projectId,
     headers,
     ...opts
 }: IntegraflowClientOptions): IntegraflowClientParsedOptions {
@@ -24,21 +25,27 @@ function parseClientOptions({
         );
     }
 
+    const newHeader = {
+        /** Use bearer if oauth token exists, otherwise use the provided apiKey */
+        Authorization: accessToken
+            ? accessToken.startsWith("Bearer ")
+                ? accessToken
+                : `Bearer ${accessToken}`
+            : apiKey ?? "",
+        /** Use configured headers */
+        ...headers,
+        /** Override any user agent with the sdk name and version */
+        "User-Agent": serializeUserAgent({
+            [process.env.npm_package_name ?? "@integraflow/sdk"]: process.env.npm_package_version ?? "unknown",
+        }),
+    };
+
+    if (projectId) {
+        newHeader["Project"] = projectId
+    }
+
     return {
-        headers: {
-            /** Use bearer if oauth token exists, otherwise use the provided apiKey */
-            Authorization: accessToken
-                ? accessToken.startsWith("Bearer ")
-                    ? accessToken
-                    : `Bearer ${accessToken}`
-                : apiKey ?? "",
-            /** Use configured headers */
-            ...headers,
-            /** Override any user agent with the sdk name and version */
-            "User-Agent": serializeUserAgent({
-                [process.env.npm_package_name ?? "@integraflow/sdk"]: process.env.npm_package_version ?? "unknown",
-            }),
-        },
+        headers: newHeader,
         /** Default to production Integraflow api */
         apiUrl: apiUrl ?? "https://api.useintegraflow.com/graphql",
         ...opts,
@@ -68,5 +75,12 @@ export class IntegraflowClient extends IntegraflowSdk {
 
         this.options = parsedOptions;
         this.client = graphQLClient;
+    }
+
+    setProject(projectId: string) {
+        this.options.headers = {
+            ...this.options.headers,
+            Project: projectId
+        }
     }
 }
