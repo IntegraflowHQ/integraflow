@@ -322,6 +322,13 @@ def _capture(
     else:
         person.attributes = person_attributes
 
+        if attributes:
+            store_names_and_properties(
+                project=project,
+                event="$identify",
+                properties=person_attributes
+            )
+
     person.save()
 
 

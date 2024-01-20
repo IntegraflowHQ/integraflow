@@ -348,6 +348,7 @@ export interface Event {
   uuid: string;
   timestamp: number;
   properties?: EventProperties;
+  attributes?: UserAttributes;
   userId?: ID;
 }
 
