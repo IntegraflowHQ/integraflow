@@ -1,25 +1,19 @@
-import { AuthUser, User } from "@/generated/graphql";
-import { Workspace } from "@/modules/workspace/states/workSpace";
-import { ROUTES } from "@/routes";
-import { DeepOmit } from "@apollo/client/utilities";
+import { DeepPartial } from "@apollo/client/utilities";
 import { useNavigate } from "react-router-dom";
 
-export default function useRedirect() {
+import { ROUTES } from "@/routes";
+import { AuthUser, User } from "@/generated/graphql";
+
+export const useRedirect = () => {
     const navigate = useNavigate();
-    const handleRedirect = (
-        user:
-            | Workspace
-            | DeepOmit<User | AuthUser, "__typename">
-            | User
-            | AuthUser,
-    ) => {
+
+    const handleRedirect = (user: DeepPartial<User | AuthUser>) => {
         if (!user.organization) {
             navigate("/create-workspace");
         } else if (
-            (user.organization &&
-                user.project &&
-                user.project.hasCompletedOnboardingFor) ||
-            (user as User | AuthUser)?.isOnboarded
+            user.organization.slug &&
+            user.project?.slug &&
+            user.isOnboarded
         ) {
             navigate(
                 ROUTES.SURVEY_LIST.replace(
@@ -28,9 +22,9 @@ export default function useRedirect() {
                 ).replace(":projectSlug", user.project.slug),
             );
         } else if (
-            user.organization &&
-            user.project &&
-            !user.project.hasCompletedOnboardingFor
+            user.organization.slug &&
+            user.project?.slug &&
+            !user.isOnboarded
         ) {
             navigate(
                 ROUTES.GET_STARTED.replace(
@@ -40,5 +34,6 @@ export default function useRedirect() {
             );
         }
     };
+
     return handleRedirect;
 }

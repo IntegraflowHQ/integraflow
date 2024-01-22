@@ -1,45 +1,95 @@
-import {
-    ApolloClient,
-    ApolloLink,
-    HttpLink,
-    InMemoryCache,
-    UriFunction,
-} from "@apollo/client";
+import { InMemoryCache } from "@apollo/client";
 
 import {
+    EmailTokenUserAuthDocument,
+    EmailTokenUserAuthMutation,
+    EmailTokenUserAuthMutationVariables,
+    EmailUserAuthChallengeDocument,
+    EmailUserAuthChallengeMutation,
+    EmailUserAuthChallengeMutationVariables,
+    GoogleUserAuthDocument,
+    GoogleUserAuthMutation,
+    GoogleUserAuthMutationVariables,
+    LogoutDocument,
+    LogoutMutation,
+    LogoutMutationVariables,
     TokenRefreshDocument,
     TokenRefreshMutation,
     TokenRefreshMutationVariables,
 } from "@/generated/graphql";
-import { loggerLink } from "@/modules/apollo/utils";
 
-const logger = loggerLink(() => "Integraflow-Refresh");
+import { ApolloFactory } from "@/modules/apollo/services/apollo.factory";
+
+const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
+
+// Create an apollo client to call auth graphql mutations
+const client = new ApolloFactory({
+    uri: `${import.meta.env.VITE_SERVER_BASE_URL}/graphql`,
+    cache: new InMemoryCache(),
+    defaultOptions: {
+        mutate: {
+            fetchPolicy: "network-only",
+        },
+    },
+    connectToDevTools: isDebugMode,
+    // We don't want to re-create the client on token change or it will cause infinite loop
+    initialAuthParams: null,
+    extraLinks: [],
+    isDebugMode,
+}).getClient();
+
+export const emailAuthChallenge = (email: string, inviteLink?: string) => {
+    return client.mutate<
+        EmailUserAuthChallengeMutation,
+        EmailUserAuthChallengeMutationVariables
+    >({
+        mutation: EmailUserAuthChallengeDocument,
+        variables: {
+            email,
+            inviteLink
+        }
+    });
+};
+
+export const verifyAuthToken = (email: string, token: string, inviteLink?: string) => {
+    return client.mutate<
+        EmailTokenUserAuthMutation,
+        EmailTokenUserAuthMutationVariables
+    >({
+        mutation: EmailTokenUserAuthDocument,
+        variables: {
+            email,
+            token,
+            inviteLink
+        }
+    });
+};
+
+export const googleAuthLogin = (code: string, inviteLink?: string) => {
+    return client.mutate<
+        GoogleUserAuthMutation,
+        GoogleUserAuthMutationVariables
+    >({
+        mutation: GoogleUserAuthDocument,
+        variables: {
+            code,
+            inviteLink
+        }
+    });
+};
 
 /**
- * Refresh token mutation with custom apollo client
- * @param uri string | UriFunction | undefined
+ * Refresh token
  * @param refreshToken string
- * @returns TokenRefreshMutation
+ * @returns string
  */
-const refreshTokenMutation = async (
-    uri: string | UriFunction | undefined,
-    refreshToken: string,
-) => {
-    const httpLink = new HttpLink({ uri });
-
-    // Create new client to call refresh token graphql mutation
-    const client = new ApolloClient({
-        link: ApolloLink.from([logger, httpLink]),
-        cache: new InMemoryCache({}),
-    });
-
+export const refreshToken = async (token: string) => {
     const { data, errors } = await client.mutate<
         TokenRefreshMutation,
         TokenRefreshMutationVariables
     >({
         mutation: TokenRefreshDocument,
-        variables: { refreshToken },
-        fetchPolicy: "network-only",
+        variables: { refreshToken: token }
     });
 
     if (
@@ -51,23 +101,32 @@ const refreshTokenMutation = async (
         throw new Error("Something went wrong during token renewal");
     }
 
-    return data;
+    return data.tokenRefresh?.token;
 };
 
 /**
- * Refresh token and update cookie storage
- * @param uri string | UriFunction | undefined
+ * Logout user
+ * @param refreshToken string
  * @returns string
  */
-export const refreshToken = async (
-    uri: string | UriFunction | undefined,
-    refreshToken?: string | null,
-) => {
-    if (!refreshToken) {
-        throw new Error("Refresh token is not defined");
+export const logout = async (token: string) => {
+    const { data, errors } = await client.mutate<
+        LogoutMutation,
+        LogoutMutationVariables
+    >({
+        mutation: LogoutDocument,
+        context: {
+            authorization: `Bearer ${token}`
+        }
+    });
+
+    if (
+        errors ||
+        !data ||
+        data.logout?.userErrors?.length
+    ) {
+        throw new Error("Something went wrong during token renewal");
     }
 
-    const data = await refreshTokenMutation(uri, refreshToken);
-
-    return data.tokenRefresh?.token;
+    return true;
 };

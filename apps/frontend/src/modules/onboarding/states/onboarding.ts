@@ -53,7 +53,7 @@ const initialState: OnboardingState = {
 };
 
 export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
-    (set, get) => ({
+    (set) => ({
         ...initialState,
         clearEventSource: () =>
             set({ eventSource: null, mobilePlatform: null }),

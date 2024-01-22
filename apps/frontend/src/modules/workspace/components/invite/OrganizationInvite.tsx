@@ -1,35 +1,34 @@
-import {
-    useOrganizationInviteCreateMutation,
-    useOrganizationInviteLinkCreateLazyQuery,
-    useOrganizationInviteLinkResetMutation,
-} from "@/generated/graphql";
-import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
+import { Link, LucideMail, RefreshCcwIcon } from "lucide-react";
+import { useState } from "react";
+
+import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
+import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
 import { Button, Dialog, DialogContent, TextInput } from "@/ui";
 import { CopyIcon } from "@/ui/icons";
 import { addEllipsis, copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
-import { Link, LucideMail, RefreshCcwIcon } from "lucide-react";
-import { useMemo, useState } from "react";
 
 type Props = {
     open: boolean;
     onOpenChange: (value: boolean) => void;
 };
 
+const EMAIL_REGEX = /^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}(?:, ?[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7})*$/;
+
 export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
-    const [fetchInviteLink, { data: inviteLink, loading: loadingInviteLink }] =
-        useOrganizationInviteLinkCreateLazyQuery();
-    const [emailInvite] = useOrganizationInviteCreateMutation();
-    const { workspace } = useWorkspaceState();
-    const [resetInviteLink, { loading: loadingLinkReset, data }] =
-        useOrganizationInviteLinkResetMutation();
+    const { workspace } = useWorkspace();
+    const { loading, emailInvite, getInviteLink, resetInviteLink } = useWorkspaceInvite();
 
     const [toggleInviteType, setToggleInviteType] = useState(false);
     const [inviteEmail, setInviteEmail] = useState("");
     const [inputError, setInputError] = useState<string | undefined>("");
+    const [inviteLink, setInviteLink] = useState("");
 
     const handleLinkInvite = async () => {
-        await fetchInviteLink();
+        const response = await getInviteLink();
+        if (response?.inviteLink) {
+            setInviteLink(`${window.location.host}${response?.inviteLink}`);
+        }
     };
 
     const handleEmailInvite = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -39,9 +38,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
             return;
         }
 
-        const emailRegex =
-            /^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}(?:, ?[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7})*$/;
-        if (!emailRegex.test(inviteEmail)) {
+        if (!EMAIL_REGEX.test(inviteEmail)) {
             setInputError("Format: (example@gmail.com, example2@gmail.com)");
             return;
         }
@@ -50,25 +47,26 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
 
         const promises = emailArray.map(async (email) => {
             return emailInvite({
-                variables: {
-                    input: {
-                        email: email.trim(),
-                    },
-                },
+                email: email.trim()
             });
         });
 
-        const results = await Promise.all(promises);
-        const failedPromise = results.filter((item) => {
-            return item.data?.organizationInviteCreate?.errors?.length > 0;
+        const responses = await Promise.all(promises);
+        const failedPromise = responses.filter((response) => {
+            if (response instanceof Error) {
+                return true;
+            }
+
+            return (response?.errors?.length ?? 0) > 0;
         });
 
-        const errorMessages = failedPromise.flatMap(
-            (response) =>
-                response?.data?.organizationInviteCreate?.organizationErrors.map(
-                    (error) => error.message,
-                ),
-        );
+        const errorMessages = failedPromise.flatMap((response) => {
+            if (response instanceof Error) {
+                return [response.message];
+            }
+
+            return response?.errors?.map((error) => error.message);
+        });
 
         const flatErrorMessages = new Set(errorMessages);
 
@@ -100,26 +98,17 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
     };
 
     const handleInviteLinkRefresh = async () => {
-        await resetInviteLink();
+        const response = await resetInviteLink();
+        if (response?.inviteLink) {
+            setInviteLink(`${window.location.host}${response?.inviteLink}`);
+        }
     };
-    const inviteLinkValue = useMemo(() => {
-        if (data?.organizationInviteLinkReset?.inviteLink) {
-            return `${window.location.host}${data?.organizationInviteLinkReset?.inviteLink}`;
-        }
-        if (inviteLink?.organizationInviteLink?.inviteLink) {
-            return `${window.location.host}${inviteLink?.organizationInviteLink?.inviteLink}`;
-        }
-        return "";
-    }, [
-        data?.organizationInviteLinkReset?.inviteLink,
-        inviteLink?.organizationInviteLink?.inviteLink,
-    ]);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent
                 alignHeader="left"
-                title={`Invite others to '${workspace?.organization?.name}'`}
+                title={`Invite others to '${workspace?.name}'`}
                 description="Invite others to your project to collaborate together in intergraflow. An invite is specific to an email address and expires after 3 days."
             >
                 {!toggleInviteType ? (
@@ -154,20 +143,17 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                             <div className="w-[75%]">
                                 <TextInput
                                     placeholder=""
-                                    value={addEllipsis(inviteLinkValue, 50)}
+                                    value={addEllipsis(inviteLink, 50)}
                                     disabled={true}
                                     rightIcon={
                                         <button
-                                            disabled={
-                                                loadingLinkReset ||
-                                                loadingInviteLink
-                                            }
+                                            disabled={loading}
                                             onClick={handleInviteLinkRefresh}
                                         >
                                             <RefreshCcwIcon
                                                 size={20}
                                                 className={
-                                                    loadingLinkReset
+                                                    loading
                                                         ? "spinner__circle"
                                                         : ""
                                                 }
@@ -182,10 +168,10 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                                     size="md"
                                     icon={<CopyIcon />}
                                     textAlign="center"
-                                    disabled={loadingInviteLink}
+                                    disabled={loading}
                                     onClick={() =>
                                         copyToClipboard(
-                                            inviteLinkValue,
+                                            inviteLink,
                                             "Invite link copied to clipboard",
                                         )
                                     }

@@ -1,244 +1,173 @@
-import {
-    AuthUser,
-    Project,
-    ProjectCountableEdge,
-    User,
-    useViewerLazyQuery,
-} from "@/generated/graphql";
-import useRedirect from "@/modules/auth/hooks/useRedirect";
-import { isOver24Hours, omitTypename } from "@/utils";
-import { logDebug } from "@/utils/log";
-import { DeepOmit } from "@apollo/client/utilities";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { DeepPartial } from "@apollo/client/utilities";
+import { useCallback, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import useUserState from "../../users/hooks/useUserState";
-import { Workspace } from "../states/workSpace";
-import useWorkspaceState from "./useWorkspaceState";
 
-export default function useWorkspace() {
-    const [isValidating, setIsValidating] = useState(true);
-    const { orgSlug, projectSlug } = useParams();
-    const { workspace, updateWorkspace } = useWorkspaceState();
-    const { user, lastUpdate: lastUserUpdate, updateUser } = useUserState();
-    const [fetchUser] = useViewerLazyQuery();
+import {
+    AuthOrganization,
+    AuthUser,
+    OnboardingCustomerSurvey,
+    Organization,
+    OrganizationCreateInput,
+    Project,
+    useOrganizationCreateMutation,
+} from "@/generated/graphql";
+import { useRedirect } from "@/modules/auth/hooks/useRedirect";
+import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
+import { convertToAuthOrganization } from "@/modules/users/states/user";
+
+export const useWorkspace = () => {
+    const { orgSlug } = useParams();
+    const { user, organizations, updateUser } = useCurrentUser();
     const redirect = useRedirect();
+    const [createOrganization, { loading }] =
+        useOrganizationCreateMutation();
 
-    const switchWorkspace = useCallback(
-        (data: Workspace) => {
-            updateWorkspace(data);
-            if (
-                orgSlug !== data.organization.slug ||
-                projectSlug !== data.project.slug
-            ) {
-                redirect(data);
-            }
-        },
-        [orgSlug, projectSlug],
-    );
+    const workspace = useMemo(() => {
+        const slug = orgSlug ?? user?.organization?.slug;
 
-    const isCurrentOrg = useMemo(() => {
-        if (!orgSlug) return false;
-        return workspace?.organization.slug === orgSlug.toLowerCase();
-    }, [workspace?.organization.slug, orgSlug]);
-
-    const isValidProject = useMemo(() => {
-        if (!projectSlug) {
-            return (
-                workspace?.project.organization.slug ===
-                workspace?.organization.slug
-            );
-        } else {
-            return (
-                workspace?.project.slug === projectSlug.toLowerCase() &&
-                workspace.project.organization.slug ===
-                    workspace.organization.slug
-            );
-        }
-    }, [projectSlug, orgSlug, workspace]);
-
-    const isValidWorkspace = useMemo(() => {
-        if (!projectSlug && !orgSlug) return true;
-        return isCurrentOrg && isValidProject;
-    }, [projectSlug, orgSlug, isCurrentOrg, isValidProject]);
-
-    const createValidWorkspaceData = useCallback(async () => {
-        let org = null;
-        let project = null;
-
-        if (!orgSlug) {
-            org = user?.organization;
-            project = user?.project;
-        } else {
-            org =
-                user?.organizations?.edges.find(
-                    (edge) => edge.node.slug === orgSlug,
-                )?.node || null;
-            project = !projectSlug
-                ? org?.projects?.edges[0].node
-                : org?.projects?.edges.find(
-                      (edge) => edge.node.slug === projectSlug,
-                  )?.node || null;
-        }
-
-        if ((!org || !project) && isOver24Hours(lastUserUpdate)) {
-            logDebug("User might be stale\nUpdating user...");
-            await fetchUser({
-                onCompleted: ({ viewer }) => {
-                    const newUser = omitTypename(viewer as User);
-                    updateUser(newUser);
-
-                    if (!orgSlug) {
-                        org = newUser?.organization;
-                        project = newUser?.project;
-                    } else {
-                        org =
-                            newUser?.organizations?.edges.find(
-                                (edge) => edge.node.slug === orgSlug,
-                            )?.node || null;
-                        project = !projectSlug
-                            ? org?.projects?.edges[0].node
-                            : org?.projects?.edges.find(
-                                  (edge) => edge.node.slug === projectSlug,
-                              )?.node || null;
-                    }
-                },
-            });
-        }
-
-        if (!org || !project) {
-            logDebug("Couldn't find valid org or project\n404 Error.");
-            return null;
-        }
-
-        return {
-            organization: org,
-            project: project,
-        } as Workspace;
-    }, [orgSlug, projectSlug, workspace]);
-
-    const currentOrgData = useMemo(() => {
-        const data =
-            user?.organizations?.edges.find(
-                (edge) => edge.node.slug === workspace?.organization.slug,
-            )?.node || null;
-
-        return data;
-    }, [user?.organizations, workspace?.organization.id]);
+        return (
+            organizations.find((organization) => organization?.slug === slug) ??
+            null
+        );
+    }, [orgSlug, user, organizations]);
 
     const projects = useMemo(() => {
-        return (
-            currentOrgData?.projects?.edges || ([] as ProjectCountableEdge[])
-        );
-    }, [currentOrgData]);
-
-    useEffect(() => {
-        if (!orgSlug) {
-            logDebug("No orgSlug, No validation required.");
-            setIsValidating(false);
-            return;
+        if (!workspace || !workspace.projects?.edges) {
+            return [];
         }
 
-        setIsValidating(true);
+        return workspace.projects.edges.map((edge) => edge?.node);
+    }, [workspace]);
 
-        if (isCurrentOrg && isValidProject) {
-            logDebug("Workspace is valid.");
-            if (!projectSlug) {
-                redirect(workspace as Workspace);
-            }
-            setIsValidating(false);
-            return;
-        } else {
-            logDebug("orgSlug", orgSlug);
-            logDebug("currentOrg", user?.organization);
-            logDebug("isCurrentOrg: ", isCurrentOrg);
-            logDebug("projectSlug", projectSlug);
-            logDebug("currentProject", user?.project);
-            logDebug("isValidProject: ", isValidProject);
-            logDebug("Creating valid workspace.");
-            createValidWorkspaceData()
-                .then((workspace) => {
-                    logDebug("New workspace: ", workspace);
-                    if (workspace) {
-                        switchWorkspace(workspace);
-                    }
-                    setIsValidating(false);
-                })
-                .catch(() => {
-                    logDebug("Failed to fetch");
-                    setIsValidating(false);
-                });
-        }
-
-        return () => {
-            setIsValidating(true);
-        };
-    }, [
-        orgSlug,
-        projectSlug,
-        isCurrentOrg,
-        isValidProject,
-        createValidWorkspaceData,
-    ]);
-
-    useEffect(() => {
-        if (!workspace?.organization || !workspace?.project || !user) return;
-        updateUser({
-            ...user,
-            organization: workspace.organization,
-            project: workspace.project,
-        });
-    }, [workspace?.organization, workspace?.project]);
-
-    const switchProject = useCallback(
-        (project: DeepOmit<Project, "__typename">) => {
-            const newWorkspace: Workspace = {
-                organization: workspace?.organization!,
-                project: project,
+    const handleSwitchWorkspace = useCallback(
+        (organization: AuthOrganization, project: Project) => {
+            const updatedUser = {
+                organization,
+                project,
             };
-            switchWorkspace(newWorkspace);
+
+            updateUser(updatedUser, true);
+
+            if (orgSlug !== organization.slug) {
+                redirect({
+                    ...(user ?? {}),
+                    ...updatedUser,
+                });
+            }
         },
-        [workspace, switchWorkspace],
+        [orgSlug, redirect, updateUser, user],
     );
 
-    const addWorkspace = useCallback(
-        (data: DeepOmit<AuthUser, "__typename">) => {
-            if (!user || !data.organization || !data.project) return;
-
-            const newUser = { ...user };
-            newUser.organization = data.organization;
-            newUser.project = data.project;
-            newUser?.organizations?.edges.unshift({
-                node: {
-                    ...data.organization,
-                    projects: {
+    const handleAddWorkspace = useCallback(
+        (organization: DeepPartial<Organization>) => {
+            updateUser(
+                {
+                    organizations: {
+                        ...user.organizations,
+                        totalCount: (user.organizations?.totalCount ?? 0) + 1,
                         edges: [
+                            ...(user.organizations?.edges ?? []),
                             {
-                                node: {
-                                    ...data.project,
-                                },
+                                node: organization,
                             },
                         ],
                     },
                 },
-            });
+                true,
+            );
 
-            updateUser(newUser);
-            switchWorkspace({
-                organization: data.organization,
-                project: data.project,
-            });
+            const project = organization.projects?.edges?.[0]?.node as Project;
+            if (organization && project) {
+                handleSwitchWorkspace(
+                    convertToAuthOrganization(organization) as AuthOrganization,
+                    project,
+                );
+            }
         },
-        [user],
+        [handleSwitchWorkspace, updateUser, user.organizations],
+    );
+
+    const handleUpdateWorkspace = useCallback(
+        (organization: DeepPartial<Organization>) => {
+            const organizations = {
+                ...user.organizations,
+                edges: (user.organizations?.edges ?? []).map((edge) => {
+                    if (edge?.node?.id === organization.id) {
+                        return {
+                            ...edge,
+                            node: organization,
+                        };
+                    }
+
+                    return edge;
+                }),
+            };
+            updateUser(
+                {
+                    organization: convertToAuthOrganization(organization),
+                    organizations,
+                },
+                true,
+            );
+        },
+        [updateUser, user],
+    );
+
+    const handleCreateWorkspace = useCallback(
+        async (
+            input: OrganizationCreateInput,
+            survey?: OnboardingCustomerSurvey,
+        ) => {
+            try {
+                const response = await createOrganization({
+                    variables: {
+                        input,
+                        survey,
+                    },
+                });
+
+                if (response.errors) {
+                    return response.errors[0];
+                }
+
+                const { data } = response;
+
+                if (
+                    data &&
+                    data.organizationCreate &&
+                    data.organizationCreate.user
+                ) {
+                    const { organization, project } = data.organizationCreate
+                        .user as AuthUser;
+
+                    if (organization && project) {
+                        handleAddWorkspace({
+                            id: organization?.id,
+                            name: organization?.name,
+                            slug: organization?.slug,
+                            memberCount: organization?.memberCount,
+                            projects: {
+                                edges: [{ node: project }],
+                            },
+                        });
+                    }
+                }
+
+                return data?.organizationCreate;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        [createOrganization, handleAddWorkspace],
     );
 
     return {
+        loading,
         workspace,
         projects,
-        isValidating,
-        isValidWorkspace,
-        switchWorkspace,
-        switchProject,
-        addWorkspace,
-        createValidWorkspaceData,
+        createWorkspace: handleCreateWorkspace,
+        addWorkspace: handleAddWorkspace,
+        updateWorkspace: handleUpdateWorkspace,
+        switchWorkspace: handleSwitchWorkspace,
     };
-}
+};

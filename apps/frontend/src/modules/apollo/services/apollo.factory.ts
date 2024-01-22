@@ -12,10 +12,9 @@ import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { RetryLink } from "@apollo/client/link/retry";
 
-import { refreshToken } from "@/modules/auth/services/auth.service";
 import { logDebug } from "@/utils/log";
 
-import { ApolloManager, AuthToken } from "../types";
+import { ApolloManager, AuthParams } from "../types";
 import { loggerLink } from "../utils";
 
 const logger = loggerLink(() => "Integraflow");
@@ -23,40 +22,52 @@ const logger = loggerLink(() => "Integraflow");
 export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
     onError?: (err: GraphQLErrors | undefined) => void;
     onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
-    onAccessTokenChange?: (token: string) => void;
     onUnauthenticatedError?: () => void;
-    initialAuthToken: AuthToken | null;
+    initialAuthParams: AuthParams | null;
     extraLinks?: ApolloLink[];
     isDebugMode?: boolean;
 }
 
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
     private client: ApolloClient<TCacheShape>;
-    private authToken: AuthToken | null = null;
+    private authParams: AuthParams | null = null;
 
     constructor(opts: Options<TCacheShape>) {
         const {
             uri,
             onError: onErrorCb,
             onNetworkError,
-            onAccessTokenChange,
             onUnauthenticatedError,
-            initialAuthToken,
+            initialAuthParams,
             extraLinks,
             isDebugMode,
             ...options
         } = opts;
 
-        this.authToken = initialAuthToken;
+        this.authParams = initialAuthParams;
 
         const buildApolloLink = (): ApolloLink => {
             const authLink = setContext(async (_, { headers }) => {
+                let newHeaders = {};
+
+                if (this.authParams?.token) {
+                    newHeaders = {
+                        ...newHeaders,
+                        authorization: `Bearer ${this.authParams?.token}`,
+                    };
+                }
+
+                if (this.authParams?.currentProjectId) {
+                    newHeaders = {
+                        ...newHeaders,
+                        project: this.authParams?.currentProjectId,
+                    };
+                }
+
                 return {
                     headers: {
                         ...headers,
-                        authorization: this.authToken?.token
-                            ? `Bearer ${this.authToken?.token}`
-                            : "",
+                        ...newHeaders
                     },
                 };
             });
@@ -79,40 +90,34 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                             switch (graphQLError?.extensions?.exception?.code) {
                                 case "ExpiredSignatureError": {
                                     return fromPromise(
-                                        refreshToken(
-                                            uri,
-                                            this.authToken?.refreshToken,
-                                        )
-                                            .then((token) => {
+                                        (async () => {
+                                            if (!this.authParams) {
+                                                return;
+                                            }
+
+                                            try {
+                                                const token = await this.authParams.refresh();
                                                 if (token) {
-                                                    this.updateAuthToken({
-                                                        token,
-                                                        refreshToken:
-                                                            this.authToken
-                                                                ?.refreshToken ??
-                                                            "",
+                                                    this.updateAuthParams({
+                                                        ...this.authParams,
+                                                        token
                                                     });
-                                                    onAccessTokenChange?.(
-                                                        token,
-                                                    );
                                                 }
-                                            })
-                                            .catch(() => {
+                                            } catch (err) {
                                                 onUnauthenticatedError?.();
-                                            }),
+                                            }
+                                        })()
                                     ).flatMap(() => forward(operation));
                                 }
                                 default:
                                     if (isDebugMode) {
                                         logDebug(
-                                            `[GraphQL error]: Message: ${
-                                                graphQLError.message
-                                            }, Location: ${
-                                                graphQLError.locations
-                                                    ? JSON.stringify(
-                                                          graphQLError.locations,
-                                                      )
-                                                    : graphQLError.locations
+                                            `[GraphQL error]: Message: ${graphQLError.message
+                                            }, Location: ${graphQLError.locations
+                                                ? JSON.stringify(
+                                                    graphQLError.locations,
+                                                )
+                                                : graphQLError.locations
                                             }, Path: ${graphQLError.path}`,
                                         );
                                     }
@@ -149,10 +154,14 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         });
     }
 
-    updateAuthToken(authToken: AuthToken | null) {
-        this.authToken = {
-            refreshToken: authToken?.refreshToken ?? "",
-            token: authToken?.token ?? "",
+    updateAuthParams(authParams: AuthParams | null) {
+        if (!authParams) {
+            return;
+        }
+
+        this.authParams = {
+            ...this.authParams,
+            ...authParams
         };
     }
 
