@@ -28,7 +28,7 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useScrollToBottom } from "react-scroll-to-bottom";
 import useWorkspace from "../workspace/hooks/useWorkspace";
-import { SURVEY_QUESTION } from "./graphql/fragments/surveyFragment";
+import { SURVEY, SURVEY_QUESTION } from "./graphql/fragments/surveyFragment";
 import { useSurveyStore } from "./states/survey";
 
 export interface SurveyProviderProp {
@@ -109,7 +109,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     const surveyName = survey?.survey?.name ?? "";
     const surveyId = survey?.survey?.id ?? "";
     const surveyExperienceSettings = survey?.survey?.settings ?? "";
-    const surveyTheme = survey?.survey?.theme
+    const surveyTheme = survey?.survey?.theme;
 
     const totalCount = surveyList?.surveys?.totalCount;
     const pageInfo = surveyList?.surveys?.pageInfo;
@@ -226,7 +226,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                             surveys(existingSurveys = []) {
                                 const newSurveyRef = cache.writeFragment({
                                     data: data.surveyCreate?.survey,
-                                    fragment: SURVEY_QUESTION,
+                                    fragment: SURVEY,
                                 });
 
                                 return {
@@ -287,13 +287,13 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
 
                     return newEdges?.length
                         ? {
-                            surveys: {
-                                pageInfo,
-                                edges: newEdges,
-                                __typename: prevResult.surveys?.__typename,
-                                totalCount: prevResult.surveys?.totalCount,
-                            },
-                        }
+                              surveys: {
+                                  pageInfo,
+                                  edges: newEdges,
+                                  __typename: prevResult.surveys?.__typename,
+                                  totalCount: prevResult.surveys?.totalCount,
+                              },
+                          }
                         : prevResult;
                 },
             });
