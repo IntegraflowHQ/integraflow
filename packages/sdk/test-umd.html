@@ -15,23 +15,25 @@
     </p>
     <p>Error: <span id="error" style="color: tomato">...pending</span></p>
     <script>
-      try {
-        const client = new Integraflow.IntegraflowClient({
-          apiKey: "asd",
-        });
-        client.viewer
-          .then(me => {
-            document.getElementById("result").innerHTML = JSON.stringify(me);
-            document.getElementById("error").innerHTML = "";
-          })
-          .catch(error => {
+    (async function() {
+        try {
+            const client = new Integraflow.IntegraflowClient({
+                appKey: 'API_KEY',
+                apiUrl: 'http://localhost:8000/graphql',
+            });
+
+            await client.captureEvent({
+                input: {
+                    event: 'Event',
+                    timestamp: new Date()
+                },
+                sentAt: new Date()
+            });
+        } catch (error) {
             document.getElementById("result").innerHTML = "";
             document.getElementById("error").innerHTML = error;
-          });
-      } catch (error) {
-        document.getElementById("result").innerHTML = "";
-        document.getElementById("error").innerHTML = error;
-      }
+        }
+    })();
     </script>
   </body>
 </html>

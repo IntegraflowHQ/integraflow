@@ -78,7 +78,7 @@ export function isValidObject(context: PluginContext, object?: ObjectTypeDefinit
     const connection = isConnection(object);
     if (connection && object) {
         // Check the type of this connection is valid
-        const rootTypeName = getObjectName(object).replace("Connection", "");
+        const rootTypeName = getObjectName(object).replace("CountableConnection", "");
         return (
             !skipComment &&
             isValidObject(

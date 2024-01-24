@@ -53,7 +53,7 @@ function isValidModel(model: ObjectTypeDefinitionNode | InterfaceTypeDefinitionN
     const connection = isConnection(model);
     if (connection && model) {
         // Check the type of this connection is valid
-        const rootTypeName = getObjectName(model).replace("Connection", "");
+        const rootTypeName = getObjectName(model).replace("CountableConnection", "");
         skipConnection = !isValidObject(
             context,
             context.objects.find(obj => rootTypeName === obj.name.value)

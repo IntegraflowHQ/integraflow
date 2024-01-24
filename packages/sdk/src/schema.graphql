@@ -227,17 +227,18 @@ input EventCaptureInput @doc(category: "Events") {
     """
     timestamp: DateTime!
     """
-    The distinct ID.
+    The user distinct ID.
     """
     userId: ID
     """
-    The payload ID.
+    The event payload ID.
     """
     uuid: UUID
 }
 
 type EventCountableConnection @doc(category: "Events") {
     edges: [EventCountableEdge!]!
+    nodes: [Event!]!
     """
     Pagination data for this connection.
     """
@@ -289,6 +290,7 @@ type EventDefinition implements Node @doc(category: "Events") {
 
 type EventDefinitionCountableConnection @doc(category: "Events") {
     edges: [EventDefinitionCountableEdge!]!
+    nodes: [EventDefinition!]!
     """
     Pagination data for this connection.
     """
@@ -363,6 +365,7 @@ type EventProperty implements Node @doc(category: "Events") {
 
 type EventPropertyCountableConnection @doc(category: "Events") {
     edges: [EventPropertyCountableEdge!]!
+    nodes: [EventProperty!]!
     """
     Pagination data for this connection.
     """
@@ -843,6 +846,7 @@ type Organization implements Node @doc(category: "Organizations") {
 
 type OrganizationCountableConnection @doc(category: "Organizations") {
     edges: [OrganizationCountableEdge!]!
+    nodes: [Organization!]!
     """
     Pagination data for this connection.
     """
@@ -1187,6 +1191,7 @@ type Person implements Node @doc(category: "Events") {
 
 type PersonCountableConnection @doc(category: "Events") {
     edges: [PersonCountableEdge!]!
+    nodes: [Person!]!
     """
     Pagination data for this connection.
     """
@@ -1244,6 +1249,7 @@ type Project implements Node @doc(category: "Projects") {
 
 type ProjectCountableConnection @doc(category: "Projects") {
     edges: [ProjectCountableEdge!]!
+    nodes: [Project!]!
     """
     Pagination data for this connection.
     """
@@ -1398,6 +1404,7 @@ type ProjectTheme implements Node @doc(category: "Projects") {
 
 type ProjectThemeCountableConnection @doc(category: "Projects") {
     edges: [ProjectThemeCountableEdge!]!
+    nodes: [ProjectTheme!]!
     """
     Pagination data for this connection.
     """
@@ -1544,6 +1551,7 @@ type PropertyDefinition implements Node @doc(category: "Events") {
 
 type PropertyDefinitionCountableConnection @doc(category: "Events") {
     edges: [PropertyDefinitionCountableEdge!]!
+    nodes: [PropertyDefinition!]!
     """
     Pagination data for this connection.
     """
@@ -2016,6 +2024,7 @@ type SurveyChannel implements Node @doc(category: "Surveys") {
 
 type SurveyChannelCountableConnection @doc(category: "Surveys") {
     edges: [SurveyChannelCountableEdge!]!
+    nodes: [SurveyChannel!]!
     """
     Pagination data for this connection.
     """
@@ -2127,6 +2136,7 @@ input SurveyChannelUpdateInput @doc(category: "Surveys") {
 
 type SurveyCountableConnection @doc(category: "Surveys") {
     edges: [SurveyCountableEdge!]!
+    nodes: [Survey!]!
     """
     Pagination data for this connection.
     """
@@ -2238,6 +2248,7 @@ input SurveyFilterInput @doc(category: "Surveys") {
     Filter by ids.
     """
     ids: [ID!]
+    search: String
     startDate: DateRangeInput
     status: SurveyStatusEnum
     """
@@ -2301,6 +2312,7 @@ type SurveyQuestion implements Node @doc(category: "Surveys") {
 
 type SurveyQuestionCountableConnection @doc(category: "Surveys") {
     edges: [SurveyQuestionCountableEdge!]!
+    nodes: [SurveyQuestion!]!
     """
     Pagination data for this connection.
     """
@@ -2523,10 +2535,6 @@ input SurveyUpdateInput @doc(category: "Surveys") {
     type: SurveyTypeEnum
 }
 
-"""
-Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
-in fields, resolvers and input.
-"""
 scalar UUID
 
 """
@@ -2627,6 +2635,7 @@ type User implements Node @doc(category: "Users") {
 
 type UserCountableConnection @doc(category: "Users") {
     edges: [UserCountableEdge!]!
+    nodes: [User!]!
     """
     Pagination data for this connection.
     """

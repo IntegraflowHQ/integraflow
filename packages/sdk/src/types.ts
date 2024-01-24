@@ -8,6 +8,8 @@ export interface IntegraflowClientOptions extends RequestInit {
     accessToken?: string;
     /** The url to the Integraflow graphql api */
     apiUrl?: string;
+    /** An optional project ID to the Integraflow graphql api */
+    projectId?: string;
 }
 
 /**

@@ -34,7 +34,7 @@ export function isValidFragment(context: PluginContext, fragment: NamedFields<Ob
   const connection = isConnection(fragment);
   if (connection) {
     // Check the type of this connection is valid
-    const rootTypeName = getObjectName(fragment).replace("Connection", "");
+    const rootTypeName = getObjectName(fragment).replace("CountableConnection", "");
     const object = context.objects.find(obj => rootTypeName === obj.name.value);
     return isValid && isValidObject(context, object);
   }

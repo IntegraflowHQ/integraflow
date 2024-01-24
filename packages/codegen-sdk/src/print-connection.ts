@@ -32,7 +32,7 @@ export function isConnectionModel(model?: SdkModel): boolean {
  * @param model The model that is being checked
  */
 export function isValidConnectionModel(context: SdkPluginContext, sdkModel: SdkModel): boolean {
-  const rootType = sdkModel?.name.replace("Connection", "");
+  const rootType = sdkModel?.name.replace("CountableConnection", "");
   return context.models?.some(model => model.name === rootType);
 }
 
@@ -79,8 +79,8 @@ function printConnectionDefault(): string {
     `function ${Sdk.CONNECTION_DEFAULT}<${Sdk.VARIABLE_TYPE} extends ${Sdk.CONNECTION_TYPE}${Sdk.VARIABLE_TYPE}>(${Sdk.VARIABLE_NAME}: ${Sdk.VARIABLE_TYPE}): ${Sdk.VARIABLE_TYPE} {
       return {
         ...${Sdk.VARIABLE_NAME},
-        ${Sdk.CONNECTION_FIRST}: ${Sdk.VARIABLE_NAME}.${Sdk.CONNECTION_FIRST} ?? (${Sdk.VARIABLE_NAME}.${Sdk.CONNECTION_AFTER} ? 50 : undefined),
-        ${Sdk.CONNECTION_LAST}: ${Sdk.VARIABLE_NAME}.${Sdk.CONNECTION_LAST} ?? (${Sdk.VARIABLE_NAME}.${Sdk.CONNECTION_BEFORE} ? 50 : undefined),
+        ${Sdk.CONNECTION_FIRST}: ${Sdk.VARIABLE_NAME}.${Sdk.CONNECTION_FIRST} ?? (${Sdk.VARIABLE_NAME}.${Sdk.CONNECTION_AFTER} ? 100 : undefined),
+        ${Sdk.CONNECTION_LAST}: ${Sdk.VARIABLE_NAME}.${Sdk.CONNECTION_LAST} ?? (${Sdk.VARIABLE_NAME}.${Sdk.CONNECTION_BEFORE} ? 100 : undefined),
       }
     }`,
   ]);
