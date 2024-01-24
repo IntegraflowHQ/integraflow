@@ -922,6 +922,9 @@ fragment EventCountableConnection on EventCountableConnection {
     pageInfo {
         ...PageInfo
     }
+    nodes {
+        ...Event
+    }
 }
 
 fragment EventDefinitionCountableConnection on EventDefinitionCountableConnection {
@@ -931,6 +934,9 @@ fragment EventDefinitionCountableConnection on EventDefinitionCountableConnectio
     # Pagination data for this connection.
     pageInfo {
         ...PageInfo
+    }
+    nodes {
+        ...EventDefinition
     }
 }
 
@@ -942,6 +948,9 @@ fragment EventPropertyCountableConnection on EventPropertyCountableConnection {
     pageInfo {
         ...PageInfo
     }
+    nodes {
+        ...EventProperty
+    }
 }
 
 fragment OrganizationCountableConnection on OrganizationCountableConnection {
@@ -951,6 +960,9 @@ fragment OrganizationCountableConnection on OrganizationCountableConnection {
     # Pagination data for this connection.
     pageInfo {
         ...PageInfo
+    }
+    nodes {
+        ...Organization
     }
 }
 
@@ -962,6 +974,9 @@ fragment PersonCountableConnection on PersonCountableConnection {
     pageInfo {
         ...PageInfo
     }
+    nodes {
+        ...Person
+    }
 }
 
 fragment ProjectCountableConnection on ProjectCountableConnection {
@@ -971,6 +986,9 @@ fragment ProjectCountableConnection on ProjectCountableConnection {
     # Pagination data for this connection.
     pageInfo {
         ...PageInfo
+    }
+    nodes {
+        ...Project
     }
 }
 
@@ -982,6 +1000,9 @@ fragment ProjectThemeCountableConnection on ProjectThemeCountableConnection {
     pageInfo {
         ...PageInfo
     }
+    nodes {
+        ...ProjectTheme
+    }
 }
 
 fragment PropertyDefinitionCountableConnection on PropertyDefinitionCountableConnection {
@@ -991,6 +1012,9 @@ fragment PropertyDefinitionCountableConnection on PropertyDefinitionCountableCon
     # Pagination data for this connection.
     pageInfo {
         ...PageInfo
+    }
+    nodes {
+        ...PropertyDefinition
     }
 }
 
@@ -1002,6 +1026,9 @@ fragment SurveyChannelCountableConnection on SurveyChannelCountableConnection {
     pageInfo {
         ...PageInfo
     }
+    nodes {
+        ...SurveyChannel
+    }
 }
 
 fragment SurveyCountableConnection on SurveyCountableConnection {
@@ -1011,6 +1038,9 @@ fragment SurveyCountableConnection on SurveyCountableConnection {
     # Pagination data for this connection.
     pageInfo {
         ...PageInfo
+    }
+    nodes {
+        ...Survey
     }
 }
 
@@ -1022,6 +1052,9 @@ fragment SurveyQuestionCountableConnection on SurveyQuestionCountableConnection 
     pageInfo {
         ...PageInfo
     }
+    nodes {
+        ...SurveyQuestion
+    }
 }
 
 fragment UserCountableConnection on UserCountableConnection {
@@ -1031,6 +1064,9 @@ fragment UserCountableConnection on UserCountableConnection {
     # Pagination data for this connection.
     pageInfo {
         ...PageInfo
+    }
+    nodes {
+        ...User
     }
 }
 

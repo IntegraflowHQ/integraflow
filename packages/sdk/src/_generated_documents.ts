@@ -27,10 +27,6 @@ export type Scalars = {
      */
     DateTime: Date;
     JSONString: any;
-    /**
-     * Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
-     * in fields, resolvers and input.
-     */
     UUID: any;
     /** _Any value scalar as defined by Federation spec. */
     _Any: any;
@@ -169,15 +165,16 @@ export type EventCaptureInput = {
     properties?: Maybe<Scalars["JSONString"]>;
     /** The time the event happened */
     timestamp: Scalars["DateTime"];
-    /** The distinct ID. */
+    /** The user distinct ID. */
     userId?: Maybe<Scalars["ID"]>;
-    /** The payload ID. */
+    /** The event payload ID. */
     uuid?: Maybe<Scalars["UUID"]>;
 };
 
 export type EventCountableConnection = {
     __typename?: "EventCountableConnection";
     edges: Array<EventCountableEdge>;
+    nodes: Array<Event>;
     /** Pagination data for this connection. */
     pageInfo: PageInfo;
     /** A total count of items in the collection. */
@@ -214,6 +211,7 @@ export type EventDefinition = Node & {
 export type EventDefinitionCountableConnection = {
     __typename?: "EventDefinitionCountableConnection";
     edges: Array<EventDefinitionCountableEdge>;
+    nodes: Array<EventDefinition>;
     /** Pagination data for this connection. */
     pageInfo: PageInfo;
     /** A total count of items in the collection. */
@@ -266,6 +264,7 @@ export type EventProperty = Node & {
 export type EventPropertyCountableConnection = {
     __typename?: "EventPropertyCountableConnection";
     edges: Array<EventPropertyCountableEdge>;
+    nodes: Array<EventProperty>;
     /** Pagination data for this connection. */
     pageInfo: PageInfo;
     /** A total count of items in the collection. */
@@ -616,6 +615,7 @@ export type OrganizationProjectsArgs = {
 export type OrganizationCountableConnection = {
     __typename?: "OrganizationCountableConnection";
     edges: Array<OrganizationCountableEdge>;
+    nodes: Array<Organization>;
     /** Pagination data for this connection. */
     pageInfo: PageInfo;
     /** A total count of items in the collection. */
@@ -852,6 +852,7 @@ export type Person = Node & {
 export type PersonCountableConnection = {
     __typename?: "PersonCountableConnection";
     edges: Array<PersonCountableEdge>;
+    nodes: Array<Person>;
     /** Pagination data for this connection. */
     pageInfo: PageInfo;
     /** A total count of items in the collection. */
@@ -888,6 +889,7 @@ export type Project = Node & {
 export type ProjectCountableConnection = {
     __typename?: "ProjectCountableConnection";
     edges: Array<ProjectCountableEdge>;
+    nodes: Array<Project>;
     /** Pagination data for this connection. */
     pageInfo: PageInfo;
     /** A total count of items in the collection. */
@@ -993,6 +995,7 @@ export type ProjectTheme = Node & {
 export type ProjectThemeCountableConnection = {
     __typename?: "ProjectThemeCountableConnection";
     edges: Array<ProjectThemeCountableEdge>;
+    nodes: Array<ProjectTheme>;
     /** Pagination data for this connection. */
     pageInfo: PageInfo;
     /** A total count of items in the collection. */
@@ -1104,6 +1107,7 @@ export type PropertyDefinition = Node & {
 export type PropertyDefinitionCountableConnection = {
     __typename?: "PropertyDefinitionCountableConnection";
     edges: Array<PropertyDefinitionCountableEdge>;
+    nodes: Array<PropertyDefinition>;
     /** Pagination data for this connection. */
     pageInfo: PageInfo;
     /** A total count of items in the collection. */
@@ -1404,6 +1408,7 @@ export type SurveyChannel = Node & {
 export type SurveyChannelCountableConnection = {
     __typename?: "SurveyChannelCountableConnection";
     edges: Array<SurveyChannelCountableEdge>;
+    nodes: Array<SurveyChannel>;
     /** Pagination data for this connection. */
     pageInfo: PageInfo;
     /** A total count of items in the collection. */
@@ -1492,6 +1497,7 @@ export type SurveyChannelUpdateInput = {
 export type SurveyCountableConnection = {
     __typename?: "SurveyCountableConnection";
     edges: Array<SurveyCountableEdge>;
+    nodes: Array<Survey>;
     /** Pagination data for this connection. */
     pageInfo: PageInfo;
     /** A total count of items in the collection. */
@@ -1573,6 +1579,7 @@ export type SurveyFilterInput = {
     endDate?: Maybe<DateTimeRangeInput>;
     /** Filter by ids. */
     ids?: Maybe<Array<Scalars["ID"]>>;
+    search?: Maybe<Scalars["String"]>;
     startDate?: Maybe<DateRangeInput>;
     status?: Maybe<SurveyStatusEnum>;
     /** Filter by type */
@@ -1614,6 +1621,7 @@ export type SurveyQuestion = Node & {
 export type SurveyQuestionCountableConnection = {
     __typename?: "SurveyQuestionCountableConnection";
     edges: Array<SurveyQuestionCountableEdge>;
+    nodes: Array<SurveyQuestion>;
     /** Pagination data for this connection. */
     pageInfo: PageInfo;
     /** A total count of items in the collection. */
@@ -1842,6 +1850,7 @@ export type UserProjectsArgs = {
 export type UserCountableConnection = {
     __typename?: "UserCountableConnection";
     edges: Array<UserCountableEdge>;
+    nodes: Array<User>;
     /** Pagination data for this connection. */
     pageInfo: PageInfo;
     /** A total count of items in the collection. */
@@ -2467,72 +2476,90 @@ export type EventCountableConnectionFragment = {
     __typename: "EventCountableConnection";
 } & Pick<EventCountableConnection, "totalCount"> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
+        nodes: Array<{ __typename?: "Event" } & EventFragment>;
     };
 
 export type EventDefinitionCountableConnectionFragment = {
     __typename: "EventDefinitionCountableConnection";
 } & Pick<EventDefinitionCountableConnection, "totalCount"> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
+        nodes: Array<
+            { __typename?: "EventDefinition" } & EventDefinitionFragment
+        >;
     };
 
 export type EventPropertyCountableConnectionFragment = {
     __typename: "EventPropertyCountableConnection";
 } & Pick<EventPropertyCountableConnection, "totalCount"> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
+        nodes: Array<{ __typename?: "EventProperty" } & EventPropertyFragment>;
     };
 
 export type OrganizationCountableConnectionFragment = {
     __typename: "OrganizationCountableConnection";
 } & Pick<OrganizationCountableConnection, "totalCount"> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
+        nodes: Array<{ __typename?: "Organization" } & OrganizationFragment>;
     };
 
 export type PersonCountableConnectionFragment = {
     __typename: "PersonCountableConnection";
 } & Pick<PersonCountableConnection, "totalCount"> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
+        nodes: Array<{ __typename?: "Person" } & PersonFragment>;
     };
 
 export type ProjectCountableConnectionFragment = {
     __typename: "ProjectCountableConnection";
 } & Pick<ProjectCountableConnection, "totalCount"> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
+        nodes: Array<{ __typename?: "Project" } & ProjectFragment>;
     };
 
 export type ProjectThemeCountableConnectionFragment = {
     __typename: "ProjectThemeCountableConnection";
 } & Pick<ProjectThemeCountableConnection, "totalCount"> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
+        nodes: Array<{ __typename?: "ProjectTheme" } & ProjectThemeFragment>;
     };
 
 export type PropertyDefinitionCountableConnectionFragment = {
     __typename: "PropertyDefinitionCountableConnection";
 } & Pick<PropertyDefinitionCountableConnection, "totalCount"> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
+        nodes: Array<
+            { __typename?: "PropertyDefinition" } & PropertyDefinitionFragment
+        >;
     };
 
 export type SurveyChannelCountableConnectionFragment = {
     __typename: "SurveyChannelCountableConnection";
 } & Pick<SurveyChannelCountableConnection, "totalCount"> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
+        nodes: Array<{ __typename?: "SurveyChannel" } & SurveyChannelFragment>;
     };
 
 export type SurveyCountableConnectionFragment = {
     __typename: "SurveyCountableConnection";
 } & Pick<SurveyCountableConnection, "totalCount"> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
+        nodes: Array<{ __typename?: "Survey" } & SurveyFragment>;
     };
 
 export type SurveyQuestionCountableConnectionFragment = {
     __typename: "SurveyQuestionCountableConnection";
 } & Pick<SurveyQuestionCountableConnection, "totalCount"> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
+        nodes: Array<
+            { __typename?: "SurveyQuestion" } & SurveyQuestionFragment
+        >;
     };
 
 export type UserCountableConnectionFragment = {
     __typename: "UserCountableConnection";
 } & Pick<UserCountableConnection, "totalCount"> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
+        nodes: Array<{ __typename?: "User" } & UserFragment>;
     };
 
 export type EmailTokenUserAuthMutationVariables = Exact<{
@@ -5063,241 +5090,6 @@ export const RefreshTokenFragmentDoc = ({
         }
     ]
 } as unknown) as DocumentNode<RefreshTokenFragment, unknown>;
-export const PersonFragmentDoc = ({
-    kind: "Document",
-    definitions: [
-        {
-            kind: "FragmentDefinition",
-            name: { kind: "Name", value: "Person" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "Person" }
-            },
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    { kind: "Field", name: { kind: "Name", value: "id" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "attributes" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "distinctIds" }
-                    },
-                    { kind: "Field", name: { kind: "Name", value: "uuid" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "project" },
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createdAt" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "isIdentified" }
-                    }
-                ]
-            }
-        }
-    ]
-} as unknown) as DocumentNode<PersonFragment, unknown>;
-export const PropertyDefinitionFragmentDoc = ({
-    kind: "Document",
-    definitions: [
-        {
-            kind: "FragmentDefinition",
-            name: { kind: "Name", value: "PropertyDefinition" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "PropertyDefinition" }
-            },
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    { kind: "Field", name: { kind: "Name", value: "id" } },
-                    { kind: "Field", name: { kind: "Name", value: "name" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "project" },
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "propertyType" }
-                    },
-                    { kind: "Field", name: { kind: "Name", value: "type" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "isNumerical" }
-                    }
-                ]
-            }
-        }
-    ]
-} as unknown) as DocumentNode<PropertyDefinitionFragment, unknown>;
-export const EventDefinitionFragmentDoc = ({
-    kind: "Document",
-    definitions: [
-        {
-            kind: "FragmentDefinition",
-            name: { kind: "Name", value: "EventDefinition" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "EventDefinition" }
-            },
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    { kind: "Field", name: { kind: "Name", value: "id" } },
-                    { kind: "Field", name: { kind: "Name", value: "name" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "project" },
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createdAt" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "lastSeenAt" }
-                    }
-                ]
-            }
-        }
-    ]
-} as unknown) as DocumentNode<EventDefinitionFragment, unknown>;
-export const EventPropertyFragmentDoc = ({
-    kind: "Document",
-    definitions: [
-        {
-            kind: "FragmentDefinition",
-            name: { kind: "Name", value: "EventProperty" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "EventProperty" }
-            },
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    { kind: "Field", name: { kind: "Name", value: "id" } },
-                    { kind: "Field", name: { kind: "Name", value: "event" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "project" },
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
-                        }
-                    },
-                    { kind: "Field", name: { kind: "Name", value: "property" } }
-                ]
-            }
-        }
-    ]
-} as unknown) as DocumentNode<EventPropertyFragment, unknown>;
-export const EventFragmentDoc = ({
-    kind: "Document",
-    definitions: [
-        {
-            kind: "FragmentDefinition",
-            name: { kind: "Name", value: "Event" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "Event" }
-            },
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    { kind: "Field", name: { kind: "Name", value: "id" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "distinctId" }
-                    },
-                    { kind: "Field", name: { kind: "Name", value: "event" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "properties" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "project" },
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "timestamp" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createdAt" }
-                    }
-                ]
-            }
-        }
-    ]
-} as unknown) as DocumentNode<EventFragment, unknown>;
 export const OrganizationInviteLinkResetFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -5917,6 +5709,59 @@ export const PageInfoFragmentDoc = ({
         }
     ]
 } as unknown) as DocumentNode<PageInfoFragment, unknown>;
+export const EventFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "Event" },
+            typeCondition: {
+                kind: "NamedType",
+                name: { kind: "Name", value: "Event" }
+            },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "__typename" }
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "distinctId" }
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "event" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "properties" }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "project" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "Project" }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "timestamp" }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "createdAt" }
+                    }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<EventFragment, unknown>;
 export const EventCountableConnectionFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -5950,12 +5795,70 @@ export const EventCountableConnectionFragmentDoc = ({
                                 }
                             ]
                         }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "nodes" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "Event" }
+                                }
+                            ]
+                        }
                     }
                 ]
             }
         }
     ]
 } as unknown) as DocumentNode<EventCountableConnectionFragment, unknown>;
+export const EventDefinitionFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "EventDefinition" },
+            typeCondition: {
+                kind: "NamedType",
+                name: { kind: "Name", value: "EventDefinition" }
+            },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "__typename" }
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "name" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "project" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "Project" }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "createdAt" }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "lastSeenAt" }
+                    }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<EventDefinitionFragment, unknown>;
 export const EventDefinitionCountableConnectionFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -5992,6 +5895,22 @@ export const EventDefinitionCountableConnectionFragmentDoc = ({
                                 }
                             ]
                         }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "nodes" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: {
+                                        kind: "Name",
+                                        value: "EventDefinition"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             }
@@ -6001,6 +5920,44 @@ export const EventDefinitionCountableConnectionFragmentDoc = ({
     EventDefinitionCountableConnectionFragment,
     unknown
 >;
+export const EventPropertyFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "EventProperty" },
+            typeCondition: {
+                kind: "NamedType",
+                name: { kind: "Name", value: "EventProperty" }
+            },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "__typename" }
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "event" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "project" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "Project" }
+                                }
+                            ]
+                        }
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "property" } }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<EventPropertyFragment, unknown>;
 export const EventPropertyCountableConnectionFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -6034,6 +5991,22 @@ export const EventPropertyCountableConnectionFragmentDoc = ({
                                 {
                                     kind: "FragmentSpread",
                                     name: { kind: "Name", value: "PageInfo" }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "nodes" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: {
+                                        kind: "Name",
+                                        value: "EventProperty"
+                                    }
                                 }
                             ]
                         }
@@ -6079,12 +6052,81 @@ export const OrganizationCountableConnectionFragmentDoc = ({
                                 }
                             ]
                         }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "nodes" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: {
+                                        kind: "Name",
+                                        value: "Organization"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             }
         }
     ]
 } as unknown) as DocumentNode<OrganizationCountableConnectionFragment, unknown>;
+export const PersonFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "Person" },
+            typeCondition: {
+                kind: "NamedType",
+                name: { kind: "Name", value: "Person" }
+            },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "__typename" }
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "attributes" }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "distinctIds" }
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "uuid" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "project" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "Project" }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "createdAt" }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "isIdentified" }
+                    }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<PersonFragment, unknown>;
 export const PersonCountableConnectionFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -6115,6 +6157,19 @@ export const PersonCountableConnectionFragmentDoc = ({
                                 {
                                     kind: "FragmentSpread",
                                     name: { kind: "Name", value: "PageInfo" }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "nodes" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "Person" }
                                 }
                             ]
                         }
@@ -6157,6 +6212,19 @@ export const ProjectCountableConnectionFragmentDoc = ({
                                 }
                             ]
                         }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "nodes" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "Project" }
+                                }
+                            ]
+                        }
                     }
                 ]
             }
@@ -6196,12 +6264,74 @@ export const ProjectThemeCountableConnectionFragmentDoc = ({
                                 }
                             ]
                         }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "nodes" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: {
+                                        kind: "Name",
+                                        value: "ProjectTheme"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             }
         }
     ]
 } as unknown) as DocumentNode<ProjectThemeCountableConnectionFragment, unknown>;
+export const PropertyDefinitionFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "PropertyDefinition" },
+            typeCondition: {
+                kind: "NamedType",
+                name: { kind: "Name", value: "PropertyDefinition" }
+            },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "__typename" }
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "name" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "project" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "Project" }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "propertyType" }
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "type" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "isNumerical" }
+                    }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<PropertyDefinitionFragment, unknown>;
 export const PropertyDefinitionCountableConnectionFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -6238,6 +6368,22 @@ export const PropertyDefinitionCountableConnectionFragmentDoc = ({
                                 {
                                     kind: "FragmentSpread",
                                     name: { kind: "Name", value: "PageInfo" }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "nodes" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: {
+                                        kind: "Name",
+                                        value: "PropertyDefinition"
+                                    }
                                 }
                             ]
                         }
@@ -6286,6 +6432,22 @@ export const SurveyChannelCountableConnectionFragmentDoc = ({
                                 }
                             ]
                         }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "nodes" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: {
+                                        kind: "Name",
+                                        value: "SurveyChannel"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             }
@@ -6325,6 +6487,19 @@ export const SurveyCountableConnectionFragmentDoc = ({
                                 {
                                     kind: "FragmentSpread",
                                     name: { kind: "Name", value: "PageInfo" }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "nodes" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "Survey" }
                                 }
                             ]
                         }
@@ -6370,6 +6545,22 @@ export const SurveyQuestionCountableConnectionFragmentDoc = ({
                                 }
                             ]
                         }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "nodes" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: {
+                                        kind: "Name",
+                                        value: "SurveyQuestion"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ]
             }
@@ -6409,6 +6600,19 @@ export const UserCountableConnectionFragmentDoc = ({
                                 {
                                     kind: "FragmentSpread",
                                     name: { kind: "Name", value: "PageInfo" }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "nodes" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "User" }
                                 }
                             ]
                         }
@@ -8438,7 +8642,13 @@ export const ChannelsDocument = ({
             }
         },
         ...SurveyChannelCountableConnectionFragmentDoc.definitions,
-        ...PageInfoFragmentDoc.definitions
+        ...PageInfoFragmentDoc.definitions,
+        ...SurveyChannelFragmentDoc.definitions,
+        ...SurveyFragmentDoc.definitions,
+        ...ProjectFragmentDoc.definitions,
+        ...AuthOrganizationFragmentDoc.definitions,
+        ...ProjectThemeFragmentDoc.definitions,
+        ...UserFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<ChannelsQuery, ChannelsQueryVariables>;
 export const EventDefinitionsDocument = ({
@@ -8552,7 +8762,10 @@ export const EventDefinitionsDocument = ({
             }
         },
         ...EventDefinitionCountableConnectionFragmentDoc.definitions,
-        ...PageInfoFragmentDoc.definitions
+        ...PageInfoFragmentDoc.definitions,
+        ...EventDefinitionFragmentDoc.definitions,
+        ...ProjectFragmentDoc.definitions,
+        ...AuthOrganizationFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<
     EventDefinitionsQuery,
@@ -8688,7 +8901,10 @@ export const EventPropertiesDocument = ({
             }
         },
         ...EventPropertyCountableConnectionFragmentDoc.definitions,
-        ...PageInfoFragmentDoc.definitions
+        ...PageInfoFragmentDoc.definitions,
+        ...EventPropertyFragmentDoc.definitions,
+        ...ProjectFragmentDoc.definitions,
+        ...AuthOrganizationFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<
     EventPropertiesQuery,
@@ -8804,7 +9020,10 @@ export const EventsDocument = ({
             }
         },
         ...EventCountableConnectionFragmentDoc.definitions,
-        ...PageInfoFragmentDoc.definitions
+        ...PageInfoFragmentDoc.definitions,
+        ...EventFragmentDoc.definitions,
+        ...ProjectFragmentDoc.definitions,
+        ...AuthOrganizationFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<EventsQuery, EventsQueryVariables>;
 export const OrganizationInviteLinkDocument = ({
@@ -8952,7 +9171,10 @@ export const PersonsDocument = ({
             }
         },
         ...PersonCountableConnectionFragmentDoc.definitions,
-        ...PageInfoFragmentDoc.definitions
+        ...PageInfoFragmentDoc.definitions,
+        ...PersonFragmentDoc.definitions,
+        ...ProjectFragmentDoc.definitions,
+        ...AuthOrganizationFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<PersonsQuery, PersonsQueryVariables>;
 export const PropertyDefinitionsDocument = ({
@@ -9091,7 +9313,10 @@ export const PropertyDefinitionsDocument = ({
             }
         },
         ...PropertyDefinitionCountableConnectionFragmentDoc.definitions,
-        ...PageInfoFragmentDoc.definitions
+        ...PageInfoFragmentDoc.definitions,
+        ...PropertyDefinitionFragmentDoc.definitions,
+        ...ProjectFragmentDoc.definitions,
+        ...AuthOrganizationFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<
     PropertyDefinitionsQuery,
@@ -9230,7 +9455,13 @@ export const QuestionsDocument = ({
             }
         },
         ...SurveyQuestionCountableConnectionFragmentDoc.definitions,
-        ...PageInfoFragmentDoc.definitions
+        ...PageInfoFragmentDoc.definitions,
+        ...SurveyQuestionFragmentDoc.definitions,
+        ...SurveyFragmentDoc.definitions,
+        ...ProjectFragmentDoc.definitions,
+        ...AuthOrganizationFragmentDoc.definitions,
+        ...ProjectThemeFragmentDoc.definitions,
+        ...UserFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<QuestionsQuery, QuestionsQueryVariables>;
 export const SurveyDocument = ({
@@ -9492,7 +9723,13 @@ export const Survey_ChannelsDocument = ({
             }
         },
         ...SurveyChannelCountableConnectionFragmentDoc.definitions,
-        ...PageInfoFragmentDoc.definitions
+        ...PageInfoFragmentDoc.definitions,
+        ...SurveyChannelFragmentDoc.definitions,
+        ...SurveyFragmentDoc.definitions,
+        ...ProjectFragmentDoc.definitions,
+        ...AuthOrganizationFragmentDoc.definitions,
+        ...ProjectThemeFragmentDoc.definitions,
+        ...UserFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<
     Survey_ChannelsQuery,
@@ -9869,7 +10106,13 @@ export const Survey_QuestionsDocument = ({
             }
         },
         ...SurveyQuestionCountableConnectionFragmentDoc.definitions,
-        ...PageInfoFragmentDoc.definitions
+        ...PageInfoFragmentDoc.definitions,
+        ...SurveyQuestionFragmentDoc.definitions,
+        ...SurveyFragmentDoc.definitions,
+        ...ProjectFragmentDoc.definitions,
+        ...AuthOrganizationFragmentDoc.definitions,
+        ...ProjectThemeFragmentDoc.definitions,
+        ...UserFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<
     Survey_QuestionsQuery,
@@ -10324,7 +10567,12 @@ export const SurveysDocument = ({
             }
         },
         ...SurveyCountableConnectionFragmentDoc.definitions,
-        ...PageInfoFragmentDoc.definitions
+        ...PageInfoFragmentDoc.definitions,
+        ...SurveyFragmentDoc.definitions,
+        ...ProjectFragmentDoc.definitions,
+        ...AuthOrganizationFragmentDoc.definitions,
+        ...ProjectThemeFragmentDoc.definitions,
+        ...UserFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<SurveysQuery, SurveysQueryVariables>;
 export const ThemesDocument = ({
@@ -10437,7 +10685,11 @@ export const ThemesDocument = ({
             }
         },
         ...ProjectThemeCountableConnectionFragmentDoc.definitions,
-        ...PageInfoFragmentDoc.definitions
+        ...PageInfoFragmentDoc.definitions,
+        ...ProjectThemeFragmentDoc.definitions,
+        ...ProjectFragmentDoc.definitions,
+        ...AuthOrganizationFragmentDoc.definitions,
+        ...UserFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<ThemesQuery, ThemesQueryVariables>;
 export const ViewerDocument = ({
@@ -10665,7 +10917,8 @@ export const Viewer_OrganizationsDocument = ({
             }
         },
         ...OrganizationCountableConnectionFragmentDoc.definitions,
-        ...PageInfoFragmentDoc.definitions
+        ...PageInfoFragmentDoc.definitions,
+        ...OrganizationFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<
     Viewer_OrganizationsQuery,
@@ -10943,7 +11196,9 @@ export const Viewer_ProjectsDocument = ({
             }
         },
         ...ProjectCountableConnectionFragmentDoc.definitions,
-        ...PageInfoFragmentDoc.definitions
+        ...PageInfoFragmentDoc.definitions,
+        ...ProjectFragmentDoc.definitions,
+        ...AuthOrganizationFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<
     Viewer_ProjectsQuery,

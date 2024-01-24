@@ -46,8 +46,8 @@ function defaultConnection<Variables extends IntegraflowConnectionVariables>(
 ): Variables {
     return {
         ...variables,
-        first: variables.first ?? (variables.after ? 50 : undefined),
-        last: variables.last ?? (variables.before ? 50 : undefined)
+        first: variables.first ?? (variables.after ? 100 : undefined),
+        last: variables.last ?? (variables.before ? 100 : undefined)
     };
 }
 
@@ -395,22 +395,24 @@ export class EventCapture extends Request {
  * EventCountableConnection model
  *
  * @param request - function to call the graphql client
- * @param data - I.EventCountableConnectionFragment response data
+ * @param fetch - function to trigger a refetch of this EventCountableConnection model
+ * @param data - EventCountableConnection response data
  */
-export class EventCountableConnection extends Request {
+export class EventCountableConnection extends Connection<Event> {
     public constructor(
         request: IntegraflowRequest,
+        fetch: (
+            connection?: IntegraflowConnectionVariables
+        ) => IntegraflowFetch<IntegraflowConnection<Event> | undefined>,
         data: I.EventCountableConnectionFragment
     ) {
-        super(request);
-        this.totalCount = data.totalCount ?? undefined;
-        this.pageInfo = new PageInfo(request, data.pageInfo);
+        super(
+            request,
+            fetch,
+            data.nodes.map(node => new Event(request, node)),
+            new PageInfo(request, data.pageInfo)
+        );
     }
-
-    /** A total count of items in the collection. */
-    public totalCount?: number;
-    /** Pagination data for this connection. */
-    public pageInfo: PageInfo;
 }
 /**
  * Represents an event definition.
@@ -450,22 +452,28 @@ export class EventDefinition extends Request {
  * EventDefinitionCountableConnection model
  *
  * @param request - function to call the graphql client
- * @param data - I.EventDefinitionCountableConnectionFragment response data
+ * @param fetch - function to trigger a refetch of this EventDefinitionCountableConnection model
+ * @param data - EventDefinitionCountableConnection response data
  */
-export class EventDefinitionCountableConnection extends Request {
+export class EventDefinitionCountableConnection extends Connection<
+    EventDefinition
+> {
     public constructor(
         request: IntegraflowRequest,
+        fetch: (
+            connection?: IntegraflowConnectionVariables
+        ) => IntegraflowFetch<
+            IntegraflowConnection<EventDefinition> | undefined
+        >,
         data: I.EventDefinitionCountableConnectionFragment
     ) {
-        super(request);
-        this.totalCount = data.totalCount ?? undefined;
-        this.pageInfo = new PageInfo(request, data.pageInfo);
+        super(
+            request,
+            fetch,
+            data.nodes.map(node => new EventDefinition(request, node)),
+            new PageInfo(request, data.pageInfo)
+        );
     }
-
-    /** A total count of items in the collection. */
-    public totalCount?: number;
-    /** Pagination data for this connection. */
-    public pageInfo: PageInfo;
 }
 /**
  * Represents errors in event mutations.
@@ -526,22 +534,26 @@ export class EventProperty extends Request {
  * EventPropertyCountableConnection model
  *
  * @param request - function to call the graphql client
- * @param data - I.EventPropertyCountableConnectionFragment response data
+ * @param fetch - function to trigger a refetch of this EventPropertyCountableConnection model
+ * @param data - EventPropertyCountableConnection response data
  */
-export class EventPropertyCountableConnection extends Request {
+export class EventPropertyCountableConnection extends Connection<
+    EventProperty
+> {
     public constructor(
         request: IntegraflowRequest,
+        fetch: (
+            connection?: IntegraflowConnectionVariables
+        ) => IntegraflowFetch<IntegraflowConnection<EventProperty> | undefined>,
         data: I.EventPropertyCountableConnectionFragment
     ) {
-        super(request);
-        this.totalCount = data.totalCount ?? undefined;
-        this.pageInfo = new PageInfo(request, data.pageInfo);
+        super(
+            request,
+            fetch,
+            data.nodes.map(node => new EventProperty(request, node)),
+            new PageInfo(request, data.pageInfo)
+        );
     }
-
-    /** A total count of items in the collection. */
-    public totalCount?: number;
-    /** Pagination data for this connection. */
-    public pageInfo: PageInfo;
 }
 /**
  * Finds or creates a new user account from google auth credentials.
@@ -676,22 +688,24 @@ export class Organization extends Request {
  * OrganizationCountableConnection model
  *
  * @param request - function to call the graphql client
- * @param data - I.OrganizationCountableConnectionFragment response data
+ * @param fetch - function to trigger a refetch of this OrganizationCountableConnection model
+ * @param data - OrganizationCountableConnection response data
  */
-export class OrganizationCountableConnection extends Request {
+export class OrganizationCountableConnection extends Connection<Organization> {
     public constructor(
         request: IntegraflowRequest,
+        fetch: (
+            connection?: IntegraflowConnectionVariables
+        ) => IntegraflowFetch<IntegraflowConnection<Organization> | undefined>,
         data: I.OrganizationCountableConnectionFragment
     ) {
-        super(request);
-        this.totalCount = data.totalCount ?? undefined;
-        this.pageInfo = new PageInfo(request, data.pageInfo);
+        super(
+            request,
+            fetch,
+            data.nodes.map(node => new Organization(request, node)),
+            new PageInfo(request, data.pageInfo)
+        );
     }
-
-    /** A total count of items in the collection. */
-    public totalCount?: number;
-    /** Pagination data for this connection. */
-    public pageInfo: PageInfo;
 }
 /**
  * Creates new organization.
@@ -1068,22 +1082,24 @@ export class Person extends Request {
  * PersonCountableConnection model
  *
  * @param request - function to call the graphql client
- * @param data - I.PersonCountableConnectionFragment response data
+ * @param fetch - function to trigger a refetch of this PersonCountableConnection model
+ * @param data - PersonCountableConnection response data
  */
-export class PersonCountableConnection extends Request {
+export class PersonCountableConnection extends Connection<Person> {
     public constructor(
         request: IntegraflowRequest,
+        fetch: (
+            connection?: IntegraflowConnectionVariables
+        ) => IntegraflowFetch<IntegraflowConnection<Person> | undefined>,
         data: I.PersonCountableConnectionFragment
     ) {
-        super(request);
-        this.totalCount = data.totalCount ?? undefined;
-        this.pageInfo = new PageInfo(request, data.pageInfo);
+        super(
+            request,
+            fetch,
+            data.nodes.map(node => new Person(request, node)),
+            new PageInfo(request, data.pageInfo)
+        );
     }
-
-    /** A total count of items in the collection. */
-    public totalCount?: number;
-    /** Pagination data for this connection. */
-    public pageInfo: PageInfo;
 }
 /**
  * Represents a project.
@@ -1132,22 +1148,24 @@ export class Project extends Request {
  * ProjectCountableConnection model
  *
  * @param request - function to call the graphql client
- * @param data - I.ProjectCountableConnectionFragment response data
+ * @param fetch - function to trigger a refetch of this ProjectCountableConnection model
+ * @param data - ProjectCountableConnection response data
  */
-export class ProjectCountableConnection extends Request {
+export class ProjectCountableConnection extends Connection<Project> {
     public constructor(
         request: IntegraflowRequest,
+        fetch: (
+            connection?: IntegraflowConnectionVariables
+        ) => IntegraflowFetch<IntegraflowConnection<Project> | undefined>,
         data: I.ProjectCountableConnectionFragment
     ) {
-        super(request);
-        this.totalCount = data.totalCount ?? undefined;
-        this.pageInfo = new PageInfo(request, data.pageInfo);
+        super(
+            request,
+            fetch,
+            data.nodes.map(node => new Project(request, node)),
+            new PageInfo(request, data.pageInfo)
+        );
     }
-
-    /** A total count of items in the collection. */
-    public totalCount?: number;
-    /** Pagination data for this connection. */
-    public pageInfo: PageInfo;
 }
 /**
  * Creates a new project
@@ -1284,22 +1302,24 @@ export class ProjectTheme extends Request {
  * ProjectThemeCountableConnection model
  *
  * @param request - function to call the graphql client
- * @param data - I.ProjectThemeCountableConnectionFragment response data
+ * @param fetch - function to trigger a refetch of this ProjectThemeCountableConnection model
+ * @param data - ProjectThemeCountableConnection response data
  */
-export class ProjectThemeCountableConnection extends Request {
+export class ProjectThemeCountableConnection extends Connection<ProjectTheme> {
     public constructor(
         request: IntegraflowRequest,
+        fetch: (
+            connection?: IntegraflowConnectionVariables
+        ) => IntegraflowFetch<IntegraflowConnection<ProjectTheme> | undefined>,
         data: I.ProjectThemeCountableConnectionFragment
     ) {
-        super(request);
-        this.totalCount = data.totalCount ?? undefined;
-        this.pageInfo = new PageInfo(request, data.pageInfo);
+        super(
+            request,
+            fetch,
+            data.nodes.map(node => new ProjectTheme(request, node)),
+            new PageInfo(request, data.pageInfo)
+        );
     }
-
-    /** A total count of items in the collection. */
-    public totalCount?: number;
-    /** Pagination data for this connection. */
-    public pageInfo: PageInfo;
 }
 /**
  * Creates a new theme
@@ -1448,22 +1468,28 @@ export class PropertyDefinition extends Request {
  * PropertyDefinitionCountableConnection model
  *
  * @param request - function to call the graphql client
- * @param data - I.PropertyDefinitionCountableConnectionFragment response data
+ * @param fetch - function to trigger a refetch of this PropertyDefinitionCountableConnection model
+ * @param data - PropertyDefinitionCountableConnection response data
  */
-export class PropertyDefinitionCountableConnection extends Request {
+export class PropertyDefinitionCountableConnection extends Connection<
+    PropertyDefinition
+> {
     public constructor(
         request: IntegraflowRequest,
+        fetch: (
+            connection?: IntegraflowConnectionVariables
+        ) => IntegraflowFetch<
+            IntegraflowConnection<PropertyDefinition> | undefined
+        >,
         data: I.PropertyDefinitionCountableConnectionFragment
     ) {
-        super(request);
-        this.totalCount = data.totalCount ?? undefined;
-        this.pageInfo = new PageInfo(request, data.pageInfo);
+        super(
+            request,
+            fetch,
+            data.nodes.map(node => new PropertyDefinition(request, node)),
+            new PageInfo(request, data.pageInfo)
+        );
     }
-
-    /** A total count of items in the collection. */
-    public totalCount?: number;
-    /** Pagination data for this connection. */
-    public pageInfo: PageInfo;
 }
 /**
  * Refresh JWT token. Mutation tries to take refreshToken from the input. If it fails it will try to take `refreshToken` from the http-only cookie `refreshToken`. `csrfToken` is required when `refreshToken` is provided as a cookie.
@@ -1683,22 +1709,26 @@ export class SurveyChannel extends Request {
  * SurveyChannelCountableConnection model
  *
  * @param request - function to call the graphql client
- * @param data - I.SurveyChannelCountableConnectionFragment response data
+ * @param fetch - function to trigger a refetch of this SurveyChannelCountableConnection model
+ * @param data - SurveyChannelCountableConnection response data
  */
-export class SurveyChannelCountableConnection extends Request {
+export class SurveyChannelCountableConnection extends Connection<
+    SurveyChannel
+> {
     public constructor(
         request: IntegraflowRequest,
+        fetch: (
+            connection?: IntegraflowConnectionVariables
+        ) => IntegraflowFetch<IntegraflowConnection<SurveyChannel> | undefined>,
         data: I.SurveyChannelCountableConnectionFragment
     ) {
-        super(request);
-        this.totalCount = data.totalCount ?? undefined;
-        this.pageInfo = new PageInfo(request, data.pageInfo);
+        super(
+            request,
+            fetch,
+            data.nodes.map(node => new SurveyChannel(request, node)),
+            new PageInfo(request, data.pageInfo)
+        );
     }
-
-    /** A total count of items in the collection. */
-    public totalCount?: number;
-    /** Pagination data for this connection. */
-    public pageInfo: PageInfo;
 }
 /**
  * Creates a new distibution channel
@@ -1785,22 +1815,24 @@ export class SurveyChannelUpdate extends Request {
  * SurveyCountableConnection model
  *
  * @param request - function to call the graphql client
- * @param data - I.SurveyCountableConnectionFragment response data
+ * @param fetch - function to trigger a refetch of this SurveyCountableConnection model
+ * @param data - SurveyCountableConnection response data
  */
-export class SurveyCountableConnection extends Request {
+export class SurveyCountableConnection extends Connection<Survey> {
     public constructor(
         request: IntegraflowRequest,
+        fetch: (
+            connection?: IntegraflowConnectionVariables
+        ) => IntegraflowFetch<IntegraflowConnection<Survey> | undefined>,
         data: I.SurveyCountableConnectionFragment
     ) {
-        super(request);
-        this.totalCount = data.totalCount ?? undefined;
-        this.pageInfo = new PageInfo(request, data.pageInfo);
+        super(
+            request,
+            fetch,
+            data.nodes.map(node => new Survey(request, node)),
+            new PageInfo(request, data.pageInfo)
+        );
     }
-
-    /** A total count of items in the collection. */
-    public totalCount?: number;
-    /** Pagination data for this connection. */
-    public pageInfo: PageInfo;
 }
 /**
  * Creates a new survey
@@ -1970,22 +2002,28 @@ export class SurveyQuestion extends Request {
  * SurveyQuestionCountableConnection model
  *
  * @param request - function to call the graphql client
- * @param data - I.SurveyQuestionCountableConnectionFragment response data
+ * @param fetch - function to trigger a refetch of this SurveyQuestionCountableConnection model
+ * @param data - SurveyQuestionCountableConnection response data
  */
-export class SurveyQuestionCountableConnection extends Request {
+export class SurveyQuestionCountableConnection extends Connection<
+    SurveyQuestion
+> {
     public constructor(
         request: IntegraflowRequest,
+        fetch: (
+            connection?: IntegraflowConnectionVariables
+        ) => IntegraflowFetch<
+            IntegraflowConnection<SurveyQuestion> | undefined
+        >,
         data: I.SurveyQuestionCountableConnectionFragment
     ) {
-        super(request);
-        this.totalCount = data.totalCount ?? undefined;
-        this.pageInfo = new PageInfo(request, data.pageInfo);
+        super(
+            request,
+            fetch,
+            data.nodes.map(node => new SurveyQuestion(request, node)),
+            new PageInfo(request, data.pageInfo)
+        );
     }
-
-    /** A total count of items in the collection. */
-    public totalCount?: number;
-    /** Pagination data for this connection. */
-    public pageInfo: PageInfo;
 }
 /**
  * Creates a new question
@@ -2159,22 +2197,24 @@ export class User extends Request {
  * UserCountableConnection model
  *
  * @param request - function to call the graphql client
- * @param data - I.UserCountableConnectionFragment response data
+ * @param fetch - function to trigger a refetch of this UserCountableConnection model
+ * @param data - UserCountableConnection response data
  */
-export class UserCountableConnection extends Request {
+export class UserCountableConnection extends Connection<User> {
     public constructor(
         request: IntegraflowRequest,
+        fetch: (
+            connection?: IntegraflowConnectionVariables
+        ) => IntegraflowFetch<IntegraflowConnection<User> | undefined>,
         data: I.UserCountableConnectionFragment
     ) {
-        super(request);
-        this.totalCount = data.totalCount ?? undefined;
-        this.pageInfo = new PageInfo(request, data.pageInfo);
+        super(
+            request,
+            fetch,
+            data.nodes.map(node => new User(request, node)),
+            new PageInfo(request, data.pageInfo)
+        );
     }
-
-    /** A total count of items in the collection. */
-    public totalCount?: number;
-    /** Pagination data for this connection. */
-    public pageInfo: PageInfo;
 }
 /**
  * Represents errors in user mutations.
@@ -3062,10 +3102,22 @@ export class ChannelsQuery extends Request {
             ...variables
         });
         const data = response.channels;
-
-        return data
-            ? new SurveyChannelCountableConnection(this._request, data)
-            : undefined;
+        if (data) {
+            return new SurveyChannelCountableConnection(
+                this._request,
+                connection =>
+                    this.fetch(
+                        id,
+                        defaultConnection({
+                            ...variables,
+                            ...connection
+                        })
+                    ),
+                data
+            );
+        } else {
+            return undefined;
+        }
     }
 }
 
@@ -3093,10 +3145,21 @@ export class EventDefinitionsQuery extends Request {
             I.EventDefinitionsQueryVariables
         >(I.EventDefinitionsDocument, variables);
         const data = response.eventDefinitions;
-
-        return data
-            ? new EventDefinitionCountableConnection(this._request, data)
-            : undefined;
+        if (data) {
+            return new EventDefinitionCountableConnection(
+                this._request,
+                connection =>
+                    this.fetch(
+                        defaultConnection({
+                            ...variables,
+                            ...connection
+                        })
+                    ),
+                data
+            );
+        } else {
+            return undefined;
+        }
     }
 }
 
@@ -3124,10 +3187,21 @@ export class EventPropertiesQuery extends Request {
             I.EventPropertiesQueryVariables
         >(I.EventPropertiesDocument, variables);
         const data = response.eventProperties;
-
-        return data
-            ? new EventPropertyCountableConnection(this._request, data)
-            : undefined;
+        if (data) {
+            return new EventPropertyCountableConnection(
+                this._request,
+                connection =>
+                    this.fetch(
+                        defaultConnection({
+                            ...variables,
+                            ...connection
+                        })
+                    ),
+                data
+            );
+        } else {
+            return undefined;
+        }
     }
 }
 
@@ -3155,10 +3229,21 @@ export class EventsQuery extends Request {
             I.EventsQueryVariables
         >(I.EventsDocument, variables);
         const data = response.events;
-
-        return data
-            ? new EventCountableConnection(this._request, data)
-            : undefined;
+        if (data) {
+            return new EventCountableConnection(
+                this._request,
+                connection =>
+                    this.fetch(
+                        defaultConnection({
+                            ...variables,
+                            ...connection
+                        })
+                    ),
+                data
+            );
+        } else {
+            return undefined;
+        }
     }
 }
 
@@ -3214,10 +3299,21 @@ export class PersonsQuery extends Request {
             I.PersonsQueryVariables
         >(I.PersonsDocument, variables);
         const data = response.persons;
-
-        return data
-            ? new PersonCountableConnection(this._request, data)
-            : undefined;
+        if (data) {
+            return new PersonCountableConnection(
+                this._request,
+                connection =>
+                    this.fetch(
+                        defaultConnection({
+                            ...variables,
+                            ...connection
+                        })
+                    ),
+                data
+            );
+        } else {
+            return undefined;
+        }
     }
 }
 
@@ -3245,10 +3341,21 @@ export class PropertyDefinitionsQuery extends Request {
             I.PropertyDefinitionsQueryVariables
         >(I.PropertyDefinitionsDocument, variables);
         const data = response.propertyDefinitions;
-
-        return data
-            ? new PropertyDefinitionCountableConnection(this._request, data)
-            : undefined;
+        if (data) {
+            return new PropertyDefinitionCountableConnection(
+                this._request,
+                connection =>
+                    this.fetch(
+                        defaultConnection({
+                            ...variables,
+                            ...connection
+                        })
+                    ),
+                data
+            );
+        } else {
+            return undefined;
+        }
     }
 }
 
@@ -3281,10 +3388,22 @@ export class QuestionsQuery extends Request {
             ...variables
         });
         const data = response.questions;
-
-        return data
-            ? new SurveyQuestionCountableConnection(this._request, data)
-            : undefined;
+        if (data) {
+            return new SurveyQuestionCountableConnection(
+                this._request,
+                connection =>
+                    this.fetch(
+                        id,
+                        defaultConnection({
+                            ...variables,
+                            ...connection
+                        })
+                    ),
+                data
+            );
+        } else {
+            return undefined;
+        }
     }
 }
 
@@ -3341,10 +3460,21 @@ export class SurveysQuery extends Request {
             I.SurveysQueryVariables
         >(I.SurveysDocument, variables);
         const data = response.surveys;
-
-        return data
-            ? new SurveyCountableConnection(this._request, data)
-            : undefined;
+        if (data) {
+            return new SurveyCountableConnection(
+                this._request,
+                connection =>
+                    this.fetch(
+                        defaultConnection({
+                            ...variables,
+                            ...connection
+                        })
+                    ),
+                data
+            );
+        } else {
+            return undefined;
+        }
     }
 }
 
@@ -3372,10 +3502,21 @@ export class ThemesQuery extends Request {
             I.ThemesQueryVariables
         >(I.ThemesDocument, variables);
         const data = response.themes;
-
-        return data
-            ? new ProjectThemeCountableConnection(this._request, data)
-            : undefined;
+        if (data) {
+            return new ProjectThemeCountableConnection(
+                this._request,
+                connection =>
+                    this.fetch(
+                        defaultConnection({
+                            ...variables,
+                            ...connection
+                        })
+                    ),
+                data
+            );
+        } else {
+            return undefined;
+        }
     }
 }
 
@@ -3437,10 +3578,22 @@ export class Survey_ChannelsQuery extends Request {
             I.Survey_ChannelsQueryVariables
         >(I.Survey_ChannelsDocument, variables);
         const data = response.survey?.channels;
-
-        return data
-            ? new SurveyChannelCountableConnection(this._request, data)
-            : undefined;
+        if (data) {
+            return new SurveyChannelCountableConnection(
+                this._request,
+                connection =>
+                    this.fetch(
+                        defaultConnection({
+                            ...this._variables,
+                            ...variables,
+                            ...connection
+                        })
+                    ),
+                data
+            );
+        } else {
+            return undefined;
+        }
     }
 }
 
@@ -3513,10 +3666,22 @@ export class Survey_QuestionsQuery extends Request {
             I.Survey_QuestionsQueryVariables
         >(I.Survey_QuestionsDocument, variables);
         const data = response.survey?.questions;
-
-        return data
-            ? new SurveyQuestionCountableConnection(this._request, data)
-            : undefined;
+        if (data) {
+            return new SurveyQuestionCountableConnection(
+                this._request,
+                connection =>
+                    this.fetch(
+                        defaultConnection({
+                            ...this._variables,
+                            ...variables,
+                            ...connection
+                        })
+                    ),
+                data
+            );
+        } else {
+            return undefined;
+        }
     }
 }
 
@@ -3726,10 +3891,22 @@ export class Viewer_OrganizationsQuery extends Request {
             I.Viewer_OrganizationsQueryVariables
         >(I.Viewer_OrganizationsDocument, variables);
         const data = response.viewer?.organizations;
-
-        return data
-            ? new OrganizationCountableConnection(this._request, data)
-            : undefined;
+        if (data) {
+            return new OrganizationCountableConnection(
+                this._request,
+                connection =>
+                    this.fetch(
+                        defaultConnection({
+                            ...this._variables,
+                            ...variables,
+                            ...connection
+                        })
+                    ),
+                data
+            );
+        } else {
+            return undefined;
+        }
     }
 }
 
@@ -3791,10 +3968,22 @@ export class Viewer_ProjectsQuery extends Request {
             I.Viewer_ProjectsQueryVariables
         >(I.Viewer_ProjectsDocument, variables);
         const data = response.viewer?.projects;
-
-        return data
-            ? new ProjectCountableConnection(this._request, data)
-            : undefined;
+        if (data) {
+            return new ProjectCountableConnection(
+                this._request,
+                connection =>
+                    this.fetch(
+                        defaultConnection({
+                            ...this._variables,
+                            ...variables,
+                            ...connection
+                        })
+                    ),
+                data
+            );
+        } else {
+            return undefined;
+        }
     }
 }
 

@@ -230,7 +230,7 @@ def _get_edges_for_connection(edge_type, qs, args, sorting_fields):
     # If we don't receive `first` and `last` we shouldn't build `edges`
     # and `page_info`
     if not first and not last:
-        return [], {"has_previous_page": False, "has_next_page": False}
+        return [], [], {"has_previous_page": False, "has_next_page": False}
 
     if last:
         start_slice, end_slice = 1, None
@@ -254,10 +254,12 @@ def _get_edges_for_connection(edge_type, qs, args, sorting_fields):
         )
         for record in matching_records
     ]
+
     if edges:
         page_info["start_cursor"] = edges[0].cursor
         page_info["end_cursor"] = edges[-1].cursor
-    return edges, page_info
+
+    return edges, matching_records, page_info
 
 
 def _get_id_coercion(qs: QuerySet) -> Callable[[str], Any]:
@@ -308,7 +310,7 @@ def connection_from_queryset_slice(
     except ValueError:
         raise GraphQLError("Received cursor is invalid.")
     filtered_qs = filtered_qs[:end_margin]
-    edges, page_info = _get_edges_for_connection(
+    edges, nodes, page_info = _get_edges_for_connection(
         edge_type, filtered_qs, args, sorting_fields
     )
 
@@ -319,12 +321,14 @@ def connection_from_queryset_slice(
 
         return connection_type(
             edges=edges,
+            nodes=nodes,
             page_info=pageinfo_type(**page_info),
             total_count=get_total_count,
         )
 
     return connection_type(
         edges=edges,
+        nodes=nodes,
         page_info=pageinfo_type(**page_info),
     )
 
@@ -410,6 +414,9 @@ def _is_first_or_last_required(info):
     if "edges" in values:
         return True
 
+    if "nodes" in values:
+        return True
+
     fragments = [
         field.name.value for field in selections if isinstance(
             field,
@@ -423,6 +430,9 @@ def _is_first_or_last_required(info):
             for field in info.fragments[fragment].selection_set.selections
         ]
         if "edges" in fragment_values:
+            return True
+
+        if "nodes" in fragment_values:
             return True
 
     return False
@@ -678,6 +688,10 @@ class NonNullConnection(BaseConnection):
         # of non-null edges.
         cls._meta.fields["edges"] = graphene.Field(
             graphene.NonNull(NonNullList(cls.Edge))
+        )
+
+        cls._meta.fields["nodes"] = graphene.Field(
+            graphene.NonNull(NonNullList(cls._meta.node))
         )
 
 
