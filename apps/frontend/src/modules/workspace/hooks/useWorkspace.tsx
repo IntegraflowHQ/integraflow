@@ -8,6 +8,7 @@ import {
 import useRedirect from "@/modules/auth/hooks/useRedirect";
 import { isOver24Hours, omitTypename } from "@/utils";
 import { logDebug } from "@/utils/log";
+import { useApolloClient } from "@apollo/client";
 import { DeepOmit } from "@apollo/client/utilities";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -22,9 +23,10 @@ export default function useWorkspace() {
     const { user, lastUpdate: lastUserUpdate, updateUser } = useUserState();
     const [fetchUser] = useViewerLazyQuery();
     const redirect = useRedirect();
+    const { cache, clearStore } = useApolloClient();
 
     const switchWorkspace = useCallback(
-        (data: Workspace) => {
+        async (data: Workspace) => {
             updateWorkspace(data);
             if (
                 orgSlug !== data.organization.slug ||
@@ -203,12 +205,15 @@ export default function useWorkspace() {
     }, [workspace?.organization, workspace?.project]);
 
     const switchProject = useCallback(
-        (project: DeepOmit<Project, "__typename">) => {
+        async (project: DeepOmit<Project, "__typename">) => {
             const newWorkspace: Workspace = {
                 organization: workspace?.organization!,
                 project: project,
             };
             switchWorkspace(newWorkspace);
+
+            await clearStore();
+            await cache.reset();
         },
         [workspace, switchWorkspace],
     );

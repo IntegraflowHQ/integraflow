@@ -31,20 +31,6 @@ import SurveyCreate from "../../SurveyCreate";
 import CreateSurveyButton from "../../partials/CreateSurveyButton";
 import { StatusBadge } from "./StatusBadge";
 
-interface SurveyListData {
-    surveys: {
-        id: string;
-        slug: string;
-        name: string;
-        createdAt: string;
-        creator: {
-            email: string;
-            fullName: string;
-        };
-        status: SurveyStatusEnum;
-    }[];
-}
-
 const headers = [
     { id: crypto.randomUUID(), title: "Name" },
     { id: crypto.randomUUID(), title: "Creator" },
@@ -63,27 +49,14 @@ export const SurveyList = () => {
         loading,
         error,
         getMoreSurveys,
-        surveyList: surveys,
+        surveyList,
         surveysOnPage,
     } = useSurvey();
-
-    const surveyList = surveys?.edges;
-    const pageInfo = surveys?.pageInfo;
-    const totalSurveys = surveys?.totalCount ?? 0;
 
     const [selectedSurveyId, setSelectedSurveyId] = React.useState<string>("");
     const [page, setPage] = React.useState<number>(1);
     const [selectedSurveyName, setSelectedSurveyName] =
         React.useState<string>("");
-
-    // const [nameFilter, setNameFilter] = React.useState<string>("");
-    const [currentSurveys, setCurrentSurveys] = React.useState<
-        SurveyListData["surveys"]
-    >(surveyList ?? []);
-
-    React.useEffect(() => {
-        setCurrentSurveys(surveyList ?? []);
-    }, [surveyList]);
 
     const handleGetMoreSurveys = (direction: string) => {
         if (direction === "forward") {
@@ -93,7 +66,6 @@ export const SurveyList = () => {
         }
 
         getMoreSurveys(direction);
-        setCurrentSurveys(surveyList ?? []);
     };
 
     const handleGetSurvey = (slug: string) => {
@@ -110,10 +82,10 @@ export const SurveyList = () => {
     ) => {
         e.stopPropagation();
 
-        const findSurvey = surveyList?.find(
-            (survey) => survey?.node?.id === id,
+        const findSurvey = surveyList?.edges?.find(
+            (survey) => survey.id === id,
         );
-        const surveyName = findSurvey?.node?.name;
+        const surveyName = findSurvey?.name;
         setSelectedSurveyName(surveyName ?? "");
     };
 
@@ -123,10 +95,10 @@ export const SurveyList = () => {
     ) => {
         event.stopPropagation();
 
-        const findSurvey = surveyList?.find(
-            (survey) => survey?.node?.id === id,
+        const findSurvey = surveyList?.edges?.find(
+            (survey) => survey?.id === id,
         );
-        const surveyId = findSurvey?.node.id;
+        const surveyId = findSurvey?.id;
 
         setSelectedSurveyId(surveyId ?? "");
     };
@@ -158,7 +130,10 @@ export const SurveyList = () => {
     };
 
     const surveyStartIndex = (page - 1) * surveysOnPage + 1;
-    const surveyEndIndex = Math.min(page * surveysOnPage, totalSurveys);
+    const surveyEndIndex = Math.min(
+        page * surveysOnPage,
+        surveyList?.totalCount ?? 0,
+    );
 
     return (
         <div className="h-full w-full px-6 py-4 text-white">
@@ -207,7 +182,7 @@ export const SurveyList = () => {
                     </TableHead>
 
                     <TableBody>
-                        {currentSurveys?.map((survey) => {
+                        {surveyList?.edges?.map((survey) => {
                             return (
                                 <TableRow
                                     key={survey.id}
@@ -215,10 +190,12 @@ export const SurveyList = () => {
                                 >
                                     <TableCell>{survey.name}</TableCell>
                                     <TableCell>
-                                        {survey?.creator?.fullName}
+                                        {survey?.creator?.fullName == " "
+                                            ? "Unknown User"
+                                            : survey?.creator?.fullName}
                                         <br />
                                         <span className="text-[12px] text-intg-text-4">
-                                            {survey?.creator.email}
+                                            {survey?.creator?.email}
                                         </span>
                                     </TableCell>
                                     <TableCell>
@@ -227,7 +204,9 @@ export const SurveyList = () => {
                                     <TableCell>
                                         <span className="first-letter:capitalize">
                                             {formatDistanceToNow(
-                                                parseISO(survey.createdAt),
+                                                parseISO(
+                                                    survey.createdAt ?? "",
+                                                ),
                                                 {
                                                     addSuffix: true,
                                                 },
@@ -236,7 +215,9 @@ export const SurveyList = () => {
                                         <br />
                                         <span className="text-[12px] text-intg-text-4">
                                             {format(
-                                                new Date(survey.createdAt),
+                                                new Date(
+                                                    survey.createdAt ?? "",
+                                                ),
                                                 "MMM dd, yyyy",
                                             )}
                                         </span>
@@ -249,7 +230,7 @@ export const SurveyList = () => {
                                                     onClick={(e) =>
                                                         getSurveyIdOnPopoverTrigger(
                                                             e,
-                                                            survey.id,
+                                                            survey?.id ?? "",
                                                         )
                                                     }
                                                     className="w-fit rounded-md px-1 py-1 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 data-[state=a]:bg-intg-bg-1"
@@ -271,7 +252,8 @@ export const SurveyList = () => {
                                                                     event,
                                                                 ) =>
                                                                     getSurveyNameOnSelect(
-                                                                        survey.id,
+                                                                        survey?.id ??
+                                                                            "",
                                                                         event,
                                                                     )
                                                                 }
@@ -296,7 +278,8 @@ export const SurveyList = () => {
                                                                 }
                                                                 onClick={(e) =>
                                                                     handleSurveyDelete(
-                                                                        survey.id,
+                                                                        survey?.id ??
+                                                                            "",
                                                                         e,
                                                                     )
                                                                 }
@@ -331,7 +314,8 @@ export const SurveyList = () => {
                                                     <div
                                                         onClick={() =>
                                                             handleGetSurvey(
-                                                                survey.slug,
+                                                                survey?.slug ??
+                                                                    "",
                                                             )
                                                         }
                                                         className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
@@ -397,12 +381,14 @@ export const SurveyList = () => {
                         <tr className="">
                             <td className="table-cell px-4 py-4">
                                 <button
-                                    disabled={!pageInfo?.hasPreviousPage}
+                                    disabled={
+                                        !surveyList?.pageInfo?.hasPreviousPage
+                                    }
                                     onClick={() =>
                                         handleGetMoreSurveys("backward")
                                     }
                                     className={`${
-                                        !pageInfo?.hasPreviousPage
+                                        !surveyList?.pageInfo?.hasPreviousPage
                                             ? "cursor-not-allowed opacity-50"
                                             : ""
                                     } hover:bg-intg-bg-8} rounded-md border border-intg-bg-7 transition-all duration-300 ease-in`}
@@ -416,12 +402,14 @@ export const SurveyList = () => {
                             </td>
                             <td className="table-cell">
                                 <button
-                                    disabled={!pageInfo?.hasNextPage}
+                                    disabled={
+                                        !surveyList?.pageInfo?.hasNextPage
+                                    }
                                     onClick={() =>
                                         handleGetMoreSurveys("forward")
                                     }
                                     className={`${
-                                        !pageInfo?.hasNextPage
+                                        !surveyList?.pageInfo?.hasNextPage
                                             ? "cursor-not-allowed opacity-50"
                                             : ""
                                     } rounded-md border border-intg-bg-7  transition-all duration-300 ease-in hover:bg-intg-bg-8`}
@@ -442,7 +430,7 @@ export const SurveyList = () => {
 
                             <td className="table-cell whitespace-nowrap px-4 py-4 text-sm font-normal text-intg-text-4">
                                 {surveyStartIndex} - {surveyEndIndex} of{" "}
-                                {totalSurveys} Surveys
+                                {surveyList?.totalCount} Surveys
                             </td>
                         </tr>
                     </tfoot>

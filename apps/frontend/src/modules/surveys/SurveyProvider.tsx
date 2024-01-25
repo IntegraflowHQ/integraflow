@@ -1,7 +1,7 @@
 import {
     OrderDirection,
+    PageInfo,
     Survey,
-    SurveyCountableConnection,
     SurveyError,
     SurveyFilterInput,
     SurveyQuestionCountableEdge,
@@ -41,6 +41,12 @@ export type SurveyResponse = {
     survey?: Survey | null;
 };
 
+export type SurveyList = {
+    pageInfo: PageInfo;
+    totalCount: number | undefined;
+    edges: Array<Partial<Survey>>;
+};
+
 export type SurveyContextValues = {
     loading: boolean;
     surveysOnPage: number;
@@ -53,7 +59,7 @@ export type SurveyContextValues = {
         input: SurveyUpdateInput,
     ) => Promise<SurveyResponse | undefined>;
     survey: SurveyResponse;
-    surveyList: SurveyCountableConnection | null;
+    surveyList: SurveyList;
     questions: SurveyQuestionCountableEdge | undefined;
     deleteSurvey: (id: string) => Promise<void | undefined>;
     getMoreSurveys: (direction: string) => Promise<void | undefined>;
@@ -100,30 +106,28 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     ] = useGetSurveyListLazyQuery();
 
     const surveyId = survey?.survey?.id ?? "";
-    const pageInfo = surveyList?.surveys?.pageInfo;
-    const totalCount = surveyList?.surveys?.totalCount;
-
-    const transformedSurveyList = surveyList?.surveys?.edges?.map((edge) => {
-        return {
-            id: edge?.node?.id,
-            slug: edge?.node?.slug,
-            status: edge?.node?.status,
-            createdAt: edge?.node?.createdAt,
-            name: edge?.node?.name ? edge?.node?.name : "Untitled survey",
-            creator: {
-                email: edge?.node?.creator.email,
-                fullName: `${edge?.node?.creator.firstName} ${edge?.node?.creator.lastName}`,
-            },
-        };
-    });
 
     const surveyListData = React.useMemo(
         () => ({
-            pageInfo,
-            totalCount,
-            edges: transformedSurveyList,
+            pageInfo: surveyList?.surveys?.pageInfo,
+            totalCount: surveyList?.surveys?.totalCount,
+            edges: surveyList?.surveys?.edges?.map((survey) => {
+                return {
+                    id: survey?.node?.id,
+                    slug: survey?.node?.slug,
+                    status: survey?.node?.status,
+                    createdAt: survey?.node?.createdAt,
+                    name: survey?.node?.name
+                        ? survey?.node?.name
+                        : "Untitled survey",
+                    creator: {
+                        email: survey?.node?.creator.email,
+                        fullName: `${survey?.node?.creator.firstName} ${survey?.node?.creator.lastName}`,
+                    },
+                };
+            }),
         }),
-        [pageInfo, totalCount, transformedSurveyList],
+        [surveyList],
     );
 
     // this could make the dependencies of the createQuestion callback
@@ -262,13 +266,13 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             if (direction === "forward") {
                 paginationVariables = {
                     first: SURVEYS_PER_PAGE,
-                    after: pageInfo?.endCursor,
+                    after: surveyList?.surveys?.pageInfo?.endCursor,
                 };
             } else if (direction === "backward") {
                 paginationVariables = {
                     first: undefined,
                     last: SURVEYS_PER_PAGE,
-                    before: pageInfo?.startCursor,
+                    before: surveyList?.surveys?.pageInfo?.startCursor,
                 };
             }
 
@@ -309,7 +313,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                 },
             });
         },
-        [fetchMore, pageInfo?.endCursor, pageInfo?.startCursor],
+        [fetchMore, surveyList],
     );
 
     // Future work...
