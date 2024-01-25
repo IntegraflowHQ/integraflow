@@ -6,12 +6,14 @@ from integraflow.app import error_codes as app_error_codes
 from integraflow.event import error_codes as event_error_codes
 from integraflow.organization import error_codes as organization_error_codes
 from integraflow.project import error_codes as project_error_codes
+from integraflow.survey import error_codes as survey_error_codes
 from integraflow.user import error_codes as user_error_codes
 from integraflow.webhook import error_codes as webhook_error_codes
 from .doc_category import (
     DOC_CATEGORY_APPS,
     DOC_CATEGORY_ORGANIZATIONS,
     DOC_CATEGORY_PROJECTS,
+    DOC_CATEGORY_SURVEYS,
     DOC_CATEGORY_USERS,
     DOC_CATEGORY_WEBHOOKS,
 )
@@ -119,6 +121,11 @@ ProjectErrorCode = graphene.Enum.from_enum(
     project_error_codes.ProjectErrorCode
 )
 ProjectErrorCode.doc_category = DOC_CATEGORY_PROJECTS
+
+SurveyErrorCode = graphene.Enum.from_enum(
+    survey_error_codes.SurveyErrorCode
+)
+SurveyErrorCode.doc_category = DOC_CATEGORY_SURVEYS
 
 UserErrorCode = graphene.Enum.from_enum(
     user_error_codes.UserErrorCode

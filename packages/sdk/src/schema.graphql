@@ -1,0 +1,2772 @@
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+"""
+Groups fields and operations into named groups.
+"""
+directive @doc(
+    """
+    Name of the grouping category
+    """
+    category: String!
+) on ENUM | FIELD | FIELD_DEFINITION | INPUT_OBJECT | OBJECT
+
+"""
+Represents an organization.
+"""
+type AuthOrganization implements Node @doc(category: "Organizations") {
+    """
+    The ID of the organization.
+    """
+    id: ID!
+    """
+    Member count
+
+    Requires one of the following permissions: AUTHENTICATED_USER.
+    """
+    memberCount: Int!
+    """
+    Name of the organization.
+
+    Requires one of the following permissions: AUTHENTICATED_USER.
+    """
+    name: String!
+    """
+    Slug of the organization.
+    """
+    slug: String!
+}
+
+"""
+Represents an authenticated user data.
+"""
+type AuthUser implements Node @doc(category: "Users") {
+    """
+    The email address of the user.
+    """
+    email: String!
+    """
+    The given name of the user.
+    """
+    firstName: String!
+    """
+    The ID of the user.
+    """
+    id: ID!
+    """
+    Determine if the user is active.
+    """
+    isActive: Boolean!
+    """
+    Determine if the user has finished onboarding.
+    """
+    isOnboarded: Boolean!
+    """
+    Determine if the user is a staff admin.
+    """
+    isStaff: Boolean!
+    """
+    The family name of the user.
+    """
+    lastName: String!
+    """
+    The current organization of the user.
+
+    Requires one of the following permissions: AUTHENTICATED_USER.
+    """
+    organization: AuthOrganization
+    """
+    The current project of the user.
+
+    Requires one of the following permissions: AUTHENTICATED_USER.
+    """
+    project: Project
+}
+
+"""
+The `Date` scalar type represents a Date
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar Date
+
+input DateRangeInput {
+    """
+    Start date.
+    """
+    gte: Date
+    """
+    End date.
+    """
+    lte: Date
+}
+
+"""
+The `DateTime` scalar type represents a DateTime
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar DateTime
+
+input DateTimeRangeInput {
+    """
+    Start date.
+    """
+    gte: DateTime
+    """
+    End date.
+    """
+    lte: DateTime
+}
+
+"""
+Authenticates a user account via email and authentication token.
+"""
+type EmailTokenUserAuth @doc(category: "Authentication") {
+    """
+    CSRF token required to re-generate access token.
+    """
+    csrfToken: String
+    errors: [UserError!]!
+    """
+    JWT refresh token, required to re-generate access token.
+    """
+    refreshToken: String
+    """
+    Access token to authenticate the user.
+    """
+    token: String
+    """
+    A user that has access to the the resources of an organization.
+    """
+    user: AuthUser
+    userErrors: [UserError!]!
+}
+
+"""
+Finds or creates a new user account by email and sends an email with token.
+"""
+type EmailUserAuthChallenge @doc(category: "Authentication") {
+    """
+    Supported challenge for this user.
+    """
+    authType: String
+    errors: [UserError!]!
+    """
+    Whether the operation was successful.
+    """
+    success: Boolean
+    userErrors: [UserError!]!
+}
+
+"""
+Represents an event.
+"""
+type Event implements Node @doc(category: "Events") {
+    """
+    The time the event was created
+    """
+    createdAt: DateTime
+    """
+    The event name
+    """
+    distinctId: String!
+    """
+    The event name
+    """
+    event: String!
+    """
+    The ID of the event.
+    """
+    id: ID!
+    """
+    The project the event belongs to
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    project: Project!
+    """
+    The event properties
+    """
+    properties: JSONString
+    """
+    The time the event occurred
+    """
+    timestamp: DateTime
+}
+
+"""
+Captures event.
+"""
+type EventCapture @doc(category: "Events") {
+    errors: [EventError!]!
+    eventErrors: [EventError!]!
+    """
+    Whether the operation was successful.
+    """
+    status: Boolean
+}
+
+input EventCaptureInput @doc(category: "Events") {
+    """
+    The user attributes.
+    """
+    attributes: JSONString
+    """
+    The name of the event.
+    """
+    event: String!
+    """
+    The event properties.
+    """
+    properties: JSONString
+    """
+    The time the event happened
+    """
+    timestamp: DateTime!
+    """
+    The user distinct ID.
+    """
+    userId: ID
+    """
+    The event payload ID.
+    """
+    uuid: UUID
+}
+
+type EventCountableConnection @doc(category: "Events") {
+    edges: [EventCountableEdge!]!
+    nodes: [Event!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
+
+type EventCountableEdge @doc(category: "Events") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: Event!
+}
+
+"""
+Represents an event definition.
+"""
+type EventDefinition implements Node @doc(category: "Events") {
+    """
+    The time the event was created
+    """
+    createdAt: DateTime
+    """
+    The ID of the event definition.
+    """
+    id: ID!
+    """
+    The time the event was last seen
+    """
+    lastSeenAt: DateTime
+    """
+    The name of the event definition
+    """
+    name: String!
+    """
+    The project the event definition belongs to
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    project: Project!
+}
+
+type EventDefinitionCountableConnection @doc(category: "Events") {
+    edges: [EventDefinitionCountableEdge!]!
+    nodes: [EventDefinition!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
+
+type EventDefinitionCountableEdge @doc(category: "Events") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: EventDefinition!
+}
+
+"""
+Represents errors in event mutations.
+"""
+type EventError @doc(category: "Events") {
+    """
+    The error code.
+    """
+    code: EventErrorCode!
+    """
+    Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
+    """
+    field: String
+    """
+    The error message.
+    """
+    message: String
+}
+
+"""
+An enumeration.
+"""
+enum EventErrorCode {
+    FORBIDDEN
+    GRAPHQL_ERROR
+    INVALID
+}
+
+"""
+Represents an event property.
+"""
+type EventProperty implements Node @doc(category: "Events") {
+    """
+    The name of the event
+    """
+    event: String!
+    """
+    The ID of the event property.
+    """
+    id: ID!
+    """
+    The project the event property belongs to
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    project: Project!
+    """
+    The property of the event
+    """
+    property: String!
+}
+
+type EventPropertyCountableConnection @doc(category: "Events") {
+    edges: [EventPropertyCountableEdge!]!
+    nodes: [EventProperty!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
+
+type EventPropertyCountableEdge @doc(category: "Events") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: EventProperty!
+}
+
+"""
+Finds or creates a new user account from google auth credentials.
+"""
+type GoogleUserAuth @doc(category: "Authentication") {
+    """
+    CSRF token required to re-generate access token.
+    """
+    csrfToken: String
+    errors: [UserError!]!
+    """
+    JWT refresh token, required to re-generate access token.
+    """
+    refreshToken: String
+    """
+    Whether the operation was successful.
+    """
+    success: Boolean
+    """
+    Access token to authenticate the user.
+    """
+    token: String
+    """
+    A user that has access to the the resources of an organization.
+    """
+    user: AuthUser
+    userErrors: [UserError!]!
+}
+
+union InviteDetails = OrganizationInviteDetails | OrganizationInviteLinkDetails
+
+scalar JSONString
+
+"""
+Deactivate all JWT tokens of the currently authenticated user.
+
+Requires one of the following permissions: AUTHENTICATED_USER.
+"""
+type Logout @doc(category: "Authentication") {
+    errors: [UserError!]!
+    userErrors: [UserError!]!
+}
+
+type Mutation {
+    """
+    Authenticates a user account via email and authentication token.
+    """
+    emailTokenUserAuth(
+        """
+        The email which to login via the magic login code.
+        """
+        email: String!
+        """
+        An optional invite link for an organization.
+        """
+        inviteLink: String
+        """
+        The magic login code.
+        """
+        token: String!
+    ): EmailTokenUserAuth @doc(category: "Authentication")
+    """
+    Finds or creates a new user account by email and sends an email with token.
+    """
+    emailUserAuthChallenge(
+        """
+        The email for which to generate the magic login code.
+        """
+        email: String!
+        """
+        An optional invite link for an organization.
+        """
+        inviteLink: String
+    ): EmailUserAuthChallenge @doc(category: "Authentication")
+    """
+    Captures event.
+    """
+    eventCapture(
+        """
+        Onboarding survey.
+        """
+        batch: [EventCaptureInput!]
+        """
+        Organization details for the new organization.
+        """
+        input: EventCaptureInput
+        """
+        The time the event(s) is/are sent.
+        """
+        sentAt: DateTime
+    ): EventCapture @doc(category: "Events")
+    """
+    Finds or creates a new user account from google auth credentials.
+    """
+    googleUserAuth(
+        """
+        Code gotten from google auth consent screen.
+        """
+        code: String!
+        """
+        An optional invite link for an organization.
+        """
+        inviteLink: String
+    ): GoogleUserAuth @doc(category: "Authentication")
+    """
+    Deactivate all JWT tokens of the currently authenticated user.
+
+    Requires one of the following permissions: AUTHENTICATED_USER.
+    """
+    logout: Logout @doc(category: "Authentication")
+    """
+    Creates new organization.
+
+    Requires one of the following permissions: AUTHENTICATED_USER.
+    """
+    organizationCreate(
+        """
+        Organization details for the new organization.
+        """
+        input: OrganizationCreateInput!
+        """
+        Onboarding survey.
+        """
+        survey: OnboardingCustomerSurvey
+    ): OrganizationCreate @doc(category: "Organizations")
+    """
+    Creates a new organization invite.
+
+    Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    """
+    organizationInviteCreate(
+        """
+        The organization invite object to create.
+        """
+        input: OrganizationInviteCreateInput!
+    ): OrganizationInviteCreate @doc(category: "Organizations")
+    """
+    Reset the current organization invite link..
+
+    Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    """
+    organizationInviteLinkReset: OrganizationInviteLinkReset
+        @doc(category: "Organizations")
+    """
+    Joins an organization
+
+    Requires one of the following permissions: AUTHENTICATED_USER.
+    """
+    organizationJoin(
+        """
+        Organization details for the new organization.
+        """
+        input: OrganizationJoinInput!
+    ): OrganizationJoin @doc(category: "Organizations")
+    """
+    Creates a new project
+    """
+    projectCreate(
+        """
+        The project object to create.
+        """
+        input: ProjectCreateInput!
+    ): ProjectCreate @doc(category: "Projects")
+    """
+    Creates a new theme
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    projectThemeCreate(
+        """
+        The theme object to create.
+        """
+        input: ProjectThemeCreateInput!
+    ): ProjectThemeCreate @doc(category: "Projects")
+    """
+    Deletes a theme.
+
+    Requires one of the following permissions: PROJECT_ADMIN_ACCESS.
+    """
+    projectThemeDelete(
+        """
+        ID of a theme to delete.
+        """
+        id: ID!
+    ): ProjectThemeDelete @doc(category: "Projects")
+    """
+    Updates an existing theme
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    projectThemeUpdate(
+        """
+        ID of a theme to update.
+        """
+        id: ID!
+        """
+        The theme object to create.
+        """
+        input: ProjectThemeUpdateInput!
+    ): ProjectThemeUpdate @doc(category: "Projects")
+    """
+    Updates a project.
+    """
+    projectUpdate(
+        """
+        A partial object to update the project with.
+        """
+        input: ProjectUpdateInput!
+    ): ProjectUpdate @doc(category: "Projects")
+    """
+    Creates a new distibution channel
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    surveyChannelCreate(
+        """
+        The channel object to create.
+        """
+        input: SurveyChannelCreateInput!
+    ): SurveyChannelCreate @doc(category: "Surveys")
+    """
+    Deletes a channel.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    surveyChannelDelete(
+        """
+        ID of a channel to delete.
+        """
+        id: ID!
+    ): SurveyChannelDelete @doc(category: "Surveys")
+    """
+    Updates a channel
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    surveyChannelUpdate(
+        """
+        ID of a channel to update.
+        """
+        id: ID!
+        """
+        A partial object to update the channel with.
+        """
+        input: SurveyChannelUpdateInput!
+    ): SurveyChannelUpdate @doc(category: "Surveys")
+    """
+    Creates a new survey
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    surveyCreate(
+        """
+        The survey object to create.
+        """
+        input: SurveyCreateInput!
+    ): SurveyCreate @doc(category: "Surveys")
+    """
+    Deletes a survey.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    surveyDelete(
+        """
+        ID of a survey to delete.
+        """
+        id: ID!
+    ): SurveyDelete @doc(category: "Surveys")
+    """
+    Creates a new question
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    surveyQuestionCreate(
+        """
+        The question object to create.
+        """
+        input: SurveyQuestionCreateInput!
+    ): SurveyQuestionCreate @doc(category: "Surveys")
+    """
+    Deletes a question.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    surveyQuestionDelete(
+        """
+        ID of a question to delete.
+        """
+        id: ID!
+    ): SurveyQuestionDelete @doc(category: "Surveys")
+    """
+    Updates a question
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    surveyQuestionUpdate(
+        """
+        ID of a question to update.
+        """
+        id: ID!
+        """
+        A partial object to update the question with.
+        """
+        input: SurveyQuestionUpdateInput!
+    ): SurveyQuestionUpdate @doc(category: "Surveys")
+    """
+    Updates a survey
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    surveyUpdate(
+        """
+        ID of a survey to update.
+        """
+        id: ID!
+        """
+        A partial object to update the survey with.
+        """
+        input: SurveyUpdateInput!
+    ): SurveyUpdate @doc(category: "Surveys")
+    """
+    Refresh JWT token. Mutation tries to take refreshToken from the input. If it fails it will try to take `refreshToken` from the http-only cookie `refreshToken`. `csrfToken` is required when `refreshToken` is provided as a cookie.
+    """
+    tokenRefresh(
+        """
+        CSRF token required to refresh token. This argument is required when `refreshToken` is provided as a cookie.
+        """
+        csrfToken: String
+        """
+        Refresh token.
+        """
+        refreshToken: String
+    ): RefreshToken @doc(category: "Authentication")
+    """
+    Updates a user.
+
+    Requires one of the following permissions: AUTHENTICATED_USER.
+    """
+    userUpdate(
+        """
+        A partial object to update the user with.
+        """
+        input: UserInput!
+    ): UserUpdate @doc(category: "Authentication")
+}
+
+"""
+An object with an ID
+"""
+interface Node {
+    """
+    The ID of the object.
+    """
+    id: ID!
+}
+
+input OnboardingCustomerSurvey @doc(category: "Organizations") {
+    """
+    Your role in your company
+    """
+    companyRole: String
+    """
+    Size of your company
+    """
+    companySize: String
+}
+
+enum OrderDirection {
+    """
+    Specifies an ascending sort order.
+    """
+    ASC
+    """
+    Specifies a descending sort order.
+    """
+    DESC
+}
+
+"""
+Represents an organization.
+"""
+type Organization implements Node @doc(category: "Organizations") {
+    """
+    The ID of the organization.
+    """
+    id: ID!
+    """
+    Member count
+
+    Requires one of the following permissions: AUTHENTICATED_USER.
+    """
+    memberCount: Int!
+    """
+    Users associated with the organization.
+
+    Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    """
+    members(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+        """
+        By which field should the pagination order by.
+        """
+        orderBy: UserSortingInput
+    ): UserCountableConnection
+    """
+    Name of the organization.
+
+    Requires one of the following permissions: AUTHENTICATED_USER.
+    """
+    name: String!
+    """
+    Projects associated with the organization.
+
+    Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    """
+    projects(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+        """
+        By which field should the pagination order by.
+        """
+        orderBy: UserSortingInput
+    ): ProjectCountableConnection
+    """
+    Slug of the organization.
+    """
+    slug: String!
+}
+
+type OrganizationCountableConnection @doc(category: "Organizations") {
+    edges: [OrganizationCountableEdge!]!
+    nodes: [Organization!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
+
+type OrganizationCountableEdge @doc(category: "Organizations") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: Organization!
+}
+
+"""
+Creates new organization.
+
+Requires one of the following permissions: AUTHENTICATED_USER.
+"""
+type OrganizationCreate @doc(category: "Organizations") {
+    errors: [OrganizationError!]!
+    """
+    An organization. Organizations are root-level objects that contain users and projects.
+    """
+    organization: AuthOrganization
+    organizationErrors: [OrganizationError!]!
+    """
+    A user that has access to the the resources of an organization.
+    """
+    user: AuthUser
+}
+
+input OrganizationCreateInput @doc(category: "Organizations") {
+    """
+    The name of the organization.
+    """
+    name: String!
+    """
+    The slug of the organization.
+    """
+    slug: String!
+    """
+    The timezone of the organization, passed in by client.
+    """
+    timezone: String!
+}
+
+"""
+Represents errors in organization mutations.
+"""
+type OrganizationError @doc(category: "Organizations") {
+    """
+    The error code.
+    """
+    code: OrganizationErrorCode!
+    """
+    Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
+    """
+    field: String
+    """
+    The error message.
+    """
+    message: String
+}
+
+"""
+An enumeration.
+"""
+enum OrganizationErrorCode @doc(category: "Organizations") {
+    ALREADY_EXISTS
+    GRAPHQL_ERROR
+    INVALID
+    NOT_FOUND
+    REQUIRED
+    UNIQUE
+}
+
+"""
+The organization invite that was created or updated.
+"""
+type OrganizationInvite implements Node @doc(category: "Organizations") {
+    """
+    The time at which the invite was created.
+    """
+    createdAt: DateTime!
+    """
+    The invitees email address.
+    """
+    email: String!
+    """
+    If the invite has expired.
+    """
+    expired: Boolean!
+    """
+    First name of the invite.
+    """
+    firstName: String
+    """
+    The unique identifier of the invite.
+    """
+    id: ID!
+    """
+    The user who created the invitation.
+
+    Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    """
+    inviter: User!
+    """
+    The current project of the user.
+
+    Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    """
+    organization: Organization!
+    """
+    The user role that the invitee will receive upon accepting the invite.
+    """
+    role: RoleLevel!
+    """
+    The last time at which the invite was updated.
+    """
+    updatedAt: DateTime!
+}
+
+"""
+Creates a new organization invite.
+
+Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+"""
+type OrganizationInviteCreate @doc(category: "Organizations") {
+    errors: [OrganizationError!]!
+    organizationErrors: [OrganizationError!]!
+    organizationInvite: OrganizationInvite
+}
+
+input OrganizationInviteCreateInput @doc(category: "Organizations") {
+    """
+    The email of the invitee.
+    """
+    email: String!
+    """
+    The identifier in UUID v4 format. If none is provided, the backend will generate one.
+    """
+    id: UUID
+    """
+    The message to send to the invitee.
+    """
+    message: String
+    """
+    What member role the invite should grant.
+    """
+    role: RoleLevel
+}
+
+"""
+The organization invite that was created or updated.
+"""
+type OrganizationInviteDetails implements Node @doc(category: "Organizations") {
+    """
+    The time at which the invite was created.
+    """
+    createdAt: DateTime!
+    """
+    The invitees email address.
+    """
+    email: String!
+    """
+    If the invite has expired.
+    """
+    expired: Boolean!
+    """
+    First name of the invite.
+    """
+    firstName: String
+    """
+    The unique identifier of the invite.
+    """
+    id: ID!
+    """
+    The name/email of the inviter.
+    """
+    inviter: String!
+    """
+    The ID of the organization the invite is for.
+    """
+    organizationId: ID!
+    """
+    The logo of the organization the invite is for.
+    """
+    organizationLogo: String
+    """
+    The name of the organization the invite is for.
+    """
+    organizationName: String!
+    """
+    The user role that the invitee will receive upon accepting the invite.
+    """
+    role: RoleLevel!
+    """
+    The last time at which the invite was updated.
+    """
+    updatedAt: DateTime!
+}
+
+"""
+The organization invite link.
+"""
+type OrganizationInviteLink @doc(category: "Organizations") {
+    """
+    The link of the organization the invite is for.
+
+    Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    """
+    inviteLink: String!
+}
+
+"""
+The organization invite that was created or updated.
+"""
+type OrganizationInviteLinkDetails implements Node
+    @doc(category: "Organizations") {
+    """
+    The ID of the object.
+    """
+    id: ID!
+    """
+    The ID of the organization the invite is for.
+    """
+    organizationId: ID!
+    """
+    The logo of the organization the invite is for.
+    """
+    organizationLogo: String
+    """
+    The name of the organization the invite is for.
+    """
+    organizationName: String!
+}
+
+"""
+Reset the current organization invite link..
+
+Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+"""
+type OrganizationInviteLinkReset @doc(category: "Organizations") {
+    errors: [OrganizationError!]!
+    """
+    The current organization invite link.
+    """
+    inviteLink: String
+    organizationErrors: [OrganizationError!]!
+    """
+    Whether the operation was successful.
+    """
+    success: Boolean
+}
+
+"""
+Joins an organization
+
+Requires one of the following permissions: AUTHENTICATED_USER.
+"""
+type OrganizationJoin @doc(category: "Organizations") {
+    errors: [OrganizationError!]!
+    organizationErrors: [OrganizationError!]!
+    """
+    A user that has access to the the resources of an organization.
+    """
+    user: AuthUser!
+}
+
+input OrganizationJoinInput @doc(category: "Organizations") {
+    """
+    An invite link for an organization.
+    """
+    inviteLink: String!
+}
+
+"""
+The Relay compliant `PageInfo` type, containing data necessary to paginate this connection.
+"""
+type PageInfo {
+    """
+    When paginating forwards, the cursor to continue.
+    """
+    endCursor: String
+    """
+    When paginating forwards, are there more items?
+    """
+    hasNextPage: Boolean!
+    """
+    When paginating backwards, are there more items?
+    """
+    hasPreviousPage: Boolean!
+    """
+    When paginating backwards, the cursor to continue.
+    """
+    startCursor: String
+}
+
+"""
+Represents a person.
+"""
+type Person implements Node @doc(category: "Events") {
+    """
+    The person's attributes
+    """
+    attributes: JSONString
+    """
+    The time the person was created
+    """
+    createdAt: DateTime
+    """
+    The person's distinct ids
+    """
+    distinctIds: [String!]
+    """
+    The ID of the event property.
+    """
+    id: ID!
+    """
+    Whether the person has been identified
+    """
+    isIdentified: Boolean!
+    """
+    The project the person belongs to
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    project: Project!
+    """
+    The person's uuid
+    """
+    uuid: UUID!
+}
+
+type PersonCountableConnection @doc(category: "Events") {
+    edges: [PersonCountableEdge!]!
+    nodes: [Person!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
+
+type PersonCountableEdge @doc(category: "Events") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: Person!
+}
+
+"""
+Represents a project.
+"""
+type Project implements Node @doc(category: "Projects") {
+    """
+    Whether the project is private or not.
+    """
+    accessControl: Boolean
+    """
+    The data required for the onboarding process
+    """
+    hasCompletedOnboardingFor: JSONString
+    """
+    The ID of the project.
+    """
+    id: ID!
+    """
+    Name of the project.
+    """
+    name: String!
+    """
+    Organization the project belongs to.
+    """
+    organization: AuthOrganization!
+    """
+    Slug of the project.
+    """
+    slug: String!
+    """
+    The timezone of the project.
+    """
+    timezone: String!
+}
+
+type ProjectCountableConnection @doc(category: "Projects") {
+    edges: [ProjectCountableEdge!]!
+    nodes: [Project!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
+
+type ProjectCountableEdge @doc(category: "Projects") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: Project!
+}
+
+"""
+Creates a new project
+"""
+type ProjectCreate @doc(category: "Projects") {
+    errors: [ProjectError!]!
+    project: Project
+    projectErrors: [ProjectError!]!
+}
+
+input ProjectCreateInput @doc(category: "Projects") {
+    """
+    The identifier in UUID v4 format. If none is provided, the backend will generate one.
+    """
+    id: UUID
+    """
+    The name of the project.
+    """
+    name: String!
+    """
+    Whether the project is private or not.
+    """
+    private: Boolean
+    """
+    The timezone of the project.
+    """
+    timezone: String
+}
+
+"""
+Represents errors in project mutations.
+"""
+type ProjectError @doc(category: "Projects") {
+    """
+    The error code.
+    """
+    code: ProjectErrorCode!
+    """
+    Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
+    """
+    field: String
+    """
+    The error message.
+    """
+    message: String
+}
+
+"""
+An enumeration.
+"""
+enum ProjectErrorCode @doc(category: "Projects") {
+    ALREADY_EXISTS
+    GRAPHQL_ERROR
+    INVALID
+    INVALID_PERMISSION
+    NOT_FOUND
+    REQUIRED
+    UNIQUE
+}
+
+enum ProjectSortField @doc(category: "Projects") {
+    """
+    Sort projects by created at.
+    """
+    CREATED_AT
+    """
+    Sort projects by name.
+    """
+    NAME
+    """
+    Sort projects by updated at.
+    """
+    UPDATED_AT
+}
+
+input ProjectSortingInput @doc(category: "Projects") {
+    """
+    Specifies the direction in which to sort projects.
+    """
+    direction: OrderDirection!
+    """
+    Sort projects by the selected field.
+    """
+    field: ProjectSortField!
+}
+
+"""
+Represents a theme.
+"""
+type ProjectTheme implements Node @doc(category: "Projects") {
+    """
+    The settings of the theme.
+    """
+    colorScheme: JSONString
+    """
+    The time at which the invite was created.
+    """
+    createdAt: DateTime!
+    """
+    The user who created the theme.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    creator: User!
+    """
+    The ID of the theme.
+    """
+    id: ID!
+    """
+    Name of the theme.
+    """
+    name: String!
+    """
+    The project the theme belongs to.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    project: Project!
+    """
+    For internal purpose.
+    """
+    reference: ID
+    """
+    The settings of the theme.
+    """
+    settings: JSONString
+    """
+    The last time at which the invite was updated.
+    """
+    updatedAt: DateTime!
+}
+
+type ProjectThemeCountableConnection @doc(category: "Projects") {
+    edges: [ProjectThemeCountableEdge!]!
+    nodes: [ProjectTheme!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
+
+type ProjectThemeCountableEdge @doc(category: "Projects") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: ProjectTheme!
+}
+
+"""
+Creates a new theme
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type ProjectThemeCreate @doc(category: "Projects") {
+    errors: [ProjectError!]!
+    projectErrors: [ProjectError!]!
+    projectTheme: ProjectTheme
+}
+
+input ProjectThemeCreateInput @doc(category: "Projects") {
+    """
+    The color scheme of the theme.
+    """
+    colorScheme: JSONString
+    """
+    The id of the theme.
+    """
+    id: UUID
+    """
+    The name of the theme.
+    """
+    name: String!
+}
+
+"""
+Deletes a theme.
+
+Requires one of the following permissions: PROJECT_ADMIN_ACCESS.
+"""
+type ProjectThemeDelete @doc(category: "Projects") {
+    errors: [ProjectError!]!
+    projectErrors: [ProjectError!]!
+    projectTheme: ProjectTheme
+}
+
+"""
+Updates an existing theme
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type ProjectThemeUpdate @doc(category: "Projects") {
+    errors: [ProjectError!]!
+    projectErrors: [ProjectError!]!
+    projectTheme: ProjectTheme
+}
+
+input ProjectThemeUpdateInput @doc(category: "Projects") {
+    """
+    The color scheme of the theme.
+    """
+    colorScheme: JSONString
+    """
+    The name of the theme.
+    """
+    name: String
+}
+
+"""
+Updates a project.
+"""
+type ProjectUpdate @doc(category: "Projects") {
+    errors: [ProjectError!]!
+    project: Project
+    projectErrors: [ProjectError!]!
+}
+
+input ProjectUpdateInput @doc(category: "Projects") {
+    """
+    The data required for the onboarding process.
+    """
+    hasCompletedOnboardingFor: JSONString
+    """
+    The icon of the project.
+    """
+    icon: String
+    """
+    The name of the project.
+    """
+    name: String
+    """
+    Whether the project is private or not.
+    """
+    private: Boolean
+    """
+    The timezone of the project.
+    """
+    timezone: String
+}
+
+"""
+Represents a property definition.
+"""
+type PropertyDefinition implements Node @doc(category: "Events") {
+    """
+    The ID of the event property.
+    """
+    id: ID!
+    """
+    Whether property accepts a numerical value
+    """
+    isNumerical: Boolean!
+    """
+    The name of the property definition
+    """
+    name: String!
+    """
+    The project the person belongs to
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    project: Project!
+    """
+    The property type
+    """
+    propertyType: PropertyTypeEnum!
+    """
+    The type of the property definition
+    """
+    type: PropertyDefinitionTypeEnum!
+}
+
+type PropertyDefinitionCountableConnection @doc(category: "Events") {
+    edges: [PropertyDefinitionCountableEdge!]!
+    nodes: [PropertyDefinition!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
+
+type PropertyDefinitionCountableEdge @doc(category: "Events") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: PropertyDefinition!
+}
+
+enum PropertyDefinitionTypeEnum {
+    EVENT
+    GROUP
+    PERSON
+}
+
+enum PropertyTypeEnum {
+    Boolean
+    Datetime
+    Numeric
+    String
+}
+
+type Query {
+    _entities(representations: [_Any]): [_Entity]
+    _service: _Service
+    """
+    List of channels for a specific survey.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    channels(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        The ID of the survey.
+        """
+        id: ID!
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+    ): SurveyChannelCountableConnection @doc(category: "Surveys")
+    """
+    List of event's definitions.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    eventDefinitions(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+    ): EventDefinitionCountableConnection @doc(category: "Events")
+    """
+    List of event's properties.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    eventProperties(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Filter properties by event. If not provided, all properties for the project will be returned.
+        """
+        event: String
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+    ): EventPropertyCountableConnection @doc(category: "Events")
+    """
+    List of triggered events.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    events(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+    ): EventCountableConnection @doc(category: "Events")
+    """
+    One specific organization invite.
+    """
+    organizationInviteDetails(
+        """
+        An invite link for an organization.
+        """
+        inviteLink: String!
+    ): InviteDetails @doc(category: "Organizations")
+    """
+    The current organization invite link.
+
+    Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    """
+    organizationInviteLink: OrganizationInviteLink
+        @doc(category: "Organizations")
+    """
+    List of persons.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    persons(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+    ): PersonCountableConnection @doc(category: "Events")
+    """
+    List of the property definitions.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    propertyDefinitions(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Filter definitions by type. If not provided, all property definitions for the project will be returned.
+        """
+        definitionType: PropertyDefinitionTypeEnum
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+    ): PropertyDefinitionCountableConnection @doc(category: "Events")
+    """
+    List of questions for a specific survey.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    questions(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        The ID of the survey.
+        """
+        id: ID!
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+    ): SurveyQuestionCountableConnection @doc(category: "Surveys")
+    """
+    Look up a survey by ID or slug.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    survey(
+        """
+        The ID of the survey.
+        """
+        id: ID
+        """
+        Slug of the survey.
+        """
+        slug: String
+    ): Survey @doc(category: "Surveys")
+    """
+    List of the project's surveys.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    surveys(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Filtering options for surveys.
+        """
+        filter: SurveyFilterInput
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+        """
+        Sort surveys.
+        """
+        sortBy: SurveySortingInput
+    ): SurveyCountableConnection @doc(category: "Surveys")
+    """
+    List of the project's themes.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    themes(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+    ): ProjectThemeCountableConnection @doc(category: "Projects")
+    """
+    Return the currently authenticated user.
+
+    Requires one of the following permissions: AUTHENTICATED_USER.
+    """
+    viewer: User @doc(category: "Users")
+}
+
+"""
+Refresh JWT token. Mutation tries to take refreshToken from the input. If it fails it will try to take `refreshToken` from the http-only cookie `refreshToken`. `csrfToken` is required when `refreshToken` is provided as a cookie.
+"""
+type RefreshToken @doc(category: "Authentication") {
+    errors: [UserError!]!
+    """
+    Acess token to authenticate the user.
+    """
+    token: String
+    userErrors: [UserError!]!
+}
+
+enum RoleLevel {
+    ADMIN
+    MEMBER
+}
+
+"""
+Represents a survey.
+"""
+type Survey implements Node @doc(category: "Surveys") {
+    """
+    The distribution channels supported by the survey
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    channels(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+    ): SurveyChannelCountableConnection!
+    """
+    The time at which the survey was created.
+    """
+    createdAt: DateTime!
+    """
+    The user who created the theme.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    creator: User!
+    """
+    The ID of the survey.
+    """
+    id: ID!
+    """
+    Name of the survey.
+    """
+    name: String
+    """
+    The project the survey belongs to
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    project: Project
+    """
+    The questions in the the survey
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    questions(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+    ): SurveyQuestionCountableConnection!
+    """
+    For internal purpose.
+    """
+    reference: ID
+    """
+    The settings of the survey.
+    """
+    settings: JSONString
+    """
+    Slug of the survey.
+    """
+    slug: String!
+    """
+    The status of the survey
+    """
+    status: SurveyStatusEnum!
+    """
+    The theme of the survey.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    theme: ProjectTheme
+    """
+    The type of the survey
+    """
+    type: SurveyTypeEnum!
+    """
+    The last time at which the survey was updated.
+    """
+    updatedAt: DateTime!
+}
+
+"""
+Represents a survey channel.
+"""
+type SurveyChannel implements Node @doc(category: "Surveys") {
+    """
+    The settings of the question.
+    """
+    conditions: JSONString
+    """
+    The time at which the channel was created.
+    """
+    createdAt: DateTime!
+    """
+    The ID of the channel.
+    """
+    id: ID!
+    """
+    For internal purpose.
+    """
+    reference: ID
+    """
+    The settings of the question.
+    """
+    settings: JSONString
+    """
+    The project the survey belongs to
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    survey: Survey
+    """
+    The options of the question.
+    """
+    triggers: JSONString
+    """
+    The type of the survey channel
+    """
+    type: SurveyChannelTypeEnum!
+}
+
+type SurveyChannelCountableConnection @doc(category: "Surveys") {
+    edges: [SurveyChannelCountableEdge!]!
+    nodes: [SurveyChannel!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
+
+type SurveyChannelCountableEdge @doc(category: "Surveys") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: SurveyChannel!
+}
+
+"""
+Creates a new distibution channel
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyChannelCreate @doc(category: "Surveys") {
+    errors: [SurveyError!]!
+    surveyChannel: SurveyChannel
+    surveyErrors: [SurveyError!]!
+}
+
+input SurveyChannelCreateInput @doc(category: "Surveys") {
+    """
+    The conditions for the channel.
+    """
+    conditions: JSONString
+    """
+    The id of the channel.
+    """
+    id: UUID
+    """
+    The settings of the channel.
+    """
+    settings: JSONString
+    """
+    The survey ID the channel belongs to.
+    """
+    surveyId: ID!
+    """
+    The triggers for the channel.
+    """
+    triggers: JSONString
+    """
+    The type of the distribution channel
+    """
+    type: SurveyChannelTypeEnum
+}
+
+"""
+Deletes a channel.
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyChannelDelete @doc(category: "Surveys") {
+    errors: [SurveyError!]!
+    surveyChannel: SurveyChannel
+    surveyErrors: [SurveyError!]!
+}
+
+enum SurveyChannelTypeEnum {
+    API
+    CUSTOM
+    EMAIL
+    LINK
+    MOBILE_SDK
+    WEB_SDK
+}
+
+"""
+Updates a channel
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyChannelUpdate @doc(category: "Surveys") {
+    errors: [SurveyError!]!
+    surveyChannel: SurveyChannel
+    surveyErrors: [SurveyError!]!
+}
+
+input SurveyChannelUpdateInput @doc(category: "Surveys") {
+    """
+    The conditions for the channel.
+    """
+    conditions: JSONString
+    """
+    The settings of the channel.
+    """
+    settings: JSONString
+    """
+    The triggers for the channel.
+    """
+    triggers: JSONString
+    """
+    The type of the distribution channel
+    """
+    type: SurveyChannelTypeEnum
+}
+
+type SurveyCountableConnection @doc(category: "Surveys") {
+    edges: [SurveyCountableEdge!]!
+    nodes: [Survey!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
+
+type SurveyCountableEdge @doc(category: "Surveys") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: Survey!
+}
+
+"""
+Creates a new survey
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyCreate @doc(category: "Surveys") {
+    errors: [SurveyError!]!
+    survey: Survey
+    surveyErrors: [SurveyError!]!
+}
+
+input SurveyCreateInput @doc(category: "Surveys") {
+    """
+    The id of the survey.
+    """
+    id: UUID
+    """
+    The name of the survey.
+    """
+    name: String
+    """
+    The settings of the survey.
+    """
+    settings: JSONString
+    """
+    The slug of the survey.
+    """
+    slug: String
+    """
+    The status of the survey
+    """
+    status: SurveyStatusEnum
+    """
+    The theme of the survey.
+    """
+    themeId: ID
+    """
+    The type of the survey
+    """
+    type: SurveyTypeEnum
+}
+
+"""
+Deletes a survey.
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyDelete @doc(category: "Surveys") {
+    errors: [SurveyError!]!
+    survey: Survey
+    surveyErrors: [SurveyError!]!
+}
+
+"""
+Represents errors in survey mutations.
+"""
+type SurveyError @doc(category: "Surveys") {
+    """
+    The error code.
+    """
+    code: SurveyErrorCode!
+    """
+    Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
+    """
+    field: String
+    """
+    The error message.
+    """
+    message: String
+}
+
+"""
+An enumeration.
+"""
+enum SurveyErrorCode @doc(category: "Surveys") {
+    GRAPHQL_ERROR
+    INACTIVE
+    INVALID
+    NOT_FOUND
+    REQUIRED
+    UNIQUE
+}
+
+input SurveyFilterInput @doc(category: "Surveys") {
+    createdAt: DateRangeInput
+    endDate: DateTimeRangeInput
+    """
+    Filter by ids.
+    """
+    ids: [ID!]
+    search: String
+    startDate: DateRangeInput
+    status: SurveyStatusEnum
+    """
+    Filter by type
+    """
+    type: SurveyTypeEnum
+    updatedAt: DateTimeRangeInput
+}
+
+"""
+Represents a question.
+"""
+type SurveyQuestion implements Node @doc(category: "Surveys") {
+    """
+    The time at which the question was created.
+    """
+    createdAt: DateTime!
+    """
+    Description of the question.
+    """
+    description: String!
+    """
+    The ID of the question.
+    """
+    id: ID!
+    """
+    Label of the question.
+    """
+    label: String!
+    """
+    The position of the question.
+    """
+    maxPath: Int!
+    """
+    The options of the question.
+    """
+    options: JSONString
+    """
+    The position of the question.
+    """
+    orderNumber: Int!
+    """
+    For internal purpose.
+    """
+    reference: ID
+    """
+    The settings of the question.
+    """
+    settings: JSONString
+    """
+    The project the survey belongs to
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    survey: Survey
+    """
+    The type of the question
+    """
+    type: SurveyQuestionTypeEnum!
+}
+
+type SurveyQuestionCountableConnection @doc(category: "Surveys") {
+    edges: [SurveyQuestionCountableEdge!]!
+    nodes: [SurveyQuestion!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
+
+type SurveyQuestionCountableEdge @doc(category: "Surveys") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: SurveyQuestion!
+}
+
+"""
+Creates a new question
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyQuestionCreate @doc(category: "Surveys") {
+    errors: [SurveyError!]!
+    surveyErrors: [SurveyError!]!
+    surveyQuestion: SurveyQuestion
+}
+
+input SurveyQuestionCreateInput @doc(category: "Surveys") {
+    """
+    The description of the question.
+    """
+    description: String
+    """
+    The id of the question.
+    """
+    id: UUID
+    """
+    The label of the question.
+    """
+    label: String
+    """
+    The options of the question.
+    """
+    options: JSONString
+    """
+    The settings of the question.
+    """
+    orderNumber: Int!
+    """
+    The settings of the question.
+    """
+    settings: JSONString
+    """
+    The survey ID the question belongs to.
+    """
+    surveyId: ID!
+    """
+    The type of the question
+    """
+    type: SurveyQuestionTypeEnum
+}
+
+"""
+Deletes a question.
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyQuestionDelete @doc(category: "Surveys") {
+    errors: [SurveyError!]!
+    surveyErrors: [SurveyError!]!
+    surveyQuestion: SurveyQuestion
+}
+
+enum SurveyQuestionTypeEnum {
+    BOOLEAN
+    CSAT
+    CTA
+    CUSTOM
+    DATE
+    DROPDOWN
+    FORM
+    INTEGRATION
+    MULTIPLE
+    NPS
+    NUMERICAL_SCALE
+    RATING
+    SINGLE
+    SMILEY_SCALE
+    TEXT
+}
+
+"""
+Updates a question
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyQuestionUpdate @doc(category: "Surveys") {
+    errors: [SurveyError!]!
+    surveyErrors: [SurveyError!]!
+    surveyQuestion: SurveyQuestion
+}
+
+input SurveyQuestionUpdateInput @doc(category: "Surveys") {
+    """
+    The description of the question.
+    """
+    description: String
+    """
+    The label of the question.
+    """
+    label: String
+    """
+    The options of the question.
+    """
+    options: JSONString
+    """
+    The settings of the question.
+    """
+    orderNumber: Int
+    """
+    The settings of the question.
+    """
+    settings: JSONString
+    """
+    The type of the question
+    """
+    type: SurveyQuestionTypeEnum
+}
+
+enum SurveySortField @doc(category: "Surveys") {
+    """
+    Sort surveys by created at.
+    """
+    CREATED_AT
+    """
+    Sort surveys by last modified at.
+    """
+    LAST_MODIFIED_AT
+    """
+    Sort surveys by name.
+    """
+    NAME
+    """
+    Sort surveys by status.
+    """
+    STATUS
+    """
+    Sort surveys by type.
+    """
+    TYPE
+}
+
+input SurveySortingInput @doc(category: "Surveys") {
+    """
+    Specifies the direction in which to sort surveys.
+    """
+    direction: OrderDirection!
+    """
+    Sort surveys by the selected field.
+    """
+    field: SurveySortField!
+}
+
+enum SurveyStatusEnum {
+    ACTIVE
+    ARCHIVED
+    COMPLETED
+    DRAFT
+    IN_PROGRESS
+    PAUSED
+}
+
+enum SurveyTypeEnum {
+    CUSTOM
+    POLL
+    QUIZ
+    SURVEY
+}
+
+"""
+Updates a survey
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type SurveyUpdate @doc(category: "Surveys") {
+    errors: [SurveyError!]!
+    survey: Survey
+    surveyErrors: [SurveyError!]!
+}
+
+input SurveyUpdateInput @doc(category: "Surveys") {
+    """
+    The name of the survey.
+    """
+    name: String
+    """
+    The settings of the survey.
+    """
+    settings: JSONString
+    """
+    The slug of the survey.
+    """
+    slug: String
+    """
+    The status of the survey
+    """
+    status: SurveyStatusEnum
+    """
+    The theme of the survey.
+    """
+    themeId: ID
+    """
+    The type of the survey
+    """
+    type: SurveyTypeEnum
+}
+
+scalar UUID
+
+"""
+Represents user data.
+"""
+type User implements Node @doc(category: "Users") {
+    """
+    The email address of the user.
+    """
+    email: String!
+    """
+    The given name of the user.
+    """
+    firstName: String!
+    """
+    The ID of the user.
+    """
+    id: ID!
+    """
+    Determine if the user is active.
+    """
+    isActive: Boolean!
+    """
+    Determine if the user has finished onboarding.
+    """
+    isOnboarded: Boolean!
+    """
+    Determine if the user is a staff admin.
+    """
+    isStaff: Boolean!
+    """
+    The family name of the user.
+    """
+    lastName: String!
+    """
+    The current organization of the user.
+
+    Requires one of the following permissions: AUTHENTICATED_USER.
+    """
+    organization: AuthOrganization
+    """
+    Organizations the user is part of.
+
+    Requires one of the following permissions: AUTHENTICATED_USER.
+    """
+    organizations(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+    ): OrganizationCountableConnection
+    """
+    The current project of the user.
+
+    Requires one of the following permissions: AUTHENTICATED_USER.
+    """
+    project: Project
+    """
+    Projects the user has access to.
+
+    Requires one of the following permissions: AUTHENTICATED_USER.
+    """
+    projects(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+        """
+        By which field should the pagination order by.
+        """
+        orderBy: ProjectSortingInput
+    ): ProjectCountableConnection
+}
+
+type UserCountableConnection @doc(category: "Users") {
+    edges: [UserCountableEdge!]!
+    nodes: [User!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
+
+type UserCountableEdge @doc(category: "Users") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: User!
+}
+
+"""
+Represents errors in user mutations.
+"""
+type UserError @doc(category: "Users") {
+    """
+    The error code.
+    """
+    code: UserErrorCode!
+    """
+    Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
+    """
+    field: String
+    """
+    The error message.
+    """
+    message: String
+}
+
+"""
+An enumeration.
+"""
+enum UserErrorCode @doc(category: "Users") {
+    GRAPHQL_ERROR
+    INACTIVE
+    INVALID
+    INVALID_MAGIC_CODE
+    JWT_DECODE_ERROR
+    JWT_INVALID_CSRF_TOKEN
+    JWT_INVALID_TOKEN
+    JWT_MISSING_TOKEN
+    JWT_SIGNATURE_EXPIRED
+    MAGIC_CODE_EXPIRED
+    NOT_FOUND
+    REQUIRED
+    UNIQUE
+}
+
+input UserInput @doc(category: "Authentication") {
+    """
+    The avatar of the user.
+    """
+    avatar: String
+    """
+    The given name of the user.
+    """
+    firstName: String
+    """
+    Determine if the user has finished onboarding.
+    """
+    isOnboarded: Boolean
+    """
+    The family name of the user.
+    """
+    lastName: String
+}
+
+enum UserSortField @doc(category: "Users") {
+    """
+    Sort users by created at.
+    """
+    CREATED_AT
+    """
+    Sort users by email.
+    """
+    EMAIL
+    """
+    Sort users by first name.
+    """
+    FIRST_NAME
+    """
+    Sort users by last name.
+    """
+    LAST_NAME
+}
+
+input UserSortingInput @doc(category: "Users") {
+    """
+    Specifies the direction in which to sort users.
+    """
+    direction: OrderDirection!
+    """
+    Sort users by the selected field.
+    """
+    field: UserSortField!
+}
+
+"""
+Updates a user.
+
+Requires one of the following permissions: AUTHENTICATED_USER.
+"""
+type UserUpdate @doc(category: "Authentication") {
+    errors: [UserError!]!
+    user: User
+    userErrors: [UserError!]!
+}
+
+"""
+_Any value scalar as defined by Federation spec.
+"""
+scalar _Any
+
+"""
+_Entity union as defined by Federation spec.
+"""
+union _Entity = AuthUser | User
+
+"""
+_Service manifest as defined by Federation spec.
+"""
+type _Service {
+    sdl: String
+}
