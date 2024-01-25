@@ -81,7 +81,7 @@ export default function Studio() {
         };
     }, []);
 
-    if (loading) return <GlobalSpinner />;
+    // if (loading) return <GlobalSpinner />;
 
     return (
         <Tabs.Root className="h-full w-full" defaultValue={tabs[0].id}>
@@ -118,7 +118,11 @@ export default function Studio() {
 
             {tabs.map(({ screen: Screen, id }) => (
                 <Tabs.Content key={id} value={id}>
-                    <Screen />
+                    <Screen
+                        loading={loading}
+                        loader={<GlobalSpinner inStudio />}
+                    />
+                    {/* {loading ? <GlobalSpinner inStudio /> : <Screen />} */}
                 </Tabs.Content>
             ))}
         </Tabs.Root>

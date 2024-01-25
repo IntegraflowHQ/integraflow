@@ -25,7 +25,7 @@ export default function SurveyHome() {
                         <GlobalSpinner />
                     ) : (
                         <>
-                            {surveyList?.length !== 0 ? (
+                            {surveyList?.totalCount !== 0 ? (
                                 <SurveyList />
                             ) : (
                                 <main className="flex h-full w-full  justify-center">

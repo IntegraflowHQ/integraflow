@@ -2,6 +2,7 @@ import { SurveyStatusEnum } from "@/generated/graphql";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ROUTES } from "@/routes";
 import { Dialog, DialogContent, DialogTrigger } from "@/ui";
+import { toast } from "@/utils/toast";
 import * as Popover from "@radix-ui/react-popover";
 import {
     Icon,
@@ -70,8 +71,6 @@ export const SurveyList = () => {
     const pageInfo = surveys?.pageInfo;
     const totalSurveys = surveys?.totalCount ?? 0;
 
-    console.log(totalSurveys);
-
     const [selectedSurveyId, setSelectedSurveyId] = React.useState<string>("");
     const [page, setPage] = React.useState<number>(1);
     const [selectedSurveyName, setSelectedSurveyName] =
@@ -111,9 +110,9 @@ export const SurveyList = () => {
     ) => {
         e.stopPropagation();
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const findSurvey = surveyList?.find((survey) => survey.id === id);
+        const findSurvey = surveyList?.find(
+            (survey) => survey?.node?.id === id,
+        );
         const surveyName = findSurvey?.node?.name;
         setSelectedSurveyName(surveyName ?? "");
     };
@@ -124,9 +123,9 @@ export const SurveyList = () => {
     ) => {
         event.stopPropagation();
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const findSurvey = surveyList?.find((survey) => survey.id === id);
+        const findSurvey = surveyList?.find(
+            (survey) => survey?.node?.id === id,
+        );
         const surveyId = findSurvey?.node.id;
 
         setSelectedSurveyId(surveyId ?? "");

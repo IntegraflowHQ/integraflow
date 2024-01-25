@@ -4,9 +4,10 @@ import Spinner from "assets/images/Spinner.png";
 
 type Props = {
     message?: string;
+    inStudio?: boolean;
 };
 
-export const GlobalSpinner = ({ message }: Props) => {
+export const GlobalSpinner = ({ message, inStudio }: Props) => {
     return (
         <div
             className="fixed inset-0 flex h-screen w-full flex-col bg-intg-black"
@@ -18,9 +19,11 @@ export const GlobalSpinner = ({ message }: Props) => {
                 backgroundSize: "cover",
             }}
         >
-            <div className="px-12 pb-8 pt-12">
-                <img src={Logo} alt="Logo" />
-            </div>
+            {!inStudio ? (
+                <div className="px-12 pb-8 pt-12">
+                    <img src={Logo} alt="Logo" />
+                </div>
+            ) : null}
             <div className=" flex h-[100%] w-full flex-1 flex-col  items-center justify-center space-y-2">
                 <div className="relative -mt-48 ">
                     <img

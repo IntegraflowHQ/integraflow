@@ -20,7 +20,7 @@ import {
 import { ROUTES } from "@/routes";
 import { generateRandomString } from "@/utils";
 import { createSelectors } from "@/utils/selectors";
-import { ApolloError, InMemoryCache, Reference } from "@apollo/client";
+import { ApolloError, InMemoryCache } from "@apollo/client";
 import { relayStylePagination } from "@apollo/client/utilities";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -431,31 +431,67 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-ignore
                         survey: {
-                            ...survey,
                             __typename: "Survey",
                             id: surveyId,
                             type: survey?.survey?.type ?? SurveyTypeEnum.Survey,
+                            reference: "",
+                            name: "",
+                            slug: surveySlug ?? "",
+                            status: survey?.survey?.status
+                                ? SurveyStatusEnum.Draft
+                                : SurveyStatusEnum.Draft,
+                            settings: "",
+                            theme: null,
+
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore
+                            creator: {
+                                lastName: "",
+                                firstName: "",
+                                email: "",
+                            },
+
+                            questions: {
+                                __typename: "SurveyQuestionCountableConnection",
+                                edges: [],
+                            },
+                            channels: {
+                                __typename: "SurveyChannelCountableConnection",
+                                edges: [],
+                            },
+
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString(),
                         },
+                        errors: [],
+                        surveyErrors: [],
                     },
                 },
 
                 update: (cache, { data }) => {
-                    if (!data) return;
+                    if (!data?.surveyDelete?.survey) return;
 
                     cache.modify({
+                        id: cache.identify(data?.surveyDelete?.survey),
                         fields: {
-                            surveys(existingSurveys = [], { readField }) {
-                                return existingSurveys.filter(
-                                    (surveyRef: Reference) =>
-                                        surveyId !== readField("id", surveyRef),
-                                );
+                            surveys(existingSurveys = []) {
+                                return {
+                                    ...existingSurveys,
+                                    edges: [...existingSurveys],
+                                };
                             },
                         },
                     });
                 },
             });
         },
-        [deleteSurveyMutation, survey, workspace?.project.id],
+        [
+            deleteSurveyMutation,
+            survey?.survey?.status,
+            survey?.survey?.type,
+            surveySlug,
+            workspace?.project.id,
+        ],
     );
 
     const createQuestion = React.useCallback(
