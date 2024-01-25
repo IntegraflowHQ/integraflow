@@ -10,12 +10,12 @@ type Props = {
 };
 
 export const CTAFields = ({ question }: Props) => {
-    const { updateQuestionMutation, openQuestion } = useQuestion();
+    const { updateQuestionMutation } = useQuestion();
 
     const [showDescription, setShowDescription] = useState(false);
-    const [titleText, setTitleText] = useState(openQuestion?.label);
+    const [titleText, setTitleText] = useState(question?.label);
     const [descriptionText, setDescriptionText] = useState(
-        openQuestion?.description,
+        question?.description,
     );
 
     useEffect(() => {
@@ -23,14 +23,6 @@ export const CTAFields = ({ question }: Props) => {
             setShowDescription(true);
         }
     }, [question?.description]);
-
-    // useEffect(() => {
-    //     if (!showDescription) {
-    //         updateQuestionMutation({
-    //             description: "",
-    //         });
-    //     }
-    // }, [showDescription]);
 
     return (
         <>

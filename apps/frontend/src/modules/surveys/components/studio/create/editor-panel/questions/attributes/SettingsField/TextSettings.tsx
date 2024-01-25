@@ -11,7 +11,7 @@ export const TextSettings = ({ question }: Props) => {
     return (
         <>
             {question.type === SurveyQuestionTypeEnum.Text ? (
-                <div className="rounded bg-[#272138] p-3">
+                <div className="rounded bg-[#272138]">
                     <Switch
                         name="Long_answer"
                         label="Long Answer"

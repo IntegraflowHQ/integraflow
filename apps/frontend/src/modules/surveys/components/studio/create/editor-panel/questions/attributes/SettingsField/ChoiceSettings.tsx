@@ -2,7 +2,7 @@ import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { Switch } from "@/ui";
 import { useState } from "react";
-import { ReactSelect } from "../ReactSelect";
+import { ReactSelect } from "../ReactSelec";
 
 type Props = {
     question: SurveyQuestion;
@@ -26,10 +26,7 @@ const limitRange = [
 
 export const ChoiceSettings = ({ question }: Props) => {
     const { updateQuestionMutation } = useQuestion();
-
     const [rangeOption, setRangeOption] = useState(limitRange[0].value);
-
-    console.log(question.settings.choice);
 
     return (
         <>
@@ -102,6 +99,20 @@ export const ChoiceSettings = ({ question }: Props) => {
                                             settings: newSettings,
                                         });
                                     }}
+                                    value={[
+                                        ...Array(
+                                            question.options.length,
+                                        ).keys(),
+                                    ]
+                                        .map((i) => ({
+                                            label: i + 1,
+                                            value: i + 1,
+                                        }))
+                                        .find(
+                                            (option) =>
+                                                option.value ===
+                                                question.settings.choice.min,
+                                        )}
                                     defaultValue={[
                                         ...Array(
                                             question.options.length,
@@ -122,18 +133,12 @@ export const ChoiceSettings = ({ question }: Props) => {
                                         ...Array(
                                             question.options.length,
                                         ).keys(),
-                                    ]
-                                        .map((i) => {
-                                            return {
-                                                label: i + 1,
-                                                value: i + 1,
-                                            };
-                                        })
-                                        .filter(
-                                            (option) =>
-                                                option.value !==
-                                                question.settings.choice.max,
-                                        )}
+                                    ].map((i) => {
+                                        return {
+                                            label: i + 1,
+                                            value: i + 1,
+                                        };
+                                    })}
                                 />
                             </div>
                             <div className="flex-1">
@@ -153,22 +158,30 @@ export const ChoiceSettings = ({ question }: Props) => {
                                             settings: newSettings,
                                         });
                                     }}
-                                    options={[
+                                    value={[
                                         ...Array(
                                             question.options.length,
                                         ).keys(),
                                     ]
-                                        .map((i) => {
-                                            return {
-                                                label: i + 1,
-                                                value: i + 1,
-                                            };
-                                        })
-                                        .filter(
+                                        .map((i) => ({
+                                            label: i + 1,
+                                            value: i + 1,
+                                        }))
+                                        .find(
                                             (option) =>
-                                                option.value !==
+                                                option.value ===
                                                 question.settings.choice.max,
                                         )}
+                                    options={[
+                                        ...Array(
+                                            question.options.length,
+                                        ).keys(),
+                                    ].map((i) => {
+                                        return {
+                                            label: i + 1,
+                                            value: i + 1,
+                                        };
+                                    })}
                                     defaultValue={[
                                         ...Array(
                                             question.options.length,
@@ -204,12 +217,10 @@ export const ChoiceSettings = ({ question }: Props) => {
                                 defaultValue={[
                                     ...Array(question.options.length).keys(),
                                 ]
-                                    .map((i) => {
-                                        return {
-                                            label: i + 1,
-                                            value: i + 1,
-                                        };
-                                    })
+                                    .map((i) => ({
+                                        label: i + 1,
+                                        value: i + 1,
+                                    }))
                                     .find(
                                         (option) =>
                                             option.value ===
@@ -217,9 +228,7 @@ export const ChoiceSettings = ({ question }: Props) => {
                                     )}
                                 options={[
                                     ...Array(question.options.length).keys(),
-                                ].map((i) => {
-                                    return { label: i + 1, value: i + 1 };
-                                })}
+                                ].map((i) => ({ label: i + 1, value: i + 1 }))}
                             />
                         </div>
                     ) : null}

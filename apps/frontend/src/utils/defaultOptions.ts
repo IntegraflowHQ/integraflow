@@ -3,9 +3,20 @@ import {
     SurveyQuestionTypeEnum,
 } from "@/generated/graphql";
 import { QuestionOption, QuestionSettings } from "@/types";
-import { FormFieldType } from "@integraflow/web/src/types";
+import {
+    FormFieldType,
+    LogicBooleanCondition,
+    LogicDateCondition,
+    LogicFormCondition,
+    LogicMultipleCondition,
+    LogicOperator,
+    LogicRangeCondition,
+    LogicSingleCondition,
+    LogicTextCondition,
+} from "@integraflow/web/src/types";
+import { generateUniqueId } from ".";
 
-export const CSATOptions = [
+const CSATOptions = [
     "Very unsatisfied",
     "Unsatisfied",
     "Neutral",
@@ -16,14 +27,14 @@ export const CSATOptions = [
 export const createFormFields = (): QuestionOption[] => {
     return [
         {
-            id: 1,
+            id: generateUniqueId(),
             orderNumber: 1,
             label: "First name",
             required: false,
             type: FormFieldType.FIRST_NAME,
         },
         {
-            id: 2,
+            id: generateUniqueId(),
             orderNumber: 2,
             label: "Last name",
             required: false,
@@ -40,7 +51,7 @@ export const createRangeOptions = (
 
     for (let i = 1; i <= length; i++) {
         options.push({
-            id: i,
+            id: crypto.randomUUID(),
             orderNumber: i,
             label:
                 type === SurveyQuestionTypeEnum.Csat
@@ -77,13 +88,13 @@ export const createOptions = (
     ) {
         return [
             {
-                id: 1,
+                id: crypto.randomUUID(),
                 orderNumber: 1,
                 label: "Answer 1",
                 comment: false,
             },
             {
-                id: 2,
+                id: crypto.randomUUID(),
                 orderNumber: 2,
                 label: "Answer 2",
                 comment: false,
@@ -99,6 +110,7 @@ export const createSettings = (
         return {
             disclaimer: false,
             consent: false,
+            logic: [],
         };
     }
 
@@ -110,6 +122,7 @@ export const createSettings = (
                 min: 1,
                 max: 2,
             },
+            logic: [],
         };
     }
     if (
@@ -119,12 +132,14 @@ export const createSettings = (
         return {
             randomize: false,
             randomizeExceptLast: false,
+            logic: [],
         };
     }
 
     if (type === SurveyQuestionTypeEnum.Text) {
         return {
             singleLine: false,
+            logic: [],
         };
     }
     if (type === SurveyQuestionTypeEnum.Boolean) {
@@ -132,18 +147,26 @@ export const createSettings = (
             positiveText: "Good",
             negativeText: "Bad",
             shape: "thumb",
+            logic: [],
+        };
+    }
+    if (type === SurveyQuestionTypeEnum.Rating) {
+        return {
+            rightText: "Very Good",
+            leftText: "Very Bad",
+            shape: "star",
+            logic: [],
         };
     }
     if (
-        type === SurveyQuestionTypeEnum.Rating ||
         type === SurveyQuestionTypeEnum.Csat ||
-        type === SurveyQuestionTypeEnum.NumericalScale
+        type === SurveyQuestionTypeEnum.NumericalScale ||
+        type === SurveyQuestionTypeEnum.Nps
     ) {
         return {
             rightText: "Very Good",
             leftText: "Very Bad",
-            
-          
+            logic: [],
         };
     }
     if (type === SurveyQuestionTypeEnum.SmileyScale) {
@@ -151,6 +174,12 @@ export const createSettings = (
             rightText: "Very Satisfied",
             leftText: "Very Unsatisfied",
             count: 5,
+            logic: [],
+        };
+    }
+    if (type === SurveyQuestionTypeEnum.Date) {
+        return {
+            logic: [],
         };
     }
 };
@@ -166,10 +195,178 @@ export const getDefaultValues = (
     };
 };
 
-export const CsatOptions = [
-    "Very unsatisfied",
-    "Unsatisfied",
-    "Neutral",
-    "Satisfied",
-    "Very satisfied",
+const MultipleLogicConditions = [
+    {
+        label: "does not include any",
+        value: LogicMultipleCondition.DOES_NOT_INCLUDE_ANY,
+    },
+    {
+        label: "includes all",
+        value: LogicMultipleCondition.INCLUDES_ALL,
+    },
+    {
+        label: "includes any",
+        value: LogicMultipleCondition.INCLUDES_ANY,
+    },
+    {
+        label: "is exactly",
+        value: LogicMultipleCondition.IS_EXACTLY,
+    },
+    {
+        label: "has any value",
+        value: LogicMultipleCondition.HAS_ANY_VALUE,
+    },
 ];
+const SingleLogicConditions = [
+    {
+        label: "is",
+        value: LogicSingleCondition.IS,
+    },
+    {
+        label: "is not",
+        value: LogicSingleCondition.IS_NOT,
+    },
+    {
+        label: "has any value",
+        value: LogicSingleCondition.HAS_ANY_VALUE,
+    },
+];
+
+const BooleanLogicConditions = [
+    {
+        label: "is false",
+        value: LogicBooleanCondition.IS_FALSE,
+    },
+    {
+        label: "is true",
+        value: LogicBooleanCondition.IS_TRUE,
+    },
+    {
+        label: "has any value",
+        value: LogicBooleanCondition.HAS_ANY_VALUE,
+    },
+];
+
+const DateLogicConditions = [
+    {
+        label: "answered",
+        value: LogicDateCondition.QUESTION_IS_ANSWERED,
+    },
+    {
+        label: "not answered",
+        value: LogicDateCondition.QUESTION_IS_NOT_ANSWERED,
+    },
+    {
+        label: "has any value",
+        value: LogicDateCondition.HAS_ANY_VALUE,
+    },
+];
+
+const RangeLogicConditions = [
+    {
+        label: "is",
+        value: LogicRangeCondition.IS,
+    },
+    {
+        label: "is not",
+        value: LogicRangeCondition.IS_NOT,
+    },
+    {
+        label: "is between",
+        value: LogicRangeCondition.IS_BETWEEN,
+    },
+    {
+        label: "has any value",
+        value: LogicRangeCondition.HAS_ANY_VALUE,
+    },
+];
+const FormLogicConditions = [
+    {
+        label: "is filled in",
+        value: LogicFormCondition.IS_FILLED_IN,
+    },
+    {
+        label: "is not filled in",
+        value: LogicFormCondition.IS_NOT_FILLED_IN,
+    },
+    {
+        label: "has any value",
+        value: LogicFormCondition.HAS_ANY_VALUE,
+    },
+];
+
+const TextLogicConditions = [
+    {
+        label: "answer contains",
+        value: LogicTextCondition.ANSWER_CONTAINS,
+    },
+    {
+        label: "answer does not contain",
+        value: LogicTextCondition.ANSWER_DOES_NOT_CONTAIN,
+    },
+    {
+        label: "question is answered",
+        value: LogicTextCondition.QUESTION_IS_ANSWERED,
+    },
+    {
+        label: "question is not answered",
+        value: LogicTextCondition.QUESTION_IS_NOT_ANSWERED,
+    },
+    {
+        label: "has any value",
+        value: LogicTextCondition.HAS_ANY_VALUE,
+    },
+];
+
+export const getLogicConditions = (type: SurveyQuestionTypeEnum) => {
+    if (type === SurveyQuestionTypeEnum.Multiple) {
+        return MultipleLogicConditions;
+    }
+    if (type === SurveyQuestionTypeEnum.Single) {
+        return SingleLogicConditions;
+    }
+    if (type === SurveyQuestionTypeEnum.Boolean) {
+        return BooleanLogicConditions;
+    }
+    if (type === SurveyQuestionTypeEnum.Date) {
+        return DateLogicConditions;
+    }
+    if (type === SurveyQuestionTypeEnum.Text) {
+        return TextLogicConditions;
+    }
+    if (
+        type === SurveyQuestionTypeEnum.Rating ||
+        type === SurveyQuestionTypeEnum.Csat ||
+        type === SurveyQuestionTypeEnum.NumericalScale ||
+        type === SurveyQuestionTypeEnum.Nps ||
+        type === SurveyQuestionTypeEnum.SmileyScale
+    ) {
+        return RangeLogicConditions;
+    }
+    if (type === SurveyQuestionTypeEnum.Form) {
+        return FormLogicConditions;
+    }
+};
+
+export const getLogicOperator = (condition: string) => {
+    if (
+        condition === "does_not_include_any" ||
+        condition === "includes_any" ||
+        condition === "is_not"
+    ) {
+        return LogicOperator.OR;
+    } else if (
+        condition === "is_exactly" ||
+        condition === "includes_all" ||
+        condition === "is" ||
+        condition === "is_between" ||
+        condition === "is_filled_in" ||
+        condition === "is_not_filled_in" ||
+        condition === "answer_contains" ||
+        condition === "answer_does_not_contain"
+    ) {
+        return LogicOperator.AND;
+    } else {
+        return "";
+    }
+};

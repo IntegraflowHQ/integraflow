@@ -10,14 +10,14 @@ export type SurveyActions = {
 };
 
 const initialState: SurveyState = {
-  openQuestion: undefined,
+    openQuestion: undefined,
 };
 
 export const useSurveyStore = create<SurveyState & SurveyActions>()((set) => ({
     ...initialState,
-    setOpenQuestion: (view) => {
+    setOpenQuestion: (question) => {
         set({
-            openQuestion: view,
+            openQuestion: question,
         });
     },
 }));

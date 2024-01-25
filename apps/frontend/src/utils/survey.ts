@@ -1,17 +1,10 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import {
-    FormFieldType,
-    LogicBooleanCondition,
-    LogicFormCondition,
-    LogicMultipleCondition,
-    LogicOperator,
-    LogicRangeCondition,
-    LogicTextCondition,
+    FormFieldType
 } from "@integraflow/web/src/types";
 import BirthdayIcon from "assets/icons/studio/birthday.png";
 import BooleanIcon from "assets/icons/studio/boolean.png";
 import ContactIcon from "assets/icons/studio/contact.png";
-import DropdownIcon from "assets/icons/studio/dropdown.png";
 import MultipleIcon from "assets/icons/studio/multiple.png";
 import NPSIcon from "assets/icons/studio/nps.png";
 import RatingIcon from "assets/icons/studio/rating.png";
@@ -21,68 +14,87 @@ import TextIcon from "assets/icons/studio/text.png";
 import ThankYouIcon from "assets/icons/studio/thankyou.png";
 import WelcomeIcon from "assets/icons/studio/welcome.png";
 
-type DropdownOption = {
-    label: string;
-    value: string;
-};
-
 export const questionTypes = [
     {
+        id: 'welcome',
         name: "Welcome message",
         icon: WelcomeIcon,
         type: SurveyQuestionTypeEnum.Cta,
     },
     {
+        id: 'single',
         name: "Single answer selection",
         icon: SingleIcon,
         type: SurveyQuestionTypeEnum.Single,
     },
     {
+        id: 'dropdown',
         name: "Dropdown list",
         icon: SingleIcon,
         type: SurveyQuestionTypeEnum.Dropdown,
     },
     {
+        id: 'multiple',
         name: "Multiple answer selection",
         icon: MultipleIcon,
         type: SurveyQuestionTypeEnum.Multiple,
     },
     {
+        id: 'text',
         name: "Text answer",
         icon: TextIcon,
         type: SurveyQuestionTypeEnum.Text,
     },
     {
+        id: 'smiley',
         name: "Smiley scale",
         icon: SmileyIcon,
         type: SurveyQuestionTypeEnum.SmileyScale,
     },
     {
+        id:'rating',
         name: "Rating scale",
         icon: RatingIcon,
         type: SurveyQuestionTypeEnum.Rating,
     },
     {
+        id:'rating',
+        name: "numerical scale",
+        icon: RatingIcon,
+        type: SurveyQuestionTypeEnum.NumericalScale,
+    },
+    {
+        id:'rating',
+        name: "csat",
+        icon: RatingIcon,
+        type: SurveyQuestionTypeEnum.Csat,
+    },
+    {
+        id:'nps',
         name: "NPS®",
         icon: NPSIcon,
         type: SurveyQuestionTypeEnum.Nps,
     },
     {
+        id: 'form',
         name: "Contact form",
         icon: ContactIcon,
         type: SurveyQuestionTypeEnum.Form,
     },
     {
+        id: 'boolean',
         name: "Boolean",
         icon: BooleanIcon,
         type: SurveyQuestionTypeEnum.Boolean,
     },
     {
+        id:'birthday',
         name: "Birthday",
         icon: BirthdayIcon,
         type: SurveyQuestionTypeEnum.Date,
     },
     {
+        id:'thankyou',
         name: "Thank you",
         icon: ThankYouIcon,
         type: SurveyQuestionTypeEnum.Cta,
@@ -169,81 +181,5 @@ export const formOptions = [
     {
         label: "Comment",
         value: FormFieldType.COMMENT,
-    },
-];
-
-export const surveyConditions: DropdownOption[] = [
-    {
-        label: "select condition",
-        value: "1",
-    },
-    {
-        label: "has any value",
-        value: LogicTextCondition.HAS_ANY_VALUE,
-    },
-    {
-        label: "is false",
-        value: LogicBooleanCondition.IS_FALSE,
-    },
-    {
-        label: "is true",
-        value: LogicBooleanCondition.IS_TRUE,
-    },
-    {
-        label: "does not include any",
-        value: LogicMultipleCondition.DOES_NOT_INCLUDE_ANY,
-    },
-    {
-        label: "includes all",
-        value: LogicMultipleCondition.INCLUDES_ALL,
-    },
-    {
-        label: "is true",
-        value: LogicMultipleCondition.INCLUDES_ANY,
-    },
-    {
-        label: "is exactly",
-        value: LogicMultipleCondition.IS_EXACTLY,
-    },
-    {
-        label: "is filled in",
-        value: LogicFormCondition.IS_FILLED_IN,
-    },
-    {
-        label: "is not filled in",
-        value: LogicFormCondition.IS_NOT_FILLED_IN,
-    },
-    {
-        label: "and",
-        value: LogicOperator.AND,
-    },
-    {
-        label: "is",
-        value: LogicRangeCondition.IS,
-    },
-    {
-        label: "is between",
-        value: LogicRangeCondition.IS_BETWEEN,
-    },
-    {
-        label: "is not",
-        value: LogicRangeCondition.IS_NOT,
-    },
-    {
-        label: "answer contains",
-        value: LogicTextCondition.ANSWER_CONTAINS,
-    },
-    {
-        label: "answer does not contain",
-        value: LogicTextCondition.ANSWER_DOES_NOT_CONTAIN,
-    },
-
-    {
-        label: "question is answered",
-        value: LogicTextCondition.QUESTION_IS_ANSWERED,
-    },
-    {
-        label: "question is not answered",
-        value: LogicTextCondition.QUESTION_IS_NOT_ANSWERED,
     },
 ];

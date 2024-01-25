@@ -4,11 +4,12 @@ import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { Button } from "@/ui";
 import { cn } from "@/utils";
 import { questionTypes } from "@/utils/survey";
+import { CTAType } from "@integraflow/web/src/types";
 import { PlusCircle } from "lucide-react";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import ScrollToBottom, { useScrollToBottom } from "react-scroll-to-bottom";
-import { surveyTypes } from "../../../../../Templates";
 import { getDefaultValues } from "../../../../../../../../utils/defaultOptions";
+import { surveyTypes } from "../../../../../Templates";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
     setCurrentQuestionType: Dispatch<
@@ -23,13 +24,47 @@ export const QuestionOptions = ({
     const [currentView, setCurrentView] = useState<string>("Welcome message");
     const [showQuestionTypes, setShowQuestionTypes] = useState<boolean>(false);
     const { parsedQuestions } = useSurvey();
-    const { createQuestionMutation } = useQuestion();
+    const {
+        createQuestionMutation,
+        welcomeMessageExists,
+        thankYouMessageExists,
+        setThankYouMessageExists,
+        setWelcomeMessageExists,
+    } = useQuestion();
     const scrollToBottom = useScrollToBottom();
 
-    const handleCreateQuestion = async (type: SurveyQuestionTypeEnum) => {
+    const handleCreateQuestion = async (
+        type: SurveyQuestionTypeEnum,
+        id: string,
+    ) => {
         setCurrentQuestionType(type);
         const options = getDefaultValues(type);
-        createQuestionMutation({ type, ...options });
+
+        if (id === "welcome") {
+            createQuestionMutation({
+                type,
+                ...options,
+                settings: {
+                    ...options.settings,
+                    ctaType: CTAType.NEXT,
+                    text: "",
+                },
+            });
+            setWelcomeMessageExists(true);
+        } else if (id === "thankyou") {
+            createQuestionMutation({
+                type,
+                ...options,
+                settings: {
+                    ...options.settings,
+                    type: CTAType.CLOSE,
+                    text: "",
+                },
+            });
+            setThankYouMessageExists(true);
+        } else {
+            createQuestionMutation({ type, ...options });
+        }
     };
 
     return (
@@ -65,28 +100,50 @@ export const QuestionOptions = ({
                     className="flex max-w-[40rem] overflow-y-auto rounded-lg bg-intg-bg-9"
                 >
                     <div className="w-[50%] p-2">
-                        {questionTypes.map((questionType) => (
-                            <div
-                                key={questionType.name}
-                                className="flex items-center gap-4 rounded-lg p-3.5 text-intg-text hover:bg-intg-bg-10"
-                                onClick={() => {
-                                    handleCreateQuestion(questionType.type);
-                                    setShowQuestionTypes(!showQuestionTypes);
-                                }}
-                                onMouseEnter={() =>
-                                    setCurrentView(questionType.name)
-                                }
-                            >
-                                <img
-                                    src={questionType.icon}
-                                    alt={questionType.name}
-                                    className="h-4 w-4"
-                                />
-                                <span className="text-sm font-medium">
-                                    {questionType.name}
-                                </span>
-                            </div>
-                        ))}
+                        {questionTypes.map((questionType) => {
+                            if (
+                                thankYouMessageExists &&
+                                questionType.id === "thankyou"
+                            )
+                                return null;
+                            if (
+                                welcomeMessageExists &&
+                                questionType.id === "welcome"
+                            )
+                                return null;
+
+                            return (
+                                <div
+                                    key={questionType.name}
+                                    className={cn(
+                                        thankYouMessageExists ? "" : "",
+                                        welcomeMessageExists ? "" : "",
+                                        "flex items-center gap-4 rounded-lg p-3.5 text-intg-text hover:bg-intg-bg-10",
+                                    )}
+                                    onClick={() => {
+                                        handleCreateQuestion(
+                                            questionType.type,
+                                            questionType.id,
+                                        );
+                                        setShowQuestionTypes(
+                                            !showQuestionTypes,
+                                        );
+                                    }}
+                                    onMouseEnter={() =>
+                                        setCurrentView(questionType.name)
+                                    }
+                                >
+                                    <img
+                                        src={questionType.icon}
+                                        alt={questionType.name}
+                                        className="h-4 w-4"
+                                    />
+                                    <span className="text-sm font-medium">
+                                        {questionType.name}
+                                    </span>
+                                </div>
+                            );
+                        })}
                     </div>
                     <div>
                         <hr className="h-full border-[.1px] border-intg-bg-4" />

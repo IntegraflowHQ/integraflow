@@ -4,52 +4,54 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/ui/Popover";
 import * as Tabs from "@radix-ui/react-tabs";
 import { MoreHorizontalIcon, XIcon } from "lucide-react";
 import { EditTab } from "./EditTab";
+import { LogicTab } from "./LogicTab";
 import { SettingsTab } from "./SettingsTab";
+
+import * as Accordion from "@radix-ui/react-accordion";
 
 type Props = {
     question: SurveyQuestion;
     currentQuestionType: SurveyQuestionTypeEnum | undefined;
-    setOpenAccordion: (values: string) => void;
+    questionIndex: number;
 };
 
-export const QuestionPanel = ({ question, setOpenAccordion }: Props) => {
-    const tabs = [
-        {
-            id: 1,
-            label: "Edit",
-            content: <EditTab question={question} />,
-        },
-        // {
-        //     id: 2,
-        //     label: "Logic",
-        //     content: <LogicTab question={question} />,
-        // },
-        {
-            id: 3,
-            label: "Settings",
-            content: <SettingsTab question={question} />,
-        },
-    ];
-
-    const { deleteQuestionMutation, openQuestion } = useQuestion();
+export const QuestionPanel = ({ question, questionIndex }: Props) => {
+    const { deleteQuestionMutation, openQuestion, setOpenQuestion } =
+        useQuestion();
 
     return (
         <Tabs.Root
             orientation="horizontal"
             className="space-y-6 rounded-lg bg-intg-bg-9 p-6 text-intg-text"
-            defaultValue={tabs[0].label}
+            defaultValue="edit"
         >
             <div className="flex items-center justify-between border-b-[1px] border-intg-bg-4 ">
                 <Tabs.List className="space-x-4">
-                    {tabs.map((tab) => (
+                    <Tabs.Trigger
+                        key="edit"
+                        value="edit"
+                        className="p-2  data-[state=active]:border-b-[2px] data-[state=active]:border-b-intg-bg-4 data-[state=active]:text-white "
+                    >
+                        Edit
+                    </Tabs.Trigger>
+                    {Object.keys(question.settings).length === 0 ? null : (
                         <Tabs.Trigger
-                            key={tab.id}
-                            value={tab.label}
+                            key="logic"
+                            value="logic"
                             className="p-2  data-[state=active]:border-b-[2px] data-[state=active]:border-b-intg-bg-4 data-[state=active]:text-white "
                         >
-                            {tab.label}
+                            Logic
                         </Tabs.Trigger>
-                    ))}
+                    )}
+                    {Object.keys(question.settings).length === 0 ? null : (
+                        <Tabs.Trigger
+                            key="settings"
+                            value="settings"
+                            className="p-2  data-[state=active]:border-b-[2px] data-[state=active]:border-b-intg-bg-4 data-[state=active]:text-white "
+                        >
+                            Settings
+                        </Tabs.Trigger>
+                    )}
                 </Tabs.List>
                 <div className="flex gap-6">
                     <Popover>
@@ -74,26 +76,49 @@ export const QuestionPanel = ({ question, setOpenAccordion }: Props) => {
                             </div>
                         </PopoverContent>
                     </Popover>
-                    <XIcon
-                        onClick={() => {
-                            setOpenAccordion("");
-                        }}
-                    />
+                    <Accordion.Trigger value={question?.id}>
+                        <XIcon className="cursor-pointer" />
+                    </Accordion.Trigger>
                 </div>
             </div>
 
             <div>
-                {tabs.map(({ content, label }) => (
-                    <div key={label}>
+                <div>
+                    <Tabs.Content
+                        value="edit"
+                        className="flex-1 pt-2"
+                        key="edit"
+                    >
+                        <EditTab
+                            question={question}
+                            questionIndex={questionIndex}
+                        />
+                    </Tabs.Content>
+                    {Object.keys(question.settings).length === 0 ? null : (
                         <Tabs.Content
-                            value={label}
+                            value="logic"
                             className="flex-1 pt-2"
-                            key={label}
+                            key="logic"
                         >
-                            {content}
+                            <LogicTab
+                                question={question}
+                                questionIndex={questionIndex}
+                            />
                         </Tabs.Content>
-                    </div>
-                ))}
+                    )}
+                    {Object.keys(question.settings).length === 0 ? null : (
+                        <Tabs.Content
+                            value="settings"
+                            className="flex-1 pt-2"
+                            key="settings"
+                        >
+                            <SettingsTab
+                                question={question}
+                                questionIndex={questionIndex}
+                            />
+                        </Tabs.Content>
+                    )}
+                </div>
             </div>
         </Tabs.Root>
     );

@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss";
-import colors from "tailwindcss/colors";
+
 const config: Config = {
     content: [
         "./src/**/*.{html,js,jsx,ts,tsx,mdx}",
@@ -39,7 +39,6 @@ const config: Config = {
                         "6": "#B5A4DB",
                         "7": "#F1F1F1",
                         "8": "#7F76A9",
-                        "9": "#705F97",
                         DEFAULT: "#AFAAC7",
                     },
                     black: {
@@ -51,35 +50,6 @@ const config: Config = {
                         bg: "rgba(206, 60, 85, 0.20)",
                     },
                 },
-                tremor: {
-                    brand: {
-                        faint: "#392D72",
-                        muted: "#392D72",
-                        subtle: "#28213B",
-                        DEFAULT: "#392D72",
-                        emphasis: "#392D72",
-                        inverted: "#392D72",
-                    },
-                    background: {
-                        muted: "#181325",
-                        subtle: "#181325",
-                        DEFAULT: "#181325",
-                        emphasis: "#181325",
-                    },
-                    border: {
-                        DEFAULT: "#181325",
-                    },
-                    ring: {
-                        DEFAULT: colors.gray[200],
-                    },
-                    content: {
-                        subtle: colors.gray[400],
-                        DEFAULT: "#AFAAC7",
-                        emphasis: "#AFAAC7",
-                        strong: colors.gray[900],
-                        inverted: colors.white,
-                    },
-                },
             },
             backgroundImage: {
                 "gradient-button":
@@ -87,10 +57,9 @@ const config: Config = {
                 "gradient-button-hover":
                     "linear-gradient(27deg, #299532 8.33%, #7EE787 91.67%)",
             },
-            borderRadius: {
-                "tremor-default": "8px",
-            },
         },
     },
 };
+
 export default config;
+

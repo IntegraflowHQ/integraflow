@@ -2,7 +2,7 @@ import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useState } from "react";
 import { EditorTextInput } from "../../../components/EditorTextInput";
-import { ReactSelect } from "../ReactSelect";
+import { ReactSelect } from "../ReactSelec";
 
 type Props = {
     question: SurveyQuestion;
@@ -73,7 +73,21 @@ export const RangeSettings = ({ question }: Props) => {
                         label={"Negative text"}
                         placeholder="Negative text"
                     />
-                    <ReactSelect label="shape" options={rangeShape} />
+                    <ReactSelect
+                        label="shape"
+                        options={rangeShape}
+                        defaultValue={rangeShape.find(
+                            (option) =>
+                                option.value === question.settings.shape,
+                        )}
+                        onchange={(option) => {
+                            const newSettings = question.settings;
+                            newSettings.shape = option?.value;
+                            updateQuestionMutation({
+                                settings: newSettings,
+                            });
+                        }}
+                    />
                 </>
             ) : null}
 

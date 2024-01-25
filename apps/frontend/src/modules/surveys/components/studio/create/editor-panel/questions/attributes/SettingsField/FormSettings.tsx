@@ -26,12 +26,6 @@ export const FormSettings = ({ question }: Props) => {
         }
         if (question.settings.consentText) {
             setShowConsent(true);
-        } else {
-            // const newSettings = question.settings;
-            // newSettings.consentText = "";
-            // updateQuestionMutation({
-            //     settings: newSettings,
-            // });
         }
     }, [question.settings.disclaimerText, question.settings.consentText]);
 
@@ -39,16 +33,10 @@ export const FormSettings = ({ question }: Props) => {
         if (!showDisclaimer) {
             const newSettings = question.settings;
             newSettings.disclaimerText = "";
-            // updateQuestionMutation({
-            //     settings: newSettings,
-            // });
         }
         if (!showConsent) {
             const newSettings = question.settings;
             newSettings.consentText = "";
-            // updateQuestionMutation({
-            //     settings: newSettings,
-            // });
         }
     }, [showDisclaimer, showConsent]);
     return (
@@ -56,7 +44,7 @@ export const FormSettings = ({ question }: Props) => {
             {question.type === SurveyQuestionTypeEnum.Form ? (
                 <div className="space-y-6">
                     <div>
-                        <div className="rounded bg-[#272138] p-3">
+                        <div className="rounded bg-[#272138]">
                             <Switch
                                 name="disclaimer"
                                 label="Show Disclaimer"
@@ -64,6 +52,10 @@ export const FormSettings = ({ question }: Props) => {
                                 onChange={(e) => {
                                     const newSettings = question.settings;
                                     newSettings.disclaimer = e.target.value;
+                                    if (e.target.value === false) {
+                                        newSettings.disclaimerText = "";
+                                    }
+
                                     updateQuestionMutation({
                                         settings: newSettings,
                                     });
@@ -91,7 +83,7 @@ export const FormSettings = ({ question }: Props) => {
                         ) : null}
                     </div>
                     <div>
-                        <div className="rounded bg-[#272138] p-3">
+                        <div className="rounded bg-[#272138]">
                             <Switch
                                 name="consent"
                                 label="Consent checkbox"
@@ -99,6 +91,9 @@ export const FormSettings = ({ question }: Props) => {
                                 onChange={(e) => {
                                     const newSettings = question.settings;
                                     newSettings.consent = e.target.value;
+                                    if (e.target.value === false) {
+                                        newSettings.consentText = "";
+                                    }
                                     updateQuestionMutation({
                                         settings: newSettings,
                                     });

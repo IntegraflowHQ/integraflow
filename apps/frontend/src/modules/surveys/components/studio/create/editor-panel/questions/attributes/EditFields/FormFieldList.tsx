@@ -1,13 +1,14 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { getHighestOrderNumber } from "@/utils";
+import { generateUniqueId, getHighestOrderNumber } from "@/utils";
 import { formOptions } from "@/utils/survey";
 import { FormField } from "@integraflow/web/src/types";
 import { EditorTextInput } from "../../../components/EditorTextInput";
+import MinusButton from "../Buttons/MinimizeButton";
 import { MoreButton } from "../Buttons/MoreButton";
 import { StarBtn } from "../Buttons/StarBtn";
 import TextButton from "../Buttons/TextButton";
-import { ReactSelect } from "../ReactSelect";
+import { ReactSelect } from "../ReactSelec";
 
 type Props = {
     question: SurveyQuestion;
@@ -83,6 +84,21 @@ export const FormFieldList = ({ question }: Props) => {
                                                     });
                                                 }}
                                             />
+                                            {question.options.length > 2 ? (
+                                                <MinusButton
+                                                    onclick={() => {
+                                                        const newOptions =
+                                                            question.options;
+                                                        newOptions.splice(
+                                                            index,
+                                                            1,
+                                                        );
+                                                        updateQuestionMutation({
+                                                            options: newOptions,
+                                                        });
+                                                    }}
+                                                />
+                                            ) : null}
                                         </div>
                                     </div>
                                 );
@@ -95,7 +111,7 @@ export const FormFieldList = ({ question }: Props) => {
                                     getHighestOrderNumber(question.options);
                                 const newOptions = question.options;
                                 newOptions.push({
-                                    id: highestOrderNumber + 1,
+                                    id: generateUniqueId(),
                                     orderNumber: highestOrderNumber + 1,
                                     label: formOptions[0].label,
                                     type: formOptions[0].value,

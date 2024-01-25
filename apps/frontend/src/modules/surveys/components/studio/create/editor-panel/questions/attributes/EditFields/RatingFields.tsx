@@ -4,7 +4,7 @@ import { QuestionOption } from "@/types";
 import { createRangeOptions } from "@/utils/defaultOptions";
 import { useState } from "react";
 import { EditorTextInput } from "../../../components/EditorTextInput";
-import { ReactSelect } from "../ReactSelect";
+import { ReactSelect } from "../ReactSelec";
 
 type Props = {
     question: SurveyQuestion;
@@ -105,7 +105,8 @@ const ratingOptions = [
 export const RatingFields = ({ question }: Props) => {
     const { updateQuestionMutation } = useQuestion();
     const [scaleStyle, setScaleStyle] = useState<string | number | undefined>(
-        scaleStyleOptions[0].value,
+        scaleStyleOptions.find((option) => option.value === question.type)
+            ?.value,
     );
     return (
         <div>

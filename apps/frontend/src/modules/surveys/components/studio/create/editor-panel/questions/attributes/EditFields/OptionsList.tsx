@@ -1,6 +1,6 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { cn, getHighestOrderNumber } from "@/utils";
+import { cn, generateUniqueId, getHighestOrderNumber } from "@/utils";
 import { FormFieldType } from "@integraflow/web/src/types";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import { AddMultipleQuestions } from "../AddMultipleQuestions";
@@ -24,13 +24,12 @@ type DefaultOption = {
 
 export const OptionsList = ({ question }: Props) => {
     const { updateQuestionMutation } = useQuestion();
-    console.log(question.options)
 
     return (
         <div>
             {question.type === SurveyQuestionTypeEnum.Single ||
-            question.type === SurveyQuestionTypeEnum.Multiple ||
-            question.type === SurveyQuestionTypeEnum.Dropdown ? (
+                question.type === SurveyQuestionTypeEnum.Multiple ||
+                question.type === SurveyQuestionTypeEnum.Dropdown ? (
                 <div className="space-y-4">
                     <div className="flex justify-between text-sm">
                         <p>Answer Choices</p>
@@ -62,11 +61,10 @@ export const OptionsList = ({ question }: Props) => {
                                         />
                                         <div
                                             className={cn(
-                                                `${
-                                                    question.type ===
+                                                `${question.type ===
                                                     SurveyQuestionTypeEnum.Dropdown
-                                                        ? "hidden "
-                                                        : "block"
+                                                    ? "hidden "
+                                                    : "block"
                                                 } flex`,
                                             )}
                                         >
@@ -88,24 +86,24 @@ export const OptionsList = ({ question }: Props) => {
                                                     });
                                                 }}
                                             />
-
-                                            {question.options.length <
-                                            3 ? null : (
-                                                <MinusButton
-                                                    onclick={() => {
-                                                        const newOptions =
-                                                            question.options;
-                                                        newOptions.splice(
-                                                            index,
-                                                            1,
-                                                        );
-                                                        updateQuestionMutation({
-                                                            options: newOptions,
-                                                        });
-                                                    }}
-                                                />
-                                            )}
                                         </div>
+
+                                        {question.options.length <
+                                            3 ? null : (
+                                            <MinusButton
+                                                onclick={() => {
+                                                    const newOptions =
+                                                        question.options;
+                                                    newOptions.splice(
+                                                        index,
+                                                        1,
+                                                    );
+                                                    updateQuestionMutation({
+                                                        options: newOptions,
+                                                    });
+                                                }}
+                                            />
+                                        )}
                                     </div>
                                 ),
                             )}
@@ -120,7 +118,7 @@ export const OptionsList = ({ question }: Props) => {
                             );
                             const newOptions = question.options;
                             newOptions.push({
-                                id: highestOrderNumber + 1,
+                                id: generateUniqueId(),
                                 orderNumber: highestOrderNumber + 1,
                                 label: "",
                                 comment: false,

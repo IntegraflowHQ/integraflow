@@ -2,7 +2,7 @@ import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useState } from "react";
 import { EditorTextInput } from "../../../components/EditorTextInput";
-import { ReactSelect } from "../ReactSelect";
+import { ReactSelect } from "../ReactSelec";
 
 type Props = {
     question: SurveyQuestion;

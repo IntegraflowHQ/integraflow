@@ -8,14 +8,16 @@ import { RatingFields } from "./attributes/EditFields/RatingFields";
 type Props = {
     orderNumber?: number;
     question: SurveyQuestion;
+    questionIndex: number;
 };
 
-export const EditTab = ({ question }: Props) => {
+export const EditTab = ({ question, questionIndex }: Props) => {
     return (
         <div className="space-y-3">
-            <TabHeader question={question} />
+            <TabHeader question={question} questionIndex={questionIndex} />
 
             <CTAFields question={question} />
+
             <RatingFields question={question} />
 
             <OptionsList question={question} />

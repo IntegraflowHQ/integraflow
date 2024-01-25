@@ -12,9 +12,10 @@ export const useSurvey = () => {
     const { orgSlug, projectSlug, surveySlug } = useParams();
     const navigate = useNavigate();
 
-    const [createSurveyMutation] = useSurveyCreateMutation();
+    const [createSurveyMutation, { loading: loadingCreateSurvey }] =
+        useSurveyCreateMutation();
 
-    const { data: survey, loading } = useGetSurveyQuery({
+    const { data: survey } = useGetSurveyQuery({
         variables: {
             slug: surveySlug,
         },
@@ -23,7 +24,7 @@ export const useSurvey = () => {
     const parsedQuestions = useMemo(() => {
         const questions = survey?.survey?.questions?.edges || [];
 
-        return questions
+        return [...questions]
             .sort((a, b) => a.node.orderNumber - b.node.orderNumber)
             .map(({ node: question }) => {
                 let parsedSettings = question.settings ?? {};
@@ -47,11 +48,7 @@ export const useSurvey = () => {
 
     const createSurvey = async () => {
         const surveySlug = `survey-${generateRandomString(10)}`;
-        navigate(
-            ROUTES.STUDIO.replace(":orgSlug", orgSlug!)
-                .replace(":projectSlug", projectSlug!)
-                .replace(":surveySlug", surveySlug),
-        );
+
         const surveyId = crypto.randomUUID();
 
         await createSurveyMutation({
@@ -69,6 +66,13 @@ export const useSurvey = () => {
                     ),
                 );
             },
+            onCompleted() {
+                navigate(
+                    ROUTES.STUDIO.replace(":orgSlug", orgSlug!)
+                        .replace(":projectSlug", projectSlug!)
+                        .replace(":surveySlug", surveySlug),
+                );
+            },
         });
     };
 
@@ -76,8 +80,7 @@ export const useSurvey = () => {
         createSurvey,
         surveySlug,
         survey,
-        loading,
         parsedQuestions,
-        // getSurveyQuery,
+        loadingCreateSurvey,
     };
 };

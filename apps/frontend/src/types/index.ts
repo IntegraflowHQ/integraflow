@@ -4,7 +4,7 @@ import {
     User,
 } from "@/generated/graphql";
 import { DeepOmit } from "@apollo/client/utilities";
-import { FormFieldType } from "@integraflow/web/src/types";
+import { CTAType, FormFieldType, ID, LogicBooleanCondition, LogicDateCondition, LogicMultipleCondition, LogicOperator, LogicRangeCondition, LogicSingleCondition, LogicTextCondition } from "@integraflow/web/src/types";
 import { PlacementType } from "@integraflow/web/src/types/index";
 
 export type CachedViewer = DeepOmit<User, "__typename">;
@@ -41,7 +41,7 @@ export type LinkSettings = {
 };
 
 export type QuestionOption = {
-    id: number;
+    id: string;
     orderNumber: number;
     label: string;
     comment?: boolean;
@@ -49,10 +49,22 @@ export type QuestionOption = {
     type?: FormFieldType;
 };
 
+export type QuestionLogic ={
+    id?:ID
+    orderNumber?:number;
+    destination?:ID;
+    condition?:LogicMultipleCondition|LogicSingleCondition|LogicRangeCondition|LogicBooleanCondition
+    |LogicDateCondition|LogicTextCondition
+    operator?:LogicOperator
+    values?:ID[]|string[]
+}
+
 export type QuestionSettings = {
+    text?: string;
+    link?: string;
     label?: string;
     comment?: boolean;
-    type?: FormFieldType;
+    type?: FormFieldType | CTAType;
     randomize?: boolean;
     randomizeExceptLast?: boolean;
     disclaimer?: boolean;
@@ -62,7 +74,7 @@ export type QuestionSettings = {
     rightText?: string;
     leftText?: string;
     count?: number;
-    shape?: "star" | "thumb" | "heart"| "button";
+    shape?: "star" | "thumb" | "heart" | "button";
     positiveText?: string;
     negativeText?: string;
     singleLine?: boolean;
@@ -70,6 +82,7 @@ export type QuestionSettings = {
         min?: number;
         max?: number;
     };
+    logic?:QuestionLogic[];
 
 };
 

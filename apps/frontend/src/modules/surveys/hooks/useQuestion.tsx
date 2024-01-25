@@ -9,6 +9,8 @@ import {
     useSurveyQuestionUpdateMutation,
 } from "@/generated/graphql";
 import { createSelectors } from "@/utils/selectors";
+import { CTAType } from "@integraflow/web/src/types";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useScrollToBottom } from "react-scroll-to-bottom";
 import { SURVEY_QUESTION } from "../graphql/fragments/surveyFragment";
@@ -25,6 +27,24 @@ export const useQuestion = () => {
     const openQuestion = surveyStore.use.openQuestion();
 
     const surveyId = survey?.survey?.id;
+
+    const welcomeMessage = parsedQuestions.find(
+        (question) => question.settings?.ctaType === CTAType.NEXT,
+    );
+    const thankYouMessage = parsedQuestions.find(
+        (question) => question.settings?.ctaType !== CTAType.NEXT,
+    );
+    const [welcomeMessageExists, setWelcomeMessageExists] = useState<boolean>(
+        !!welcomeMessage,
+    );
+    const [thankYouMessageExists, setThankYouMessageExists] = useState<boolean>(
+        !!thankYouMessage,
+    );
+
+    useEffect(() => {
+        setWelcomeMessageExists(!!welcomeMessage);
+        setThankYouMessageExists(!!thankYouMessage);
+    }, [welcomeMessage, thankYouMessage]);
 
     const [createQuestion] = useSurveyQuestionCreateMutation();
     const [deleteQuestion] = useSurveyQuestionDeleteMutation();
@@ -67,15 +87,6 @@ export const useQuestion = () => {
                 },
             },
             update: (cache, { data }) => {
-                console.log(
-                    "QUESTION",
-                    data?.surveyQuestionCreate?.surveyQuestion,
-                );
-                setOpenQuestion(
-                    data?.surveyQuestionCreate
-                        ?.surveyQuestion as SurveyQuestion,
-                );
-
                 if (!data?.surveyQuestionCreate?.surveyQuestion) return;
                 cache.modify({
                     id: `Survey:${surveyId}`,
@@ -100,6 +111,11 @@ export const useQuestion = () => {
                         },
                     },
                 });
+            },
+            onCompleted(data) {
+                setOpenQuestion(
+                    data.surveyQuestionCreate?.surveyQuestion as SurveyQuestion,
+                );
             },
         });
     };
@@ -180,7 +196,6 @@ export const useQuestion = () => {
 
             update: (cache, { data }) => {
                 if (!data?.surveyQuestionDelete?.surveyQuestion) return;
-                console.log(cache);
                 cache.modify({
                     id: `Survey:${surveyId}`,
                     fields: {
@@ -207,5 +222,9 @@ export const useQuestion = () => {
         setOpenQuestion,
         updateQuestionMutation,
         deleteQuestionMutation,
+        welcomeMessageExists,
+        setWelcomeMessageExists,
+        thankYouMessageExists,
+        setThankYouMessageExists,
     };
 };
