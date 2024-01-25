@@ -22,7 +22,9 @@ const THEMES_INFO = [
 ];
 
 export const UpdateDesignEditor = () => {
-    const { updateSurvey, surveyId } = useSurvey();
+    const { updateSurvey, survey } = useSurvey();
+    const surveyId = survey?.survey?.id;
+
     const editThemeState = useStudioStore((state) => state.editTheme);
     const { createTheme, updateTheme, refetch, deleteTheme } = useTheme();
 
@@ -41,8 +43,6 @@ export const UpdateDesignEditor = () => {
                     name: theme.name,
                     colorScheme: theme.colorScheme,
                 });
-
-                console.log("response", response);
 
                 if (response) {
                     updateSurvey(surveyId, {

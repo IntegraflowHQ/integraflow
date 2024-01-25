@@ -14,9 +14,12 @@ interface ContentProp {
 }
 
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
-    const { survey, updateSurvey, surveyTheme, surveyId } = useSurvey();
+    const { survey, updateSurvey } = useSurvey();
 
-    console.log(surveyTheme)
+    const surveyTheme = survey?.survey?.theme;
+    const surveyId = survey?.survey?.id;
+
+    console.log(survey.survey);
 
     const [selectedTheme, setSelectedTheme] =
         React.useState<Partial<ProjectTheme>>();
@@ -58,7 +61,7 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
     React.useEffect(() => {
         setSelectedTheme(surveyTheme as Partial<ProjectTheme>);
-    }, [survey?.theme, surveyTheme]);
+    }, [surveyTheme]);
 
     return (
         <>
@@ -95,10 +98,11 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
 
                                                 return (
                                                     <div
-                                                        className={`h-8 w-8 rounded-full border-2 ${index !== 0
-                                                            ? "-ml-4"
-                                                            : ""
-                                                            }`}
+                                                        className={`h-8 w-8 rounded-full border-2 ${
+                                                            index !== 0
+                                                                ? "-ml-4"
+                                                                : ""
+                                                        }`}
                                                         key={index}
                                                         style={{
                                                             backgroundColor: `${color[key]}`,
@@ -136,8 +140,9 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
                     />
 
                     <div
-                        className={`mt-1 py-2 ${count !== 0 ? "-mt-4 h-fit" : ""
-                            } transition-all delay-100 duration-300 ease-in`}
+                        className={`mt-1 py-2 ${
+                            count !== 0 ? "-mt-4 h-fit" : ""
+                        } transition-all delay-100 duration-300 ease-in`}
                     >
                         <p className="text-sm font-normal capitalize">
                             all themes
@@ -175,8 +180,9 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
             ) : null}
 
             <div
-                className={`-mt-3 ${count !== 0 ? "h-[395px] translate-y-[20px]" : ""
-                    } transition-all delay-100 duration-300 ease-in`}
+                className={`-mt-3 ${
+                    count !== 0 ? "h-[395px] translate-y-[20px]" : ""
+                } transition-all delay-100 duration-300 ease-in`}
             >
                 {count !== 0 && <hr className="border-1 border-intg-bg-14" />}
 

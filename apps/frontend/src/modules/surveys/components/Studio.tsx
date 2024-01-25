@@ -25,11 +25,13 @@ const tabs = [
 export default function Studio() {
     const params = useParams();
     const navigate = useNavigate();
-    const { loading, survey, surveyName, surveyId, updateSurvey } = useSurvey();
+    const { loading, survey, updateSurvey } = useSurvey();
     const [surveyTitle, setSurveyTitle] = React.useState<string>("");
     const { enableStudioMode, disableStudioMode } = useStudioState();
 
     const { orgSlug, projectSlug } = params;
+    const surveyId = survey?.survey?.id;
+    const surveyName = survey?.survey?.name;
 
     const updateSurveyTitle = React.useCallback(
         debounce((value: string) => {

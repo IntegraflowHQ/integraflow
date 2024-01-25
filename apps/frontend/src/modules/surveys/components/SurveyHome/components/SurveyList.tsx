@@ -2,7 +2,6 @@ import { SurveyStatusEnum } from "@/generated/graphql";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ROUTES } from "@/routes";
 import { Dialog, DialogContent, DialogTrigger } from "@/ui";
-import { toast } from "@/utils/toast";
 import * as Popover from "@radix-ui/react-popover";
 import {
     Icon,
@@ -63,11 +62,15 @@ export const SurveyList = () => {
         loading,
         error,
         getMoreSurveys,
-        surveyList,
-        totalSurveys,
+        surveyList: surveys,
         surveysOnPage,
-        pageInfo,
     } = useSurvey();
+
+    const surveyList = surveys?.edges;
+    const pageInfo = surveys?.pageInfo;
+    const totalSurveys = surveys?.totalCount ?? 0;
+
+    console.log(totalSurveys);
 
     const [selectedSurveyId, setSelectedSurveyId] = React.useState<string>("");
     const [page, setPage] = React.useState<number>(1);
@@ -77,7 +80,7 @@ export const SurveyList = () => {
     // const [nameFilter, setNameFilter] = React.useState<string>("");
     const [currentSurveys, setCurrentSurveys] = React.useState<
         SurveyListData["surveys"]
-    >(surveyList || []);
+    >(surveyList ?? []);
 
     React.useEffect(() => {
         setCurrentSurveys(surveyList ?? []);
@@ -91,7 +94,7 @@ export const SurveyList = () => {
         }
 
         getMoreSurveys(direction);
-        setCurrentSurveys(surveyList || []);
+        setCurrentSurveys(surveyList ?? []);
     };
 
     const handleGetSurvey = (slug: string) => {
@@ -111,7 +114,7 @@ export const SurveyList = () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const findSurvey = surveyList?.find((survey) => survey.id === id);
-        const surveyName = findSurvey?.name;
+        const surveyName = findSurvey?.node?.name;
         setSelectedSurveyName(surveyName ?? "");
     };
 
@@ -123,9 +126,8 @@ export const SurveyList = () => {
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const surveyId = id
-            ? surveyList?.find((survey) => survey.id === id)?.id
-            : "";
+        const findSurvey = surveyList?.find((survey) => survey.id === id);
+        const surveyId = findSurvey?.node.id;
 
         setSelectedSurveyId(surveyId ?? "");
     };
@@ -157,10 +159,7 @@ export const SurveyList = () => {
     };
 
     const surveyStartIndex = (page - 1) * surveysOnPage + 1;
-    const surveyEndIndex = Math.min(
-        page * surveysOnPage,
-        totalSurveys as number,
-    );
+    const surveyEndIndex = Math.min(page * surveysOnPage, totalSurveys);
 
     return (
         <div className="h-full w-full px-6 py-4 text-white">

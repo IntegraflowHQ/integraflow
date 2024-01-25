@@ -1,7 +1,5 @@
 import {
     OrderDirection,
-    PageInfo,
-    ProjectTheme,
     Survey,
     SurveyCountableConnection,
     SurveyError,
@@ -28,7 +26,10 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useScrollToBottom } from "react-scroll-to-bottom";
 import useWorkspace from "../workspace/hooks/useWorkspace";
-import { SURVEY, SURVEY_QUESTION } from "./graphql/fragments/surveyFragment";
+import {
+    SURVEY_CREATE,
+    SURVEY_QUESTION,
+} from "./graphql/fragments/surveyFragment";
 import { useSurveyStore } from "./states/survey";
 
 export interface SurveyProviderProp {
@@ -41,26 +42,18 @@ export type SurveyResponse = {
 };
 
 export type SurveyContextValues = {
-    surveysOnPage: number;
-    totalSurveys: number | null | undefined;
-    pageInfo: PageInfo | undefined;
     loading: boolean;
+    surveysOnPage: number;
     error: ApolloError | undefined;
     openQuestion: string;
-    surveyName: string | undefined;
-    selectedSurveyTheme: string | undefined;
-    surveyId: string | undefined;
-    surveyExperienceSettings: string | undefined;
-    surveySlug: string | undefined;
-    surveyTheme: ProjectTheme | null | undefined;
-    createSurvey: (template?: string) => Promise<void>;
+    createSurvey: (template?: string) => Promise<SurveyResponse>;
     setOpenQuestion: (value: string) => void;
     updateSurvey: (
         id: string,
         input: SurveyUpdateInput,
     ) => Promise<SurveyResponse | undefined>;
-    survey: Survey;
-    surveyList: SurveyCountableConnection | undefined;
+    survey: SurveyResponse;
+    surveyList: SurveyCountableConnection | null;
     questions: SurveyQuestionCountableEdge | undefined;
     deleteSurvey: (id: string) => Promise<void | undefined>;
     getMoreSurveys: (direction: string) => Promise<void | undefined>;
@@ -106,13 +99,9 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
         { refetch, fetchMore, data: surveyList, loading: surveyListLoading },
     ] = useGetSurveyListLazyQuery();
 
-    const surveyName = survey?.survey?.name ?? "";
     const surveyId = survey?.survey?.id ?? "";
-    const surveyExperienceSettings = survey?.survey?.settings ?? "";
-    const surveyTheme = survey?.survey?.theme;
-
-    const totalCount = surveyList?.surveys?.totalCount;
     const pageInfo = surveyList?.surveys?.pageInfo;
+    const totalCount = surveyList?.surveys?.totalCount;
 
     const transformedSurveyList = surveyList?.surveys?.edges?.map((edge) => {
         return {
@@ -127,6 +116,15 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             },
         };
     });
+
+    const surveyListData = React.useMemo(
+        () => ({
+            pageInfo,
+            totalCount,
+            edges: transformedSurveyList,
+        }),
+        [pageInfo, totalCount, transformedSurveyList],
+    );
 
     // this could make the dependencies of the createQuestion callback
     // change on every render. Wrapping it in a Memo fixes it i guess.
@@ -226,7 +224,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                             surveys(existingSurveys = []) {
                                 const newSurveyRef = cache.writeFragment({
                                     data: data.surveyCreate?.survey,
-                                    fragment: SURVEY,
+                                    fragment: SURVEY_CREATE,
                                 });
 
                                 return {
@@ -542,23 +540,17 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     const values = React.useMemo<SurveyContextValues>(
         () => ({
             error,
-            surveyId,
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             questions,
 
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            surveyTheme,
 
-            surveyName,
-            pageInfo,
-            surveySlug,
             createSurvey,
             openQuestion,
             createQuestion,
             setOpenQuestion,
-            totalSurveys: totalCount,
             surveysOnPage: SURVEYS_PER_PAGE,
 
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -568,23 +560,16 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             updateSurvey,
             getMoreSurveys,
             filterSurveyByName: filterSurveyList,
-            surveyExperienceSettings,
 
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            surveyList: transformedSurveyList,
+            surveyList: surveyListData,
             loading: loadingSurvey || pendingDeletion || surveyListLoading,
         }),
         [
             error,
             survey,
-            surveyId,
             questions,
-            surveyName,
-            surveyTheme,
-            surveySlug,
-            totalCount,
-            pageInfo,
             filterSurveyList,
             updateSurvey,
             createSurvey,
@@ -592,12 +577,11 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             openQuestion,
             loadingSurvey,
             createQuestion,
-            transformedSurveyList,
             pendingDeletion,
             setOpenQuestion,
             surveyListLoading,
             getMoreSurveys,
-            surveyExperienceSettings,
+            surveyListData,
         ],
     );
 
