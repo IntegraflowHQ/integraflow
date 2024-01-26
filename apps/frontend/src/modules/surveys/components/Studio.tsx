@@ -21,7 +21,7 @@ export default function Studio() {
     const [title, setTitle] = useState("");
     const { enableStudioMode, disableStudioMode } = useStudioState();
     const [activeTab, setActiveTab] = useState(tabs[0].label);
-    const { loading } = useSurvey();
+    const { loadingCreateSurvey } = useSurvey();
 
     useEffect(() => {
         enableStudioMode();
@@ -31,7 +31,7 @@ export default function Studio() {
         };
     }, []);
 
-    if (loading) return <GlobalSpinner />;
+    if (loadingCreateSurvey) return <GlobalSpinner />;
 
     return (
         <Tabs.Root

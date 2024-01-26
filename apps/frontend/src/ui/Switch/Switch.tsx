@@ -6,10 +6,11 @@ type Props = {
     name: string;
     value?: boolean;
     onChange?: (e: { target: { value: boolean } }) => void;
+    defaultValue?: boolean;
 };
 
 export const Switch = forwardRef<HTMLButtonElement, Props>(
-    ({ label, value, name, onChange }, ref) => {
+    ({ label, value, name, defaultValue, onChange }, ref) => {
         return (
             <div className="flex items-center justify-between rounded-lg bg-intg-bg-15 px-4 py-3">
                 <label
@@ -31,6 +32,7 @@ export const Switch = forwardRef<HTMLButtonElement, Props>(
                     onCheckedChange={(value: boolean) =>
                         onChange && onChange({ target: { value } })
                     }
+                    defaultChecked={defaultValue}
                 >
                     <SwitchPrimitive.Thumb className="block h-[13px] w-[13px] translate-x-1 rounded-full bg-[#6941C6]  transition-transform duration-100 will-change-transform data-[state=checked]:translate-x-[15px]" />
                 </SwitchPrimitive.Root>

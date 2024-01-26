@@ -1,6 +1,21 @@
 import { PROPERTY_FIELDS } from "@/constants";
-import { SurveyChannel, User } from "@/generated/graphql";
+import {
+    SurveyChannel,
+    SurveyQuestionCountableEdge,
+    User,
+} from "@/generated/graphql";
 import { DeepOmit } from "@apollo/client/utilities";
+import {
+    CTAType,
+    FormFieldType,
+    ID,
+    LogicBooleanCondition,
+    LogicDateCondition,
+    LogicMultipleCondition,
+    LogicRangeCondition,
+    LogicSingleCondition,
+    LogicTextCondition,
+} from "@integraflow/web/src/types";
 import {
     Audience,
     FilterOperator,
@@ -78,4 +93,61 @@ export type WebChannelAccordionProps = {
 export type IntegraflowIconProps = {
     color?: string;
     size?: number;
+};
+
+export type QuestionOption = {
+    id: string;
+    orderNumber: number;
+    label: string;
+    comment?: boolean;
+    required?: boolean;
+    type?: FormFieldType;
+};
+
+export type QuestionLogic = {
+    id?: ID;
+    orderNumber?: number;
+    destination?: ID;
+    condition?:
+        | LogicMultipleCondition
+        | LogicSingleCondition
+        | LogicRangeCondition
+        | LogicBooleanCondition
+        | LogicDateCondition
+        | LogicTextCondition;
+    operator?: LogicOperator;
+    values?: ID[] | string[];
+};
+
+export type QuestionSettings = {
+    text?: string;
+    link?: string;
+    label?: string;
+    comment?: boolean;
+    type?: FormFieldType | CTAType;
+    randomize?: boolean;
+    randomizeExceptLast?: boolean;
+    disclaimer?: boolean;
+    disclaimerText?: string;
+    consent?: boolean;
+    consentText?: string;
+    rightText?: string;
+    leftText?: string;
+    count?: number;
+    shape?: "star" | "thumb" | "heart" | "button";
+    positiveText?: string;
+    negativeText?: string;
+    singleLine?: boolean;
+    choice?: {
+        min?: number;
+        max?: number;
+    };
+    logic?: QuestionLogic[];
+};
+
+export type ParsedQuestion = Omit<
+    SurveyQuestionCountableEdge["node"],
+    "questions"
+> & {
+    questions: QuestionOption[];
 };

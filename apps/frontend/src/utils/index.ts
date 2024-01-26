@@ -1,6 +1,6 @@
 import { PROPERTY_FIELDS } from "@/constants";
 import { SurveyChannel } from "@/generated/graphql";
-import { ParsedChannel } from "@/types";
+import { ParsedChannel, QuestionOption } from "@/types";
 import { DeepOmit } from "@apollo/client/utilities";
 import { FilterOperator } from "@integraflow/web/src/types";
 import { toast } from "./toast";
@@ -60,6 +60,11 @@ export const generateRandomString = (length: number) => {
         );
     }
     return result;
+};
+
+export const getHighestOrderNumber = (array: QuestionOption[]) => {
+    const orderNumbers = array.map((item) => item.orderNumber);
+    return Math.max(...orderNumbers);
 };
 
 export const toSurveyChannel = (channel: ParsedChannel): SurveyChannel => {

@@ -1,97 +1,105 @@
-import { addEllipsis, cn } from "@/utils";
+import { addEllipsis } from "@/utils";
 import * as Accordion from "@radix-ui/react-accordion";
-import { useEffect, useMemo, useState } from "react";
-import { QuestionOptions } from "./attributes/Options";
+import { useState } from "react";
+import { QuestionOptions } from "./attributes/QuestionTypes";
 
-import { SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { questionTypes } from "@/utils/survey";
 import { QuestionPanel } from "./QuestionPanel";
 
 export default function UpdateQuestion() {
-    const { getSurvey, questions, setOpenQuestion, openQuestion, surveySlug } =
-        useSurvey();
+    const { parsedQuestions } = useSurvey();
+
+    const { openQuestion, setOpenQuestion } = useQuestion();
 
     const [currentQuestionType, setCurrentQuestionType] = useState<
         SurveyQuestionTypeEnum | undefined
     >();
 
-    const sortedQuestions = useMemo(() => {
-        return [...questions].sort((a, b) => {
-            return a.node.orderNumber - b.node.orderNumber;
-        });
-    }, [questions]);
-
- 
     return (
         <div className="h-full w-full space-y-4 pt-2">
             <div>
-                <Accordion.Root
-                    type="single"
-                    collapsible={true}
-                    value={openQuestion}
-                    className="space-y-4"
-                >
-                    {sortedQuestions?.map((question) => {
-                        return (
-                            <Accordion.Item
-                                onClick={() =>
-                                    setCurrentQuestionType(question.node.type)
-                                }
-                                value={question.node.id}
-                                key={question.node.createdAt}
-                            >
-                                <Accordion.Header>
-                                    <Accordion.Trigger
-                                        className={cn(
-                                            ` ${
-                                                openQuestion ===
-                                                question.node.id
-                                                    ? "hidden"
-                                                    : "block"
-                                            } text-intg-text-7" flex w-full items-center justify-between gap-2 rounded-lg bg-intg-bg-9 p-4`,
-                                        )}
-                                        onClick={() =>
-                                            setOpenQuestion(question.node.id)
-                                        }
-                                    >
-                                        <div>
-                                            <img
-                                                src={
-                                                    questionTypes.find(
-                                                        (type) =>
-                                                            type.type ===
-                                                            question.node.type,
-                                                    )?.icon
-                                                }
-                                                alt=""
-                                            />
-                                        </div>
-                                        <div className="font-bold text-intg-text-9">
-                                            {question.node.orderNumber < 10
-                                                ? `0${question.node.orderNumber}`
-                                                : question.node.orderNumber}
-                                        </div>
-                                        <div className="w-[415px] rounded-lg bg-intg-bg-15 px-[16px] py-4 text-start text-intg-text-1 ">
-                                            {addEllipsis(
-                                                "Lorem ipsum dolor sit, ametconsectetur adipisicing elit.",
-                                                40,
-                                            )}
-                                        </div>
-                                    </Accordion.Trigger>
-                                </Accordion.Header>
-                                <Accordion.Content>
-                                    <QuestionPanel
-                                        currentQuestionType={
-                                            currentQuestionType
-                                        }
-                                        question={question}
-                                    />
-                                </Accordion.Content>
-                            </Accordion.Item>
-                        );
-                    })}
-                </Accordion.Root>
+                {parsedQuestions.length > 0 ? (
+                    <Accordion.Root
+                        type="single"
+                        collapsible={true}
+                        value={openQuestion?.id}
+                        defaultValue={parsedQuestions[0]?.id}
+                        onValueChange={(value) => {
+                            if (value === "" || value === undefined) {
+                                setOpenQuestion({
+                                    id: "",
+                                } as SurveyQuestion);
+                                return;
+                            }
+                            setOpenQuestion(
+                                parsedQuestions.find(
+                                    (question) => question.id === value,
+                                ),
+                            );
+                        }}
+                        className="space-y-4"
+                    >
+                        {parsedQuestions?.map((question, index) => {
+                            return (
+                                <Accordion.Item
+                                    value={question.id}
+                                    key={question.id}
+                                >
+                                    <Accordion.Header>
+                                        <Accordion.Trigger
+                                            value={question.id}
+                                            className="w-full items-center  justify-between gap-2 rounded-lg bg-intg-bg-9 p-4 text-intg-text-7 data-[state=close]:flex data-[state=open]:hidden"
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <div>
+                                                    <img
+                                                        src={
+                                                            questionTypes.find(
+                                                                (type) =>
+                                                                    type.type ===
+                                                                    question.type,
+                                                            )?.icon
+                                                        }
+                                                        alt="icon"
+                                                    />
+                                                </div>
+                                                <div className="text-intg-text-9 text-sm font-bold">
+                                                    {index + 1 < 10
+                                                        ? `0${index + 1}`
+                                                        : index + 1}
+                                                </div>
+                                                <div className="w-[415px] rounded-lg bg-intg-bg-15 px-[16px] py-4 text-start text-sm text-intg-text-1 ">
+                                                    {question.label ? (
+                                                        addEllipsis(
+                                                            question.label,
+                                                            40,
+                                                        )
+                                                    ) : (
+                                                        <p>
+                                                            Enter your text here
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </Accordion.Trigger>
+                                    </Accordion.Header>
+                                    <Accordion.Content>
+                                        <QuestionPanel
+                                            currentQuestionType={
+                                                currentQuestionType
+                                            }
+                                            question={question}
+                                            questionIndex={index}
+                                        />
+                                    </Accordion.Content>
+                                </Accordion.Item>
+                            );
+                        })}
+                    </Accordion.Root>
+                ) : null}
             </div>
             <QuestionOptions setCurrentQuestionType={setCurrentQuestionType} />
         </div>

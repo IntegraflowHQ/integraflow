@@ -4,7 +4,7 @@ type Props = {
     onclick?: () => void;
 };
 
-const MinimizeButton = ({ onclick }: Props) => {
+const MinusButton = ({ onclick }: Props) => {
     return (
         <div
             onClick={onclick}
@@ -15,4 +15,4 @@ const MinimizeButton = ({ onclick }: Props) => {
     );
 };
 
-export default MinimizeButton;
+export default MinusButton;

@@ -1,22 +1,23 @@
+import { SurveyQuestion } from "@/generated/graphql";
 import { create } from "zustand";
 
 export type SurveyState = {
-    openQuestion: string;
+    openQuestion: SurveyQuestion | undefined;
 };
 
 export type SurveyActions = {
-    setOpenQuestion: (view: string) => void;
+    setOpenQuestion: (question: SurveyQuestion) => void;
 };
 
 const initialState: SurveyState = {
-    openQuestion: "", //the value of the open accordion question
+    openQuestion: undefined,
 };
 
 export const useSurveyStore = create<SurveyState & SurveyActions>()((set) => ({
     ...initialState,
-    setOpenQuestion: (view) => {
+    setOpenQuestion: (question) => {
         set({
-            openQuestion: view,
+            openQuestion: question,
         });
     },
 }));
