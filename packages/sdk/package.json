@@ -17,18 +17,18 @@
         "dist"
     ],
     "scripts": {
-        "build:clean": "npx rimraf -G dist .rollup-cache tsconfig.tsbuildinfo",
+        "build:clean": "rimraf -G dist .rollup-cache tsconfig.tsbuildinfo",
         "build:sdk": "run-s build:clean build:rollup",
-        "build:rollup": "npx rollup -c",
+        "build:rollup": "rollup -c",
         "generate:changeset:dependencies": "ts-node scripts/generate-dependencies-changeset.ts",
         "generate:changeset:schema": "ts-node scripts/generate-schema-changeset.ts",
-        "generate:clean": "npx rimraf src/**/_generated*",
-        "generate:doc": "npx graphql-codegen --config codegen.doc.yml",
-        "generate:schema": "npx graphql-codegen --config codegen.schema.yml",
-        "generate:sdk": "npx graphql-codegen --config codegen.sdk.yml && yarn update:scalars",
-        "generate:test": "npx graphql-codegen --config codegen.test.yml",
+        "generate:clean": "rimraf src/**/_generated*",
+        "generate:doc": "graphql-codegen --config codegen.doc.yml",
+        "generate:schema": "graphql-codegen --config codegen.schema.yml",
+        "generate:sdk": "graphql-codegen --config codegen.sdk.yml && yarn update:scalars",
+        "generate:test": "graphql-codegen --config codegen.test.yml",
         "update:scalars": "ts-node scripts/update-scalars.ts",
-        "schema": "npx graphql-codegen --config codegen.schema.yml",
+        "schema": "graphql-codegen --config codegen.schema.yml",
         "scratch": "ts-node src/scratch.ts"
     },
     "dependencies": {

@@ -105,4 +105,19 @@ export default [
     ],
     plugins: [...browserPlugins],
   },
+  {
+    input: "src/index.ts",
+    output: [
+      {
+        dir: "./",
+        entryFileNames: "dist/index.js",
+        format: "umd",
+        esModule: false,
+        sourcemap: true,
+        exports: "named",
+        name: "Integraflow",
+      },
+    ],
+    plugins: [...browserPlugins],
+  },
 ];

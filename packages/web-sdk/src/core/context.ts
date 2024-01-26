@@ -1,61 +1,74 @@
-import { Configuration, Listeners, Survey, State } from '../types';
+import {
+    ClientCredentials,
+    Configuration,
+    Listeners,
+    State,
+    Survey
+} from "../types";
 
-type SdkEventType = 'eventTracked' | 'audienceUpdated';
+type SdkEventType = "eventTracked" | "audienceUpdated";
 export type SdkEvent<T = any> = { type: SdkEventType; data: T };
 type SdkEventHandler = (event: SdkEvent) => void;
 
 export class Context {
-  readonly debug: boolean;
-  readonly listeners: Listeners;
+    readonly debug: boolean;
+    readonly listeners: Listeners;
+    readonly credentials: ClientCredentials;
 
-  private readonly subscribers: { [key: string]: SdkEventHandler[] };
+    private readonly subscribers: { [key: string]: SdkEventHandler[] };
 
-  surveys: Survey[];
-  state: State | null;
+    surveys: Survey[];
+    state: State | null;
 
-  constructor(config: Configuration) {
-    this.surveys = config.surveys ?? [];
+    constructor(config: Configuration) {
+        this.surveys = config.surveys ?? [];
 
-    this.debug = config.debug || false;
-    this.listeners = {
-      onAudienceChanged: config.onAudienceChanged,
-      onEventTracked: config.onEventTracked,
-      onSurveyDisplayed: config.onSurveyDisplayed,
-      onSurveyClosed: config.onSurveyClosed,
-      onQuestionAnswered: config.onQuestionAnswered,
-      onSurveyCompleted: config.onSurveyCompleted
-    };
+        this.debug = config.debug || false;
+        this.listeners = {
+            onAudienceChanged: config.onAudienceChanged,
+            onEventTracked: config.onEventTracked,
+            onSurveyDisplayed: config.onSurveyDisplayed,
+            onSurveyClosed: config.onSurveyClosed,
+            onQuestionAnswered: config.onQuestionAnswered,
+            onSurveyCompleted: config.onSurveyCompleted
+        };
 
-    this.subscribers = {};  
-    this.state = null;
-  }
+        this.credentials = {
+            appKey: config.appKey,
+            accessToken: config.accessToken,
+            apiHost: config.apiHost
+        };
 
-  setState(state: State) {
-    this.state = state;
-  }
-
-  subscribe(event: SdkEventType, handler: SdkEventHandler) {
-    if (!this.subscribers[event]) {
-      this.subscribers[event] = [];
+        this.subscribers = {};
+        this.state = null;
     }
 
-    if (this.subscribers[event].indexOf(handler) > -1) {
-      return;
+    setState(state: State) {
+        this.state = state;
     }
 
-    this.subscribers[event].push(handler);
-  }
+    subscribe(event: SdkEventType, handler: SdkEventHandler) {
+        if (!this.subscribers[event]) {
+            this.subscribers[event] = [];
+        }
 
-  broadcast(event: SdkEventType, data: any) {
-    if (!this.subscribers[event]) {
-      return;
+        if (this.subscribers[event].indexOf(handler) > -1) {
+            return;
+        }
+
+        this.subscribers[event].push(handler);
     }
 
-    for (let i = 0; i < this.subscribers[event].length; ++i) {
-      this.subscribers[event][i]({
-        type: event,
-        data
-      });
+    broadcast(event: SdkEventType, data: any) {
+        if (!this.subscribers[event]) {
+            return;
+        }
+
+        for (let i = 0; i < this.subscribers[event].length; ++i) {
+            this.subscribers[event][i]({
+                type: event,
+                data
+            });
+        }
     }
-  }
 }
