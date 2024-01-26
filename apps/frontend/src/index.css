@@ -27,3 +27,7 @@
         ); /* Rotate counterclockwise by -360 degrees */
     }
 }
+
+.editor-input__placeholder::placeholder {
+    color: red !important;
+}

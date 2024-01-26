@@ -127,6 +127,158 @@ export type EmailUserAuthChallenge = {
   userErrors: Array<UserError>;
 };
 
+/** Represents an event. */
+export type Event = Node & {
+  __typename?: 'Event';
+  /** The time the event was created */
+  createdAt?: Maybe<Scalars['DateTime']>;
+  /** The event name */
+  distinctId: Scalars['String'];
+  /** The event name */
+  event: Scalars['String'];
+  /** The ID of the event. */
+  id: Scalars['ID'];
+  /**
+   * The project the event belongs to
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  project: Project;
+  /** The event properties */
+  properties?: Maybe<Scalars['JSONString']>;
+  /** The time the event occurred */
+  timestamp?: Maybe<Scalars['DateTime']>;
+};
+
+/** Captures event. */
+export type EventCapture = {
+  __typename?: 'EventCapture';
+  errors: Array<EventError>;
+  eventErrors: Array<EventError>;
+  /** Whether the operation was successful. */
+  status?: Maybe<Scalars['Boolean']>;
+};
+
+export type EventCaptureInput = {
+  /** The user attributes. */
+  attributes?: InputMaybe<Scalars['JSONString']>;
+  /** The name of the event. */
+  event: Scalars['String'];
+  /** The event properties. */
+  properties?: InputMaybe<Scalars['JSONString']>;
+  /** The time the event happened */
+  timestamp: Scalars['DateTime'];
+  /** The distinct ID. */
+  userId?: InputMaybe<Scalars['ID']>;
+  /** The payload ID. */
+  uuid?: InputMaybe<Scalars['UUID']>;
+};
+
+export type EventCountableConnection = {
+  __typename?: 'EventCountableConnection';
+  edges: Array<EventCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type EventCountableEdge = {
+  __typename?: 'EventCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: Event;
+};
+
+/** Represents an event definition. */
+export type EventDefinition = Node & {
+  __typename?: 'EventDefinition';
+  /** The time the event was created */
+  createdAt?: Maybe<Scalars['DateTime']>;
+  /** The ID of the event definition. */
+  id: Scalars['ID'];
+  /** The time the event was last seen */
+  lastSeenAt?: Maybe<Scalars['DateTime']>;
+  /** The name of the event definition */
+  name: Scalars['String'];
+  /**
+   * The project the event definition belongs to
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  project: Project;
+};
+
+export type EventDefinitionCountableConnection = {
+  __typename?: 'EventDefinitionCountableConnection';
+  edges: Array<EventDefinitionCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type EventDefinitionCountableEdge = {
+  __typename?: 'EventDefinitionCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: EventDefinition;
+};
+
+/** Represents errors in event mutations. */
+export type EventError = {
+  __typename?: 'EventError';
+  /** The error code. */
+  code: EventErrorCode;
+  /** Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field. */
+  field?: Maybe<Scalars['String']>;
+  /** The error message. */
+  message?: Maybe<Scalars['String']>;
+};
+
+/** An enumeration. */
+export enum EventErrorCode {
+  Forbidden = 'FORBIDDEN',
+  GraphqlError = 'GRAPHQL_ERROR',
+  Invalid = 'INVALID'
+}
+
+/** Represents an event property. */
+export type EventProperty = Node & {
+  __typename?: 'EventProperty';
+  /** The name of the event */
+  event: Scalars['String'];
+  /** The ID of the event property. */
+  id: Scalars['ID'];
+  /**
+   * The project the event property belongs to
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  project: Project;
+  /** The property of the event */
+  property: Scalars['String'];
+};
+
+export type EventPropertyCountableConnection = {
+  __typename?: 'EventPropertyCountableConnection';
+  edges: Array<EventPropertyCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type EventPropertyCountableEdge = {
+  __typename?: 'EventPropertyCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: EventProperty;
+};
+
 /** Finds or creates a new user account from google auth credentials. */
 export type GoogleUserAuth = {
   __typename?: 'GoogleUserAuth';
@@ -163,6 +315,8 @@ export type Mutation = {
   emailTokenUserAuth?: Maybe<EmailTokenUserAuth>;
   /** Finds or creates a new user account by email and sends an email with token. */
   emailUserAuthChallenge?: Maybe<EmailUserAuthChallenge>;
+  /** Captures event. */
+  eventCapture?: Maybe<EventCapture>;
   /** Finds or creates a new user account from google auth credentials. */
   googleUserAuth?: Maybe<GoogleUserAuth>;
   /**
@@ -292,6 +446,13 @@ export type MutationEmailTokenUserAuthArgs = {
 export type MutationEmailUserAuthChallengeArgs = {
   email: Scalars['String'];
   inviteLink?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationEventCaptureArgs = {
+  batch?: InputMaybe<Array<EventCaptureInput>>;
+  input?: InputMaybe<EventCaptureInput>;
+  sentAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 
@@ -687,6 +848,46 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['String']>;
 };
 
+/** Represents a person. */
+export type Person = Node & {
+  __typename?: 'Person';
+  /** The person's attributes */
+  attributes?: Maybe<Scalars['JSONString']>;
+  /** The time the person was created */
+  createdAt?: Maybe<Scalars['DateTime']>;
+  /** The person's distinct ids */
+  distinctIds?: Maybe<Array<Scalars['String']>>;
+  /** The ID of the event property. */
+  id: Scalars['ID'];
+  /** Whether the person has been identified */
+  isIdentified: Scalars['Boolean'];
+  /**
+   * The project the person belongs to
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  project: Project;
+  /** The person's uuid */
+  uuid: Scalars['UUID'];
+};
+
+export type PersonCountableConnection = {
+  __typename?: 'PersonCountableConnection';
+  edges: Array<PersonCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type PersonCountableEdge = {
+  __typename?: 'PersonCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: Person;
+};
+
 /** Represents a project. */
 export type Project = Node & {
   __typename?: 'Project';
@@ -901,6 +1102,57 @@ export type ProjectUpdateInput = {
   timezone?: InputMaybe<Scalars['String']>;
 };
 
+/** Represents a property definition. */
+export type PropertyDefinition = Node & {
+  __typename?: 'PropertyDefinition';
+  /** The ID of the event property. */
+  id: Scalars['ID'];
+  /** Whether property accepts a numerical value */
+  isNumerical: Scalars['Boolean'];
+  /** The name of the property definition */
+  name: Scalars['String'];
+  /**
+   * The project the person belongs to
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  project: Project;
+  /** The property type */
+  propertyType: PropertyTypeEnum;
+  /** The type of the property definition */
+  type: PropertyDefinitionTypeEnum;
+};
+
+export type PropertyDefinitionCountableConnection = {
+  __typename?: 'PropertyDefinitionCountableConnection';
+  edges: Array<PropertyDefinitionCountableEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type PropertyDefinitionCountableEdge = {
+  __typename?: 'PropertyDefinitionCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: PropertyDefinition;
+};
+
+export enum PropertyDefinitionTypeEnum {
+  Event = 'EVENT',
+  Group = 'GROUP',
+  Person = 'PERSON'
+}
+
+export enum PropertyTypeEnum {
+  Boolean = 'Boolean',
+  Datetime = 'Datetime',
+  Numeric = 'Numeric',
+  String = 'String'
+}
+
 export type Query = {
   __typename?: 'Query';
   _entities?: Maybe<Array<Maybe<_Entity>>>;
@@ -911,6 +1163,24 @@ export type Query = {
    * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
    */
   channels?: Maybe<SurveyChannelCountableConnection>;
+  /**
+   * List of event's definitions.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  eventDefinitions?: Maybe<EventDefinitionCountableConnection>;
+  /**
+   * List of event's properties.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  eventProperties?: Maybe<EventPropertyCountableConnection>;
+  /**
+   * List of triggered events.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  events?: Maybe<EventCountableConnection>;
   /** One specific organization invite. */
   organizationInviteDetails?: Maybe<InviteDetails>;
   /**
@@ -920,11 +1190,29 @@ export type Query = {
    */
   organizationInviteLink?: Maybe<OrganizationInviteLink>;
   /**
+   * List of persons.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  persons?: Maybe<PersonCountableConnection>;
+  /**
+   * List of the property definitions.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  propertyDefinitions?: Maybe<PropertyDefinitionCountableConnection>;
+  /**
    * List of questions for a specific survey.
    *
    * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
    */
   questions?: Maybe<SurveyQuestionCountableConnection>;
+  /**
+   * Look up a survey by ID or slug.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  survey?: Maybe<Survey>;
   /**
    * List of the project's surveys.
    *
@@ -960,8 +1248,50 @@ export type QueryChannelsArgs = {
 };
 
 
+export type QueryEventDefinitionsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryEventPropertiesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  event?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryEventsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryOrganizationInviteDetailsArgs = {
   inviteLink: Scalars['String'];
+};
+
+
+export type QueryPersonsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryPropertyDefinitionsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  definitionType?: InputMaybe<PropertyDefinitionTypeEnum>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -971,6 +1301,12 @@ export type QueryQuestionsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   id: Scalars['ID'];
   last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QuerySurveyArgs = {
+  id?: InputMaybe<Scalars['ID']>;
+  slug?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1161,8 +1497,9 @@ export enum SurveyChannelTypeEnum {
   Api = 'API',
   Custom = 'CUSTOM',
   Email = 'EMAIL',
-  InApp = 'IN_APP',
-  Link = 'LINK'
+  Link = 'LINK',
+  MobileSdk = 'MOBILE_SDK',
+  WebSdk = 'WEB_SDK'
 }
 
 /**
@@ -1745,12 +2082,124 @@ export type ProjectFragmentFragment = { __typename?: 'Project', id: string, name
 
 export type ProjectUpdateFragmentFragment = { __typename?: 'ProjectUpdate', project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
 
+export type ProjectThemeFragmentFragment = { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } };
+
+export type ProjectThemeUpdateFragmentFragment = { __typename?: 'ProjectThemeUpdate', projectTheme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
+
 export type ProjectCreateMutationVariables = Exact<{
   input: ProjectCreateInput;
 }>;
 
 
 export type ProjectCreateMutation = { __typename?: 'Mutation', projectCreate?: { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+
+export type ProjectThemeCreateMutationVariables = Exact<{
+  input: ProjectThemeCreateInput;
+}>;
+
+
+export type ProjectThemeCreateMutation = { __typename?: 'Mutation', projectThemeCreate?: { __typename?: 'ProjectThemeCreate', projectTheme?: { __typename?: 'ProjectTheme', id: string, name: string, colorScheme?: any | null } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+
+export type ProjectThemeUpdateMutationVariables = Exact<{
+  id: Scalars['ID'];
+  input: ProjectThemeUpdateInput;
+}>;
+
+
+export type ProjectThemeUpdateMutation = { __typename?: 'Mutation', projectThemeUpdate?: { __typename?: 'ProjectThemeUpdate', projectTheme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+
+export type ThemesQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type ThemesQuery = { __typename?: 'Query', themes?: { __typename?: 'ProjectThemeCountableConnection', totalCount?: number | null, edges: Array<{ __typename?: 'ProjectThemeCountableEdge', node: { __typename?: 'ProjectTheme', id: string, name: string, colorScheme?: any | null } }> } | null };
+
+export type SurveyQuestionFragmentFragment = { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string };
+
+export type SurveyChannelFragmentFragment = { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string };
+
+export type SurveyFragmentFragment = { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } };
+
+export type SurveyErrorFragmentFragment = { __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode };
+
+export type SurveyCreateFragmentFragment = { __typename?: 'SurveyCreate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null };
+
+export type SurveyUpdateMutationVariables = Exact<{
+  id: Scalars['ID'];
+  input: SurveyUpdateInput;
+}>;
+
+
+export type SurveyUpdateMutation = { __typename?: 'Mutation', surveyUpdate?: { __typename?: 'SurveyUpdate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null } | null };
+
+export type SurveyQuestionCreateMutationVariables = Exact<{
+  input: SurveyQuestionCreateInput;
+}>;
+
+
+export type SurveyQuestionCreateMutation = { __typename?: 'Mutation', surveyQuestionCreate?: { __typename?: 'SurveyQuestionCreate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, surveyQuestion?: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } | null } | null };
+
+export type SurveyChannelCreateMutationVariables = Exact<{
+  input: SurveyChannelCreateInput;
+}>;
+
+
+export type SurveyChannelCreateMutation = { __typename?: 'Mutation', surveyChannelCreate?: { __typename?: 'SurveyChannelCreate', surveyChannel?: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } | null, surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+
+export type SurveyChannelUpdateMutationVariables = Exact<{
+  id: Scalars['ID'];
+  input: SurveyChannelUpdateInput;
+}>;
+
+
+export type SurveyChannelUpdateMutation = { __typename?: 'Mutation', surveyChannelUpdate?: { __typename?: 'SurveyChannelUpdate', surveyChannel?: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } | null, surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+
+export type SurveyChannelDeleteMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type SurveyChannelDeleteMutation = { __typename?: 'Mutation', surveyChannelDelete?: { __typename?: 'SurveyChannelDelete', surveyChannel?: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } | null, surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+
+export type SurveyCreateMutationVariables = Exact<{
+  input: SurveyCreateInput;
+}>;
+
+
+export type SurveyCreateMutation = { __typename?: 'Mutation', surveyCreate?: { __typename?: 'SurveyCreate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null } | null };
+
+export type AudiencePropertiesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AudiencePropertiesQuery = { __typename?: 'Query', propertyDefinitions?: { __typename?: 'PropertyDefinitionCountableConnection', edges: Array<{ __typename?: 'PropertyDefinitionCountableEdge', node: { __typename?: 'PropertyDefinition', id: string, name: string, isNumerical: boolean, type: PropertyDefinitionTypeEnum, propertyType: PropertyTypeEnum } }> } | null };
+
+export type ChannelsQueryVariables = Exact<{
+  surveyId: Scalars['ID'];
+}>;
+
+
+export type ChannelsQuery = { __typename?: 'Query', channels?: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } | null };
+
+export type ProjectEventsDataQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ProjectEventsDataQuery = { __typename?: 'Query', eventDefinitions?: { __typename?: 'EventDefinitionCountableConnection', edges: Array<{ __typename?: 'EventDefinitionCountableEdge', node: { __typename?: 'EventDefinition', id: string, name: string, createdAt?: string | null, lastSeenAt?: string | null } }> } | null, eventProperties?: { __typename?: 'EventPropertyCountableConnection', edges: Array<{ __typename?: 'EventPropertyCountableEdge', node: { __typename?: 'EventProperty', id: string, event: string, property: string } }> } | null, propertyDefinitions?: { __typename?: 'PropertyDefinitionCountableConnection', edges: Array<{ __typename?: 'PropertyDefinitionCountableEdge', node: { __typename?: 'PropertyDefinition', id: string, name: string, isNumerical: boolean, type: PropertyDefinitionTypeEnum, propertyType: PropertyTypeEnum } }> } | null };
+
+export type GetQuestionsQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetQuestionsQuery = { __typename?: 'Query', questions?: { __typename?: 'SurveyQuestionCountableConnection', totalCount?: number | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }, edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> } | null };
+
+export type GetSurveyQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['ID']>;
+  slug?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetSurveyQuery = { __typename?: 'Query', survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null };
 
 export type UserFragmentFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null };
 
@@ -2021,6 +2470,120 @@ export const UserFragmentFragmentDoc = gql`
 }
     ${AuthOrganizationFragmentFragmentDoc}
 ${ProjectFragmentFragmentDoc}`;
+export const ProjectThemeFragmentFragmentDoc = gql`
+    fragment ProjectThemeFragment on ProjectTheme {
+  id
+  reference
+  name
+  colorScheme
+  settings
+  project {
+    ...ProjectFragment
+  }
+  creator {
+    ...UserFragment
+  }
+  createdAt
+  updatedAt
+}
+    ${ProjectFragmentFragmentDoc}
+${UserFragmentFragmentDoc}`;
+export const ProjectThemeUpdateFragmentFragmentDoc = gql`
+    fragment ProjectThemeUpdateFragment on ProjectThemeUpdate {
+  projectTheme {
+    ...ProjectThemeFragment
+  }
+  projectErrors {
+    ...ProjectErrorFragment
+  }
+  errors {
+    ...ProjectErrorFragment
+  }
+}
+    ${ProjectThemeFragmentFragmentDoc}
+${ProjectErrorFragmentFragmentDoc}`;
+export const SurveyErrorFragmentFragmentDoc = gql`
+    fragment SurveyErrorFragment on SurveyError {
+  field
+  message
+  code
+}
+    `;
+export const SurveyQuestionFragmentFragmentDoc = gql`
+    fragment SurveyQuestionFragment on SurveyQuestion {
+  id
+  reference
+  label
+  description
+  type
+  options
+  settings
+  orderNumber
+  maxPath
+  createdAt
+}
+    `;
+export const SurveyChannelFragmentFragmentDoc = gql`
+    fragment SurveyChannelFragment on SurveyChannel {
+  id
+  reference
+  type
+  triggers
+  conditions
+  settings
+  createdAt
+}
+    `;
+export const SurveyFragmentFragmentDoc = gql`
+    fragment SurveyFragment on Survey {
+  id
+  reference
+  name
+  slug
+  type
+  status
+  settings
+  theme {
+    ...ProjectThemeFragment
+  }
+  creator {
+    ...UserFragment
+  }
+  questions(first: 50) {
+    edges {
+      node {
+        ...SurveyQuestionFragment
+      }
+    }
+  }
+  channels(first: 50) {
+    edges {
+      node {
+        ...SurveyChannelFragment
+      }
+    }
+  }
+  createdAt
+  updatedAt
+}
+    ${ProjectThemeFragmentFragmentDoc}
+${UserFragmentFragmentDoc}
+${SurveyQuestionFragmentFragmentDoc}
+${SurveyChannelFragmentFragmentDoc}`;
+export const SurveyCreateFragmentFragmentDoc = gql`
+    fragment SurveyCreateFragment on SurveyCreate {
+  surveyErrors {
+    ...SurveyErrorFragment
+  }
+  errors {
+    ...SurveyErrorFragment
+  }
+  survey {
+    ...SurveyFragment
+  }
+}
+    ${SurveyErrorFragmentFragmentDoc}
+${SurveyFragmentFragmentDoc}`;
 export const EmailTokenUserAuthDocument = gql`
     mutation emailTokenUserAuth($email: String!, $token: String!, $inviteLink: String) {
   emailTokenUserAuth(email: $email, token: $token, inviteLink: $inviteLink) {
@@ -2472,6 +3035,600 @@ export function useProjectCreateMutation(baseOptions?: Apollo.MutationHookOption
 export type ProjectCreateMutationHookResult = ReturnType<typeof useProjectCreateMutation>;
 export type ProjectCreateMutationResult = Apollo.MutationResult<ProjectCreateMutation>;
 export type ProjectCreateMutationOptions = Apollo.BaseMutationOptions<ProjectCreateMutation, ProjectCreateMutationVariables>;
+export const ProjectThemeCreateDocument = gql`
+    mutation ProjectThemeCreate($input: ProjectThemeCreateInput!) {
+  projectThemeCreate(input: $input) {
+    projectTheme {
+      id
+      name
+      colorScheme
+    }
+    projectErrors {
+      ...ProjectErrorFragment
+    }
+  }
+}
+    ${ProjectErrorFragmentFragmentDoc}`;
+export type ProjectThemeCreateMutationFn = Apollo.MutationFunction<ProjectThemeCreateMutation, ProjectThemeCreateMutationVariables>;
+
+/**
+ * __useProjectThemeCreateMutation__
+ *
+ * To run a mutation, you first call `useProjectThemeCreateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useProjectThemeCreateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [projectThemeCreateMutation, { data, loading, error }] = useProjectThemeCreateMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useProjectThemeCreateMutation(baseOptions?: Apollo.MutationHookOptions<ProjectThemeCreateMutation, ProjectThemeCreateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ProjectThemeCreateMutation, ProjectThemeCreateMutationVariables>(ProjectThemeCreateDocument, options);
+      }
+export type ProjectThemeCreateMutationHookResult = ReturnType<typeof useProjectThemeCreateMutation>;
+export type ProjectThemeCreateMutationResult = Apollo.MutationResult<ProjectThemeCreateMutation>;
+export type ProjectThemeCreateMutationOptions = Apollo.BaseMutationOptions<ProjectThemeCreateMutation, ProjectThemeCreateMutationVariables>;
+export const ProjectThemeUpdateDocument = gql`
+    mutation ProjectThemeUpdate($id: ID!, $input: ProjectThemeUpdateInput!) {
+  projectThemeUpdate(id: $id, input: $input) {
+    projectTheme {
+      ...ProjectThemeFragment
+    }
+    projectErrors {
+      ...ProjectErrorFragment
+    }
+    errors {
+      ...ProjectErrorFragment
+    }
+  }
+}
+    ${ProjectThemeFragmentFragmentDoc}
+${ProjectErrorFragmentFragmentDoc}`;
+export type ProjectThemeUpdateMutationFn = Apollo.MutationFunction<ProjectThemeUpdateMutation, ProjectThemeUpdateMutationVariables>;
+
+/**
+ * __useProjectThemeUpdateMutation__
+ *
+ * To run a mutation, you first call `useProjectThemeUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useProjectThemeUpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [projectThemeUpdateMutation, { data, loading, error }] = useProjectThemeUpdateMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useProjectThemeUpdateMutation(baseOptions?: Apollo.MutationHookOptions<ProjectThemeUpdateMutation, ProjectThemeUpdateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ProjectThemeUpdateMutation, ProjectThemeUpdateMutationVariables>(ProjectThemeUpdateDocument, options);
+      }
+export type ProjectThemeUpdateMutationHookResult = ReturnType<typeof useProjectThemeUpdateMutation>;
+export type ProjectThemeUpdateMutationResult = Apollo.MutationResult<ProjectThemeUpdateMutation>;
+export type ProjectThemeUpdateMutationOptions = Apollo.BaseMutationOptions<ProjectThemeUpdateMutation, ProjectThemeUpdateMutationVariables>;
+export const ThemesDocument = gql`
+    query Themes($first: Int) {
+  themes(first: $first) {
+    edges {
+      node {
+        id
+        name
+        colorScheme
+      }
+    }
+    totalCount
+  }
+}
+    `;
+
+/**
+ * __useThemesQuery__
+ *
+ * To run a query within a React component, call `useThemesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useThemesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useThemesQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *   },
+ * });
+ */
+export function useThemesQuery(baseOptions?: Apollo.QueryHookOptions<ThemesQuery, ThemesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ThemesQuery, ThemesQueryVariables>(ThemesDocument, options);
+      }
+export function useThemesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ThemesQuery, ThemesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ThemesQuery, ThemesQueryVariables>(ThemesDocument, options);
+        }
+export type ThemesQueryHookResult = ReturnType<typeof useThemesQuery>;
+export type ThemesLazyQueryHookResult = ReturnType<typeof useThemesLazyQuery>;
+export type ThemesQueryResult = Apollo.QueryResult<ThemesQuery, ThemesQueryVariables>;
+export const SurveyUpdateDocument = gql`
+    mutation SurveyUpdate($id: ID!, $input: SurveyUpdateInput!) {
+  surveyUpdate(id: $id, input: $input) {
+    surveyErrors {
+      ...SurveyErrorFragment
+    }
+    errors {
+      ...SurveyErrorFragment
+    }
+    survey {
+      ...SurveyFragment
+    }
+  }
+}
+    ${SurveyErrorFragmentFragmentDoc}
+${SurveyFragmentFragmentDoc}`;
+export type SurveyUpdateMutationFn = Apollo.MutationFunction<SurveyUpdateMutation, SurveyUpdateMutationVariables>;
+
+/**
+ * __useSurveyUpdateMutation__
+ *
+ * To run a mutation, you first call `useSurveyUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSurveyUpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [surveyUpdateMutation, { data, loading, error }] = useSurveyUpdateMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSurveyUpdateMutation(baseOptions?: Apollo.MutationHookOptions<SurveyUpdateMutation, SurveyUpdateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SurveyUpdateMutation, SurveyUpdateMutationVariables>(SurveyUpdateDocument, options);
+      }
+export type SurveyUpdateMutationHookResult = ReturnType<typeof useSurveyUpdateMutation>;
+export type SurveyUpdateMutationResult = Apollo.MutationResult<SurveyUpdateMutation>;
+export type SurveyUpdateMutationOptions = Apollo.BaseMutationOptions<SurveyUpdateMutation, SurveyUpdateMutationVariables>;
+export const SurveyQuestionCreateDocument = gql`
+    mutation SurveyQuestionCreate($input: SurveyQuestionCreateInput!) {
+  surveyQuestionCreate(input: $input) {
+    surveyErrors {
+      ...SurveyErrorFragment
+    }
+    errors {
+      ...SurveyErrorFragment
+    }
+    surveyQuestion {
+      ...SurveyQuestionFragment
+    }
+  }
+}
+    ${SurveyErrorFragmentFragmentDoc}
+${SurveyQuestionFragmentFragmentDoc}`;
+export type SurveyQuestionCreateMutationFn = Apollo.MutationFunction<SurveyQuestionCreateMutation, SurveyQuestionCreateMutationVariables>;
+
+/**
+ * __useSurveyQuestionCreateMutation__
+ *
+ * To run a mutation, you first call `useSurveyQuestionCreateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSurveyQuestionCreateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [surveyQuestionCreateMutation, { data, loading, error }] = useSurveyQuestionCreateMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSurveyQuestionCreateMutation(baseOptions?: Apollo.MutationHookOptions<SurveyQuestionCreateMutation, SurveyQuestionCreateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SurveyQuestionCreateMutation, SurveyQuestionCreateMutationVariables>(SurveyQuestionCreateDocument, options);
+      }
+export type SurveyQuestionCreateMutationHookResult = ReturnType<typeof useSurveyQuestionCreateMutation>;
+export type SurveyQuestionCreateMutationResult = Apollo.MutationResult<SurveyQuestionCreateMutation>;
+export type SurveyQuestionCreateMutationOptions = Apollo.BaseMutationOptions<SurveyQuestionCreateMutation, SurveyQuestionCreateMutationVariables>;
+export const SurveyChannelCreateDocument = gql`
+    mutation SurveyChannelCreate($input: SurveyChannelCreateInput!) {
+  surveyChannelCreate(input: $input) {
+    surveyChannel {
+      ...SurveyChannelFragment
+    }
+    surveyErrors {
+      ...SurveyErrorFragment
+    }
+    errors {
+      ...SurveyErrorFragment
+    }
+  }
+}
+    ${SurveyChannelFragmentFragmentDoc}
+${SurveyErrorFragmentFragmentDoc}`;
+export type SurveyChannelCreateMutationFn = Apollo.MutationFunction<SurveyChannelCreateMutation, SurveyChannelCreateMutationVariables>;
+
+/**
+ * __useSurveyChannelCreateMutation__
+ *
+ * To run a mutation, you first call `useSurveyChannelCreateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSurveyChannelCreateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [surveyChannelCreateMutation, { data, loading, error }] = useSurveyChannelCreateMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSurveyChannelCreateMutation(baseOptions?: Apollo.MutationHookOptions<SurveyChannelCreateMutation, SurveyChannelCreateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SurveyChannelCreateMutation, SurveyChannelCreateMutationVariables>(SurveyChannelCreateDocument, options);
+      }
+export type SurveyChannelCreateMutationHookResult = ReturnType<typeof useSurveyChannelCreateMutation>;
+export type SurveyChannelCreateMutationResult = Apollo.MutationResult<SurveyChannelCreateMutation>;
+export type SurveyChannelCreateMutationOptions = Apollo.BaseMutationOptions<SurveyChannelCreateMutation, SurveyChannelCreateMutationVariables>;
+export const SurveyChannelUpdateDocument = gql`
+    mutation SurveyChannelUpdate($id: ID!, $input: SurveyChannelUpdateInput!) {
+  surveyChannelUpdate(id: $id, input: $input) {
+    surveyChannel {
+      ...SurveyChannelFragment
+    }
+    surveyErrors {
+      ...SurveyErrorFragment
+    }
+    errors {
+      ...SurveyErrorFragment
+    }
+  }
+}
+    ${SurveyChannelFragmentFragmentDoc}
+${SurveyErrorFragmentFragmentDoc}`;
+export type SurveyChannelUpdateMutationFn = Apollo.MutationFunction<SurveyChannelUpdateMutation, SurveyChannelUpdateMutationVariables>;
+
+/**
+ * __useSurveyChannelUpdateMutation__
+ *
+ * To run a mutation, you first call `useSurveyChannelUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSurveyChannelUpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [surveyChannelUpdateMutation, { data, loading, error }] = useSurveyChannelUpdateMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSurveyChannelUpdateMutation(baseOptions?: Apollo.MutationHookOptions<SurveyChannelUpdateMutation, SurveyChannelUpdateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SurveyChannelUpdateMutation, SurveyChannelUpdateMutationVariables>(SurveyChannelUpdateDocument, options);
+      }
+export type SurveyChannelUpdateMutationHookResult = ReturnType<typeof useSurveyChannelUpdateMutation>;
+export type SurveyChannelUpdateMutationResult = Apollo.MutationResult<SurveyChannelUpdateMutation>;
+export type SurveyChannelUpdateMutationOptions = Apollo.BaseMutationOptions<SurveyChannelUpdateMutation, SurveyChannelUpdateMutationVariables>;
+export const SurveyChannelDeleteDocument = gql`
+    mutation SurveyChannelDelete($id: ID!) {
+  surveyChannelDelete(id: $id) {
+    surveyChannel {
+      ...SurveyChannelFragment
+    }
+    surveyErrors {
+      ...SurveyErrorFragment
+    }
+    errors {
+      ...SurveyErrorFragment
+    }
+  }
+}
+    ${SurveyChannelFragmentFragmentDoc}
+${SurveyErrorFragmentFragmentDoc}`;
+export type SurveyChannelDeleteMutationFn = Apollo.MutationFunction<SurveyChannelDeleteMutation, SurveyChannelDeleteMutationVariables>;
+
+/**
+ * __useSurveyChannelDeleteMutation__
+ *
+ * To run a mutation, you first call `useSurveyChannelDeleteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSurveyChannelDeleteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [surveyChannelDeleteMutation, { data, loading, error }] = useSurveyChannelDeleteMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSurveyChannelDeleteMutation(baseOptions?: Apollo.MutationHookOptions<SurveyChannelDeleteMutation, SurveyChannelDeleteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SurveyChannelDeleteMutation, SurveyChannelDeleteMutationVariables>(SurveyChannelDeleteDocument, options);
+      }
+export type SurveyChannelDeleteMutationHookResult = ReturnType<typeof useSurveyChannelDeleteMutation>;
+export type SurveyChannelDeleteMutationResult = Apollo.MutationResult<SurveyChannelDeleteMutation>;
+export type SurveyChannelDeleteMutationOptions = Apollo.BaseMutationOptions<SurveyChannelDeleteMutation, SurveyChannelDeleteMutationVariables>;
+export const SurveyCreateDocument = gql`
+    mutation SurveyCreate($input: SurveyCreateInput!) {
+  surveyCreate(input: $input) {
+    ...SurveyCreateFragment
+  }
+}
+    ${SurveyCreateFragmentFragmentDoc}`;
+export type SurveyCreateMutationFn = Apollo.MutationFunction<SurveyCreateMutation, SurveyCreateMutationVariables>;
+
+/**
+ * __useSurveyCreateMutation__
+ *
+ * To run a mutation, you first call `useSurveyCreateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSurveyCreateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [surveyCreateMutation, { data, loading, error }] = useSurveyCreateMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSurveyCreateMutation(baseOptions?: Apollo.MutationHookOptions<SurveyCreateMutation, SurveyCreateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SurveyCreateMutation, SurveyCreateMutationVariables>(SurveyCreateDocument, options);
+      }
+export type SurveyCreateMutationHookResult = ReturnType<typeof useSurveyCreateMutation>;
+export type SurveyCreateMutationResult = Apollo.MutationResult<SurveyCreateMutation>;
+export type SurveyCreateMutationOptions = Apollo.BaseMutationOptions<SurveyCreateMutation, SurveyCreateMutationVariables>;
+export const AudiencePropertiesDocument = gql`
+    query audienceProperties {
+  propertyDefinitions(first: 100, definitionType: PERSON) {
+    edges {
+      node {
+        id
+        name
+        isNumerical
+        type
+        propertyType
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useAudiencePropertiesQuery__
+ *
+ * To run a query within a React component, call `useAudiencePropertiesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAudiencePropertiesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAudiencePropertiesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAudiencePropertiesQuery(baseOptions?: Apollo.QueryHookOptions<AudiencePropertiesQuery, AudiencePropertiesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AudiencePropertiesQuery, AudiencePropertiesQueryVariables>(AudiencePropertiesDocument, options);
+      }
+export function useAudiencePropertiesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AudiencePropertiesQuery, AudiencePropertiesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AudiencePropertiesQuery, AudiencePropertiesQueryVariables>(AudiencePropertiesDocument, options);
+        }
+export type AudiencePropertiesQueryHookResult = ReturnType<typeof useAudiencePropertiesQuery>;
+export type AudiencePropertiesLazyQueryHookResult = ReturnType<typeof useAudiencePropertiesLazyQuery>;
+export type AudiencePropertiesQueryResult = Apollo.QueryResult<AudiencePropertiesQuery, AudiencePropertiesQueryVariables>;
+export const ChannelsDocument = gql`
+    query channels($surveyId: ID!) {
+  channels(id: $surveyId, first: 50) {
+    edges {
+      node {
+        ...SurveyChannelFragment
+      }
+    }
+  }
+}
+    ${SurveyChannelFragmentFragmentDoc}`;
+
+/**
+ * __useChannelsQuery__
+ *
+ * To run a query within a React component, call `useChannelsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChannelsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChannelsQuery({
+ *   variables: {
+ *      surveyId: // value for 'surveyId'
+ *   },
+ * });
+ */
+export function useChannelsQuery(baseOptions: Apollo.QueryHookOptions<ChannelsQuery, ChannelsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ChannelsQuery, ChannelsQueryVariables>(ChannelsDocument, options);
+      }
+export function useChannelsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChannelsQuery, ChannelsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ChannelsQuery, ChannelsQueryVariables>(ChannelsDocument, options);
+        }
+export type ChannelsQueryHookResult = ReturnType<typeof useChannelsQuery>;
+export type ChannelsLazyQueryHookResult = ReturnType<typeof useChannelsLazyQuery>;
+export type ChannelsQueryResult = Apollo.QueryResult<ChannelsQuery, ChannelsQueryVariables>;
+export const ProjectEventsDataDocument = gql`
+    query projectEventsData {
+  eventDefinitions(first: 100) {
+    edges {
+      node {
+        id
+        name
+        createdAt
+        lastSeenAt
+      }
+    }
+  }
+  eventProperties(first: 100) {
+    edges {
+      node {
+        id
+        event
+        property
+      }
+    }
+  }
+  propertyDefinitions(first: 100, definitionType: EVENT) {
+    edges {
+      node {
+        id
+        name
+        isNumerical
+        type
+        propertyType
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useProjectEventsDataQuery__
+ *
+ * To run a query within a React component, call `useProjectEventsDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProjectEventsDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProjectEventsDataQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useProjectEventsDataQuery(baseOptions?: Apollo.QueryHookOptions<ProjectEventsDataQuery, ProjectEventsDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProjectEventsDataQuery, ProjectEventsDataQueryVariables>(ProjectEventsDataDocument, options);
+      }
+export function useProjectEventsDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProjectEventsDataQuery, ProjectEventsDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProjectEventsDataQuery, ProjectEventsDataQueryVariables>(ProjectEventsDataDocument, options);
+        }
+export type ProjectEventsDataQueryHookResult = ReturnType<typeof useProjectEventsDataQuery>;
+export type ProjectEventsDataLazyQueryHookResult = ReturnType<typeof useProjectEventsDataLazyQuery>;
+export type ProjectEventsDataQueryResult = Apollo.QueryResult<ProjectEventsDataQuery, ProjectEventsDataQueryVariables>;
+export const GetQuestionsDocument = gql`
+    query GetQuestions($id: ID!) {
+  questions(id: $id, first: 50) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    edges {
+      node {
+        ...SurveyQuestionFragment
+      }
+    }
+    totalCount
+  }
+}
+    ${SurveyQuestionFragmentFragmentDoc}`;
+
+/**
+ * __useGetQuestionsQuery__
+ *
+ * To run a query within a React component, call `useGetQuestionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetQuestionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetQuestionsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetQuestionsQuery(baseOptions: Apollo.QueryHookOptions<GetQuestionsQuery, GetQuestionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetQuestionsQuery, GetQuestionsQueryVariables>(GetQuestionsDocument, options);
+      }
+export function useGetQuestionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetQuestionsQuery, GetQuestionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetQuestionsQuery, GetQuestionsQueryVariables>(GetQuestionsDocument, options);
+        }
+export type GetQuestionsQueryHookResult = ReturnType<typeof useGetQuestionsQuery>;
+export type GetQuestionsLazyQueryHookResult = ReturnType<typeof useGetQuestionsLazyQuery>;
+export type GetQuestionsQueryResult = Apollo.QueryResult<GetQuestionsQuery, GetQuestionsQueryVariables>;
+export const GetSurveyDocument = gql`
+    query GetSurvey($id: ID, $slug: String) {
+  survey(id: $id, slug: $slug) {
+    ...SurveyFragment
+  }
+}
+    ${SurveyFragmentFragmentDoc}`;
+
+/**
+ * __useGetSurveyQuery__
+ *
+ * To run a query within a React component, call `useGetSurveyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSurveyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSurveyQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      slug: // value for 'slug'
+ *   },
+ * });
+ */
+export function useGetSurveyQuery(baseOptions?: Apollo.QueryHookOptions<GetSurveyQuery, GetSurveyQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetSurveyQuery, GetSurveyQueryVariables>(GetSurveyDocument, options);
+      }
+export function useGetSurveyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSurveyQuery, GetSurveyQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetSurveyQuery, GetSurveyQueryVariables>(GetSurveyDocument, options);
+        }
+export type GetSurveyQueryHookResult = ReturnType<typeof useGetSurveyQuery>;
+export type GetSurveyLazyQueryHookResult = ReturnType<typeof useGetSurveyLazyQuery>;
+export type GetSurveyQueryResult = Apollo.QueryResult<GetSurveyQuery, GetSurveyQueryVariables>;
 export const UserUpdateDocument = gql`
     mutation userUpdate($input: UserInput!) {
   userUpdate(input: $input) {

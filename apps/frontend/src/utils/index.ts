@@ -1,4 +1,8 @@
+import { PROPERTY_FIELDS } from "@/constants";
+import { SurveyChannel } from "@/generated/graphql";
+import { ParsedChannel } from "@/types";
 import { DeepOmit } from "@apollo/client/utilities";
+import { FilterOperator } from "@integraflow/web/src/types";
 import { toast } from "./toast";
 
 export function cn(...classes: string[]) {
@@ -44,3 +48,43 @@ export function addEllipsis(text: string, maxLength: number) {
 }
 
 export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+export const generateRandomString = (length: number) => {
+    let result = "";
+    const characters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(
+            Math.floor(Math.random() * charactersLength),
+        );
+    }
+    return result;
+};
+
+export const toSurveyChannel = (channel: ParsedChannel): SurveyChannel => {
+    return {
+        ...channel,
+        settings: JSON.stringify(channel.settings ?? {}),
+        triggers: JSON.stringify(channel.triggers ?? {}),
+        conditions: JSON.stringify(channel.conditions ?? {}),
+    };
+};
+
+export const fromSurveyChannel = (channel: SurveyChannel): ParsedChannel => {
+    return {
+        ...channel,
+        settings: JSON.parse(channel.settings ?? "{}"),
+        triggers: JSON.parse(channel.triggers ?? "{}"),
+        conditions: JSON.parse(channel.conditions ?? "{}"),
+    };
+};
+
+export const getFilterLabel = (operator: FilterOperator) => {
+    const operators = Object.values(PROPERTY_FIELDS).reduce(
+        (acc, curr) => [...acc, ...curr],
+        [],
+    );
+    const operatorObj = operators.find((o) => o.operator === operator);
+    return operatorObj?.label;
+};

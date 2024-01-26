@@ -3,6 +3,9 @@ import {
     MagicSignIn,
     Onboarding,
     Signup,
+    SurveyStudio,
+    SurveyTemplates,
+    Surveys,
     Workspace,
 } from "@/pages";
 import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
@@ -57,6 +60,22 @@ const router = createBrowserRouter([
                     {
                         path: "projects/:projectSlug/get-started",
                         element: <Onboarding />,
+                    },
+                    {
+                        path: "projects/:projectSlug/surveys",
+                        element: <Surveys />,
+                    },
+                    {
+                        path: "projects/:projectSlug/surveys/templates",
+                        element: <SurveyTemplates />,
+                    },
+                    {
+                        path: "/:orgSlug/projects/:projectSlug/survey/:surveySlug",
+                        element: <SurveyStudio />,
+                    },
+                    {
+                        path: "/:orgSlug/projects/:projectSlug/surveys",
+                        element: <Surveys />,
                     },
                 ],
             },

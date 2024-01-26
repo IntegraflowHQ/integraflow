@@ -1,5 +1,5 @@
-from datetime import datetime
 import json
+from datetime import datetime
 from numbers import Number
 from typing import Any, Dict, Optional, Union
 
@@ -8,17 +8,16 @@ from dateutil import parser
 from dateutil.relativedelta import relativedelta
 from django.db import IntegrityError
 from django.utils import timezone
-from sentry_sdk import capture_exception
-
 from integraflow.event.models import (
     Event,
     EventDefinition,
     EventProperty,
     Person,
     PropertyDefinition,
-    PropertyType
+    PropertyType,
 )
 from integraflow.project.models import Project
+from sentry_sdk import capture_exception
 
 
 def _get_person(project_id: str, distinct_id: str):
@@ -126,6 +125,13 @@ def _set_is_identified(
     return person
 
 
+def is_valid_datetime(date):
+    try:
+        parser.isoparse(date)
+        return True
+    except ValueError:
+        return False
+
 def handle_timestamp(data: dict, now: str, sent_at: Optional[str]) -> datetime:
     if data.get("timestamp"):
         if sent_at:
@@ -184,7 +190,7 @@ def _from_value_get_property_type(value):
     if isinstance(value, Number):
         return PropertyType.Numeric
 
-    if isinstance(value, datetime):
+    if is_valid_datetime(value):
         return PropertyType.Datetime
 
     return PropertyType.String
