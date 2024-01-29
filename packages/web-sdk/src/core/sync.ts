@@ -50,29 +50,8 @@ export class SyncManager {
 
     async sync() {
         const state = await getState(this.context);
-        const surveys = await this.api.surveys({ first: 100 });
+        const surveys = await this.api.activeSurveys({ first: 100 });
         console.log("surveys: ", surveys);
-        if (surveys?.nodes && surveys.nodes.length > 0) {
-            const questionPromises = surveys.nodes.map(async survey => {
-                const questions = await this.api.questions(survey.id, {
-                    first: 100
-                });
-                return { [survey.slug]: questions?.nodes };
-            });
-
-            const questions = await Promise.all(questionPromises);
-            console.log("questions: ", questions);
-
-            const channelPromises = surveys.nodes.map(async survey => {
-                const channels = await this.api.channels(survey.id, {
-                    first: 100
-                });
-                return { [survey.slug]: channels?.nodes };
-            });
-
-            const channels = await Promise.all(channelPromises);
-            console.log("channels: ", channels);
-        }
 
         this.context.setState(state);
     }

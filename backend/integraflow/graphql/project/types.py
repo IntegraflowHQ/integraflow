@@ -51,14 +51,10 @@ class Project(ModelObjectType):
         return root.organization
 
 
-class ProjectTheme(ModelObjectType):
+class BaseProjectTheme(ModelObjectType):
     id = graphene.GlobalID(
         required=True,
         description="The ID of the theme."
-    )
-    reference = graphene.ID(
-        required=False,
-        description="For internal purpose."
     )
     name = graphene.String(
         required=True,
@@ -69,6 +65,19 @@ class ProjectTheme(ModelObjectType):
     )
     settings = JSONString(
         description="The settings of the theme."
+    )
+
+    class Meta:
+        description = "Represents a theme."
+        doc_category = DOC_CATEGORY_PROJECTS
+        model = models.ProjectTheme
+        interfaces = [graphene.relay.Node]
+
+
+class ProjectTheme(BaseProjectTheme):
+    reference = graphene.ID(
+        required=False,
+        description="For internal purpose."
     )
     project = PermissionsField(
         Project,

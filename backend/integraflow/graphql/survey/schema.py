@@ -24,6 +24,7 @@ from .mutations import (
     SurveyUpdate
 )
 from .resolvers import (
+    resolve_active_surveys,
     resolve_channels,
     resolve_questions,
     resolve_survey,
@@ -31,6 +32,7 @@ from .resolvers import (
 )
 from .sorters import SurveySortingInput
 from .types import (
+    BaseSurveyCountableConnection,
     Survey,
     SurveyChannelCountableConnection,
     SurveyCountableConnection,
@@ -69,6 +71,14 @@ class SurveyQueries(graphene.ObjectType):
         permissions=[AuthorizationFilters.PROJECT_MEMBER_ACCESS],
         doc_category=DOC_CATEGORY_SURVEYS,
     )
+    active_surveys = FilterConnectionField(
+        BaseSurveyCountableConnection,
+        filter=SurveyFilterInput(description="Filtering options for surveys."),
+        sort_by=SurveySortingInput(description="Sort surveys."),
+        description="List of the project's surveys.",
+        permissions=[AuthorizationFilters.AUTHENTICATED_API],
+        doc_category=DOC_CATEGORY_SURVEYS,
+    )
     survey = PermissionsField(
         Survey,
         id=graphene.Argument(
@@ -82,7 +92,10 @@ class SurveyQueries(graphene.ObjectType):
             required=False
         ),
         description="Look up a survey by ID or slug.",
-        permissions=[AuthorizationFilters.PROJECT_MEMBER_ACCESS],
+        permissions=[
+            AuthorizationFilters.PROJECT_MEMBER_ACCESS,
+            AuthorizationFilters.AUTHENTICATED_API
+        ],
         doc_category=DOC_CATEGORY_SURVEYS,
     )
 
@@ -109,6 +122,17 @@ class SurveyQueries(graphene.ObjectType):
     @staticmethod
     def resolve_surveys(_root, info, **kwargs):
         qs = resolve_surveys(info)
+        qs = filter_connection_queryset(qs, kwargs)
+        return create_connection_slice(
+            qs,
+            info,
+            kwargs,
+            SurveyQuestionCountableConnection
+        )
+
+    @staticmethod
+    def resolve_active_surveys(_root, info, **kwargs):
+        qs = resolve_active_surveys(info)
         qs = filter_connection_queryset(qs, kwargs)
         return create_connection_slice(
             qs,

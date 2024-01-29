@@ -11,6 +11,7 @@ from integraflow.graphql.core.fields import (
     JSONString,
     PermissionsField
 )
+from integraflow.graphql.core.types.common import NonNullList
 from integraflow.graphql.core.types.model import ModelObjectType
 from integraflow.graphql.core.utils import to_global_ids_from_pks
 from integraflow.graphql.survey.enums import (
@@ -21,6 +22,86 @@ from integraflow.graphql.survey.enums import (
 )
 from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.survey import models
+
+
+class BaseSurvey(ModelObjectType):
+    id = graphene.GlobalID(
+        required=True,
+        description="The ID of the survey."
+    )
+    slug = graphene.String(
+        required=True,
+        description="Slug of the survey.",
+    )
+    name = graphene.String(
+        required=False,
+        description="Name of the survey.",
+    )
+    status = graphene.Field(
+        SurveyStatusEnum,
+        required=True,
+        description="The status of the survey",
+    )
+    settings = JSONString(
+        description="The settings of the survey."
+    )
+    theme = PermissionsField(
+        "integraflow.graphql.project.types.BaseProjectTheme",
+        description="The theme of the survey.",
+    )
+    questions = NonNullList(
+        "integraflow.graphql.survey.types.BaseSurveyQuestion",
+        required=True,
+        description="The questions in the the survey"
+    )
+    channels = NonNullList(
+        "integraflow.graphql.survey.types.BaseSurveyChannel",
+        required=True,
+        description="The distribution channels supported by the survey",
+        channelType=graphene.Argument(
+            SurveyChannelTypeEnum,
+            description="The type of the distribution channel",
+            required=False,
+        ),
+    )
+    created_at = graphene.DateTime(
+        required=True,
+        description="The time at which the survey was created."
+    )
+    start_date = graphene.DateTime(
+        required=False,
+        description="The date at which the survey was started."
+    )
+    end_date = graphene.DateTime(
+        required=False,
+        description="The date at which the survey was ended."
+    )
+
+    class Meta:
+        description = "Represents a survey from used by our sdk."
+        doc_category = DOC_CATEGORY_SURVEYS
+        model = models.Survey
+        interfaces = [graphene.relay.Node]
+
+    @staticmethod
+    def resolve_theme(root: models.Survey, info: ResolveInfo):
+        return root.theme
+
+    @staticmethod
+    def resolve_questions(root: models.Survey, info: ResolveInfo, **kwargs):
+        return root.survey_questions.all()  # type: ignore
+
+    @staticmethod
+    def resolve_channels(
+        root: models.Survey,
+        info: ResolveInfo,
+        channelType=None
+    ):
+        channels = root.survey_channels  # type: ignore
+        if channelType:
+            return channels.filter(type=channelType).all()
+
+        return channels.all()
 
 
 class Survey(ModelObjectType):
@@ -139,14 +220,10 @@ class Survey(ModelObjectType):
         )
 
 
-class SurveyQuestion(ModelObjectType):
+class BaseSurveyQuestion(ModelObjectType):
     id = graphene.GlobalID(
         required=True,
         description="The ID of the question."
-    )
-    reference = graphene.ID(
-        required=False,
-        description="For internal purpose."
     )
     label = graphene.String(
         required=True,
@@ -175,13 +252,6 @@ class SurveyQuestion(ModelObjectType):
         required=True,
         description="The position of the question."
     )
-    survey = PermissionsField(
-        Survey,
-        description="The project the survey belongs to",
-        permissions=[
-            AuthorizationFilters.PROJECT_MEMBER_ACCESS,
-        ],
-    )
     created_at = graphene.DateTime(
         required=True,
         description="The time at which the question was created."
@@ -205,6 +275,26 @@ class SurveyQuestion(ModelObjectType):
 
         return settings
 
+
+class SurveyQuestion(BaseSurveyQuestion):
+    reference = graphene.ID(
+        required=False,
+        description="For internal purpose."
+    )
+    survey = PermissionsField(
+        Survey,
+        description="The project the survey belongs to",
+        permissions=[
+            AuthorizationFilters.PROJECT_MEMBER_ACCESS,
+        ],
+    )
+
+    class Meta:
+        description = "Represents a question."
+        doc_category = DOC_CATEGORY_SURVEYS
+        model = models.SurveyQuestion
+        interfaces = [graphene.relay.Node]
+
     @staticmethod
     def resolve_reference(root: models.SurveyQuestion, info: ResolveInfo):
         return root.pk
@@ -214,14 +304,10 @@ class SurveyQuestion(ModelObjectType):
         return root.survey
 
 
-class SurveyChannel(ModelObjectType):
+class BaseSurveyChannel(ModelObjectType):
     id = graphene.GlobalID(
         required=True,
         description="The ID of the channel."
-    )
-    reference = graphene.ID(
-        required=False,
-        description="For internal purpose."
     )
     type = graphene.Field(
         SurveyChannelTypeEnum,
@@ -240,6 +326,19 @@ class SurveyChannel(ModelObjectType):
     created_at = graphene.DateTime(
         required=True,
         description="The time at which the channel was created."
+    )
+
+    class Meta:
+        description = "Represents a survey channel."
+        doc_category = DOC_CATEGORY_SURVEYS
+        model = models.SurveyChannel
+        interfaces = [graphene.relay.Node]
+
+
+class SurveyChannel(BaseSurveyChannel):
+    reference = graphene.ID(
+        required=False,
+        description="For internal purpose."
     )
     survey = PermissionsField(
         Survey,
@@ -262,6 +361,12 @@ class SurveyChannel(ModelObjectType):
     @staticmethod
     def resolve_survey(root: models.SurveyChannel, info: ResolveInfo):
         return root.survey
+
+
+class BaseSurveyCountableConnection(CountableConnection):
+    class Meta:
+        doc_category = DOC_CATEGORY_SURVEYS
+        node = BaseSurvey
 
 
 class SurveyCountableConnection(CountableConnection):

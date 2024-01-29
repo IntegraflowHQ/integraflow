@@ -86,6 +86,179 @@ type AuthUser implements Node @doc(category: "Users") {
 }
 
 """
+Represents a theme.
+"""
+type BaseProjectTheme implements Node @doc(category: "Projects") {
+    """
+    The settings of the theme.
+    """
+    colorScheme: JSONString
+    """
+    The ID of the theme.
+    """
+    id: ID!
+    """
+    Name of the theme.
+    """
+    name: String!
+    """
+    The settings of the theme.
+    """
+    settings: JSONString
+}
+
+"""
+Represents a survey from used by our sdk.
+"""
+type BaseSurvey implements Node @doc(category: "Surveys") {
+    """
+    The distribution channels supported by the survey
+    """
+    channels(
+        """
+        The type of the distribution channel
+        """
+        channelType: SurveyChannelTypeEnum
+    ): [BaseSurveyChannel!]!
+    """
+    The time at which the survey was created.
+    """
+    createdAt: DateTime!
+    """
+    The date at which the survey was ended.
+    """
+    endDate: DateTime
+    """
+    The ID of the survey.
+    """
+    id: ID!
+    """
+    Name of the survey.
+    """
+    name: String
+    """
+    The questions in the the survey
+    """
+    questions: [BaseSurveyQuestion!]!
+    """
+    The settings of the survey.
+    """
+    settings: JSONString
+    """
+    Slug of the survey.
+    """
+    slug: String!
+    """
+    The date at which the survey was started.
+    """
+    startDate: DateTime
+    """
+    The status of the survey
+    """
+    status: SurveyStatusEnum!
+    """
+    The theme of the survey.
+    """
+    theme: BaseProjectTheme
+}
+
+"""
+Represents a survey channel.
+"""
+type BaseSurveyChannel implements Node @doc(category: "Surveys") {
+    """
+    The settings of the question.
+    """
+    conditions: JSONString
+    """
+    The time at which the channel was created.
+    """
+    createdAt: DateTime!
+    """
+    The ID of the channel.
+    """
+    id: ID!
+    """
+    The settings of the question.
+    """
+    settings: JSONString
+    """
+    The options of the question.
+    """
+    triggers: JSONString
+    """
+    The type of the survey channel
+    """
+    type: SurveyChannelTypeEnum!
+}
+
+type BaseSurveyCountableConnection @doc(category: "Surveys") {
+    edges: [BaseSurveyCountableEdge!]!
+    nodes: [BaseSurvey!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
+
+type BaseSurveyCountableEdge @doc(category: "Surveys") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: BaseSurvey!
+}
+
+"""
+Represents a question.
+"""
+type BaseSurveyQuestion implements Node @doc(category: "Surveys") {
+    """
+    The time at which the question was created.
+    """
+    createdAt: DateTime!
+    """
+    Description of the question.
+    """
+    description: String!
+    """
+    The ID of the question.
+    """
+    id: ID!
+    """
+    Label of the question.
+    """
+    label: String!
+    """
+    The position of the question.
+    """
+    maxPath: Int!
+    """
+    The options of the question.
+    """
+    options: JSONString
+    """
+    The position of the question.
+    """
+    orderNumber: Int!
+    """
+    The settings of the question.
+    """
+    settings: JSONString
+    """
+    The type of the question
+    """
+    type: SurveyQuestionTypeEnum!
+}
+
+"""
 The `Date` scalar type represents a Date
 value as specified by
 [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
@@ -227,11 +400,11 @@ input EventCaptureInput @doc(category: "Events") {
     """
     timestamp: DateTime!
     """
-    The user distinct ID.
+    The distinct ID.
     """
     userId: ID
     """
-    The event payload ID.
+    The payload ID.
     """
     uuid: UUID
 }
@@ -1590,6 +1763,37 @@ type Query {
     _entities(representations: [_Any]): [_Entity]
     _service: _Service
     """
+    List of the project's surveys.
+
+    Requires one of the following permissions: AUTHENTICATED_API.
+    """
+    activeSurveys(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Filtering options for surveys.
+        """
+        filter: SurveyFilterInput
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+        """
+        Sort surveys.
+        """
+        sortBy: SurveySortingInput
+    ): BaseSurveyCountableConnection @doc(category: "Surveys")
+    """
     List of channels for a specific survey.
 
     Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -1785,7 +1989,7 @@ type Query {
     """
     Look up a survey by ID or slug.
 
-    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS, AUTHENTICATED_API.
     """
     survey(
         """
@@ -2248,7 +2452,6 @@ input SurveyFilterInput @doc(category: "Surveys") {
     Filter by ids.
     """
     ids: [ID!]
-    search: String
     startDate: DateRangeInput
     status: SurveyStatusEnum
     """
@@ -2535,6 +2738,10 @@ input SurveyUpdateInput @doc(category: "Surveys") {
     type: SurveyTypeEnum
 }
 
+"""
+Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
+in fields, resolvers and input.
+"""
 scalar UUID
 
 """

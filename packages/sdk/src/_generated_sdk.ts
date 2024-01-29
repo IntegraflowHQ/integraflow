@@ -266,6 +266,185 @@ export class AuthUser extends Request {
     public project?: Project;
 }
 /**
+ * Represents a theme.
+ *
+ * @param request - function to call the graphql client
+ * @param data - I.BaseProjectThemeFragment response data
+ */
+export class BaseProjectTheme extends Request {
+    public constructor(
+        request: IntegraflowRequest,
+        data: I.BaseProjectThemeFragment
+    ) {
+        super(request);
+        this.colorScheme = data.colorScheme ?? undefined;
+        this.id = data.id;
+        this.name = data.name;
+        this.settings = data.settings ?? undefined;
+    }
+
+    /** The settings of the theme. */
+    public colorScheme?: I.Scalars["JSONString"];
+    /** The ID of the theme. */
+    public id: string;
+    /** Name of the theme. */
+    public name: string;
+    /** The settings of the theme. */
+    public settings?: I.Scalars["JSONString"];
+}
+/**
+ * Represents a survey from used by our sdk.
+ *
+ * @param request - function to call the graphql client
+ * @param data - I.BaseSurveyFragment response data
+ */
+export class BaseSurvey extends Request {
+    public constructor(
+        request: IntegraflowRequest,
+        data: I.BaseSurveyFragment
+    ) {
+        super(request);
+        this.createdAt = parseDate(data.createdAt) ?? new Date();
+        this.endDate = parseDate(data.endDate) ?? undefined;
+        this.id = data.id;
+        this.name = data.name ?? undefined;
+        this.settings = data.settings ?? undefined;
+        this.slug = data.slug;
+        this.startDate = parseDate(data.startDate) ?? undefined;
+        this.theme = data.theme
+            ? new BaseProjectTheme(request, data.theme)
+            : undefined;
+        this.status = data.status;
+        this.channels = data.channels.map(
+            node => new BaseSurveyChannel(request, node)
+        );
+        this.questions = data.questions.map(
+            node => new BaseSurveyQuestion(request, node)
+        );
+    }
+
+    /** The time at which the survey was created. */
+    public createdAt: Date;
+    /** The date at which the survey was ended. */
+    public endDate?: Date;
+    /** The ID of the survey. */
+    public id: string;
+    /** Name of the survey. */
+    public name?: string;
+    /** The settings of the survey. */
+    public settings?: I.Scalars["JSONString"];
+    /** Slug of the survey. */
+    public slug: string;
+    /** The date at which the survey was started. */
+    public startDate?: Date;
+    /** The distribution channels supported by the survey */
+    public channels: BaseSurveyChannel[];
+    /** The questions in the the survey */
+    public questions: BaseSurveyQuestion[];
+    /** The theme of the survey. */
+    public theme?: BaseProjectTheme;
+    /** The status of the survey */
+    public status: I.SurveyStatusEnum;
+}
+/**
+ * Represents a survey channel.
+ *
+ * @param request - function to call the graphql client
+ * @param data - I.BaseSurveyChannelFragment response data
+ */
+export class BaseSurveyChannel extends Request {
+    public constructor(
+        request: IntegraflowRequest,
+        data: I.BaseSurveyChannelFragment
+    ) {
+        super(request);
+        this.conditions = data.conditions ?? undefined;
+        this.createdAt = parseDate(data.createdAt) ?? new Date();
+        this.id = data.id;
+        this.settings = data.settings ?? undefined;
+        this.triggers = data.triggers ?? undefined;
+        this.type = data.type;
+    }
+
+    /** The settings of the question. */
+    public conditions?: I.Scalars["JSONString"];
+    /** The time at which the channel was created. */
+    public createdAt: Date;
+    /** The ID of the channel. */
+    public id: string;
+    /** The settings of the question. */
+    public settings?: I.Scalars["JSONString"];
+    /** The options of the question. */
+    public triggers?: I.Scalars["JSONString"];
+    /** The type of the survey channel */
+    public type: I.SurveyChannelTypeEnum;
+}
+/**
+ * BaseSurveyCountableConnection model
+ *
+ * @param request - function to call the graphql client
+ * @param fetch - function to trigger a refetch of this BaseSurveyCountableConnection model
+ * @param data - BaseSurveyCountableConnection response data
+ */
+export class BaseSurveyCountableConnection extends Connection<BaseSurvey> {
+    public constructor(
+        request: IntegraflowRequest,
+        fetch: (
+            connection?: IntegraflowConnectionVariables
+        ) => IntegraflowFetch<IntegraflowConnection<BaseSurvey> | undefined>,
+        data: I.BaseSurveyCountableConnectionFragment
+    ) {
+        super(
+            request,
+            fetch,
+            data.nodes.map(node => new BaseSurvey(request, node)),
+            new PageInfo(request, data.pageInfo)
+        );
+    }
+}
+/**
+ * Represents a question.
+ *
+ * @param request - function to call the graphql client
+ * @param data - I.BaseSurveyQuestionFragment response data
+ */
+export class BaseSurveyQuestion extends Request {
+    public constructor(
+        request: IntegraflowRequest,
+        data: I.BaseSurveyQuestionFragment
+    ) {
+        super(request);
+        this.createdAt = parseDate(data.createdAt) ?? new Date();
+        this.description = data.description;
+        this.id = data.id;
+        this.label = data.label;
+        this.maxPath = data.maxPath;
+        this.options = data.options ?? undefined;
+        this.orderNumber = data.orderNumber;
+        this.settings = data.settings ?? undefined;
+        this.type = data.type;
+    }
+
+    /** The time at which the question was created. */
+    public createdAt: Date;
+    /** Description of the question. */
+    public description: string;
+    /** The ID of the question. */
+    public id: string;
+    /** Label of the question. */
+    public label: string;
+    /** The position of the question. */
+    public maxPath: number;
+    /** The options of the question. */
+    public options?: I.Scalars["JSONString"];
+    /** The position of the question. */
+    public orderNumber: number;
+    /** The settings of the question. */
+    public settings?: I.Scalars["JSONString"];
+    /** The type of the question */
+    public type: I.SurveyQuestionTypeEnum;
+}
+/**
  * Authenticates a user account via email and authentication token.
  *
  * @param request - function to call the graphql client
@@ -3074,6 +3253,48 @@ export class UpdateUserMutation extends Request {
 }
 
 /**
+ * A fetchable ActiveSurveys Query
+ *
+ * @param request - function to call the graphql client
+ */
+export class ActiveSurveysQuery extends Request {
+    public constructor(request: IntegraflowRequest) {
+        super(request);
+    }
+
+    /**
+     * Call the ActiveSurveys query and return a BaseSurveyCountableConnection
+     *
+     * @param variables - variables to pass into the ActiveSurveysQuery
+     * @returns parsed response from ActiveSurveysQuery
+     */
+    public async fetch(
+        variables?: I.ActiveSurveysQueryVariables
+    ): IntegraflowFetch<BaseSurveyCountableConnection | undefined> {
+        const response = await this._request<
+            I.ActiveSurveysQuery,
+            I.ActiveSurveysQueryVariables
+        >(I.ActiveSurveysDocument, variables);
+        const data = response.activeSurveys;
+        if (data) {
+            return new BaseSurveyCountableConnection(
+                this._request,
+                connection =>
+                    this.fetch(
+                        defaultConnection({
+                            ...variables,
+                            ...connection
+                        })
+                    ),
+                data
+            );
+        } else {
+            return undefined;
+        }
+    }
+}
+
+/**
  * A fetchable Channels Query
  *
  * @param request - function to call the graphql client
@@ -4362,6 +4583,19 @@ export class IntegraflowSdk extends Request {
         return new UpdateUserMutation(this._request).fetch(input);
     }
     /**
+     * List of the project's surveys.
+     *
+     * Requires one of the following permissions: AUTHENTICATED_API.
+     *
+     * @param variables - variables to pass into the ActiveSurveysQuery
+     * @returns BaseSurveyCountableConnection
+     */
+    public activeSurveys(
+        variables?: I.ActiveSurveysQueryVariables
+    ): IntegraflowFetch<BaseSurveyCountableConnection | undefined> {
+        return new ActiveSurveysQuery(this._request).fetch(variables);
+    }
+    /**
      * List of channels for a specific survey.
      *
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -4471,7 +4705,7 @@ export class IntegraflowSdk extends Request {
     /**
      * Look up a survey by ID or slug.
      *
-     * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+     * Requires one of the following permissions: PROJECT_MEMBER_ACCESS, AUTHENTICATED_API.
      *
      * @param variables - variables to pass into the SurveyQuery
      * @returns Survey
