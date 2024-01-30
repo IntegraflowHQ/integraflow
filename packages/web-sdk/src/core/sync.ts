@@ -1,4 +1,4 @@
-import { IntegraflowClient } from "@integraflow/sdk/dist";
+import { IntegraflowClient } from "@integraflow/sdk";
 import {
     Event,
     EventProperties,
@@ -6,7 +6,7 @@ import {
     SurveyAnswer,
     UserAttributes
 } from "../types";
-import { uuidv4 } from "../utils";
+import { parsedSurveys, uuidv4 } from "../utils";
 import { Context } from "./context";
 import { getState, persistState, resetState } from "./storage";
 
@@ -50,10 +50,11 @@ export class SyncManager {
 
     async sync() {
         const state = await getState(this.context);
+        console.debug("state: ", state);
         const surveys = await this.api.activeSurveys({ first: 100 });
-        console.log("surveys: ", surveys);
-
-        this.context.setState(state);
+        const newSurveys = parsedSurveys(surveys);
+        await persistState(this.context, { ...state, surveys: newSurveys });
+        this.context.setState({ ...state, surveys: newSurveys });
     }
 
     stopSync() {
@@ -137,19 +138,6 @@ export class SyncManager {
         this.context.broadcast("eventTracked", event);
 
         this.context.setState(state);
-
-        // TODO: Send event to the backend
-        await this.api.captureEvent({
-            input: {
-                ...event,
-                timestamp: new Date(event.timestamp),
-                userId:
-                    typeof state.user?.id === "number"
-                        ? String(state.user?.id)
-                        : state.user?.id,
-                attributes: state.user
-            }
-        });
 
         return event;
     }
