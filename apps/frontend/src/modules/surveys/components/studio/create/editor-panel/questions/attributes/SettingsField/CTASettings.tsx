@@ -1,5 +1,6 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
+import { QuestionSettings } from "@/types";
 import { CTAType } from "@integraflow/web/src/types";
 import { useState } from "react";
 import { SingleValue } from "react-select";
@@ -38,7 +39,8 @@ export const CTASettings = ({ question }: Props) => {
                         onChange={(e) => {
                             setButtonLabel(e.target.value);
                             const newSettings = question.settings;
-                            newSettings.consentText = e.target.value;
+                            (newSettings as QuestionSettings).label =
+                                e.target.value;
                             updateQuestionMutation({
                                 settings: newSettings,
                             });

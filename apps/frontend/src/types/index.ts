@@ -61,6 +61,7 @@ export type QuestionOption = {
 };
 
 export type FormLogicGroup = {
+    id?: string;
     condition: string;
     operator: string;
     fields: string[];

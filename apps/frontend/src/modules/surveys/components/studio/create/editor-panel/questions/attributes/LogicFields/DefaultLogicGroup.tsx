@@ -2,6 +2,7 @@ import MinusIcon from "@/assets/icons/studio/MinusIcon";
 import { SurveyQuestion } from "@/generated/graphql";
 import { FormLogicGroup } from "@/types";
 import { getLogicConditions } from "@/utils/defaultOptions";
+import { LogicOperator } from "@integraflow/web/src/types";
 import { MultiValue, SingleValue } from "react-select";
 import { FormLogicValues } from "../../LogicTab";
 import { Option, ReactSelect } from "../ReactSelect";
@@ -24,11 +25,8 @@ export const LogicGroup = ({
     index,
 }: Props) => {
     return (
-        <div className="relative space-y-6 p-6" key={`${group.fields[0]}index`}>
-            <div
-                className="relative space-y-6 p-6"
-                key={`${group.fields[0]}index`}
-            >
+        <div className="relative" key={group.id}>
+            <div className="relative space-y-6 p-6" key={index}>
                 <div className="flex justify-between">
                     <div></div>
                     <div className="w-[330px]">
@@ -58,6 +56,7 @@ export const LogicGroup = ({
                                                 (g) => ({
                                                     ...g,
                                                     fields: ["1"],
+                                                    operator: LogicOperator.OR,
                                                 }),
                                             ),
                                         });
@@ -68,6 +67,7 @@ export const LogicGroup = ({
                                             groups: formLogicValues.groups.map(
                                                 (g) => ({
                                                     ...g,
+                                                    operator: LogicOperator.AND,
                                                     fields: (
                                                         values as MultiValue<Option>
                                                     )
@@ -86,6 +86,7 @@ export const LogicGroup = ({
                                         groups: formLogicValues.groups.map(
                                             (g) => ({
                                                 ...g,
+                                                operator: LogicOperator.AND,
                                                 fields: (
                                                     values as MultiValue<Option>
                                                 ).map((v) => v.value),
@@ -95,24 +96,24 @@ export const LogicGroup = ({
                                 }
                             }}
                             value={
-                                group.fields.length > 1
-                                    ? group.fields.map((f) => ({
-                                          value: f,
-                                          label:
-                                              question.options?.find(
-                                                  (q: Option) => q.id === f,
-                                              )?.label || "Any field",
-                                      }))
-                                    : group.fields.length === 1
-                                    ? {
-                                          value: group.fields[0],
-                                          label:
-                                              question.options?.find(
-                                                  (q: Option) =>
-                                                      q.id === group.fields[0],
-                                              )?.label || "Any field",
-                                      }
-                                    : undefined
+                                group.fields.length === 1 &&
+                                group.fields[0] === "1"
+                                    ? [
+                                          {
+                                              value: "1",
+                                              label: "Any field",
+                                          },
+                                      ]
+                                    : group.fields.map((field) => {
+                                          const option = question.options?.find(
+                                              (option: Option) =>
+                                                  option.id === field,
+                                          );
+                                          return {
+                                              value: option?.id,
+                                              label: option?.label,
+                                          };
+                                      })
                             }
                         />
                     </div>
@@ -128,8 +129,8 @@ export const LogicGroup = ({
                                     setFormLogicValues({
                                         ...formLogicValues,
                                         groups: formLogicValues.groups.map(
-                                            (g, i) =>
-                                                i === index
+                                            (g) =>
+                                                g.id === group.id
                                                     ? {
                                                           ...g,
                                                           condition: (
@@ -146,7 +147,7 @@ export const LogicGroup = ({
                 )}
 
                 <div
-                    className="absolute bottom-1/2 right-0 translate-x-1/2"
+                    className="absolute bottom-1/2 right-0 translate-x-1/2 border"
                     onClick={() => {
                         if (formLogicValues.groups.length === 1) {
                             setFormLogicValues({
@@ -154,15 +155,15 @@ export const LogicGroup = ({
                                 groups: [],
                                 orderNumber: undefined,
                             });
+                            setIsCreatingLogic(false);
                             return;
                         }
                         setFormLogicValues({
                             ...formLogicValues,
                             groups: formLogicValues.groups.filter(
-                                (g, i) => i !== index,
+                                (g) => g.id !== group.id,
                             ),
                         });
-                        setIsCreatingLogic(false);
                     }}
                 >
                     <MinusIcon />

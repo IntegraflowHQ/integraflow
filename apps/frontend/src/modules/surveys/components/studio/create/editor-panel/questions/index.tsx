@@ -6,6 +6,7 @@ import { QuestionOptions } from "./attributes/QuestionTypes";
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
+import { ParsedQuestion } from "@/types";
 import { questionTypes } from "@/utils/survey";
 import { QuestionPanel } from "./QuestionPanel";
 
@@ -37,7 +38,7 @@ export default function UpdateQuestion() {
                             setOpenQuestion(
                                 parsedQuestions.find(
                                     (question) => question.id === value,
-                                ),
+                                ) as ParsedQuestion,
                             );
                         }}
                         className="space-y-4"

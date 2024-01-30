@@ -13,7 +13,7 @@ type Props = {
     comboBox?: boolean;
     defaultValue?: Option | Option[];
     label?: string;
-    value?: Option | Option[];
+    value?: Option | Option[] | null;
     onchange?: (
         value: Option | SingleValue<Option> | MultiValue<Option>,
     ) => void;

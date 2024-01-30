@@ -27,6 +27,7 @@ export type LogicValues = QuestionLogic & {
 
 export type FormLogicValues = QuestionLogic & {
     groups: {
+        id?: string;
         condition: string;
         operator: string;
         fields: string[];
@@ -50,6 +51,7 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
         id: "",
         groups: [
             {
+                id: "",
                 condition: "",
                 operator: "",
                 fields: [],
@@ -65,8 +67,17 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
             if (question.type === SurveyQuestionTypeEnum.Form) {
                 setFormLogicValues({
                     ...formLogicValues,
+                    operator: LogicOperator.AND,
                     id: generateUniqueId(),
                     orderNumber: question.settings.logic?.length + 1 || 0,
+                    groups: [
+                        {
+                            id: generateUniqueId(),
+                            condition: "",
+                            operator: LogicOperator.AND,
+                            fields: [],
+                        },
+                    ],
                 });
             } else {
                 setLogicValues({
@@ -77,9 +88,10 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
             }
         } else {
             setFormLogicValues({
-                id: "",
+                id: generateUniqueId(),
                 groups: [
                     {
+                        id: "",
                         condition: "",
                         operator: "",
                         fields: [],

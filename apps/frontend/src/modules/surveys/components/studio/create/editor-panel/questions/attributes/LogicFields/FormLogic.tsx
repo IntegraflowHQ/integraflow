@@ -2,10 +2,11 @@ import MinusIcon from "@/assets/icons/studio/MinusIcon";
 import { SurveyQuestion } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { QuestionLogic } from "@/types";
+import { FormLogicGroup, QuestionLogic } from "@/types";
+import { generateUniqueId } from "@/utils";
 import { getLogicConditions } from "@/utils/defaultOptions";
 import { PlusIcon } from "lucide-react";
-import { SingleValue } from "react-select";
+import { MultiValue, SingleValue } from "react-select";
 import { Option, ReactSelect } from "../ReactSelect";
 
 type Props = {
@@ -22,47 +23,44 @@ export const FormLogicBox = ({
     const { parsedQuestions } = useSurvey();
     const { updateQuestionMutation } = useQuestion();
 
-    const handleFieldChange = (values: any) => {
-        console.log(values);
-    };
+    // const handleFieldChange = (values: any) => {
+    //     console.log(values);
+    // };
 
-    const handleConditionChange = (value: any) => {
-        updateQuestionMutation({
-            settings: {
-                ...question.settings,
-                logic: [
-                    ...question.settings.logic,
-                    {
-                        condition: value?.value,
-                    },
-                ],
-            },
-        });
-    };
+    // const handleConditionChange = (value: any) => {
+    //     updateQuestionMutation({
+    //         settings: {
+    //             ...question.settings,
+    //             logic: [
+    //                 ...question.settings.logic,
+    //                 {
+    //                     condition: value?.value,
+    //                 },
+    //             ],
+    //         },
+    //     });
+    // };
 
     const handleDestinationChange = (value: any) => {
-        updateQuestionMutation({
-            settings: {
-                ...question.settings,
-                logic: [
-                    ...question.settings.logic,
-                    {
-                        destination: value?.value,
-                    },
-                ],
-            },
-        });
-        setIsCreatingLogic(false);
+        // updateQuestionMutation({
+        //     settings: {
+        //         ...question.settings,
+        //         logic: [
+        //             ...question.settings.logic,
+        //             {
+        //                 destination: value?.value,
+        //             },
+        //         ],
+        //     },
+        // });
+        // setIsCreatingLogic(false);
     };
 
     return (
         <div className="relative rounded-md border border-intg-bg-4">
             {logic.groups &&
                 logic.groups.map((group) => (
-                    <div
-                        className="relative space-y-6 p-6"
-                        key={`${group.fields[0]}index`}
-                    >
+                    <div className="relative space-y-6 p-6" key={group.id}>
                         <div className="flex justify-between">
                             <div></div>
                             <div className="w-[330px]">
@@ -92,7 +90,11 @@ export const FormLogicBox = ({
                                               }))
                                             : []
                                     }
-                                    onchange={handleFieldChange}
+                                    onchange={(
+                                        values:
+                                            | SingleValue<Option>
+                                            | MultiValue<Option>,
+                                    ) => {}}
                                 />
                             </div>
                         </div>
@@ -110,25 +112,101 @@ export const FormLogicBox = ({
                                         )?.find(
                                             (c) => c.value === group.condition,
                                         )}
-                                        onchange={handleConditionChange}
+                                        value={
+                                            getLogicConditions(
+                                                question.type,
+                                            )?.find(
+                                                (c) =>
+                                                    c.value === group.condition,
+                                            ) ?? null
+                                        }
+                                        onchange={(
+                                            value:
+                                                | SingleValue<Option>
+                                                | MultiValue<Option>,
+                                        ) => {
+                                            const newLogic = [
+                                                ...question.settings.logic,
+                                            ];
+                                            const currentLogic =
+                                                newLogic.findIndex(
+                                                    (l: QuestionLogic) =>
+                                                        l.id === logic.id,
+                                                );
+                                            newLogic[currentLogic].condition = (
+                                                value as SingleValue<Option>
+                                            )?.value;
+
+                                            updateQuestionMutation({
+                                                settings: {
+                                                    ...question.settings,
+                                                    logic: newLogic,
+                                                },
+                                            });
+                                        }}
                                     />
                                 </div>
                             </div>
                         )}
 
                         <div
-                            className="absolute bottom-1/2 right-0 translate-x-1/2"
-                            onClick={() => {}}
+                            className="absolute bottom-1/2 right-0 translate-x-1/2 cursor-pointer border"
+                            onClick={() => {
+                                const currentLogic =
+                                    question.settings.logic.findIndex(
+                                        (l: QuestionLogic) => l.id === logic.id,
+                                    );
+                                const newLogic = [...question.settings.logic];
+
+                                if (
+                                    question.settings.logic[currentLogic].groups
+                                        .length === 1
+                                ) {
+                                    newLogic.splice(currentLogic, 1);
+                                } else {
+                                    newLogic[currentLogic].groups = newLogic[
+                                        currentLogic
+                                    ].groups.filter(
+                                        (g: FormLogicGroup) =>
+                                            g.id !== group.id,
+                                    );
+                                }
+
+                                updateQuestionMutation({
+                                    settings: {
+                                        ...question.settings,
+                                        logic: newLogic,
+                                    },
+                                });
+                            }}
                         >
                             <MinusIcon />
                         </div>
                     </div>
                 ))}
 
-            <div className="relative">
-                <hr />
-                <div className="absolute right-0 translate-x-1/2">
-                    <PlusIcon onClick={() => {}} />
+            <div className="relative p-6">
+                <hr className="border-intg-bg-4" />
+                <div className="absolute right-0 -translate-y-1/2 translate-x-1/2">
+                    <PlusIcon
+                        onClick={() => {
+                            const newLogic = [...question.settings.logic];
+                            const currentLogic = newLogic.findIndex(
+                                (l: QuestionLogic) => l.id === logic.id,
+                            );
+                            newLogic[currentLogic].groups.push({
+                                id: generateUniqueId(),
+                                fields: [],
+                            });
+
+                            updateQuestionMutation({
+                                settings: {
+                                    ...question.settings,
+                                    logic: newLogic,
+                                },
+                            });
+                        }}
+                    />
                 </div>
             </div>
 
@@ -170,7 +248,20 @@ export const FormLogicBox = ({
                                       label: "End survey",
                                   }
                         }
-                        onchange={handleDestinationChange}
+                        onchange={() => {
+                            const newLogic = [...question.settings.logic];
+                            const currentLogic = newLogic.findIndex(
+                                (l: QuestionLogic) => l.id === logic.id,
+                            );
+                            newLogic[currentLogic].destination =
+                                logic.destination;
+                            updateQuestionMutation({
+                                settings: {
+                                    ...question.settings,
+                                    logic: newLogic,
+                                },
+                            });
+                        }}
                     />
                 </div>
             </div>

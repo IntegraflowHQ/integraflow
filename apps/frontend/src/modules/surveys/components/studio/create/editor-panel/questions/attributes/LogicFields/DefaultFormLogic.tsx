@@ -1,12 +1,14 @@
 import { SurveyQuestion } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
+import { cn, generateUniqueId } from "@/utils";
 import { LogicOperator } from "@integraflow/web/src/types";
 import { PlusIcon } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
+import { MultiValue, SingleValue } from "react-select";
 import { FormLogicValues } from "../../LogicTab";
-import { ReactSelect } from "../ReactSelect";
-import { LogicGroup } from "./LogicGroup";
+import { Option, ReactSelect } from "../ReactSelect";
+import { LogicGroup } from "./DefaultLogicGroup";
 type Props = {
     question: SurveyQuestion;
     formLogicValues: FormLogicValues;
@@ -24,6 +26,17 @@ const FormLogicDefault = ({
 }: Props) => {
     const { parsedQuestions } = useSurvey();
     const { updateQuestionMutation } = useQuestion();
+    const [showAddGroup, setShowAddGroup] = React.useState<boolean>(false);
+    useEffect(() => {
+        const lastValue =
+            formLogicValues.groups[formLogicValues.groups.length - 1];
+
+        if (formLogicValues.groups.length > 0 && lastValue.condition) {
+            setShowAddGroup(true);
+        } else {
+            setShowAddGroup(false);
+        }
+    }, [formLogicValues.groups]);
 
     return (
         <>
@@ -42,8 +55,15 @@ const FormLogicDefault = ({
                     ))}
 
                     {formLogicValues.groups.length > 0 && (
-                        <div className="relative">
-                            <hr />
+                        <div
+                            className={cn(
+                                showAddGroup
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed",
+                                "relative p-6",
+                            )}
+                        >
+                            <hr className="border-intg-bg-4" />
                             <div className="absolute right-0 translate-x-1/2">
                                 <PlusIcon
                                     onClick={() => {
@@ -52,6 +72,7 @@ const FormLogicDefault = ({
                                             groups: [
                                                 ...formLogicValues.groups,
                                                 {
+                                                    id: generateUniqueId(),
                                                     fields: [],
                                                     condition: "",
                                                     operator: LogicOperator.AND,
@@ -103,8 +124,9 @@ const FormLogicDefault = ({
                                                             .logic,
                                                         {
                                                             ...formLogicValues,
-                                                            destination:
-                                                                value?.value,
+                                                            destination: (
+                                                                value as SingleValue<Option>
+                                                            )?.value,
                                                         },
                                                     ],
                                                 },
