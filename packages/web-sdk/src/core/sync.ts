@@ -227,7 +227,8 @@ export class SyncManager {
 
     async markSurveyAsCompleted(surveyId: ID) {
         this.clearSurveyAnswers(surveyId);
-
-        // TODO: Sync survey status with the server.
+        this.api.updateSurvey(surveyId as string, {
+            status: IntegraflowDocument.SurveyStatusEnum.Completed
+        });
     }
 }
