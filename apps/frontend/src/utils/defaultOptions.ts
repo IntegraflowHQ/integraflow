@@ -324,7 +324,10 @@ export const getLogicConditions = (type: SurveyQuestionTypeEnum) => {
     if (type === SurveyQuestionTypeEnum.Multiple) {
         return MultipleLogicConditions;
     }
-    if (type === SurveyQuestionTypeEnum.Single) {
+    if (
+        type === SurveyQuestionTypeEnum.Single ||
+        type === SurveyQuestionTypeEnum.Dropdown
+    ) {
         return SingleLogicConditions;
     }
     if (type === SurveyQuestionTypeEnum.Boolean) {

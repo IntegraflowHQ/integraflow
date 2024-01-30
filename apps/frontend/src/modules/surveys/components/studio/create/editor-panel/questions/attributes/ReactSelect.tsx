@@ -45,8 +45,14 @@ export const ReactSelect = ({
     const handleCreate = (inputValue: string) => {
         setTimeout(() => {
             const newOption = createOption(inputValue);
+
+            if (Array.isArray(values)) {
+                setValue((prev) => [...(prev as Option[]), newOption]);
+            } else {
+                setValue([values, newOption]);
+            }
+
             setUserOptions((prev) => [...prev, newOption]);
-            setValue((prev) => [...prev, newOption]);
         }, 100);
     };
 

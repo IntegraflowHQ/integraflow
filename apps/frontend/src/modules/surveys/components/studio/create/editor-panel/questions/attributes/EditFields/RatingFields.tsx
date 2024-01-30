@@ -3,8 +3,9 @@ import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { QuestionOption } from "@/types";
 import { createRangeOptions } from "@/utils/defaultOptions";
 import { useState } from "react";
+import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
-import { ReactSelect } from "../ReactSelec";
+import { Option, ReactSelect } from "../ReactSelect";
 
 type Props = {
     question: SurveyQuestion;
@@ -123,12 +124,16 @@ export const RatingFields = ({ question }: Props) => {
                                     (option) => option.value === question.type,
                                 )}
                                 onchange={(value) => {
-                                    setScaleStyle(value?.value);
+                                    setScaleStyle(
+                                        (value as SingleValue<Option>)?.value,
+                                    );
 
                                     updateQuestionMutation({
-                                        type: value?.value as SurveyQuestionTypeEnum,
+                                        type: (value as SingleValue<Option>)
+                                            ?.value as SurveyQuestionTypeEnum,
                                         options: createRangeOptions(
-                                            value?.value as SurveyQuestionTypeEnum,
+                                            (value as SingleValue<Option>)
+                                                ?.value as SurveyQuestionTypeEnum,
                                             5,
                                         ),
                                     });
@@ -150,7 +155,8 @@ export const RatingFields = ({ question }: Props) => {
                                         updateQuestionMutation({
                                             options: createRangeOptions(
                                                 question.type,
-                                                option?.value as number,
+                                                (option as SingleValue<Option>)
+                                                    ?.value as number,
                                             ),
                                         });
                                     }}
@@ -171,7 +177,8 @@ export const RatingFields = ({ question }: Props) => {
                                         updateQuestionMutation({
                                             options: createRangeOptions(
                                                 question.type,
-                                                option?.value as number,
+                                                (option as SingleValue<Option>)
+                                                    ?.value as number,
                                             ),
                                         });
                                     }}

@@ -2,8 +2,9 @@ import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { CTAType } from "@integraflow/web/src/types";
 import { useState } from "react";
+import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
-import { ReactSelect } from "../ReactSelec";
+import { Option, ReactSelect } from "../ReactSelect";
 
 type Props = {
     question: SurveyQuestion;
@@ -56,10 +57,14 @@ export const CTASettings = ({ question }: Props) => {
                                 label="Button type"
                                 onchange={(option) => {
                                     const newSettings = question.settings;
-                                    newSettings.ctaType = option?.value;
+                                    newSettings.ctaType = (
+                                        option as SingleValue<Option>
+                                    )?.value;
                                     if (
-                                        option?.value === CTAType.CLOSE ||
-                                        option?.value === CTAType.HIDDEN
+                                        (option as SingleValue<Option>)
+                                            ?.value === CTAType.CLOSE ||
+                                        (option as SingleValue<Option>)
+                                            ?.value === CTAType.HIDDEN
                                     ) {
                                         newSettings.link = "";
                                     }
