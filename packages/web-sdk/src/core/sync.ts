@@ -1,4 +1,4 @@
-import { IntegraflowClient } from "@integraflow/sdk";
+import { IntegraflowClient, IntegraflowDocument } from "@integraflow/sdk";
 import {
     Event,
     EventProperties,
@@ -183,7 +183,9 @@ export class SyncManager {
 
         this.context.setState(state);
 
-        // TODO: Sync survey status with the server.
+        this.api.updateSurvey(surveyId as string, {
+            status: IntegraflowDocument.SurveyStatusEnum.InProgress
+        });
     }
 
     async persistSurveyAnswers(
