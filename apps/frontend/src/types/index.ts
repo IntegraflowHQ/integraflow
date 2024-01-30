@@ -4,7 +4,18 @@ import {
     User,
 } from "@/generated/graphql";
 import { DeepOmit } from "@apollo/client/utilities";
-import { CTAType, FormFieldType, ID, LogicBooleanCondition, LogicDateCondition, LogicMultipleCondition, LogicOperator, LogicRangeCondition, LogicSingleCondition, LogicTextCondition } from "@integraflow/web/src/types";
+import {
+    CTAType,
+    FormFieldType,
+    ID,
+    LogicBooleanCondition,
+    LogicDateCondition,
+    LogicMultipleCondition,
+    LogicOperator,
+    LogicRangeCondition,
+    LogicSingleCondition,
+    LogicTextCondition,
+} from "@integraflow/web/src/types";
 import { PlacementType } from "@integraflow/web/src/types/index";
 
 export type CachedViewer = DeepOmit<User, "__typename">;
@@ -49,15 +60,27 @@ export type QuestionOption = {
     type?: FormFieldType;
 };
 
-export type QuestionLogic ={
-    id?:ID
-    orderNumber?:number;
-    destination?:ID;
-    condition?:LogicMultipleCondition|LogicSingleCondition|LogicRangeCondition|LogicBooleanCondition
-    |LogicDateCondition|LogicTextCondition
-    operator?:LogicOperator
-    values?:ID[]|string[]
-}
+export type FormLogicGroup = {
+    condition: string;
+    operator: string;
+    fields: string[];
+};
+
+export type QuestionLogic = {
+    id?: ID;
+    orderNumber?: number;
+    destination?: ID;
+    condition?:
+        | LogicMultipleCondition
+        | LogicSingleCondition
+        | LogicRangeCondition
+        | LogicBooleanCondition
+        | LogicDateCondition
+        | LogicTextCondition;
+    operator?: LogicOperator | undefined;
+    values?: ID[] | string[];
+    groups?: FormLogicGroup[];
+};
 
 export type QuestionSettings = {
     text?: string;
@@ -82,8 +105,7 @@ export type QuestionSettings = {
         min?: number;
         max?: number;
     };
-    logic?:QuestionLogic[];
-
+    logic?: QuestionLogic[];
 };
 
 export type ParsedQuestion = Omit<

@@ -1,23 +1,37 @@
-import { SurveyQuestion } from "@/generated/graphql";
+import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { QuestionSettings } from "@/types";
 import { cn, generateUniqueId } from "@/utils";
+import { LogicOperator } from "@integraflow/web/src/types";
 import { useEffect, useState } from "react";
 import { TabHeader } from "./TabHeader";
+import FormLogicDefault from "./attributes/LogicFields/DefaultFormLogic";
 import { DefaultLogicBox } from "./attributes/LogicFields/DefaultLogicBox";
+import { FormLogicBox } from "./attributes/LogicFields/FormLogic";
 import { LogicBox } from "./attributes/LogicFields/LogicBox";
 
 type Props = {
     question: SurveyQuestion;
     questionIndex: number;
 };
-
-export type LogicValues = {
+type QuestionLogic = {
     id: string;
+    orderNumber?: number;
+    destination: string;
+};
+
+export type LogicValues = QuestionLogic & {
     condition: string;
     values?: string[];
-    operator: string;
-    destination: string;
-    orderNumber?: number;
+    operator: LogicOperator | undefined;
+};
+
+export type FormLogicValues = QuestionLogic & {
+    groups: {
+        condition: string;
+        operator: string;
+        fields: string[];
+    }[];
+    operator: LogicOperator | undefined;
 };
 
 export const LogicTab = ({ question, questionIndex }: Props) => {
@@ -27,31 +41,64 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
         id: "",
         condition: "",
         values: undefined,
-        operator: "",
+        operator: undefined,
+        destination: "",
+        orderNumber: question.settings.logic?.length || 0,
+    });
+
+    const [formLogicValues, setFormLogicValues] = useState<FormLogicValues>({
+        id: "",
+        groups: [
+            {
+                condition: "",
+                operator: "",
+                fields: [],
+            },
+        ],
+        operator: undefined,
         destination: "",
         orderNumber: question.settings.logic?.length || 0,
     });
 
     useEffect(() => {
         if (isCreatingLogic) {
-            setLogicValues({
-                ...logicValues,
-                id: generateUniqueId(),
-                orderNumber: question.settings.logic?.length + 1 || 0,
-            });
+            if (question.type === SurveyQuestionTypeEnum.Form) {
+                setFormLogicValues({
+                    ...formLogicValues,
+                    id: generateUniqueId(),
+                    orderNumber: question.settings.logic?.length + 1 || 0,
+                });
+            } else {
+                setLogicValues({
+                    ...logicValues,
+                    id: generateUniqueId(),
+                    orderNumber: question.settings.logic?.length + 1 || 0,
+                });
+            }
         } else {
+            setFormLogicValues({
+                id: "",
+                groups: [
+                    {
+                        condition: "",
+                        operator: "",
+                        fields: [],
+                    },
+                ],
+                operator: undefined,
+                destination: "",
+                orderNumber: undefined,
+            });
             setLogicValues({
                 id: "",
                 condition: "",
                 values: undefined,
-                operator: "",
+                operator: undefined,
                 destination: "",
                 orderNumber: undefined,
             });
         }
     }, [isCreatingLogic]);
-
-    console.log(isCreatingLogic);
 
     return (
         <div className="space-y-4">
@@ -63,29 +110,55 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
                     <span className="cursor-pointer underline">Learn more</span>
                 </p>
             </div>
-            <>
-                {((question.settings as QuestionSettings).logic || [])?.map(
-                    (logic) => {
-                        return (
-                            <LogicBox
-                                question={question}
-                                setIsCreatingLogic={setIsCreatingLogic}
-                                logic={logic}
-                                key={logic.id}
-                            />
-                        );
-                    },
-                )}
-                {isCreatingLogic && (
-                    <DefaultLogicBox
-                        isCreatingLogic={isCreatingLogic}
-                        question={question}
-                        setIsCreatingLogic={setIsCreatingLogic}
-                        logicValues={logicValues}
-                        setLogicValues={setLogicValues}
-                    />
-                )}
-            </>
+            {question.type === SurveyQuestionTypeEnum.Form ? (
+                <>
+                    {((question.settings as QuestionSettings).logic || [])?.map(
+                        (logic) => {
+                            return (
+                                <FormLogicBox
+                                    question={question}
+                                    setIsCreatingLogic={setIsCreatingLogic}
+                                    logic={logic}
+                                    key={logic.id}
+                                />
+                            );
+                        },
+                    )}
+                    {
+                        <FormLogicDefault
+                            isCreatingLogic={isCreatingLogic}
+                            question={question}
+                            setIsCreatingLogic={setIsCreatingLogic}
+                            formLogicValues={formLogicValues}
+                            setFormLogicValues={setFormLogicValues}
+                        />
+                    }
+                </>
+            ) : (
+                <>
+                    {((question.settings as QuestionSettings).logic || [])?.map(
+                        (logic) => {
+                            return (
+                                <LogicBox
+                                    question={question}
+                                    setIsCreatingLogic={setIsCreatingLogic}
+                                    logic={logic}
+                                    key={logic.id}
+                                />
+                            );
+                        },
+                    )}
+                    {isCreatingLogic && (
+                        <DefaultLogicBox
+                            isCreatingLogic={isCreatingLogic}
+                            question={question}
+                            setIsCreatingLogic={setIsCreatingLogic}
+                            logicValues={logicValues}
+                            setLogicValues={setLogicValues}
+                        />
+                    )}
+                </>
+            )}
             <div
                 className={cn(
                     isCreatingLogic ? "cursor-not-allowed" : "cursor-pointer",

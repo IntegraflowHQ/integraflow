@@ -3,9 +3,11 @@ import { SurveyQuestion } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { getLogicConditions, getLogicOperator } from "@/utils/defaultOptions";
-import * as Slider from "@radix-ui/react-slider";
+import React from "react";
+import { MultiValue, SingleValue } from "react-select";
 import { LogicValues } from "../../LogicTab";
-import { ReactSelect } from "../ReactSelect";
+import MinMaxSelector from "../MinMaxSelector";
+import { Option, ReactSelect } from "../ReactSelect";
 
 type Props = {
     question: SurveyQuestion;
@@ -15,15 +17,89 @@ type Props = {
     setIsCreatingLogic: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const DefaultLogicBox = ({
+export const DefaultLogicBox: React.FC<Props> = ({
     question,
-    setLogicValues,
     logicValues,
-    setIsCreatingLogic,
     isCreatingLogic,
+    setLogicValues,
+    setIsCreatingLogic,
 }: Props) => {
     const { parsedQuestions } = useSurvey();
     const { updateQuestionMutation } = useQuestion();
+
+    const handleConditionChange = (
+        value: SingleValue<Option> | MultiValue<Option>,
+    ) => {
+        if (
+            (logicValues.values && logicValues.values.length > 0) ||
+            logicValues.destination
+        ) {
+            setLogicValues({
+                ...logicValues,
+                condition: (value as SingleValue<Option>)?.value,
+                values: [],
+                operator: undefined,
+                destination: "",
+            });
+        } else {
+            setLogicValues({
+                ...logicValues,
+                condition: (value as SingleValue<Option>)?.value,
+                operator: getLogicOperator(
+                    (value as SingleValue<Option>)?.value,
+                ),
+            });
+        }
+    };
+
+    const handleMinChange = (option: any) => {
+        const newValues = [...(logicValues.values || [])];
+        newValues[0] = option?.value;
+        setLogicValues({ ...logicValues, values: newValues });
+    };
+
+    const handleMaxChange = (option: any) => {
+        const newValues = [...(logicValues.values || [])];
+        newValues[1] = option?.value;
+        setLogicValues({ ...logicValues, values: newValues });
+    };
+
+    const handleFieldSelection = (
+        values: SingleValue<Option> | MultiValue<Option>,
+    ) => {
+        setLogicValues({
+            ...logicValues,
+            values: (values as MultiValue<Option>).map((v) => v.value),
+        });
+    };
+
+    const handleDestinationSelection = (value: any) => {
+        updateQuestionMutation({
+            settings: {
+                ...question.settings,
+                logic: [
+                    ...question.settings.logic,
+                    {
+                        ...logicValues,
+                        destination: value?.value,
+                    },
+                ],
+            },
+        });
+        setIsCreatingLogic(false);
+    };
+
+    const handleCancel = () => {
+        setIsCreatingLogic(false);
+        setLogicValues({
+            id: "",
+            condition: "",
+            values: undefined,
+            operator: undefined,
+            destination: "",
+            orderNumber: undefined,
+        });
+    };
 
     return (
         <>
@@ -34,102 +110,81 @@ export const DefaultLogicBox = ({
                         <div className="w-[330px]">
                             <ReactSelect
                                 options={getLogicConditions(question.type)}
-                                onchange={(value) => {
-                                    if (
-                                        (logicValues.values &&
-                                            logicValues.values.length > 0) ||
-                                        logicValues.destination
-                                    ) {
-                                        return setLogicValues({
-                                            ...logicValues,
-                                            condition: value.value,
-                                            values: [],
-                                            operator: "",
-                                            destination: "",
-                                        });
-                                    } else {
-                                        return setLogicValues({
-                                            ...logicValues,
-                                            condition: value?.value,
-                                            operator: getLogicOperator(
-                                                value?.value,
-                                            ),
-                                        });
-                                    }
-                                }}
+                                onchange={handleConditionChange}
                             />
                         </div>
                     </div>
                     {logicValues.condition === "between" && (
-                        <Slider.Root
-                            className="SliderRoot w-200 relative flex h-20 touch-none select-none items-center"
-                            defaultValue={[5, 6]}
-                            max={question.options?.length - 1}
-                            step={1}
-                            onValueChange={(value) => {
-                                console.log(value);
-                            }}
-                        >
-                            <Slider.Track className="SliderTrack relative h-3 flex-grow rounded-full bg-red-500">
-                                <Slider.Range className="SliderRange absolute h-full rounded-full bg-white" />
-                            </Slider.Track>
-                            <Slider.Thumb
-                                className="SliderThumb block h-6 w-6 rounded-full bg-white shadow-md"
-                                aria-label="Volume"
-                            />
-                            <Slider.Thumb
-                                className="SliderThumb block h-6 w-6 rounded-full bg-white shadow-md"
-                                aria-label="Volume"
-                            />
-                        </Slider.Root>
-                    )}
-
-                    {logicValues.condition &&
-                    logicValues.condition !== "not_answered" &&
-                    logicValues.condition !== "any_value" &&
-                    logicValues.condition !== "answered" &&
-                    logicValues.condition !== "is_false" &&
-                    logicValues.condition !== "is_true" ? (
                         <div className="flex justify-between">
                             <div></div>
                             <div className="w-[330px]">
-                                <ReactSelect
-                                    comboBox={true}
-                                    options={question.options?.map((option) => {
-                                        return {
+                                <MinMaxSelector
+                                    options={question.options?.map(
+                                        (option: Option) => ({
                                             value: option.id,
                                             label: option.label,
-                                        };
-                                    })}
-                                    // defaultValue={}
-                                    onchange={(value) => {
-                                        setLogicValues({
-                                            ...logicValues,
-                                            values: value?.map((v) => v.value),
-                                        });
-                                    }}
-                                    value={
-                                        logicValues.values &&
-                                        logicValues.values.map((v) => {
-                                            return {
-                                                value: v,
-                                                label: question.options?.find(
-                                                    (o) => o.id === v,
-                                                )?.label,
-                                            };
-                                        })
-                                    }
+                                        }),
+                                    )}
+                                    maxChange={handleMaxChange}
+                                    minValue={question.options?.find(
+                                        (option: Option) =>
+                                            option.value ===
+                                            logicValues.values?.[0],
+                                    )}
+                                    maxValue={question.options?.find(
+                                        (option: Option) =>
+                                            option.value ===
+                                            logicValues.values?.[1],
+                                    )}
+                                    minChange={handleMinChange}
                                 />
                             </div>
                         </div>
-                    ) : null}
+                    )}
+
+                    {logicValues.condition &&
+                        ![
+                            "not_answered",
+                            "any_value",
+                            "answered",
+                            "is_false",
+                            "between",
+                            "is_true",
+                        ].includes(logicValues.condition) && (
+                            <div className="flex justify-between">
+                                <div></div>
+                                <div className="w-[330px]">
+                                    <ReactSelect
+                                        comboBox={true}
+                                        options={question.options?.map(
+                                            (option: Option) => ({
+                                                value: option.id,
+                                                label: option.label,
+                                            }),
+                                        )}
+                                        onchange={handleFieldSelection}
+                                        value={
+                                            logicValues.values &&
+                                            logicValues.values.map((v) => ({
+                                                value: v,
+                                                label: question.options?.find(
+                                                    (o: Option) => o.id === v,
+                                                )?.label,
+                                            }))
+                                        }
+                                    />
+                                </div>
+                            </div>
+                        )}
 
                     {(logicValues.values && logicValues.values.length > 0) ||
-                    logicValues.condition === "not_answered" ||
-                    logicValues.condition === "any_value" ||
-                    logicValues.condition === "answered" ||
-                    logicValues.condition === "is_false" ||
-                    logicValues.condition === "is_true" ? (
+                    [
+                        "not_answered",
+                        "any_value",
+                        "answered",
+                        "is_false",
+                        "is_true",
+                    ].includes(logicValues.condition) ? (
                         <div className="flex justify-between gap-14">
                             <p>then</p>
                             <div className="w-[330px]">
@@ -141,52 +196,26 @@ export const DefaultLogicBox = ({
                                                     (q) => q.id === question.id,
                                                 ) + 1,
                                             )
-                                            .map((q) => {
-                                                return {
-                                                    value: q.id,
-                                                    label: q.label
-                                                        ? `${q.orderNumber}- ${q.label} `
-                                                        : `${q.orderNumber}- Empty Question`,
-                                                };
-                                            }),
+                                            .map((q) => ({
+                                                value: q.id,
+                                                label: q.label
+                                                    ? `${q.orderNumber}- ${q.label} `
+                                                    : `${q.orderNumber}- Empty Question`,
+                                            })),
                                         {
                                             value: "-1",
                                             label: "End survey",
                                         },
                                     ]}
-                                    onchange={(value) => {
-                                        updateQuestionMutation({
-                                            settings: {
-                                                ...question.settings,
-                                                logic: [
-                                                    ...question.settings.logic,
-                                                    {
-                                                        ...logicValues,
-                                                        destination:
-                                                            value?.value,
-                                                    },
-                                                ],
-                                            },
-                                        });
-                                        setIsCreatingLogic(false);
-                                    }}
+                                    onchange={handleDestinationSelection}
                                 />
                             </div>
                         </div>
                     ) : null}
+
                     <div
                         className="absolute -right-2.5 bottom-[50%] translate-y-1/2 cursor-pointer"
-                        onClick={() => {
-                            setIsCreatingLogic(false);
-                            setLogicValues({
-                                id: "",
-                                condition: "",
-                                values: undefined,
-                                operator: "",
-                                destination: "",
-                                orderNumber: undefined,
-                            });
-                        }}
+                        onClick={handleCancel}
                     >
                         <MinusIcon />
                     </div>
@@ -195,3 +224,5 @@ export const DefaultLogicBox = ({
         </>
     );
 };
+
+export default DefaultLogicBox;

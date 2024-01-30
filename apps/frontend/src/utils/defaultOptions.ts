@@ -1,7 +1,9 @@
 import {
+    SurveyQuestion,
     SurveyQuestionCreateInput,
     SurveyQuestionTypeEnum,
 } from "@/generated/graphql";
+import { Option } from "@/modules/surveys/components/studio/create/editor-panel/questions/attributes/ReactSelect";
 import { QuestionOption, QuestionSettings } from "@/types";
 import {
     FormFieldType,
@@ -367,7 +369,13 @@ export const getLogicOperator = (condition: string) => {
     ) {
         return LogicOperator.AND;
     } else {
-        return "";
+        return undefined;
     }
 };
 
+export const questionOptions = (question: SurveyQuestion) => {
+    return question.options.map((option: Option) => ({
+        value: option.id,
+        label: option.label,
+    }));
+};

@@ -14,12 +14,15 @@ type Props = {
     defaultValue?: Option | Option[];
     label?: string;
     value?: Option | Option[];
-    onchange?: (value: MultiValue<Option> | SingleValue<Option>) => void;
+    onchange?: (
+        value: Option | SingleValue<Option> | MultiValue<Option>,
+    ) => void;
 };
 
 export interface Option {
-    readonly label: string;
-    readonly value: string;
+    label: any;
+    value: any;
+    id?: string;
 }
 
 const createOption = (label: string) => ({
@@ -118,7 +121,7 @@ export const ReactSelect = ({
                             closeMenuOnSelect={false}
                             onCreateOption={handleCreate}
                             value={values}
-                           defaultValue={defaultValue}
+                            defaultValue={defaultValue}
                             isMulti
                             options={userOptions}
                             onChange={(value) => {
