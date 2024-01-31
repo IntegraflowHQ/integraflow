@@ -1,4 +1,4 @@
-import { IntegraflowClient, IntegraflowDocument } from "@integraflow/sdk";
+import { IntegraflowClient } from "@integraflow/sdk";
 import {
     Event,
     EventProperties,
@@ -139,18 +139,20 @@ export class SyncManager {
 
         this.context.setState(state);
 
-        await this.api.captureEvent({
-            input: {
-                ...event,
-                timestamp: new Date(event.timestamp),
-                userId:
-                    typeof state.user?.id === "number"
-                        ? String(state.user?.id)
-                        : state.user?.id,
-                properties: JSON.stringify(event.properties ?? {}),
-                attributes: JSON.stringify(state.user ?? {})
-            }
-        });
+        if (state.user?.id) {
+            await this.api.captureEvent({
+                input: {
+                    ...event,
+                    timestamp: new Date(event.timestamp),
+                    userId:
+                        typeof state.user?.id === "number"
+                            ? String(state.user?.id)
+                            : state.user?.id,
+                    properties: JSON.stringify(event.properties ?? {}),
+                    attributes: JSON.stringify(state.user ?? {})
+                }
+            });
+        }
 
         return event;
     }
@@ -183,9 +185,7 @@ export class SyncManager {
 
         this.context.setState(state);
 
-        this.api.updateSurvey(surveyId as string, {
-            status: IntegraflowDocument.SurveyStatusEnum.InProgress
-        });
+        // TODO: Sync survey status with the server.
     }
 
     async persistSurveyAnswers(
@@ -227,8 +227,7 @@ export class SyncManager {
 
     async markSurveyAsCompleted(surveyId: ID) {
         this.clearSurveyAnswers(surveyId);
-        this.api.updateSurvey(surveyId as string, {
-            status: IntegraflowDocument.SurveyStatusEnum.Completed
-        });
+
+        // TODO: Sync survey status with the server.
     }
 }

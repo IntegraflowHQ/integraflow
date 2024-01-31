@@ -49,9 +49,7 @@ export function del(key: IDBValidKey): Promise<void> {
 
 export async function getState(ctx: Context): Promise<State> {
     const cacheKeys = getCacheKeys("state");
-    let state: State =
-        JSON.parse((await get<string>(cacheKeys.STATE_CACHE_KEY)) || "{}") ??
-        {};
+    let state: State = (await get<State>(cacheKeys.STATE_CACHE_KEY)) ?? {};
 
     const lastLoadTime =
         (await get<number>(cacheKeys.STATE_CACHE_KEY_UPDATED)) ?? 0;
@@ -80,7 +78,7 @@ export async function getState(ctx: Context): Promise<State> {
     }
 
     if (updatedRemoteState) {
-        await set(cacheKeys.STATE_CACHE_KEY, JSON.stringify(state));
+        await set(cacheKeys.STATE_CACHE_KEY, state);
         await set(cacheKeys.STATE_CACHE_KEY_UPDATED, Date.now());
     }
 
@@ -96,7 +94,7 @@ export async function persistState(ctx: Context, state: State): Promise<void> {
     }
 
     const cacheKeys = getCacheKeys("state");
-    await set(cacheKeys.STATE_CACHE_KEY, JSON.stringify(state));
+    await set(cacheKeys.STATE_CACHE_KEY, state);
     await set(cacheKeys.STATE_CACHE_KEY_UPDATED, Date.now());
 }
 
@@ -116,6 +114,6 @@ export async function resetState(
     }
 
     const cacheKeys = getCacheKeys("state");
-    await set(cacheKeys.STATE_CACHE_KEY, JSON.stringify(state));
+    await set(cacheKeys.STATE_CACHE_KEY, state);
     await set(cacheKeys.STATE_CACHE_KEY_UPDATED, Date.now());
 }

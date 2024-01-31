@@ -165,6 +165,7 @@ export const parsedSurveys = (
 
             return ({
                 ...question,
+                type: question.type.toLowerCase(),
                 settings: parsedSettings,
                 options: parsedOptions
             } as unknown) as Question;
@@ -201,5 +202,5 @@ export const parsedSurveys = (
         });
     }
 
-    return surveyList;
+    return JSON.parse(JSON.stringify(surveyList));
 };
