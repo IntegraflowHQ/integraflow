@@ -9,6 +9,7 @@ from integraflow.core.utils import (
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_PROJECTS
 from integraflow.graphql.core.mutations import ModelMutation
+from integraflow.graphql.core.scalars import UUID
 from integraflow.graphql.core.types.base import BaseInputObjectType
 from integraflow.graphql.core.types.common import ProjectError
 from integraflow.permission.auth_filters import AuthorizationFilters
@@ -35,7 +36,7 @@ class ProjectInput(BaseInputObjectType):
 
 
 class ProjectCreateInput(ProjectInput):
-    id = graphene.UUID(
+    id = UUID(
         description="The identifier in UUID v4 format. If none is provided, "
         "the backend will generate one."
     )

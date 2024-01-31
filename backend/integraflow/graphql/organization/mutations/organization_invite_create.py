@@ -10,6 +10,7 @@ from integraflow.graphql.core.enums import RoleLevel
 from integraflow.graphql.core.types.base import BaseInputObjectType
 from integraflow.graphql.core.types.common import OrganizationError
 from integraflow.graphql.core.mutations import ModelMutation
+from integraflow.graphql.core.scalars import UUID
 from integraflow.graphql.organization.types import OrganizationInvite
 from integraflow.messaging.tasks import send_invite
 from integraflow.organization import models
@@ -18,7 +19,7 @@ from integraflow.permission.auth_filters import AuthorizationFilters
 
 
 class OrganizationInviteCreateInput(BaseInputObjectType):
-    id = graphene.UUID(
+    id = UUID(
         description="The identifier in UUID v4 format. If none is provided, "
         "the backend will generate one."
     )

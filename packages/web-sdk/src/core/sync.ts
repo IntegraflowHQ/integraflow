@@ -130,7 +130,8 @@ export class SyncManager {
 
     async trackEvent(
         name: string,
-        properties?: EventProperties
+        properties?: EventProperties,
+        attributes?: UserAttributes
     ): Promise<Event> {
         const state = await getState(this.context);
 
@@ -139,7 +140,10 @@ export class SyncManager {
             uuid: uuidv4(),
             timestamp: Date.now(),
             properties,
-            userId: state.user?.id
+            userId: state.user?.id,
+            attributes: {
+                ...(attributes ?? {})
+            }
         };
 
         this.context.broadcast("eventTracked", event);

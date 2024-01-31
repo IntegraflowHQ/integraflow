@@ -344,11 +344,12 @@ export interface EventProperties {
 }
 
 export interface Event {
-    event: string;
-    uuid: string;
-    timestamp: number;
-    properties?: EventProperties;
-    userId?: ID;
+  event: string;
+  uuid: string;
+  timestamp: number;
+  properties?: EventProperties;
+  attributes?: UserAttributes;
+  userId?: ID;
 }
 
 export interface State {

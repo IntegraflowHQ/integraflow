@@ -6,6 +6,7 @@ from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_SURVEYS
 from integraflow.graphql.core.fields import JSONString
 from integraflow.graphql.core.mutations import ModelMutation
+from integraflow.graphql.core.scalars import UUID
 from integraflow.graphql.core.types.base import BaseInputObjectType
 from integraflow.graphql.core.types.common import SurveyError
 from integraflow.core.utils import (
@@ -44,7 +45,7 @@ class SurveyInput(BaseInputObjectType):
 
 
 class SurveyCreateInput(SurveyInput):
-    id = graphene.UUID(
+    id = UUID(
         description="The id of the survey."
     )
 

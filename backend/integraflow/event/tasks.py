@@ -8,6 +8,8 @@ from dateutil import parser
 from dateutil.relativedelta import relativedelta
 from django.db import IntegrityError
 from django.utils import timezone
+from sentry_sdk import capture_exception
+
 from integraflow.event.models import (
     Event,
     EventDefinition,
@@ -17,7 +19,6 @@ from integraflow.event.models import (
     PropertyType,
 )
 from integraflow.project.models import Project
-from sentry_sdk import capture_exception
 
 
 def _get_person(project_id: str, distinct_id: str):
@@ -319,6 +320,13 @@ def _capture(
         person.attributes.update(properties)
     else:
         person.attributes = person_attributes
+
+        if attributes:
+            store_names_and_properties(
+                project=project,
+                event="$identify",
+                properties=person_attributes
+            )
 
     person.save()
 
