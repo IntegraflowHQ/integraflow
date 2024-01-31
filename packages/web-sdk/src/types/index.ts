@@ -373,13 +373,16 @@ export interface Listeners {
     onSurveyCompleted?: (surveyId: ID) => void;
 }
 
-export interface ClientCredentials {
+export enum FetchPolicy {
+    AUTO = "auto",
+    MANUAL = "manual"
+}
+
+export interface Configuration extends Listeners {
+    surveys?: Survey[];
+    debug?: boolean;
     apiHost?: string;
     appKey?: string;
     accessToken?: string;
-}
-
-export interface Configuration extends Listeners, ClientCredentials {
-    surveys?: Survey[];
-    debug?: boolean;
+    fetchPolicy?: FetchPolicy;
 }

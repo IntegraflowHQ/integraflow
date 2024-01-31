@@ -1,10 +1,5 @@
-import {
-    ClientCredentials,
-    Configuration,
-    Listeners,
-    State,
-    Survey
-} from "../types";
+import { IntegraflowClient } from "@integraflow/sdk";
+import { Configuration, FetchPolicy, Listeners, State, Survey } from "../types";
 
 type SdkEventType = "eventTracked" | "audienceUpdated";
 export type SdkEvent<T = any> = { type: SdkEventType; data: T };
@@ -13,12 +8,13 @@ type SdkEventHandler = (event: SdkEvent) => void;
 export class Context {
     readonly debug: boolean;
     readonly listeners: Listeners;
-    readonly credentials: ClientCredentials;
+    client: IntegraflowClient;
 
     private readonly subscribers: { [key: string]: SdkEventHandler[] };
 
     surveys: Survey[];
     state: State | null;
+    fetchPolicy: FetchPolicy;
 
     constructor(config: Configuration) {
         this.surveys = config.surveys ?? [];
@@ -33,14 +29,15 @@ export class Context {
             onSurveyCompleted: config.onSurveyCompleted
         };
 
-        this.credentials = {
-            appKey: config.appKey,
+        this.client = new IntegraflowClient({
+            apiUrl: config.apiHost ? `${config.apiHost}/graphql` : undefined,
             accessToken: config.accessToken,
-            apiHost: config.apiHost
-        };
+            apiKey: config.appKey
+        });
 
         this.subscribers = {};
         this.state = null;
+        this.fetchPolicy = config.fetchPolicy ?? FetchPolicy.AUTO;
     }
 
     setState(state: State) {

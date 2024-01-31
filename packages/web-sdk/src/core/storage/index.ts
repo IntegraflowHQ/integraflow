@@ -1,6 +1,7 @@
 import { State } from "../../types";
-import { uuidv4 } from "../../utils";
+import { parsedSurveys, uuidv4 } from "../../utils";
 import { Context } from "../context";
+import { FetchPolicy, Survey } from "./../../types/index";
 import {
     Store,
     del as idbDel,
@@ -60,9 +61,19 @@ export async function getState(ctx: Context): Promise<State> {
 
         const installId = state.installId ?? uuidv4();
         try {
-            // TODO: Sync with the backend
+            let surveys: Survey[];
+
+            if (ctx.fetchPolicy === FetchPolicy.AUTO) {
+                const activeSurveys = await ctx.client.activeSurveys({
+                    first: 100
+                });
+                surveys = parsedSurveys(activeSurveys);
+            } else {
+                surveys = ctx.surveys ?? [];
+            }
+
             state = {
-                surveys: ctx.surveys ?? [],
+                surveys,
                 installId,
                 user: state.user ?? { id: installId },
                 seenSurveyIds: state.seenSurveyIds ?? new Set(),

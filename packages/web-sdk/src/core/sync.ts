@@ -1,7 +1,7 @@
-import { IntegraflowClient } from "@integraflow/sdk";
 import {
     Event,
     EventProperties,
+    FetchPolicy,
     ID,
     SurveyAnswer,
     UserAttributes
@@ -12,20 +12,11 @@ import { getState, persistState, resetState } from "./storage";
 
 export class SyncManager {
     private readonly context: Context;
-    private readonly api: IntegraflowClient;
 
     private syncId: NodeJS.Timeout | null = null;
 
     constructor(ctx: Context) {
         this.context = ctx;
-        this.api = new IntegraflowClient({
-            apiUrl: this.context.credentials.apiHost
-                ? `${this.context.credentials.apiHost}/graphql`
-                : undefined,
-            accessToken: this.context.credentials.accessToken,
-            apiKey: this.context.credentials.appKey
-        });
-
         this.startSync();
     }
 
@@ -51,10 +42,24 @@ export class SyncManager {
     async sync() {
         const state = await getState(this.context);
         console.debug("state: ", state);
-        const surveys = await this.api.activeSurveys({ first: 100 });
-        const newSurveys = parsedSurveys(surveys);
-        await persistState(this.context, { ...state, surveys: newSurveys });
-        this.context.setState({ ...state, surveys: newSurveys });
+
+        if (this.context.fetchPolicy === FetchPolicy.AUTO) {
+            try {
+                const surveys = await this.context.client.activeSurveys({
+                    first: 100
+                });
+                const newSurveys = parsedSurveys(surveys);
+                await persistState(this.context, {
+                    ...state,
+                    surveys: newSurveys
+                });
+
+                this.context.setState({ ...state, surveys: newSurveys });
+            } catch (e) {
+                console.warn(e);
+                // Noop (fallback to local)
+            }
+        }
     }
 
     stopSync() {
@@ -100,6 +105,8 @@ export class SyncManager {
 
         await persistState(this.context, state);
 
+        await this.trackEvent("$identify", state.user);
+
         this.context.setState(state);
         this.context.broadcast("audienceUpdated", state.user);
 
@@ -139,19 +146,24 @@ export class SyncManager {
 
         this.context.setState(state);
 
-        if (state.user?.id) {
-            await this.api.captureEvent({
-                input: {
-                    ...event,
-                    timestamp: new Date(event.timestamp),
-                    userId:
-                        typeof state.user?.id === "number"
-                            ? String(state.user?.id)
-                            : state.user?.id,
-                    properties: JSON.stringify(event.properties ?? {}),
-                    attributes: JSON.stringify(state.user ?? {})
-                }
-            });
+        if (state.user?.id && this.context.fetchPolicy === FetchPolicy.AUTO) {
+            try {
+                await this.context.client.captureEvent({
+                    input: {
+                        ...event,
+                        timestamp: new Date(event.timestamp),
+                        userId:
+                            typeof state.user?.id === "number"
+                                ? String(state.user?.id)
+                                : state.user?.id,
+                        properties: JSON.stringify(event.properties ?? {}),
+                        attributes: JSON.stringify(state.user ?? {})
+                    }
+                });
+            } catch (e) {
+                console.warn(e);
+                // Noop (fallback to local)
+            }
         }
 
         return event;
