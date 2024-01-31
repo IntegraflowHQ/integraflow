@@ -382,3 +382,17 @@ export const questionOptions = (question: SurveyQuestion) => {
         label: option.label,
     }));
 };
+
+export const generateNumericalOptions = (
+    start: number,
+    end: number,
+): { label: string; value: number }[] => {
+    const options = [];
+    for (let i = start; i <= end; i++) {
+        options.push({
+            label: i.toString(),
+            value: i,
+        });
+    }
+    return options;
+};

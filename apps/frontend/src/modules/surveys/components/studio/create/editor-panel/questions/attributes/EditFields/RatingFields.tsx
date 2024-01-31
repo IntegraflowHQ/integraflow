@@ -1,7 +1,10 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { QuestionOption } from "@/types";
-import { createRangeOptions } from "@/utils/defaultOptions";
+import {
+    createRangeOptions,
+    generateNumericalOptions,
+} from "@/utils/defaultOptions";
 import { useState } from "react";
 import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
@@ -25,83 +28,8 @@ const scaleStyleOptions = [
         value: SurveyQuestionTypeEnum.Csat,
     },
 ];
-const numericalOptions = [
-    {
-        label: "2",
-        value: 2,
-    },
-    {
-        label: "3",
-        value: 3,
-    },
-    {
-        label: "4",
-        value: 4,
-    },
-    {
-        label: "5",
-        value: 5,
-    },
-    {
-        label: "6",
-        value: 6,
-    },
-    {
-        label: "7",
-        value: 7,
-    },
-    {
-        label: "8",
-        value: 8,
-    },
-    {
-        label: "9",
-        value: 9,
-    },
-    {
-        label: "10",
-        value: 10,
-    },
-];
-
-const ratingOptions = [
-    {
-        label: "2",
-        value: 2,
-    },
-    {
-        label: "3",
-        value: 3,
-    },
-    {
-        label: "4",
-        value: 4,
-    },
-    {
-        label: "5",
-        value: 5,
-    },
-    {
-        label: "6",
-        value: 6,
-    },
-    {
-        label: "7",
-        value: 7,
-    },
-    {
-        label: "8",
-        value: 8,
-    },
-    {
-        label: "9",
-        value: 9,
-    },
-    {
-        label: "10",
-        value: 10,
-    },
-];
+const numericalOptions = generateNumericalOptions(2, 10);
+const ratingOptions = generateNumericalOptions(2, 10);
 
 export const RatingFields = ({ question }: Props) => {
     const { updateQuestionMutation } = useQuestion();

@@ -18,14 +18,13 @@ type Props = {
 };
 
 export const DefaultLogicBox: React.FC<Props> = ({
-    question,
     logicValues,
     isCreatingLogic,
     setLogicValues,
     setIsCreatingLogic,
 }: Props) => {
     const { parsedQuestions } = useSurvey();
-    const { updateQuestionMutation } = useQuestion();
+    const { updateQuestionMutation, openQuestion } = useQuestion();
 
     const handleConditionChange = (
         value: SingleValue<Option> | MultiValue<Option>,
@@ -76,9 +75,9 @@ export const DefaultLogicBox: React.FC<Props> = ({
     const handleDestinationSelection = (value: any) => {
         updateQuestionMutation({
             settings: {
-                ...question.settings,
+                ...openQuestion?.settings,
                 logic: [
-                    ...question.settings.logic,
+                    ...openQuestion?.settings.logic,
                     {
                         ...logicValues,
                         destination: value?.value,
@@ -109,7 +108,9 @@ export const DefaultLogicBox: React.FC<Props> = ({
                         <p>If answer</p>
                         <div className="w-[330px]">
                             <ReactSelect
-                                options={getLogicConditions(question.type)}
+                                options={getLogicConditions(
+                                    openQuestion?.type!,
+                                )}
                                 onchange={handleConditionChange}
                             />
                         </div>
@@ -119,19 +120,19 @@ export const DefaultLogicBox: React.FC<Props> = ({
                             <div></div>
                             <div className="w-[330px]">
                                 <MinMaxSelector
-                                    options={question.options?.map(
+                                    options={openQuestion?.options?.map(
                                         (option: Option) => ({
                                             value: option.id,
                                             label: option.label,
                                         }),
                                     )}
                                     maxChange={handleMaxChange}
-                                    minValue={question.options?.find(
+                                    minValue={openQuestion?.options?.find(
                                         (option: Option) =>
                                             option.value ===
                                             logicValues.values?.[0],
                                     )}
-                                    maxValue={question.options?.find(
+                                    maxValue={openQuestion?.options?.find(
                                         (option: Option) =>
                                             option.value ===
                                             logicValues.values?.[1],
@@ -156,7 +157,7 @@ export const DefaultLogicBox: React.FC<Props> = ({
                                 <div className="w-[330px]">
                                     <ReactSelect
                                         comboBox={true}
-                                        options={question.options?.map(
+                                        options={openQuestion?.options?.map(
                                             (option: Option) => ({
                                                 value: option.id,
                                                 label: option.label,
@@ -167,7 +168,7 @@ export const DefaultLogicBox: React.FC<Props> = ({
                                             logicValues.values &&
                                             logicValues.values.map((v) => ({
                                                 value: v,
-                                                label: question.options?.find(
+                                                label: openQuestion?.options?.find(
                                                     (o: Option) => o.id === v,
                                                 )?.label,
                                             }))
@@ -193,7 +194,9 @@ export const DefaultLogicBox: React.FC<Props> = ({
                                         ...parsedQuestions
                                             .slice(
                                                 parsedQuestions.findIndex(
-                                                    (q) => q.id === question.id,
+                                                    (q) =>
+                                                        q.id ===
+                                                        openQuestion?.id,
                                                 ) + 1,
                                             )
                                             .map((q) => ({
@@ -224,5 +227,3 @@ export const DefaultLogicBox: React.FC<Props> = ({
         </>
     );
 };
-
-export default DefaultLogicBox;

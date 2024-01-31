@@ -1,5 +1,5 @@
 import MinusIcon from "@/assets/icons/studio/MinusIcon";
-import { SurveyQuestion } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { FormLogicGroup, QuestionLogic } from "@/types";
 import { getLogicConditions } from "@/utils/defaultOptions";
@@ -8,18 +8,17 @@ import { MultiValue, SingleValue } from "react-select";
 import { Option, ReactSelect } from "../ReactSelect";
 
 type Props = {
-    question: SurveyQuestion;
     logic: QuestionLogic;
 };
 
-export const LogicGroup = ({ question, logic }: Props) => {
-    const { updateQuestionMutation } = useQuestion();
+export const LogicGroup = ({ logic }: Props) => {
+    const { updateQuestionMutation, openQuestion } = useQuestion();
 
     const handleUpdateFields = (
         values: SingleValue<Option> | MultiValue<Option>,
         group: FormLogicGroup,
     ) => {
-        const newLogic = [...question.settings.logic];
+        const newLogic = [...openQuestion?.settings.logic];
 
         const currentLogic = newLogic.findIndex(
             (l: QuestionLogic) => l.id === logic.id,
@@ -66,7 +65,50 @@ export const LogicGroup = ({ question, logic }: Props) => {
         }
         updateQuestionMutation({
             settings: {
-                ...question.settings,
+                ...openQuestion?.settings,
+                logic: newLogic,
+            },
+        });
+    };
+
+    const handleRemoveGroup = (group: FormLogicGroup) => {
+        const currentLogic = openQuestion?.settings.logic.findIndex(
+            (l: QuestionLogic) => l.id === logic.id,
+        );
+        const newLogic = [...openQuestion?.settings.logic];
+
+        if (openQuestion?.settings.logic[currentLogic].groups.length === 1) {
+            newLogic.splice(currentLogic, 1);
+        } else {
+            newLogic[currentLogic].groups = newLogic[
+                currentLogic
+            ].groups.filter((g: FormLogicGroup) => g.id !== group.id);
+        }
+
+        updateQuestionMutation({
+            settings: {
+                ...openQuestion?.settings,
+                logic: newLogic,
+            },
+        });
+    };
+    const handleUpdateCondition = (
+        value: SingleValue<Option> | MultiValue<Option>,
+        group: FormLogicGroup,
+    ) => {
+        const newLogic = [...openQuestion?.settings.logic];
+        const currentLogic = newLogic.findIndex(
+            (l: QuestionLogic) => l.id === logic.id,
+        );
+        newLogic[currentLogic].groups[
+            newLogic[currentLogic].groups.findIndex(
+                (g: FormLogicGroup) => g.id === group.id,
+            )
+        ].condition = (value as SingleValue<Option>)?.value;
+
+        updateQuestionMutation({
+            settings: {
+                ...openQuestion?.settings,
                 logic: newLogic,
             },
         });
@@ -84,7 +126,7 @@ export const LogicGroup = ({ question, logic }: Props) => {
                                     <ReactSelect
                                         comboBox={true}
                                         options={[
-                                            ...(question.options?.map(
+                                            ...(openQuestion?.options?.map(
                                                 (
                                                     option: SingleValue<Option>,
                                                 ) => ({
@@ -102,7 +144,7 @@ export const LogicGroup = ({ question, logic }: Props) => {
                                                 ? group.fields.map((field) => ({
                                                       value: field,
                                                       label:
-                                                          question.options?.find(
+                                                          openQuestion?.options?.find(
                                                               (o: Option) =>
                                                                   o.id ===
                                                                   field,
@@ -122,7 +164,7 @@ export const LogicGroup = ({ question, logic }: Props) => {
                                                   ]
                                                 : group.fields.map((field) => {
                                                       const option =
-                                                          question.options?.find(
+                                                          openQuestion?.options?.find(
                                                               (
                                                                   option: Option,
                                                               ) =>
@@ -152,17 +194,17 @@ export const LogicGroup = ({ question, logic }: Props) => {
                                     <div className="w-[330px]">
                                         <ReactSelect
                                             options={getLogicConditions(
-                                                question.type,
+                                                openQuestion?.type as SurveyQuestionTypeEnum,
                                             )}
                                             defaultValue={getLogicConditions(
-                                                question.type,
+                                                openQuestion?.type as SurveyQuestionTypeEnum,
                                             )?.find(
                                                 (c) =>
                                                     c.value === group.condition,
                                             )}
                                             value={
                                                 getLogicConditions(
-                                                    question.type,
+                                                    openQuestion?.type as SurveyQuestionTypeEnum,
                                                 )?.find(
                                                     (c) =>
                                                         c.value ===
@@ -174,31 +216,10 @@ export const LogicGroup = ({ question, logic }: Props) => {
                                                     | SingleValue<Option>
                                                     | MultiValue<Option>,
                                             ) => {
-                                                const newLogic = [
-                                                    ...question.settings.logic,
-                                                ];
-                                                const currentLogic =
-                                                    newLogic.findIndex(
-                                                        (l: QuestionLogic) =>
-                                                            l.id === logic.id,
-                                                    );
-                                                newLogic[currentLogic].groups[
-                                                    newLogic[
-                                                        currentLogic
-                                                    ].groups.findIndex(
-                                                        (g: FormLogicGroup) =>
-                                                            g.id === group.id,
-                                                    )
-                                                ].condition = (
-                                                    value as SingleValue<Option>
-                                                )?.value;
-
-                                                updateQuestionMutation({
-                                                    settings: {
-                                                        ...question.settings,
-                                                        logic: newLogic,
-                                                    },
-                                                });
+                                                handleUpdateCondition(
+                                                    value,
+                                                    group,
+                                                );
                                             }}
                                         />
                                     </div>
@@ -208,36 +229,7 @@ export const LogicGroup = ({ question, logic }: Props) => {
                             <div
                                 className="absolute bottom-1/2 right-0 translate-x-1/2 cursor-pointer border"
                                 onClick={() => {
-                                    const currentLogic =
-                                        question.settings.logic.findIndex(
-                                            (l: QuestionLogic) =>
-                                                l.id === logic.id,
-                                        );
-                                    const newLogic = [
-                                        ...question.settings.logic,
-                                    ];
-
-                                    if (
-                                        question.settings.logic[currentLogic]
-                                            .groups.length === 1
-                                    ) {
-                                        newLogic.splice(currentLogic, 1);
-                                    } else {
-                                        newLogic[currentLogic].groups =
-                                            newLogic[
-                                                currentLogic
-                                            ].groups.filter(
-                                                (g: FormLogicGroup) =>
-                                                    g.id !== group.id,
-                                            );
-                                    }
-
-                                    updateQuestionMutation({
-                                        settings: {
-                                            ...question.settings,
-                                            logic: newLogic,
-                                        },
-                                    });
+                                    handleRemoveGroup(group);
                                 }}
                             >
                                 <MinusIcon />

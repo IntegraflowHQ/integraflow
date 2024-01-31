@@ -1,5 +1,4 @@
 import MinusIcon from "@/assets/icons/studio/MinusIcon";
-import { SurveyQuestion } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { QuestionLogic } from "@/types";
@@ -9,21 +8,20 @@ import MinMaxSelector from "../MinMaxSelector";
 import { Option, ReactSelect } from "../ReactSelect";
 
 type Props = {
-    question: SurveyQuestion;
     logic: QuestionLogic;
     setIsCreatingLogic: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const LogicBox = ({ question, setIsCreatingLogic, logic }: Props) => {
+export const LogicBox = ({ setIsCreatingLogic, logic }: Props) => {
     const { parsedQuestions } = useSurvey();
-    const { updateQuestionMutation } = useQuestion();
+    const { updateQuestionMutation, openQuestion } = useQuestion();
 
     const handleLogicUpdate = (updatedLogic: QuestionLogic) => {
         updateQuestionMutation({
             settings: {
-                ...question.settings,
+                ...openQuestion?.settings,
                 logic: [
-                    ...(question.settings.logic as QuestionLogic[]).filter(
+                    ...(openQuestion?.settings.logic as QuestionLogic[]).filter(
                         (l) => l.id !== logic.id,
                     ),
                     updatedLogic,
@@ -60,7 +58,7 @@ export const LogicBox = ({ question, setIsCreatingLogic, logic }: Props) => {
                 <p>If answer</p>
                 <div className="w-[330px]">
                     <ReactSelect
-                        options={getLogicConditions(question.type)}
+                        options={getLogicConditions(openQuestion?.type!)}
                         onchange={(
                             value: SingleValue<Option> | MultiValue<Option>,
                         ) =>
@@ -73,9 +71,9 @@ export const LogicBox = ({ question, setIsCreatingLogic, logic }: Props) => {
                                 ),
                             })
                         }
-                        defaultValue={getLogicConditions(question.type)?.find(
-                            (c) => c.value === logic.condition,
-                        )}
+                        defaultValue={getLogicConditions(
+                            openQuestion?.type!,
+                        )?.find((c) => c.value === logic.condition)}
                     />
                 </div>
             </div>
@@ -85,13 +83,13 @@ export const LogicBox = ({ question, setIsCreatingLogic, logic }: Props) => {
                     <div></div>
                     <div className="w-[330px]">
                         <MinMaxSelector
-                            options={question.options.map(
+                            options={openQuestion?.options.map(
                                 (option: SingleValue<Option>) => ({
                                     value: option?.id,
                                     label: option?.label,
                                 }),
                             )}
-                            minDefault={question.options
+                            minDefault={openQuestion?.options
                                 .map((option: SingleValue<Option>) => {
                                     return {
                                         value: option?.id,
@@ -102,7 +100,7 @@ export const LogicBox = ({ question, setIsCreatingLogic, logic }: Props) => {
                                     (o: Option) =>
                                         o.value === logic.values?.[0],
                                 )}
-                            maxDefault={question.options
+                            maxDefault={openQuestion?.options
                                 .map((option: SingleValue<Option>) => {
                                     return {
                                         value: option?.id,
@@ -113,7 +111,7 @@ export const LogicBox = ({ question, setIsCreatingLogic, logic }: Props) => {
                                     (o: Option) =>
                                         o.value === logic.values?.[1],
                                 )}
-                            minValue={question.options
+                            minValue={openQuestion?.options
                                 .map((option: SingleValue<Option>) => {
                                     return {
                                         value: option?.id,
@@ -124,7 +122,7 @@ export const LogicBox = ({ question, setIsCreatingLogic, logic }: Props) => {
                                     (o: Option) =>
                                         o.value === logic.values?.[0],
                                 )}
-                            maxValue={question.options
+                            maxValue={openQuestion?.options
                                 .map((option: SingleValue<Option>) => {
                                     return {
                                         value: option?.id,
@@ -160,7 +158,7 @@ export const LogicBox = ({ question, setIsCreatingLogic, logic }: Props) => {
                     <div className="w-[330px]">
                         <ReactSelect
                             comboBox={true}
-                            options={question.options?.map(
+                            options={openQuestion?.options?.map(
                                 (option: SingleValue<Option>) => ({
                                     value: option?.id,
                                     label: option?.label,
@@ -169,7 +167,7 @@ export const LogicBox = ({ question, setIsCreatingLogic, logic }: Props) => {
                             defaultValue={logic.values
                                 ?.map(
                                     (v) =>
-                                        question.options?.find(
+                                        openQuestion?.options?.find(
                                             (o: Option) => o.id === v,
                                         ),
                                 )
@@ -207,7 +205,7 @@ export const LogicBox = ({ question, setIsCreatingLogic, logic }: Props) => {
                             ...parsedQuestions
                                 .slice(
                                     parsedQuestions.findIndex(
-                                        (q) => q.id === question.id,
+                                        (q) => q.id === openQuestion?.id,
                                     ) + 1,
                                 )
                                 .map((q) => ({
@@ -231,9 +229,9 @@ export const LogicBox = ({ question, setIsCreatingLogic, logic }: Props) => {
                 onClick={() =>
                     updateQuestionMutation({
                         settings: {
-                            ...question.settings,
+                            ...openQuestion?.settings,
                             logic: (
-                                question.settings.logic as QuestionLogic[]
+                                openQuestion?.settings.logic as QuestionLogic[]
                             ).filter((l) => l.id !== logic.id),
                         },
                     })

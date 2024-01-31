@@ -1,4 +1,3 @@
-import { SurveyQuestion } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { QuestionLogic } from "@/types";
@@ -10,17 +9,16 @@ import { Option, ReactSelect } from "../ReactSelect";
 import { LogicGroup } from "./LogicGroup";
 
 type Props = {
-    question: SurveyQuestion;
     logic: QuestionLogic;
     setIsCreatingLogic: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const FormLogicBox = ({ question, logic }: Props) => {
+export const FormLogicBox = ({ logic }: Props) => {
     const { parsedQuestions } = useSurvey();
-    const { updateQuestionMutation } = useQuestion();
+    const { updateQuestionMutation, openQuestion } = useQuestion();
 
     const addLogicGroup = () => {
-        const newLogic = [...question.settings.logic];
+        const newLogic = [...openQuestion?.settings.logic];
         const currentLogic = newLogic.findIndex(
             (l: QuestionLogic) => l.id === logic.id,
         );
@@ -31,7 +29,7 @@ export const FormLogicBox = ({ question, logic }: Props) => {
 
         updateQuestionMutation({
             settings: {
-                ...question.settings,
+                ...openQuestion?.settings,
                 logic: newLogic,
             },
         });
@@ -40,7 +38,7 @@ export const FormLogicBox = ({ question, logic }: Props) => {
     const handleDestinationChange = (
         value: SingleValue<Option> | MultiValue<Option>,
     ) => {
-        const newLogic = [...question.settings.logic];
+        const newLogic = [...openQuestion?.settings.logic];
         const currentLogic = newLogic.findIndex(
             (l: QuestionLogic) => l.id === logic.id,
         );
@@ -48,7 +46,7 @@ export const FormLogicBox = ({ question, logic }: Props) => {
 
         updateQuestionMutation({
             settings: {
-                ...question.settings,
+                ...openQuestion?.settings,
                 logic: newLogic,
             },
         });
@@ -56,7 +54,7 @@ export const FormLogicBox = ({ question, logic }: Props) => {
 
     return (
         <div className="relative rounded-md border border-intg-bg-4">
-            <LogicGroup question={question} logic={logic} />
+            <LogicGroup logic={logic} />
 
             <div className="relative p-6">
                 <hr className="border-intg-bg-4" />
@@ -73,7 +71,7 @@ export const FormLogicBox = ({ question, logic }: Props) => {
                             ...parsedQuestions
                                 .slice(
                                     parsedQuestions.findIndex(
-                                        (q) => q.id === question.id,
+                                        (q) => q.id === openQuestion?.id,
                                     ) + 1,
                                 )
                                 .map((q) => ({

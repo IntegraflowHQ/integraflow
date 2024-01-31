@@ -12,14 +12,12 @@ import { createSelectors } from "@/utils/selectors";
 import { CTAType } from "@integraflow/web/src/types";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useScrollToBottom } from "react-scroll-to-bottom";
 import { SURVEY_QUESTION } from "../graphql/fragments/surveyFragment";
 import { useSurveyStore } from "../states/survey";
 import { useSurvey } from "./useSurvey";
 
 export const useQuestion = () => {
     const { surveySlug } = useParams();
-    const scrollToBottom = useScrollToBottom();
     const { survey, parsedQuestions } = useSurvey();
 
     const surveyStore = createSelectors(useSurveyStore);

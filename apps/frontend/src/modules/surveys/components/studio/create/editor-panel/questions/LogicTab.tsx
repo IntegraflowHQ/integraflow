@@ -128,7 +128,6 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
                         (logic) => {
                             return (
                                 <FormLogicBox
-                                    question={question}
                                     setIsCreatingLogic={setIsCreatingLogic}
                                     logic={logic}
                                     key={logic.id}
@@ -139,7 +138,6 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
                     {
                         <FormLogicDefault
                             isCreatingLogic={isCreatingLogic}
-                            question={question}
                             setIsCreatingLogic={setIsCreatingLogic}
                             formLogicValues={formLogicValues}
                             setFormLogicValues={setFormLogicValues}
@@ -152,7 +150,6 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
                         (logic) => {
                             return (
                                 <LogicBox
-                                    question={question}
                                     setIsCreatingLogic={setIsCreatingLogic}
                                     logic={logic}
                                     key={logic.id}

@@ -1,4 +1,3 @@
-import { SurveyQuestion } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { cn, generateUniqueId } from "@/utils";
@@ -10,7 +9,6 @@ import { FormLogicValues } from "../../LogicTab";
 import { Option, ReactSelect } from "../ReactSelect";
 import { LogicGroup } from "./DefaultLogicGroup";
 type Props = {
-    question: SurveyQuestion;
     formLogicValues: FormLogicValues;
     isCreatingLogic: boolean;
     setFormLogicValues: React.Dispatch<React.SetStateAction<FormLogicValues>>;
@@ -18,14 +16,13 @@ type Props = {
 };
 
 const FormLogicDefault = ({
-    question,
     setFormLogicValues,
     formLogicValues,
     setIsCreatingLogic,
     isCreatingLogic,
 }: Props) => {
     const { parsedQuestions } = useSurvey();
-    const { updateQuestionMutation } = useQuestion();
+    const { updateQuestionMutation, openQuestion } = useQuestion();
     const [showAddGroup, setShowAddGroup] = React.useState<boolean>(false);
     useEffect(() => {
         const lastValue =
@@ -38,6 +35,24 @@ const FormLogicDefault = ({
         }
     }, [formLogicValues.groups]);
 
+    const handleUpdateCondition = (
+        value: SingleValue<Option> | MultiValue<Option>,
+    ) => {
+        updateQuestionMutation({
+            settings: {
+                ...openQuestion?.settings,
+                logic: [
+                    ...openQuestion?.settings.logic,
+                    {
+                        ...formLogicValues,
+                        destination: (value as SingleValue<Option>)?.value,
+                    },
+                ],
+            },
+        });
+        setIsCreatingLogic(false);
+    };
+
     return (
         <>
             {isCreatingLogic && (
@@ -49,7 +64,6 @@ const FormLogicDefault = ({
                             index={index}
                             formLogicValues={formLogicValues}
                             setFormLogicValues={setFormLogicValues}
-                            question={question}
                             setIsCreatingLogic={setIsCreatingLogic}
                         />
                     ))}
@@ -97,7 +111,7 @@ const FormLogicDefault = ({
                                                     parsedQuestions.findIndex(
                                                         (q) =>
                                                             q.id ===
-                                                            question.id,
+                                                            openQuestion?.id,
                                                     ) + 1,
                                                 )
                                                 .map((q) => ({
@@ -116,22 +130,7 @@ const FormLogicDefault = ({
                                                 | SingleValue<Option>
                                                 | MultiValue<Option>,
                                         ) => {
-                                            updateQuestionMutation({
-                                                settings: {
-                                                    ...question.settings,
-                                                    logic: [
-                                                        ...question.settings
-                                                            .logic,
-                                                        {
-                                                            ...formLogicValues,
-                                                            destination: (
-                                                                value as SingleValue<Option>
-                                                            )?.value,
-                                                        },
-                                                    ],
-                                                },
-                                            });
-                                            setIsCreatingLogic(false);
+                                            handleUpdateCondition(value);
                                         }}
                                     />
                                 </div>
