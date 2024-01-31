@@ -29,7 +29,7 @@ export const FormFieldList = ({ question }: Props) => {
                         {question.options.map(
                             (option: FormField, index: number) => {
                                 return (
-                                    <div>
+                                    <div key={option.id}>
                                         <div className="flex items-center justify-between">
                                             <MoreButton />
                                             <div className=" grid flex-1 grid-cols-2 items-center gap-2">

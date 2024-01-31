@@ -68,7 +68,7 @@ export type FormLogicGroup = {
 };
 
 export type QuestionLogic = {
-    id?: ID;
+    id?: ID | number | string;
     orderNumber?: number;
     destination?: ID;
     condition?:

@@ -192,7 +192,10 @@ export const RatingFields = ({ question }: Props) => {
                             {question.options?.map(
                                 (option: QuestionOption, index: number) => {
                                     return (
-                                        <div className="flex items-center gap-2">
+                                        <div
+                                            key={option.id}
+                                            className="flex items-center gap-2"
+                                        >
                                             <EditorTextInput
                                                 value={option.label}
                                                 onChange={(e) => {
