@@ -46,13 +46,6 @@ export default [
                 sourcemap: true,
                 exports: "named",
             },
-            {
-                dir: "./",
-                entryFileNames: "dist/index-es.min.js",
-                format: "es",
-                sourcemap: true,
-                exports: "named",
-            },
         ],
         plugins: [...nodePlugins, ...minPlugins],
     },
