@@ -9,7 +9,7 @@ import { brotliCompressSync } from "zlib";
 
 const plugins = [typescript(), json()];
 
-const nodePlugins = [...plugins, resolve(), commonjs()];
+const nodePlugins = [...plugins, commonjs()];
 
 const browserPlugins = [
     ...plugins,
