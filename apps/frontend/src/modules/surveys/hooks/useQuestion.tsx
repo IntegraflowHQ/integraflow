@@ -8,9 +8,10 @@ import {
     useSurveyQuestionDeleteMutation,
     useSurveyQuestionUpdateMutation,
 } from "@/generated/graphql";
+import { QuestionLogic } from "@/types";
 import { createSelectors } from "@/utils/selectors";
 import { CTAType } from "@integraflow/web/src/types";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { SURVEY_QUESTION } from "../graphql/fragments/surveyFragment";
 import { useSurveyStore } from "../states/survey";
@@ -213,8 +214,50 @@ export const useQuestion = () => {
         });
     };
 
+    const updateLogic = useCallback(
+        (
+            editValues: QuestionLogic,
+            question: SurveyQuestion,
+            logicIndex: number,
+        ) => {
+            if (!editValues.destination) {
+                return;
+            }
+            if (!editValues.groups || editValues.groups?.length == 0) {
+                return;
+            }
+
+            const completeGroups = editValues.groups.filter(
+                (g) => g.fields.length > 0 && g.condition,
+            );
+
+            if (completeGroups.length === 0) {
+                return;
+            }
+
+            const newLogic = {
+                ...editValues,
+                destination: editValues.destination,
+                groups: completeGroups,
+            };
+            const newLogicArray = question.settings.logic.map(
+                (l: QuestionLogic, i: number) =>
+                    i === logicIndex ? newLogic : l,
+            );
+
+            updateQuestionMutation({
+                settings: {
+                    ...question.settings,
+                    logic: newLogicArray,
+                },
+            });
+        },
+        [],
+    );
+
     return {
         createQuestionMutation,
+        updateLogic,
         surveySlug,
         openQuestion,
         setOpenQuestion,

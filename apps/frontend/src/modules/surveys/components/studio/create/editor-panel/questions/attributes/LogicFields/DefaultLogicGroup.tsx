@@ -1,5 +1,5 @@
 import MinusIcon from "@/assets/icons/studio/MinusIcon";
-import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
+import { SurveyQuestion } from "@/generated/graphql";
 import { FormLogicGroup } from "@/types";
 import { getLogicConditions } from "@/utils/defaultOptions";
 import { LogicOperator } from "@integraflow/web/src/types";
@@ -13,6 +13,7 @@ type Props = {
     setFormLogicValues: React.Dispatch<React.SetStateAction<FormLogicValues>>;
     setIsCreatingLogic: React.Dispatch<React.SetStateAction<boolean>>;
     group: FormLogicGroup;
+    question: SurveyQuestion;
 };
 
 export const LogicGroup = ({
@@ -21,48 +22,25 @@ export const LogicGroup = ({
     setFormLogicValues,
     setIsCreatingLogic,
     index,
+    question,
 }: Props) => {
-    const { openQuestion } = useQuestion();
     const handleUpdateFields = (
         values: SingleValue<Option> | MultiValue<Option>,
     ) => {
-        if ((values as MultiValue<Option>).length > 1) {
-            if (
-                (values as MultiValue<Option>)[
-                    (values as MultiValue<Option>)?.length - 1
-                ]?.value === "1"
-            ) {
-                setFormLogicValues({
-                    ...formLogicValues,
-                    groups: formLogicValues.groups.map((g) => ({
-                        ...g,
-                        fields: ["1"],
-                        operator: LogicOperator.OR,
-                    })),
-                });
-                return;
-            } else {
-                setFormLogicValues({
-                    ...formLogicValues,
-                    groups: formLogicValues.groups.map((g) => ({
-                        ...g,
-                        operator: LogicOperator.AND,
-                        fields: (values as MultiValue<Option>)
-                            ?.filter((v) => v.value !== "1")
-                            .map((v) => v.value),
-                    })),
-                });
-            }
-        } else {
-            setFormLogicValues({
-                ...formLogicValues,
-                groups: formLogicValues.groups.map((g) => ({
-                    ...g,
-                    operator: LogicOperator.AND,
-                    fields: (values as MultiValue<Option>).map((v) => v.value),
-                })),
-            });
-        }
+        setFormLogicValues({
+            ...formLogicValues,
+            groups: formLogicValues.groups.map((g) =>
+                g.id === group.id
+                    ? {
+                          ...g,
+                          fields: (values as MultiValue<Option>)?.map(
+                              (v) => v.value,
+                          ),
+                          operator: LogicOperator.AND,
+                      }
+                    : g,
+            ),
+        });
     };
 
     const handleRemoveGroup = () => {
@@ -101,58 +79,43 @@ export const LogicGroup = ({
         <div className="relative" key={group.id}>
             <div className="relative space-y-6 p-6" key={index}>
                 <div className="flex justify-between">
-                    <div></div>
+                    <div>If</div>
                     <div className="w-[330px]">
                         <ReactSelect
                             comboBox={true}
                             options={[
-                                ...(openQuestion?.options?.map(
-                                    (option: Option) => ({
-                                        value: option.id,
-                                        label: option.label,
+                                ...(question?.options?.map(
+                                    (option: SingleValue<Option>) => ({
+                                        value: option?.id,
+                                        label: option?.label,
                                     }),
                                 ) ?? []),
-                                {
-                                    value: "1",
-                                    label: "Any field",
-                                },
                             ]}
                             onchange={(values) => {
                                 handleUpdateFields(values);
                             }}
-                            value={
-                                group.fields.length === 1 &&
-                                group.fields[0] === "1"
-                                    ? [
-                                          {
-                                              value: "1",
-                                              label: "Any field",
-                                          },
-                                      ]
-                                    : group.fields.map((field) => {
-                                          const option =
-                                              openQuestion?.options?.find(
-                                                  (option: Option) =>
-                                                      option.id === field,
-                                              );
-                                          return {
-                                              value: option?.id,
-                                              label: option?.label,
-                                          };
-                                      })
-                            }
+                            value={[
+                                ...((
+                                    question?.options?.map(
+                                        (option: SingleValue<Option>) => ({
+                                            value: option?.id,
+                                            label: option?.label,
+                                        }),
+                                    ) ?? []
+                                ).filter((option: Option) =>
+                                    group.fields.includes(option.value),
+                                ) ?? []),
+                            ]}
                         />
                     </div>
                 </div>
 
                 {group.fields.length > 0 && (
                     <div className="flex justify-between">
-                        <p>If answer</p>
+                        <p></p>
                         <div className="w-[330px]">
                             <ReactSelect
-                                options={getLogicConditions(
-                                    openQuestion?.type!,
-                                )}
+                                options={getLogicConditions(question?.type!)}
                                 onchange={(value) => {
                                     handleUpdateCondition(value);
                                 }}
@@ -162,7 +125,7 @@ export const LogicGroup = ({
                 )}
 
                 <div
-                    className="absolute bottom-1/2 right-0 translate-x-1/2 border"
+                    className="absolute bottom-1/2 right-0 translate-x-1/2"
                     onClick={() => handleRemoveGroup()}
                 >
                     <MinusIcon />

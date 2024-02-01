@@ -1,66 +1,73 @@
-import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
+import { SurveyQuestion } from "@/generated/graphql";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { QuestionLogic } from "@/types";
-import { generateUniqueId } from "@/utils";
+import { cn, generateUniqueId } from "@/utils";
+import { LogicOperator } from "@integraflow/web/src/types";
 import { PlusIcon } from "lucide-react";
-import React from "react";
-import { MultiValue, SingleValue } from "react-select";
+import React, { useEffect, useState } from "react";
+import { SingleValue } from "react-select";
 import { Option, ReactSelect } from "../ReactSelect";
 import { LogicGroup } from "./LogicGroup";
 
 type Props = {
     logic: QuestionLogic;
     setIsCreatingLogic: React.Dispatch<React.SetStateAction<boolean>>;
+    question: SurveyQuestion;
+    logicIndex: number;
 };
 
-export const FormLogicBox = ({ logic }: Props) => {
+export const FormLogicBox = ({ logic, question, logicIndex }: Props) => {
     const { parsedQuestions } = useSurvey();
-    const { updateQuestionMutation, openQuestion } = useQuestion();
+    const [disableAddLogic, setDisableAddLogic] = useState(false);
+    const [editValues, setEditValues] = useState(logic);
+
+    useEffect(() => {
+        const disable = editValues.groups.some(
+            (g) => g.fields.length === 0 || !g.condition,
+        );
+        setDisableAddLogic(disable);
+    }, [editValues]);
 
     const addLogicGroup = () => {
-        const newLogic = [...openQuestion?.settings.logic];
-        const currentLogic = newLogic.findIndex(
-            (l: QuestionLogic) => l.id === logic.id,
-        );
-        newLogic[currentLogic].groups.push({
-            id: generateUniqueId(),
-            fields: [],
-        });
-
-        updateQuestionMutation({
-            settings: {
-                ...openQuestion?.settings,
-                logic: newLogic,
-            },
+        setEditValues({
+            ...editValues,
+            groups: [
+                ...editValues.groups,
+                {
+                    id: generateUniqueId(),
+                    fields: [],
+                    condition: "",
+                    operator: LogicOperator.AND,
+                },
+            ],
         });
     };
-
-    const handleDestinationChange = (
-        value: SingleValue<Option> | MultiValue<Option>,
-    ) => {
-        const newLogic = [...openQuestion?.settings.logic];
-        const currentLogic = newLogic.findIndex(
-            (l: QuestionLogic) => l.id === logic.id,
-        );
-        newLogic[currentLogic].destination = value;
-
-        updateQuestionMutation({
-            settings: {
-                ...openQuestion?.settings,
-                logic: newLogic,
-            },
-        });
-    };
+    console.log(editValues.groups);
 
     return (
         <div className="relative rounded-md border border-intg-bg-4">
-            <LogicGroup logic={logic} />
+            <LogicGroup
+                groups={editValues.groups}
+                logicIndex={logicIndex}
+                question={question}
+                setEditValues={setEditValues}
+                editValues={editValues}
+            />
 
             <div className="relative p-6">
                 <hr className="border-intg-bg-4" />
-                <div className="absolute right-0 -translate-y-1/2 translate-x-1/2">
-                    <PlusIcon onClick={addLogicGroup} />
-                </div>
+                <button
+                    disabled={disableAddLogic}
+                    className={cn(
+                        disableAddLogic
+                            ? "cursor-not-allowed"
+                            : "cursor-pointer",
+                        "absolute right-0 -translate-y-1/2 translate-x-1/2",
+                    )}
+                    onClick={addLogicGroup}
+                >
+                    <PlusIcon />
+                </button>
             </div>
 
             <div className="flex justify-between gap-14 p-6 pt-0">
@@ -71,7 +78,7 @@ export const FormLogicBox = ({ logic }: Props) => {
                             ...parsedQuestions
                                 .slice(
                                     parsedQuestions.findIndex(
-                                        (q) => q.id === openQuestion?.id,
+                                        (q) => q.id === question?.id,
                                     ) + 1,
                                 )
                                 .map((q) => ({
@@ -101,7 +108,13 @@ export const FormLogicBox = ({ logic }: Props) => {
                                       label: "End survey",
                                   }
                         }
-                        onchange={(value) => handleDestinationChange(value)}
+                        onchange={(value) => {
+                            setEditValues({
+                                ...editValues,
+                                destination: (value as SingleValue<Option>)
+                                    ?.value,
+                            });
+                        }}
                     />
                 </div>
             </div>

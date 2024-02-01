@@ -80,7 +80,7 @@ export type QuestionLogic = {
         | LogicTextCondition;
     operator?: LogicOperator | undefined;
     values?: ID[] | string[];
-    groups?: FormLogicGroup[];
+    groups: FormLogicGroup[];
 };
 
 export type QuestionSettings = {

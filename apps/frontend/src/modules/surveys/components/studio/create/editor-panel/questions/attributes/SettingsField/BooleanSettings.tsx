@@ -69,6 +69,7 @@ export const BooleanSettings = ({ question }: Props) => {
                         characterCount={negativeText?.split("").length}
                     />
                     <ReactSelect
+                        label="Shape"
                         options={booleanOptionsShape}
                         defaultValue={booleanOptionsShape.find(
                             (option) =>

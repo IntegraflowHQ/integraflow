@@ -125,9 +125,11 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
             {question.type === SurveyQuestionTypeEnum.Form ? (
                 <>
                     {((question.settings as QuestionSettings).logic || [])?.map(
-                        (logic) => {
+                        (logic, index) => {
                             return (
                                 <FormLogicBox
+                                    logicIndex={index}
+                                    question={question}
                                     setIsCreatingLogic={setIsCreatingLogic}
                                     logic={logic}
                                     key={logic.id}
@@ -137,6 +139,7 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
                     )}
                     {
                         <FormLogicDefault
+                            question={question}
                             isCreatingLogic={isCreatingLogic}
                             setIsCreatingLogic={setIsCreatingLogic}
                             formLogicValues={formLogicValues}
