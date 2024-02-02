@@ -141,6 +141,19 @@ type Query {
   ): Survey @doc(category: "Surveys")
 
   """
+  Look up a survey by channel ID or link.
+  
+  Requires one of the following permissions: AUTHENTICATED_API.
+  """
+  surveyByChannel(
+    """The ID of the channel."""
+    id: ID
+
+    """Unique link of the channel."""
+    link: String
+  ): BaseSurvey @doc(category: "Surveys")
+
+  """
   List of the project's themes.
   
   Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -427,6 +440,9 @@ type Project implements Node @doc(category: "Projects") {
 
   """Name of the project."""
   name: String!
+
+  """API token for project."""
+  apiToken: String!
 
   """Slug of the project."""
   slug: String!
@@ -952,6 +968,8 @@ type SurveyCountableEdge @doc(category: "Surveys") {
 }
 
 input SurveyFilterInput @doc(category: "Surveys") {
+  search: String
+
   """Filter by type"""
   type: SurveyTypeEnum
   status: SurveyStatusEnum
@@ -1059,6 +1077,9 @@ type BaseSurvey implements Node @doc(category: "Surveys") {
     channelType: SurveyChannelTypeEnum
   ): [BaseSurveyChannel!]!
 
+  """The project the survey belongs to"""
+  project: BaseProject
+
   """The time at which the survey was created."""
   createdAt: DateTime!
 
@@ -1133,6 +1154,18 @@ type BaseSurveyChannel implements Node @doc(category: "Surveys") {
 
   """The time at which the channel was created."""
   createdAt: DateTime!
+}
+
+"""Represents a project."""
+type BaseProject implements Node @doc(category: "Projects") {
+  """The ID of the project."""
+  id: ID!
+
+  """Name of the project."""
+  name: String!
+
+  """API token for project."""
+  apiToken: String!
 }
 
 type ProjectThemeCountableConnection @doc(category: "Projects") {
@@ -1390,10 +1423,6 @@ type Person implements Node @doc(category: "Events") {
   createdAt: DateTime
 }
 
-"""
-Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
-in fields, resolvers and input.
-"""
 scalar UUID
 
 type PropertyDefinitionCountableConnection @doc(category: "Events") {
@@ -2436,10 +2465,10 @@ input EventCaptureInput @doc(category: "Events") {
   """The name of the event."""
   event: String!
 
-  """The payload ID."""
+  """The event payload ID."""
   uuid: UUID
 
-  """The distinct ID."""
+  """The user distinct ID."""
   userId: ID
 
   """The event properties."""

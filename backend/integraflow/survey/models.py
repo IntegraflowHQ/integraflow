@@ -1,10 +1,12 @@
 from functools import partial
+from typing import Any
 from django.db import models
 from django.utils.crypto import get_random_string
 
 from integraflow.core.models import UUIDModel
 from integraflow.core.utils import (
-    MAX_SLUG_LENGTH
+    MAX_SLUG_LENGTH,
+    create_with_unique_string
 )
 
 
@@ -129,6 +131,16 @@ class SurveyQuestion(UUIDModel):
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
 
 
+class SurveyChannelManager(models.Manager):
+    def create(self, *args: Any, **kwargs: Any):
+        return create_with_unique_string(
+            super().create,
+            'link',
+            *args,
+            **kwargs
+        )
+
+
 class SurveyChannel(UUIDModel):
     class Type(models.TextChoices):
         EMAIL = "email", "email"
@@ -142,6 +154,12 @@ class SurveyChannel(UUIDModel):
         verbose_name = "SurveyChannel"
         verbose_name_plural = "SurveyChannels"
         db_table = "survey_channels"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["link"],
+                name="unique_link_for_survey_channel"
+            ),
+        ]
 
     survey: models.ForeignKey = models.ForeignKey(
         Survey,
@@ -154,10 +172,16 @@ class SurveyChannel(UUIDModel):
         choices=Type.choices,
         default=Type.LINK
     )
+    link: models.CharField = models.CharField(
+        max_length=MAX_SLUG_LENGTH,
+        default=partial(get_random_string, length=6)
+    )
     triggers: models.JSONField = models.JSONField(blank=True, null=True)
     conditions: models.JSONField = models.JSONField(blank=True, null=True)
     settings: models.JSONField = models.JSONField(blank=True, null=True)
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
+
+    objects: SurveyChannelManager = SurveyChannelManager()
 
 
 class SurveyResponse(UUIDModel):

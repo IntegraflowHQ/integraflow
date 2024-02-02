@@ -9,7 +9,7 @@ from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.project import models
 
 
-class Project(ModelObjectType):
+class BaseProject(ModelObjectType):
     id = graphene.GlobalID(
         required=True,
         description="The ID of the project."
@@ -18,6 +18,19 @@ class Project(ModelObjectType):
         required=True,
         description="Name of the project.",
     )
+    api_token = graphene.String(
+        required=True,
+        description="API token for project.",
+    )
+
+    class Meta:
+        description = "Represents a project."
+        doc_category = DOC_CATEGORY_PROJECTS
+        model = models.Project
+        interfaces = [graphene.relay.Node]
+
+
+class Project(BaseProject):
     slug = graphene.String(
         required=True,
         description="Slug of the project.",

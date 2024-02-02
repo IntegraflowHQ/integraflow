@@ -13,7 +13,10 @@ from django.utils.translation import gettext_lazy as _
 from integraflow.core.models import UUIDClassicModel
 from integraflow.core.utils import sane_repr
 from integraflow.messaging.utils import is_email_available
-from integraflow.organization.models import Organization, OrganizationMembership
+from integraflow.organization.models import (
+    Organization,
+    OrganizationMembership
+)
 from integraflow.project.models import Project
 
 
@@ -156,7 +159,10 @@ class User(
     jwt_token_key: models.CharField = models.CharField(
         max_length=12, default=partial(get_random_string, length=12)
     )
-    token_updated_at: models.DateTimeField = models.DateTimeField(null=True, blank=True)
+    token_updated_at: models.DateTimeField = models.DateTimeField(
+        null=True,
+        blank=True
+    )
     is_onboarded: models.BooleanField = models.BooleanField(default=False)
 
     # Remove unused attributes from `AbstractUser`
@@ -216,7 +222,9 @@ class User(
                 self.current_organization_id = (
                     self.current_project.organization_id
                 )
-            self.current_organization = self.organizations.first()
+            self.current_organization = (
+                self.organizations.first()  # type: ignore
+            )
             self.save()
         return self.current_organization
 

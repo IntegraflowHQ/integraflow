@@ -2,13 +2,10 @@ import graphene
 
 from integraflow.graphql.core.connection import (
     create_connection_slice,
-    filter_connection_queryset
+    filter_connection_queryset,
 )
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_SURVEYS
-from integraflow.graphql.core.fields import (
-    FilterConnectionField,
-    PermissionsField
-)
+from integraflow.graphql.core.fields import FilterConnectionField, PermissionsField
 from integraflow.permission.auth_filters import AuthorizationFilters
 
 from .filters import SurveyFilterInput
@@ -21,22 +18,24 @@ from .mutations import (
     SurveyQuestionCreate,
     SurveyQuestionDelete,
     SurveyQuestionUpdate,
-    SurveyUpdate
+    SurveyUpdate,
 )
 from .resolvers import (
     resolve_active_surveys,
     resolve_channels,
     resolve_questions,
     resolve_survey,
-    resolve_surveys
+    resolve_survey_by_channel,
+    resolve_surveys,
 )
 from .sorters import SurveySortingInput
 from .types import (
+    BaseSurvey,
     BaseSurveyCountableConnection,
     Survey,
     SurveyChannelCountableConnection,
     SurveyCountableConnection,
-    SurveyQuestionCountableConnection
+    SurveyQuestionCountableConnection,
 )
 
 
@@ -98,6 +97,22 @@ class SurveyQueries(graphene.ObjectType):
         ],
         doc_category=DOC_CATEGORY_SURVEYS,
     )
+    survey_by_channel = PermissionsField(
+        BaseSurvey,
+        id=graphene.Argument(
+            graphene.ID,
+            description="The ID of the channel.",
+            required=False
+        ),
+        link=graphene.Argument(
+            graphene.String,
+            description="Unique link of the channel.",
+            required=False
+        ),
+        description="Look up a survey by channel ID or link.",
+        permissions=[AuthorizationFilters.AUTHENTICATED_API],
+        doc_category=DOC_CATEGORY_SURVEYS,
+    )
 
     @staticmethod
     def resolve_channels(_root, info, **kwargs):
@@ -144,6 +159,10 @@ class SurveyQueries(graphene.ObjectType):
     @staticmethod
     def resolve_survey(_root, info, *, id=None, slug=None):
         return resolve_survey(info, id, slug)
+
+    @staticmethod
+    def resolve_survey_by_channel(_root, info, *, id=None, link=None):
+        return resolve_survey_by_channel(info, id, link)
 
 
 class SurveyMutations(graphene.ObjectType):

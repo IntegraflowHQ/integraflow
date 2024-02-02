@@ -3,13 +3,13 @@ import graphene
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.connection import (
     CountableConnection,
-    create_connection_slice
+    create_connection_slice,
 )
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_SURVEYS
 from integraflow.graphql.core.fields import (
     FilterConnectionField,
     JSONString,
-    PermissionsField
+    PermissionsField,
 )
 from integraflow.graphql.core.types.common import NonNullList
 from integraflow.graphql.core.types.model import ModelObjectType
@@ -18,7 +18,7 @@ from integraflow.graphql.survey.enums import (
     SurveyChannelTypeEnum,
     SurveyQuestionTypeEnum,
     SurveyStatusEnum,
-    SurveyTypeEnum
+    SurveyTypeEnum,
 )
 from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.survey import models
@@ -64,6 +64,10 @@ class BaseSurvey(ModelObjectType):
             required=False,
         ),
     )
+    project = PermissionsField(
+        "integraflow.graphql.project.types.BaseProject",
+        description="The project the survey belongs to",
+    )
     created_at = graphene.DateTime(
         required=True,
         description="The time at which the survey was created."
@@ -102,6 +106,10 @@ class BaseSurvey(ModelObjectType):
             return channels.filter(type=channelType).all()
 
         return channels.all()
+
+    @staticmethod
+    def resolve_project(root: models.Survey, info: ResolveInfo):
+        return root.project
 
 
 class Survey(ModelObjectType):
