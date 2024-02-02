@@ -1,7 +1,7 @@
 import { State } from "../../types";
 import { parsedSurveys, uuidv4 } from "../../utils";
 import { Context } from "../context";
-import { FetchPolicy, Survey } from "./../../types/index";
+import { Survey } from "./../../types/index";
 import {
     Store,
     del as idbDel,
@@ -63,7 +63,7 @@ export async function getState(ctx: Context): Promise<State> {
         try {
             let surveys: Survey[];
 
-            if (ctx.fetchPolicy === FetchPolicy.AUTO) {
+            if (ctx.fetchPolicy === "auto") {
                 const activeSurveys = await ctx.client.activeSurveys({
                     first: 100
                 });

@@ -1,7 +1,6 @@
 import {
     Event,
     EventProperties,
-    FetchPolicy,
     ID,
     SurveyAnswer,
     UserAttributes
@@ -43,7 +42,7 @@ export class SyncManager {
         const state = await getState(this.context);
         console.debug("state: ", state);
 
-        if (this.context.fetchPolicy === FetchPolicy.AUTO) {
+        if (this.context.fetchPolicy === "auto") {
             try {
                 const surveys = await this.context.client.activeSurveys({
                     first: 100
@@ -150,7 +149,7 @@ export class SyncManager {
 
         this.context.setState(state);
 
-        if (state.user?.id && this.context.fetchPolicy === FetchPolicy.AUTO) {
+        if (state.user?.id && this.context.fetchPolicy === "auto") {
             try {
                 await this.context.client.captureEvent({
                     input: {
