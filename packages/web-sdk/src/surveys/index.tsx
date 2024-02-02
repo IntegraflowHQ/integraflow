@@ -161,6 +161,7 @@ export class SurveyManager {
                 onSurveyDisplayed={this.onSurveyDisplayed}
                 onSurveyClosed={this.onSurveyClosed}
                 onSurveyCompleted={this.onSurveyCompleted}
+                fullScreen={this.context.fullScreen}
             />,
             this.surveyContainer.element
         );

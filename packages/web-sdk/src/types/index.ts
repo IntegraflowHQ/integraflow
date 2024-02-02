@@ -344,12 +344,12 @@ export interface EventProperties {
 }
 
 export interface Event {
-  event: string;
-  uuid: string;
-  timestamp: number;
-  properties?: EventProperties;
-  attributes?: UserAttributes;
-  userId?: ID;
+    event: string;
+    uuid: string;
+    timestamp: number;
+    properties?: EventProperties;
+    attributes?: UserAttributes;
+    userId?: ID;
 }
 
 export interface State {
@@ -374,16 +374,12 @@ export interface Listeners {
     onSurveyCompleted?: (surveyId: ID) => void;
 }
 
-export enum FetchPolicy {
-    AUTO = "auto",
-    MANUAL = "manual"
-}
-
 export interface Configuration extends Listeners {
     surveys?: Survey[];
     debug?: boolean;
     apiHost?: string;
     appKey?: string;
     accessToken?: string;
-    fetchPolicy?: FetchPolicy;
+    fetchPolicy?: "auto" | "manual";
+    fullScreen?: boolean;
 }

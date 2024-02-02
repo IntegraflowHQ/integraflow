@@ -1,5 +1,5 @@
 import { IntegraflowClient } from "@integraflow/sdk";
-import { Configuration, FetchPolicy, Listeners, State, Survey } from "../types";
+import { Configuration, Listeners, State, Survey } from "../types";
 
 type SdkEventType = "eventTracked" | "audienceUpdated";
 export type SdkEvent<T = any> = { type: SdkEventType; data: T };
@@ -14,7 +14,8 @@ export class Context {
 
     surveys: Survey[];
     state: State | null;
-    fetchPolicy: FetchPolicy;
+    fetchPolicy: Configuration["fetchPolicy"];
+    fullScreen: boolean;
 
     constructor(config: Configuration) {
         this.surveys = config.surveys ?? [];
@@ -37,7 +38,8 @@ export class Context {
 
         this.subscribers = {};
         this.state = null;
-        this.fetchPolicy = config.fetchPolicy ?? FetchPolicy.AUTO;
+        this.fetchPolicy = config.fetchPolicy ?? "auto";
+        this.fullScreen = config.fullScreen ?? false;
     }
 
     setState(state: State) {
