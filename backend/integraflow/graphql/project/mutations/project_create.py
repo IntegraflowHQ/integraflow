@@ -1,10 +1,10 @@
+from django.utils.crypto import get_random_string
 from django.utils.text import slugify
 from typing import cast
 import graphene
 
 from integraflow.core.utils import (
     MAX_SLUG_LENGTH,
-    generate_random_short_suffix
 )
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_PROJECTS
@@ -80,7 +80,7 @@ class ProjectCreate(ModelMutation):
         if name:
             cleaned_input["slug"] = (
                 f"{slugify(name)[:MAX_SLUG_LENGTH - 7]}-"
-                f"{generate_random_short_suffix(6).lower()}"
+                f"{get_random_string(6).lower()}"
             )
 
         cleaned_input["access_control"] = cleaned_input.get("private")

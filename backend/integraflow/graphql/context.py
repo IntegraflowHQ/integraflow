@@ -50,13 +50,11 @@ def set_app_on_context(request: IntegraflowContext):
 
 def set_project_on_context(request: IntegraflowContext):
     if request.path == API_PATH and not hasattr(request, "project"):
-        def project():
-            if request.user and request.user.project:
-                return request.user.project
+        if request.user and request.user.project:
+            request.project = request.user.project
+            return
 
-            return get_project_promise(request).get() or None
-
-        request.project = SimpleLazyObject(project)  # type: ignore
+        request.project = get_project_promise(request).get()
 
 
 def get_user(request: IntegraflowContext) -> Optional[User]:

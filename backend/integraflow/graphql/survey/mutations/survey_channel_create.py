@@ -74,3 +74,7 @@ class SurveyChannelCreate(ModelMutation):
             cleaned_input["survey"] = survey
 
         return cleaned_input
+
+    @classmethod
+    def save(cls, _info: ResolveInfo, instance, _cleaned_input, /):
+        models.SurveyChannel.objects.create(**_cleaned_input)
