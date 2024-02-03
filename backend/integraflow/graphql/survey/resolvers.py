@@ -1,4 +1,5 @@
 from datetime import datetime
+from dateutil import parser
 from django.db.models import Q
 from typing import cast
 
@@ -108,8 +109,25 @@ def resolve_survey_by_channel(info, id=None, link=None):
     if instance is None:
         return None
 
-    start_date = instance.settings.get("startDate")
-    end_date = instance.settings.get("endDate")
+    start_date = None
+    end_date = None
+
+    try:
+        start_date = parser.isoparse(
+            str(instance.settings.get("startDate"))
+        )
+    except ValueError:
+        start_date = None
+
+    try:
+        end_date = parser.isoparse(
+            str(instance.settings.get("endDate"))
+        )
+    except ValueError:
+        end_date = None
+
+    if not start_date and not end_date:
+        return instance.survey
 
     if (
         (start_date and (start_date <= now)) and
