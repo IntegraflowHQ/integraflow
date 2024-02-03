@@ -101,8 +101,14 @@ def resolve_survey_by_channel(info, id=None, link=None):
             lookup &
             Q(survey__project_id=project.pk) &
             Q(survey__status=models.Survey.Status.ACTIVE) &
-            Q(Q(start_date__isnull=True) | Q(start_date__lte=now)) &
-            Q(Q(end_date__isnull=True) | Q(start_date__gte=now))
+            Q(
+                Q(survey__start_date__isnull=True) |
+                Q(survey__start_date__lte=now)
+            ) &
+            Q(
+                Q(survey__end_date__isnull=True) |
+                Q(survey__end_date__gte=now)
+            )
         )
         .first()
     )
