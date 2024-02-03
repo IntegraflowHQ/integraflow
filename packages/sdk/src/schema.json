@@ -284,6 +284,71 @@
             },
             {
                 "kind": "OBJECT",
+                "name": "BaseProject",
+                "description": "Represents a project.",
+                "fields": [
+                    {
+                        "name": "id",
+                        "description": "The ID of the project.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "ID",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "name",
+                        "description": "Name of the project.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "apiToken",
+                        "description": "API token for project.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [
+                    {
+                        "kind": "INTERFACE",
+                        "name": "Node",
+                        "ofType": null
+                    }
+                ],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
                 "name": "BaseProjectTheme",
                 "description": "Represents a theme.",
                 "fields": [
@@ -506,6 +571,18 @@
                         "deprecationReason": null
                     },
                     {
+                        "name": "project",
+                        "description": "The project the survey belongs to",
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "BaseProject",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
                         "name": "createdAt",
                         "description": "The time at which the survey was created.",
                         "args": [],
@@ -588,6 +665,22 @@
                             "ofType": {
                                 "kind": "ENUM",
                                 "name": "SurveyChannelTypeEnum",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "link",
+                        "description": "Unique link to the channel.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
                                 "ofType": null
                             }
                         },
@@ -1433,7 +1526,7 @@
                     },
                     {
                         "name": "uuid",
-                        "description": "The payload ID.",
+                        "description": "The event payload ID.",
                         "type": {
                             "kind": "SCALAR",
                             "name": "UUID",
@@ -1445,7 +1538,7 @@
                     },
                     {
                         "name": "userId",
-                        "description": "The distinct ID.",
+                        "description": "The user distinct ID.",
                         "type": {
                             "kind": "SCALAR",
                             "name": "ID",
@@ -3249,6 +3342,11 @@
                     {
                         "kind": "OBJECT",
                         "name": "AuthUser",
+                        "ofType": null
+                    },
+                    {
+                        "kind": "OBJECT",
+                        "name": "BaseProject",
                         "ofType": null
                     },
                     {
@@ -5114,6 +5212,22 @@
                     {
                         "name": "name",
                         "description": "Name of the project.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "apiToken",
+                        "description": "API token for project.",
                         "args": [],
                         "type": {
                             "kind": "NON_NULL",
@@ -7057,6 +7171,43 @@
                         "deprecationReason": null
                     },
                     {
+                        "name": "surveyByChannel",
+                        "description": "Look up a survey by channel ID or link.\n\nRequires one of the following permissions: AUTHENTICATED_API.",
+                        "args": [
+                            {
+                                "name": "id",
+                                "description": "The ID of the channel.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "ID",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "link",
+                                "description": "Unique link of the channel.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "String",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            }
+                        ],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "BaseSurvey",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
                         "name": "themes",
                         "description": "List of the project's themes.\n\nRequires one of the following permissions: PROJECT_MEMBER_ACCESS.",
                         "args": [
@@ -7989,6 +8140,22 @@
                         "deprecationReason": null
                     },
                     {
+                        "name": "link",
+                        "description": "Unique link to the channel.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
                         "name": "triggers",
                         "description": "The options of the question.",
                         "args": [],
@@ -8212,6 +8379,18 @@
                 "description": "Creates a new distibution channel \n\nRequires one of the following permissions: PROJECT_MEMBER_ACCESS.",
                 "fields": [
                     {
+                        "name": "surveyChannel",
+                        "description": "The checkout with the added gift card or voucher.",
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "SurveyChannel",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
                         "name": "surveyErrors",
                         "description": null,
                         "args": [],
@@ -8255,18 +8434,6 @@
                                     }
                                 }
                             }
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "surveyChannel",
-                        "description": null,
-                        "args": [],
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "SurveyChannel",
-                            "ofType": null
                         },
                         "isDeprecated": false,
                         "deprecationReason": null
@@ -9083,6 +9250,18 @@
                 "description": null,
                 "fields": null,
                 "inputFields": [
+                    {
+                        "name": "search",
+                        "description": null,
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
                     {
                         "name": "type",
                         "description": "Filter by type",
@@ -10322,7 +10501,7 @@
             {
                 "kind": "SCALAR",
                 "name": "UUID",
-                "description": "Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects\nin fields, resolvers and input.",
+                "description": null,
                 "fields": null,
                 "inputFields": null,
                 "interfaces": null,

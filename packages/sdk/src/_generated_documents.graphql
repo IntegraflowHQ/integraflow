@@ -44,11 +44,12 @@ fragment EventCapture on EventCapture {
 # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
 fragment SurveyChannelCreate on SurveyChannelCreate {
     __typename
-    errors {
-        ...SurveyError
-    }
+    # The checkout with the added gift card or voucher.
     surveyChannel {
         ...SurveyChannel
+    }
+    errors {
+        ...SurveyError
     }
     surveyErrors {
         ...SurveyError
@@ -325,8 +326,21 @@ fragment Person on Person {
 }
 
 # Represents a project.
+fragment BaseProject on BaseProject {
+    __typename
+    # API token for project.
+    apiToken
+    # Name of the project.
+    name
+    # The ID of the project.
+    id
+}
+
+# Represents a project.
 fragment Project on Project {
     __typename
+    # API token for project.
+    apiToken
     # Name of the project.
     name
     # Organization the project belongs to.
@@ -435,6 +449,8 @@ fragment BaseSurveyChannel on BaseSurveyChannel {
     createdAt
     # The type of the survey channel
     type
+    # Unique link to the channel.
+    link
 }
 
 # Represents a survey channel.
@@ -460,6 +476,8 @@ fragment SurveyChannel on SurveyChannel {
     createdAt
     # The type of the survey channel
     type
+    # Unique link to the channel.
+    link
 }
 
 # Represents a survey from used by our sdk.
@@ -478,6 +496,10 @@ fragment BaseSurvey on BaseSurvey {
     # The distribution channels supported by the survey
     channels {
         ...BaseSurveyChannel
+    }
+    # The project the survey belongs to
+    project {
+        ...BaseProject
     }
     # The questions in the the survey
     questions {
@@ -1782,6 +1804,45 @@ query survey_theme_project_organization(
                     ...AuthOrganization
                 }
             }
+        }
+    }
+}
+# Look up a survey by channel ID or link.
+#
+# Requires one of the following permissions: AUTHENTICATED_API.
+query surveyByChannel(
+    # The ID of the channel.
+    $id: ID
+    # Unique link of the channel.
+    $link: String
+) {
+    surveyByChannel(id: $id, link: $link) {
+        ...BaseSurvey
+    }
+}
+# The project the survey belongs to
+query surveyByChannel_project(
+    # The ID of the channel.
+    $id: ID
+    # Unique link of the channel.
+    $link: String
+) {
+    surveyByChannel(id: $id, link: $link) {
+        project {
+            ...BaseProject
+        }
+    }
+}
+# The theme of the survey.
+query surveyByChannel_theme(
+    # The ID of the channel.
+    $id: ID
+    # Unique link of the channel.
+    $link: String
+) {
+    surveyByChannel(id: $id, link: $link) {
+        theme {
+            ...BaseProjectTheme
         }
     }
 }

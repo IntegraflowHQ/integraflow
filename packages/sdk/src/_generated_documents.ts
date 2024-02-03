@@ -27,10 +27,6 @@ export type Scalars = {
      */
     DateTime: Date;
     JSONString: any;
-    /**
-     * Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
-     * in fields, resolvers and input.
-     */
     UUID: any;
     /** _Any value scalar as defined by Federation spec. */
     _Any: any;
@@ -88,6 +84,17 @@ export type AuthUser = Node & {
     project?: Maybe<Project>;
 };
 
+/** Represents a project. */
+export type BaseProject = Node & {
+    __typename?: "BaseProject";
+    /** API token for project. */
+    apiToken: Scalars["String"];
+    /** The ID of the project. */
+    id: Scalars["ID"];
+    /** Name of the project. */
+    name: Scalars["String"];
+};
+
 /** Represents a theme. */
 export type BaseProjectTheme = Node & {
     __typename?: "BaseProjectTheme";
@@ -114,6 +121,8 @@ export type BaseSurvey = Node & {
     id: Scalars["ID"];
     /** Name of the survey. */
     name?: Maybe<Scalars["String"]>;
+    /** The project the survey belongs to */
+    project?: Maybe<BaseProject>;
     /** The questions in the the survey */
     questions: Array<BaseSurveyQuestion>;
     /** The settings of the survey. */
@@ -142,6 +151,8 @@ export type BaseSurveyChannel = Node & {
     createdAt: Scalars["DateTime"];
     /** The ID of the channel. */
     id: Scalars["ID"];
+    /** Unique link to the channel. */
+    link: Scalars["String"];
     /** The settings of the question. */
     settings?: Maybe<Scalars["JSONString"]>;
     /** The options of the question. */
@@ -272,9 +283,9 @@ export type EventCaptureInput = {
     properties?: Maybe<Scalars["JSONString"]>;
     /** The time the event happened */
     timestamp: Scalars["DateTime"];
-    /** The distinct ID. */
+    /** The user distinct ID. */
     userId?: Maybe<Scalars["ID"]>;
-    /** The payload ID. */
+    /** The event payload ID. */
     uuid?: Maybe<Scalars["UUID"]>;
 };
 
@@ -979,6 +990,8 @@ export type Project = Node & {
     __typename?: "Project";
     /** Whether the project is private or not. */
     accessControl?: Maybe<Scalars["Boolean"]>;
+    /** API token for project. */
+    apiToken: Scalars["String"];
     /** The data required for the onboarding process */
     hasCompletedOnboardingFor?: Maybe<Scalars["JSONString"]>;
     /** The ID of the project. */
@@ -1309,6 +1322,12 @@ export type Query = {
      */
     survey?: Maybe<Survey>;
     /**
+     * Look up a survey by channel ID or link.
+     *
+     * Requires one of the following permissions: AUTHENTICATED_API.
+     */
+    surveyByChannel?: Maybe<BaseSurvey>;
+    /**
      * List of the project's surveys.
      *
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -1401,6 +1420,11 @@ export type QueryQuestionsArgs = {
 export type QuerySurveyArgs = {
     id?: Maybe<Scalars["ID"]>;
     slug?: Maybe<Scalars["String"]>;
+};
+
+export type QuerySurveyByChannelArgs = {
+    id?: Maybe<Scalars["ID"]>;
+    link?: Maybe<Scalars["String"]>;
 };
 
 export type QuerySurveysArgs = {
@@ -1511,6 +1535,8 @@ export type SurveyChannel = Node & {
     createdAt: Scalars["DateTime"];
     /** The ID of the channel. */
     id: Scalars["ID"];
+    /** Unique link to the channel. */
+    link: Scalars["String"];
     /** For internal purpose. */
     reference?: Maybe<Scalars["ID"]>;
     /** The settings of the question. */
@@ -1553,6 +1579,7 @@ export type SurveyChannelCountableEdge = {
 export type SurveyChannelCreate = {
     __typename?: "SurveyChannelCreate";
     errors: Array<SurveyError>;
+    /** The checkout with the added gift card or voucher. */
     surveyChannel?: Maybe<SurveyChannel>;
     surveyErrors: Array<SurveyError>;
 };
@@ -1701,6 +1728,7 @@ export type SurveyFilterInput = {
     endDate?: Maybe<DateTimeRangeInput>;
     /** Filter by ids. */
     ids?: Maybe<Array<Scalars["ID"]>>;
+    search?: Maybe<Scalars["String"]>;
     startDate?: Maybe<DateRangeInput>;
     status?: Maybe<SurveyStatusEnum>;
     /** Filter by type */
@@ -2071,6 +2099,11 @@ type Node_AuthOrganization_Fragment = { __typename: "AuthOrganization" } & Pick<
 
 type Node_AuthUser_Fragment = { __typename: "AuthUser" } & Pick<AuthUser, "id">;
 
+type Node_BaseProject_Fragment = { __typename: "BaseProject" } & Pick<
+    BaseProject,
+    "id"
+>;
+
 type Node_BaseProjectTheme_Fragment = { __typename: "BaseProjectTheme" } & Pick<
     BaseProjectTheme,
     "id"
@@ -2148,6 +2181,7 @@ type Node_User_Fragment = { __typename: "User" } & Pick<User, "id">;
 export type NodeFragment =
     | Node_AuthOrganization_Fragment
     | Node_AuthUser_Fragment
+    | Node_BaseProject_Fragment
     | Node_BaseProjectTheme_Fragment
     | Node_BaseSurvey_Fragment
     | Node_BaseSurveyChannel_Fragment
@@ -2187,10 +2221,10 @@ export type EventCaptureFragment = { __typename: "EventCapture" } & Pick<
 export type SurveyChannelCreateFragment = {
     __typename: "SurveyChannelCreate";
 } & {
-    errors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
     surveyChannel?: Maybe<
         { __typename?: "SurveyChannel" } & SurveyChannelFragment
     >;
+    errors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
     surveyErrors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
 };
 
@@ -2341,8 +2375,14 @@ export type PersonFragment = { __typename: "Person" } & Pick<
     "id" | "attributes" | "distinctIds" | "uuid" | "createdAt" | "isIdentified"
 > & { project: { __typename?: "Project" } & ProjectFragment };
 
+export type BaseProjectFragment = { __typename: "BaseProject" } & Pick<
+    BaseProject,
+    "apiToken" | "name" | "id"
+>;
+
 export type ProjectFragment = { __typename: "Project" } & Pick<
     Project,
+    | "apiToken"
     | "name"
     | "slug"
     | "id"
@@ -2395,7 +2435,13 @@ export type BaseSurveyChannelFragment = {
     __typename: "BaseSurveyChannel";
 } & Pick<
     BaseSurveyChannel,
-    "id" | "triggers" | "conditions" | "settings" | "createdAt" | "type"
+    | "id"
+    | "triggers"
+    | "conditions"
+    | "settings"
+    | "createdAt"
+    | "type"
+    | "link"
 >;
 
 export type SurveyChannelFragment = { __typename: "SurveyChannel" } & Pick<
@@ -2407,6 +2453,7 @@ export type SurveyChannelFragment = { __typename: "SurveyChannel" } & Pick<
     | "settings"
     | "createdAt"
     | "type"
+    | "link"
 > & { survey?: Maybe<{ __typename?: "Survey" } & SurveyFragment> };
 
 export type BaseSurveyFragment = { __typename: "BaseSurvey" } & Pick<
@@ -2423,6 +2470,7 @@ export type BaseSurveyFragment = { __typename: "BaseSurvey" } & Pick<
         channels: Array<
             { __typename?: "BaseSurveyChannel" } & BaseSurveyChannelFragment
         >;
+        project?: Maybe<{ __typename?: "BaseProject" } & BaseProjectFragment>;
         questions: Array<
             { __typename?: "BaseSurveyQuestion" } & BaseSurveyQuestionFragment
         >;
@@ -3302,6 +3350,45 @@ export type Survey_Theme_Project_OrganizationQuery = {
     >;
 };
 
+export type SurveyByChannelQueryVariables = Exact<{
+    id?: Maybe<Scalars["ID"]>;
+    link?: Maybe<Scalars["String"]>;
+}>;
+
+export type SurveyByChannelQuery = { __typename?: "Query" } & {
+    surveyByChannel?: Maybe<{ __typename?: "BaseSurvey" } & BaseSurveyFragment>;
+};
+
+export type SurveyByChannel_ProjectQueryVariables = Exact<{
+    id?: Maybe<Scalars["ID"]>;
+    link?: Maybe<Scalars["String"]>;
+}>;
+
+export type SurveyByChannel_ProjectQuery = { __typename?: "Query" } & {
+    surveyByChannel?: Maybe<
+        { __typename?: "BaseSurvey" } & {
+            project?: Maybe<
+                { __typename?: "BaseProject" } & BaseProjectFragment
+            >;
+        }
+    >;
+};
+
+export type SurveyByChannel_ThemeQueryVariables = Exact<{
+    id?: Maybe<Scalars["ID"]>;
+    link?: Maybe<Scalars["String"]>;
+}>;
+
+export type SurveyByChannel_ThemeQuery = { __typename?: "Query" } & {
+    surveyByChannel?: Maybe<
+        { __typename?: "BaseSurvey" } & {
+            theme?: Maybe<
+                { __typename?: "BaseProjectTheme" } & BaseProjectThemeFragment
+            >;
+        }
+    >;
+};
+
 export type SurveysQueryVariables = Exact<{
     after?: Maybe<Scalars["String"]>;
     before?: Maybe<Scalars["String"]>;
@@ -3487,6 +3574,10 @@ export const ProjectFragmentDoc = ({
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "__typename" }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "apiToken" }
                     },
                     { kind: "Field", name: { kind: "Name", value: "name" } },
                     {
@@ -3766,31 +3857,6 @@ export const EventCaptureFragmentDoc = ({
         }
     ]
 } as unknown) as DocumentNode<EventCaptureFragment, unknown>;
-export const SurveyErrorFragmentDoc = ({
-    kind: "Document",
-    definitions: [
-        {
-            kind: "FragmentDefinition",
-            name: { kind: "Name", value: "SurveyError" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "SurveyError" }
-            },
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    { kind: "Field", name: { kind: "Name", value: "field" } },
-                    { kind: "Field", name: { kind: "Name", value: "code" } },
-                    { kind: "Field", name: { kind: "Name", value: "message" } }
-                ]
-            }
-        }
-    ]
-} as unknown) as DocumentNode<SurveyErrorFragment, unknown>;
 export const UserFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -4067,12 +4133,38 @@ export const SurveyChannelFragmentDoc = ({
                         kind: "Field",
                         name: { kind: "Name", value: "createdAt" }
                     },
-                    { kind: "Field", name: { kind: "Name", value: "type" } }
+                    { kind: "Field", name: { kind: "Name", value: "type" } },
+                    { kind: "Field", name: { kind: "Name", value: "link" } }
                 ]
             }
         }
     ]
 } as unknown) as DocumentNode<SurveyChannelFragment, unknown>;
+export const SurveyErrorFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "SurveyError" },
+            typeCondition: {
+                kind: "NamedType",
+                name: { kind: "Name", value: "SurveyError" }
+            },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "__typename" }
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "field" } },
+                    { kind: "Field", name: { kind: "Name", value: "code" } },
+                    { kind: "Field", name: { kind: "Name", value: "message" } }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<SurveyErrorFragment, unknown>;
 export const SurveyChannelCreateFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -4092,19 +4184,6 @@ export const SurveyChannelCreateFragmentDoc = ({
                     },
                     {
                         kind: "Field",
-                        name: { kind: "Name", value: "errors" },
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        kind: "Field",
                         name: { kind: "Name", value: "surveyChannel" },
                         selectionSet: {
                             kind: "SelectionSet",
@@ -4115,6 +4194,19 @@ export const SurveyChannelCreateFragmentDoc = ({
                                         kind: "Name",
                                         value: "SurveyChannel"
                                     }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "errors" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "SurveyError" }
                                 }
                             ]
                         }
@@ -5958,12 +6050,41 @@ export const BaseSurveyChannelFragmentDoc = ({
                         kind: "Field",
                         name: { kind: "Name", value: "createdAt" }
                     },
-                    { kind: "Field", name: { kind: "Name", value: "type" } }
+                    { kind: "Field", name: { kind: "Name", value: "type" } },
+                    { kind: "Field", name: { kind: "Name", value: "link" } }
                 ]
             }
         }
     ]
 } as unknown) as DocumentNode<BaseSurveyChannelFragment, unknown>;
+export const BaseProjectFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "BaseProject" },
+            typeCondition: {
+                kind: "NamedType",
+                name: { kind: "Name", value: "BaseProject" }
+            },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "__typename" }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "apiToken" }
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "name" } },
+                    { kind: "Field", name: { kind: "Name", value: "id" } }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<BaseProjectFragment, unknown>;
 export const BaseSurveyQuestionFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -6073,6 +6194,19 @@ export const BaseSurveyFragmentDoc = ({
                                         kind: "Name",
                                         value: "BaseSurveyChannel"
                                     }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "project" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "BaseProject" }
                                 }
                             ]
                         }
@@ -8178,13 +8312,13 @@ export const CreateSurveyChannelDocument = ({
             }
         },
         ...SurveyChannelCreateFragmentDoc.definitions,
-        ...SurveyErrorFragmentDoc.definitions,
         ...SurveyChannelFragmentDoc.definitions,
         ...SurveyFragmentDoc.definitions,
         ...ProjectFragmentDoc.definitions,
         ...AuthOrganizationFragmentDoc.definitions,
         ...ProjectThemeFragmentDoc.definitions,
-        ...UserFragmentDoc.definitions
+        ...UserFragmentDoc.definitions,
+        ...SurveyErrorFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<
     CreateSurveyChannelMutation,
@@ -9126,6 +9260,7 @@ export const ActiveSurveysDocument = ({
         ...PageInfoFragmentDoc.definitions,
         ...BaseSurveyFragmentDoc.definitions,
         ...BaseSurveyChannelFragmentDoc.definitions,
+        ...BaseProjectFragmentDoc.definitions,
         ...BaseSurveyQuestionFragmentDoc.definitions,
         ...BaseProjectThemeFragmentDoc.definitions
     ]
@@ -11039,6 +11174,256 @@ export const Survey_Theme_Project_OrganizationDocument = ({
 } as unknown) as DocumentNode<
     Survey_Theme_Project_OrganizationQuery,
     Survey_Theme_Project_OrganizationQueryVariables
+>;
+export const SurveyByChannelDocument = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "surveyByChannel" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "id" }
+                    },
+                    type: {
+                        kind: "NamedType",
+                        name: { kind: "Name", value: "ID" }
+                    }
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "link" }
+                    },
+                    type: {
+                        kind: "NamedType",
+                        name: { kind: "Name", value: "String" }
+                    }
+                }
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "surveyByChannel" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: {
+                                    kind: "Variable",
+                                    name: { kind: "Name", value: "id" }
+                                }
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "link" },
+                                value: {
+                                    kind: "Variable",
+                                    name: { kind: "Name", value: "link" }
+                                }
+                            }
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "BaseSurvey" }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        ...BaseSurveyFragmentDoc.definitions,
+        ...BaseSurveyChannelFragmentDoc.definitions,
+        ...BaseProjectFragmentDoc.definitions,
+        ...BaseSurveyQuestionFragmentDoc.definitions,
+        ...BaseProjectThemeFragmentDoc.definitions
+    ]
+} as unknown) as DocumentNode<
+    SurveyByChannelQuery,
+    SurveyByChannelQueryVariables
+>;
+export const SurveyByChannel_ProjectDocument = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "surveyByChannel_project" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "id" }
+                    },
+                    type: {
+                        kind: "NamedType",
+                        name: { kind: "Name", value: "ID" }
+                    }
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "link" }
+                    },
+                    type: {
+                        kind: "NamedType",
+                        name: { kind: "Name", value: "String" }
+                    }
+                }
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "surveyByChannel" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: {
+                                    kind: "Variable",
+                                    name: { kind: "Name", value: "id" }
+                                }
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "link" },
+                                value: {
+                                    kind: "Variable",
+                                    name: { kind: "Name", value: "link" }
+                                }
+                            }
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "project" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            {
+                                                kind: "FragmentSpread",
+                                                name: {
+                                                    kind: "Name",
+                                                    value: "BaseProject"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        ...BaseProjectFragmentDoc.definitions
+    ]
+} as unknown) as DocumentNode<
+    SurveyByChannel_ProjectQuery,
+    SurveyByChannel_ProjectQueryVariables
+>;
+export const SurveyByChannel_ThemeDocument = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "surveyByChannel_theme" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "id" }
+                    },
+                    type: {
+                        kind: "NamedType",
+                        name: { kind: "Name", value: "ID" }
+                    }
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "link" }
+                    },
+                    type: {
+                        kind: "NamedType",
+                        name: { kind: "Name", value: "String" }
+                    }
+                }
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "surveyByChannel" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: {
+                                    kind: "Variable",
+                                    name: { kind: "Name", value: "id" }
+                                }
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "link" },
+                                value: {
+                                    kind: "Variable",
+                                    name: { kind: "Name", value: "link" }
+                                }
+                            }
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "theme" },
+                                    selectionSet: {
+                                        kind: "SelectionSet",
+                                        selections: [
+                                            {
+                                                kind: "FragmentSpread",
+                                                name: {
+                                                    kind: "Name",
+                                                    value: "BaseProjectTheme"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        ...BaseProjectThemeFragmentDoc.definitions
+    ]
+} as unknown) as DocumentNode<
+    SurveyByChannel_ThemeQuery,
+    SurveyByChannel_ThemeQueryVariables
 >;
 export const SurveysDocument = ({
     kind: "Document",

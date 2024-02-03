@@ -266,6 +266,30 @@ export class AuthUser extends Request {
     public project?: Project;
 }
 /**
+ * Represents a project.
+ *
+ * @param request - function to call the graphql client
+ * @param data - I.BaseProjectFragment response data
+ */
+export class BaseProject extends Request {
+    public constructor(
+        request: IntegraflowRequest,
+        data: I.BaseProjectFragment
+    ) {
+        super(request);
+        this.apiToken = data.apiToken;
+        this.id = data.id;
+        this.name = data.name;
+    }
+
+    /** API token for project. */
+    public apiToken: string;
+    /** The ID of the project. */
+    public id: string;
+    /** Name of the project. */
+    public name: string;
+}
+/**
  * Represents a theme.
  *
  * @param request - function to call the graphql client
@@ -311,6 +335,9 @@ export class BaseSurvey extends Request {
         this.settings = data.settings ?? undefined;
         this.slug = data.slug;
         this.startDate = parseDate(data.startDate) ?? undefined;
+        this.project = data.project
+            ? new BaseProject(request, data.project)
+            : undefined;
         this.theme = data.theme
             ? new BaseProjectTheme(request, data.theme)
             : undefined;
@@ -341,6 +368,8 @@ export class BaseSurvey extends Request {
     public channels: BaseSurveyChannel[];
     /** The questions in the the survey */
     public questions: BaseSurveyQuestion[];
+    /** The project the survey belongs to */
+    public project?: BaseProject;
     /** The theme of the survey. */
     public theme?: BaseProjectTheme;
     /** The status of the survey */
@@ -361,6 +390,7 @@ export class BaseSurveyChannel extends Request {
         this.conditions = data.conditions ?? undefined;
         this.createdAt = parseDate(data.createdAt) ?? new Date();
         this.id = data.id;
+        this.link = data.link;
         this.settings = data.settings ?? undefined;
         this.triggers = data.triggers ?? undefined;
         this.type = data.type;
@@ -372,6 +402,8 @@ export class BaseSurveyChannel extends Request {
     public createdAt: Date;
     /** The ID of the channel. */
     public id: string;
+    /** Unique link to the channel. */
+    public link: string;
     /** The settings of the question. */
     public settings?: I.Scalars["JSONString"];
     /** The options of the question. */
@@ -1290,6 +1322,7 @@ export class Project extends Request {
     public constructor(request: IntegraflowRequest, data: I.ProjectFragment) {
         super(request);
         this.accessControl = data.accessControl ?? undefined;
+        this.apiToken = data.apiToken;
         this.hasCompletedOnboardingFor =
             data.hasCompletedOnboardingFor ?? undefined;
         this.id = data.id;
@@ -1301,6 +1334,8 @@ export class Project extends Request {
 
     /** Whether the project is private or not. */
     public accessControl?: boolean;
+    /** API token for project. */
+    public apiToken: string;
     /** The data required for the onboarding process */
     public hasCompletedOnboardingFor?: I.Scalars["JSONString"];
     /** The ID of the project. */
@@ -1822,6 +1857,7 @@ export class SurveyChannel extends Request {
         this.conditions = data.conditions ?? undefined;
         this.createdAt = parseDate(data.createdAt) ?? new Date();
         this.id = data.id;
+        this.link = data.link;
         this.reference = data.reference ?? undefined;
         this.settings = data.settings ?? undefined;
         this.triggers = data.triggers ?? undefined;
@@ -1837,6 +1873,8 @@ export class SurveyChannel extends Request {
     public createdAt: Date;
     /** The ID of the channel. */
     public id: string;
+    /** Unique link to the channel. */
+    public link: string;
     /** For internal purpose. */
     public reference?: string;
     /** The settings of the question. */
@@ -1934,6 +1972,7 @@ export class SurveyChannelCreate extends Request {
 
     public errors: SurveyError[];
     public surveyErrors: SurveyError[];
+    /** The checkout with the added gift card or voucher. */
     public surveyChannel?: SurveyChannel;
 }
 /**
@@ -3658,6 +3697,35 @@ export class SurveyQuery extends Request {
 }
 
 /**
+ * A fetchable SurveyByChannel Query
+ *
+ * @param request - function to call the graphql client
+ */
+export class SurveyByChannelQuery extends Request {
+    public constructor(request: IntegraflowRequest) {
+        super(request);
+    }
+
+    /**
+     * Call the SurveyByChannel query and return a BaseSurvey
+     *
+     * @param variables - variables to pass into the SurveyByChannelQuery
+     * @returns parsed response from SurveyByChannelQuery
+     */
+    public async fetch(
+        variables?: I.SurveyByChannelQueryVariables
+    ): IntegraflowFetch<BaseSurvey | undefined> {
+        const response = await this._request<
+            I.SurveyByChannelQuery,
+            I.SurveyByChannelQueryVariables
+        >(I.SurveyByChannelDocument, variables);
+        const data = response.surveyByChannel;
+
+        return data ? new BaseSurvey(this._request, data) : undefined;
+    }
+}
+
+/**
  * A fetchable Surveys Query
  *
  * @param request - function to call the graphql client
@@ -4051,6 +4119,80 @@ export class Survey_Theme_Project_OrganizationQuery extends Request {
         const data = response.survey?.theme?.project?.organization;
 
         return data ? new AuthOrganization(this._request, data) : undefined;
+    }
+}
+
+/**
+ * A fetchable SurveyByChannel_Project Query
+ *
+ * @param request - function to call the graphql client
+ * @param variables - variables to pass into the SurveyByChannel_ProjectQuery
+ */
+export class SurveyByChannel_ProjectQuery extends Request {
+    private _variables?: I.SurveyByChannel_ProjectQueryVariables;
+
+    public constructor(
+        request: IntegraflowRequest,
+        variables?: I.SurveyByChannel_ProjectQueryVariables
+    ) {
+        super(request);
+
+        this._variables = variables;
+    }
+
+    /**
+     * Call the SurveyByChannel_Project query and return a BaseProject
+     *
+     * @param variables - variables to pass into the SurveyByChannel_ProjectQuery
+     * @returns parsed response from SurveyByChannel_ProjectQuery
+     */
+    public async fetch(
+        variables?: I.SurveyByChannel_ProjectQueryVariables
+    ): IntegraflowFetch<BaseProject | undefined> {
+        const response = await this._request<
+            I.SurveyByChannel_ProjectQuery,
+            I.SurveyByChannel_ProjectQueryVariables
+        >(I.SurveyByChannel_ProjectDocument, variables);
+        const data = response.surveyByChannel?.project;
+
+        return data ? new BaseProject(this._request, data) : undefined;
+    }
+}
+
+/**
+ * A fetchable SurveyByChannel_Theme Query
+ *
+ * @param request - function to call the graphql client
+ * @param variables - variables to pass into the SurveyByChannel_ThemeQuery
+ */
+export class SurveyByChannel_ThemeQuery extends Request {
+    private _variables?: I.SurveyByChannel_ThemeQueryVariables;
+
+    public constructor(
+        request: IntegraflowRequest,
+        variables?: I.SurveyByChannel_ThemeQueryVariables
+    ) {
+        super(request);
+
+        this._variables = variables;
+    }
+
+    /**
+     * Call the SurveyByChannel_Theme query and return a BaseProjectTheme
+     *
+     * @param variables - variables to pass into the SurveyByChannel_ThemeQuery
+     * @returns parsed response from SurveyByChannel_ThemeQuery
+     */
+    public async fetch(
+        variables?: I.SurveyByChannel_ThemeQueryVariables
+    ): IntegraflowFetch<BaseProjectTheme | undefined> {
+        const response = await this._request<
+            I.SurveyByChannel_ThemeQuery,
+            I.SurveyByChannel_ThemeQueryVariables
+        >(I.SurveyByChannel_ThemeDocument, variables);
+        const data = response.surveyByChannel?.theme;
+
+        return data ? new BaseProjectTheme(this._request, data) : undefined;
     }
 }
 
@@ -4714,6 +4856,19 @@ export class IntegraflowSdk extends Request {
         variables?: I.SurveyQueryVariables
     ): IntegraflowFetch<Survey | undefined> {
         return new SurveyQuery(this._request).fetch(variables);
+    }
+    /**
+     * Look up a survey by channel ID or link.
+     *
+     * Requires one of the following permissions: AUTHENTICATED_API.
+     *
+     * @param variables - variables to pass into the SurveyByChannelQuery
+     * @returns BaseSurvey
+     */
+    public surveyByChannel(
+        variables?: I.SurveyByChannelQueryVariables
+    ): IntegraflowFetch<BaseSurvey | undefined> {
+        return new SurveyByChannelQuery(this._request).fetch(variables);
     }
     /**
      * List of the project's surveys.

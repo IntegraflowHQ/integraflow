@@ -86,6 +86,24 @@ type AuthUser implements Node @doc(category: "Users") {
 }
 
 """
+Represents a project.
+"""
+type BaseProject implements Node @doc(category: "Projects") {
+    """
+    API token for project.
+    """
+    apiToken: String!
+    """
+    The ID of the project.
+    """
+    id: ID!
+    """
+    Name of the project.
+    """
+    name: String!
+}
+
+"""
 Represents a theme.
 """
 type BaseProjectTheme implements Node @doc(category: "Projects") {
@@ -137,6 +155,10 @@ type BaseSurvey implements Node @doc(category: "Surveys") {
     """
     name: String
     """
+    The project the survey belongs to
+    """
+    project: BaseProject
+    """
     The questions in the the survey
     """
     questions: [BaseSurveyQuestion!]!
@@ -178,6 +200,10 @@ type BaseSurveyChannel implements Node @doc(category: "Surveys") {
     The ID of the channel.
     """
     id: ID!
+    """
+    Unique link to the channel.
+    """
+    link: String!
     """
     The settings of the question.
     """
@@ -400,11 +426,11 @@ input EventCaptureInput @doc(category: "Events") {
     """
     timestamp: DateTime!
     """
-    The distinct ID.
+    The user distinct ID.
     """
     userId: ID
     """
-    The payload ID.
+    The event payload ID.
     """
     uuid: UUID
 }
@@ -1395,6 +1421,10 @@ type Project implements Node @doc(category: "Projects") {
     """
     accessControl: Boolean
     """
+    API token for project.
+    """
+    apiToken: String!
+    """
     The data required for the onboarding process
     """
     hasCompletedOnboardingFor: JSONString
@@ -2002,6 +2032,21 @@ type Query {
         slug: String
     ): Survey @doc(category: "Surveys")
     """
+    Look up a survey by channel ID or link.
+
+    Requires one of the following permissions: AUTHENTICATED_API.
+    """
+    surveyByChannel(
+        """
+        The ID of the channel.
+        """
+        id: ID
+        """
+        Unique link of the channel.
+        """
+        link: String
+    ): BaseSurvey @doc(category: "Surveys")
+    """
     List of the project's surveys.
 
     Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -2203,6 +2248,10 @@ type SurveyChannel implements Node @doc(category: "Surveys") {
     """
     id: ID!
     """
+    Unique link to the channel.
+    """
+    link: String!
+    """
     For internal purpose.
     """
     reference: ID
@@ -2257,6 +2306,9 @@ Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
 """
 type SurveyChannelCreate @doc(category: "Surveys") {
     errors: [SurveyError!]!
+    """
+    The checkout with the added gift card or voucher.
+    """
     surveyChannel: SurveyChannel
     surveyErrors: [SurveyError!]!
 }
@@ -2452,6 +2504,7 @@ input SurveyFilterInput @doc(category: "Surveys") {
     Filter by ids.
     """
     ids: [ID!]
+    search: String
     startDate: DateRangeInput
     status: SurveyStatusEnum
     """
@@ -2738,10 +2791,6 @@ input SurveyUpdateInput @doc(category: "Surveys") {
     type: SurveyTypeEnum
 }
 
-"""
-Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
-in fields, resolvers and input.
-"""
 scalar UUID
 
 """
