@@ -683,6 +683,9 @@ type SurveyChannel implements Node @doc(category: "Surveys") {
   """The type of the survey channel"""
   type: SurveyChannelTypeEnum!
 
+  """Unique link to the channel."""
+  link: String!
+
   """The options of the question."""
   triggers: JSONString
 
@@ -1142,6 +1145,9 @@ type BaseSurveyChannel implements Node @doc(category: "Surveys") {
 
   """The type of the survey channel"""
   type: SurveyChannelTypeEnum!
+
+  """Unique link to the channel."""
+  link: String!
 
   """The options of the question."""
   triggers: JSONString
@@ -1911,9 +1917,10 @@ Creates a new distibution channel
 Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
 """
 type SurveyChannelCreate @doc(category: "Surveys") {
+  """The checkout with the added gift card or voucher."""
+  surveyChannel: SurveyChannel
   surveyErrors: [SurveyError!]!
   errors: [SurveyError!]!
-  surveyChannel: SurveyChannel
 }
 
 """Represents errors in survey mutations."""

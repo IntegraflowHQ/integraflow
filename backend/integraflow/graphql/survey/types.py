@@ -1,5 +1,4 @@
 import graphene
-
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.connection import (
     CountableConnection,
@@ -321,6 +320,10 @@ class BaseSurveyChannel(ModelObjectType):
         SurveyChannelTypeEnum,
         required=True,
         description="The type of the survey channel",
+    )
+    link = graphene.String(
+        required=True,
+        description="Unique link to the channel.",
     )
     triggers = JSONString(
         description="The options of the question."
