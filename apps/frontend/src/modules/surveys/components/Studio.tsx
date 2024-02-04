@@ -1,4 +1,6 @@
+import { SurveyStatusEnum } from "@/generated/graphql";
 import { Button, GlobalSpinner } from "@/ui";
+import { toast } from "@/utils/toast";
 import * as Tabs from "@radix-ui/react-tabs";
 import { XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -21,7 +23,7 @@ export default function Studio() {
     const [title, setTitle] = useState("");
     const { enableStudioMode, disableStudioMode } = useStudioState();
     const [activeTab, setActiveTab] = useState(tabs[0].label);
-    const { loadingCreateSurvey } = useSurvey();
+    const { loadingCreateSurvey, updateSurvey, survey } = useSurvey();
 
     useEffect(() => {
         enableStudioMode();
@@ -30,6 +32,16 @@ export default function Studio() {
             disableStudioMode();
         };
     }, []);
+
+    const publishSurvey = async () => {
+        if (!survey?.survey?.id) {
+            return;
+        }
+        await updateSurvey(survey?.survey.id, {
+            status: SurveyStatusEnum.Active,
+        });
+        toast.success("Survey published successfully");
+    };
 
     if (loadingCreateSurvey) return <GlobalSpinner />;
 
@@ -68,7 +80,7 @@ export default function Studio() {
                         text={activeTab === tabs[1].label ? "Publish" : "Next"}
                         onClick={() => {
                             if (activeTab === tabs[1].label) {
-                                // TODO publishSurvey();
+                                publishSurvey();
                             } else {
                                 setActiveTab(tabs[1].label);
                             }

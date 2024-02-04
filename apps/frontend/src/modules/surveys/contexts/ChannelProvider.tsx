@@ -21,7 +21,7 @@ import { SURVEY_CHANNEL } from "../graphql/fragments/surveyFragment";
 import { useSurvey } from "../hooks/useSurvey";
 
 function useChannelContextFactory() {
-    const { survey, surveyId } = useSurvey();
+    const { survey } = useSurvey();
     const { workspace } = useWorkspaceState();
 
     const { data: eventsData } = useProjectEventsDataQuery({
@@ -36,14 +36,14 @@ function useChannelContextFactory() {
     const createChannel = async (
         input: Omit<SurveyChannelCreateInput, "surveyId">,
     ) => {
-        if (!surveyId) return;
+        if (!survey?.survey?.id) return;
         const data: SurveyChannelCreateInput = {
             type: input.type ?? SurveyChannelTypeEnum.WebSdk,
             id: input.id ?? crypto.randomUUID(),
             triggers: input.triggers ?? "{}",
             conditions: input.conditions ?? "{}",
             settings: input.settings ?? "{}",
-            surveyId,
+            surveyId: survey.survey.id,
         };
         await createChannelMutation({
             variables: {
@@ -56,6 +56,7 @@ function useChannelContextFactory() {
                     surveyChannel: {
                         __typename: "SurveyChannel",
                         ...data,
+                        link: "",
                         reference: data.id,
                         createdAt: new Date().toISOString(),
                     },
@@ -66,7 +67,7 @@ function useChannelContextFactory() {
             update: (cache, { data }) => {
                 if (!data?.surveyChannelCreate?.surveyChannel) return;
                 cache.modify({
-                    id: `Survey:${surveyId}`,
+                    id: `Survey:${survey?.survey?.id}`,
                     fields: {
                         channels(existingChannels) {
                             const newChannelRef = cache.writeFragment({
@@ -112,6 +113,7 @@ function useChannelContextFactory() {
                         __typename: "SurveyChannel",
                         id: channel.id,
                         type: input.type ?? surveyChannel.type,
+                        link: surveyChannel.link ?? "",
                         triggers: input.triggers ?? surveyChannel.triggers,
                         conditions:
                             input.conditions ?? surveyChannel.conditions,
@@ -155,7 +157,7 @@ function useChannelContextFactory() {
             update: (cache, { data }) => {
                 if (!data?.surveyChannelDelete?.surveyChannel) return;
                 cache.modify({
-                    id: `Survey:${surveyId}`,
+                    id: `Survey:${survey?.survey?.id}`,
                     fields: {
                         channels(existingChannels, { readField }) {
                             return {

@@ -1,11 +1,13 @@
 import {
+    SurveyUpdateInput,
     useGetSurveyQuery,
     useSurveyCreateMutation,
+    useSurveyUpdateMutation,
 } from "@/generated/graphql";
 import { ROUTES } from "@/routes";
 import { ParsedQuestion } from "@/types";
 import { generateRandomString } from "@/utils";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export const useSurvey = () => {
@@ -14,6 +16,8 @@ export const useSurvey = () => {
 
     const [createSurveyMutation, { loading: loadingCreateSurvey }] =
         useSurveyCreateMutation();
+
+    const [surveyUpdateMutation] = useSurveyUpdateMutation();
 
     const { data: survey } = useGetSurveyQuery({
         variables: {
@@ -78,8 +82,21 @@ export const useSurvey = () => {
         });
     };
 
+    const updateSurvey = useCallback(
+        async (id: string, input: SurveyUpdateInput) => {
+            await surveyUpdateMutation({
+                variables: {
+                    id,
+                    input,
+                },
+            });
+        },
+        [surveyUpdateMutation],
+    );
+
     return {
         createSurvey,
+        updateSurvey,
         surveySlug,
         survey,
         parsedQuestions,
