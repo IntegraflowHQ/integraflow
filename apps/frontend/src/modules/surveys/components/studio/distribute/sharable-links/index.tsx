@@ -8,10 +8,6 @@ import Link from "./Link";
 
 export default function SharableLinks() {
     const { createChannel, getChannels } = useChannels();
-    // const linkChannels = useMemo(
-    //     () => getChannels(SurveyChannelTypeEnum.Link),
-    //     [getChannels],
-    // );
     const linkChannels = getChannels(SurveyChannelTypeEnum.Link);
 
     const handleCreate = async () => {

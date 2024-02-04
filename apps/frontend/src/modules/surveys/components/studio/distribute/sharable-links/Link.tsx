@@ -3,25 +3,31 @@ import { ParsedChannel } from "@/types";
 import { Dialog, DialogContent, DialogTrigger, Header } from "@/ui";
 import { Copy, QRCode, SettingsIcon, Trash } from "@/ui/icons";
 import { cn, copyToClipboard } from "@/utils";
+import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 import EditLink from "./EditLink";
-import QRCodeView from "./QRCodevie";
+import QRCodeView from "./QRCodeview";
 
 export type LinkProps = {
     link: ParsedChannel;
 };
 
+const LINK_SURVEY_HOST =
+    import.meta.env.VITE_LINK_SURVEY_HOST ??
+    "https://surveys.useintegraflow.com";
+
 export default function Link({ link }: LinkProps) {
     const [editing, setEditing] = useState(false);
     const settings = link.settings;
     const { deleteChannel } = useChannels();
+    const url = `${LINK_SURVEY_HOST}/${link.link}`;
 
     return (
         <div className="flex items-center justify-between rounded-lg bg-intg-bg-14 p-4">
             <Header
                 variant="3"
                 title={settings.name || "Link"}
-                description="useintegraflow.com"
+                description={url}
                 font="medium"
             />
 
@@ -32,10 +38,7 @@ export default function Link({ link }: LinkProps) {
             >
                 <button
                     onClick={() => {
-                        copyToClipboard(
-                            "useintegraflow.com",
-                            "Link copied to clipboard!",
-                        );
+                        copyToClipboard(url, "Link copied to clipboard!");
                     }}
                 >
                     <Copy />
@@ -46,10 +49,7 @@ export default function Link({ link }: LinkProps) {
                         <QRCode />
                     </DialogTrigger>
                     <DialogContent title={"QR Code"}>
-                        <QRCodeView
-                            url={"useintegraflow.com"}
-                            name={settings.name || "Link"}
-                        />
+                        <QRCodeView url={url} name={settings.name || "Link"} />
                     </DialogContent>
                 </Dialog>
 
@@ -68,6 +68,10 @@ export default function Link({ link }: LinkProps) {
                         />
                     </DialogContent>
                 </Dialog>
+
+                <a href={url} className="text-intg-text" target="_blank">
+                    <ExternalLink size={20} />
+                </a>
 
                 <button onClick={() => deleteChannel(link)}>
                     <Trash />

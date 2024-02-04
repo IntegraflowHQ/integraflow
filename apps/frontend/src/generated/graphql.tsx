@@ -537,6 +537,10 @@ export type Mutation = {
    * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
    */
   surveyQuestionUpdate?: Maybe<SurveyQuestionUpdate>;
+  /** Creates a response to survey. */
+  surveyResponseCreate?: Maybe<SurveyResponseCreate>;
+  /** Updates a response. */
+  surveyResponseUpdate?: Maybe<SurveyResponseUpdate>;
   /**
    * Updates a survey
    *
@@ -661,6 +665,17 @@ export type MutationSurveyQuestionDeleteArgs = {
 export type MutationSurveyQuestionUpdateArgs = {
   id: Scalars['ID'];
   input: SurveyQuestionUpdateInput;
+};
+
+
+export type MutationSurveyResponseCreateArgs = {
+  input: SurveyResponseCreateInput;
+};
+
+
+export type MutationSurveyResponseUpdateArgs = {
+  id: Scalars['ID'];
+  input: SurveyResponseUpdateInput;
 };
 
 
@@ -1910,6 +1925,64 @@ export type SurveyQuestionUpdateInput = {
   settings?: InputMaybe<Scalars['JSONString']>;
   /** The type of the question */
   type?: InputMaybe<SurveyQuestionTypeEnum>;
+};
+
+/** Creates a response to survey. */
+export type SurveyResponseCreate = {
+  __typename?: 'SurveyResponseCreate';
+  errors: Array<SurveyError>;
+  /** The ID of the response. */
+  responseId?: Maybe<Scalars['ID']>;
+  /** Whether the operation was successful. */
+  status?: Maybe<Scalars['Boolean']>;
+  surveyErrors: Array<SurveyError>;
+};
+
+export type SurveyResponseCreateInput = {
+  /** The user attributes. */
+  attributes?: InputMaybe<Scalars['JSONString']>;
+  /** Whether the response is completed. */
+  completed?: InputMaybe<Scalars['Boolean']>;
+  /** The time the survey completed. */
+  completedAt?: InputMaybe<Scalars['DateTime']>;
+  /** The ID of the response. */
+  id?: InputMaybe<Scalars['UUID']>;
+  /** The response metadata. */
+  metadata?: InputMaybe<Scalars['JSONString']>;
+  /** The partial response for the survey. */
+  response?: InputMaybe<Scalars['JSONString']>;
+  /** The time the survey started. */
+  startedAt?: InputMaybe<Scalars['DateTime']>;
+  /** The survey ID the response belongs to. */
+  surveyId: Scalars['ID'];
+  /** The user distinct ID. */
+  userId?: InputMaybe<Scalars['ID']>;
+};
+
+/** Updates a response. */
+export type SurveyResponseUpdate = {
+  __typename?: 'SurveyResponseUpdate';
+  errors: Array<SurveyError>;
+  /** Whether the operation was successful. */
+  status?: Maybe<Scalars['Boolean']>;
+  surveyErrors: Array<SurveyError>;
+};
+
+export type SurveyResponseUpdateInput = {
+  /** The user attributes. */
+  attributes?: InputMaybe<Scalars['JSONString']>;
+  /** Whether the response is completed. */
+  completed?: InputMaybe<Scalars['Boolean']>;
+  /** The time the survey completed. */
+  completedAt?: InputMaybe<Scalars['DateTime']>;
+  /** The response metadata. */
+  metadata?: InputMaybe<Scalars['JSONString']>;
+  /** The partial response for the survey. */
+  response?: InputMaybe<Scalars['JSONString']>;
+  /** The time the survey started. */
+  startedAt?: InputMaybe<Scalars['DateTime']>;
+  /** The user distinct ID. */
+  userId?: InputMaybe<Scalars['ID']>;
 };
 
 export enum SurveySortField {
