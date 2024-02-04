@@ -1,19 +1,21 @@
-import graphene
 import uuid
+import graphene
 from typing import List, cast
 
 from dateutil import parser
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from integraflow.celeryconf import app as celery_app
 from integraflow.core.exceptions import PermissionDenied
+from integraflow.event.utils import get_or_create_person
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_SURVEYS
 from integraflow.graphql.core.mutations import BaseMutation
 from integraflow.graphql.core.types.common import SurveyError
-from integraflow.graphql.core.utils import from_global_id_or_none
+from integraflow.graphql.core.utils import (
+    from_global_id_or_none,
+    from_global_ids_to_pks
+)
 from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.project.models import Project
 from integraflow.survey import models
@@ -27,7 +29,7 @@ class SurveyResponseUpdateInput(SurveyResponseInput):
         doc_category = DOC_CATEGORY_SURVEYS
 
 
-class SurveyResponseCreate(BaseMutation):
+class SurveyResponseUpdate(BaseMutation):
     class Arguments:
         id = graphene.ID(
             description="The ID of the response.",
@@ -44,91 +46,94 @@ class SurveyResponseCreate(BaseMutation):
     )
 
     class Meta:
-        description = "Creates a response to survey."
+        description = "Updates a response."
         error_type_class = SurveyError
         error_type_field = "survey_errors"
         doc_category = DOC_CATEGORY_SURVEYS
 
     @classmethod
-    def clean_input(cls, info: ResolveInfo, **kwargs):
-        project = cast(Project, info.context.project)
-
+    def clean_input(
+        cls,
+        info: ResolveInfo,
+        survey_response: models.SurveyResponse,
+        **kwargs
+    ):
         responses = kwargs.get("response", None)
-        if isinstance(responses, dict):
-            responses = [responses]
+        if responses is not None:
+            if isinstance(responses, dict):
+                responses = [responses]
 
-        question_ids = []
-        if isinstance(responses, List):
-            for response in responses:
-                question_id = response.get("questionId", None)
-                str("")
-                if question_id is None:
+            question_ids = []
+            if isinstance(responses, List):
+                for response in responses:
+                    question_ids.append(response.get("questionId", None))
+
+                questions = cls.get_nodes_or_error(
+                    question_ids,
+                    "question_id",
+                    schema=info.schema
+                )
+                count = len(questions)
+
+                if len(question_ids) != count:
                     raise ValidationError(
                         {
                             "question_id": ValidationError(
-                                "Invalid question ID provided",
-                                code=SurveyErrorCode.INVALID.value,
+                                "Could not resolve one of the questions",
+                                code=SurveyErrorCode.NOT_FOUND.value,
                             )
                         }
                     )
 
-                try:
-                    response["questionId"] = uuid.UUID(question_id)
-                except ValueError:
-                    response["questionId"] = from_global_id_or_none(
-                        question_id
-                    )
+            from_global_ids_to_pks(responses, "questionId")
 
-                question_ids.append(response["questionId"])
+            cleaned_response = survey_response.response or {}
+            for response in responses:
+                question_id = response["questionId"]
+                answers = response["answers"]
+                cleaned_response[question_id] = answers
 
-            question_count = models.SurveyQuestion.objects.filter(
-                id__in=question_ids
-            ).count()
+            survey_response.response = cleaned_response
 
-            if len(question_ids) != question_count:
-                raise ValidationError(
-                    {
-                        "question_id": ValidationError(
-                            "Could not resolve one of the questions",
-                            code=SurveyErrorCode.NOT_FOUND.value,
-                        )
-                    }
-                )
+        started_at = kwargs.get("completed_at", None)
+        if started_at is not None:
+            survey_response.created_at = parser.isoparse(
+                str(started_at)
+            ).isoformat()
 
-        setattr(kwargs, "response", responses)
-
-        completed = kwargs.get("completed", None)
-
-        now = timezone.now()
-
-        if completed is not None:
-            kwargs["completed"] = completed
+        completed = kwargs.get("completed", False)
+        if completed is True:
+            now = timezone.now()
+            survey_response.status = models.SurveyResponse.Status.COMPLETED
             completed_at = kwargs.get("completed_at", now.isoformat())
 
-            setattr(
-                kwargs,
-                "completed_at",
-                parser.isoparse(str(completed_at)).isoformat()
-            )
+            survey_response.completed_at = parser.isoparse(
+                str(completed_at)
+            ).isoformat()
 
         user_id = kwargs.get("user_id", None)
         if user_id is not None:
-            setattr(kwargs, "distinct_id", user_id)
+            survey_response.distinct_id = user_id
 
         attributes = kwargs.get("attributes", None)
         if attributes is not None:
-            setattr(kwargs, "user_attributes", user_id)
+            user_attributes = survey_response.user_attributes or {}
+            user_attributes.update(attributes)
+            survey_response.user_attributes = user_attributes
 
-        return kwargs
+        metadata = kwargs.get("metadata", None)
+        if metadata is not None:
+            survey_metadata = survey_response.metadata or {}
+            survey_metadata.update(metadata)
+            survey_response.metadata = metadata
+
+        return survey_response
 
     @classmethod
     def perform_mutation(cls, _root, info: ResolveInfo, **kwargs):
         if not cls.check_permissions(
             info.context,
-            [
-                AuthorizationFilters.AUTHENTICATED_API,
-                AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS
-            ],
+            [AuthorizationFilters.AUTHENTICATED_API],
             require_all_permissions=False
         ):
             raise PermissionDenied(
@@ -136,14 +141,18 @@ class SurveyResponseCreate(BaseMutation):
                 "in Integraflow project settings."
             )
 
-        id = kwargs["id"]
-        try:
-            kwargs["id"] = uuid.UUID(id)
-        except ValueError:
-            kwargs["id"] = from_global_id_or_none(id)
+        project = cast(Project, info.context.project)
 
         try:
-            models.SurveyResponse.objects.get(id=kwargs["id"])
+            id = uuid.UUID(kwargs["id"])
+        except ValueError:
+            id = from_global_id_or_none(kwargs["id"])
+
+        try:
+            response = models.SurveyResponse.objects.get(
+                id=id,
+                survey__project_id=project.pk
+            )
         except models.SurveyResponse.DoesNotExist:
             raise ValidationError(
                 {
@@ -154,14 +163,22 @@ class SurveyResponseCreate(BaseMutation):
                 }
             )
 
-        cleaned_input = cls.clean_input(info, kwargs=kwargs["input"])
+        old_distinct_id = response.distinct_id
 
-        response = models.SurveyResponse.objects.create(**cleaned_input)
+        cls.clean_input(info, response, **kwargs["input"])
 
-        task_name = "integraflow.survey.task.process_response"
-        celery_app.send_task(
-            name=task_name,
-            queue=settings.CELERY_DEFAULT_QUEUE,
-            args=[response],
-        )
+        project = cast(Project, info.context.project)
+
+        distinct_id = response.distinct_id
+        if distinct_id != old_distinct_id:
+            person = get_or_create_person(project.id, distinct_id)
+            response.person_id = person.uuid
+
+        response.completed_at = timezone.now()
+        response.save()
+
+        if response.status == models.SurveyResponse.Status.COMPLETED:
+            # Trigger a celery task to calculate survey metrics
+            pass
+
         return cls(status=True)

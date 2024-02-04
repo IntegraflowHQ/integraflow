@@ -1583,6 +1583,21 @@ type Mutation {
     input: SurveyQuestionUpdateInput!
   ): SurveyQuestionUpdate @doc(category: "Surveys")
 
+  """Creates a response to survey."""
+  surveyResponseCreate(
+    """The details for the response to create."""
+    input: SurveyResponseCreateInput!
+  ): SurveyResponseCreate @doc(category: "Surveys")
+
+  """Updates a response."""
+  surveyResponseUpdate(
+    """The ID of the response."""
+    id: ID!
+
+    """The partial response object to update"""
+    input: SurveyResponseUpdateInput!
+  ): SurveyResponseUpdate @doc(category: "Surveys")
+
   """
   Updates a survey 
   
@@ -1864,9 +1879,10 @@ Creates a new distibution channel
 Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
 """
 type SurveyChannelCreate @doc(category: "Surveys") {
+  """The checkout with the added gift card or voucher."""
+  surveyChannel: SurveyChannel
   surveyErrors: [SurveyError!]!
   errors: [SurveyError!]!
-  surveyChannel: SurveyChannel
 }
 
 """Represents errors in survey mutations."""
@@ -2071,6 +2087,77 @@ input SurveyQuestionUpdateInput @doc(category: "Surveys") {
 
   """The settings of the question."""
   orderNumber: Int
+}
+
+"""Creates a response to survey."""
+type SurveyResponseCreate @doc(category: "Surveys") {
+  """The ID of the response."""
+  responseId: ID
+
+  """Whether the operation was successful."""
+  status: Boolean
+  surveyErrors: [SurveyError!]!
+  errors: [SurveyError!]!
+}
+
+input SurveyResponseCreateInput @doc(category: "Surveys") {
+  """The partial response for the survey."""
+  response: JSONString
+
+  """The time the survey started."""
+  startedAt: DateTime
+
+  """Whether the response is completed."""
+  completed: Boolean = false
+
+  """The time the survey completed."""
+  completedAt: DateTime
+
+  """The user distinct ID."""
+  userId: ID
+
+  """The response metadata."""
+  metadata: JSONString
+
+  """The user attributes."""
+  attributes: JSONString
+
+  """The ID of the response."""
+  id: UUID
+
+  """The survey ID the response belongs to."""
+  surveyId: ID!
+}
+
+"""Updates a response."""
+type SurveyResponseUpdate @doc(category: "Surveys") {
+  """Whether the operation was successful."""
+  status: Boolean
+  surveyErrors: [SurveyError!]!
+  errors: [SurveyError!]!
+}
+
+input SurveyResponseUpdateInput @doc(category: "Surveys") {
+  """The partial response for the survey."""
+  response: JSONString
+
+  """The time the survey started."""
+  startedAt: DateTime
+
+  """Whether the response is completed."""
+  completed: Boolean = false
+
+  """The time the survey completed."""
+  completedAt: DateTime
+
+  """The user distinct ID."""
+  userId: ID
+
+  """The response metadata."""
+  metadata: JSONString
+
+  """The user attributes."""
+  attributes: JSONString
 }
 
 """

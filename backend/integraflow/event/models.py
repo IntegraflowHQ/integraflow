@@ -148,7 +148,8 @@ class Person(models.Model):
     def distinct_ids(self) -> List[str]:
         if hasattr(self, "distinct_ids_cache"):
             return [
-                id.distinct_id for id in self.distinct_ids_cache  # type: ignore
+                id.distinct_id for id in
+                self.distinct_ids_cache  # type: ignore
             ]
         if hasattr(self, "_distinct_ids") and self._distinct_ids:
             return self._distinct_ids
@@ -156,7 +157,7 @@ class Person(models.Model):
             id[0]
             for id in PersonDistinctId.objects.filter(
                 person=self,
-                project_id=self.project_id
+                project_id=self.project_id  # type: ignore
             )
             .order_by("id")
             .values_list("distinct_id")
@@ -166,7 +167,7 @@ class Person(models.Model):
         PersonDistinctId.objects.create(
             person=self,
             distinct_id=distinct_id,
-            project_id=self.project_id
+            project_id=self.project_id  # type: ignore
         )
 
     def _add_distinct_ids(self, distinct_ids: List[str]) -> None:
@@ -190,7 +191,7 @@ class Person(models.Model):
         for other_person in people_to_merge:
             other_person_distinct_ids = PersonDistinctId.objects.filter(
                 person=other_person,
-                project_id=self.project_id
+                project_id=self.project_id  # type: ignore
             )
 
             for person_distinct_id in other_person_distinct_ids:
@@ -200,6 +201,7 @@ class Person(models.Model):
             other_person.delete()
 
     objects = PersonManager()
+
     created_at: models.DateTimeField = models.DateTimeField(
         auto_now_add=True,
         blank=True

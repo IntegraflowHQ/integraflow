@@ -1,14 +1,12 @@
 import graphene
-import uuid
 from typing import List, cast
 
 from dateutil import parser
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from integraflow.celeryconf import app as celery_app
 from integraflow.core.exceptions import PermissionDenied
+from integraflow.event.utils import get_or_create_person
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_SURVEYS
 from integraflow.graphql.core.fields import JSONString
@@ -16,7 +14,7 @@ from integraflow.graphql.core.mutations import BaseMutation
 from integraflow.graphql.core.scalars import UUID
 from integraflow.graphql.core.types.base import BaseInputObjectType
 from integraflow.graphql.core.types.common import SurveyError
-from integraflow.graphql.core.utils import from_global_id_or_none
+from integraflow.graphql.core.utils import from_global_ids_to_pks
 from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.project.models import Project
 from integraflow.survey import models
@@ -29,15 +27,15 @@ class SurveyResponseInput(BaseInputObjectType):
     )
     started_at = graphene.DateTime(
         description="The time the survey started.",
-        default_value=timezone.now()
+        required=False
     )
     completed = graphene.Boolean(
         description="Whether the response is completed.",
         default_value=False
     )
     completed_at = graphene.DateTime(
-        description="The time the survey happened.",
-        default_value=timezone.now()
+        description="The time the survey completed.",
+        required=False
     )
     user_id = graphene.ID(
         description="The user distinct ID.",
@@ -76,6 +74,10 @@ class SurveyResponseCreate(BaseMutation):
             description="The details for the response to create."
         )
 
+    response_id = graphene.GlobalID(
+        description="The ID of the response.",
+        required=False
+    )
     status = graphene.Boolean(
         description="Whether the operation was successful.",
         default_value=False
@@ -91,15 +93,13 @@ class SurveyResponseCreate(BaseMutation):
     def clean_input(cls, info: ResolveInfo, **kwargs):
         project = cast(Project, info.context.project)
 
-        survey_id = kwargs["survey_id"]
-        try:
-            kwargs["survey_id"] = uuid.UUID(survey_id)
-        except ValueError:
-            kwargs["survey_id"] = from_global_id_or_none(survey_id)
+        survey_id = kwargs.get("survey_id")
+        survey = cls.get_node_or_error(
+            info,
+            survey_id
+        )
 
-        try:
-            models.Survey.objects.get(id=survey_id, project_id=project.pk)
-        except models.Survey.DoesNotExist:
+        if survey is None or survey.project.pk != project.pk:  # type: ignore
             raise ValidationError(
                 {
                     "survey_id": ValidationError(
@@ -109,82 +109,86 @@ class SurveyResponseCreate(BaseMutation):
                 }
             )
 
-        responses = kwargs.get("response", None)
-        if isinstance(responses, dict):
-            responses = [responses]
+        cleaned_input = {
+            "survey_id": survey.pk
+        }
 
-        question_ids = []
-        if isinstance(responses, List):
-            for response in responses:
-                question_id = response.get("questionId", None)
-                if question_id is None:
+        id = kwargs.get("id", None)
+        if id is not None:
+            cleaned_input["id"] = id
+
+        responses = kwargs.get("response", None)
+        if responses is not None:
+            if isinstance(responses, dict):
+                responses = [responses]
+
+            question_ids = []
+            if isinstance(responses, List):
+                for response in responses:
+                    question_ids.append(response.get("questionId", None))
+
+                questions = cls.get_nodes_or_error(
+                    question_ids,
+                    "question_id",
+                    schema=info.schema
+                )
+                count = len(questions)
+
+                if len(question_ids) != count:
                     raise ValidationError(
                         {
                             "question_id": ValidationError(
-                                "Invalid question ID provided",
-                                code=SurveyErrorCode.INVALID.value,
+                                "Could not resolve one of the questions",
+                                code=SurveyErrorCode.NOT_FOUND.value,
                             )
                         }
                     )
 
-                try:
-                    response["questionId"] = uuid.UUID(question_id)
-                except ValueError:
-                    response["questionId"] = from_global_id_or_none(
-                        question_id
-                    )
+            from_global_ids_to_pks(responses, "questionId")
 
-                question_ids.append(response["questionId"])
+            cleaned_response = {}
+            for response in responses:
+                question_id = response["questionId"]
+                answers = response["answers"]
+                cleaned_response[question_id] = answers
 
-            question_count = models.SurveyQuestion.objects.filter(
-                id__in=question_ids,
-                survey_id=survey_id
-            ).count()
+            cleaned_input["response"] = cleaned_response
 
-            if len(question_ids) != question_count:
-                raise ValidationError(
-                    {
-                        "question_id": ValidationError(
-                            "Could not resolve one of the questions",
-                            code=SurveyErrorCode.NOT_FOUND.value,
-                        )
-                    }
-                )
+        started_at = kwargs.get("started_at", None)
+        if started_at is not None:
+            cleaned_input["created_at"] = parser.isoparse(
+                str(started_at)
+            ).isoformat()
 
-        setattr(kwargs, "response", responses)
-
-        completed = kwargs.get("completed", None)
-
-        now = timezone.now()
-
-        if completed is not None:
-            kwargs["completed"] = completed
+        completed = kwargs.get("completed", False)
+        if completed:
+            now = timezone.now()
+            cleaned_input["status"] = models.SurveyResponse.Status.COMPLETED
             completed_at = kwargs.get("completed_at", now.isoformat())
 
-            setattr(
-                kwargs,
-                "completed_at",
-                parser.isoparse(str(completed_at)).isoformat()
-            )
+            cleaned_input["completed_at"] = parser.isoparse(
+                str(completed_at)
+            ).isoformat()
 
         user_id = kwargs.get("user_id", None)
         if user_id is not None:
-            setattr(kwargs, "distinct_id", user_id)
+            cleaned_input["distinct_id"] = user_id
 
         attributes = kwargs.get("attributes", None)
         if attributes is not None:
-            setattr(kwargs, "user_attributes", user_id)
+            cleaned_input["user_attributes"] = attributes
 
-        return kwargs
+        metadata = kwargs.get("metadata", None)
+        if metadata is not None:
+            cleaned_input["metadata"] = metadata
+
+        return cleaned_input
 
     @classmethod
     def perform_mutation(cls, _root, info: ResolveInfo, **kwargs):
         if not cls.check_permissions(
             info.context,
-            [
-                AuthorizationFilters.AUTHENTICATED_API,
-                AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS
-            ],
+            [AuthorizationFilters.AUTHENTICATED_API],
             require_all_permissions=False
         ):
             raise PermissionDenied(
@@ -192,14 +196,28 @@ class SurveyResponseCreate(BaseMutation):
                 "in Integraflow project settings."
             )
 
-        cleaned_input = cls.clean_input(info, kwargs=kwargs["input"])
+        cleaned_input = cls.clean_input(info, **kwargs["input"])
 
-        response = models.SurveyResponse.objects.create(**cleaned_input)
+        project = cast(Project, info.context.project)
+        distinct_id = cleaned_input.get("distinct_id", None)
+        if distinct_id is not None:
+            person = get_or_create_person(project.id, distinct_id)
+            cleaned_input["person_id"] = person.uuid
 
-        task_name = "integraflow.survey.task.process_response"
-        celery_app.send_task(
-            name=task_name,
-            queue=settings.CELERY_DEFAULT_QUEUE,
-            args=[response],
+        id = cleaned_input.get("id", None)
+        if id is None:
+            response = models.SurveyResponse.objects.create(**cleaned_input)
+        else:
+            response, _ = models.SurveyResponse.objects.update_or_create(
+                id=cleaned_input["id"],
+                defaults=cleaned_input
+            )
+
+        if response.status == models.SurveyResponse.Status.COMPLETED:
+            # Trigger a celery task to calculate survey metrics
+            pass
+
+        return cls(
+            status=True,
+            response_id=response.pk
         )
-        return cls(status=True)
