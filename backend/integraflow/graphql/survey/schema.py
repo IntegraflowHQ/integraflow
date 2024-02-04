@@ -18,6 +18,8 @@ from .mutations import (
     SurveyQuestionCreate,
     SurveyQuestionDelete,
     SurveyQuestionUpdate,
+    SurveyResponseCreate,
+    SurveyResponseUpdate,
     SurveyUpdate,
 )
 from .resolvers import (
@@ -174,4 +176,6 @@ class SurveyMutations(graphene.ObjectType):
     survey_question_create = SurveyQuestionCreate.Field()
     survey_question_delete = SurveyQuestionDelete.Field()
     survey_question_update = SurveyQuestionUpdate.Field()
+    survey_response_create = SurveyResponseCreate.Field()
+    survey_response_update = SurveyResponseUpdate.Field()
     survey_update = SurveyUpdate.Field()

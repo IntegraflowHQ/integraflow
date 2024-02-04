@@ -215,6 +215,7 @@ class SurveyResponse(UUIDModel):
     )
     metadata: models.JSONField = models.JSONField(default=dict)
     user_attributes: models.JSONField = models.JSONField(default=dict)
+    is_processed: models.BooleanField = models.BooleanField(default=False)
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
     completed_at: models.DateTimeField = models.DateTimeField(

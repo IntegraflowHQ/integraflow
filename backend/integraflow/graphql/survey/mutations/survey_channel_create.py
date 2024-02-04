@@ -12,6 +12,7 @@ from integraflow.graphql.core.types.common import SurveyError
 from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.project.models import Project
 from integraflow.survey import models
+from integraflow.survey.error_codes import SurveyErrorCode
 
 from ..enums import SurveyChannelTypeEnum
 from ..types import SurveyChannel
@@ -62,8 +63,6 @@ class SurveyChannelCreate(BaseMutation):
 
     class Meta:
         description = "Creates a new distibution channel"
-        # model = models.SurveyChannel
-        object_type = SurveyChannel
         error_type_class = SurveyError
         error_type_field = "survey_errors"
         doc_category = DOC_CATEGORY_SURVEYS
@@ -83,8 +82,8 @@ class SurveyChannelCreate(BaseMutation):
             raise ValidationError(
                 {
                     "survey_id": ValidationError(
-                        f"Couldn't resolve a survey: {survey_id}",
-                        code="not found"
+                        f"Could not resolve survey with ID: {survey_id}",
+                        code=SurveyErrorCode.NOT_FOUND.value,
                     )
                 }
             )
