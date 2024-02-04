@@ -8,13 +8,7 @@ import {
     CTAType,
     FormFieldType,
     ID,
-    LogicBooleanCondition,
-    LogicDateCondition,
-    LogicMultipleCondition,
     LogicOperator,
-    LogicRangeCondition,
-    LogicSingleCondition,
-    LogicTextCondition,
 } from "@integraflow/web/src/types";
 import { PlacementType } from "@integraflow/web/src/types/index";
 
@@ -71,16 +65,10 @@ export type QuestionLogic = {
     id?: ID | number | string;
     orderNumber?: number;
     destination?: ID;
-    condition?:
-        | LogicMultipleCondition
-        | LogicSingleCondition
-        | LogicRangeCondition
-        | LogicBooleanCondition
-        | LogicDateCondition
-        | LogicTextCondition;
+    condition?: LogicConditionEnum | undefined;
     operator?: LogicOperator | undefined;
     values?: ID[] | string[];
-    groups: FormLogicGroup[];
+    groups?: FormLogicGroup[];
 };
 
 export type QuestionSettings = {
@@ -115,3 +103,24 @@ export type ParsedQuestion = Omit<
 > & {
     questions: QuestionOption[];
 };
+
+export enum LogicConditionEnum {
+    IS = "is",
+    IS_NOT = "is_not",
+    NOT_ANSWERED = "not_answered",
+    ANSWERED = "answered",
+    IS_FALSE = "is_false",
+    BETWEEN = "between",
+    IS_TRUE = "is_true",
+    ANSWER_CONTAINS = "contains",
+    ANSWER_DOES_NOT_CONTAIN = "not_contain",
+    HAS_ANY_VALUE = "any_value",
+    QUESTION_IS_ANSWERED = "answered",
+    QUESTION_IS_NOT_ANSWERED = "not_answered",
+    DOES_NOT_INCLUDE_ANY = "not_include_any",
+    IS_FILLED_IN = "filled",
+    IS_NOT_FILLED_IN = "not_filled",
+    IS_EXACTLY = "exactly",
+    INCLUDES_ALL = "includes_all",
+    INCLUDES_ANY = "includes_any",
+}

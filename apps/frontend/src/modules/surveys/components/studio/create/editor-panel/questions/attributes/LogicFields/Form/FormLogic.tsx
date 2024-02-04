@@ -6,7 +6,7 @@ import { LogicOperator } from "@integraflow/web/src/types";
 import { PlusIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { SingleValue } from "react-select";
-import { Option, ReactSelect } from "../ReactSelect";
+import { Option, ReactSelect } from "../../ReactSelect";
 import { LogicGroup } from "./LogicGroup";
 
 type Props = {
@@ -18,21 +18,23 @@ type Props = {
 
 export const FormLogicBox = ({ logic, question, logicIndex }: Props) => {
     const { parsedQuestions } = useSurvey();
-    const [disableAddLogic, setDisableAddLogic] = useState(false);
+    const [allowAddLogic, setAllowAddLogic] = useState(false);
     const [editValues, setEditValues] = useState(logic);
 
     useEffect(() => {
-        const disable = editValues.groups.some(
-            (g) => g.fields.length === 0 || !g.condition,
-        );
-        setDisableAddLogic(disable);
+        if (editValues.groups && editValues.groups.length > 0) {
+            const disable = editValues.groups.some(
+                (g) => g.fields.length === 0 || !g.condition,
+            );
+            setAllowAddLogic(disable);
+        }
     }, [editValues]);
 
     const addLogicGroup = () => {
         setEditValues({
             ...editValues,
             groups: [
-                ...editValues.groups,
+                ...(editValues.groups ?? []),
                 {
                     id: generateUniqueId(),
                     fields: [],
@@ -42,12 +44,11 @@ export const FormLogicBox = ({ logic, question, logicIndex }: Props) => {
             ],
         });
     };
-    console.log(editValues.groups);
 
     return (
         <div className="relative rounded-md border border-intg-bg-4">
             <LogicGroup
-                groups={editValues.groups}
+                groups={editValues.groups || []}
                 logicIndex={logicIndex}
                 question={question}
                 setEditValues={setEditValues}
@@ -57,11 +58,9 @@ export const FormLogicBox = ({ logic, question, logicIndex }: Props) => {
             <div className="relative p-6">
                 <hr className="border-intg-bg-4" />
                 <button
-                    disabled={disableAddLogic}
+                    disabled={allowAddLogic}
                     className={cn(
-                        disableAddLogic
-                            ? "cursor-not-allowed"
-                            : "cursor-pointer",
+                        allowAddLogic ? "cursor-not-allowed" : "cursor-pointer",
                         "absolute right-0 -translate-y-1/2 translate-x-1/2",
                     )}
                     onClick={addLogicGroup}

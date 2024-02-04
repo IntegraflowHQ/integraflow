@@ -1,53 +1,32 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { QuestionSettings } from "@/types";
+import { QuestionLogic, QuestionSettings } from "@/types";
 import { cn, generateUniqueId } from "@/utils";
 import { LogicOperator } from "@integraflow/web/src/types";
 import { useEffect, useState } from "react";
 import { TabHeader } from "./TabHeader";
-import FormLogicDefault from "./attributes/LogicFields/DefaultFormLogic";
 import { DefaultLogicBox } from "./attributes/LogicFields/DefaultLogicBox";
-import { FormLogicBox } from "./attributes/LogicFields/FormLogic";
+import FormLogicDefault from "./attributes/LogicFields/Form/DefaultFormLogic";
+import { FormLogicBox } from "./attributes/LogicFields/Form/FormLogic";
 import { LogicBox } from "./attributes/LogicFields/LogicBox";
 
 type Props = {
     question: SurveyQuestion;
     questionIndex: number;
 };
-type QuestionLogic = {
-    id: string;
-    orderNumber?: number;
-    destination: string;
-};
-
-export type LogicValues = QuestionLogic & {
-    condition: string;
-    values?: string[];
-    operator: LogicOperator | undefined;
-};
-
-export type FormLogicValues = QuestionLogic & {
-    groups: {
-        id?: string;
-        condition: string;
-        operator: string;
-        fields: string[];
-    }[];
-    operator: LogicOperator | undefined;
-};
 
 export const LogicTab = ({ question, questionIndex }: Props) => {
     const [isCreatingLogic, setIsCreatingLogic] = useState(false);
 
-    const [logicValues, setLogicValues] = useState<LogicValues>({
+    const [logicValues, setLogicValues] = useState<QuestionLogic>({
         id: "",
-        condition: "",
+        condition: undefined,
         values: undefined,
         operator: undefined,
         destination: "",
         orderNumber: question.settings.logic?.length || 0,
     });
 
-    const [formLogicValues, setFormLogicValues] = useState<FormLogicValues>({
+    const [formLogicValues, setFormLogicValues] = useState<QuestionLogic>({
         id: "",
         groups: [
             {
@@ -57,7 +36,7 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
                 fields: [],
             },
         ],
-        operator: undefined,
+        operator: LogicOperator.AND,
         destination: "",
         orderNumber: question.settings.logic?.length || 0,
     });
@@ -103,7 +82,7 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
             });
             setLogicValues({
                 id: "",
-                condition: "",
+                condition: undefined,
                 values: undefined,
                 operator: undefined,
                 destination: "",
@@ -127,13 +106,15 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
                     {((question.settings as QuestionSettings).logic || [])?.map(
                         (logic, index) => {
                             return (
-                                <FormLogicBox
-                                    logicIndex={index}
-                                    question={question}
-                                    setIsCreatingLogic={setIsCreatingLogic}
-                                    logic={logic}
-                                    key={logic.id}
-                                />
+                                <div className="w-full">
+                                    <FormLogicBox
+                                        logicIndex={index}
+                                        question={question}
+                                        setIsCreatingLogic={setIsCreatingLogic}
+                                        logic={logic}
+                                        key={logic.id}
+                                    />
+                                </div>
                             );
                         },
                     )}
@@ -150,12 +131,15 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
             ) : (
                 <>
                     {((question.settings as QuestionSettings).logic || [])?.map(
-                        (logic) => {
+                        (logic, index) => {
                             return (
                                 <LogicBox
+                                    key={logic.id}
                                     setIsCreatingLogic={setIsCreatingLogic}
                                     logic={logic}
-                                    key={logic.id}
+                                    question={question}
+                                    logicIndex={index}
+                                    setLogicValues={setLogicValues}
                                 />
                             );
                         },

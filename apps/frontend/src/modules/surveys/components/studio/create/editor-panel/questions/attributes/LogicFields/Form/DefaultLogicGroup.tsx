@@ -1,16 +1,15 @@
 import MinusIcon from "@/assets/icons/studio/MinusIcon";
 import { SurveyQuestion } from "@/generated/graphql";
-import { FormLogicGroup } from "@/types";
-import { getLogicConditions } from "@/utils/defaultOptions";
+import { FormLogicGroup, QuestionLogic } from "@/types";
+import { changeableOperator, getLogicConditions } from "@/utils/defaultOptions";
 import { LogicOperator } from "@integraflow/web/src/types";
 import { MultiValue, SingleValue } from "react-select";
-import { FormLogicValues } from "../../LogicTab";
-import { Option, ReactSelect } from "../ReactSelect";
+import { Option, ReactSelect } from "../../ReactSelect";
 
 type Props = {
-    formLogicValues: FormLogicValues;
+    formLogicValues: QuestionLogic;
     index: number;
-    setFormLogicValues: React.Dispatch<React.SetStateAction<FormLogicValues>>;
+    setFormLogicValues: React.Dispatch<React.SetStateAction<QuestionLogic>>;
     setIsCreatingLogic: React.Dispatch<React.SetStateAction<boolean>>;
     group: FormLogicGroup;
     question: SurveyQuestion;
@@ -29,7 +28,7 @@ export const LogicGroup = ({
     ) => {
         setFormLogicValues({
             ...formLogicValues,
-            groups: formLogicValues.groups.map((g) =>
+            groups: formLogicValues.groups?.map((g) =>
                 g.id === group.id
                     ? {
                           ...g,
@@ -44,7 +43,7 @@ export const LogicGroup = ({
     };
 
     const handleRemoveGroup = () => {
-        if (formLogicValues.groups.length === 1) {
+        if ((formLogicValues.groups ?? []).length === 1) {
             setFormLogicValues({
                 ...formLogicValues,
                 groups: [],
@@ -55,7 +54,9 @@ export const LogicGroup = ({
         }
         setFormLogicValues({
             ...formLogicValues,
-            groups: formLogicValues.groups.filter((g) => g.id !== group.id),
+            groups: (formLogicValues.groups ?? []).filter(
+                (g) => g.id !== group.id,
+            ),
         });
     };
 
@@ -64,7 +65,7 @@ export const LogicGroup = ({
     ) => {
         setFormLogicValues({
             ...formLogicValues,
-            groups: formLogicValues.groups.map((g) =>
+            groups: (formLogicValues.groups ?? []).map((g) =>
                 g.id === group.id
                     ? {
                           ...g,
@@ -82,6 +83,12 @@ export const LogicGroup = ({
                     <div>If</div>
                     <div className="w-[330px]">
                         <ReactSelect
+                            shouldLogicalOperatorChange={changeableOperator(
+                                question,
+                            )}
+                            onOperatorChange={(value) => {
+                                handleUpdateCondition(value);
+                            }}
                             comboBox={true}
                             options={[
                                 ...(question?.options?.map(

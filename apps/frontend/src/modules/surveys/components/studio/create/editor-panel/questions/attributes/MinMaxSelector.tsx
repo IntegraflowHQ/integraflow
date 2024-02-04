@@ -1,13 +1,15 @@
+import { useState } from "react";
+import { MultiValue, SingleValue } from "react-select";
 import { Option, ReactSelect } from "./ReactSelect";
 
 type Props = {
     options: Option[];
-    minChange: (option) => void;
-    maxChange: (option) => void;
+    minChange: (option: SingleValue<Option> | MultiValue<Option>) => void;
+    maxChange: (option: SingleValue<Option> | MultiValue<Option>) => void;
     minValue?: Option;
     maxValue?: Option;
-    minDefault?: Option;
-    maxDefault?: Option;
+    minDefault?: Option | Option[];
+    maxDefault?: Option | Option[];
 };
 
 const MinMaxSelector = ({
@@ -19,34 +21,36 @@ const MinMaxSelector = ({
     maxDefault,
     minDefault,
 }: Props) => {
-    const handleMinChange = (option: Option) => {
-        const minOptionValue = Array.isArray(options)
-            ? option?.value
-            : option?.value;
-        const maxOptionValue = Array.isArray(options)
-            ? option?.value
-            : option?.value;
+    const [min, setMin] = useState<Option | null>(minValue || null);
+    const [max, setMax] = useState<Option | null>(maxValue || null);
 
-        if (maxOptionValue && minOptionValue > maxOptionValue) {
+    const handleMinChange = (
+        option: SingleValue<Option> | MultiValue<Option>,
+    ) => {
+        const index = (option as SingleValue<Option>)?.index;
+        if (max && option && index) {
+            if (index > (max?.index ?? 0)) {
+                setMax(option as Option);
+            }
             maxChange(option);
-        } else {
-            minChange(option);
         }
+        setMin(option as Option);
+        minChange(option);
     };
 
-    const handleMaxChange = (option: Option) => {
-        const minOptionValue = Array.isArray(options)
-            ? option?.value
-            : option?.value;
-        const maxOptionValue = Array.isArray(options)
-            ? option?.value
-            : option?.value;
+    const handleMaxChange = (
+        option: SingleValue<Option> | MultiValue<Option>,
+    ) => {
+        const index = (option as SingleValue<Option>)?.index;
 
-        if (minOptionValue && maxOptionValue < minOptionValue) {
-            minChange(option);
-        } else {
-            maxChange(option);
+        if (min && option && index) {
+            if (index < (min?.index ?? 0)) {
+                setMin(option as Option);
+                minChange(option);
+            }
         }
+        setMax(option as Option);
+        maxChange(option);
     };
 
     return (
@@ -55,9 +59,9 @@ const MinMaxSelector = ({
                 <p className="text-sm">Min</p>
                 <ReactSelect
                     onchange={handleMinChange}
-                    minDefault={minDefault}
                     options={options}
-                    value={minValue}
+                    value={min}
+                    defaultValue={minDefault}
                 />
             </div>
             <div className="flex-1">
@@ -65,8 +69,8 @@ const MinMaxSelector = ({
                 <ReactSelect
                     onchange={handleMaxChange}
                     options={options}
-                    maxDefault={maxDefault}
-                    value={maxValue}
+                    value={max}
+                    defaultValue={maxDefault}
                 />
             </div>
         </div>

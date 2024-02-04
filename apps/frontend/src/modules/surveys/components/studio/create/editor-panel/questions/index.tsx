@@ -1,6 +1,6 @@
 import { addEllipsis } from "@/utils";
 import * as Accordion from "@radix-ui/react-accordion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QuestionOptions } from "./attributes/QuestionTypes";
 
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
@@ -18,6 +18,12 @@ export default function UpdateQuestion() {
     const [currentQuestionType, setCurrentQuestionType] = useState<
         SurveyQuestionTypeEnum | undefined
     >();
+
+    useEffect(() => {
+        if (!openQuestion || !openQuestion.id) {
+            setOpenQuestion(parsedQuestions[0]);
+        }
+    }, [parsedQuestions, openQuestion]);
 
     return (
         <div className="h-full w-full space-y-4 pt-2">

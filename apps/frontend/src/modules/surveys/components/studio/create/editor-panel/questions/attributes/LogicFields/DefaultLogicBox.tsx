@@ -2,18 +2,23 @@ import MinusIcon from "@/assets/icons/studio/MinusIcon";
 import { SurveyQuestion } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { getLogicConditions, getLogicOperator } from "@/utils/defaultOptions";
-import React from "react";
+import { LogicConditionEnum, QuestionLogic } from "@/types";
+import {
+    changeableOperator,
+    getLogicConditions,
+    getLogicOperator,
+} from "@/utils/defaultOptions";
+import { LogicOperator } from "@integraflow/web/src/types";
+import React, { useEffect, useState } from "react";
 import { MultiValue, SingleValue } from "react-select";
-import { LogicValues } from "../../LogicTab";
 import MinMaxSelector from "../MinMaxSelector";
 import { Option, ReactSelect } from "../ReactSelect";
 
 type Props = {
     question: SurveyQuestion;
-    logicValues: LogicValues;
+    logicValues: QuestionLogic;
     isCreatingLogic: boolean;
-    setLogicValues: React.Dispatch<React.SetStateAction<LogicValues>>;
+    setLogicValues: React.Dispatch<React.SetStateAction<QuestionLogic>>;
     setIsCreatingLogic: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -22,48 +27,52 @@ export const DefaultLogicBox: React.FC<Props> = ({
     isCreatingLogic,
     setLogicValues,
     setIsCreatingLogic,
+    question,
 }: Props) => {
     const { parsedQuestions } = useSurvey();
-    const { updateQuestionMutation, openQuestion } = useQuestion();
+    const { updateQuestionMutation } = useQuestion();
+    const [enableUserOptions, setEnableUserOptions] = useState(false);
+    const [logicOperator, setLogicOperator] = useState(logicValues.operator);
+
+    useEffect(() => {
+        if (
+            logicValues.condition === LogicConditionEnum.ANSWER_CONTAINS ||
+            logicValues.condition === LogicConditionEnum.ANSWER_DOES_NOT_CONTAIN
+        ) {
+            setEnableUserOptions(true);
+        } else {
+            setEnableUserOptions(false);
+        }
+    }, [logicValues]);
 
     const handleConditionChange = (
         value: SingleValue<Option> | MultiValue<Option>,
     ) => {
-        if (
-            (logicValues.values && logicValues.values.length > 0) ||
-            logicValues.destination
-        ) {
-            setLogicValues({
-                ...logicValues,
-                condition: (value as SingleValue<Option>)?.value,
-                values: [],
-                operator: undefined,
-                destination: "",
-            });
-        } else {
-            setLogicValues({
-                ...logicValues,
-                condition: (value as SingleValue<Option>)?.value,
-                operator: getLogicOperator(
-                    (value as SingleValue<Option>)?.value,
-                ),
-            });
-        }
+        setLogicValues({
+            ...logicValues,
+            condition: (value as SingleValue<Option>)?.value,
+            values: [],
+            operator: getLogicOperator((value as SingleValue<Option>)?.value),
+            destination: "",
+        });
     };
 
     const handleMinChange = (option: any) => {
+        console.log(option);
+
         const newValues = [...(logicValues.values || [])];
         newValues[0] = option?.value;
         setLogicValues({ ...logicValues, values: newValues });
     };
 
     const handleMaxChange = (option: any) => {
+        console.log(option);
         const newValues = [...(logicValues.values || [])];
         newValues[1] = option?.value;
         setLogicValues({ ...logicValues, values: newValues });
     };
 
-    const handleFieldSelection = (
+    const handleValuesSelection = (
         values: SingleValue<Option> | MultiValue<Option>,
     ) => {
         setLogicValues({
@@ -75,9 +84,9 @@ export const DefaultLogicBox: React.FC<Props> = ({
     const handleDestinationSelection = (value: any) => {
         updateQuestionMutation({
             settings: {
-                ...openQuestion?.settings,
+                ...question?.settings,
                 logic: [
-                    ...openQuestion?.settings.logic,
+                    ...question?.settings.logic,
                     {
                         ...logicValues,
                         destination: value?.value,
@@ -85,14 +94,18 @@ export const DefaultLogicBox: React.FC<Props> = ({
                 ],
             },
         });
+
         setIsCreatingLogic(false);
+        setLogicValues({
+            ...logicValues,
+        });
     };
 
     const handleCancel = () => {
         setIsCreatingLogic(false);
         setLogicValues({
             id: "",
-            condition: "",
+            condition: undefined,
             values: undefined,
             operator: undefined,
             destination: "",
@@ -100,6 +113,21 @@ export const DefaultLogicBox: React.FC<Props> = ({
         });
     };
 
+    const handleOperatorChange = () => {
+        const newValues = {
+            ...logicValues,
+            operator:
+                logicOperator === LogicOperator.AND
+                    ? LogicOperator.OR
+                    : LogicOperator.AND,
+        };
+        setLogicValues(newValues);
+        setLogicOperator(newValues.operator);
+    };
+
+    console.log(logicValues);
+
+    console.log(logicValues);
     return (
         <>
             {isCreatingLogic && (
@@ -108,10 +136,22 @@ export const DefaultLogicBox: React.FC<Props> = ({
                         <p>If answer</p>
                         <div className="w-[330px]">
                             <ReactSelect
-                                options={getLogicConditions(
-                                    openQuestion?.type!,
-                                )}
+                                options={getLogicConditions(question?.type)}
                                 onchange={handleConditionChange}
+                                defaultValue={getLogicConditions(
+                                    question?.type!,
+                                )?.find(
+                                    (option) =>
+                                        option.value ===
+                                        (logicValues.condition as string),
+                                )}
+                                value={getLogicConditions(
+                                    question?.type!,
+                                )?.find(
+                                    (option) =>
+                                        option.value ===
+                                        (logicValues.condition as string),
+                                )}
                             />
                         </div>
                     </div>
@@ -120,23 +160,14 @@ export const DefaultLogicBox: React.FC<Props> = ({
                             <div></div>
                             <div className="w-[330px]">
                                 <MinMaxSelector
-                                    options={openQuestion?.options?.map(
-                                        (option: Option) => ({
+                                    options={question?.options?.map(
+                                        (option: Option, index: number) => ({
                                             value: option.id,
                                             label: option.label,
+                                            index: index,
                                         }),
                                     )}
                                     maxChange={handleMaxChange}
-                                    minValue={openQuestion?.options?.find(
-                                        (option: Option) =>
-                                            option.value ===
-                                            logicValues.values?.[0],
-                                    )}
-                                    maxValue={openQuestion?.options?.find(
-                                        (option: Option) =>
-                                            option.value ===
-                                            logicValues.values?.[1],
-                                    )}
                                     minChange={handleMinChange}
                                 />
                             </div>
@@ -156,22 +187,44 @@ export const DefaultLogicBox: React.FC<Props> = ({
                                 <div></div>
                                 <div className="w-[330px]">
                                     <ReactSelect
+                                        shouldLogicalOperatorChange={changeableOperator(
+                                            question,
+                                        )}
+                                        enableUserOptions={
+                                            enableUserOptions || false
+                                        }
+                                        logicOperator={logicOperator}
+                                        onOperatorChange={() => {
+                                            handleOperatorChange();
+                                        }}
                                         comboBox={true}
-                                        options={openQuestion?.options?.map(
+                                        options={question?.options?.map(
                                             (option: Option) => ({
                                                 value: option.id,
                                                 label: option.label,
                                             }),
                                         )}
-                                        onchange={handleFieldSelection}
+                                        onchange={handleValuesSelection}
                                         value={
-                                            logicValues.values &&
-                                            logicValues.values.map((v) => ({
-                                                value: v,
-                                                label: openQuestion?.options?.find(
-                                                    (o: Option) => o.id === v,
-                                                )?.label,
-                                            }))
+                                            enableUserOptions
+                                                ? logicValues.values?.map(
+                                                      (v) => {
+                                                          return {
+                                                              value: v,
+                                                              label: v,
+                                                          };
+                                                      },
+                                                  )
+                                                : logicValues.values &&
+                                                  logicValues.values.map(
+                                                      (v) => ({
+                                                          value: v,
+                                                          label: question?.options?.find(
+                                                              (o: Option) =>
+                                                                  o.id === v,
+                                                          )?.label,
+                                                      }),
+                                                  )
                                         }
                                     />
                                 </div>
@@ -185,7 +238,7 @@ export const DefaultLogicBox: React.FC<Props> = ({
                         "answered",
                         "is_false",
                         "is_true",
-                    ].includes(logicValues.condition) ? (
+                    ].includes(logicValues.condition ?? "") ? (
                         <div className="flex justify-between gap-14">
                             <p>then</p>
                             <div className="w-[330px]">
@@ -195,8 +248,7 @@ export const DefaultLogicBox: React.FC<Props> = ({
                                             .slice(
                                                 parsedQuestions.findIndex(
                                                     (q) =>
-                                                        q.id ===
-                                                        openQuestion?.id,
+                                                        q.id === question?.id,
                                                 ) + 1,
                                             )
                                             .map((q) => ({
