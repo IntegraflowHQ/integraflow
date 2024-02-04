@@ -84,8 +84,7 @@
     },
     "dependencies": {
         "lucide-preact": "^0.268.0",
-        "preact": "10.16.0",
-        "react-date-picker": "^10.5.0"
+        "preact": "10.16.0"
     },
     "jest": {
         "transformIgnorePatterns": [
