@@ -16,8 +16,7 @@ type Props = {
 };
 
 export const QuestionPanel = ({ question, questionIndex }: Props) => {
-    const { deleteQuestionMutation, openQuestion, setOpenQuestion } =
-        useQuestion();
+    const { deleteQuestionMutation, openQuestion } = useQuestion();
 
     return (
         <Tabs.Root

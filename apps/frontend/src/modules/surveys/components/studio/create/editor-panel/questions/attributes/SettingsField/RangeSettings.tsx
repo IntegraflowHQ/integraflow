@@ -1,8 +1,9 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useState } from "react";
+import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
-import { ReactSelect } from "../ReactSelec";
+import { Option, ReactSelect } from "../ReactSelect";
 
 type Props = {
     question: SurveyQuestion;
@@ -82,7 +83,8 @@ export const RangeSettings = ({ question }: Props) => {
                         )}
                         onchange={(option) => {
                             const newSettings = question.settings;
-                            newSettings.shape = option?.value;
+                            newSettings.shape = (option as SingleValue<Option>)
+                                ?.value;
                             updateQuestionMutation({
                                 settings: newSettings,
                             });
@@ -128,7 +130,8 @@ export const RangeSettings = ({ question }: Props) => {
                         label="Number of smileys"
                         onchange={(option) => {
                             const newSettings = question.settings;
-                            newSettings.count = option?.value;
+                            newSettings.count = (option as SingleValue<Option>)
+                                ?.value;
                             updateQuestionMutation({
                                 settings: newSettings,
                             });

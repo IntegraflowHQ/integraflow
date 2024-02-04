@@ -21,6 +21,8 @@ export const useSurvey = () => {
         },
     });
 
+    const surveyId = survey?.survey?.id;
+
     const parsedQuestions = useMemo(() => {
         const questions = survey?.survey?.questions?.edges || [];
 
@@ -82,5 +84,6 @@ export const useSurvey = () => {
         survey,
         parsedQuestions,
         loadingCreateSurvey,
+        surveyId,
     };
 };

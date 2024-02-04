@@ -1,8 +1,9 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useState } from "react";
+import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
-import { ReactSelect } from "../ReactSelec";
+import { Option, ReactSelect } from "../ReactSelect";
 
 type Props = {
     question: SurveyQuestion;
@@ -68,6 +69,7 @@ export const BooleanSettings = ({ question }: Props) => {
                         characterCount={negativeText?.split("").length}
                     />
                     <ReactSelect
+                        label="Shape"
                         options={booleanOptionsShape}
                         defaultValue={booleanOptionsShape.find(
                             (option) =>
@@ -77,7 +79,8 @@ export const BooleanSettings = ({ question }: Props) => {
                             updateQuestionMutation({
                                 settings: {
                                     ...question.settings,
-                                    shape: value?.value,
+                                    shape: (value as SingleValue<Option>)
+                                        ?.value,
                                 },
                             });
                         }}

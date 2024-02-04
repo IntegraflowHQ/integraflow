@@ -1,11 +1,14 @@
+import { LogicOperator } from "@integraflow/web/src/types";
 import { useState } from "react";
 import Select, {
     CSSObjectWithLabel,
     MultiValue,
+    MultiValueGenericProps,
     SingleValue,
+    components,
 } from "react-select";
-
 import CreatableSelect from "react-select/creatable";
+import { LogicOperatorBtn } from "./LogicOperator";
 
 type Props = {
     options?: Option[];
@@ -13,13 +16,20 @@ type Props = {
     comboBox?: boolean;
     defaultValue?: Option | Option[];
     label?: string;
-    value?: Option | Option[];
-    onchange?: (value: MultiValue<Option> | SingleValue<Option>) => void;
+    value?: Option | Option[] | null;
+    onchange?: (
+        value: Option | SingleValue<Option> | MultiValue<Option>,
+    ) => void;
+    shouldLogicalOperatorChange?: boolean;
+    onOperatorChange?: (value: Option) => void;
+    logicOperator?: LogicOperator;
 };
 
 export interface Option {
-    readonly label: string;
-    readonly value: string;
+    label: any;
+    value: any;
+    id?: string;
+    index?: number;
 }
 
 const createOption = (label: string) => ({
@@ -35,15 +45,26 @@ export const ReactSelect = ({
     comboBox = false,
     label,
     value,
+    onOperatorChange,
+    logicOperator,
+    shouldLogicalOperatorChange = false,
 }: Props) => {
     const [values, setValue] = useState<Option | Option[]>([]);
     const [userOptions, setUserOptions] = useState<Option[]>([]);
+    const [logicalOperatorValue, setLogicalOperatorValue] =
+        useState<LogicOperator>(logicOperator as LogicOperator);
 
     const handleCreate = (inputValue: string) => {
         setTimeout(() => {
             const newOption = createOption(inputValue);
+
+            if (Array.isArray(values)) {
+                setValue((prev) => [...(prev as Option[]), newOption]);
+            } else {
+                setValue([values, newOption]);
+            }
+
             setUserOptions((prev) => [...prev, newOption]);
-            setValue((prev) => [...prev, newOption]);
         }, 100);
     };
 
@@ -97,6 +118,38 @@ export const ReactSelect = ({
         }),
     };
 
+    const MultiValueContainer = (props: MultiValueGenericProps<Option>) => {
+        return (
+            <>
+                {(props.selectProps.value &&
+                    (props.selectProps.value as MultiValue<Option>)[0]
+                        ?.value) !== props.data.value ? (
+                    <LogicOperatorBtn
+                        value={logicalOperatorValue as LogicOperator}
+                        onclick={() => {
+                            console.log(shouldLogicalOperatorChange);
+                            if (shouldLogicalOperatorChange) {
+                                setLogicalOperatorValue(
+                                    logicalOperatorValue === LogicOperator.AND
+                                        ? LogicOperator.OR
+                                        : LogicOperator.AND,
+                                );
+                                onOperatorChange &&
+                                    onOperatorChange({
+                                        label: logicalOperatorValue,
+                                        value: logicalOperatorValue,
+                                    });
+                            } else {
+                                return;
+                            }
+                        }}
+                    />
+                ) : null}
+                <components.MultiValueContainer {...props} />
+            </>
+        );
+    };
+
     return (
         <>
             {!comboBox ? (
@@ -116,9 +169,16 @@ export const ReactSelect = ({
                     {enableUserOptions ? (
                         <CreatableSelect<Option, boolean>
                             closeMenuOnSelect={false}
-                            onCreateOption={handleCreate}
-                            value={values}
-                           defaultValue={defaultValue}
+                            components={{ MultiValueContainer }}
+                            onCreateOption={(inputValue) => {
+                                handleCreate(inputValue);
+                                onchange &&
+                                    onchange([
+                                        ...(values as Option[]),
+                                        createOption(inputValue),
+                                    ]);
+                            }}
+                            value={value}
                             isMulti
                             options={userOptions}
                             onChange={(value) => {
@@ -130,6 +190,8 @@ export const ReactSelect = ({
                     ) : (
                         <div>
                             <Select
+                                className="border"
+                                components={{ MultiValueContainer }}
                                 value={value}
                                 options={options}
                                 defaultValue={defaultValue}

@@ -2,7 +2,8 @@ import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { Switch } from "@/ui";
 import { useState } from "react";
-import { ReactSelect } from "../ReactSelec";
+import { SingleValue } from "react-select";
+import { Option, ReactSelect } from "../ReactSelect";
 
 type Props = {
     question: SurveyQuestion;
@@ -76,7 +77,9 @@ export const ChoiceSettings = ({ question }: Props) => {
                             options={limitRange}
                             defaultValue={limitRange[0]}
                             onchange={(option) => {
-                                setRangeOption(option?.value as string);
+                                setRangeOption(
+                                    (option as SingleValue<Option>)?.value,
+                                );
                             }}
                         />
                     </div>
@@ -87,7 +90,9 @@ export const ChoiceSettings = ({ question }: Props) => {
                                 <ReactSelect
                                     onchange={(option) => {
                                         const newSettings = question.settings;
-                                        newSettings.choice.min = option?.value;
+                                        newSettings.choice.min = (
+                                            option as SingleValue<Option>
+                                        )?.value;
                                         if (
                                             newSettings.choice.max <
                                             newSettings.choice.min
@@ -146,7 +151,9 @@ export const ChoiceSettings = ({ question }: Props) => {
                                 <ReactSelect
                                     onchange={(option) => {
                                         const newSettings = question.settings;
-                                        newSettings.choice.max = option?.value;
+                                        newSettings.choice.max = (
+                                            option as SingleValue<Option>
+                                        )?.value;
                                         if (
                                             newSettings.choice.max <
                                             newSettings.choice.min
@@ -208,8 +215,12 @@ export const ChoiceSettings = ({ question }: Props) => {
                             <ReactSelect
                                 onchange={(option) => {
                                     const newSettings = question.settings;
-                                    newSettings.choice.max = option?.value;
-                                    newSettings.choice.min = option?.value;
+                                    newSettings.choice.max = (
+                                        option as SingleValue<Option>
+                                    )?.value;
+                                    newSettings.choice.min = (
+                                        option as SingleValue<Option>
+                                    )?.value;
                                     updateQuestionMutation({
                                         settings: newSettings,
                                     });

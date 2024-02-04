@@ -3,12 +3,13 @@ import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { generateUniqueId, getHighestOrderNumber } from "@/utils";
 import { formOptions } from "@/utils/survey";
 import { FormField } from "@integraflow/web/src/types";
+import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import MinusButton from "../Buttons/MinimizeButton";
 import { MoreButton } from "../Buttons/MoreButton";
 import { StarBtn } from "../Buttons/StarBtn";
 import TextButton from "../Buttons/TextButton";
-import { ReactSelect } from "../ReactSelec";
+import { Option, ReactSelect } from "../ReactSelect";
 
 type Props = {
     question: SurveyQuestion;
@@ -28,7 +29,7 @@ export const FormFieldList = ({ question }: Props) => {
                         {question.options.map(
                             (option: FormField, index: number) => {
                                 return (
-                                    <div>
+                                    <div key={option.id}>
                                         <div className="flex items-center justify-between">
                                             <MoreButton />
                                             <div className=" grid flex-1 grid-cols-2 items-center gap-2">
@@ -41,10 +42,14 @@ export const FormFieldList = ({ question }: Props) => {
                                                         const newOptions =
                                                             question.options;
                                                         newOptions[index].type =
-                                                            value?.value;
+                                                            (
+                                                                value as SingleValue<Option>
+                                                            )?.value;
                                                         newOptions[
                                                             index
-                                                        ].label = value?.label;
+                                                        ].label = (
+                                                            value as SingleValue<Option>
+                                                        )?.label;
 
                                                         updateQuestionMutation({
                                                             options: newOptions,

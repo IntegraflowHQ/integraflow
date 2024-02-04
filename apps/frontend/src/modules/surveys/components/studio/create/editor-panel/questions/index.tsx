@@ -1,11 +1,12 @@
 import { addEllipsis } from "@/utils";
 import * as Accordion from "@radix-ui/react-accordion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QuestionOptions } from "./attributes/QuestionTypes";
 
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
+import { ParsedQuestion } from "@/types";
 import { questionTypes } from "@/utils/survey";
 import { QuestionPanel } from "./QuestionPanel";
 
@@ -17,6 +18,12 @@ export default function UpdateQuestion() {
     const [currentQuestionType, setCurrentQuestionType] = useState<
         SurveyQuestionTypeEnum | undefined
     >();
+
+    useEffect(() => {
+        if (!openQuestion || !openQuestion.id) {
+            setOpenQuestion(parsedQuestions[0]);
+        }
+    }, [parsedQuestions, openQuestion]);
 
     return (
         <div className="h-full w-full space-y-4 pt-2">
@@ -37,7 +44,7 @@ export default function UpdateQuestion() {
                             setOpenQuestion(
                                 parsedQuestions.find(
                                     (question) => question.id === value,
-                                ),
+                                ) as ParsedQuestion,
                             );
                         }}
                         className="space-y-4"

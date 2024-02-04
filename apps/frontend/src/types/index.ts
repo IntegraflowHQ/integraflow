@@ -6,24 +6,16 @@ import {
 } from "@/generated/graphql";
 import { DeepOmit } from "@apollo/client/utilities";
 import {
-    CTAType,
-    FormFieldType,
-    ID,
-    LogicBooleanCondition,
-    LogicDateCondition,
-    LogicMultipleCondition,
-    LogicRangeCondition,
-    LogicSingleCondition,
-    LogicTextCondition,
-} from "@integraflow/web/src/types";
-import {
     Audience,
+    CTAType,
     FilterOperator,
     FilterValue,
+    FormFieldType,
+    ID,
     LogicOperator,
     PlacementType,
     Trigger,
-} from "@integraflow/web/src/types/index";
+} from "@integraflow/web";
 
 export type CachedViewer = DeepOmit<User, "__typename">;
 
@@ -104,19 +96,21 @@ export type QuestionOption = {
     type?: FormFieldType;
 };
 
+export type FormLogicGroup = {
+    id?: string;
+    condition: string;
+    operator: string;
+    fields: string[];
+};
+
 export type QuestionLogic = {
-    id?: ID;
+    id?: ID | number | string;
     orderNumber?: number;
     destination?: ID;
-    condition?:
-        | LogicMultipleCondition
-        | LogicSingleCondition
-        | LogicRangeCondition
-        | LogicBooleanCondition
-        | LogicDateCondition
-        | LogicTextCondition;
-    operator?: LogicOperator;
+    condition?: LogicConditionEnum | undefined;
+    operator?: LogicOperator | undefined;
     values?: ID[] | string[];
+    groups?: FormLogicGroup[];
 };
 
 export type QuestionSettings = {
@@ -151,3 +145,24 @@ export type ParsedQuestion = Omit<
 > & {
     questions: QuestionOption[];
 };
+
+export enum LogicConditionEnum {
+    IS = "is",
+    IS_NOT = "is_not",
+    NOT_ANSWERED = "not_answered",
+    ANSWERED = "answered",
+    IS_FALSE = "is_false",
+    BETWEEN = "between",
+    IS_TRUE = "is_true",
+    ANSWER_CONTAINS = "contains",
+    ANSWER_DOES_NOT_CONTAIN = "not_contain",
+    HAS_ANY_VALUE = "any_value",
+    QUESTION_IS_ANSWERED = "answered",
+    QUESTION_IS_NOT_ANSWERED = "not_answered",
+    DOES_NOT_INCLUDE_ANY = "not_include_any",
+    IS_FILLED_IN = "filled",
+    IS_NOT_FILLED_IN = "not_filled",
+    IS_EXACTLY = "exactly",
+    INCLUDES_ALL = "includes_all",
+    INCLUDES_ANY = "includes_any",
+}
