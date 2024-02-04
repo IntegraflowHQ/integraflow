@@ -908,6 +908,7 @@ enum SurveyQuestionTypeEnum {
   TEXT
   DATE
   CSAT
+  CES
   SMILEY_SCALE
   NUMERICAL_SCALE
   RATING

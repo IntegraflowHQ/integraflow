@@ -92,6 +92,7 @@ class SurveyQuestion(UUIDModel):
         TEXT = "text", "text"
         DATE = "date", "date"
         CSAT = "csat", "csat"
+        CES = "ces", "ces"
         SMILEY_SCALE = "smiley_scale", "smiley scale"
         NUMERICAL_SCALE = "numerical_scale", "numerical scale"
         RATING = "rating", "rating"
