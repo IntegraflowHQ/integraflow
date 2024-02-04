@@ -126,6 +126,11 @@ export default function DateResponse({
                         pattern="[0-9]*"
                         value={month}
                         ref={monthRef}
+                        onKeyDown={e => {
+                            if (e.key === "Backspace" && month === "") {
+                                dayRef.current?.focus();
+                            }
+                        }}
                         onInput={e => {
                             if (monthRef.current?.checkValidity()) {
                                 setMonth(e.currentTarget.value);
@@ -146,6 +151,11 @@ export default function DateResponse({
                         pattern="[0-9]*"
                         value={year}
                         ref={yearRef}
+                        onKeyDown={e => {
+                            if (e.key === "Backspace" && year === "") {
+                                monthRef.current?.focus();
+                            }
+                        }}
                         onInput={e => {
                             if (yearRef.current?.checkValidity()) {
                                 setYear(e.currentTarget.value);
