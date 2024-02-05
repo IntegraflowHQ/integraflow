@@ -11,12 +11,6 @@ type Props = {
 export const FormSettings = ({ question }: Props) => {
     const { updateQuestionMutation } = useQuestion();
 
-    const [disclaimerText, setDisclaimerText] = useState(
-        question.settings.disclaimerText || "",
-    );
-    const [consentText, setConsentText] = useState(
-        question.settings.consentText || "",
-    );
     const [showDisclaimer, setShowDisclaimer] = useState(false);
     const [showConsent, setShowConsent] = useState(false);
 
@@ -29,16 +23,6 @@ export const FormSettings = ({ question }: Props) => {
         }
     }, [question.settings.disclaimerText, question.settings.consentText]);
 
-    useEffect(() => {
-        if (!showDisclaimer) {
-            const newSettings = question.settings;
-            newSettings.disclaimerText = "";
-        }
-        if (!showConsent) {
-            const newSettings = question.settings;
-            newSettings.consentText = "";
-        }
-    }, [showDisclaimer, showConsent]);
     return (
         <div>
             {question.type === SurveyQuestionTypeEnum.Form ? (
@@ -66,18 +50,18 @@ export const FormSettings = ({ question }: Props) => {
                         {showDisclaimer ? (
                             <EditorTextInput
                                 onChange={(e) => {
-                                    setDisclaimerText(e.target.value);
                                     const newSettings = question.settings;
                                     newSettings.disclaimerText = e.target.value;
                                     updateQuestionMutation({
                                         settings: newSettings,
                                     });
                                 }}
-                                value={question.settings.disclaimerText}
+                                defaultValue={question.settings.disclaimerText}
                                 label={"Disclaimer content"}
                                 placeholder="Type in your disclaimer here"
                                 characterCount={
-                                    disclaimerText?.split("").length
+                                    question.settings.disclaimerText?.split("")
+                                        .length
                                 }
                             />
                         ) : null}
@@ -105,16 +89,18 @@ export const FormSettings = ({ question }: Props) => {
                             <EditorTextInput
                                 label={"Consent Label"}
                                 onChange={(e) => {
-                                    setConsentText(e.target.value);
                                     const newSettings = question.settings;
                                     newSettings.consentText = e.target.value;
                                     updateQuestionMutation({
                                         settings: newSettings,
                                     });
                                 }}
-                                value={question.settings.consentText}
+                                defaultValue={question.settings.consentText}
                                 placeholder="Type in consent label here"
-                                characterCount={consentText?.split("").length}
+                                characterCount={
+                                    question.settings.consentText?.split("")
+                                        .length
+                                }
                             />
                         ) : null}
                     </div>

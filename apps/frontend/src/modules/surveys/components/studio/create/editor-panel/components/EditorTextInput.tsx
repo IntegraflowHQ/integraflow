@@ -1,5 +1,7 @@
 import { cn } from "@/utils";
 import { TextInput, TextInputProps } from "@tremor/react";
+import debounce from "lodash.debounce";
+import { useMemo } from "react";
 
 export interface EditorTextProps extends TextInputProps {
     label?: string;
@@ -8,6 +10,7 @@ export interface EditorTextProps extends TextInputProps {
     characterCount?: number;
     showCharacterCount?: boolean;
     maxCharacterCount?: number;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const EditorTextInput = ({
@@ -17,8 +20,11 @@ export const EditorTextInput = ({
     showCharacterCount = true,
     maxCharacterCount = 5000,
     placeholder,
+    onChange,
     ...props
 }: EditorTextProps) => {
+    const debounceSubmit = useMemo(() => debounce(onChange, 3000), [onChange]);
+
     return (
         <div className={cn(`${classname} relative my-2 w-full`)}>
             <label
@@ -28,6 +34,7 @@ export const EditorTextInput = ({
                 {label}
             </label>
             <TextInput
+                onChange={(e) => debounceSubmit(e)}
                 {...props}
                 placeholder={placeholder}
                 className="my-2 rounded-lg border border-transparent bg-[#272138] py-[6px] pl-1 text-sm

@@ -99,9 +99,10 @@ export type QuestionSettings = {
 
 export type ParsedQuestion = Omit<
     SurveyQuestionCountableEdge["node"],
-    "questions"
+    "questions" | "settings"
 > & {
     questions: QuestionOption[];
+    settings: QuestionSettings;
 };
 
 export enum LogicConditionEnum {

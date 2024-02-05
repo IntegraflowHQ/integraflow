@@ -1,6 +1,5 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { useState } from "react";
 import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import { Option, ReactSelect } from "../ReactSelect";
@@ -27,13 +26,6 @@ const booleanOptionsShape = [
 export const BooleanSettings = ({ question }: Props) => {
     const { updateQuestionMutation } = useQuestion();
 
-    const [positiveText, setPositiveText] = useState(
-        question.settings.positiveText,
-    );
-    const [negativeText, setNegativeText] = useState(
-        question.settings.negativeText,
-    );
-
     return (
         <div className="space-y-6">
             {question.type === SurveyQuestionTypeEnum.Boolean && (
@@ -41,9 +33,8 @@ export const BooleanSettings = ({ question }: Props) => {
                     <EditorTextInput
                         label={"Positive text"}
                         placeholder="Positive text"
-                        value={positiveText}
+                        defaultValue={question.settings.positiveText}
                         onChange={(e) => {
-                            setPositiveText(e.target.value);
                             updateQuestionMutation({
                                 settings: {
                                     ...question.settings,
@@ -51,14 +42,15 @@ export const BooleanSettings = ({ question }: Props) => {
                                 },
                             });
                         }}
-                        characterCount={positiveText?.split("").length}
+                        characterCount={
+                            question.settings.positiveText?.split("").length
+                        }
                     />
                     <EditorTextInput
                         label={"Negative text"}
                         placeholder="Negative text"
-                        value={negativeText}
+                        defaultValue={question.settings.negativeText}
                         onChange={(e) => {
-                            setNegativeText(e.target.value);
                             updateQuestionMutation({
                                 settings: {
                                     ...question.settings,
@@ -66,7 +58,9 @@ export const BooleanSettings = ({ question }: Props) => {
                                 },
                             });
                         }}
-                        characterCount={negativeText?.split("").length}
+                        characterCount={
+                            question.settings.negativeText?.split("").length
+                        }
                     />
                     <ReactSelect
                         label="Shape"

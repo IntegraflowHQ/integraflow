@@ -142,7 +142,7 @@ export const SurveyExperience = () => {
                 placeholder="Submit"
                 label="Proceed to next question"
                 onChange={handleChange}
-                value={surveyExperience.submitText}
+                defaultValue={surveyExperience.submitText}
                 characterCount={surveyExperience.submitText.length}
             />
         </div>
