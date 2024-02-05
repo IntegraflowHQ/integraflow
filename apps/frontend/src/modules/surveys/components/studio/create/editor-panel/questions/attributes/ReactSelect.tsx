@@ -23,6 +23,7 @@ type Props = {
     shouldLogicalOperatorChange?: boolean;
     onOperatorChange?: (value: Option) => void;
     logicOperator?: LogicOperator;
+    classname?: string;
 };
 
 export interface Option {
@@ -48,6 +49,7 @@ export const ReactSelect = ({
     onOperatorChange,
     logicOperator,
     shouldLogicalOperatorChange = false,
+    classname,
 }: Props) => {
     const [values, setValue] = useState<Option | Option[]>([]);
     const [userOptions, setUserOptions] = useState<Option[]>([]);
@@ -71,9 +73,10 @@ export const ReactSelect = ({
     const styles = {
         control: (provided: any) => ({
             ...provided,
-            borderRadius: "4px",
+            borderRadius: "8px",
             border: "1px solid transparent",
             backgroundColor: "#272138",
+            height: "48px",
         }),
         indicatorsContainer: (provided: CSSObjectWithLabel) => ({
             ...provided,
@@ -115,6 +118,15 @@ export const ReactSelect = ({
             fontSize: "14px",
             lineHeight: "17px",
             padding: "10px 12px",
+        }),
+        multiValueLabel: (provided: CSSObjectWithLabel) => ({
+            ...provided,
+            color: "#DBD4EB",
+        }),
+        multiValueRemove: (provided: CSSObjectWithLabel) => ({
+            ...provided,
+            color: "#DBD4EB",
+            display: "none",
         }),
     };
 
@@ -162,6 +174,7 @@ export const ReactSelect = ({
                         defaultValue={defaultValue}
                         onChange={(newValue) => onchange && onchange(newValue)}
                         styles={styles}
+                        className={classname}
                     />
                 </div>
             ) : (
@@ -185,12 +198,12 @@ export const ReactSelect = ({
                                 setValue(value as Option[]);
                                 onchange && onchange(value);
                             }}
+                            className={classname}
                             styles={styles}
                         />
                     ) : (
                         <div>
                             <Select
-                                className="border"
                                 components={{ MultiValueContainer }}
                                 value={value}
                                 options={options}
@@ -199,6 +212,7 @@ export const ReactSelect = ({
                                 onChange={(value) => {
                                     onchange && onchange(value);
                                 }}
+                                className={classname}
                                 styles={styles}
                             />
                         </div>

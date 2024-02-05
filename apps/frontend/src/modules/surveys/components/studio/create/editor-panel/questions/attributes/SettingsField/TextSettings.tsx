@@ -16,11 +16,11 @@ export const TextSettings = ({ question }: Props) => {
                         name="Long_answer"
                         label="Long Answer"
                         defaultValue={question.settings.singleLine}
-                        onChange={(e) => {
+                        onChange={() => {
                             updateQuestionMutation({
                                 settings: {
                                     ...question.settings,
-                                    singleLine: e.target.value,
+                                    singleLine: !question.settings.singleLine,
                                 },
                             });
                         }}

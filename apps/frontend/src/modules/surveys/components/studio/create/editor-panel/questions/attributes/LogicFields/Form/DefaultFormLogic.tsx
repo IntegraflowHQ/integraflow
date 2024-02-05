@@ -80,17 +80,19 @@ const FormLogicDefault = ({
                 <div className="relative rounded-md border border-intg-bg-4 ">
                     {(formLogicValues?.groups || []).map((group, index) => (
                         <>
-                            <div className="m-auto w-fit">
-                                <LogicOperatorBtn
-                                    value={
-                                        formLogicValues.operator as LogicOperator
-                                    }
-                                    onclick={() => {
-                                        handleUpdateGroupOperator();
-                                        console.log("first");
-                                    }}
-                                />
-                            </div>
+                            {index !== 0 && (
+                                <div className="m-auto w-fit">
+                                    <LogicOperatorBtn
+                                        value={
+                                            formLogicValues.operator as LogicOperator
+                                        }
+                                        onclick={() => {
+                                            handleUpdateGroupOperator();
+                                            console.log("first");
+                                        }}
+                                    />
+                                </div>
+                            )}
                             <LogicGroup
                                 question={question}
                                 key={group.id}
