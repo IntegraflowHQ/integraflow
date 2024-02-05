@@ -14,7 +14,7 @@ export class Context {
 
     surveys: Survey[];
     state: State | null;
-    fetchPolicy: Configuration["fetchPolicy"];
+    syncPolicy: Configuration["syncPolicy"];
     fullScreen: boolean;
 
     constructor(config: Configuration) {
@@ -38,7 +38,7 @@ export class Context {
 
         this.subscribers = {};
         this.state = null;
-        this.fetchPolicy = config.fetchPolicy ?? "auto";
+        this.syncPolicy = config.syncPolicy ?? "polling";
         this.fullScreen = config.fullScreen ?? false;
     }
 

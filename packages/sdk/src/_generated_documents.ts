@@ -539,6 +539,10 @@ export type Mutation = {
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
      */
     surveyQuestionUpdate?: Maybe<SurveyQuestionUpdate>;
+    /** Creates a response to survey. */
+    surveyResponseCreate?: Maybe<SurveyResponseCreate>;
+    /** Updates a response. */
+    surveyResponseUpdate?: Maybe<SurveyResponseUpdate>;
     /**
      * Updates a survey
      *
@@ -643,6 +647,15 @@ export type MutationSurveyQuestionDeleteArgs = {
 export type MutationSurveyQuestionUpdateArgs = {
     id: Scalars["ID"];
     input: SurveyQuestionUpdateInput;
+};
+
+export type MutationSurveyResponseCreateArgs = {
+    input: SurveyResponseCreateInput;
+};
+
+export type MutationSurveyResponseUpdateArgs = {
+    id: Scalars["ID"];
+    input: SurveyResponseUpdateInput;
 };
 
 export type MutationSurveyUpdateArgs = {
@@ -1873,6 +1886,64 @@ export type SurveyQuestionUpdateInput = {
     type?: Maybe<SurveyQuestionTypeEnum>;
 };
 
+/** Creates a response to survey. */
+export type SurveyResponseCreate = {
+    __typename?: "SurveyResponseCreate";
+    errors: Array<SurveyError>;
+    /** The ID of the response. */
+    responseId?: Maybe<Scalars["ID"]>;
+    /** Whether the operation was successful. */
+    status?: Maybe<Scalars["Boolean"]>;
+    surveyErrors: Array<SurveyError>;
+};
+
+export type SurveyResponseCreateInput = {
+    /** The user attributes. */
+    attributes?: Maybe<Scalars["JSONString"]>;
+    /** Whether the response is completed. */
+    completed?: Maybe<Scalars["Boolean"]>;
+    /** The time the survey completed. */
+    completedAt?: Maybe<Scalars["DateTime"]>;
+    /** The ID of the response. */
+    id?: Maybe<Scalars["UUID"]>;
+    /** The response metadata. */
+    metadata?: Maybe<Scalars["JSONString"]>;
+    /** The partial response for the survey. */
+    response?: Maybe<Scalars["JSONString"]>;
+    /** The time the survey started. */
+    startedAt?: Maybe<Scalars["DateTime"]>;
+    /** The survey ID the response belongs to. */
+    surveyId: Scalars["ID"];
+    /** The user distinct ID. */
+    userId?: Maybe<Scalars["ID"]>;
+};
+
+/** Updates a response. */
+export type SurveyResponseUpdate = {
+    __typename?: "SurveyResponseUpdate";
+    errors: Array<SurveyError>;
+    /** Whether the operation was successful. */
+    status?: Maybe<Scalars["Boolean"]>;
+    surveyErrors: Array<SurveyError>;
+};
+
+export type SurveyResponseUpdateInput = {
+    /** The user attributes. */
+    attributes?: Maybe<Scalars["JSONString"]>;
+    /** Whether the response is completed. */
+    completed?: Maybe<Scalars["Boolean"]>;
+    /** The time the survey completed. */
+    completedAt?: Maybe<Scalars["DateTime"]>;
+    /** The response metadata. */
+    metadata?: Maybe<Scalars["JSONString"]>;
+    /** The partial response for the survey. */
+    response?: Maybe<Scalars["JSONString"]>;
+    /** The time the survey started. */
+    startedAt?: Maybe<Scalars["DateTime"]>;
+    /** The user distinct ID. */
+    userId?: Maybe<Scalars["ID"]>;
+};
+
 export enum SurveySortField {
     /** Sort surveys by created at. */
     CreatedAt = "CREATED_AT",
@@ -2278,6 +2349,15 @@ export type ProjectThemeCreateFragment = {
     >;
 };
 
+export type SurveyResponseCreateFragment = {
+    __typename: "SurveyResponseCreate";
+} & Pick<SurveyResponseCreate, "responseId" | "status"> & {
+        errors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
+        surveyErrors: Array<
+            { __typename?: "SurveyError" } & SurveyErrorFragment
+        >;
+    };
+
 export type OrganizationCreateFragment = {
     __typename: "OrganizationCreate";
 } & {
@@ -2682,6 +2762,15 @@ export type SurveyQuestionUpdateFragment = {
     >;
 };
 
+export type SurveyResponseUpdateFragment = {
+    __typename: "SurveyResponseUpdate";
+} & Pick<SurveyResponseUpdate, "status"> & {
+        errors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
+        surveyErrors: Array<
+            { __typename?: "SurveyError" } & SurveyErrorFragment
+        >;
+    };
+
 export type SurveyUpdateFragment = { __typename: "SurveyUpdate" } & {
     errors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
     survey?: Maybe<{ __typename?: "Survey" } & SurveyFragment>;
@@ -3039,6 +3128,27 @@ export type UpdateSurveyQuestionMutationVariables = Exact<{
 export type UpdateSurveyQuestionMutation = { __typename?: "Mutation" } & {
     surveyQuestionUpdate?: Maybe<
         { __typename?: "SurveyQuestionUpdate" } & SurveyQuestionUpdateFragment
+    >;
+};
+
+export type CreateSurveyResponseMutationVariables = Exact<{
+    input: SurveyResponseCreateInput;
+}>;
+
+export type CreateSurveyResponseMutation = { __typename?: "Mutation" } & {
+    surveyResponseCreate?: Maybe<
+        { __typename?: "SurveyResponseCreate" } & SurveyResponseCreateFragment
+    >;
+};
+
+export type UpdateSurveyResponseMutationVariables = Exact<{
+    id: Scalars["ID"];
+    input: SurveyResponseUpdateInput;
+}>;
+
+export type UpdateSurveyResponseMutation = { __typename?: "Mutation" } & {
+    surveyResponseUpdate?: Maybe<
+        { __typename?: "SurveyResponseUpdate" } & SurveyResponseUpdateFragment
     >;
 };
 
@@ -4767,6 +4877,59 @@ export const ProjectThemeCreateFragmentDoc = ({
         }
     ]
 } as unknown) as DocumentNode<ProjectThemeCreateFragment, unknown>;
+export const SurveyResponseCreateFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "SurveyResponseCreate" },
+            typeCondition: {
+                kind: "NamedType",
+                name: { kind: "Name", value: "SurveyResponseCreate" }
+            },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "__typename" }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "responseId" }
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "status" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "errors" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "SurveyError" }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "surveyErrors" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "SurveyError" }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<SurveyResponseCreateFragment, unknown>;
 export const OrganizationCreateFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -5763,6 +5926,55 @@ export const SurveyQuestionUpdateFragmentDoc = ({
         }
     ]
 } as unknown) as DocumentNode<SurveyQuestionUpdateFragment, unknown>;
+export const SurveyResponseUpdateFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "SurveyResponseUpdate" },
+            typeCondition: {
+                kind: "NamedType",
+                name: { kind: "Name", value: "SurveyResponseUpdate" }
+            },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "__typename" }
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "status" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "errors" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "SurveyError" }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "surveyErrors" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "SurveyError" }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<SurveyResponseUpdateFragment, unknown>;
 export const SurveyUpdateFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -8850,6 +9062,158 @@ export const UpdateSurveyQuestionDocument = ({
 } as unknown) as DocumentNode<
     UpdateSurveyQuestionMutation,
     UpdateSurveyQuestionMutationVariables
+>;
+export const CreateSurveyResponseDocument = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "createSurveyResponse" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "input" }
+                    },
+                    type: {
+                        kind: "NonNullType",
+                        type: {
+                            kind: "NamedType",
+                            name: {
+                                kind: "Name",
+                                value: "SurveyResponseCreateInput"
+                            }
+                        }
+                    }
+                }
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "surveyResponseCreate" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "input" },
+                                value: {
+                                    kind: "Variable",
+                                    name: { kind: "Name", value: "input" }
+                                }
+                            }
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: {
+                                        kind: "Name",
+                                        value: "SurveyResponseCreate"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        ...SurveyResponseCreateFragmentDoc.definitions,
+        ...SurveyErrorFragmentDoc.definitions
+    ]
+} as unknown) as DocumentNode<
+    CreateSurveyResponseMutation,
+    CreateSurveyResponseMutationVariables
+>;
+export const UpdateSurveyResponseDocument = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "updateSurveyResponse" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "id" }
+                    },
+                    type: {
+                        kind: "NonNullType",
+                        type: {
+                            kind: "NamedType",
+                            name: { kind: "Name", value: "ID" }
+                        }
+                    }
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "input" }
+                    },
+                    type: {
+                        kind: "NonNullType",
+                        type: {
+                            kind: "NamedType",
+                            name: {
+                                kind: "Name",
+                                value: "SurveyResponseUpdateInput"
+                            }
+                        }
+                    }
+                }
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "surveyResponseUpdate" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: {
+                                    kind: "Variable",
+                                    name: { kind: "Name", value: "id" }
+                                }
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "input" },
+                                value: {
+                                    kind: "Variable",
+                                    name: { kind: "Name", value: "input" }
+                                }
+                            }
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: {
+                                        kind: "Name",
+                                        value: "SurveyResponseUpdate"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        ...SurveyResponseUpdateFragmentDoc.definitions,
+        ...SurveyErrorFragmentDoc.definitions
+    ]
+} as unknown) as DocumentNode<
+    UpdateSurveyResponseMutation,
+    UpdateSurveyResponseMutationVariables
 >;
 export const UpdateSurveyDocument = ({
     kind: "Document",

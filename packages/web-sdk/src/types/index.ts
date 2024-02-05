@@ -359,6 +359,7 @@ export interface State {
     seenSurveyIds?: Set<ID>;
     lastPresentationTimes?: Map<ID, Date>;
     surveyAnswers?: { [surveyId: ID]: Map<ID, SurveyAnswer[]> };
+    surveyResponses?: Map<string, string>;
 }
 
 export interface Listeners {
@@ -380,6 +381,6 @@ export interface Configuration extends Listeners {
     apiHost?: string;
     appKey?: string;
     accessToken?: string;
-    fetchPolicy?: "auto" | "manual";
+    syncPolicy?: "polling" | "manual" | "off";
     fullScreen?: boolean;
 }

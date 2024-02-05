@@ -134,6 +134,21 @@ fragment ProjectThemeCreate on ProjectThemeCreate {
     }
 }
 
+# Creates a response to survey.
+fragment SurveyResponseCreate on SurveyResponseCreate {
+    __typename
+    # The ID of the response.
+    responseId
+    # Whether the operation was successful.
+    status
+    errors {
+        ...SurveyError
+    }
+    surveyErrors {
+        ...SurveyError
+    }
+}
+
 # Creates new organization.
 #
 # Requires one of the following permissions: AUTHENTICATED_USER.
@@ -968,6 +983,19 @@ fragment SurveyQuestionUpdate on SurveyQuestionUpdate {
     }
 }
 
+# Updates a response.
+fragment SurveyResponseUpdate on SurveyResponseUpdate {
+    __typename
+    # Whether the operation was successful.
+    status
+    errors {
+        ...SurveyError
+    }
+    surveyErrors {
+        ...SurveyError
+    }
+}
+
 # Updates a survey
 #
 # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -1433,6 +1461,26 @@ mutation updateSurveyQuestion(
 ) {
     surveyQuestionUpdate(id: $id, input: $input) {
         ...SurveyQuestionUpdate
+    }
+}
+# Creates a response to survey.
+mutation createSurveyResponse(
+    # The details for the response to create.
+    $input: SurveyResponseCreateInput!
+) {
+    surveyResponseCreate(input: $input) {
+        ...SurveyResponseCreate
+    }
+}
+# Updates a response.
+mutation updateSurveyResponse(
+    # The ID of the response.
+    $id: ID!
+    # The partial response object to update
+    $input: SurveyResponseUpdateInput!
+) {
+    surveyResponseUpdate(id: $id, input: $input) {
+        ...SurveyResponseUpdate
     }
 }
 # Updates a survey

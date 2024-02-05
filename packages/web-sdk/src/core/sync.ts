@@ -42,7 +42,7 @@ export class SyncManager {
         const state = await getState(this.context);
         console.debug("state: ", state);
 
-        if (this.context.fetchPolicy === "auto") {
+        if (this.context.syncPolicy === "polling") {
             try {
                 const surveys = await this.context.client.activeSurveys({
                     first: 100
@@ -149,9 +149,9 @@ export class SyncManager {
 
         this.context.setState(state);
 
-        if (state.user?.id && this.context.fetchPolicy === "auto") {
+        if (state.user?.id && this.context.syncPolicy !== "off") {
             try {
-                await this.context.client.captureEvent({
+                this.context.client.captureEvent({
                     input: {
                         ...event,
                         timestamp: new Date(event.timestamp),
@@ -181,7 +181,8 @@ export class SyncManager {
 
         const {
             seenSurveyIds = new Set(),
-            lastPresentationTimes = new Map<ID, Date>()
+            lastPresentationTimes = new Map<ID, Date>(),
+            surveyResponses = new Map()
         } = state;
         if (!isRecurring && seenSurveyIds.has(surveyId)) {
             return;
@@ -191,16 +192,40 @@ export class SyncManager {
             lastPresentationTimes.delete(surveyId);
         }
 
+        if (surveyResponses.has(surveyId)) {
+            surveyResponses.delete(surveyId);
+        }
+
+        const responseId = uuidv4();
+
         lastPresentationTimes.set(surveyId, presentationTime);
         seenSurveyIds.add(surveyId);
+        surveyResponses.set(surveyId, responseId);
 
         state.seenSurveyIds = seenSurveyIds;
         state.lastPresentationTimes = lastPresentationTimes;
+        state.surveyResponses = surveyResponses;
         await persistState(this.context, state);
 
         this.context.setState(state);
 
-        // TODO: Sync survey status with the server.
+        if (this.context.syncPolicy !== "off") {
+            try {
+                this.context.client.createSurveyResponse({
+                    id: responseId,
+                    surveyId: surveyId as string,
+                    attributes: JSON.stringify(state.user ?? {}),
+                    startedAt: presentationTime,
+                    userId:
+                        typeof state.user?.id === "number"
+                            ? String(state.user?.id)
+                            : state.user?.id
+                });
+            } catch (e) {
+                console.warn(e);
+                // Noop (fallback to local)
+            }
+        }
     }
 
     async persistSurveyAnswers(
@@ -210,19 +235,47 @@ export class SyncManager {
     ) {
         const state = await getState(this.context);
 
-        const { surveyAnswers = {} } = state;
+        const { surveyAnswers = {}, surveyResponses = new Map() } = state;
 
         if (!surveyAnswers[surveyId]) {
             surveyAnswers[surveyId] = new Map();
         }
 
+        const responseId = surveyResponses.get(surveyId);
+
         surveyAnswers[surveyId].set(questionId, answers);
+        surveyResponses.set(questionId, responseId);
         state.surveyAnswers = surveyAnswers;
 
         await persistState(this.context, state);
         this.context.setState(state);
 
-        // TODO: Send survey answers to the server.
+        if (this.context.syncPolicy !== "off") {
+            const surveyAnswers = Array.from(
+                state.surveyAnswers[surveyId].entries()
+            ).map(([questionId, answers]) => ({
+                questionId,
+                answers
+            }));
+
+            try {
+                if (!responseId) {
+                    throw new Error("Response ID not found");
+                }
+
+                this.context.client.updateSurveyResponse(responseId, {
+                    attributes: JSON.stringify(state.user ?? {}),
+                    userId:
+                        typeof state.user?.id === "number"
+                            ? String(state.user?.id)
+                            : state.user?.id,
+                    response: JSON.stringify(surveyAnswers)
+                });
+            } catch (e) {
+                console.warn(e);
+                // Noop (fallback to local)
+            }
+        }
     }
 
     async clearSurveyAnswers(surveyId: ID) {
@@ -241,8 +294,36 @@ export class SyncManager {
     }
 
     async markSurveyAsCompleted(surveyId: ID) {
+        const state = await getState(this.context);
         this.clearSurveyAnswers(surveyId);
+        const { surveyResponses = new Map() } = state;
+        const responseId = surveyResponses.get(surveyId);
 
         // TODO: Sync survey status with the server.
+
+        if (this.context.syncPolicy !== "off") {
+            if (!responseId) {
+                throw new Error("Response ID not found");
+            }
+
+            try {
+                this.context.client.updateSurveyResponse(responseId, {
+                    attributes: JSON.stringify(state.user ?? {}),
+                    userId:
+                        typeof state.user?.id === "number"
+                            ? String(state.user?.id)
+                            : state.user?.id,
+                    completed: true,
+                    completedAt: new Date()
+                });
+
+                surveyResponses.delete(surveyId);
+                state.surveyResponses = surveyResponses;
+                await persistState(this.context, state);
+            } catch (e) {
+                console.warn(e);
+                // Noop (fallback to local)
+            }
+        }
     }
 }

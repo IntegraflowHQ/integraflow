@@ -27,7 +27,7 @@ export default function Home({
             const Integraflow = (await import("@integraflow/web")).default;
             const intg = Integraflow.init({
                 surveys,
-                fetchPolicy: "manual",
+                syncPolicy: "manual",
                 appKey,
                 apiHost,
                 fullScreen: true,

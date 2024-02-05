@@ -2325,6 +2325,57 @@ export class SurveyQuestionUpdate extends Request {
     public surveyQuestion?: SurveyQuestion;
 }
 /**
+ * Creates a response to survey.
+ *
+ * @param request - function to call the graphql client
+ * @param data - I.SurveyResponseCreateFragment response data
+ */
+export class SurveyResponseCreate extends Request {
+    public constructor(
+        request: IntegraflowRequest,
+        data: I.SurveyResponseCreateFragment
+    ) {
+        super(request);
+        this.responseId = data.responseId ?? undefined;
+        this.status = data.status ?? undefined;
+        this.errors = data.errors.map(node => new SurveyError(request, node));
+        this.surveyErrors = data.surveyErrors.map(
+            node => new SurveyError(request, node)
+        );
+    }
+
+    /** The ID of the response. */
+    public responseId?: string;
+    /** Whether the operation was successful. */
+    public status?: boolean;
+    public errors: SurveyError[];
+    public surveyErrors: SurveyError[];
+}
+/**
+ * Updates a response.
+ *
+ * @param request - function to call the graphql client
+ * @param data - I.SurveyResponseUpdateFragment response data
+ */
+export class SurveyResponseUpdate extends Request {
+    public constructor(
+        request: IntegraflowRequest,
+        data: I.SurveyResponseUpdateFragment
+    ) {
+        super(request);
+        this.status = data.status ?? undefined;
+        this.errors = data.errors.map(node => new SurveyError(request, node));
+        this.surveyErrors = data.surveyErrors.map(
+            node => new SurveyError(request, node)
+        );
+    }
+
+    /** Whether the operation was successful. */
+    public status?: boolean;
+    public errors: SurveyError[];
+    public surveyErrors: SurveyError[];
+}
+/**
  * Updates a survey
  *
  * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -3194,6 +3245,71 @@ export class UpdateSurveyQuestionMutation extends Request {
         const data = response.surveyQuestionUpdate;
 
         return data ? new SurveyQuestionUpdate(this._request, data) : undefined;
+    }
+}
+
+/**
+ * A fetchable CreateSurveyResponse Mutation
+ *
+ * @param request - function to call the graphql client
+ */
+export class CreateSurveyResponseMutation extends Request {
+    public constructor(request: IntegraflowRequest) {
+        super(request);
+    }
+
+    /**
+     * Call the CreateSurveyResponse mutation and return a SurveyResponseCreate
+     *
+     * @param input - required input to pass to createSurveyResponse
+     * @returns parsed response from CreateSurveyResponseMutation
+     */
+    public async fetch(
+        input: I.SurveyResponseCreateInput
+    ): IntegraflowFetch<SurveyResponseCreate | undefined> {
+        const response = await this._request<
+            I.CreateSurveyResponseMutation,
+            I.CreateSurveyResponseMutationVariables
+        >(I.CreateSurveyResponseDocument, {
+            input
+        });
+        const data = response.surveyResponseCreate;
+
+        return data ? new SurveyResponseCreate(this._request, data) : undefined;
+    }
+}
+
+/**
+ * A fetchable UpdateSurveyResponse Mutation
+ *
+ * @param request - function to call the graphql client
+ */
+export class UpdateSurveyResponseMutation extends Request {
+    public constructor(request: IntegraflowRequest) {
+        super(request);
+    }
+
+    /**
+     * Call the UpdateSurveyResponse mutation and return a SurveyResponseUpdate
+     *
+     * @param id - required id to pass to updateSurveyResponse
+     * @param input - required input to pass to updateSurveyResponse
+     * @returns parsed response from UpdateSurveyResponseMutation
+     */
+    public async fetch(
+        id: string,
+        input: I.SurveyResponseUpdateInput
+    ): IntegraflowFetch<SurveyResponseUpdate | undefined> {
+        const response = await this._request<
+            I.UpdateSurveyResponseMutation,
+            I.UpdateSurveyResponseMutationVariables
+        >(I.UpdateSurveyResponseDocument, {
+            id,
+            input
+        });
+        const data = response.surveyResponseUpdate;
+
+        return data ? new SurveyResponseUpdate(this._request, data) : undefined;
     }
 }
 
@@ -4684,6 +4800,30 @@ export class IntegraflowSdk extends Request {
         input: I.SurveyQuestionUpdateInput
     ): IntegraflowFetch<SurveyQuestionUpdate | undefined> {
         return new UpdateSurveyQuestionMutation(this._request).fetch(id, input);
+    }
+    /**
+     * Creates a response to survey.
+     *
+     * @param input - required input to pass to createSurveyResponse
+     * @returns SurveyResponseCreate
+     */
+    public createSurveyResponse(
+        input: I.SurveyResponseCreateInput
+    ): IntegraflowFetch<SurveyResponseCreate | undefined> {
+        return new CreateSurveyResponseMutation(this._request).fetch(input);
+    }
+    /**
+     * Updates a response.
+     *
+     * @param id - required id to pass to updateSurveyResponse
+     * @param input - required input to pass to updateSurveyResponse
+     * @returns SurveyResponseUpdate
+     */
+    public updateSurveyResponse(
+        id: string,
+        input: I.SurveyResponseUpdateInput
+    ): IntegraflowFetch<SurveyResponseUpdate | undefined> {
+        return new UpdateSurveyResponseMutation(this._request).fetch(id, input);
     }
     /**
      * Updates a survey
