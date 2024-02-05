@@ -26,7 +26,7 @@ export const EditorTextInput = ({
     const debounceSubmit = useMemo(() => debounce(onChange, 3000), [onChange]);
 
     return (
-        <div className={cn(`${classname} relative my-2 w-full`)}>
+        <div className={cn(`${classname} relative w-full`)}>
             <label
                 htmlFor={label}
                 className="text-sm font-normal text-intg-text-2"
@@ -37,7 +37,7 @@ export const EditorTextInput = ({
                 onChange={(e) => debounceSubmit(e)}
                 {...props}
                 placeholder={placeholder}
-                className="my-2 rounded-lg border border-transparent bg-[#272138] py-[6px] pl-1 text-sm
+                className="rounded-lg border border-transparent bg-[#272138] py-[6px] pl-1 text-sm
                 font-medium tracking-[-0.408px] text-intg-text-1 placeholder:text-intg-text-3
                 focus:border-intg-text-3 focus:outline-none"
                 disabled={maxCharacterCount === characterCount}

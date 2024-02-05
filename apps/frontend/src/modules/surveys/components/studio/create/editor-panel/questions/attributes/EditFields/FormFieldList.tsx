@@ -32,7 +32,7 @@ export const FormFieldList = ({ question }: Props) => {
                                     <div key={option.id}>
                                         <div className="flex items-center justify-between">
                                             <MoreButton />
-                                            <div className=" grid flex-1 grid-cols-2 items-center gap-2">
+                                            <div className="grid grid-cols-2 items-center gap-2">
                                                 <ReactSelect
                                                     options={formOptions}
                                                     defaultValue={
