@@ -155,7 +155,6 @@ export const createSettings = (
         };
     }
     if (
-        type === SurveyQuestionTypeEnum.Csat ||
         type === SurveyQuestionTypeEnum.NumericalScale ||
         type === SurveyQuestionTypeEnum.Nps
     ) {
@@ -173,7 +172,10 @@ export const createSettings = (
             logic: [],
         };
     }
-    if (type === SurveyQuestionTypeEnum.Date) {
+    if (
+        type === SurveyQuestionTypeEnum.Date ||
+        type === SurveyQuestionTypeEnum.Csat
+    ) {
         return {
             logic: [],
         };

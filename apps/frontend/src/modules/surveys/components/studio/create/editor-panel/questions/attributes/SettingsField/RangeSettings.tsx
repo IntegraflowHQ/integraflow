@@ -1,6 +1,5 @@
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { useState } from "react";
 import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import { Option, ReactSelect } from "../ReactSelect";
@@ -43,8 +42,7 @@ const smileyCount = [
 
 export const RangeSettings = ({ question }: Props) => {
     const { updateQuestionMutation } = useQuestion();
-    const [rightText, setRightText] = useState(question.settings.rightText);
-    const [leftText, setLeftText] = useState(question.settings.leftText);
+
     return (
         <>
             {question.type === SurveyQuestionTypeEnum.Nps ||
@@ -53,27 +51,44 @@ export const RangeSettings = ({ question }: Props) => {
                     <div className="flex items-center justify-between gap-4">
                         <p>Text on the left</p>
                         <div className="w-[330px]">
-                            <EditorTextInput />
+                            <EditorTextInput
+                                defaultValue={question.settings.leftText}
+                                onChange={(e) => {
+                                    const newSettings = question.settings;
+                                    newSettings.leftText = e.target.value;
+                                    updateQuestionMutation({
+                                        settings: newSettings,
+                                    });
+                                }}
+                                characterCount={
+                                    question.settings.leftText?.split("").length
+                                }
+                            />
                         </div>
                     </div>
                     <div className="flex items-center justify-between gap-4">
                         <p>Text on the right</p>
                         <div className="w-[330px]">
-                            <EditorTextInput />
+                            <EditorTextInput
+                                defaultValue={question.settings.rightText}
+                                onChange={(e) => {
+                                    const newSettings = question.settings;
+                                    newSettings.rightText = e.target.value;
+                                    updateQuestionMutation({
+                                        settings: newSettings,
+                                    });
+                                }}
+                                characterCount={
+                                    question.settings.rightText?.split("")
+                                        .length
+                                }
+                            />
                         </div>
                     </div>
                 </>
             ) : null}
             {question.type === SurveyQuestionTypeEnum.Rating ? (
                 <>
-                    <EditorTextInput
-                        label={"Positive text"}
-                        placeholder="Positive text"
-                    />
-                    <EditorTextInput
-                        label={"Negative text"}
-                        placeholder="Negative text"
-                    />
                     <ReactSelect
                         label="shape"
                         options={rangeShape}
@@ -98,28 +113,32 @@ export const RangeSettings = ({ question }: Props) => {
                     <EditorTextInput
                         label={"Right text"}
                         placeholder=""
+                        defaultValue={question.settings.rightText}
                         onChange={(e) => {
-                            setRightText(e.target.value);
                             const newSettings = question.settings;
                             newSettings.rightText = e.target.value;
                             updateQuestionMutation({
                                 settings: newSettings,
                             });
                         }}
-                        characterCount={rightText?.split("").length}
+                        characterCount={
+                            question.settings.rightText?.split("").length
+                        }
                     />
                     <EditorTextInput
                         label={"Left text"}
                         placeholder=""
+                        defaultValue={question.settings.leftText}
                         onChange={(e) => {
-                            setLeftText(e.target.value);
                             const newSettings = question.settings;
                             newSettings.negativeText = e.target.value;
                             updateQuestionMutation({
                                 settings: newSettings,
                             });
                         }}
-                        characterCount={leftText?.split("").length}
+                        characterCount={
+                            question.settings.leftText?.split("").length
+                        }
                     />
                     <ReactSelect
                         options={smileyCount}

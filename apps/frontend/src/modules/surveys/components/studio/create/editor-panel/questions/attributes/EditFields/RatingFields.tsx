@@ -125,7 +125,7 @@ export const RatingFields = ({ question }: Props) => {
                                             className="flex items-center gap-2"
                                         >
                                             <EditorTextInput
-                                                value={option.label}
+                                                defaultValue={option.label}
                                                 onChange={(e) => {
                                                     const newOptions =
                                                         question.options;

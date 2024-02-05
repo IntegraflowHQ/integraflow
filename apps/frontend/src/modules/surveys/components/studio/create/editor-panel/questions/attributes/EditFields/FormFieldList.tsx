@@ -58,7 +58,9 @@ export const FormFieldList = ({ question }: Props) => {
                                                 />
                                                 <EditorTextInput
                                                     showCharacterCount={false}
-                                                    value={option.label ?? ""}
+                                                    defaultValue={
+                                                        option.label ?? ""
+                                                    }
                                                     onChange={(e) => {
                                                         const newOptions =
                                                             question.options;

@@ -28,14 +28,12 @@ export const OptionsList = ({ question }: Props) => {
     return (
         <div>
             {question.type === SurveyQuestionTypeEnum.Single ||
-                question.type === SurveyQuestionTypeEnum.Multiple ||
-                question.type === SurveyQuestionTypeEnum.Dropdown ? (
+            question.type === SurveyQuestionTypeEnum.Multiple ||
+            question.type === SurveyQuestionTypeEnum.Dropdown ? (
                 <div className="space-y-4">
                     <div className="flex justify-between text-sm">
                         <p>Answer Choices</p>
-                        <AddMultipleQuestions
-                            question={question.options}
-                        />
+                        <AddMultipleQuestions question={question.options} />
                     </div>
 
                     {question.options ? (
@@ -48,12 +46,13 @@ export const OptionsList = ({ question }: Props) => {
                                     >
                                         <MoreButton />
                                         <EditorTextInput
-                                            value={option.label || ""}
+                                            defaultValue={option.label}
                                             onChange={(e) => {
                                                 const newOptions =
                                                     question.options;
                                                 newOptions[index].label =
                                                     e.target.value;
+
                                                 updateQuestionMutation({
                                                     options: newOptions,
                                                 });
@@ -61,10 +60,11 @@ export const OptionsList = ({ question }: Props) => {
                                         />
                                         <div
                                             className={cn(
-                                                `${question.type ===
+                                                `${
+                                                    question.type ===
                                                     SurveyQuestionTypeEnum.Dropdown
-                                                    ? "hidden "
-                                                    : "block"
+                                                        ? "hidden "
+                                                        : "block"
                                                 } flex`,
                                             )}
                                         >
@@ -88,16 +88,12 @@ export const OptionsList = ({ question }: Props) => {
                                             />
                                         </div>
 
-                                        {question.options.length <
-                                            3 ? null : (
+                                        {question.options.length < 3 ? null : (
                                             <MinusButton
                                                 onclick={() => {
                                                     const newOptions =
                                                         question.options;
-                                                    newOptions.splice(
-                                                        index,
-                                                        1,
-                                                    );
+                                                    newOptions.splice(index, 1);
                                                     updateQuestionMutation({
                                                         options: newOptions,
                                                     });

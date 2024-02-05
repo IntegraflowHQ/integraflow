@@ -13,10 +13,6 @@ export const CTAFields = ({ question }: Props) => {
     const { updateQuestionMutation } = useQuestion();
 
     const [showDescription, setShowDescription] = useState(false);
-    const [titleText, setTitleText] = useState(question?.label);
-    const [descriptionText, setDescriptionText] = useState(
-        question?.description,
-    );
 
     useEffect(() => {
         if (question?.description) {
@@ -30,13 +26,12 @@ export const CTAFields = ({ question }: Props) => {
                 <EditorTextInput
                     placeholder=""
                     onChange={(e) => {
-                        setTitleText(e.target.value);
                         updateQuestionMutation({
                             label: e.target.value,
                         });
                     }}
-                    value={titleText}
-                    characterCount={titleText?.split("").length}
+                    defaultValue={question?.label}
+                    characterCount={question?.label?.split("").length}
                 />
                 {showDescription ? (
                     <div className="mt-4 flex items-center justify-between gap-4">
@@ -44,10 +39,11 @@ export const CTAFields = ({ question }: Props) => {
                             label={"Description"}
                             placeholder=""
                             className="flex-1"
-                            value={descriptionText}
-                            characterCount={descriptionText?.split("").length}
+                            defaultValue={question?.description}
+                            characterCount={
+                                question?.description?.split("").length
+                            }
                             onChange={(e) => {
-                                setDescriptionText(e.target.value);
                                 updateQuestionMutation({
                                     description: e.target.value,
                                 });
@@ -56,7 +52,6 @@ export const CTAFields = ({ question }: Props) => {
                         <div>
                             <MinusButton
                                 onclick={() => {
-                                    setDescriptionText("");
                                     setShowDescription(false);
                                     updateQuestionMutation({
                                         description: "",

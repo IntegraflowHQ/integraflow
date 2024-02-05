@@ -7,6 +7,8 @@ import { EditTab } from "./EditTab";
 import { LogicTab } from "./LogicTab";
 import { SettingsTab } from "./SettingsTab";
 
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
+import { questionsWithoutSettingsTab } from "@/utils/question";
 import * as Accordion from "@radix-ui/react-accordion";
 
 type Props = {
@@ -17,6 +19,8 @@ type Props = {
 
 export const QuestionPanel = ({ question, questionIndex }: Props) => {
     const { deleteQuestionMutation, openQuestion } = useQuestion();
+    const { parsedQuestions } = useSurvey();
+    const lastQuestionIndex = parsedQuestions.length - 1;
 
     return (
         <Tabs.Root
@@ -33,23 +37,37 @@ export const QuestionPanel = ({ question, questionIndex }: Props) => {
                     >
                         Edit
                     </Tabs.Trigger>
-                    {Object.keys(question.settings).length === 0 ? null : (
-                        <Tabs.Trigger
-                            key="logic"
-                            value="logic"
-                            className="p-2  data-[state=active]:border-b-[2px] data-[state=active]:border-b-intg-bg-4 data-[state=active]:text-white "
-                        >
-                            Logic
-                        </Tabs.Trigger>
+
+                    {questionIndex === lastQuestionIndex ||
+                    question.type === SurveyQuestionTypeEnum.Cta ? null : (
+                        <>
+                            {Object.keys(question.settings).length ===
+                            0 ? null : (
+                                <Tabs.Trigger
+                                    key="logic"
+                                    value="logic"
+                                    className="p-2  data-[state=active]:border-b-[2px] data-[state=active]:border-b-intg-bg-4 data-[state=active]:text-white "
+                                >
+                                    Logic
+                                </Tabs.Trigger>
+                            )}
+                        </>
                     )}
-                    {Object.keys(question.settings).length === 0 ? null : (
-                        <Tabs.Trigger
-                            key="settings"
-                            value="settings"
-                            className="p-2  data-[state=active]:border-b-[2px] data-[state=active]:border-b-intg-bg-4 data-[state=active]:text-white "
-                        >
-                            Settings
-                        </Tabs.Trigger>
+                    {questionsWithoutSettingsTab.includes(
+                        question.type,
+                    ) ? null : (
+                        <>
+                            {Object.keys(question.settings).length ===
+                            0 ? null : (
+                                <Tabs.Trigger
+                                    key="settings"
+                                    value="settings"
+                                    className="p-2  data-[state=active]:border-b-[2px] data-[state=active]:border-b-intg-bg-4 data-[state=active]:text-white "
+                                >
+                                    Settings
+                                </Tabs.Trigger>
+                            )}
+                        </>
                     )}
                 </Tabs.List>
                 <div className="flex gap-6">

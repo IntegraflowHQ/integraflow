@@ -2,7 +2,6 @@ import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { QuestionSettings } from "@/types";
 import { CTAType } from "@integraflow/web/src/types";
-import { useState } from "react";
 import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import { Option, ReactSelect } from "../ReactSelect";
@@ -27,7 +26,9 @@ const ctaTypeOptions = [
 
 export const CTASettings = ({ question }: Props) => {
     const { updateQuestionMutation } = useQuestion();
-    const [buttonLabel, setButtonLabel] = useState(question.settings.text);
+
+    const typedQuestion = question as SurveyQuestion;
+    typedQuestion.settings;
 
     return (
         <>
@@ -35,31 +36,32 @@ export const CTASettings = ({ question }: Props) => {
                 <>
                     <EditorTextInput
                         label={"Button label"}
-                        placeholder=""
+                        defaultValue={question.settings.text}
                         onChange={(e) => {
-                            setButtonLabel(e.target.value);
                             const newSettings = question.settings;
-                            (newSettings as QuestionSettings).label =
+                            (newSettings as QuestionSettings).text =
                                 e.target.value;
                             updateQuestionMutation({
                                 settings: newSettings,
                             });
                         }}
-                        characterCount={buttonLabel?.split("").length}
+                        characterCount={
+                            question.settings.label?.split("").length
+                        }
                     />
-                    {question.settings.ctaType !== CTAType.NEXT ? (
+                    {question.settings.type !== CTAType.NEXT ? (
                         <div>
                             <ReactSelect
                                 options={ctaTypeOptions}
                                 defaultValue={ctaTypeOptions.find(
                                     (option) =>
-                                        option.value ===
-                                        question.settings.ctaType,
+                                        option.value === question.settings.type,
                                 )}
                                 label="Button type"
                                 onchange={(option) => {
-                                    const newSettings = question.settings;
-                                    newSettings.ctaType = (
+                                    const newSettings =
+                                        question.settings as QuestionSettings;
+                                    newSettings.type = (
                                         option as SingleValue<Option>
                                     )?.value;
                                     if (
@@ -78,7 +80,7 @@ export const CTASettings = ({ question }: Props) => {
                             {question.settings.ctaType === CTAType.LINK ? (
                                 <EditorTextInput
                                     label={"Button link"}
-                                    placeholder=""
+                                    defaultValue={question.settings.ctaLink}
                                     onChange={(e) => {
                                         const newSettings = question.settings;
                                         newSettings.link = e.target.value;
