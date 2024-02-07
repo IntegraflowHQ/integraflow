@@ -1,3 +1,4 @@
+import { ProjectTheme } from "@/generated/graphql";
 import { useTheme } from "@/modules/projects/hooks/useTheme";
 import { toast } from "@/utils/toast";
 
@@ -55,13 +56,11 @@ const getPresetThemes = () => {
 };
 
 export interface PresetThemesProps {
-    onThemeSelectUpdateSurvey: (surveyId: string, themeId: string) => void;
-    surveyId: string;
+    onThemeSelected?: (theme: Partial<ProjectTheme>) => void;
 }
 
 export const PresetThemes = ({
-    surveyId,
-    onThemeSelectUpdateSurvey,
+    onThemeSelected,
 }: PresetThemesProps) => {
     const presetThemes = getPresetThemes();
     const { createTheme, error } = useTheme();
@@ -75,11 +74,8 @@ export const PresetThemes = ({
                 colorScheme: theme.colorScheme,
             });
 
-            const newThemeId = response.newThemeData?.id;
-
-            if (newThemeId) {
-                onThemeSelectUpdateSurvey(surveyId, newThemeId);
-                toast.success("Theme created successfully");
+            if (response.newThemeData) {
+                onThemeSelected?.(response.newThemeData);
             }
         } catch (err) {
             toast.error(error?.message || error?.networkError?.message || "");

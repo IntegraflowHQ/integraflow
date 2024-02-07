@@ -1,7 +1,6 @@
 import { SurveyUpdateInput } from "@/generated/graphql";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { Switch } from "@/ui";
-import { toast } from "@/utils/toast";
 import debounce from "lodash.debounce";
 import React from "react";
 import { EditorTextInput } from "../../components/EditorTextInput";
@@ -16,7 +15,6 @@ interface SurveyExperienceProps {
 export const SurveyExperience = () => {
     const { updateSurvey, error, survey } = useSurvey();
 
-    const surveyId = survey?.survey?.id;
     const settings = survey?.survey?.settings;
 
     const [surveyExperience, setSurveyExperience] =
@@ -30,35 +28,25 @@ export const SurveyExperience = () => {
     const updateSurveyPreferences = async (
         updatedPreferences: SurveyExperienceProps,
     ) => {
-        if (surveyId && error === undefined) {
-            try {
-                updateSurvey(surveyId, {
-                    settings: JSON.stringify(
-                        updatedPreferences,
-                    ) as Partial<SurveyUpdateInput>,
-                });
-                toast.success("Survey experience updated successfully");
-            } catch (err) {
-                toast.error("Something went wrong. Try again later");
-            }
+        if (survey.survey && error === undefined) {
+            updateSurvey(survey.survey, {
+                settings: JSON.stringify(
+                    updatedPreferences,
+                ) as Partial<SurveyUpdateInput>,
+            });
         }
     };
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleSubmitText = React.useCallback(
         debounce((value: string) => {
-            try {
-                if (value.trim() !== "") {
-                    updateSurveyPreferences({
-                        ...surveyExperience,
-                        submitText: value,
-                    });
-                }
-            } catch (err) {
-                toast.error("Something went wrong. Try again later");
+            if (value.trim() !== "") {
+                updateSurveyPreferences({
+                    ...surveyExperience,
+                    submitText: value,
+                });
             }
         }, 1000),
-        [],
+        [surveyExperience],
     );
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,7 +104,7 @@ export const SurveyExperience = () => {
                 <Switch
                     name="showBranding"
                     value={surveyExperience.showBranding}
-                    label="remove integraflow branding"
+                    label="remove Integraflow branding"
                     onChange={(event) =>
                         handleSwitches(
                             "showBranding",

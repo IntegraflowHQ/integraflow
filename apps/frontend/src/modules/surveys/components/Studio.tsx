@@ -1,6 +1,5 @@
 import { ROUTES } from "@/routes";
 import { Button, GlobalSpinner } from "@/ui";
-import { toast } from "@/utils/toast";
 import * as Tabs from "@radix-ui/react-tabs";
 import debounce from "lodash.debounce";
 import { XIcon } from "lucide-react";
@@ -30,23 +29,15 @@ export default function Studio() {
     const { enableStudioMode, disableStudioMode } = useStudioState();
 
     const { orgSlug, projectSlug } = params;
-    const surveyId = survey?.survey?.id;
     const surveyName = survey?.survey?.name;
 
     const updateSurveyTitle = React.useCallback(
         debounce((value: string) => {
-            try {
-                if (surveyId && value.trim() !== "" && value !== surveyName) {
-                    updateSurvey(surveyId, { name: value });
-                    toast.success("Survey title updated successfully");
-                }
-            } catch (err) {
-                toast.error(
-                    "Failed to update survey title. Please try again later.",
-                );
+            if (survey.survey && value.trim() !== "" && value !== surveyName) {
+                updateSurvey(survey.survey, { name: value });
             }
         }, 1000),
-        [survey],
+        [survey?.survey, surveyName],
     );
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

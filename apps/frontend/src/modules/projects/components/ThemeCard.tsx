@@ -79,14 +79,14 @@ export const ThemeCard = ({
                 </div>
             </div>
 
-            {isHovered ? (
+            {isHovered && (
                 <Pen
                     size={8}
                     color="#AFAAC7"
                     onClick={() => editTheme()}
                     className={`mt-[6px] h-9 w-9 rounded-md bg-intg-bg-11 px-1 py-2 text-sm transition-all duration-500 ease-in-out hover:cursor-pointer hover:bg-intg-bg-9`}
                 />
-            ) : null}
+            )}
         </div>
     );
 };

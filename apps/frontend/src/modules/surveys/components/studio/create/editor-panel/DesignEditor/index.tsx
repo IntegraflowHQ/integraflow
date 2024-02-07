@@ -23,7 +23,6 @@ const THEMES_INFO = [
 
 export const UpdateDesignEditor = () => {
     const { updateSurvey, survey } = useSurvey();
-    const surveyId = survey?.survey?.id;
 
     const editThemeState = useStudioStore((state) => state.editTheme);
     const { createTheme, updateTheme, refetch, deleteTheme } = useTheme();
@@ -33,10 +32,9 @@ export const UpdateDesignEditor = () => {
 
     // triggered when the 'Create theme' button in the colorPicker is clicked
     const handleCreateTheme = async () => {
-        if (theme?.name && theme?.colorScheme && surveyId) {
+        if (theme?.name && theme?.colorScheme && survey.survey) {
             if (theme.id) {
                 updateTheme(theme);
-                toast.success("Theme updated successfully");
                 setOpenState(!newThemeOpenState);
             } else {
                 const response = await createTheme({
@@ -45,7 +43,7 @@ export const UpdateDesignEditor = () => {
                 });
 
                 if (response) {
-                    updateSurvey(surveyId, {
+                    updateSurvey(survey.survey, {
                         themeId: response.newThemeData?.id,
                     });
                 } else {
@@ -60,16 +58,15 @@ export const UpdateDesignEditor = () => {
     };
 
     const handleDeleteTheme = async () => {
-        if (theme?.id && surveyId) {
+        if (theme?.id && survey.survey) {
             try {
                 await deleteTheme(theme.id);
-                await updateSurvey(surveyId, { themeId: undefined });
+                await updateSurvey(survey.survey, { themeId: undefined });
                 refetch();
             } catch (error) {
                 toast.error(error as string);
             }
 
-            toast.success("Theme deleted successfully");
             setOpenState(!newThemeOpenState);
         } else {
             toast.error("Please fill all the fields");

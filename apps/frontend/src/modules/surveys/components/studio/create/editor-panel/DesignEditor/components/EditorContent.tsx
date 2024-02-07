@@ -6,52 +6,54 @@ import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { useStudioStore } from "@/modules/surveys/states/studio";
 import { Button } from "@/ui";
 import { Info } from "@/ui/Info";
-import { toast } from "@/utils/toast";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 
 interface ContentProp {
     onOpen: (theme?: Partial<ProjectTheme>) => void;
 }
 
 export const DesignEditorContent = ({ onOpen }: ContentProp) => {
-    const { survey, updateSurvey } = useSurvey();
-
-    const surveyTheme = survey?.survey?.theme;
-    const surveyId = survey?.survey?.id;
-
-    console.log(survey.survey);
-
     const [selectedTheme, setSelectedTheme] =
         React.useState<Partial<ProjectTheme>>();
 
-    const { themes, error } = useTheme();
+    const { survey, updateSurvey } = useSurvey();
+    const surveyTheme = survey?.survey?.theme;
+
+    const { themes, loading } = useTheme();
+
+    const theme = useMemo(() => {
+        if (selectedTheme?.id && selectedTheme?.colorScheme) {
+            return selectedTheme;
+        }
+
+        if (surveyTheme?.id && surveyTheme?.colorScheme) {
+            return surveyTheme;
+        }
+
+        return null;
+    }, [selectedTheme, surveyTheme]);
 
     const colorScheme = React.useMemo(() => {
         let colorScheme = {};
 
         try {
-            colorScheme = JSON.parse(selectedTheme?.colorScheme ?? "{}");
+            colorScheme = JSON.parse(theme?.colorScheme ?? "{}");
         } catch (error) {
-            colorScheme = selectedTheme?.colorScheme ?? {};
+            colorScheme = theme?.colorScheme ?? {};
         }
 
         return colorScheme;
-    }, [selectedTheme?.colorScheme]);
+    }, [theme]);
 
-    const handleSelectedTheme = (theme: Partial<ProjectTheme>) => {
-        if (surveyId) {
-            try {
+    const handleSelectedTheme = useCallback(
+        (theme: Partial<ProjectTheme>) => {
+            if (survey.survey) {
                 setSelectedTheme(theme);
-                updateSurvey(surveyId, { themeId: theme.id });
-            } catch (error) {
-                toast.error("Something went wrong. Please try again.");
+                updateSurvey(survey.survey, { themeId: theme.id });
             }
-        }
-    };
-
-    if (error) {
-        toast.error(error.message || error.networkError?.message || "");
-    }
+        },
+        [survey.survey, updateSurvey],
+    );
 
     const count = themes?.length ?? 0;
     const createNewTheme = () => {
@@ -59,142 +61,125 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
         onOpen();
     };
 
-    React.useEffect(() => {
-        setSelectedTheme(surveyTheme as Partial<ProjectTheme>);
-    }, [surveyTheme]);
-
     return (
         <>
-            {count === 0 ? (
-                <Info message="You don't have any theme. Click the button below to create one or choose from our presets" />
-            ) : null}
+            {theme ? (
+                <div>
+                    <p className="py-4 text-sm font-normal uppercase">
+                        selected theme
+                    </p>
+                    <div
+                        className={`flex h-16 w-full gap-5 rounded-md  bg-intg-bg-15 px-3 py-2`}
+                    >
+                        <div className="flex gap-5">
+                            <div className="flex py-2">
+                                {Object.keys(colorScheme).map(
+                                    (key: string, index: number) => {
+                                        const color: {
+                                            [Key: string]: string;
+                                        } = colorScheme;
 
-            {count === 0 && (
-                <Button
-                    text="new theme"
-                    onClick={() => createNewTheme()}
-                    variant="secondary"
-                    className="mb-2 mt-4 text-sm font-normal first-letter:capitalize"
-                />
-            )}
+                                        return (
+                                            <div
+                                                className={`h-8 w-8 rounded-full border-2 ${
+                                                    index !== 0 ? "-ml-4" : ""
+                                                }`}
+                                                key={index}
+                                                style={{
+                                                    backgroundColor: `${color[key]}`,
+                                                }}
+                                            />
+                                        );
+                                    },
+                                )}
+                            </div>
 
-            {count !== 0 ? (
-                <>
-                    {selectedTheme ? (
-                        <div>
-                            <p className="py-4 text-sm font-normal uppercase">
-                                selected theme
-                            </p>
-                            <div
-                                className={`flex h-16 w-full gap-5 rounded-md  bg-intg-bg-15 px-3 py-2`}
-                            >
-                                <div className="flex gap-5">
-                                    <div className="flex py-2">
-                                        {Object.keys(colorScheme).map(
-                                            (key: string, index: number) => {
-                                                const color: {
-                                                    [Key: string]: string;
-                                                } = colorScheme;
-
-                                                return (
-                                                    <div
-                                                        className={`h-8 w-8 rounded-full border-2 ${
-                                                            index !== 0
-                                                                ? "-ml-4"
-                                                                : ""
-                                                        }`}
-                                                        key={index}
-                                                        style={{
-                                                            backgroundColor: `${color[key]}`,
-                                                        }}
-                                                    />
-                                                );
-                                            },
-                                        )}
-                                    </div>
-
-                                    <div>
-                                        <p className="font-normal leading-6 first-letter:capitalize">
-                                            {selectedTheme?.name}
-                                        </p>
-                                        <p className="font-normal text-intg-text-4">
-                                            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-                                            {/* @ts-ignore */}
-                                            {colorScheme["question"]
-                                                ? "Fetched theme"
-                                                : null}
-                                        </p>
-                                    </div>
-                                </div>
+                            <div>
+                                <p className="font-normal leading-6 first-letter:capitalize">
+                                    {theme?.name}
+                                </p>
+                                <p className="font-normal text-intg-text-4">
+                                    {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                                    {/* @ts-ignore */}
+                                    {colorScheme["question"]
+                                        ? "Fetched theme"
+                                        : null}
+                                </p>
                             </div>
                         </div>
-                    ) : (
-                        <Info message="You have not selected any theme for this survey." />
+                    </div>
+                </div>
+            ) : (
+                <Info message="You have not selected any theme for this survey." />
+            )}
+
+            <Button
+                text="new theme"
+                onClick={() => createNewTheme()}
+                variant="secondary"
+                className="mb-2 mt-4 text-sm font-normal first-letter:capitalize"
+            />
+
+            {!loading && count === 0 && (
+                <Info message="You don't have any theme. Click the button below to create one or choose from our presets" />
+            )}
+
+            {!loading && count !== 0 && (
+                <div
+                    className={`mt-1 py-2 ${
+                        count !== 0 ? "-mt-4 h-fit" : ""
+                    } transition-all delay-100 duration-300 ease-in`}
+                >
+                    <p className="text-sm font-normal capitalize">all themes</p>
+                    <div
+                        className={`flex-col py-1 transition duration-300 ease-in`}
+                    >
+                        {themes?.map(
+                            (
+                                projectTheme: Partial<ProjectTheme>,
+                                index: number,
+                            ) => {
+                                return (
+                                    <div key={index}>
+                                        <ThemeCard
+                                            activeTheme={
+                                                projectTheme.id === theme?.id
+                                            }
+                                            theme={projectTheme}
+                                            onClick={() =>
+                                                handleSelectedTheme(
+                                                    projectTheme,
+                                                )
+                                            }
+                                            toggleNewThemeModal={() =>
+                                                onOpen(projectTheme)
+                                            }
+                                        />
+                                    </div>
+                                );
+                            },
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {count <= 5 && (
+                <div
+                    className={`-mt-3 ${
+                        count !== 0 ? "h-[395px] translate-y-[20px]" : ""
+                    } transition-all delay-100 duration-300 ease-in`}
+                >
+                    {count !== 0 && (
+                        <hr className="border-1 border-intg-bg-14" />
                     )}
 
-                    <Button
-                        text="new theme"
-                        onClick={() => createNewTheme()}
-                        variant="secondary"
-                        className="mb-2 mt-4 text-sm font-normal first-letter:capitalize"
+                    <PresetThemes
+                        onThemeSelected={async (theme) =>
+                            handleSelectedTheme(theme)
+                        }
                     />
-
-                    <div
-                        className={`mt-1 py-2 ${
-                            count !== 0 ? "-mt-4 h-fit" : ""
-                        } transition-all delay-100 duration-300 ease-in`}
-                    >
-                        <p className="text-sm font-normal capitalize">
-                            all themes
-                        </p>
-                        <div
-                            className={`flex-col py-1 transition duration-300 ease-in`}
-                        >
-                            {themes?.map(
-                                (
-                                    theme: Partial<ProjectTheme>,
-                                    index: number,
-                                ) => {
-                                    return (
-                                        <div key={index}>
-                                            <ThemeCard
-                                                activeTheme={
-                                                    theme.id ===
-                                                    selectedTheme?.id
-                                                }
-                                                theme={theme}
-                                                onClick={() =>
-                                                    handleSelectedTheme(theme)
-                                                }
-                                                toggleNewThemeModal={() =>
-                                                    onOpen(theme)
-                                                }
-                                            />
-                                        </div>
-                                    );
-                                },
-                            )}
-                        </div>
-                    </div>
-                </>
-            ) : null}
-
-            <div
-                className={`-mt-3 ${
-                    count !== 0 ? "h-[395px] translate-y-[20px]" : ""
-                } transition-all delay-100 duration-300 ease-in`}
-            >
-                {count !== 0 && <hr className="border-1 border-intg-bg-14" />}
-
-                <PresetThemes
-                    surveyId={surveyId ?? ""}
-                    onThemeSelectUpdateSurvey={async (surveyId, themeId) =>
-                        await updateSurvey(surveyId, {
-                            themeId: themeId,
-                        })
-                    }
-                />
-            </div>
+                </div>
+            )}
         </>
     );
 };
