@@ -1,8 +1,13 @@
 import {
+    CompleteResponsePayload,
+    CreateResponsePayload,
     Event,
     EventProperties,
     ID,
+    ResponseAction,
+    ResponseTask,
     SurveyAnswer,
+    UpdateResponsePayload,
     UserAttributes
 } from "../types";
 import { parsedSurveys, uuidv4 } from "../utils";
@@ -13,6 +18,8 @@ export class SyncManager {
     private readonly context: Context;
 
     private syncId: NodeJS.Timeout | null = null;
+    private answerSyncId: NodeJS.Timeout | null = null;
+    private responseQueue: ResponseTask[] = [];
 
     constructor(ctx: Context) {
         this.context = ctx;
@@ -40,7 +47,6 @@ export class SyncManager {
 
     async sync() {
         const state = await getState(this.context);
-        console.debug("state: ", state);
 
         if (this.context.syncPolicy === "polling") {
             try {
@@ -172,6 +178,137 @@ export class SyncManager {
         return event;
     }
 
+    async createSurveyResponse(
+        payload: CreateResponsePayload
+    ): Promise<boolean> {
+        try {
+            const res = await this.context.client.createSurveyResponse({
+                ...payload,
+                attributes: JSON.stringify(payload.attributes)
+            });
+
+            return res?.status ?? false;
+        } catch (e) {
+            console.warn(e);
+            return false;
+        }
+    }
+
+    async updateSurveyResponse({
+        type,
+        payload
+    }:
+        | { type: "update"; payload: UpdateResponsePayload }
+        | { type: "complete"; payload: CompleteResponsePayload }): Promise<
+        boolean
+    > {
+        try {
+            if (type === "update") {
+                const res = await this.context.client.updateSurveyResponse(
+                    payload.id,
+                    {
+                        response: JSON.stringify(payload.response)
+                    }
+                );
+                return res?.status ?? false;
+            }
+
+            const res = await this.context.client.updateSurveyResponse(
+                payload.id,
+                {
+                    completedAt: payload.completedAt,
+                    completed: true
+                }
+            );
+            return res?.status ?? false;
+        } catch (e) {
+            console.warn(e);
+            return false;
+        }
+    }
+
+    async removeTask(ids: string[]) {
+        this.responseQueue = this.responseQueue.filter(
+            task => !ids.includes(task.id)
+        );
+    }
+
+    async handleTasks(tasks: ResponseTask[], actionType: ResponseAction) {
+        if (tasks.length === 0) {
+            return;
+        }
+
+        const maxRetries = 2;
+
+        this.answerSyncId = setTimeout(async () => {
+            for (const task of tasks) {
+                let successful = false;
+                let retries = 0;
+
+                while (!successful && retries <= maxRetries) {
+                    switch (actionType) {
+                        case "create":
+                            successful = await this.createSurveyResponse(
+                                task.payload as CreateResponsePayload
+                            );
+                            break;
+                        case "complete":
+                            successful = await this.updateSurveyResponse({
+                                type: "complete",
+                                payload: task.payload as CompleteResponsePayload
+                            });
+                            break;
+                        case "update":
+                            successful = await this.updateSurveyResponse({
+                                type: "update",
+                                payload: task.payload as UpdateResponsePayload
+                            });
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (!successful) {
+                        retries++;
+                    }
+                }
+
+                this.removeTask([task.id]);
+            }
+
+            this.stopAnswerSync();
+            this.syncAnswers();
+        }, 0);
+    }
+
+    async syncAnswers() {
+        if (this.answerSyncId) {
+            return;
+        }
+
+        const actionTypes = ["create", "update", "complete"] as const;
+
+        for (const actionType of actionTypes) {
+            const tasks = this.responseQueue.filter(
+                task => task.action === actionType
+            );
+            await this.handleTasks(tasks, actionType);
+        }
+
+        if (typeof window !== "undefined") {
+            window.addEventListener("beforeunload", () =>
+                this.stopAnswerSync()
+            );
+        }
+    }
+
+    stopAnswerSync() {
+        if (this.answerSyncId) {
+            clearTimeout(this.answerSyncId);
+            this.answerSyncId = null;
+        }
+    }
+
     async markSurveyAsSeen(
         surveyId: ID,
         presentationTime: Date = new Date(),
@@ -206,25 +343,24 @@ export class SyncManager {
         state.lastPresentationTimes = lastPresentationTimes;
         state.surveyResponses = surveyResponses;
         await persistState(this.context, state);
-
         this.context.setState(state);
 
         if (this.context.syncPolicy !== "off") {
-            try {
-                this.context.client.createSurveyResponse({
+            this.responseQueue.push({
+                id: uuidv4(),
+                action: "create",
+                payload: {
                     id: responseId,
-                    surveyId: surveyId as string,
-                    attributes: JSON.stringify(state.user ?? {}),
-                    startedAt: presentationTime,
+                    surveyId,
                     userId:
                         typeof state.user?.id === "number"
                             ? String(state.user?.id)
-                            : state.user?.id
-                });
-            } catch (e) {
-                console.warn(e);
-                // Noop (fallback to local)
-            }
+                            : state.user?.id,
+                    attributes: state.user
+                } as CreateResponsePayload
+            });
+
+            this.syncAnswers();
         }
     }
 
@@ -246,35 +382,20 @@ export class SyncManager {
         surveyAnswers[surveyId].set(questionId, answers);
         surveyResponses.set(questionId, responseId);
         state.surveyAnswers = surveyAnswers;
-
         await persistState(this.context, state);
         this.context.setState(state);
 
         if (this.context.syncPolicy !== "off") {
-            const surveyAnswers = Array.from(
-                state.surveyAnswers[surveyId].entries()
-            ).map(([questionId, answers]) => ({
-                questionId,
-                answers
-            }));
-
-            try {
-                if (!responseId) {
-                    throw new Error("Response ID not found");
-                }
-
-                this.context.client.updateSurveyResponse(responseId, {
-                    attributes: JSON.stringify(state.user ?? {}),
-                    userId:
-                        typeof state.user?.id === "number"
-                            ? String(state.user?.id)
-                            : state.user?.id,
-                    response: JSON.stringify(surveyAnswers)
-                });
-            } catch (e) {
-                console.warn(e);
-                // Noop (fallback to local)
-            }
+            this.responseQueue.push({
+                id: uuidv4(),
+                action: "update",
+                payload: {
+                    response: [{ questionId, answers }],
+                    surveyId,
+                    id: responseId
+                } as UpdateResponsePayload
+            });
+            this.syncAnswers();
         }
     }
 
@@ -298,32 +419,19 @@ export class SyncManager {
         this.clearSurveyAnswers(surveyId);
         const { surveyResponses = new Map() } = state;
         const responseId = surveyResponses.get(surveyId);
-
-        // TODO: Sync survey status with the server.
+        await persistState(this.context, state);
+        this.context.setState(state);
 
         if (this.context.syncPolicy !== "off") {
-            if (!responseId) {
-                throw new Error("Response ID not found");
-            }
-
-            try {
-                this.context.client.updateSurveyResponse(responseId, {
-                    attributes: JSON.stringify(state.user ?? {}),
-                    userId:
-                        typeof state.user?.id === "number"
-                            ? String(state.user?.id)
-                            : state.user?.id,
-                    completed: true,
+            this.responseQueue.push({
+                id: uuidv4(),
+                action: "complete",
+                payload: {
+                    id: responseId,
                     completedAt: new Date()
-                });
-
-                surveyResponses.delete(surveyId);
-                state.surveyResponses = surveyResponses;
-                await persistState(this.context, state);
-            } catch (e) {
-                console.warn(e);
-                // Noop (fallback to local)
-            }
+                } as CompleteResponsePayload
+            });
+            this.syncAnswers();
         }
     }
 }

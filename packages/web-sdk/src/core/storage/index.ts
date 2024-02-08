@@ -63,7 +63,7 @@ export async function getState(ctx: Context): Promise<State> {
         try {
             let surveys: Survey[];
 
-            if (ctx.fetchPolicy === "auto") {
+            if (ctx.syncPolicy === "polling") {
                 const activeSurveys = await ctx.client.activeSurveys({
                     first: 100
                 });
