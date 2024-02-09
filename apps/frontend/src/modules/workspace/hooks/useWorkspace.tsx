@@ -14,12 +14,14 @@ import {
 import { useRedirect } from "@/modules/auth/hooks/useRedirect";
 import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
 import { convertToAuthOrganization } from "@/modules/users/states/user";
+import { useApolloClient } from "@apollo/client";
 
 export const useWorkspace = () => {
     const { orgSlug } = useParams();
     const { user, organizations, updateUser } = useCurrentUser();
     const redirect = useRedirect();
     const [createOrganization, { loading }] = useOrganizationCreateMutation();
+    const { cache, clearStore } = useApolloClient();
 
     const workspace = useMemo(() => {
         const slug = orgSlug ?? user?.organization?.slug;
@@ -53,6 +55,9 @@ export const useWorkspace = () => {
                     ...updatedUser,
                 });
             }
+
+            clearStore();
+            cache.reset();
         },
         [orgSlug, redirect, updateUser, user],
     );
