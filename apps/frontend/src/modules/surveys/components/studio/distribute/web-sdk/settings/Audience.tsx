@@ -1,3 +1,4 @@
+import { useProject } from "@/modules/projects/hooks/useProject";
 import useChannels from "@/modules/surveys/hooks/useChannels";
 import useStudioState from "@/modules/surveys/hooks/useStudioState";
 import {
@@ -15,7 +16,8 @@ import PropertySelect from "./filters/PropertySelect";
 
 export default function Audience({ channel }: WebChannelAccordionProps) {
     const { addingAudienceProperty, updateStudio } = useStudioState();
-    const { personProperties, updateChannel } = useChannels();
+    const { updateChannel } = useChannels();
+    const { personProperties } = useProject();
     const [filterInput, setFilterInput] = useState<EventFilter | null>(null);
     const [conditionInput, setConditionInput] = useState<
         TriggerConditionInput | undefined

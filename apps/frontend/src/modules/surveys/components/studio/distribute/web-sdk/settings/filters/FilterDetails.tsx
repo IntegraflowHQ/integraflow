@@ -1,4 +1,4 @@
-import useChannels from "@/modules/surveys/hooks/useChannels";
+import { useProject } from "@/modules/projects/hooks/useProject";
 import { EventFilter } from "@/types";
 import { X } from "@/ui/icons";
 import { getFilterLabel } from "@/utils";
@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default function FilterDetails({ filter, onRemoveFilter }: Props) {
-    const { getPropertyDefinition } = useChannels();
+    const { getPropertyDefinition } = useProject();
     const definition = getPropertyDefinition(filter.property);
 
     const formatIfDate = (value: FilterValue) => {
@@ -29,7 +29,7 @@ export default function FilterDetails({ filter, onRemoveFilter }: Props) {
     return (
         <div
             className={
-                "inline-flex w-max items-center gap-2 rounded-lg bg-intg-bg-19 p-2 text-intg-text"
+                "bg-intg-bg-19 inline-flex w-max items-center gap-2 rounded-lg p-2 text-intg-text"
             }
         >
             <span>
