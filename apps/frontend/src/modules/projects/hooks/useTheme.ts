@@ -6,9 +6,9 @@ import {
     useThemesQuery,
 } from "@/generated/graphql";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import useUserState from "@/modules/users/hooks/useUserState";
-import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
+import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
 import { PROJECT_THEME } from "../graphql/fragments/projectFragments";
+import { useProject } from "./useProject";
 
 export type ColorScheme = {
     answer: string;
@@ -19,8 +19,8 @@ export type ColorScheme = {
 };
 
 export const useThemes = () => {
-    const { user } = useUserState();
-    const { workspace } = useWorkspace();
+    const { user } = useCurrentUser();
+    const { project } = useProject();
     const [createThemeMutation] = useProjectThemeCreateMutation();
     const [updateThemeMutation] = useProjectThemeUpdateMutation();
     const { updateSurvey } = useSurvey();
@@ -32,11 +32,6 @@ export const useThemes = () => {
     } = useThemesQuery({
         variables: { first: 20 },
         notifyOnNetworkStatusChange: true,
-        context: {
-            headers: {
-                Project: workspace?.project.id,
-            },
-        },
     });
 
     const transformThemes = (themes: ThemesQuery) => {
@@ -67,11 +62,6 @@ export const useThemes = () => {
                 },
             },
             notifyOnNetworkStatusChange: true,
-            context: {
-                headers: {
-                    Project: workspace?.project.id,
-                },
-            },
             onCompleted: (data) => {
                 const themeData = {
                     name: data.projectThemeCreate?.projectTheme?.name ?? "",
@@ -153,11 +143,6 @@ export const useThemes = () => {
                 },
             },
             notifyOnNetworkStatusChange: true,
-            context: {
-                headers: {
-                    Project: workspace?.project.id,
-                },
-            },
             optimisticResponse: {
                 __typename: "Mutation",
                 projectThemeUpdate: {
@@ -169,26 +154,21 @@ export const useThemes = () => {
                         colorScheme: JSON.stringify(theme.colorScheme ?? {}),
                         settings: [],
                         project: {
-                            id: workspace?.project.id ?? "",
-                            name: workspace?.project.name ?? "",
-                            slug: workspace?.project.slug ?? "",
+                            id: project?.id ?? "",
+                            name: project?.name ?? "",
+                            slug: project?.slug ?? "",
                             hasCompletedOnboardingFor: [],
-                            timezone: workspace?.project.timezone ?? "",
+                            timezone: project?.timezone ?? "",
                             organization: {
-                                id: workspace?.project.organization.id ?? "",
-                                slug:
-                                    workspace?.project.organization.slug ?? "",
-                                name:
-                                    workspace?.project.organization.name ?? "",
+                                id: project?.organization?.id ?? "",
+                                slug: project?.organization?.slug ?? "",
+                                name: project?.organization?.name ?? "",
                                 memberCount:
-                                    workspace?.project.organization
-                                        .memberCount ?? 0,
+                                    project?.organization?.memberCount ?? 0,
                             },
                         },
-                        createdAt:
-                            workspace?.project.createdAt ??
-                            new Date().toISOString(),
-                        creator: workspace?.project.creator ?? user,
+                        createdAt: new Date().toISOString(),
+                        creator: user,
                         updatedAt: new Date().toISOString(),
                     },
                     projectErrors: [],

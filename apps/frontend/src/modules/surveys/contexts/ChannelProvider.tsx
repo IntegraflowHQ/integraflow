@@ -12,7 +12,6 @@ import {
     useSurveyChannelDeleteMutation,
     useSurveyChannelUpdateMutation,
 } from "@/generated/graphql";
-import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
 import { ParsedChannel } from "@/types";
 import { fromSurveyChannel, toSurveyChannel } from "@/utils";
 import { EventProperties } from "@integraflow/web/src/types";
@@ -22,15 +21,10 @@ import { useSurvey } from "../hooks/useSurvey";
 
 function useChannelContextFactory() {
     const { survey, surveyId } = useSurvey();
-    const { workspace } = useWorkspaceState();
 
-    const { data: eventsData } = useProjectEventsDataQuery({
-        skip: !workspace?.project.id,
-    });
+    const { data: eventsData } = useProjectEventsDataQuery();
 
-    const { data: audienceProperties } = useAudiencePropertiesQuery({
-        skip: !workspace?.project.id,
-    });
+    const { data: audienceProperties } = useAudiencePropertiesQuery();
 
     const [createChannelMutation] = useSurveyChannelCreateMutation();
     const createChannel = async (

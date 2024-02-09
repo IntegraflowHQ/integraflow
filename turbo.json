@@ -5,6 +5,26 @@
       "dependsOn": ["@integraflow/web#build"]
     },
     "@integraflow/web#build": {},
+    "@integraflow/sdk#build:sdk": {},
+    "@integraflow/sdk#generate:doc": {
+        "cache": false
+    },
+    "@integraflow/sdk#generate:schema": {
+        "cache": false
+    },
+    "@integraflow/sdk#generate:sdk": {
+        "cache": false
+    },
+    "@integraflow/sdk#generate:test": {
+        "cache": false
+    },
+    "@integraflow/codegen-doc#build:codegen-doc": {
+        "cache": false
+    },
+    "@integraflow/codegen-sdk#build:codegen-sdk": {
+        "cache": false
+    },
+    "@integraflow/codegen-test#build:codegen-test": {},
     "lint": {}
   }
 }

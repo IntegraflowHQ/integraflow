@@ -1,4 +1,4 @@
-import OnboardingIndex from "@/modules/onboarding/components/Index";
+import OnboardingIndex from "@/modules/onboarding/components/Onboarding";
 
 const Onboarding = () => {
     return <OnboardingIndex />;
