@@ -6,21 +6,22 @@ type Props = {
     question: SurveyQuestion;
 };
 
-export const TextSettings = ({ question }: Props) => {
-    const { updateQuestionMutation } = useQuestion();
+export const TextSettings = ({}: Props) => {
+    const { updateQuestionMutation, openQuestion } = useQuestion();
     return (
         <>
-            {question.type === SurveyQuestionTypeEnum.Text ? (
+            {openQuestion?.type === SurveyQuestionTypeEnum.Text ? (
                 <div className="rounded bg-[#272138]">
                     <Switch
                         name="Long_answer"
                         label="Long Answer"
-                        defaultValue={question.settings.singleLine}
+                        defaultValue={openQuestion?.settings.singleLine}
                         onChange={() => {
                             updateQuestionMutation({
                                 settings: {
-                                    ...question.settings,
-                                    singleLine: !question.settings.singleLine,
+                                    ...openQuestion?.settings,
+                                    singleLine:
+                                        !openQuestion?.settings.singleLine,
                                 },
                             });
                         }}

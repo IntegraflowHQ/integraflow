@@ -1,24 +1,19 @@
-import { SurveyQuestion } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useEffect, useState } from "react";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import MinusButton from "../Buttons/MinimizeButton";
 import TextButton from "../Buttons/TextButton";
 
-type Props = {
-    question: SurveyQuestion;
-};
-
-export const CTAFields = ({ question }: Props) => {
-    const { updateQuestionMutation } = useQuestion();
+export const CTAFields = () => {
+    const { updateQuestionMutation, openQuestion } = useQuestion();
 
     const [showDescription, setShowDescription] = useState(false);
 
     useEffect(() => {
-        if (question?.description) {
+        if (openQuestion?.description) {
             setShowDescription(true);
         }
-    }, [question?.description]);
+    }, [openQuestion?.description]);
 
     return (
         <>
@@ -30,8 +25,8 @@ export const CTAFields = ({ question }: Props) => {
                             label: e.target.value,
                         });
                     }}
-                    defaultValue={question?.label}
-                    characterCount={question?.label?.split("").length}
+                    defaultValue={openQuestion?.label}
+                    characterCount={openQuestion?.label?.split("").length}
                 />
                 {showDescription ? (
                     <div className="mt-4 flex items-center justify-between gap-4">
@@ -39,9 +34,9 @@ export const CTAFields = ({ question }: Props) => {
                             label={"Description"}
                             placeholder=""
                             className="flex-1"
-                            defaultValue={question?.description}
+                            defaultValue={openQuestion?.description}
                             characterCount={
-                                question?.description?.split("").length
+                                openQuestion?.description?.split("").length
                             }
                             onChange={(e) => {
                                 updateQuestionMutation({

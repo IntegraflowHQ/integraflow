@@ -97,6 +97,13 @@ export type QuestionSettings = {
     logic?: QuestionLogic[];
 };
 
+export enum CTAEnums {
+    BUTTON = "button",
+    LINK = "link",
+    HIDDEN = "hidden",
+    CLOSE = "close",
+}
+
 export type ParsedQuestion = Omit<
     SurveyQuestionCountableEdge["node"],
     "questions" | "settings"

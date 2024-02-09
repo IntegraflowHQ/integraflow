@@ -1,12 +1,9 @@
-import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { SingleValue } from "react-select";
+import { QuestionSettings } from "@/types";
+import { MultiValue, SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import { Option, ReactSelect } from "../ReactSelect";
-
-type Props = {
-    question: SurveyQuestion;
-};
 
 enum RangeShapeEnum {
     STAR = "star",
@@ -15,146 +12,119 @@ enum RangeShapeEnum {
 }
 
 const rangeShape = [
-    {
-        label: "star",
-        value: RangeShapeEnum.STAR,
-    },
-    {
-        label: "thumb",
-        value: RangeShapeEnum.THUMB,
-    },
-    {
-        label: "heart",
-        value: RangeShapeEnum.HEART,
-    },
+    { label: "Star", value: RangeShapeEnum.STAR },
+    { label: "Thumb", value: RangeShapeEnum.THUMB },
+    { label: "Heart", value: RangeShapeEnum.HEART },
 ];
 
 const smileyCount = [
-    {
-        label: "3",
-        value: 3,
-    },
-    {
-        label: "5",
-        value: 5,
-    },
+    { label: "3", value: 3 },
+    { label: "5", value: 5 },
 ];
 
-export const RangeSettings = ({ question }: Props) => {
-    const { updateQuestionMutation } = useQuestion();
+export const RangeSettings = () => {
+    const { updateQuestionMutation, openQuestion } = useQuestion();
+
+    const updateSettings = (newSettings: QuestionSettings) => {
+        updateQuestionMutation({
+            settings: { ...openQuestion?.settings, ...newSettings },
+        });
+    };
 
     return (
         <>
-            {question.type === SurveyQuestionTypeEnum.Nps ||
-            question.type === SurveyQuestionTypeEnum.NumericalScale ? (
+            {(openQuestion?.type === SurveyQuestionTypeEnum.Nps ||
+                openQuestion?.type ===
+                    SurveyQuestionTypeEnum.NumericalScale) && (
                 <>
-                    <div className="flex items-center justify-between gap-4">
+                    <div>
                         <p>Text on the left</p>
-                        <div className="w-[330px]">
+                        <div>
                             <EditorTextInput
-                                defaultValue={question.settings.leftText}
-                                onChange={(e) => {
-                                    const newSettings = question.settings;
-                                    newSettings.leftText = e.target.value;
-                                    updateQuestionMutation({
-                                        settings: newSettings,
-                                    });
-                                }}
+                                defaultValue={openQuestion?.settings.leftText}
+                                onChange={(e) =>
+                                    updateSettings({ leftText: e.target.value })
+                                }
                                 characterCount={
-                                    question.settings.leftText?.split("").length
+                                    openQuestion?.settings.leftText?.length ?? 0
                                 }
                             />
                         </div>
                     </div>
-                    <div className="flex items-center justify-between gap-4">
+                    <div>
                         <p>Text on the right</p>
-                        <div className="w-[330px]">
+                        <div>
                             <EditorTextInput
-                                defaultValue={question.settings.rightText}
-                                onChange={(e) => {
-                                    const newSettings = question.settings;
-                                    newSettings.rightText = e.target.value;
-                                    updateQuestionMutation({
-                                        settings: newSettings,
-                                    });
-                                }}
+                                defaultValue={openQuestion?.settings.rightText}
+                                onChange={(e) =>
+                                    updateSettings({
+                                        rightText: e.target.value,
+                                    })
+                                }
                                 characterCount={
-                                    question.settings.rightText?.split("")
-                                        .length
+                                    openQuestion?.settings.rightText?.length ??
+                                    0
                                 }
                             />
                         </div>
                     </div>
                 </>
-            ) : null}
-            {question.type === SurveyQuestionTypeEnum.Rating ? (
-                <>
-                    <ReactSelect
-                        label="shape"
-                        options={rangeShape}
-                        defaultValue={rangeShape.find(
-                            (option) =>
-                                option.value === question.settings.shape,
-                        )}
-                        onchange={(option) => {
-                            const newSettings = question.settings;
-                            newSettings.shape = (option as SingleValue<Option>)
-                                ?.value;
-                            updateQuestionMutation({
-                                settings: newSettings,
-                            });
-                        }}
-                    />
-                </>
-            ) : null}
+            )}
 
-            {question.type === SurveyQuestionTypeEnum.SmileyScale && (
+            {openQuestion?.type === SurveyQuestionTypeEnum.Rating && (
+                <ReactSelect
+                    label="Shape"
+                    options={rangeShape}
+                    defaultValue={rangeShape.find(
+                        (option) =>
+                            option.value === openQuestion?.settings.shape,
+                    )}
+                    onchange={(option) =>
+                        updateSettings({
+                            shape: (option as SingleValue<Option>)?.value,
+                        })
+                    }
+                />
+            )}
+
+            {openQuestion?.type === SurveyQuestionTypeEnum.SmileyScale && (
                 <>
                     <EditorTextInput
-                        label={"Right text"}
+                        label="Right text"
                         placeholder=""
-                        defaultValue={question.settings.rightText}
-                        onChange={(e) => {
-                            const newSettings = question.settings;
-                            newSettings.rightText = e.target.value;
-                            updateQuestionMutation({
-                                settings: newSettings,
-                            });
-                        }}
+                        defaultValue={openQuestion?.settings.rightText}
+                        onChange={(e) =>
+                            updateSettings({ rightText: e.target.value })
+                        }
                         characterCount={
-                            question.settings.rightText?.split("").length
+                            openQuestion?.settings.rightText?.length ?? 0
                         }
                     />
                     <EditorTextInput
-                        label={"Left text"}
+                        label="Left text"
                         placeholder=""
-                        defaultValue={question.settings.leftText}
-                        onChange={(e) => {
-                            const newSettings = question.settings;
-                            newSettings.negativeText = e.target.value;
-                            updateQuestionMutation({
-                                settings: newSettings,
-                            });
-                        }}
+                        defaultValue={openQuestion?.settings.leftText}
+                        onChange={(e) =>
+                            updateSettings({ leftText: e.target.value })
+                        }
                         characterCount={
-                            question.settings.leftText?.split("").length
+                            openQuestion?.settings.leftText?.length ?? 0
                         }
                     />
                     <ReactSelect
                         options={smileyCount}
                         defaultValue={smileyCount.find(
                             (option) =>
-                                option.value === question.settings.count,
+                                option.value === openQuestion?.settings.count,
                         )}
                         label="Number of smileys"
-                        onchange={(option) => {
-                            const newSettings = question.settings;
-                            newSettings.count = (option as SingleValue<Option>)
-                                ?.value;
-                            updateQuestionMutation({
-                                settings: newSettings,
-                            });
-                        }}
+                        onchange={(
+                            option: MultiValue<Option> | SingleValue<Option>,
+                        ) =>
+                            updateSettings({
+                                count: (option as SingleValue<Option>)?.value,
+                            })
+                        }
                     />
                 </>
             )}

@@ -1,4 +1,4 @@
-import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { generateUniqueId, getHighestOrderNumber } from "@/utils";
 import { formOptions } from "@/utils/survey";
@@ -11,22 +11,19 @@ import { StarBtn } from "../Buttons/StarBtn";
 import TextButton from "../Buttons/TextButton";
 import { Option, ReactSelect } from "../ReactSelect";
 
-type Props = {
-    question: SurveyQuestion;
-};
-
-export const FormFieldList = ({ question }: Props) => {
-    const { updateQuestionMutation } = useQuestion();
+export const FormFieldList = () => {
+    const { updateQuestionMutation, openQuestion } = useQuestion();
+    console.log("openQuestion: ", openQuestion);
     return (
         <>
-            {question.type === SurveyQuestionTypeEnum.Form &&
-                (question.options ? (
+            {openQuestion?.type === SurveyQuestionTypeEnum.Form &&
+                (openQuestion.options.length > 1 && openQuestion?.options ? (
                     <>
                         <div className="flex justify-between">
                             <p className="flex-1 text-sm">Form Type</p>
                             <p className="flex-1 text-sm">Label</p>
                         </div>
-                        {question.options.map(
+                        {openQuestion?.options.map(
                             (option: FormField, index: number) => {
                                 return (
                                     <div key={option.id}>
@@ -36,11 +33,13 @@ export const FormFieldList = ({ question }: Props) => {
                                                 <ReactSelect
                                                     options={formOptions}
                                                     defaultValue={
-                                                        question.options[index]
+                                                        openQuestion?.options[
+                                                            index
+                                                        ]
                                                     }
                                                     onchange={(value) => {
                                                         const newOptions =
-                                                            question.options;
+                                                            openQuestion?.options;
                                                         newOptions[index].type =
                                                             (
                                                                 value as SingleValue<Option>
@@ -63,7 +62,7 @@ export const FormFieldList = ({ question }: Props) => {
                                                     }
                                                     onChange={(e) => {
                                                         const newOptions =
-                                                            question.options;
+                                                            openQuestion?.options;
                                                         newOptions[
                                                             index
                                                         ].label =
@@ -83,7 +82,7 @@ export const FormFieldList = ({ question }: Props) => {
                                                 }
                                                 onClick={() => {
                                                     const newOptions =
-                                                        question.options;
+                                                        openQuestion?.options;
                                                     newOptions[index].required =
                                                         !option.required;
                                                     updateQuestionMutation({
@@ -91,11 +90,12 @@ export const FormFieldList = ({ question }: Props) => {
                                                     });
                                                 }}
                                             />
-                                            {question.options.length > 2 ? (
+                                            {openQuestion?.options.length >
+                                            2 ? (
                                                 <MinusButton
                                                     onclick={() => {
                                                         const newOptions =
-                                                            question.options;
+                                                            openQuestion?.options;
                                                         newOptions.splice(
                                                             index,
                                                             1,
@@ -115,8 +115,10 @@ export const FormFieldList = ({ question }: Props) => {
                             text={"Add next field"}
                             onclick={() => {
                                 const highestOrderNumber =
-                                    getHighestOrderNumber(question.options);
-                                const newOptions = question.options;
+                                    getHighestOrderNumber(
+                                        openQuestion?.options,
+                                    );
+                                const newOptions = openQuestion?.options;
                                 newOptions.push({
                                     id: generateUniqueId(),
                                     orderNumber: highestOrderNumber + 1,

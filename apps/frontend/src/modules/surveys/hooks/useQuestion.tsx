@@ -9,7 +9,7 @@ import {
     useSurveyQuestionUpdateMutation,
 } from "@/generated/graphql";
 import { QuestionLogic } from "@/types";
-import { createSelectors } from "@/utils/selectors";
+import { parseQuestion } from "@/utils";
 import { CTAType } from "@integraflow/web/src/types";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -19,31 +19,28 @@ import { useSurvey } from "./useSurvey";
 
 export const useQuestion = () => {
     const { surveySlug } = useParams();
-    const { survey, parsedQuestions } = useSurvey();
+    const { parsedQuestions, surveyId } = useSurvey();
+    const { openQuestion, setOpenQuestion } = useSurveyStore((state) => state);
 
-    const surveyStore = createSelectors(useSurveyStore);
-    const setOpenQuestion = surveyStore.use.setOpenQuestion();
-    const openQuestion = surveyStore.use.openQuestion();
-
-    const surveyId = survey?.survey?.id;
-
-    const welcomeMessage = parsedQuestions.find(
-        (question) => question.settings?.ctaType === CTAType.NEXT,
-    );
-    const thankYouMessage = parsedQuestions.find(
-        (question) => question.settings?.ctaType !== CTAType.NEXT,
-    );
-    const [welcomeMessageExists, setWelcomeMessageExists] = useState<boolean>(
-        !!welcomeMessage,
-    );
-    const [thankYouMessageExists, setThankYouMessageExists] = useState<boolean>(
-        !!thankYouMessage,
-    );
+    const [welcomeMessageExists, setWelcomeMessageExists] =
+        useState<boolean>(false);
+    const [thankYouMessageExists, setThankYouMessageExists] =
+        useState<boolean>(false);
 
     useEffect(() => {
+        const welcomeMessage = parsedQuestions.find(
+            (question) => question.settings?.type === CTAType.NEXT,
+        );
+        const thankYouMessage = parsedQuestions.find((question) => {
+            if (question.settings?.type) {
+                [CTAType.CLOSE, CTAType.LINK, CTAType.HIDDEN].includes(
+                    question.settings?.type as CTAType,
+                );
+            }
+        });
         setWelcomeMessageExists(!!welcomeMessage);
         setThankYouMessageExists(!!thankYouMessage);
-    }, [welcomeMessage, thankYouMessage]);
+    }, [parsedQuestions]);
 
     const [createQuestion] = useSurveyQuestionCreateMutation();
     const [deleteQuestion] = useSurveyQuestionDeleteMutation();
@@ -53,6 +50,7 @@ export const useQuestion = () => {
         input: Partial<SurveyQuestionCreateInput>,
     ) => {
         const id = crypto.randomUUID();
+        if (!surveyId) return;
         if (input.options) input.options = JSON.stringify([...input.options]);
         if (input.settings)
             input.settings = JSON.stringify({ ...input.settings });
@@ -61,7 +59,7 @@ export const useQuestion = () => {
                 input: {
                     ...input,
                     orderNumber: parsedQuestions.length + 1,
-                    surveyId: surveyId ?? "",
+                    surveyId: surveyId,
                 },
             },
             optimisticResponse: {
@@ -86,6 +84,7 @@ export const useQuestion = () => {
                 },
             },
             update: (cache, { data }) => {
+                console.log("newQuestion: ", data);
                 if (!data?.surveyQuestionCreate?.surveyQuestion) return;
                 cache.modify({
                     id: `Survey:${surveyId}`,
@@ -112,9 +111,14 @@ export const useQuestion = () => {
                 });
             },
             onCompleted(data) {
-                setOpenQuestion(
-                    data.surveyQuestionCreate?.surveyQuestion as SurveyQuestion,
-                );
+                if (data.surveyQuestionCreate?.surveyQuestion) {
+                    setOpenQuestion(
+                        parseQuestion(
+                            data.surveyQuestionCreate
+                                ?.surveyQuestion as SurveyQuestion,
+                        ),
+                    );
+                }
             },
         });
     };
@@ -169,11 +173,21 @@ export const useQuestion = () => {
                     data: data.surveyQuestionUpdate?.surveyQuestion,
                 });
             },
+            onCompleted: (data) => {
+                if (data.surveyQuestionUpdate?.surveyQuestion) {
+                    setOpenQuestion(
+                        parseQuestion(
+                            data.surveyQuestionUpdate
+                                ?.surveyQuestion as SurveyQuestion,
+                        ),
+                    );
+                }
+            },
         });
     };
 
     const deleteQuestionMutation = async (question: SurveyQuestion) => {
-        if (!surveyId) return;
+        if (surveyId) return;
         await deleteQuestion({
             variables: {
                 id: question.id,

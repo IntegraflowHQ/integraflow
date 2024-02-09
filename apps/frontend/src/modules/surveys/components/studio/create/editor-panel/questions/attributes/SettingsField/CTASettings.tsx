@@ -1,4 +1,4 @@
-import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { QuestionSettings } from "@/types";
 import { CTAType } from "@integraflow/web/src/types";
@@ -6,64 +6,55 @@ import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import { Option, ReactSelect } from "../ReactSelect";
 
-type Props = {
-    question: SurveyQuestion;
-};
 const ctaTypeOptions = [
-    {
-        label: "link",
-        value: CTAType.LINK,
-    },
-    {
-        label: "close",
-        value: CTAType.CLOSE,
-    },
-    {
-        label: "hidden",
-        value: CTAType.HIDDEN,
-    },
+    { label: "Link", value: CTAType.LINK },
+    { label: "Close", value: CTAType.CLOSE },
+    { label: "Hidden", value: CTAType.HIDDEN },
 ];
 
-export const CTASettings = ({ question }: Props) => {
-    const { updateQuestionMutation } = useQuestion();
+export const CTASettings = () => {
+    const { updateQuestionMutation, openQuestion } = useQuestion();
 
-    const typedQuestion = question as SurveyQuestion;
-    typedQuestion.settings;
+    const updateSettings = (newSettings: QuestionSettings) => {
+        updateQuestionMutation({
+            settings: { ...openQuestion?.settings, ...newSettings },
+        });
+    };
 
     return (
         <>
-            {question.type === SurveyQuestionTypeEnum.Cta && (
+            {openQuestion?.type === SurveyQuestionTypeEnum.Cta && (
                 <>
                     <EditorTextInput
-                        label={"Button label"}
-                        defaultValue={question.settings.text}
+                        label="Button label"
+                        defaultValue={openQuestion?.settings.text}
                         onChange={(e) => {
-                            const newSettings = question.settings;
-                            (newSettings as QuestionSettings).text =
-                                e.target.value;
-                            updateQuestionMutation({
-                                settings: newSettings,
-                            });
+                            const newSettings = {
+                                ...openQuestion.settings,
+                                text: e.target.value,
+                            };
+                            updateSettings(newSettings);
                         }}
                         characterCount={
-                            question.settings.label?.split("").length
+                            openQuestion?.settings.label?.length ?? 0
                         }
                     />
-                    {question.settings.type !== CTAType.NEXT ? (
+                    {openQuestion.settings.type !== CTAType.NEXT && (
                         <div>
                             <ReactSelect
                                 options={ctaTypeOptions}
                                 defaultValue={ctaTypeOptions.find(
                                     (option) =>
-                                        option.value === question.settings.type,
+                                        option.value ===
+                                        openQuestion?.settings.type,
                                 )}
                                 label="Button type"
                                 onchange={(option) => {
-                                    const newSettings =
-                                        question.settings as QuestionSettings;
-                                    newSettings.type = (
-                                        option as SingleValue<Option>
-                                    )?.value;
+                                    const newSettings = {
+                                        ...openQuestion.settings,
+                                        type: (option as SingleValue<Option>)
+                                            ?.value,
+                                    };
                                     if (
                                         (option as SingleValue<Option>)
                                             ?.value === CTAType.CLOSE ||
@@ -72,30 +63,27 @@ export const CTASettings = ({ question }: Props) => {
                                     ) {
                                         newSettings.link = "";
                                     }
-                                    updateQuestionMutation({
-                                        settings: newSettings,
-                                    });
+                                    updateSettings(newSettings);
                                 }}
                             />
-                            {question.settings.ctaType === CTAType.LINK ? (
+                            {openQuestion?.settings.type === CTAType.LINK && (
                                 <EditorTextInput
-                                    label={"Button link"}
-                                    defaultValue={question.settings.ctaLink}
+                                    label="Button link"
+                                    defaultValue={openQuestion?.settings.link}
                                     onChange={(e) => {
-                                        const newSettings = question.settings;
-                                        newSettings.link = e.target.value;
-                                        updateQuestionMutation({
-                                            settings: newSettings,
-                                        });
+                                        const newSettings = {
+                                            ...openQuestion.settings,
+                                            link: e.target.value,
+                                        };
+                                        updateSettings(newSettings);
                                     }}
                                     characterCount={
-                                        question.settings.ctaLink?.split("")
-                                            .length
+                                        openQuestion?.settings.link?.length ?? 0
                                     }
                                 />
-                            ) : null}
+                            )}
                         </div>
-                    ) : null}
+                    )}
                 </>
             )}
         </>

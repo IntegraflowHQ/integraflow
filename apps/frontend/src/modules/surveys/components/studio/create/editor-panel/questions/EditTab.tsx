@@ -11,18 +11,14 @@ type Props = {
     questionIndex: number;
 };
 
-export const EditTab = ({ question, questionIndex }: Props) => {
+export const EditTab = ({ questionIndex }: Props) => {
     return (
         <div className="space-y-3">
-            <TabHeader question={question} questionIndex={questionIndex} />
-
-            <CTAFields question={question} />
-
-            <RatingFields question={question} />
-
-            <OptionsList question={question} />
-
-            <FormFieldList question={question} />
+            <TabHeader questionIndex={questionIndex} />
+            <CTAFields />
+            <RatingFields />
+            <OptionsList />
+            <FormFieldList />
         </div>
     );
 };

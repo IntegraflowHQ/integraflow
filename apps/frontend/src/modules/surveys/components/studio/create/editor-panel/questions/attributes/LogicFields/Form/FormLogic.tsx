@@ -1,7 +1,9 @@
 import { SurveyQuestion } from "@/generated/graphql";
+import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { QuestionLogic } from "@/types";
 import { cn, generateUniqueId } from "@/utils";
+import { destinationOptions } from "@/utils/question";
 import { LogicOperator } from "@integraflow/web/src/types";
 import { PlusIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -16,8 +18,9 @@ type Props = {
     logicIndex: number;
 };
 
-export const FormLogicBox = ({ logic, question, logicIndex }: Props) => {
+export const FormLogicBox = ({ logic, logicIndex }: Props) => {
     const { parsedQuestions } = useSurvey();
+    const { openQuestion } = useQuestion();
     const [allowAddLogic, setAllowAddLogic] = useState(false);
     const [editValues, setEditValues] = useState(logic);
 
@@ -50,7 +53,7 @@ export const FormLogicBox = ({ logic, question, logicIndex }: Props) => {
             <LogicGroup
                 groups={editValues.groups || []}
                 logicIndex={logicIndex}
-                question={question}
+                question={openQuestion!}
                 setEditValues={setEditValues}
                 editValues={editValues}
             />
@@ -73,24 +76,10 @@ export const FormLogicBox = ({ logic, question, logicIndex }: Props) => {
                 <p>then</p>
                 <div className="w-[330px]">
                     <ReactSelect
-                        options={[
-                            ...parsedQuestions
-                                .slice(
-                                    parsedQuestions.findIndex(
-                                        (q) => q.id === question?.id,
-                                    ) + 1,
-                                )
-                                .map((q) => ({
-                                    value: q.id,
-                                    label: q.label
-                                        ? `${q.orderNumber}- ${q.label} `
-                                        : `${q.orderNumber}- Empty Question`,
-                                })),
-                            {
-                                value: "-1",
-                                label: "End survey",
-                            },
-                        ]}
+                        options={destinationOptions(
+                            parsedQuestions,
+                            openQuestion!,
+                        )}
                         defaultValue={
                             parsedQuestions.find(
                                 (q) => q.id === logic.destination,

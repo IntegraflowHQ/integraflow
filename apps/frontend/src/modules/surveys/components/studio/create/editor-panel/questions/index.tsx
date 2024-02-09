@@ -3,7 +3,7 @@ import * as Accordion from "@radix-ui/react-accordion";
 import { useEffect, useState } from "react";
 import { QuestionOptions } from "./attributes/QuestionTypes";
 
-import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ParsedQuestion } from "@/types";
@@ -38,7 +38,7 @@ export default function UpdateQuestion() {
                             if (value === "" || value === undefined) {
                                 setOpenQuestion({
                                     id: "",
-                                } as SurveyQuestion);
+                                } as ParsedQuestion);
                                 return;
                             }
                             setOpenQuestion(

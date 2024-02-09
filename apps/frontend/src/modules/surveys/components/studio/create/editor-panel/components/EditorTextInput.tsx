@@ -18,12 +18,12 @@ export const EditorTextInput = ({
     classname,
     characterCount = 0,
     showCharacterCount = true,
-    maxCharacterCount = 5000,
+    maxCharacterCount = 500,
     placeholder,
     onChange,
     ...props
 }: EditorTextProps) => {
-    const debounceSubmit = useMemo(() => debounce(onChange, 3000), [onChange]);
+    const debounceSubmit = useMemo(() => debounce(onChange, 1000), [onChange]);
 
     return (
         <div className={cn(`${classname} relative w-full`)}>

@@ -1,12 +1,12 @@
-import { SurveyQuestion } from "@/generated/graphql";
+import { ParsedQuestion } from "@/types";
 import { create } from "zustand";
 
 export type SurveyState = {
-    openQuestion: SurveyQuestion | undefined;
+    openQuestion?: ParsedQuestion;
 };
 
 export type SurveyActions = {
-    setOpenQuestion: (question: SurveyQuestion) => void;
+    setOpenQuestion: (question: ParsedQuestion) => void;
 };
 
 const initialState: SurveyState = {

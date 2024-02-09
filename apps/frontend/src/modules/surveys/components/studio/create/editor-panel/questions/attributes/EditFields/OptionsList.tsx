@@ -1,4 +1,4 @@
-import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { cn, generateUniqueId, getHighestOrderNumber } from "@/utils";
 import { FormFieldType } from "@integraflow/web/src/types";
@@ -9,10 +9,6 @@ import MinusButton from "../Buttons/MinimizeButton";
 import { MoreButton } from "../Buttons/MoreButton";
 import TextButton from "../Buttons/TextButton";
 
-type Props = {
-    question: SurveyQuestion;
-};
-
 type DefaultOption = {
     id: number;
     orderNumber: number;
@@ -22,23 +18,25 @@ type DefaultOption = {
     type?: FormFieldType;
 };
 
-export const OptionsList = ({ question }: Props) => {
-    const { updateQuestionMutation } = useQuestion();
+export const OptionsList = () => {
+    const { updateQuestionMutation, openQuestion } = useQuestion();
 
     return (
         <div>
-            {question.type === SurveyQuestionTypeEnum.Single ||
-            question.type === SurveyQuestionTypeEnum.Multiple ||
-            question.type === SurveyQuestionTypeEnum.Dropdown ? (
+            {openQuestion?.type === SurveyQuestionTypeEnum.Single ||
+            openQuestion?.type === SurveyQuestionTypeEnum.Multiple ||
+            openQuestion?.type === SurveyQuestionTypeEnum.Dropdown ? (
                 <div className="space-y-4">
                     <div className="flex justify-between text-sm">
                         <p>Answer Choices</p>
-                        <AddMultipleQuestions question={question.options} />
+                        <AddMultipleQuestions
+                            questionOptions={openQuestion?.options}
+                        />
                     </div>
 
-                    {question.options ? (
-                        <div className="space-y-1">
-                            {question.options.map(
+                    {openQuestion?.options ? (
+                        <div className="space-y-4">
+                            {openQuestion?.options.map(
                                 (option: DefaultOption, index: number) => (
                                     <div
                                         key={option.id}
@@ -49,7 +47,7 @@ export const OptionsList = ({ question }: Props) => {
                                             defaultValue={option.label}
                                             onChange={(e) => {
                                                 const newOptions =
-                                                    question.options;
+                                                    openQuestion?.options;
                                                 newOptions[index].label =
                                                     e.target.value;
 
@@ -57,11 +55,15 @@ export const OptionsList = ({ question }: Props) => {
                                                     options: newOptions,
                                                 });
                                             }}
+                                            characterCount={
+                                                openQuestion?.options[index]
+                                                    .label.length
+                                            }
                                         />
                                         <div
                                             className={cn(
                                                 `${
-                                                    question.type ===
+                                                    openQuestion?.type ===
                                                     SurveyQuestionTypeEnum.Dropdown
                                                         ? "hidden "
                                                         : "block"
@@ -76,7 +78,7 @@ export const OptionsList = ({ question }: Props) => {
                                                 }
                                                 onClick={() => {
                                                     const newOptions =
-                                                        question.options;
+                                                        openQuestion?.options;
 
                                                     newOptions[index].comment =
                                                         !option.comment;
@@ -88,11 +90,12 @@ export const OptionsList = ({ question }: Props) => {
                                             />
                                         </div>
 
-                                        {question.options.length < 3 ? null : (
+                                        {openQuestion?.options.length <
+                                        3 ? null : (
                                             <MinusButton
                                                 onclick={() => {
                                                     const newOptions =
-                                                        question.options;
+                                                        openQuestion?.options;
                                                     newOptions.splice(index, 1);
                                                     updateQuestionMutation({
                                                         options: newOptions,
@@ -110,9 +113,9 @@ export const OptionsList = ({ question }: Props) => {
                         text={"Add an answer at choice"}
                         onclick={() => {
                             const highestOrderNumber = getHighestOrderNumber(
-                                question.options,
+                                openQuestion?.options,
                             );
-                            const newOptions = question.options;
+                            const newOptions = openQuestion?.options;
                             newOptions.push({
                                 id: generateUniqueId(),
                                 orderNumber: highestOrderNumber + 1,

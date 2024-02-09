@@ -15,7 +15,7 @@ type Props = {
 export const SettingsTab = ({ question, questionIndex }: Props) => {
     return (
         <div className="space-y-3 text-sm">
-            <TabHeader question={question} questionIndex={questionIndex} />
+            <TabHeader questionIndex={questionIndex} />
             <div className="space-y-3">
                 <CTASettings question={question} />
                 <BooleanSettings question={question} />

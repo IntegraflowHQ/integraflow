@@ -1,7 +1,5 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
-import {
-    FormFieldType
-} from "@integraflow/web/src/types";
+import { FormFieldType } from "@integraflow/web/src/types";
 import BirthdayIcon from "assets/icons/studio/birthday.png";
 import BooleanIcon from "assets/icons/studio/boolean.png";
 import ContactIcon from "assets/icons/studio/contact.png";
@@ -16,85 +14,73 @@ import WelcomeIcon from "assets/icons/studio/welcome.png";
 
 export const questionTypes = [
     {
-        id: 'welcome',
+        id: "welcome",
         name: "Welcome message",
         icon: WelcomeIcon,
         type: SurveyQuestionTypeEnum.Cta,
     },
     {
-        id: 'single',
+        id: "single",
         name: "Single answer selection",
         icon: SingleIcon,
         type: SurveyQuestionTypeEnum.Single,
     },
     {
-        id: 'dropdown',
+        id: "dropdown",
         name: "Dropdown list",
         icon: SingleIcon,
         type: SurveyQuestionTypeEnum.Dropdown,
     },
     {
-        id: 'multiple',
+        id: "multiple",
         name: "Multiple answer selection",
         icon: MultipleIcon,
         type: SurveyQuestionTypeEnum.Multiple,
     },
     {
-        id: 'text',
+        id: "text",
         name: "Text answer",
         icon: TextIcon,
         type: SurveyQuestionTypeEnum.Text,
     },
     {
-        id: 'smiley',
+        id: "smiley",
         name: "Smiley scale",
         icon: SmileyIcon,
         type: SurveyQuestionTypeEnum.SmileyScale,
     },
     {
-        id:'rating',
+        id: "rating",
         name: "Rating scale",
         icon: RatingIcon,
         type: SurveyQuestionTypeEnum.Rating,
     },
     {
-        id:'rating',
-        name: "numerical scale",
-        icon: RatingIcon,
-        type: SurveyQuestionTypeEnum.NumericalScale,
-    },
-    {
-        id:'rating',
-        name: "csat",
-        icon: RatingIcon,
-        type: SurveyQuestionTypeEnum.Csat,
-    },
-    {
-        id:'nps',
+        id: "nps",
         name: "NPS®",
         icon: NPSIcon,
         type: SurveyQuestionTypeEnum.Nps,
     },
     {
-        id: 'form',
+        id: "form",
         name: "Contact form",
         icon: ContactIcon,
         type: SurveyQuestionTypeEnum.Form,
     },
     {
-        id: 'boolean',
+        id: "boolean",
         name: "Boolean",
         icon: BooleanIcon,
         type: SurveyQuestionTypeEnum.Boolean,
     },
     {
-        id:'birthday',
+        id: "birthday",
         name: "Birthday",
         icon: BirthdayIcon,
         type: SurveyQuestionTypeEnum.Date,
     },
     {
-        id:'thankyou',
+        id: "thankyou",
         name: "Thank you",
         icon: ThankYouIcon,
         type: SurveyQuestionTypeEnum.Cta,

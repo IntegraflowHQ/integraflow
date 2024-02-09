@@ -46,8 +46,8 @@ export const QuestionOptions = ({
                 ...options,
                 settings: {
                     ...options.settings,
-                    ctaType: CTAType.NEXT,
                     text: "",
+                    type: CTAType.NEXT,
                 },
             });
             setWelcomeMessageExists(true);

@@ -1,10 +1,10 @@
 import {
+    SurveyQuestion,
     useGetSurveyQuery,
     useSurveyCreateMutation,
 } from "@/generated/graphql";
 import { ROUTES } from "@/routes";
-import { ParsedQuestion } from "@/types";
-import { generateRandomString } from "@/utils";
+import { generateRandomString, parseQuestion } from "@/utils";
 import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -28,24 +28,9 @@ export const useSurvey = () => {
 
         return [...questions]
             .sort((a, b) => a.node.orderNumber - b.node.orderNumber)
-            .map(({ node: question }) => {
-                let parsedSettings = question.settings ?? {};
-                let parsedOptions = question.options ?? [];
-
-                if (typeof parsedSettings === "string") {
-                    parsedSettings = JSON.parse(parsedSettings);
-                }
-
-                if (typeof parsedOptions === "string") {
-                    parsedOptions = JSON.parse(parsedOptions);
-                }
-
-                return {
-                    ...question,
-                    settings: parsedSettings,
-                    options: parsedOptions,
-                } as ParsedQuestion;
-            });
+            .map(({ node: question }) =>
+                parseQuestion(question as SurveyQuestion),
+            );
     }, [survey]);
 
     const createSurvey = async () => {

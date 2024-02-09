@@ -7,12 +7,14 @@ import { useEffect, useState } from "react";
 import TextButton from "./Buttons/TextButton";
 
 interface Props extends DialogProps {
-    question?: QuestionOption[] | FormField[];
+    questionOptions?: QuestionOption[] | FormField[];
 }
 
-export const AddMultipleQuestions = ({ question }: Props) => {
+export const AddMultipleQuestions = ({ questionOptions }: Props) => {
     const [inputValue, setInputValue] = useState(
-        question ? [...question.map((option) => option.label)].join("\n") : "",
+        questionOptions
+            ? [...questionOptions.map((option) => option.label)].join("\n")
+            : "",
     );
 
     const [openModal, setOpenModal] = useState(false);
@@ -21,8 +23,12 @@ export const AddMultipleQuestions = ({ question }: Props) => {
 
     useEffect(() => {
         setInputValue(
-            question
-                ? [...question.map((option) => option.label)].join("\n")
+            questionOptions
+                ? [
+                      ...questionOptions.map(
+                          (option: QuestionOption) => option.label,
+                      ),
+                  ].join("\n")
                 : "",
         );
     }, [openModal]);

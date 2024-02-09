@@ -1,18 +1,12 @@
-import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { QuestionOption } from "@/types";
-import {
-    createRangeOptions,
-    generateNumericalOptions,
-} from "@/utils/defaultOptions";
+import { createRangeOptions } from "@/utils/defaultOptions";
+import { generateNumericalOptions } from "@/utils/question";
 import { useState } from "react";
 import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import { Option, ReactSelect } from "../ReactSelect";
-
-type Props = {
-    question: SurveyQuestion;
-};
 
 const scaleStyleOptions = [
     {
@@ -27,31 +21,39 @@ const scaleStyleOptions = [
         label: "Classic CSAT",
         value: SurveyQuestionTypeEnum.Csat,
     },
+    {
+        label: "CES",
+        value: "CES",
+    },
 ];
 const numericalOptions = generateNumericalOptions(2, 10);
 const ratingOptions = generateNumericalOptions(2, 10);
 
-export const RatingFields = ({ question }: Props) => {
-    const { updateQuestionMutation } = useQuestion();
+export const RatingFields = () => {
+    const { updateQuestionMutation, openQuestion } = useQuestion();
     const [scaleStyle, setScaleStyle] = useState<string | number | undefined>(
-        scaleStyleOptions.find((option) => option.value === question.type)
+        scaleStyleOptions.find((option) => option.value === openQuestion?.type)
             ?.value,
     );
+    console.log(scaleStyle);
     return (
         <div>
-            {question.type === SurveyQuestionTypeEnum.Rating ||
-            question.type === SurveyQuestionTypeEnum.Csat ||
-            question.type === SurveyQuestionTypeEnum.NumericalScale ? (
-                <>
+            {openQuestion?.type === SurveyQuestionTypeEnum.Rating ||
+            openQuestion?.type === SurveyQuestionTypeEnum.Csat ||
+            openQuestion?.type === SurveyQuestionTypeEnum.NumericalScale ||
+            openQuestion?.type === "CES" ? (
+                <div className="space-y-6">
                     <div className="flex gap-2">
                         <div className="flex-1">
                             <ReactSelect
                                 label="Scale Style"
                                 options={scaleStyleOptions}
                                 defaultValue={scaleStyleOptions.find(
-                                    (option) => option.value === question.type,
+                                    (option) =>
+                                        option.value === openQuestion?.type,
                                 )}
                                 onchange={(value) => {
+                                    console.log(value);
                                     setScaleStyle(
                                         (value as SingleValue<Option>)?.value,
                                     );
@@ -77,12 +79,12 @@ export const RatingFields = ({ question }: Props) => {
                                     defaultValue={numericalOptions.find(
                                         (option) =>
                                             option.value ===
-                                            question.options?.length,
+                                            openQuestion?.options?.length,
                                     )}
                                     onchange={(option) => {
                                         updateQuestionMutation({
                                             options: createRangeOptions(
-                                                question.type,
+                                                openQuestion?.type,
                                                 (option as SingleValue<Option>)
                                                     ?.value as number,
                                             ),
@@ -99,12 +101,12 @@ export const RatingFields = ({ question }: Props) => {
                                     defaultValue={ratingOptions.find(
                                         (option) =>
                                             option.value ===
-                                            question.options?.length,
+                                            openQuestion?.options?.length,
                                     )}
                                     onchange={(option) => {
                                         updateQuestionMutation({
                                             options: createRangeOptions(
-                                                question.type,
+                                                openQuestion?.type,
                                                 (option as SingleValue<Option>)
                                                     ?.value as number,
                                             ),
@@ -114,21 +116,21 @@ export const RatingFields = ({ question }: Props) => {
                             </div>
                         ) : null}
                     </div>
-                    {scaleStyle === SurveyQuestionTypeEnum.Csat ? (
+                    {scaleStyle === SurveyQuestionTypeEnum.Csat ||
+                    scaleStyle === "CES" ? (
                         <div>
                             <p>Scale labels:</p>
-                            {question.options?.map(
+                            {openQuestion?.options?.map(
                                 (option: QuestionOption, index: number) => {
+                                    console.log("openQuestion: ", openQuestion);
+                                    console.log(option);
                                     return (
-                                        <div
-                                            key={option.id}
-                                            className="flex items-center gap-2"
-                                        >
+                                        <div key={option.id} className="mb-4">
                                             <EditorTextInput
                                                 defaultValue={option.label}
                                                 onChange={(e) => {
                                                     const newOptions =
-                                                        question.options;
+                                                        openQuestion?.options;
                                                     newOptions[index].label =
                                                         e.target.value;
                                                     updateQuestionMutation({
@@ -142,7 +144,7 @@ export const RatingFields = ({ question }: Props) => {
                             )}
                         </div>
                     ) : null}
-                </>
+                </div>
             ) : null}
         </div>
     );
