@@ -8,7 +8,7 @@ import { CTAType } from "@integraflow/web/src/types";
 import { PlusCircle } from "lucide-react";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import ScrollToBottom, { useScrollToBottom } from "react-scroll-to-bottom";
-import { getDefaultValues } from "../../../../../../../../utils/defaultOptions";
+import { getDefaultValues } from "../../../../../../../../utils/question/defaultOptions";
 import { surveyTypes } from "../../../../../Templates";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {

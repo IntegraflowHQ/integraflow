@@ -1,8 +1,8 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { QuestionOption } from "@/types";
-import { createRangeOptions } from "@/utils/defaultOptions";
 import { generateNumericalOptions } from "@/utils/question";
+import { createRangeOptions } from "@/utils/question/defaultOptions";
 import { useState } from "react";
 import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";

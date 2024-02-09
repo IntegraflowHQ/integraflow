@@ -99,7 +99,6 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
             values: (values as MultiValue<Option>)?.map((v: any) => v.value),
         };
         if ((values as MultiValue<Option>).length > 0) {
-            console.log("first");
             newValues = {
                 ...editValues,
                 values: (values as MultiValue<Option>)?.map(
@@ -234,7 +233,7 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
             editValues.condition !==
                 LogicConditionEnum.QUESTION_IS_NOT_ANSWERED ? (
                 <div className="flex justify-between">
-                    <div></div>
+                    <div />
                     <div className="w-[330px]">
                         <ReactSelect
                             comboBox={true}
@@ -243,9 +242,7 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
                                 openQuestion?.type as SurveyQuestionTypeEnum,
                             )}
                             logicOperator={logicOperator}
-                            onOperatorChange={() => {
-                                handleOperatorChange();
-                            }}
+                            onOperatorChange={handleOperatorChange}
                             options={logicValuesOptions(openQuestion!)}
                             defaultValue={editValues.values
                                 ?.map(

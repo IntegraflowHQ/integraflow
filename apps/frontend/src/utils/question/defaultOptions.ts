@@ -4,7 +4,7 @@ import {
 } from "@/generated/graphql";
 import { QuestionOption, QuestionSettings } from "@/types";
 import { FormFieldType } from "@integraflow/web/src/types";
-import { generateUniqueId } from ".";
+import { generateUniqueId } from "..";
 
 const CSATOptions = [
     "Very unsatisfied",

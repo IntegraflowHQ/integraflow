@@ -9,7 +9,7 @@ import {
     logicValuesOptions,
 } from "@/utils/question";
 import { LogicOperator } from "@integraflow/web/src/types";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { MultiValue, SingleValue } from "react-select";
 import { LogicOperatorBtn } from "../../LogicOperator";
 import { Option, ReactSelect } from "../../ReactSelect";
@@ -29,12 +29,52 @@ export const LogicGroup = ({
     logicIndex,
 }: Props) => {
     const { openQuestion } = useQuestion();
-    const { updateLogic, updateQuestionMutation } = useQuestion();
+    const { updateQuestionMutation } = useQuestion();
     const [groupOperator, setGroupOperator] = useState<LogicOperator>(
         editValues.operator as LogicOperator,
     );
     const [fieldOperator, setFieldOperator] = useState<LogicOperator>(
         editValues.operator as LogicOperator,
+    );
+    const updateLogic = useCallback(
+        (
+            editValues: QuestionLogic,
+            question: SurveyQuestion,
+            logicIndex: number,
+        ) => {
+            if (!editValues.destination) {
+                return;
+            }
+            if (!editValues.groups || editValues.groups?.length == 0) {
+                return;
+            }
+
+            const completeGroups = editValues.groups.filter(
+                (g) => g.fields.length > 0 && g.condition,
+            );
+
+            if (completeGroups.length === 0) {
+                return;
+            }
+
+            const newLogic = {
+                ...editValues,
+                destination: editValues.destination,
+                groups: completeGroups,
+            };
+            const newLogicArray = question.settings.logic.map(
+                (l: QuestionLogic, i: number) =>
+                    i === logicIndex ? newLogic : l,
+            );
+
+            updateQuestionMutation({
+                settings: {
+                    ...question.settings,
+                    logic: newLogicArray,
+                },
+            });
+        },
+        [],
     );
     const handleUpdateFields = (
         values: SingleValue<Option> | MultiValue<Option>,

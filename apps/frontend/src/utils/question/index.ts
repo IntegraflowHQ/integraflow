@@ -1,13 +1,8 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { Option } from "@/modules/surveys/components/studio/create/editor-panel/questions/attributes/ReactSelect";
-import { LogicConditionEnum, ParsedQuestion } from "@/types";
+import { LogicConditionEnum, ParsedQuestion, QuestionOption } from "@/types";
 import { LogicOperator } from "@integraflow/web/src/types";
-import { SingleValue } from "react-select";
 
-export const questionsWithoutSettingsTab = [
-    SurveyQuestionTypeEnum.Csat,
-    SurveyQuestionTypeEnum.CES,
-];
+export const questionsWithoutSettingsTab = [SurveyQuestionTypeEnum.Csat, "CES"];
 
 const MultipleLogicConditions = [
     {
@@ -157,7 +152,7 @@ export const conditionOptions = (type: SurveyQuestionTypeEnum) => {
         type === SurveyQuestionTypeEnum.Nps ||
         type === SurveyQuestionTypeEnum.SmileyScale ||
         type === SurveyQuestionTypeEnum.Csat ||
-        type === SurveyQuestionTypeEnum.CES
+        type === "CES"
     ) {
         return RangeLogicConditions;
     }
@@ -239,12 +234,10 @@ export const destinationOptions = (
 
 export const logicValuesOptions = (question: ParsedQuestion) => {
     return [
-        ...(question?.options?.map(
-            (option: SingleValue<Option>, index: number) => ({
-                value: option?.id,
-                label: option?.label ?? `Empty Option ${index + 1}`,
-            }),
-        ) ?? []),
+        ...(question?.options?.map((option: QuestionOption, index: number) => ({
+            value: option?.id,
+            label: option?.label ?? `Empty Option ${index + 1}`,
+        })) ?? []),
     ];
 };
 
