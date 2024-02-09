@@ -1,7 +1,10 @@
-import useLogout from "@/modules/auth/hooks/useLogout";
-import useUserState from "@/modules/users/hooks/useUserState";
+import { ChevronDown } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+import { useLogout } from "@/modules/auth/hooks/useLogout";
+import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
+import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { AcronynmBox, Button, NavItem, NavLink } from "@/ui";
-import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -22,31 +25,31 @@ import {
     QuestionIcon,
     SettingsIcon,
 } from "@/ui/icons";
-import Frame from "assets/images/Frame.png";
-import { ChevronDown } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-export const UserProfile = () => {
-    const ProfileNavItems = [
-        {
-            id: 1,
-            title: "Billing",
-            icon: <NewspaperIcon />,
-        },
-        {
-            id: 2,
-            title: "Status Page",
-            icon: <CircleStackIcon />,
-        },
-        {
-            id: 3,
-            title: "Help and doc",
-            icon: <QuestionIcon />,
-        },
-    ];
 
-    const { handleLogout } = useLogout();
+import Frame from "assets/images/Frame.png";
+
+const profileNavItems = [
+    {
+        id: 1,
+        title: "Billing",
+        icon: <NewspaperIcon />,
+    },
+    {
+        id: 2,
+        title: "Status Page",
+        icon: <CircleStackIcon />,
+    },
+    {
+        id: 3,
+        title: "Help and doc",
+        icon: <QuestionIcon />,
+    },
+];
+
+export const UserProfile = () => {
+    const { user, organizations } = useCurrentUser();
     const { workspace } = useWorkspace();
-    const { user } = useUserState();
+    const { logout } = useLogout();
     const navigate = useNavigate();
 
     return (
@@ -100,13 +103,9 @@ export const UserProfile = () => {
                     <DropdownMenuSubTrigger>
                         <NavItem
                             uppercase={true}
-                            text={workspace?.organization?.name}
+                            text={workspace?.name}
                             leftIcon={
-                                <AcronynmBox
-                                    text={
-                                        workspace?.organization?.name as string
-                                    }
-                                />
+                                <AcronynmBox text={workspace?.name as string} />
                             }
                             rightIcon={<CheckCircleIcon />}
                             classnames="px-3 py-2 my-3 uppercase"
@@ -117,20 +116,20 @@ export const UserProfile = () => {
                         <DropdownMenuLabel>
                             <p className="mb-2 text-xs">OTHER WORKSPACES</p>
                         </DropdownMenuLabel>
-                        {user?.organizations?.edges.map((item) => {
+                        {organizations?.map((item) => {
                             return (
                                 <DropdownMenuItem
                                     className="px-3 py-2"
-                                    key={item.node.name}
+                                    key={item?.name}
                                     onClick={() => {
-                                        navigate(`/${item.node.slug}`);
+                                        navigate(`/${item?.slug}`);
                                     }}
                                 >
                                     <NavItem
-                                        text={item.node.name}
+                                        text={item?.name}
                                         leftIcon={
                                             <AcronynmBox
-                                                text={item.node.name}
+                                                text={item?.name ?? ""}
                                             />
                                         }
                                     />
@@ -156,7 +155,7 @@ export const UserProfile = () => {
                     <p className="text-sm">Workspace Settings</p>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
-                {ProfileNavItems.map((item) => {
+                {profileNavItems.map((item) => {
                     return (
                         <DropdownMenuItem key={item.title}>
                             <NavLink
@@ -174,7 +173,7 @@ export const UserProfile = () => {
                 <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
                 <DropdownMenuItem
                     className="flex items-center gap-2 px-3 py-2"
-                    onClick={handleLogout}
+                    onClick={logout}
                 >
                     <LogoutIcon />
                     <p className="text-sm text-intg-error-text">Log out</p>

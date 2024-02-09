@@ -8,7 +8,7 @@ import {
     useSurveyChannelDeleteMutation,
     useSurveyChannelUpdateMutation,
 } from "@/generated/graphql";
-import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
+import { useProject } from "@/modules/projects/hooks/useProject";
 import { ParsedChannel } from "@/types";
 import { fromSurveyChannel, toSurveyChannel } from "@/utils";
 import { useCallback, useMemo } from "react";
@@ -17,11 +17,11 @@ import { useSurvey } from "./useSurvey";
 
 export default function useChannels() {
     const { survey, surveyId } = useSurvey();
-    const { workspace } = useWorkspaceState();
+    const { project } = useProject();
 
     const context = {
         headers: {
-            Project: workspace?.project.id,
+            Project: project?.id,
         },
     };
 

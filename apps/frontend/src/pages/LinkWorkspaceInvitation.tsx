@@ -1,70 +1,46 @@
-import {
-    OrganizationInviteDetails,
-    User,
-    useOrganizationInviteDetailsLazyQuery,
-    useOrganizationJoinMutation,
-} from "@/generated/graphql";
-import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
-import { ExpiredInviteLink } from "@/modules/organizationInvite/components/ExpiredInviteLink";
-import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
+import { OrganizationInviteLinkDetails } from "@/generated/graphql";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { ExpiredInviteLink } from "@/modules/workspace/components/invite/ExpiredInviteLink";
+import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
 import { Button, GlobalSpinner, Screen } from "@/ui";
 import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
-import { getAcronym, omitTypename } from "@/utils";
-import { useEffect } from "react";
+import { getAcronym } from "@/utils";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export const LinkWorkspaceInvitation = () => {
     const { inviteLink } = useParams();
-    const { addWorkspace } = useWorkspace();
-    const { token } = useAuthToken();
+    const { loading, getInviteDetails, joinWorkspace } = useWorkspaceInvite();
+    const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
 
-    const [joinOrganization, { loading }] = useOrganizationJoinMutation();
-
-    const [
-        fetchInviteDetails,
-        { loading: inviteDetailsLoading, data: inviteDetails },
-    ] = useOrganizationInviteDetailsLazyQuery({
-        variables: {
-            inviteLink: window.location.href,
-        },
-    });
+    const [inviteDetails, setInviteDetails] =
+        useState<OrganizationInviteLinkDetails>();
 
     useEffect(() => {
-        const getInviteDetails = async () => {
-            await fetchInviteDetails();
+        const fetchInviteDetails = async () => {
+            const response = await getInviteDetails(window.location.href);
+            if (response) {
+                setInviteDetails(response as OrganizationInviteLinkDetails);
+            }
         };
-        getInviteDetails();
-    }, [inviteLink]);
+
+        fetchInviteDetails();
+    }, [getInviteDetails, inviteLink]);
 
     const handleJoinOrganization = async () => {
-        if (token) {
-            const result = await joinOrganization({
-                variables: {
-                    input: {
-                        inviteLink: window.location.pathname,
-                    },
-                },
-            });
-            if (result.data?.organizationJoin?.user) {
-                const user = omitTypename(
-                    result.data.organizationJoin?.user as User,
-                );
-                addWorkspace(user);
-            }
+        if (isAuthenticated) {
+            await joinWorkspace(window.location.pathname);
         } else {
             navigate(`/?inviteLink=${window.location.href}`);
         }
     };
 
-    if (loading || inviteDetailsLoading) {
+    if (loading) {
         return <GlobalSpinner />;
     }
-    if (
-        (inviteDetails?.organizationInviteDetails as OrganizationInviteDetails)
-            ?.expired ||
-        !inviteDetails?.organizationInviteDetails
-    ) {
+
+    if (!inviteDetails) {
         return <ExpiredInviteLink />;
     }
 
@@ -76,19 +52,14 @@ export const LinkWorkspaceInvitation = () => {
                         <AcronynmBox
                             size="md"
                             text={getAcronym(
-                                (
-                                    inviteDetails?.organizationInviteDetails as OrganizationInviteDetails
-                                )?.organizationName,
+                                inviteDetails?.organizationName ?? "",
                             )}
                         />
                     </div>
                     <p className="text-center text-3xl font-semibold text-white">
                         <span>You have been invited you to</span>
                         <br />
-                        {
-                            inviteDetails?.organizationInviteDetails
-                                ?.organizationName
-                        }
+                        {inviteDetails?.organizationName}
                     </p>
                     <p>
                         Redefine customer experience with organic feedback and
@@ -99,7 +70,7 @@ export const LinkWorkspaceInvitation = () => {
                     <div className="m-auto w-[80%]">
                         <Button
                             onClick={handleJoinOrganization}
-                            text={token ? "Accept" : "Login"}
+                            text={isAuthenticated ? "Accept" : "Login"}
                         />
                     </div>
                 </div>

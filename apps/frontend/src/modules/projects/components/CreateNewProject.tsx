@@ -1,7 +1,4 @@
-import { Project, useProjectCreateMutation } from "@/generated/graphql";
-import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
 import { Button, Dialog, DialogContent, TextInput } from "@/ui";
-import { omitTypename } from "@/utils";
 import { toast } from "@/utils/toast";
 import React, { useState } from "react";
 import { useProject } from "../hooks/useProject";
@@ -12,9 +9,7 @@ type Props = {
 };
 
 export const CreateNewProject = ({ open, onOpenChange }: Props) => {
-    const [projectCreate] = useProjectCreateMutation();
-    const { workspace, switchProject } = useWorkspace();
-    const { upsertProject } = useProject();
+    const { createProject } = useProject();
 
     const [projectName, setProjectName] = useState<string>("");
     const [projectNameError, setProjectNameError] = useState<
@@ -32,29 +27,20 @@ export const CreateNewProject = ({ open, onOpenChange }: Props) => {
             return;
         }
 
-        const result = await projectCreate({
-            variables: {
-                input: { name: projectName },
-            },
-            context: {
-                headers: {
-                    Project: workspace?.project?.id,
-                },
-            },
-        });
+        const response = await createProject(projectName);
 
-        if (result.data?.projectCreate?.projectErrors.length > 0) {
-            toast.error(result.data.projectCreate.projectErrors[0].message);
+        if (response instanceof Error) {
+            toast.error(response.message);
+            return;
         }
 
-        if (result.data?.projectCreate?.project) {
+        if (response?.projectErrors?.length) {
+            toast.error(response.projectErrors[0].message as string);
+            return;
+        }
+
+        if (response?.project) {
             toast.success("Project created");
-            upsertProject(
-                omitTypename(result.data.projectCreate.project as Project),
-            );
-            switchProject(
-                omitTypename(result.data.projectCreate.project as Project),
-            );
             onOpenChange(!open);
         }
     };

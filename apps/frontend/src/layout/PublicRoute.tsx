@@ -1,9 +1,9 @@
-import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
-import useRedirect from "@/modules/auth/hooks/useRedirect";
-import useUserState from "@/modules/users/hooks/useUserState";
-import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
-import { GlobalSpinner } from "@/ui";
 import React, { useEffect, useState } from "react";
+
+import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { useRedirect } from "@/modules/auth/hooks/useRedirect";
+import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
+import { GlobalSpinner } from "@/ui";
 
 export default function PublicRoute({
     children,
@@ -11,38 +11,21 @@ export default function PublicRoute({
     children: React.ReactNode;
 }) {
     const [ready, setReady] = useState(false);
-    const { token } = useAuthToken();
-    const { user } = useUserState();
-    const {
-        workspace,
-        isValidWorkspace,
-        createValidWorkspaceData,
-        switchWorkspace,
-    } = useWorkspace();
+    const { isAuthenticated } = useAuth();
+    const { user } = useCurrentUser();
     const redirect = useRedirect();
 
     useEffect(() => {
-        const onMount = async () => {
-            if (!token) {
-                setReady(true);
-                return;
-            }
-
-            if (workspace && isValidWorkspace) {
-                redirect(workspace);
-            } else {
-                const newWorkspace = await createValidWorkspaceData();
-                if (newWorkspace) {
-                    switchWorkspace(newWorkspace);
-                } else if (user) {
-                    redirect(user);
-                }
-            }
+        if (!isAuthenticated) {
             setReady(true);
-        };
+            return;
+        }
 
-        onMount();
-    }, [workspace, isValidWorkspace, user]);
+        if (isAuthenticated && user) {
+            redirect(user);
+        }
+        setReady(true);
+    }, [isAuthenticated, redirect, user]);
 
     if (!ready) {
         return <GlobalSpinner />;
