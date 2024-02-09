@@ -9,7 +9,7 @@ import {
     useSurveyQuestionCreateMutation,
     useSurveyUpdateMutation,
 } from "@/generated/graphql";
-import useUserState from "@/modules/users/hooks/useUserState";
+import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
 import { ROUTES } from "@/routes";
 import { generateRandomString } from "@/utils";
 import { createSelectors } from "@/utils/selectors";
@@ -23,7 +23,7 @@ export const useSurvey = () => {
     const { orgSlug, projectSlug, surveySlug } = useParams();
     const scrollToBottom = useScrollToBottom();
     const navigate = useNavigate();
-    const { user } = useUserState();
+    const { user } = useCurrentUser();
 
     const surveyStore = createSelectors(useSurveyStore);
     const openQuestion = surveyStore.use.openQuestion();
