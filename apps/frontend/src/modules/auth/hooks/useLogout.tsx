@@ -3,8 +3,8 @@ import { useCallback } from "react";
 
 import { useLogoutMutation } from "@/generated/graphql";
 
-import { useAuth } from "./useAuth";
 import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
+import { useAuth } from "./useAuth";
 
 export const useLogout = () => {
     const { logout: clearAuth } = useAuth();

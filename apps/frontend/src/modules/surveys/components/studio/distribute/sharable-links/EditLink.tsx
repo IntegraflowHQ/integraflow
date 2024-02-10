@@ -5,13 +5,6 @@ import { addDays, subDays } from "date-fns";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { LinkProps } from "./Link";
 
-type Inputs = {
-    name: string;
-    singleUse: boolean;
-    startDate?: Date;
-    endDate?: Date;
-};
-
 type Props = LinkProps & {
     settings: ChannelSettings;
     close: () => void;
@@ -19,18 +12,17 @@ type Props = LinkProps & {
 
 export default function EditLink({ link, settings, close }: Props) {
     const { updateChannel } = useChannels();
-    const { register, handleSubmit, watch, setValue } = useForm<Inputs>({
-        defaultValues: {
-            name: settings?.name ?? "",
-            singleUse: settings?.singleUse ?? false,
-            startDate: settings?.startDate
-                ? new Date(settings?.startDate)
-                : undefined,
-            endDate: settings?.endDate ? new Date(settings.endDate) : undefined,
-        },
-    });
+    const { register, handleSubmit, watch, setValue } =
+        useForm<ChannelSettings>({
+            defaultValues: {
+                name: settings?.name ?? "",
+                singleUse: settings?.singleUse ?? false,
+                startDate: settings?.startDate,
+                endDate: settings?.endDate,
+            },
+        });
 
-    const onSubmit: SubmitHandler<Inputs> = (data) => {
+    const onSubmit: SubmitHandler<ChannelSettings> = (data) => {
         updateChannel(link, {
             settings: JSON.stringify(data),
         });
@@ -48,6 +40,7 @@ export default function EditLink({ link, settings, close }: Props) {
                     {...register("name", { required: true })}
                 />
                 <Switch
+                    name="singleUse"
                     label="Allow multiple response from the same device"
                     onChange={(event) => {
                         setValue("singleUse", event.target.value);
@@ -56,25 +49,43 @@ export default function EditLink({ link, settings, close }: Props) {
                 />
                 <DatePicker
                     label="Start date"
-                    value={watch("startDate")}
-                    onChange={(event) => {
-                        setValue("startDate", event.target.value);
+                    value={
+                        watch("startDate")
+                            ? new Date(watch("startDate") as string)
+                            : undefined
+                    }
+                    onChange={(e) => {
+                        if (e.target.value) {
+                            setValue("startDate", e.target.value.toISOString());
+                        } else {
+                            setValue("startDate", "");
+                        }
                     }}
+                    displayFormat="dd/MM/yyyy"
                     toDate={
                         watch("endDate")
-                            ? subDays(new Date(watch("endDate") as Date), 1)
+                            ? subDays(new Date(watch("endDate") as string), 1)
                             : undefined
                     }
                 />
                 <DatePicker
                     label="End date"
-                    onChange={(event) => {
-                        setValue("endDate", event.target.value);
+                    value={
+                        watch("endDate")
+                            ? new Date(watch("endDate") as string)
+                            : undefined
+                    }
+                    onChange={(e) => {
+                        if (e.target.value) {
+                            setValue("endDate", e.target.value.toISOString());
+                        } else {
+                            setValue("endDate", "");
+                        }
                     }}
-                    value={watch("endDate")}
+                    displayFormat="dd/MM/yyyy"
                     fromDate={
                         watch("startDate")
-                            ? addDays(new Date(watch("startDate") as Date), 1)
+                            ? addDays(new Date(watch("startDate") as string), 1)
                             : undefined
                     }
                 />

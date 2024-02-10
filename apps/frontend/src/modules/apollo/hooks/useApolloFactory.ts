@@ -4,10 +4,19 @@ import { useMemo, useRef } from "react";
 import { useUpdateEffect } from "@/hooks";
 
 import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { LocalForageWrapper, persistCache } from "apollo3-cache-persist";
+import * as localForage from "localforage";
 
 import { ApolloFactory } from "../services/apollo.factory";
 
 const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
+
+const cache = new InMemoryCache();
+
+await persistCache({
+    cache,
+    storage: new LocalForageWrapper(localForage),
+});
 
 export const useApolloFactory = () => {
     const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
@@ -18,7 +27,7 @@ export const useApolloFactory = () => {
     const apolloClient = useMemo(() => {
         apolloRef.current = new ApolloFactory({
             uri: `${import.meta.env.VITE_SERVER_BASE_URL}/graphql`,
-            cache: new InMemoryCache(),
+            cache,
             defaultOptions: {
                 query: {
                     fetchPolicy: "cache-first",

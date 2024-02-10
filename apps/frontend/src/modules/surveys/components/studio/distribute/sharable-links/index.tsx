@@ -8,10 +8,6 @@ import Link from "./Link";
 
 export default function SharableLinks() {
     const { createChannel, getChannels } = useChannels();
-    // const linkChannels = useMemo(
-    //     () => getChannels(SurveyChannelTypeEnum.Link),
-    //     [getChannels],
-    // );
     const linkChannels = getChannels(SurveyChannelTypeEnum.Link);
 
     const handleCreate = async () => {
@@ -21,7 +17,7 @@ export default function SharableLinks() {
             settings: JSON.stringify({
                 name: `Link ${linkChannels.length + 1}`,
                 singleUse: false,
-                startDate: linkChannels.length ? "" : new Date().toISOString(),
+                startDate: "",
                 endDate: "",
             } as ChannelSettings),
         });
