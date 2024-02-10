@@ -5,13 +5,6 @@ import { addDays, subDays } from "date-fns";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { LinkProps } from "./Link";
 
-type Inputs = {
-    name: string;
-    singleUse: boolean;
-    startDate?: Date;
-    endDate?: Date;
-};
-
 type Props = LinkProps & {
     settings: ChannelSettings;
     close: () => void;

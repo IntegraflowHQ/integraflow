@@ -18,8 +18,3 @@ export enum OperationType {
     Subscription = "subscription",
     Error = "error",
 }
-
-export type ApolloWorkspace = {
-    project: string;
-    organization: string;
-};
