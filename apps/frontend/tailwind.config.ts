@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import colors from "tailwindcss/colors";
 
 const config: Config = {
     content: [
@@ -52,44 +51,12 @@ const config: Config = {
                         bg: "rgba(206, 60, 85, 0.20)",
                     },
                 },
-                tremor: {
-                    brand: {
-                        faint: "#392D72",
-                        muted: "#392D72",
-                        subtle: "#28213B",
-                        DEFAULT: "#392D72",
-                        emphasis: "#392D72",
-                        inverted: "#392D72",
-                    },
-                    background: {
-                        muted: "#181325",
-                        subtle: "#181325",
-                        DEFAULT: "#181325",
-                        emphasis: "#181325",
-                    },
-                    border: {
-                        DEFAULT: "#181325",
-                    },
-                    ring: {
-                        DEFAULT: colors.gray[200],
-                    },
-                    content: {
-                        subtle: colors.gray[400],
-                        DEFAULT: "#AFAAC7",
-                        emphasis: "#AFAAC7",
-                        strong: colors.gray[900],
-                        inverted: colors.white,
-                    },
-                },
             },
             backgroundImage: {
                 "gradient-button":
                     "linear-gradient(27deg, #53389E 8.33%, #6941C6 91.67%)",
                 "gradient-button-hover":
                     "linear-gradient(27deg, #299532 8.33%, #7EE787 91.67%)",
-            },
-            borderRadius: {
-                "tremor-default": "8px",
             },
         },
     },
