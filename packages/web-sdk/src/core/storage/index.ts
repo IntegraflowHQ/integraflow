@@ -97,16 +97,11 @@ export async function getState(ctx: Context): Promise<State> {
 }
 
 export async function persistState(ctx: Context, state: State): Promise<void> {
-    try {
-        // TODO: Sync with the backend
-    } catch (e) {
-        console.warn(e);
-        // Noop (fallback to local)
-    }
-
     const cacheKeys = getCacheKeys("state");
     await set(cacheKeys.STATE_CACHE_KEY, state);
     await set(cacheKeys.STATE_CACHE_KEY_UPDATED, Date.now());
+
+    ctx.setState(state);
 }
 
 export async function resetState(

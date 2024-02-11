@@ -46,7 +46,7 @@ export class SurveyManager {
         this.setState("loading");
     }
 
-    private onEventTracked = (event: SdkEvent) => {
+    private onEventTracked = async (event: SdkEvent) => {
         console.info("Survey trigger saw event", event);
 
         if (this.state !== "ready") {
@@ -57,6 +57,10 @@ export class SurveyManager {
         if (event.type === "audienceUpdated") {
             this.loadSurveys();
             return;
+        }
+
+        if (event.data.event === "$sync") {
+            await this.loadSurveys();
         }
 
         this.evaluateTriggers();

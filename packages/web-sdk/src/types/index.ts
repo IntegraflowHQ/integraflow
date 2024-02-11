@@ -412,7 +412,22 @@ export interface Configuration extends Listeners {
     debug?: boolean;
     apiHost?: string;
     appKey?: string;
-    accessToken?: string;
     syncPolicy?: "polling" | "manual" | "off";
     fullScreen?: boolean;
+}
+
+export type QueuedRequest = {
+    id: string;
+    action: string;
+    payloadId?: string;
+    payload: Record<string, any>;
+    batchKey: string;
+    callback?: (response: Jsonish, data?: Jsonish) => void;
+    timestamp: number;
+    retriesPerformedSoFar?: number;
+    flushIds?: string[];
+}
+
+export type QueuedRetryRequest = QueuedRequest & {
+    retryAt: Date;
 }

@@ -32,7 +32,6 @@ export class Context {
 
         this.client = new IntegraflowClient({
             apiUrl: config.apiHost ? `${config.apiHost}/graphql` : undefined,
-            accessToken: config.accessToken,
             apiKey: config.appKey
         });
 

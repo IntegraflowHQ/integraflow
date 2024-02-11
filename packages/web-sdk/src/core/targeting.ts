@@ -146,10 +146,11 @@ export class TargetingEngine {
                 const lastPresentationTime = state?.lastPresentationTimes?.get(
                     survey.id
                 );
+
                 if (
                     this.triggerMatched(survey, event) &&
                     this.evaluateAttributes(survey, state?.user) &&
-                    this.isSurveyRecurring(survey, lastPresentationTime)
+                    (!lastPresentationTime || this.isSurveyRecurring(survey, lastPresentationTime))
                 ) {
                     matchedSurveys.push(survey);
                 }
