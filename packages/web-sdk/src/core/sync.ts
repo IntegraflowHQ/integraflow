@@ -27,13 +27,20 @@ export class SyncManager {
 
     init() {
         if (this.context.syncPolicy !== "off") {
-            this.requestQueue = new RequestQueue(this.handleRequestQueue.bind(this));
-            this.retryQueue = new RetryQueue(this.handleRequestQueue.bind(this));
+            this.requestQueue = new RequestQueue(
+                this.handleRequestQueue.bind(this)
+            );
+            this.retryQueue = new RetryQueue(
+                this.handleRequestQueue.bind(this)
+            );
             this.startSync();
         }
 
         // Use `onpagehide` if available, see https://calendar.perfplanet.com/2020/beaconing-in-practice/#beaconing-reliability-avoiding-abandons
-        window?.addEventListener?.('onpagehide' in self ? 'pagehide' : 'unload', this.handleUnload.bind(this))
+        window?.addEventListener?.(
+            "onpagehide" in self ? "pagehide" : "unload",
+            this.handleUnload.bind(this)
+        );
     }
 
     async startSync() {
@@ -47,10 +54,10 @@ export class SyncManager {
             this.stopSync();
         }
 
-        this.syncId = setInterval(async () => {
+        this.syncId = (setInterval(async () => {
             console.log("Syncing.");
             await this.sync();
-        }, interval) as any as number;
+        }, interval) as any) as number;
 
         await this.sync();
     }
@@ -73,14 +80,11 @@ export class SyncManager {
                 surveys: newSurveys
             });
 
-            this.context.broadcast(
-                "eventTracked",
-                {
-                    event: "$sync",
-                    uuid: uuidv4(),
-                    timestamp: Date.now()
-                }
-            );
+            this.context.broadcast("eventTracked", {
+                event: "$sync",
+                uuid: uuidv4(),
+                timestamp: Date.now()
+            });
         } catch (e) {
             console.warn(e);
             // Noop (fallback to local)
@@ -322,14 +326,18 @@ export class SyncManager {
             if (request.payloadId) {
                 await (this.context.client as any)[request.action](
                     request.payloadId,
-                    { input: request.payload }
+                    request.payload
                 );
                 return;
             }
 
             await (this.context.client as any)[request.action](request.payload);
         } catch (e) {
-            if (e instanceof IntegraflowError && (e.type === IntegraflowErrorType.NetworkError || e.type === IntegraflowErrorType.Unknown)) {
+            if (
+                e instanceof IntegraflowError &&
+                (e.type === IntegraflowErrorType.NetworkError ||
+                    e.type === IntegraflowErrorType.Unknown)
+            ) {
                 this.retryQueue?.enqueue(request);
                 return;
             }
