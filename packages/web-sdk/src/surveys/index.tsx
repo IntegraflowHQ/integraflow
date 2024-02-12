@@ -234,7 +234,6 @@ export class SurveyManager {
         const survey = this.context.surveys?.find(
             survey => survey.id === surveyId
         );
-        console.log("showSurvey", survey);
 
         if (survey) {
             const idx = this.activeSurveys.findIndex(

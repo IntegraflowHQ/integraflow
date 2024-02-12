@@ -352,38 +352,6 @@ export interface Event {
     userId?: ID;
 }
 
-export type ResponseAction = "create" | "update" | "complete";
-
-export interface CreateResponsePayload {
-    id: string;
-    surveyId: string;
-    userId: string;
-    attributes: UserAttributes;
-}
-
-export interface UpdateResponsePayload {
-    id: string;
-    surveyId: string;
-    response: {
-        questionId: string;
-        answers: SurveyAnswer[];
-    }[];
-}
-
-export interface CompleteResponsePayload {
-    id: string;
-    completedAt: Date;
-}
-
-export interface ResponseTask {
-    id: string;
-    action: ResponseAction;
-    payload:
-        | CreateResponsePayload
-        | UpdateResponsePayload
-        | CompleteResponsePayload;
-}
-
 export interface State {
     surveys?: Survey[];
     installId?: string;
@@ -426,8 +394,8 @@ export type QueuedRequest = {
     timestamp: number;
     retriesPerformedSoFar?: number;
     flushIds?: string[];
-}
+};
 
 export type QueuedRetryRequest = QueuedRequest & {
     retryAt: Date;
-}
+};

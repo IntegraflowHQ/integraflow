@@ -204,3 +204,116 @@ export const parsedSurveys = (
 
     return JSON.parse(JSON.stringify(surveyList));
 };
+
+function getDeviceType() {
+    const ua: string = navigator.userAgent.toLowerCase();
+
+    if (
+        /mobile|iphone|ipod|android|blackberry|opera mini|opera mobi|iemobile|windows phone|kindle/i.test(
+            ua
+        )
+    ) {
+        return "Mobile";
+    } else if (/ipad|tablet/i.test(ua)) {
+        return "Tablet";
+    } else if (/win|mac|linux|x11/i.test(ua)) {
+        return "Desktop";
+    } else {
+        return "Unknown";
+    }
+}
+
+function getOperatingSystem() {
+    const ua: string = navigator.userAgent;
+    let os: string = "Unknown";
+    let version: string = "Unknown";
+
+    if (/Windows/.test(ua)) {
+        os = "Windows";
+        const match = /Windows NT (\d+\.\d+)/.exec(ua);
+        version = match ? match[1] : "Unknown";
+    } else if (/Mac OS X/.test(ua)) {
+        os = "Mac OS X";
+        const match = /Mac OS X (\d+[\._]\d+)/.exec(ua);
+        version = match ? match[1].replace("_", ".") : "Unknown";
+    } else if (/Linux/.test(ua)) {
+        os = "Linux";
+        const match = /Linux(?: x86_64)?(?:; ([^;]+))?/.exec(ua);
+        version = match ? match[1] || "Unknown" : "Unknown";
+    } else if (/Android/.test(ua)) {
+        os = "Android";
+        const match = /Android ([^;)]+)/.exec(ua);
+        version = match ? match[1] : "Unknown";
+    } else if (/iOS|iPhone|iPad/.test(ua)) {
+        os = "iOS";
+        const match = /OS (\d+[_\d]*)/.exec(ua);
+        version = match ? match[1].replace("_", ".") : "Unknown";
+    }
+
+    return {
+        os,
+        version
+    };
+}
+
+function getBrowser() {
+    const ua: string = navigator.userAgent;
+    let tem: RegExpMatchArray | null;
+    let browser: string;
+    let version: string;
+
+    const matchArray =
+        ua.match(
+            /(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i
+        ) || [];
+
+    if (/trident/i.test(matchArray[1])) {
+        tem = /\brv[ :]+(\d+)/g.exec(ua);
+        browser = "IE";
+        version = tem ? tem[1] : "";
+    } else if (matchArray[1] === "Chrome") {
+        tem = ua.match(/\b(OPR|Edg)\/(\d+)/);
+        if (tem !== null) {
+            browser = tem[1].replace("OPR", "Opera").replace("Edg", "Edge");
+            version = tem[2];
+        } else {
+            browser = matchArray[1];
+            version = matchArray[2] || "";
+        }
+    } else {
+        browser = matchArray[1];
+        version = matchArray[2] || "";
+    }
+
+    return {
+        browser,
+        version
+    };
+}
+
+export function getBrowserInfo() {
+    if (typeof window === "undefined") {
+        return {};
+    }
+
+    const browser = getBrowser();
+    const os = getOperatingSystem();
+
+    return {
+        os: os.os,
+        os_version: os.version,
+        browser: browser.browser,
+        browser_version: browser.version,
+        browser_language: navigator.language,
+        device_type: getDeviceType(),
+        screen_height: window.screen.height.toString(),
+        screen_width: window.screen.width.toString(),
+        viewport_height: window.innerHeight.toString(),
+        viewport_width: window.innerWidth.toString(),
+        raw_user_agent: navigator.userAgent,
+        current_url: window.location.href,
+        host: window.location.host,
+        pathname: window.location.pathname,
+        time: new Date().toISOString()
+    };
+}
