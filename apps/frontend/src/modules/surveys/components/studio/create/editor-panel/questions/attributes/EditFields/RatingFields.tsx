@@ -35,7 +35,6 @@ export const RatingFields = () => {
         scaleStyleOptions.find((option) => option.value === openQuestion?.type)
             ?.value,
     );
-    console.log(scaleStyle);
     return (
         <div>
             {openQuestion?.type === SurveyQuestionTypeEnum.Rating ||
@@ -53,7 +52,6 @@ export const RatingFields = () => {
                                         option.value === openQuestion?.type,
                                 )}
                                 onchange={(value) => {
-                                    console.log(value);
                                     setScaleStyle(
                                         (value as SingleValue<Option>)?.value,
                                     );
@@ -122,8 +120,6 @@ export const RatingFields = () => {
                             <p>Scale labels:</p>
                             {openQuestion?.options?.map(
                                 (option: QuestionOption, index: number) => {
-                                    console.log("openQuestion: ", openQuestion);
-                                    console.log(option);
                                     return (
                                         <div key={option.id} className="mb-4">
                                             <EditorTextInput

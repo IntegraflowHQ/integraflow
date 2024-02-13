@@ -122,9 +122,6 @@ export const DefaultLogicBox: React.FC<Props> = ({
         setLogicOperator(newValues.operator);
     };
 
-    console.log(logicValues);
-
-    console.log(logicValues);
     return (
         <>
             {isCreatingLogic && (

@@ -12,7 +12,6 @@ import CreateSurveyButton from "./partials/CreateSurveyButton";
 
 export default function SurveyHome() {
     const { loadingCreateSurvey } = useSurvey();
-    console.log(loadingCreateSurvey);
 
     if (loadingCreateSurvey) {
         return <GlobalSpinner />;

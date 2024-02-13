@@ -1,7 +1,9 @@
 import { cn } from "@/utils";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { TextInput, TextInputProps } from "@tremor/react";
 import debounce from "lodash.debounce";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { Option } from "../questions/attributes/ReactSelect";
 
 export interface EditorTextProps extends TextInputProps {
     label?: string;
@@ -11,6 +13,9 @@ export interface EditorTextProps extends TextInputProps {
     showCharacterCount?: boolean;
     maxCharacterCount?: number;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    options?: Option[];
+    attributes?: Option[];
+    value?: string | undefined;
 }
 
 export const EditorTextInput = ({
@@ -24,6 +29,10 @@ export const EditorTextInput = ({
     ...props
 }: EditorTextProps) => {
     const debounceSubmit = useMemo(() => debounce(onChange, 1000), [onChange]);
+    const [atBtnClicked, setAtBtnClicked] = useState(false);
+    const [atIndex, setAtIndex] = useState<number | null>(null);
+    const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+    const [inputValue, setInputValue] = useState("");
 
     return (
         <div className={cn(`${classname} relative w-full`)}>
@@ -33,9 +42,71 @@ export const EditorTextInput = ({
             >
                 {label}
             </label>
+            {atBtnClicked && (
+                <DropdownMenu.Root
+                    open={atBtnClicked}
+                    onOpenChange={() => setAtBtnClicked(!atBtnClicked)}
+                >
+                    <DropdownMenu.Trigger asChild className="invisible">
+                        <button>hello</button>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Portal>
+                        <DropdownMenu.Content
+                            sideOffset={40}
+                            align="start"
+                            alignOffset={3}
+                            className="max-h-40 overflow-auto rounded-md bg-intg-bg-4 text-intg-text"
+                        >
+                            {props.attributes && (
+                                <DropdownMenu.Label className="px-2 py-1 text-xs uppercase">
+                                    attributes
+                                </DropdownMenu.Label>
+                            )}
+                            {props.attributes &&
+                                props.attributes.map((option) => (
+                                    <DropdownMenu.Item
+                                        key={option.value}
+                                        className="cursor-pointer px-2 py-1 text-sm"
+                                        onClick={() => {
+                                            setSelectedOption(option);
+                                            setAtBtnClicked(false);
+                                        }}
+                                    >
+                                        {option.label}
+                                    </DropdownMenu.Item>
+                                ))}
+                            <DropdownMenu.Separator className="border"></DropdownMenu.Separator>
+                            {props.options && (
+                                <DropdownMenu.Label className="px-2 py-1 text-xs uppercase">
+                                    Recall from
+                                </DropdownMenu.Label>
+                            )}
+                            {props.options &&
+                                props.options.map((option) => (
+                                    <DropdownMenu.Item
+                                        key={option.value}
+                                        className="cursor-pointer px-2 py-1 text-sm"
+                                    >
+                                        {option.label}
+                                    </DropdownMenu.Item>
+                                ))}
+                        </DropdownMenu.Content>
+                    </DropdownMenu.Portal>
+                </DropdownMenu.Root>
+            )}
             <TextInput
-                onChange={(e) => debounceSubmit(e)}
+                onChange={(e) => {
+                    setInputValue(e.target.value);
+                    debounceSubmit(e);
+                }}
                 {...props}
+                onKeyUp={(e) => {
+                    if (e.key === "@") {
+                        setAtBtnClicked(true);
+                        setAtIndex(e.currentTarget.selectionStart!);
+                    }
+                }}
+                value={inputValue}
                 placeholder={placeholder}
                 className="rounded-lg border border-transparent bg-[#272138] py-[6px] pl-1 text-sm
                 font-medium tracking-[-0.408px] text-intg-text-1 placeholder:text-intg-text-3

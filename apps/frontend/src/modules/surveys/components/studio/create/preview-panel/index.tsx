@@ -1,5 +1,5 @@
 import { Header } from "@/ui";
-import EmptySurvey from "assets/images/empty.png";
+import EmptySurvey from "assets/images/surveys/empty.png";
 
 export const Preview = () => {
     // const iframe = createRef<HTMLIFrameElement>();

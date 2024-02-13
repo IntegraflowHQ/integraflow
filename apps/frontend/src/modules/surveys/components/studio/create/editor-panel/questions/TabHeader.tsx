@@ -1,5 +1,8 @@
+import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { questionTypes } from "@/utils/survey";
+import RatingIcon from "assets/icons/studio/rating.png";
+
 type Props = {
     questionIndex: number;
 };
@@ -11,9 +14,16 @@ export const TabHeader = ({ questionIndex }: Props) => {
             <div>
                 <img
                     src={
-                        questionTypes.find(
-                            (type) => type.type === openQuestion?.type,
-                        )?.icon
+                        [
+                            SurveyQuestionTypeEnum.Rating,
+                            SurveyQuestionTypeEnum.NumericalScale,
+                            SurveyQuestionTypeEnum.Csat,
+                            SurveyQuestionTypeEnum.CES,
+                        ].includes(openQuestion?.type)
+                            ? RatingIcon
+                            : questionTypes.find(
+                                  (type) => type.type === openQuestion?.type,
+                              )?.icon
                     }
                     alt="icon"
                 />

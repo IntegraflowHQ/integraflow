@@ -1,4 +1,5 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { Option } from "@/modules/surveys/components/studio/create/editor-panel/questions/attributes/ReactSelect";
 import { LogicConditionEnum, ParsedQuestion, QuestionOption } from "@/types";
 import { LogicOperator } from "@integraflow/web/src/types";
 
@@ -251,3 +252,38 @@ export const rangeOptions = (question: ParsedQuestion) => {
         };
     });
 };
+
+export const recallOptions = (
+    questions: ParsedQuestion[],
+    openQuestion: ParsedQuestion,
+) => {
+    const newQuestions = questions.filter(
+        (q) =>
+            q.type !== SurveyQuestionTypeEnum.Form &&
+            q.type !== SurveyQuestionTypeEnum.Cta,
+    );
+    return [
+        ...newQuestions
+            .slice(
+                0,
+                questions.findIndex((q) => q.id === openQuestion?.id),
+            )
+            .map((q) => ({
+                value: q.id,
+                label: q.label
+                    ? `${q.orderNumber}- ${q.label} `
+                    : `${q.orderNumber}- Empty Question`,
+            })),
+    ];
+};
+
+export const userAttributeOptions: Option[] = [
+    {
+        label: "first name",
+        value: "first name",
+    },
+    {
+        label: "last name",
+        value: "last name",
+    },
+];

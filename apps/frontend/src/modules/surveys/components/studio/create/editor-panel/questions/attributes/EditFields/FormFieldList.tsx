@@ -13,7 +13,6 @@ import { Option, ReactSelect } from "../ReactSelect";
 
 export const FormFieldList = () => {
     const { updateQuestionMutation, openQuestion } = useQuestion();
-    console.log("openQuestion: ", openQuestion);
     return (
         <>
             {openQuestion?.type === SurveyQuestionTypeEnum.Form &&

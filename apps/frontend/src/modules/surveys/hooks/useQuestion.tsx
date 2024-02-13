@@ -83,7 +83,6 @@ export const useQuestion = () => {
                 },
             },
             update: (cache, { data }) => {
-                console.log("newQuestion: ", data);
                 if (!data?.surveyQuestionCreate?.surveyQuestion) return;
                 cache.modify({
                     id: `Survey:${surveyId}`,

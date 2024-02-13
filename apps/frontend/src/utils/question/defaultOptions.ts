@@ -49,7 +49,6 @@ export const createRangeOptions = (
 ): QuestionOption[] => {
     const options = [];
     for (let i = 1; i <= length; i++) {
-        console.log(CESOptions[i - 1], "CSATOptions[i - 1]", type);
         options.push({
             id: generateUniqueId(),
             orderNumber: i,
@@ -57,8 +56,8 @@ export const createRangeOptions = (
                 type === SurveyQuestionTypeEnum.Csat
                     ? CSATOptions[i - 1]
                     : type === "CES"
-                    ? CESOptions[i - 1]
-                    : "",
+                      ? CESOptions[i - 1]
+                      : "",
         });
     }
     return options;
@@ -79,7 +78,8 @@ export const createOptions = (
         type === SurveyQuestionTypeEnum.NumericalScale ||
         type === SurveyQuestionTypeEnum.SmileyScale
     ) {
-        const length = type === SurveyQuestionTypeEnum.Nps ? 10 : 5;
+        const length =
+            type === SurveyQuestionTypeEnum.Nps ? 10 : type === "CES" ? 7 : 5;
         return createRangeOptions(type, length);
     }
 
