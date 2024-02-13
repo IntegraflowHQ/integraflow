@@ -2,9 +2,12 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 
 import {
+    EventDefinition,
     Project,
     ProjectUpdateInput,
+    useAudiencePropertiesQuery,
     useProjectCreateMutation,
+    useProjectEventsDataQuery,
     useProjectUpdateMutation,
 } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
@@ -12,6 +15,7 @@ import { useRedirect } from "@/modules/auth/hooks/useRedirect";
 import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
 import { convertToAuthOrganization } from "@/modules/users/states/user";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
+import { EventProperties } from "@integraflow/web/src/types";
 
 export const useProject = () => {
     const { currentProjectId, switchProject } = useAuth();
@@ -22,6 +26,8 @@ export const useProject = () => {
 
     const [projectCreate] = useProjectCreateMutation();
     const [projectUpdate] = useProjectUpdateMutation();
+    const { data: eventsData } = useProjectEventsDataQuery();
+    const { data: audienceProperties } = useAudiencePropertiesQuery();
 
     const project = useMemo(() => {
         if (!workspace) {
@@ -215,8 +221,64 @@ export const useProject = () => {
         [project, projectUpdate, updateUser, updateWorkspace, workspace],
     );
 
+    const eventDefinitions = useMemo(() => {
+        return (
+            eventsData?.eventDefinitions?.edges.map(({ node }) => node) ||
+            ([] as EventDefinition[])
+        );
+    }, [eventsData?.eventDefinitions]);
+
+    const eventProperties = useMemo(() => {
+        return (
+            eventsData?.eventProperties?.edges.map(({ node }) => node) ||
+            ([] as EventProperties[])
+        );
+    }, [eventsData?.eventProperties]);
+
+    const propertyDefinitions = useMemo(() => {
+        return (
+            eventsData?.propertyDefinitions?.edges.map(({ node }) => node) ||
+            ([] as PropertyDefinition[])
+        );
+    }, [eventsData?.propertyDefinitions]);
+
+    const getPropertyDefinition = useCallback(
+        (property: string) => {
+            return propertyDefinitions.find((p) => p.name === property);
+        },
+        [propertyDefinitions],
+    );
+
+    const getProperties = useCallback(
+        (event: string) => {
+            const properties = eventProperties.filter((p) => p.event === event);
+            return properties.map((p) => {
+                const definition = p.property
+                    ? getPropertyDefinition(p.property as string)
+                    : undefined;
+
+                return definition;
+            });
+        },
+        [eventProperties, getPropertyDefinition],
+    );
+
+    const personProperties = useMemo(() => {
+        return (
+            audienceProperties?.propertyDefinitions?.edges.map(
+                (edge) => edge.node,
+            ) || ([] as PropertyDefinition[])
+        );
+    }, [audienceProperties]);
+
     return {
         project,
+        eventDefinitions,
+        eventProperties,
+        propertyDefinitions,
+        personProperties,
+        getProperties,
+        getPropertyDefinition,
         addProject: handleAddProject,
         createProject: handleCreateProject,
         switchProject: handleSwitchProject,

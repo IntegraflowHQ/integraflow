@@ -4,8 +4,8 @@ import webviewLight from "@/assets/images/surveys/studio/webview-light.svg";
 import webview from "@/assets/images/surveys/studio/webview.svg";
 import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import useChannels from "@/modules/surveys/hooks/useChannels";
-import { ChannelSettings, ParsedChannel } from "@/types";
-import { DatePicker, Switch, TextInput } from "@/ui";
+import { ChannelSettings, WebChannelAccordionProps } from "@/types";
+import { DatePicker, NumberInput, Switch } from "@/ui";
 import { BottomLeft, BottomRight, Center, TopLeft, TopRight } from "@/ui/icons";
 import { cn } from "@/utils";
 import { logDebug } from "@/utils/log";
@@ -16,37 +16,32 @@ import { Ban, Moon, Sun } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
-type Position = {
-    value: PlacementType;
-    icon: React.ReactNode;
-};
-
 type Background = {
     label: string;
     value: "dark" | "light" | "none";
     icon: React.ReactNode;
 };
 
-const positions: Position[] = [
+const positions = [
     {
         value: "bottomRight",
-        icon: <BottomRight />,
+        icon: BottomRight,
     },
     {
         value: "bottomLeft",
-        icon: <BottomLeft />,
+        icon: BottomLeft,
     },
     {
         value: "center",
-        icon: <Center />,
+        icon: Center,
     },
     {
         value: "topRight",
-        icon: <TopRight />,
+        icon: TopRight,
     },
     {
         value: "topLeft",
-        icon: <TopLeft />,
+        icon: TopLeft,
     },
 ];
 
@@ -68,36 +63,12 @@ const backgrounds: Background[] = [
     },
 ];
 
-export default function Behavior() {
-    const { getChannels, updateChannel, createChannel } = useChannels();
-
-    const channel =
-        getChannels(SurveyChannelTypeEnum.WebSdk)[0] ??
-        ({
-            id: "",
-            type: SurveyChannelTypeEnum.WebSdk,
-            createdAt: "",
-            settings: {
-                placement: "bottomRight",
-                recurring: false,
-                recurringPeriod: 0,
-                startDate: "",
-                endDate: "",
-                backgroundOverlay: "light",
-                closeOnLimit: false,
-                responseLimit: 0,
-            },
-        } as ParsedChannel);
+export default function Behavior({ channel }: WebChannelAccordionProps) {
+    const { updateChannel, createChannel } = useChannels();
 
     const { register, watch, setValue } = useForm<ChannelSettings>({
-        defaultValues: {
+        values: {
             ...channel.settings,
-            startDate: channel.settings?.startDate
-                ? new Date(channel.settings?.startDate)
-                : undefined,
-            endDate: channel.settings?.endDate
-                ? new Date(channel.settings.endDate)
-                : undefined,
         },
     });
 
@@ -136,20 +107,29 @@ export default function Behavior() {
                             Survey position
                         </span>
                         <div className="flex w-full justify-between">
-                            {positions.map((position) => (
+                            {positions.map(({ value, icon: Icon }) => (
                                 <button
-                                    key={position.value}
+                                    key={value}
                                     className={cn(
                                         "w-max rounded bg-intg-bg-18 px-[14px] py-[8px] hover:bg-gradient-button hover:text-white",
-                                        watch("placement") === position.value
-                                            ? "bg-gradient-button text-white"
+                                        watch("placement") === value
+                                            ? "bg-gradient-button"
                                             : "",
                                     )}
                                     onClick={() =>
-                                        setValue("placement", position.value)
+                                        setValue(
+                                            "placement",
+                                            value as PlacementType,
+                                        )
                                     }
                                 >
-                                    {position.icon}
+                                    <Icon
+                                        color={
+                                            watch("placement") === value
+                                                ? "#FFFFFF"
+                                                : "#AFAAC7"
+                                        }
+                                    />
                                 </button>
                             ))}
                         </div>
@@ -191,18 +171,19 @@ export default function Behavior() {
 
                 <div className="flex w-full flex-col gap-3">
                     <Switch
+                        name={"recurring"}
                         label="Recurring"
                         value={watch("recurring")}
                         onChange={(e) => setValue("recurring", e.target.value)}
                     />
                     {watch("recurring") && (
-                        <TextInput
-                            type="number"
+                        <NumberInput
                             label="Recurring period"
                             {...register("recurringPeriod")}
                         />
                     )}
                     <Switch
+                        name={"closeOnLimit"}
                         label="Close survey on response limit"
                         value={watch("closeOnLimit")}
                         onChange={(e) =>
@@ -210,8 +191,7 @@ export default function Behavior() {
                         }
                     />
                     {watch("closeOnLimit") && (
-                        <TextInput
-                            type="number"
+                        <NumberInput
                             label="Response limit"
                             {...register("responseLimit")}
                         />
@@ -219,15 +199,26 @@ export default function Behavior() {
                     <div className="flex gap-1">
                         <DatePicker
                             label="Start date"
-                            value={watch("startDate") as Date | undefined}
+                            value={
+                                watch("startDate")
+                                    ? new Date(watch("startDate") as string)
+                                    : undefined
+                            }
                             onChange={(e) => {
-                                setValue("startDate", e.target.value);
+                                if (e.target.value) {
+                                    setValue(
+                                        "startDate",
+                                        e.target.value.toISOString(),
+                                    );
+                                } else {
+                                    setValue("startDate", "");
+                                }
                             }}
                             displayFormat="dd/MM/yyyy"
                             toDate={
                                 watch("endDate")
                                     ? subDays(
-                                          new Date(watch("endDate") as Date),
+                                          new Date(watch("endDate") as string),
                                           1,
                                       )
                                     : undefined
@@ -235,15 +226,28 @@ export default function Behavior() {
                         />
                         <DatePicker
                             label="End date"
-                            value={watch("endDate") as Date | undefined}
-                            onChange={(e) =>
-                                setValue("endDate", e.target.value)
+                            value={
+                                watch("endDate")
+                                    ? new Date(watch("endDate") as string)
+                                    : undefined
                             }
+                            onChange={(e) => {
+                                if (e.target.value) {
+                                    setValue(
+                                        "endDate",
+                                        e.target.value.toISOString(),
+                                    );
+                                } else {
+                                    setValue("endDate", "");
+                                }
+                            }}
                             displayFormat="dd/MM/yyyy"
                             fromDate={
                                 watch("startDate")
                                     ? addDays(
-                                          new Date(watch("startDate") as Date),
+                                          new Date(
+                                              watch("startDate") as string,
+                                          ),
                                           1,
                                       )
                                     : undefined

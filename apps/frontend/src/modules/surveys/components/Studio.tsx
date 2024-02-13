@@ -1,4 +1,6 @@
+import { SurveyStatusEnum } from "@/generated/graphql";
 import { Button, GlobalSpinner } from "@/ui";
+import { toast } from "@/utils/toast";
 import * as Tabs from "@radix-ui/react-tabs";
 import { XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -9,19 +11,19 @@ import Create from "./studio/create";
 import Distribute from "./studio/distribute";
 
 const tabs = [
-    { id: crypto.randomUUID(), label: "Create", screen: Create },
+    { label: "Create", screen: Create },
     {
-        id: crypto.randomUUID(),
         label: "Distribute",
         screen: Distribute,
     },
-    { id: crypto.randomUUID(), label: "Analyze", screen: Analyze },
+    { label: "Analyze", screen: Analyze },
 ];
 
 export default function Studio() {
     const [title, setTitle] = useState("");
     const { enableStudioMode, disableStudioMode } = useStudioState();
-    const { loading } = useSurvey();
+    const [activeTab, setActiveTab] = useState(tabs[0].label);
+    const { loading, updateSurvey } = useSurvey();
 
     useEffect(() => {
         enableStudioMode();
@@ -31,11 +33,22 @@ export default function Studio() {
         };
     }, []);
 
+    const publishSurvey = async () => {
+        await updateSurvey({
+            status: SurveyStatusEnum.Active,
+        });
+        toast.success("Survey published successfully");
+    };
+
     if (loading) return <GlobalSpinner />;
 
     return (
-        <Tabs.Root className="h-full w-full" defaultValue={tabs[0].id}>
-            <header className="fixed flex w-full items-center justify-between border-b border-intg-bg-4 bg-[#090713] py-[22px] pl-10 pr-12">
+        <Tabs.Root
+            className="h-full w-full"
+            value={activeTab}
+            onValueChange={setActiveTab}
+        >
+            <header className="fixed z-10 flex w-full items-center justify-between border-b border-intg-bg-4 bg-[#090713] py-[22px] pl-10 pr-12">
                 <input
                     type="text"
                     name="title"
@@ -49,8 +62,8 @@ export default function Studio() {
                 <Tabs.List className="flex gap-[15px]">
                     {tabs.map((tab) => (
                         <Tabs.Trigger
-                            key={tab.id}
-                            value={tab.id}
+                            key={tab.label}
+                            value={tab.label}
                             className={`rounded-md px-3 py-2 text-sm text-intg-text transition-all ease-in hover:bg-[#272138] data-[state=active]:bg-[#272138] data-[state=active]:text-white`}
                         >
                             {tab.label}
@@ -59,15 +72,25 @@ export default function Studio() {
                 </Tabs.List>
 
                 <div className="flex gap-[35px]">
-                    <Button text="Next" className="px-[16px] py-[8px]" />
+                    <Button
+                        className="px-[16px] py-[8px]"
+                        text={activeTab === tabs[1].label ? "Publish" : "Next"}
+                        onClick={() => {
+                            if (activeTab === tabs[1].label) {
+                                publishSurvey();
+                            } else {
+                                setActiveTab(tabs[1].label);
+                            }
+                        }}
+                    />
                     <button>
                         <XIcon color="#AFAAC7" />
                     </button>
                 </div>
             </header>
 
-            {tabs.map(({ screen: Screen, id }) => (
-                <Tabs.Content key={id} value={id}>
+            {tabs.map(({ screen: Screen, label }) => (
+                <Tabs.Content key={label} value={label}>
                     <Screen />
                 </Tabs.Content>
             ))}

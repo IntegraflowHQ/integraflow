@@ -1,3 +1,4 @@
+import IntegrateWeb from "@/modules/onboarding/components/integrate-sdk/IntegrateWeb";
 import { Header } from "@/ui";
 import * as Tabs from "@radix-ui/react-tabs";
 import Settings from "./settings";
@@ -11,7 +12,7 @@ const tabs = [
     {
         id: crypto.randomUUID(),
         name: "Install",
-        content: <div className="text-white">Install</div>,
+        content: <IntegrateWeb />,
     },
 ];
 

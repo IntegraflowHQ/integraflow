@@ -32,11 +32,6 @@ export const useThemes = () => {
     } = useThemesQuery({
         variables: { first: 20 },
         notifyOnNetworkStatusChange: true,
-        context: {
-            headers: {
-                Project: project?.id,
-            },
-        },
     });
 
     const transformThemes = (themes: ThemesQuery) => {
@@ -67,11 +62,6 @@ export const useThemes = () => {
                 },
             },
             notifyOnNetworkStatusChange: true,
-            context: {
-                headers: {
-                    Project: project?.id,
-                },
-            },
             onCompleted: (data) => {
                 const themeData = {
                     name: data.projectThemeCreate?.projectTheme?.name ?? "",
@@ -153,11 +143,6 @@ export const useThemes = () => {
                 },
             },
             notifyOnNetworkStatusChange: true,
-            context: {
-                headers: {
-                    Project: project?.id,
-                },
-            },
             optimisticResponse: {
                 __typename: "Mutation",
                 projectThemeUpdate: {

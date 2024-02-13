@@ -1,3 +1,4 @@
+import { PROPERTY_FIELDS } from "@/constants";
 import {
     SurveyChannel,
     SurveyQuestionCountableEdge,
@@ -5,12 +6,16 @@ import {
 } from "@/generated/graphql";
 import { DeepOmit } from "@apollo/client/utilities";
 import {
+    Audience,
     CTAType,
+    FilterOperator,
+    FilterValue,
     FormFieldType,
     ID,
     LogicOperator,
+    PlacementType,
+    Trigger,
 } from "@integraflow/web/src/types";
-import { PlacementType } from "@integraflow/web/src/types/index";
 
 export type CachedViewer = DeepOmit<User, "__typename">;
 
@@ -25,8 +30,8 @@ export type ChannelSettings = {
     name?: string;
     recurring?: boolean;
     recurringPeriod?: number;
-    startDate?: string | Date;
-    endDate?: string | Date;
+    startDate?: string;
+    endDate?: string;
     backgroundOverlay?: BackgroundOverLayType;
     placement?: PlacementType;
     closeOnLimit?: boolean;
@@ -34,8 +39,13 @@ export type ChannelSettings = {
     singleUse?: boolean;
 };
 
-export type ParsedChannel = Omit<SurveyChannel, "settings"> & {
+export type ParsedChannel = Omit<
+    SurveyChannel,
+    "settings" | "triggers" | "conditions"
+> & {
     settings: ChannelSettings;
+    triggers: Trigger;
+    conditions: Audience;
 };
 
 export type LinkSettings = {
@@ -132,3 +142,34 @@ export enum LogicConditionEnum {
     INCLUDES_ALL = "includes_all",
     INCLUDES_ANY = "includes_any",
 }
+export type EventFilter = {
+    property: string;
+    operator: FilterOperator;
+    value: FilterValue;
+};
+
+export type AudienceFilter = {
+    attribute: string;
+    operator: FilterOperator;
+    value: FilterValue;
+};
+
+export type TriggerCondition = {
+    event: string;
+    operator: LogicOperator;
+    filters?: EventFilter[];
+};
+
+export type TriggerConditionInput = {
+    type: keyof typeof PROPERTY_FIELDS;
+    property: string;
+};
+
+export type WebChannelAccordionProps = {
+    channel: ParsedChannel;
+};
+
+export type IntegraflowIconProps = {
+    color?: string;
+    size?: number;
+};

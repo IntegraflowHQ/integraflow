@@ -1,6 +1,8 @@
+import { PROPERTY_FIELDS } from "@/constants";
 import { SurveyChannel, SurveyQuestion } from "@/generated/graphql";
 import { ParsedChannel, ParsedQuestion, QuestionOption } from "@/types";
 import { DeepOmit } from "@apollo/client/utilities";
+import { FilterOperator } from "@integraflow/web/src/types";
 import { toast } from "./toast";
 
 export function cn(...classes: string[]) {
@@ -100,4 +102,13 @@ export const parseQuestion = (question: SurveyQuestion): ParsedQuestion => {
         settings: parsedSettings,
         options: parsedOptions,
     } as ParsedQuestion;
+};
+
+export const getFilterLabel = (operator: FilterOperator) => {
+    const operators = Object.values(PROPERTY_FIELDS).reduce(
+        (acc, curr) => [...acc, ...curr],
+        [],
+    );
+    const operatorObj = operators.find((o) => o.operator === operator);
+    return operatorObj?.label;
 };
