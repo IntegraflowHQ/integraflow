@@ -1,13 +1,8 @@
-import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { QuestionSettings } from "@/types";
 import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import { Option, ReactSelect } from "../ReactSelect";
-
-type Props = {
-    question: SurveyQuestion;
-};
 
 enum BooleanOptionsShapeEnum {
     BUTTON = "button",
@@ -19,60 +14,35 @@ const booleanOptionsShape = [
     { label: "thumb", value: BooleanOptionsShapeEnum.THUMB },
 ];
 
-export const BooleanSettings = ({}: Props) => {
-    const { updateQuestionMutation, openQuestion } = useQuestion();
+export const BooleanSettings = () => {
+    const { question, updateSettings } = useQuestion();
 
-    const updateSettings = (newSettings: QuestionSettings) => {
-        updateQuestionMutation({
-            settings: { ...openQuestion?.settings, ...newSettings },
-        });
-    };
+    if (!question || question?.type !== SurveyQuestionTypeEnum.Boolean) {
+        return null;
+    }
 
     return (
         <div className="space-y-6">
-            {openQuestion?.type === SurveyQuestionTypeEnum.Boolean && (
-                <>
-                    <EditorTextInput
-                        label="Positive text"
-                        placeholder="Positive text"
-                        defaultValue={openQuestion?.settings?.positiveText}
-                        onChange={(e) =>
-                            updateSettings({
-                                positiveText: e.target.value,
-                            })
-                        }
-                        characterCount={
-                            openQuestion?.settings?.positiveText?.length
-                        }
-                    />
-                    <EditorTextInput
-                        label="Negative text"
-                        placeholder="Negative text"
-                        defaultValue={openQuestion?.settings?.negativeText}
-                        onChange={(e) =>
-                            updateSettings({
-                                negativeText: e.target.value,
-                            })
-                        }
-                        characterCount={
-                            openQuestion?.settings?.negativeText?.length
-                        }
-                    />
-                    <ReactSelect
-                        label="Shape"
-                        options={booleanOptionsShape}
-                        defaultValue={booleanOptionsShape.find(
-                            (option) =>
-                                option.value === openQuestion?.settings?.shape,
-                        )}
-                        onchange={(value) =>
-                            updateSettings({
-                                shape: (value as SingleValue<Option>)?.value,
-                            })
-                        }
-                    />
-                </>
-            )}
+            <EditorTextInput
+                label="Positive text"
+                placeholder="Positive text"
+                defaultValue={question?.settings?.positiveText}
+                onChange={(e) => updateSettings({ positiveText: e.target.value }, true)}
+            />
+
+            <EditorTextInput
+                label="Negative text"
+                placeholder="Negative text"
+                defaultValue={question?.settings?.negativeText}
+                onChange={(e) => updateSettings({ negativeText: e.target.value }, true)}
+            />
+
+            <ReactSelect
+                label="Shape"
+                options={booleanOptionsShape}
+                defaultValue={booleanOptionsShape.find((option) => option.value === question?.settings?.shape)}
+                onchange={(value) => updateSettings({ shape: (value as SingleValue<Option>)?.value })}
+            />
         </div>
     );
 };

@@ -1,6 +1,5 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { QuestionSettings } from "@/types";
 import { MultiValue, SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import { Option, ReactSelect } from "../ReactSelect";
@@ -23,31 +22,25 @@ const smileyCount = [
 ];
 
 export const RangeSettings = () => {
-    const { updateQuestionMutation, openQuestion } = useQuestion();
+    const { question, updateSettings } = useQuestion();
 
-    const updateSettings = (newSettings: QuestionSettings) => {
-        updateQuestionMutation({
-            settings: { ...openQuestion?.settings, ...newSettings },
-        });
-    };
+    if (!question) {
+        return null;
+    }
 
     return (
         <>
-            {(openQuestion?.type === SurveyQuestionTypeEnum.Nps ||
-                openQuestion?.type ===
-                    SurveyQuestionTypeEnum.NumericalScale) && (
+            {(question?.type === SurveyQuestionTypeEnum.Nps ||
+                question?.type === SurveyQuestionTypeEnum.NumericalScale) && (
                 <>
                     <div>
                         <p>Text on the left</p>
                         <div>
                             <EditorTextInput
-                                defaultValue={openQuestion?.settings.leftText}
-                                onChange={(e) =>
-                                    updateSettings({ leftText: e.target.value })
-                                }
-                                characterCount={
-                                    openQuestion?.settings.leftText?.length ?? 0
-                                }
+                                defaultValue={question?.settings.leftText}
+                                onChange={(e) => {
+                                    updateSettings({ leftText: e.target.value }, true);
+                                }}
                             />
                         </div>
                     </div>
@@ -55,76 +48,47 @@ export const RangeSettings = () => {
                         <p>Text on the right</p>
                         <div>
                             <EditorTextInput
-                                defaultValue={openQuestion?.settings.rightText}
-                                onChange={(e) =>
-                                    updateSettings({
-                                        rightText: e.target.value,
-                                    })
-                                }
-                                characterCount={
-                                    openQuestion?.settings.rightText?.length ??
-                                    0
-                                }
+                                defaultValue={question?.settings.rightText}
+                                onChange={(e) => {
+                                    updateSettings({ rightText: e.target.value }, true);
+                                }}
                             />
                         </div>
                     </div>
                 </>
             )}
 
-            {openQuestion?.type === SurveyQuestionTypeEnum.Rating && (
+            {question?.type === SurveyQuestionTypeEnum.Rating && (
                 <ReactSelect
                     label="Shape"
                     options={rangeShape}
-                    defaultValue={rangeShape.find(
-                        (option) =>
-                            option.value === openQuestion?.settings.shape,
-                    )}
-                    onchange={(option) =>
-                        updateSettings({
-                            shape: (option as SingleValue<Option>)?.value,
-                        })
-                    }
+                    defaultValue={rangeShape.find((option) => option.value === question?.settings.shape)}
+                    onchange={(option) => updateSettings({ shape: (option as SingleValue<Option>)?.value })}
                 />
             )}
 
-            {openQuestion?.type === SurveyQuestionTypeEnum.SmileyScale && (
+            {question?.type === SurveyQuestionTypeEnum.SmileyScale && (
                 <>
                     <EditorTextInput
                         label="Right text"
                         placeholder=""
-                        defaultValue={openQuestion?.settings.rightText}
-                        onChange={(e) =>
-                            updateSettings({ rightText: e.target.value })
-                        }
-                        characterCount={
-                            openQuestion?.settings.rightText?.length ?? 0
-                        }
+                        defaultValue={question?.settings.rightText}
+                        onChange={(e) => updateSettings({ rightText: e.target.value }, true)}
                     />
                     <EditorTextInput
                         label="Left text"
                         placeholder=""
-                        defaultValue={openQuestion?.settings.leftText}
-                        onChange={(e) =>
-                            updateSettings({ leftText: e.target.value })
-                        }
-                        characterCount={
-                            openQuestion?.settings.leftText?.length ?? 0
-                        }
+                        defaultValue={question?.settings.leftText}
+                        onChange={(e) => updateSettings({ leftText: e.target.value })}
                     />
+
                     <ReactSelect
                         options={smileyCount}
-                        defaultValue={smileyCount.find(
-                            (option) =>
-                                option.value === openQuestion?.settings.count,
-                        )}
+                        defaultValue={smileyCount.find((option) => option.value === question?.settings.count)}
                         label="Number of smileys"
-                        onchange={(
-                            option: MultiValue<Option> | SingleValue<Option>,
-                        ) =>
-                            updateSettings({
-                                count: (option as SingleValue<Option>)?.value,
-                            })
-                        }
+                        onchange={(option: MultiValue<Option> | SingleValue<Option>) => {
+                            updateSettings({ count: (option as SingleValue<Option>)?.value });
+                        }}
                     />
                 </>
             )}

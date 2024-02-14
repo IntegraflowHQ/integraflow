@@ -1,4 +1,3 @@
-import { SurveyQuestion } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { QuestionLogic } from "@/types";
@@ -6,29 +5,25 @@ import { cn, generateUniqueId } from "@/utils";
 import { destinationOptions } from "@/utils/question";
 import { LogicOperator } from "@integraflow/web/src/types";
 import { PlusIcon } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { SingleValue } from "react-select";
 import { Option, ReactSelect } from "../../ReactSelect";
 import { LogicGroup } from "./LogicGroup";
 
 type Props = {
     logic: QuestionLogic;
-    setIsCreatingLogic: React.Dispatch<React.SetStateAction<boolean>>;
-    question: SurveyQuestion;
     logicIndex: number;
 };
 
 export const FormLogicBox = ({ logic, logicIndex }: Props) => {
     const { parsedQuestions } = useSurvey();
-    const { openQuestion } = useQuestion();
+    const { question } = useQuestion();
     const [allowAddLogic, setAllowAddLogic] = useState(false);
     const [editValues, setEditValues] = useState(logic);
 
     useEffect(() => {
         if (editValues.groups && editValues.groups.length > 0) {
-            const disable = editValues.groups.some(
-                (g) => g.fields.length === 0 || !g.condition,
-            );
+            const disable = editValues.groups.some((g) => g.fields.length === 0 || !g.condition);
             setAllowAddLogic(disable);
         }
     }, [editValues]);
@@ -53,7 +48,6 @@ export const FormLogicBox = ({ logic, logicIndex }: Props) => {
             <LogicGroup
                 groups={editValues.groups || []}
                 logicIndex={logicIndex}
-                question={openQuestion!}
                 setEditValues={setEditValues}
                 editValues={editValues}
             />
@@ -76,20 +70,14 @@ export const FormLogicBox = ({ logic, logicIndex }: Props) => {
                 <p>then</p>
                 <div className="w-[330px]">
                     <ReactSelect
-                        options={destinationOptions(
-                            parsedQuestions,
-                            openQuestion!,
-                        )}
+                        options={destinationOptions(parsedQuestions, question!)}
                         defaultValue={
-                            parsedQuestions.find(
-                                (q) => q.id === logic.destination,
-                            )
+                            parsedQuestions.find((q) => q.id === logic.destination)
                                 ? {
                                       value: logic.destination,
                                       label:
-                                          parsedQuestions.find(
-                                              (q) => q.id === logic.destination,
-                                          )?.label || "Empty Question",
+                                          parsedQuestions.find((q) => q.id === logic.destination)?.label ||
+                                          "Empty Question",
                                   }
                                 : {
                                       value: "-1",
@@ -99,8 +87,7 @@ export const FormLogicBox = ({ logic, logicIndex }: Props) => {
                         onchange={(value) => {
                             setEditValues({
                                 ...editValues,
-                                destination: (value as SingleValue<Option>)
-                                    ?.value,
+                                destination: (value as SingleValue<Option>)?.value,
                             });
                         }}
                     />

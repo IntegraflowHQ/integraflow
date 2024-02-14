@@ -1,31 +1,24 @@
-import { addEllipsis } from "@/utils";
-import * as Accordion from "@radix-ui/react-accordion";
-import { useEffect, useState } from "react";
-import { QuestionOptions } from "./attributes/QuestionTypes";
-
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ParsedQuestion } from "@/types";
+import { addEllipsis } from "@/utils";
 import { questionTypes } from "@/utils/survey";
+import * as Accordion from "@radix-ui/react-accordion";
 import RatingIcon from "assets/icons/studio/rating.png";
-
+import { useEffect } from "react";
 import { QuestionPanel } from "./QuestionPanel";
+import { QuestionOptions } from "./attributes/QuestionTypes";
 
 export default function UpdateQuestion() {
     const { parsedQuestions } = useSurvey();
-
-    const { openQuestion, setOpenQuestion } = useQuestion();
-
-    const [currentQuestionType, setCurrentQuestionType] = useState<
-        SurveyQuestionTypeEnum | undefined
-    >();
+    const { question, switchQuestion, clear } = useQuestion();
 
     useEffect(() => {
-        if (!openQuestion || !openQuestion.id) {
-            setOpenQuestion(parsedQuestions[0]);
+        if ((!question || !question.id) && parsedQuestions.length > 0) {
+            switchQuestion(parsedQuestions[0]);
         }
-    }, [parsedQuestions, openQuestion]);
+    }, [parsedQuestions, question]);
 
     return (
         <div className="h-full w-full space-y-4 pt-2">
@@ -34,29 +27,20 @@ export default function UpdateQuestion() {
                     <Accordion.Root
                         type="single"
                         collapsible={true}
-                        value={openQuestion?.id}
-                        defaultValue={parsedQuestions[0]?.id}
+                        value={question ? question.id : ""}
                         onValueChange={(value) => {
                             if (value === "" || value === undefined) {
-                                setOpenQuestion({
-                                    id: "",
-                                } as ParsedQuestion);
+                                clear();
                                 return;
                             }
-                            setOpenQuestion(
-                                parsedQuestions.find(
-                                    (question) => question.id === value,
-                                ) as ParsedQuestion,
-                            );
+
+                            switchQuestion(parsedQuestions.find((question) => question.id === value) as ParsedQuestion);
                         }}
                         className="space-y-4"
                     >
                         {parsedQuestions?.map((question, index) => {
                             return (
-                                <Accordion.Item
-                                    value={question.id}
-                                    key={question.id}
-                                >
+                                <Accordion.Item value={question.id} key={question.id}>
                                     <Accordion.Header>
                                         <Accordion.Trigger
                                             value={question.id}
@@ -71,47 +55,30 @@ export default function UpdateQuestion() {
                                                                 SurveyQuestionTypeEnum.Csat,
                                                                 SurveyQuestionTypeEnum.NumericalScale,
                                                                 SurveyQuestionTypeEnum.CES,
-                                                            ].includes(
-                                                                question.type,
-                                                            )
+                                                            ].includes(question.type)
                                                                 ? RatingIcon
                                                                 : questionTypes.find(
-                                                                      (type) =>
-                                                                          type.type ===
-                                                                          question.type,
+                                                                      (type) => type.type === question.type,
                                                                   )?.icon
                                                         }
                                                         alt="icon"
                                                     />
                                                 </div>
                                                 <div className="text-intg-text-9 text-sm font-bold">
-                                                    {index + 1 < 10
-                                                        ? `0${index + 1}`
-                                                        : index + 1}
+                                                    {index + 1 < 10 ? `0${index + 1}` : index + 1}
                                                 </div>
                                                 <div className="w-[415px] rounded-lg bg-intg-bg-15 px-[16px] py-4 text-start text-sm text-intg-text-1 ">
                                                     {question.label ? (
-                                                        addEllipsis(
-                                                            question.label,
-                                                            40,
-                                                        )
+                                                        addEllipsis(question.label, 40)
                                                     ) : (
-                                                        <p>
-                                                            Enter your text here
-                                                        </p>
+                                                        <p>Enter your text here</p>
                                                     )}
                                                 </div>
                                             </div>
                                         </Accordion.Trigger>
                                     </Accordion.Header>
                                     <Accordion.Content>
-                                        <QuestionPanel
-                                            currentQuestionType={
-                                                currentQuestionType
-                                            }
-                                            question={question}
-                                            questionIndex={index}
-                                        />
+                                        <QuestionPanel questionIndex={index} />
                                     </Accordion.Content>
                                 </Accordion.Item>
                             );
@@ -119,7 +86,7 @@ export default function UpdateQuestion() {
                     </Accordion.Root>
                 ) : null}
             </div>
-            <QuestionOptions setCurrentQuestionType={setCurrentQuestionType} />
+            <QuestionOptions />
         </div>
     );
 }

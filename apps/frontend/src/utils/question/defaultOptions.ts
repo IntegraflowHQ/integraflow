@@ -1,18 +1,9 @@
-import {
-    SurveyQuestionCreateInput,
-    SurveyQuestionTypeEnum,
-} from "@/generated/graphql";
+import { SurveyQuestionCreateInput, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { QuestionOption, QuestionSettings } from "@/types";
 import { FormFieldType } from "@integraflow/web/src/types";
 import { generateUniqueId } from "..";
 
-const CSATOptions = [
-    "Very unsatisfied",
-    "Unsatisfied",
-    "Neutral",
-    "Satisfied",
-    "Very satisfied",
-];
+const CSATOptions = ["Very unsatisfied", "Unsatisfied", "Neutral", "Satisfied", "Very satisfied"];
 
 const CESOptions = [
     "Strongly Disagree",
@@ -43,29 +34,19 @@ export const createFormFields = (): QuestionOption[] => {
     ];
 };
 
-export const createRangeOptions = (
-    type: SurveyQuestionTypeEnum,
-    length: number,
-): QuestionOption[] => {
+export const createRangeOptions = (type: SurveyQuestionTypeEnum, length: number): QuestionOption[] => {
     const options = [];
     for (let i = 1; i <= length; i++) {
         options.push({
             id: generateUniqueId(),
             orderNumber: i,
-            label:
-                type === SurveyQuestionTypeEnum.Csat
-                    ? CSATOptions[i - 1]
-                    : type === "CES"
-                      ? CESOptions[i - 1]
-                      : "",
+            label: type === SurveyQuestionTypeEnum.Csat ? CSATOptions[i - 1] : type === "CES" ? CESOptions[i - 1] : "",
         });
     }
     return options;
 };
 
-export const createOptions = (
-    type: SurveyQuestionTypeEnum,
-): QuestionOption[] | undefined => {
+export const createOptions = (type: SurveyQuestionTypeEnum): QuestionOption[] | undefined => {
     if (type === SurveyQuestionTypeEnum.Form) {
         return createFormFields();
     }
@@ -78,8 +59,7 @@ export const createOptions = (
         type === SurveyQuestionTypeEnum.NumericalScale ||
         type === SurveyQuestionTypeEnum.SmileyScale
     ) {
-        const length =
-            type === SurveyQuestionTypeEnum.Nps ? 10 : type === "CES" ? 7 : 5;
+        const length = type === SurveyQuestionTypeEnum.Nps ? 10 : type === "CES" ? 7 : 5;
         return createRangeOptions(type, length);
     }
 
@@ -105,9 +85,7 @@ export const createOptions = (
     }
 };
 
-export const createSettings = (
-    type: SurveyQuestionTypeEnum,
-): QuestionSettings | undefined => {
+export const createSettings = (type: SurveyQuestionTypeEnum): QuestionSettings | undefined => {
     if (type === SurveyQuestionTypeEnum.Form) {
         return {
             disclaimer: false,
@@ -127,10 +105,7 @@ export const createSettings = (
             logic: [],
         };
     }
-    if (
-        type === SurveyQuestionTypeEnum.Single ||
-        type === SurveyQuestionTypeEnum.Dropdown
-    ) {
+    if (type === SurveyQuestionTypeEnum.Single || type === SurveyQuestionTypeEnum.Dropdown) {
         return {
             randomize: false,
             randomizeExceptLast: false,
@@ -160,10 +135,7 @@ export const createSettings = (
             logic: [],
         };
     }
-    if (
-        type === SurveyQuestionTypeEnum.NumericalScale ||
-        type === SurveyQuestionTypeEnum.Nps
-    ) {
+    if (type === SurveyQuestionTypeEnum.NumericalScale || type === SurveyQuestionTypeEnum.Nps) {
         return {
             rightText: "Very Good",
             leftText: "Very Bad",
@@ -178,19 +150,14 @@ export const createSettings = (
             logic: [],
         };
     }
-    if (
-        type === SurveyQuestionTypeEnum.Date ||
-        type === SurveyQuestionTypeEnum.Csat
-    ) {
+    if (type === SurveyQuestionTypeEnum.Date || type === SurveyQuestionTypeEnum.Csat) {
         return {
             logic: [],
         };
     }
 };
 
-export const getDefaultValues = (
-    type: SurveyQuestionTypeEnum,
-): Partial<SurveyQuestionCreateInput> => {
+export const getDefaultValues = (type: SurveyQuestionTypeEnum): Partial<SurveyQuestionCreateInput> => {
     return {
         label: "",
         orderNumber: 1,

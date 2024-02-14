@@ -1,6 +1,5 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { QuestionSettings } from "@/types";
 import { CTAType } from "@integraflow/web/src/types";
 import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
@@ -13,78 +12,53 @@ const ctaTypeOptions = [
 ];
 
 export const CTASettings = () => {
-    const { updateQuestionMutation, openQuestion } = useQuestion();
+    const { question, updateSettings } = useQuestion();
 
-    const updateSettings = (newSettings: QuestionSettings) => {
-        updateQuestionMutation({
-            settings: { ...openQuestion?.settings, ...newSettings },
-        });
-    };
+    if (!question || question?.type !== SurveyQuestionTypeEnum.Cta) {
+        return null;
+    }
 
     return (
         <>
-            {openQuestion?.type === SurveyQuestionTypeEnum.Cta && (
-                <>
-                    <EditorTextInput
-                        label="Button label"
-                        defaultValue={openQuestion?.settings.text}
-                        onChange={(e) => {
+            <EditorTextInput
+                label="Button label"
+                defaultValue={question?.settings.text}
+                onChange={(e) => {
+                    updateSettings({ text: e.target.value }, true);
+                }}
+            />
+
+            {question.settings.type !== CTAType.NEXT && (
+                <div>
+                    <ReactSelect
+                        options={ctaTypeOptions}
+                        defaultValue={ctaTypeOptions.find((option) => option.value === question?.settings.type)}
+                        label="Button type"
+                        onchange={(option) => {
                             const newSettings = {
-                                ...openQuestion.settings,
-                                text: e.target.value,
+                                ...question.settings,
+                                type: (option as SingleValue<Option>)?.value,
                             };
+                            if (
+                                (option as SingleValue<Option>)?.value === CTAType.CLOSE ||
+                                (option as SingleValue<Option>)?.value === CTAType.HIDDEN
+                            ) {
+                                newSettings.link = "";
+                            }
                             updateSettings(newSettings);
                         }}
-                        characterCount={
-                            openQuestion?.settings.label?.length ?? 0
-                        }
                     />
-                    {openQuestion.settings.type !== CTAType.NEXT && (
-                        <div>
-                            <ReactSelect
-                                options={ctaTypeOptions}
-                                defaultValue={ctaTypeOptions.find(
-                                    (option) =>
-                                        option.value ===
-                                        openQuestion?.settings.type,
-                                )}
-                                label="Button type"
-                                onchange={(option) => {
-                                    const newSettings = {
-                                        ...openQuestion.settings,
-                                        type: (option as SingleValue<Option>)
-                                            ?.value,
-                                    };
-                                    if (
-                                        (option as SingleValue<Option>)
-                                            ?.value === CTAType.CLOSE ||
-                                        (option as SingleValue<Option>)
-                                            ?.value === CTAType.HIDDEN
-                                    ) {
-                                        newSettings.link = "";
-                                    }
-                                    updateSettings(newSettings);
-                                }}
-                            />
-                            {openQuestion?.settings.type === CTAType.LINK && (
-                                <EditorTextInput
-                                    label="Button link"
-                                    defaultValue={openQuestion?.settings.link}
-                                    onChange={(e) => {
-                                        const newSettings = {
-                                            ...openQuestion.settings,
-                                            link: e.target.value,
-                                        };
-                                        updateSettings(newSettings);
-                                    }}
-                                    characterCount={
-                                        openQuestion?.settings.link?.length ?? 0
-                                    }
-                                />
-                            )}
-                        </div>
+
+                    {question?.settings.type === CTAType.LINK && (
+                        <EditorTextInput
+                            label="Button link"
+                            defaultValue={question?.settings.link}
+                            onChange={(e) => {
+                                updateSettings({ link: e.target.value });
+                            }}
+                        />
                     )}
-                </>
+                </div>
             )}
         </>
     );

@@ -1,6 +1,5 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { QuestionSettings } from "@/types";
 import { Switch } from "@/ui";
 import { rangeOptions } from "@/utils/question";
 import { useState } from "react";
@@ -25,19 +24,11 @@ const limitRange = [
 ];
 
 export const ChoiceSettings = () => {
-    const { updateQuestionMutation, openQuestion } = useQuestion();
+    const { question, updateSettings } = useQuestion();
     const [rangeOption, setRangeOption] = useState(limitRange[0].value);
 
-    const updateSettings = (newSettings: QuestionSettings) => {
-        updateQuestionMutation({
-            settings: { ...openQuestion?.settings, ...newSettings },
-        });
-    };
-
-    const handleMaxChange = (
-        option: SingleValue<Option> | MultiValue<Option>,
-    ) => {
-        const newSettings = openQuestion?.settings ?? {};
+    const handleMaxChange = (option: SingleValue<Option> | MultiValue<Option>) => {
+        const newSettings = question?.settings ? { ...question?.settings } : {};
         if (!newSettings?.choice) {
             newSettings.choice = {
                 min: 0,
@@ -47,10 +38,9 @@ export const ChoiceSettings = () => {
         newSettings.choice.max = (option as SingleValue<Option>)?.value;
         updateSettings(newSettings);
     };
-    const handleMinChange = (
-        option: SingleValue<Option> | MultiValue<Option>,
-    ) => {
-        const newSettings = openQuestion?.settings ?? {};
+
+    const handleMinChange = (option: SingleValue<Option> | MultiValue<Option>) => {
+        const newSettings = question?.settings ? { ...question?.settings } : {};
         if (!newSettings?.choice) {
             newSettings.choice = {
                 min: 0,
@@ -60,10 +50,9 @@ export const ChoiceSettings = () => {
         newSettings.choice.min = (option as SingleValue<Option>)?.value;
         updateSettings(newSettings);
     };
-    const handleExactRangeChange = (
-        option: SingleValue<Option> | MultiValue<Option>,
-    ) => {
-        const newSettings = openQuestion?.settings ?? {};
+
+    const handleExactRangeChange = (option: SingleValue<Option> | MultiValue<Option>) => {
+        const newSettings = question?.settings ? { ...question?.settings } : {};
         if (!newSettings.choice) {
             newSettings.choice = {
                 min: 0,
@@ -75,46 +64,41 @@ export const ChoiceSettings = () => {
         updateSettings(newSettings);
     };
 
+    if (!question) {
+        return null;
+    }
+
     return (
         <>
-            {openQuestion?.type === SurveyQuestionTypeEnum.Single ||
-            openQuestion?.type === SurveyQuestionTypeEnum.Dropdown ||
-            openQuestion?.type === SurveyQuestionTypeEnum.Multiple ? (
+            {question?.type === SurveyQuestionTypeEnum.Single ||
+            question?.type === SurveyQuestionTypeEnum.Dropdown ||
+            question?.type === SurveyQuestionTypeEnum.Multiple ? (
                 <>
                     <div className="rounded bg-[#272138] p-3">
                         <Switch
                             name="randomizeAnswers"
                             label="Randomize answers"
-                            defaultValue={openQuestion?.settings?.randomize}
+                            defaultValue={question?.settings?.randomize}
                             onChange={(e) => {
-                                const newSettings = openQuestion?.settings;
-                                newSettings.randomize = e.target.value;
-                                updateQuestionMutation({
-                                    settings: newSettings,
-                                });
+                                updateSettings({ randomize: e.target.value });
                             }}
                         />
                     </div>
+
                     <div className="rounded bg-[#272138] p-3">
                         <Switch
                             name="randomizeAnswersExceptLast"
                             label="Randomize except last"
-                            defaultValue={
-                                openQuestion?.settings.randomizeExceptLast
-                            }
+                            defaultValue={question?.settings.randomizeExceptLast}
                             onChange={(e) => {
-                                const newSettings = openQuestion?.settings;
-                                newSettings.randomize = e.target.value;
-                                updateQuestionMutation({
-                                    settings: newSettings,
-                                });
+                                updateSettings({ randomizeExceptLast: e.target.value });
                             }}
                         />
                     </div>
                 </>
             ) : null}
 
-            {openQuestion?.type === SurveyQuestionTypeEnum.Multiple && (
+            {question?.type === SurveyQuestionTypeEnum.Multiple && (
                 <div className="flex gap-2">
                     <div className="flex-1">
                         <p className="text-sm">Selection limit Range</p>
@@ -122,44 +106,34 @@ export const ChoiceSettings = () => {
                             options={limitRange}
                             defaultValue={limitRange[0]}
                             onchange={(option) => {
-                                setRangeOption(
-                                    (option as SingleValue<Option>)?.value,
-                                );
+                                setRangeOption((option as SingleValue<Option>)?.value);
                             }}
                         />
                     </div>
+
                     {rangeOption === LimitRange.RANGE ? (
                         <MinMaxSelector
-                            options={rangeOptions(openQuestion!)}
-                            maxValue={rangeOptions(openQuestion!).find((v) => {
-                                return (
-                                    v.value ===
-                                    openQuestion?.settings.choice?.max
-                                );
+                            options={rangeOptions(question!)}
+                            maxValue={rangeOptions(question!).find((v) => {
+                                return v.value === question?.settings.choice?.max;
                             })}
-                            minValue={rangeOptions(openQuestion!).find((v) => {
-                                return (
-                                    v.value ===
-                                    openQuestion?.settings.choice?.min
-                                );
+                            minValue={rangeOptions(question!).find((v) => {
+                                return v.value === question?.settings.choice?.min;
                             })}
                             maxChange={(option) => handleMaxChange(option)}
                             minChange={(option) => handleMinChange(option)}
                         />
                     ) : null}
+
                     {rangeOption === LimitRange.EXACT ? (
                         <div className="flex-1">
                             <p className="text-sm">Exact</p>
                             <ReactSelect
-                                onchange={(option) =>
-                                    handleExactRangeChange(option)
-                                }
-                                defaultValue={rangeOptions(openQuestion!).find(
-                                    (option) =>
-                                        option.value ===
-                                        openQuestion?.settings.choice?.max,
+                                onchange={(option) => handleExactRangeChange(option)}
+                                defaultValue={rangeOptions(question!).find(
+                                    (option) => option.value === question?.settings.choice?.max,
                                 )}
-                                options={rangeOptions(openQuestion!)}
+                                options={rangeOptions(question!)}
                             />
                         </div>
                     ) : null}

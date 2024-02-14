@@ -19,116 +19,100 @@ type DefaultOption = {
 };
 
 export const OptionsList = () => {
-    const { updateQuestionMutation, openQuestion } = useQuestion();
+    const { updateQuestion, question } = useQuestion();
+
+    if (!question) {
+        return null;
+    }
+
+    if (
+        ![SurveyQuestionTypeEnum.Single, SurveyQuestionTypeEnum.Multiple, SurveyQuestionTypeEnum.Dropdown].includes(
+            question?.type,
+        )
+    ) {
+        return null;
+    }
 
     return (
         <div>
-            {openQuestion?.type === SurveyQuestionTypeEnum.Single ||
-            openQuestion?.type === SurveyQuestionTypeEnum.Multiple ||
-            openQuestion?.type === SurveyQuestionTypeEnum.Dropdown ? (
-                <div className="space-y-4">
-                    <div className="flex justify-between text-sm">
-                        <p>Answer Choices</p>
-                        <AddMultipleQuestions
-                            questionOptions={openQuestion?.options}
-                        />
-                    </div>
-
-                    {openQuestion?.options ? (
-                        <div className="space-y-4">
-                            {openQuestion?.options.map(
-                                (option: DefaultOption, index: number) => (
-                                    <div
-                                        key={option.id}
-                                        className="flex items-center gap-2"
-                                    >
-                                        <MoreButton />
-                                        <EditorTextInput
-                                            defaultValue={option.label}
-                                            onChange={(e) => {
-                                                const newOptions =
-                                                    openQuestion?.options;
-                                                newOptions[index].label =
-                                                    e.target.value;
-
-                                                updateQuestionMutation({
-                                                    options: newOptions,
-                                                });
-                                            }}
-                                            characterCount={
-                                                openQuestion?.options[index]
-                                                    .label.length
-                                            }
-                                        />
-                                        <div
-                                            className={cn(
-                                                `${
-                                                    openQuestion?.type ===
-                                                    SurveyQuestionTypeEnum.Dropdown
-                                                        ? "hidden "
-                                                        : "block"
-                                                } flex`,
-                                            )}
-                                        >
-                                            <CommentButton
-                                                color={
-                                                    option.comment
-                                                        ? "active"
-                                                        : "default"
-                                                }
-                                                onClick={() => {
-                                                    const newOptions =
-                                                        openQuestion?.options;
-
-                                                    newOptions[index].comment =
-                                                        !option.comment;
-
-                                                    updateQuestionMutation({
-                                                        options: newOptions,
-                                                    });
-                                                }}
-                                            />
-                                        </div>
-
-                                        {openQuestion?.options.length <
-                                        3 ? null : (
-                                            <MinusButton
-                                                onclick={() => {
-                                                    const newOptions =
-                                                        openQuestion?.options;
-                                                    newOptions.splice(index, 1);
-                                                    updateQuestionMutation({
-                                                        options: newOptions,
-                                                    });
-                                                }}
-                                            />
-                                        )}
-                                    </div>
-                                ),
-                            )}
-                        </div>
-                    ) : null}
-
-                    <TextButton
-                        text={"Add an answer at choice"}
-                        onclick={() => {
-                            const highestOrderNumber = getHighestOrderNumber(
-                                openQuestion?.options,
-                            );
-                            const newOptions = openQuestion?.options;
-                            newOptions.push({
-                                id: generateUniqueId(),
-                                orderNumber: highestOrderNumber + 1,
-                                label: "",
-                                comment: false,
-                            });
-                            updateQuestionMutation({
-                                options: newOptions,
-                            });
-                        }}
-                    />
+            <div className="space-y-4">
+                <div className="flex justify-between text-sm">
+                    <p>Answer Choices</p>
+                    <AddMultipleQuestions questionOptions={question?.options} />
                 </div>
-            ) : null}
+
+                {question?.options ? (
+                    <div className="space-y-4">
+                        {question?.options.map((option: DefaultOption, index: number) => (
+                            <div key={option.id} className="flex items-center gap-2">
+                                <MoreButton />
+                                <EditorTextInput
+                                    defaultValue={option.label}
+                                    onChange={(e) => {
+                                        const newOptions = [...question?.options];
+                                        newOptions[index].label = e.target.value;
+
+                                        updateQuestion(
+                                            {
+                                                options: newOptions,
+                                            },
+                                            true,
+                                        );
+                                    }}
+                                />
+                                <div
+                                    className={cn(
+                                        `${
+                                            question?.type === SurveyQuestionTypeEnum.Dropdown ? "hidden " : "block"
+                                        } flex`,
+                                    )}
+                                >
+                                    <CommentButton
+                                        color={option.comment ? "active" : "default"}
+                                        onClick={() => {
+                                            const newOptions = [...question?.options];
+                                            newOptions[index].comment = !option.comment;
+
+                                            updateQuestion({
+                                                options: newOptions,
+                                            });
+                                        }}
+                                    />
+                                </div>
+
+                                {question?.options.length < 3 ? null : (
+                                    <MinusButton
+                                        onclick={() => {
+                                            const newOptions = [...question?.options];
+                                            newOptions.splice(index, 1);
+                                            updateQuestion({
+                                                options: newOptions,
+                                            });
+                                        }}
+                                    />
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                ) : null}
+
+                <TextButton
+                    text={"Add an answer at choice"}
+                    onclick={() => {
+                        const highestOrderNumber = getHighestOrderNumber(question?.options);
+                        const newOptions = [...question?.options];
+                        newOptions.push({
+                            id: generateUniqueId(),
+                            orderNumber: highestOrderNumber + 1,
+                            label: "",
+                            comment: false,
+                        });
+                        updateQuestion({
+                            options: newOptions,
+                        });
+                    }}
+                />
+            </div>
         </div>
     );
 };

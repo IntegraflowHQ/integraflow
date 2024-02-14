@@ -12,24 +12,16 @@ interface Props extends DialogProps {
 
 export const AddMultipleQuestions = ({ questionOptions }: Props) => {
     const [inputValue, setInputValue] = useState(
-        questionOptions
-            ? [...questionOptions.map((option) => option.label)].join("\n")
-            : "",
+        questionOptions ? [...questionOptions.map((option) => option.label)].join("\n") : "",
     );
 
     const [openModal, setOpenModal] = useState(false);
 
-    const { updateQuestionMutation } = useQuestion();
+    const { updateQuestion } = useQuestion();
 
     useEffect(() => {
         setInputValue(
-            questionOptions
-                ? [
-                      ...questionOptions.map(
-                          (option: QuestionOption) => option.label,
-                      ),
-                  ].join("\n")
-                : "",
+            questionOptions ? [...questionOptions.map((option: QuestionOption) => option.label)].join("\n") : "",
         );
     }, [openModal]);
 
@@ -48,23 +40,17 @@ export const AddMultipleQuestions = ({ questionOptions }: Props) => {
                         }}
                     ></textarea>
                     <div className="ml-auto flex w-[45%] gap-2">
-                        <Button
-                            text="Cancel"
-                            variant="secondary"
-                            onClick={() => setOpenModal(!open)}
-                        />
+                        <Button text="Cancel" variant="secondary" onClick={() => setOpenModal(!open)} />
                         <Button
                             text="Update"
                             onClick={() => {
                                 setOpenModal(!openModal);
-                                updateQuestionMutation({
-                                    options: inputValue
-                                        .split("\n")
-                                        .map((option, index) => ({
-                                            id: generateUniqueId(),
-                                            orderNumber: index,
-                                            label: option,
-                                        })),
+                                updateQuestion({
+                                    options: inputValue.split("\n").map((option, index) => ({
+                                        id: generateUniqueId(),
+                                        orderNumber: index,
+                                        label: option,
+                                    })),
                                 });
                             }}
                         />

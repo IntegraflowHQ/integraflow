@@ -1,5 +1,5 @@
 import MinusIcon from "@/assets/icons/studio/MinusIcon";
-import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { LogicConditionEnum, QuestionLogic } from "@/types";
@@ -20,14 +20,13 @@ import { Option, ReactSelect } from "../ReactSelect";
 type Props = {
     logic: QuestionLogic;
     setIsCreatingLogic: React.Dispatch<React.SetStateAction<boolean>>;
-    question: SurveyQuestion;
     logicIndex: number;
     setLogicValues: React.Dispatch<React.SetStateAction<QuestionLogic>>;
 };
 
 export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
     const { parsedQuestions } = useSurvey();
-    const { updateQuestionMutation, openQuestion } = useQuestion();
+    const { updateQuestion, question } = useQuestion();
     const [enableUserOptions, setEnableUserOptions] = useState(false);
     const [editValues, setEditValues] = useState(logic);
     const [logicOperator, setLogicOperator] = useState(editValues.operator);
@@ -45,12 +44,10 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
 
     const handleLogicUpdate = (updatedLogic: QuestionLogic) => {
         if (!updatedLogic.destination) {
-            updateQuestionMutation({
+            updateQuestion({
                 settings: {
-                    ...openQuestion?.settings,
-                    logic: (
-                        openQuestion?.settings.logic as QuestionLogic[]
-                    ).filter((l) => l.id !== logic.id),
+                    ...question?.settings,
+                    logic: (question?.settings.logic as QuestionLogic[]).filter((l) => l.id !== logic.id),
                 },
             });
             setIsCreatingLogic(true);
@@ -65,13 +62,11 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
             });
             return;
         } else {
-            updateQuestionMutation({
+            updateQuestion({
                 settings: {
-                    ...openQuestion?.settings,
+                    ...question?.settings,
                     logic: [
-                        ...(
-                            openQuestion?.settings.logic as QuestionLogic[]
-                        ).map((l: QuestionLogic, i: number) =>
+                        ...(question?.settings.logic as QuestionLogic[]).map((l: QuestionLogic, i: number) =>
                             i === logicIndex ? updatedLogic : l,
                         ),
                     ],
@@ -90,9 +85,7 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
         handleLogicUpdate(newValues);
     };
 
-    const handleValuesChange = (
-        values: SingleValue<Option> | MultiValue<Option>,
-    ) => {
+    const handleValuesChange = (values: SingleValue<Option> | MultiValue<Option>) => {
         let newValues;
         newValues = {
             ...editValues,
@@ -101,9 +94,7 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
         if ((values as MultiValue<Option>).length > 0) {
             newValues = {
                 ...editValues,
-                values: (values as MultiValue<Option>)?.map(
-                    (v: any) => v.value,
-                ),
+                values: (values as MultiValue<Option>)?.map((v: any) => v.value),
             };
         } else {
             newValues = {
@@ -142,10 +133,7 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
     const handleOperatorChange = () => {
         const newValues = {
             ...editValues,
-            operator:
-                logicOperator === LogicOperator.AND
-                    ? LogicOperator.OR
-                    : LogicOperator.AND,
+            operator: logicOperator === LogicOperator.AND ? LogicOperator.OR : LogicOperator.AND,
         };
         setEditValues(newValues);
         setLogicOperator(newValues.operator);
@@ -159,18 +147,14 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
                 <p>If answer</p>
                 <div className="w-[330px]">
                     <ReactSelect
-                        options={conditionOptions(openQuestion?.type!)}
-                        onchange={(
-                            value: SingleValue<Option> | MultiValue<Option>,
-                        ) => handleConditionChange(value)}
-                        value={conditionOptions(openQuestion?.type!)?.find(
-                            (c) =>
-                                editValues.condition !== undefined &&
-                                c.value === editValues.condition,
+                        options={conditionOptions(question?.type!)}
+                        onchange={(value: SingleValue<Option> | MultiValue<Option>) => handleConditionChange(value)}
+                        value={conditionOptions(question?.type!)?.find(
+                            (c) => editValues.condition !== undefined && c.value === editValues.condition,
                         )}
-                        defaultValue={conditionOptions(
-                            openQuestion?.type as SurveyQuestionTypeEnum,
-                        )?.find((c) => c.value === editValues.condition)}
+                        defaultValue={conditionOptions(question?.type as SurveyQuestionTypeEnum)?.find(
+                            (c) => c.value === editValues.condition,
+                        )}
                     />
                 </div>
             </div>
@@ -180,32 +164,25 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
                     <div></div>
                     <div className="w-[330px]">
                         <MinMaxSelector
-                            options={logicValuesOptions(openQuestion!)}
-                            minDefault={logicValuesOptions(openQuestion!).find(
-                                (o: Option) =>
-                                    o.value === editValues.values?.[0],
+                            options={logicValuesOptions(question!)}
+                            minDefault={logicValuesOptions(question!).find(
+                                (o: Option) => o.value === editValues.values?.[0],
                             )}
-                            maxDefault={logicValuesOptions(openQuestion!).find(
-                                (o: Option) =>
-                                    o.value === editValues.values?.[1],
+                            maxDefault={logicValuesOptions(question!).find(
+                                (o: Option) => o.value === editValues.values?.[1],
                             )}
-                            minValue={logicValuesOptions(openQuestion!).find(
-                                (o: Option) =>
-                                    o.value === editValues.values?.[0],
+                            minValue={logicValuesOptions(question!).find(
+                                (o: Option) => o.value === editValues.values?.[0],
                             )}
-                            maxValue={logicValuesOptions(openQuestion!).find(
-                                (o: Option) =>
-                                    o.value === editValues.values?.[1],
+                            maxValue={logicValuesOptions(question!).find(
+                                (o: Option) => o.value === editValues.values?.[1],
                             )}
                             maxChange={(value) => {
                                 handleMinMaxChange(
                                     {
                                         value: editValues.values?.[1] ?? value,
-                                        label: openQuestion?.options?.find(
-                                            (o: Option) =>
-                                                o.id ===
-                                                (value as SingleValue<Option>)
-                                                    ?.value,
+                                        label: question?.options?.find(
+                                            (o: Option) => o.id === (value as SingleValue<Option>)?.value,
                                         )?.label,
                                     },
                                     value,
@@ -214,11 +191,8 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
                             minChange={(value) => {
                                 handleMinMaxChange(value, {
                                     value: editValues.values?.[0] ?? value,
-                                    label: openQuestion?.options?.find(
-                                        (o: Option) =>
-                                            o.id ===
-                                            (value as SingleValue<Option>)
-                                                ?.value,
+                                    label: question?.options?.find(
+                                        (o: Option) => o.id === (value as SingleValue<Option>)?.value,
                                     )?.label,
                                 });
                             }}
@@ -230,27 +204,19 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
             {editValues.condition !== LogicConditionEnum.BETWEEN &&
             editValues.condition !== LogicConditionEnum.HAS_ANY_VALUE &&
             editValues.condition !== LogicConditionEnum.QUESTION_IS_ANSWERED &&
-            editValues.condition !==
-                LogicConditionEnum.QUESTION_IS_NOT_ANSWERED ? (
+            editValues.condition !== LogicConditionEnum.QUESTION_IS_NOT_ANSWERED ? (
                 <div className="flex justify-between">
                     <div />
                     <div className="w-[330px]">
                         <ReactSelect
                             comboBox={true}
                             enableUserOptions={enableUserOptions || false}
-                            shouldLogicalOperatorChange={changeableOperator(
-                                openQuestion?.type as SurveyQuestionTypeEnum,
-                            )}
+                            shouldLogicalOperatorChange={changeableOperator(question?.type as SurveyQuestionTypeEnum)}
                             logicOperator={logicOperator}
                             onOperatorChange={handleOperatorChange}
-                            options={logicValuesOptions(openQuestion!)}
+                            options={logicValuesOptions(question!)}
                             defaultValue={editValues.values
-                                ?.map(
-                                    (v) =>
-                                        openQuestion?.options?.find(
-                                            (o: Option) => o.id === v,
-                                        ),
-                                )
+                                ?.map((v) => question?.options?.find((o: Option) => o.id === v))
                                 .map((v) => ({
                                     value: v?.id,
                                     label: v?.label,
@@ -263,12 +229,7 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
                                       }))
                                     : editValues.values &&
                                       editValues?.values
-                                          .map(
-                                              (v) =>
-                                                  openQuestion?.options?.find(
-                                                      (o: Option) => o.id === v,
-                                                  ),
-                                          )
+                                          .map((v) => question?.options?.find((o: Option) => o.id === v))
                                           .map((v) => ({
                                               value: v?.id,
                                               label: v?.label,
@@ -285,25 +246,19 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
                 <div className="w-[330px]">
                     <ReactSelect
                         defaultValue={
-                            parsedQuestions.find(
-                                (q) => q.id === logic.destination,
-                            )
+                            parsedQuestions.find((q) => q.id === logic.destination)
                                 ? {
                                       value: logic.destination,
                                       label:
-                                          parsedQuestions.find(
-                                              (q) => q.id === logic.destination,
-                                          )?.label || "Empty Question",
+                                          parsedQuestions.find((q) => q.id === logic.destination)?.label ||
+                                          "Empty Question",
                                   }
                                 : {
                                       value: "-1",
                                       label: "End survey",
                                   }
                         }
-                        options={destinationOptions(
-                            parsedQuestions,
-                            openQuestion!,
-                        )}
+                        options={destinationOptions(parsedQuestions, question!)}
                         onchange={handleDestinationChange}
                     />
                 </div>
@@ -312,12 +267,10 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
             <div
                 className="absolute -right-2.5 bottom-[50%] translate-y-1/2 cursor-pointer"
                 onClick={() =>
-                    updateQuestionMutation({
+                    updateQuestion({
                         settings: {
-                            ...openQuestion?.settings,
-                            logic: (
-                                openQuestion?.settings.logic as QuestionLogic[]
-                            ).filter((l) => l.id !== logic.id),
+                            ...question?.settings,
+                            logic: (question?.settings.logic as QuestionLogic[]).filter((l) => l.id !== logic.id),
                         },
                     })
                 }

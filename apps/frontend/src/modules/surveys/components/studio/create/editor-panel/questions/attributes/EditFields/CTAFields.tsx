@@ -7,66 +7,66 @@ import MinusButton from "../Buttons/MinimizeButton";
 import TextButton from "../Buttons/TextButton";
 
 export const CTAFields = () => {
-    const { updateQuestionMutation, openQuestion } = useQuestion();
+    const { updateQuestion, question } = useQuestion();
     const { parsedQuestions } = useSurvey();
-
     const [showDescription, setShowDescription] = useState(false);
 
     useEffect(() => {
-        if (openQuestion?.description) {
+        if (question?.description) {
             setShowDescription(true);
         }
-    }, [openQuestion?.description]);
+    }, [question?.description]);
 
     return (
-        <>
-            <div>
-                <EditorTextInput
-                    placeholder=""
-                    options={recallOptions(parsedQuestions, openQuestion!)}
-                    attributes={userAttributeOptions}
-                    onChange={(e) => {
-                        updateQuestionMutation({
+        <div>
+            <EditorTextInput
+                placeholder=""
+                options={recallOptions(parsedQuestions, question!)}
+                attributes={userAttributeOptions}
+                onChange={(e) => {
+                    updateQuestion(
+                        {
                             label: e.target.value,
-                        });
-                    }}
-                    defaultValue={openQuestion?.label}
-                    characterCount={openQuestion?.label?.split("").length}
-                />
-                {showDescription ? (
-                    <div className="mt-4 flex items-center justify-between gap-4">
-                        <EditorTextInput
-                            label={"Description"}
-                            placeholder=""
-                            className="flex-1"
-                            defaultValue={openQuestion?.description}
-                            characterCount={
-                                openQuestion?.description?.split("").length
-                            }
-                            onChange={(e) => {
-                                updateQuestionMutation({
+                        },
+                        true,
+                    );
+                }}
+                defaultValue={question?.label}
+            />
+
+            {showDescription ? (
+                <div className="mt-4 flex items-center justify-between gap-4">
+                    <EditorTextInput
+                        label={"Description"}
+                        placeholder=""
+                        className="flex-1"
+                        defaultValue={question?.description}
+                        onChange={(e) => {
+                            updateQuestion(
+                                {
                                     description: e.target.value,
-                                });
-                            }}
-                        />
-                        <div>
-                            <MinusButton
-                                onclick={() => {
-                                    setShowDescription(false);
-                                    updateQuestionMutation({
-                                        description: "",
-                                    });
-                                }}
-                            />
-                        </div>
-                    </div>
-                ) : null}
-                <TextButton
-                    classname={`${showDescription ? "hidden" : "block"}`}
-                    text="Add description"
-                    onclick={() => setShowDescription(true)}
-                />
-            </div>
-        </>
+                                },
+                                true,
+                            );
+                        }}
+                    />
+
+                    <MinusButton
+                        onclick={() => {
+                            setShowDescription(false);
+                            updateQuestion({
+                                description: "",
+                            });
+                        }}
+                    />
+                </div>
+            ) : null}
+
+            <TextButton
+                classname={`${showDescription ? "hidden" : "block"}`}
+                text="Add description"
+                onclick={() => setShowDescription(true)}
+            />
+        </div>
     );
 };
