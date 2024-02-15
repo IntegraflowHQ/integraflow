@@ -22,8 +22,8 @@ def get_context_value(request: HttpRequest) -> IntegraflowContext:
     request.allow_replica = getattr(request, "allow_replica", True)
     request.request_time = timezone.now()
     set_app_on_context(request)
-    set_project_on_context(request)
     set_auth_on_context(request)
+    set_project_on_context(request)
     set_decoded_auth_token(request)
     return request
 
@@ -50,6 +50,10 @@ def set_app_on_context(request: IntegraflowContext):
 
 def set_project_on_context(request: IntegraflowContext):
     if request.path == API_PATH and not hasattr(request, "project"):
+        if request.user and request.user.project:
+            request.project = request.user.project
+            return
+
         request.project = get_project_promise(request).get()
 
 

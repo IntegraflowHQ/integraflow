@@ -9,7 +9,7 @@ from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.project import models
 
 
-class Project(ModelObjectType):
+class BaseProject(ModelObjectType):
     id = graphene.GlobalID(
         required=True,
         description="The ID of the project."
@@ -18,6 +18,19 @@ class Project(ModelObjectType):
         required=True,
         description="Name of the project.",
     )
+    api_token = graphene.String(
+        required=True,
+        description="API token for project.",
+    )
+
+    class Meta:
+        description = "Represents a project."
+        doc_category = DOC_CATEGORY_PROJECTS
+        model = models.Project
+        interfaces = [graphene.relay.Node]
+
+
+class Project(BaseProject):
     slug = graphene.String(
         required=True,
         description="Slug of the project.",
@@ -51,14 +64,10 @@ class Project(ModelObjectType):
         return root.organization
 
 
-class ProjectTheme(ModelObjectType):
+class BaseProjectTheme(ModelObjectType):
     id = graphene.GlobalID(
         required=True,
         description="The ID of the theme."
-    )
-    reference = graphene.ID(
-        required=False,
-        description="For internal purpose."
     )
     name = graphene.String(
         required=True,
@@ -69,6 +78,19 @@ class ProjectTheme(ModelObjectType):
     )
     settings = JSONString(
         description="The settings of the theme."
+    )
+
+    class Meta:
+        description = "Represents a theme."
+        doc_category = DOC_CATEGORY_PROJECTS
+        model = models.ProjectTheme
+        interfaces = [graphene.relay.Node]
+
+
+class ProjectTheme(BaseProjectTheme):
+    reference = graphene.ID(
+        required=False,
+        description="For internal purpose."
     )
     project = PermissionsField(
         Project,

@@ -49,19 +49,19 @@ class LogicBooleanCondition(LogicBaseCondition):
     IS_FALSE = "is_false"
 
 
-def evaluate_single_logic(logic, destinations):
+def evaluate_single_logic(logic, destinations, option_count):
     if (
         logic.get("condition") == LogicSingleCondition.IS and
-        len(logic.get("values")) == len(logic.options)
+        len(logic.get("values")) == option_count
     ):
         destinations.clear()
         destinations.add(logic.get("destination"))
 
 
-def evaluate_multiple_logic(logic, destinations):
+def evaluate_multiple_logic(logic, destinations, option_count):
     if (
         logic.get("condition") == LogicMultipleCondition.INCLUDES_ANY and
-        len(logic.get("values")) == len(logic.options)
+        len(logic.get("values")) == option_count
     ):
         destinations.clear()
         destinations.add(logic.get("destination"))
@@ -87,10 +87,18 @@ def evaluate_logic(
             break
 
         if question.type == SurveyQuestion.Type.SINGLE:
-            evaluate_single_logic(logic, destinations)
+            evaluate_single_logic(
+                logic,
+                destinations,
+                len(question.options or [])
+            )
 
         if question.type == SurveyQuestion.Type.MULTIPLE:
-            evaluate_multiple_logic(logic, destinations)
+            evaluate_multiple_logic(
+                logic,
+                destinations,
+                len(question.options or [])
+            )
 
     return destinations
 
