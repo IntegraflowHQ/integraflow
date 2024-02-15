@@ -21,6 +21,7 @@ import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
 import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
 
 const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
+
 if (isDebugMode) {
     loadDevMessages();
     loadErrorMessages();

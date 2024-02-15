@@ -1,63 +1,46 @@
 import {
     ProjectTheme,
-    SurveyQuestionTypeEnum,
+    SurveyQuestion,
     SurveyStatusEnum,
     SurveyTypeEnum,
     SurveyUpdateInput,
     useGetSurveyQuery,
     useSurveyCreateMutation,
-    useSurveyQuestionCreateMutation,
     useSurveyUpdateMutation,
 } from "@/generated/graphql";
 import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
 import { ROUTES } from "@/routes";
-import { generateRandomString } from "@/utils";
-import { createSelectors } from "@/utils/selectors";
-import { useEffect } from "react";
+import { generateRandomString, parseQuestion } from "@/utils";
+import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useScrollToBottom } from "react-scroll-to-bottom";
-import { SURVEY_QUESTION } from "../graphql/fragments/surveyFragment";
-import { useSurveyStore } from "../states/survey";
 
 export const useSurvey = () => {
     const { orgSlug, projectSlug, surveySlug } = useParams();
-    const scrollToBottom = useScrollToBottom();
-    const navigate = useNavigate();
     const { user } = useCurrentUser();
+    const navigate = useNavigate();
 
-    const surveyStore = createSelectors(useSurveyStore);
-    const openQuestion = surveyStore.use.openQuestion();
-    const setOpenQuestion = surveyStore.use.setOpenQuestion();
+    const [createSurveyMutation, { loading: loadingCreateSurvey }] = useSurveyCreateMutation();
+    const [updateSurveyMutation] = useSurveyUpdateMutation();
 
-    const [createSurveyMutation] = useSurveyCreateMutation();
-    const [createQuestionMutaton] = useSurveyQuestionCreateMutation({});
-    const [updateSurveyMutation] = useSurveyUpdateMutation({});
-
-    const {
-        data: survey,
-        loading,
-        refetch,
-    } = useGetSurveyQuery({
+    const { data: survey } = useGetSurveyQuery({
         variables: {
             slug: surveySlug,
         },
-        skip: !surveySlug,
     });
 
-    const questions = survey?.survey?.questions?.edges || [];
     const surveyId = survey?.survey?.id;
 
-    useEffect(() => {
-        refetch();
-    }, [refetch, surveySlug]);
+    const parsedQuestions = useMemo(() => {
+        const questions = survey?.survey?.questions?.edges || [];
 
-    const createSurvey = async (_template?: string) => {
+        return [...questions]
+            .sort((a, b) => a.node.orderNumber - b.node.orderNumber)
+            .map(({ node: question }) => parseQuestion(question as SurveyQuestion));
+    }, [survey]);
+
+    const createSurvey = async () => {
         const surveySlug = `survey-${generateRandomString(10)}`;
-        navigate(
-            ROUTES.STUDIO.replace(":orgSlug", orgSlug!)
-                .replace(":projectSlug", projectSlug!)
-                .replace(":surveySlug", surveySlug),
-        );
+
         const surveyId = crypto.randomUUID();
 
         await createSurveyMutation({
@@ -68,88 +51,19 @@ export const useSurvey = () => {
                 },
             },
             onError: () => {
+                navigate(ROUTES.SURVEY_LIST.replace(":orgSlug", orgSlug!).replace(":projectSlug", projectSlug!));
+            },
+            onCompleted() {
                 navigate(
-                    ROUTES.SURVEY_LIST.replace(":orgSlug", orgSlug!).replace(
-                        ":projectSlug",
-                        projectSlug!,
-                    ),
+                    ROUTES.STUDIO.replace(":orgSlug", orgSlug!)
+                        .replace(":projectSlug", projectSlug!)
+                        .replace(":surveySlug", surveySlug),
                 );
             },
         });
     };
 
-    const createQuestion = async (type: SurveyQuestionTypeEnum) => {
-        const id = crypto.randomUUID();
-        if (!surveyId) return;
-
-        await createQuestionMutaton({
-            variables: {
-                input: {
-                    orderNumber: questions.length + 1,
-                    surveyId: surveyId,
-                    id,
-                    type: type,
-                },
-            },
-            optimisticResponse: {
-                __typename: "Mutation",
-                surveyQuestionCreate: {
-                    __typename: "SurveyQuestionCreate",
-                    surveyQuestion: {
-                        __typename: "SurveyQuestion",
-                        id: "temp-id",
-                        createdAt: new Date().toISOString(),
-                        description: "",
-                        label: "",
-                        maxPath: 0,
-                        orderNumber: questions.length + 1,
-                        reference: id,
-                        type: type,
-                        settings: null,
-                        options: null,
-                    },
-                    surveyErrors: [],
-                    errors: [],
-                },
-            },
-            update: (cache, { data }) => {
-                if (!data?.surveyQuestionCreate?.surveyQuestion) return;
-                cache.modify({
-                    id: `Survey:${surveyId}`,
-                    fields: {
-                        questions(existingQuestions = []) {
-                            const newQuestionRef = cache.writeFragment({
-                                data: data.surveyQuestionCreate?.surveyQuestion,
-                                fragment: SURVEY_QUESTION,
-                            });
-
-                            return {
-                                __typename: "SurveyQuestionCountableConnection",
-                                edges: [
-                                    ...existingQuestions.edges,
-                                    {
-                                        __typename:
-                                            "SurveyQuestionCountableEdge",
-                                        node: newQuestionRef,
-                                    },
-                                ],
-                            };
-                        },
-                    },
-                });
-            },
-            onCompleted: ({ surveyQuestionCreate }) => {
-                const { surveyQuestion } = surveyQuestionCreate ?? {};
-                setOpenQuestion(surveyQuestion?.id as string);
-                scrollToBottom();
-            },
-        });
-    };
-
-    const updateSurvey = async (
-        input: SurveyUpdateInput,
-        newTheme?: Partial<ProjectTheme>,
-    ) => {
+    const updateSurvey = async (input: SurveyUpdateInput, newTheme?: Partial<ProjectTheme>) => {
         if (!surveyId || !user || !survey) return;
 
         await updateSurveyMutation({
@@ -170,14 +84,8 @@ export const useSurvey = () => {
                         id: surveyId,
                         name: input.name ?? survey?.survey?.name,
                         reference: survey?.survey?.reference ?? "",
-                        type:
-                            input.type ??
-                            survey?.survey?.type ??
-                            SurveyTypeEnum.Survey,
-                        status:
-                            input.status ??
-                            survey.survey?.status ??
-                            SurveyStatusEnum.Draft,
+                        type: input.type ?? survey?.survey?.type ?? SurveyTypeEnum.Survey,
+                        status: input.status ?? survey.survey?.status ?? SurveyStatusEnum.Draft,
                         slug: input.slug ?? surveySlug ?? "",
                         questions: survey?.survey?.questions ?? {
                             __typename: "SurveyQuestionCountableConnection",
@@ -187,15 +95,12 @@ export const useSurvey = () => {
                             __typename: "SurveyChannelCountableConnection",
                             edges: [],
                         },
-                        createdAt:
-                            survey?.survey?.createdAt ??
-                            new Date().toISOString(),
+                        createdAt: survey?.survey?.createdAt ?? new Date().toISOString(),
                         updatedAt: new Date().toISOString(),
 
                         creator: survey?.survey?.creator ?? user,
                         theme: newTheme ?? survey?.survey?.theme ?? null,
-                        settings:
-                            input.settings ?? survey?.survey?.settings ?? null,
+                        settings: input.settings ?? survey?.survey?.settings ?? null,
                     },
                     surveyErrors: [],
                     errors: [],
@@ -221,14 +126,11 @@ export const useSurvey = () => {
 
     return {
         createSurvey,
-        createQuestion,
-        questions,
-        surveySlug,
-        setOpenQuestion,
-        openQuestion,
-        surveyId,
-        survey,
         updateSurvey,
-        loading,
+        surveySlug,
+        survey,
+        parsedQuestions,
+        loadingCreateSurvey,
+        surveyId,
     };
 };

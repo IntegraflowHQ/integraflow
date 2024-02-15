@@ -1,14 +1,26 @@
-import { Dialog, DialogContent, DialogTrigger, Header } from "@/ui";
+import {
+    Dialog,
+    DialogContent,
+    DialogTrigger,
+    GlobalSpinner,
+    Header,
+} from "@/ui";
 import { Document } from "@/ui/icons";
+import { useSurvey } from "../hooks/useSurvey";
 import SurveyCreate from "./SurveyCreate";
 import CreateSurveyButton from "./partials/CreateSurveyButton";
 
 export default function SurveyHome() {
+    const { loadingCreateSurvey } = useSurvey();
+
+    if (loadingCreateSurvey) {
+        return <GlobalSpinner />;
+    }
+
     return (
         <main className="flex h-full w-full flex-col items-center justify-center">
             <div className="flex max-w-[386px] flex-col items-center gap-[7px]">
                 <Document size="62" color="#AFAAC7" />
-
                 <div className="flex flex-col items-center gap-6">
                     <Header
                         title="Create your first survey"

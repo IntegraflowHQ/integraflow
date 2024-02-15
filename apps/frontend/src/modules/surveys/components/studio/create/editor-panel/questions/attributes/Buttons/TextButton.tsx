@@ -9,7 +9,7 @@ type Props = {
 
 const TextButton = ({ text, onclick, classname, size = "sm" }: Props) => {
     return (
-        <button
+        <div
             onClick={onclick && onclick}
             className={cn(
                 `${classname} ${
@@ -18,7 +18,7 @@ const TextButton = ({ text, onclick, classname, size = "sm" }: Props) => {
             )}
         >
             {text}
-        </button>
+        </div>
     );
 };
 

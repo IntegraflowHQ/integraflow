@@ -21,7 +21,7 @@ export const GlobalSpinner = ({ message }: Props) => {
             <div className="px-12 pb-8 pt-12">
                 <img src={Logo} alt="Logo" />
             </div>
-            <div className=" flex h-[100%] w-full flex-1 flex-col  items-center justify-center space-y-2">
+            <div className="flex h-[100%] w-full flex-1 flex-col items-center justify-center space-y-2">
                 <div className="relative -mt-48 ">
                     <img
                         src={Spinner}
@@ -30,7 +30,7 @@ export const GlobalSpinner = ({ message }: Props) => {
                     />
                     <img
                         src={LogoIcon}
-                        alt=""
+                        alt="logo"
                         className="absolute left-1/2 top-[50%] -translate-x-[50%] -translate-y-[50%]"
                     />
                 </div>
