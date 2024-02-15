@@ -28,16 +28,16 @@ export const useQuestion = () => {
         clear,
     } = useQuestionStore((state) => state);
 
-    const [createQuestion] = useSurveyQuestionCreateMutation();
-    const [deleteQuestion] = useSurveyQuestionDeleteMutation();
+    const [createQuestionMutation] = useSurveyQuestionCreateMutation();
+    const [deleteQuestionMutation] = useSurveyQuestionDeleteMutation();
     const [updateQuestionMutation] = useSurveyQuestionUpdateMutation();
 
-    const createQuestionMutation = async (input: Partial<SurveyQuestionCreateInput>) => {
+    const createQuestion = async (input: Partial<SurveyQuestionCreateInput>) => {
         const id = crypto.randomUUID();
         if (!surveyId) return;
         if (input.options) input.options = JSON.stringify([...input.options]);
         if (input.settings) input.settings = JSON.stringify({ ...input.settings });
-        await createQuestion({
+        await createQuestionMutation({
             variables: {
                 input: {
                     ...input,
@@ -150,12 +150,12 @@ export const useQuestion = () => {
         });
     };
 
-    const deleteQuestionMutation = async (question: SurveyQuestion) => {
+    const deleteQuestion = async (question: SurveyQuestion) => {
         if (!surveyId) {
             return;
         }
 
-        await deleteQuestion({
+        await deleteQuestionMutation({
             variables: {
                 id: question.id,
             },
@@ -225,11 +225,11 @@ export const useQuestion = () => {
     return {
         question: activeQuestion,
         surveySlug,
+        createQuestion,
         switchQuestion,
         updateQuestion,
         updateSettings,
+        deleteQuestion,
         clear,
-        createQuestionMutation,
-        deleteQuestionMutation,
     };
 };

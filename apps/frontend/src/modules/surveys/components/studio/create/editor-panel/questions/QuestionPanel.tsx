@@ -15,7 +15,7 @@ type Props = {
 };
 
 export const QuestionPanel = ({ questionIndex }: Props) => {
-    const { deleteQuestionMutation, question, clear } = useQuestion();
+    const { question, clear, deleteQuestion } = useQuestion();
     const { parsedQuestions } = useSurvey();
     const lastQuestionIndex = parsedQuestions.length - 1;
 
@@ -76,7 +76,7 @@ export const QuestionPanel = ({ questionIndex }: Props) => {
                         <PopoverContent className=" w-fit border text-intg-text">
                             <div className="flex flex-col gap-2">
                                 <p className="cursor-pointer text-sm">Duplicate</p>
-                                <p className="cursor-pointer text-sm" onClick={() => deleteQuestionMutation(question)}>
+                                <p className="cursor-pointer text-sm" onClick={() => deleteQuestion(question)}>
                                     Delete
                                 </p>
                             </div>

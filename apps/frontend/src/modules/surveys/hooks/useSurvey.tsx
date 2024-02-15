@@ -19,9 +19,8 @@ export const useSurvey = () => {
     const { user } = useCurrentUser();
     const navigate = useNavigate();
 
-    const [createSurveyMutation, { loading: loadingCreateSurvey }] =
-        useSurveyCreateMutation();
-    const [updateSurveyMutation] = useSurveyUpdateMutation({});
+    const [createSurveyMutation, { loading: loadingCreateSurvey }] = useSurveyCreateMutation();
+    const [updateSurveyMutation] = useSurveyUpdateMutation();
 
     const { data: survey } = useGetSurveyQuery({
         variables: {
@@ -36,9 +35,7 @@ export const useSurvey = () => {
 
         return [...questions]
             .sort((a, b) => a.node.orderNumber - b.node.orderNumber)
-            .map(({ node: question }) =>
-                parseQuestion(question as SurveyQuestion),
-            );
+            .map(({ node: question }) => parseQuestion(question as SurveyQuestion));
     }, [survey]);
 
     const createSurvey = async () => {
@@ -54,12 +51,7 @@ export const useSurvey = () => {
                 },
             },
             onError: () => {
-                navigate(
-                    ROUTES.SURVEY_LIST.replace(":orgSlug", orgSlug!).replace(
-                        ":projectSlug",
-                        projectSlug!,
-                    ),
-                );
+                navigate(ROUTES.SURVEY_LIST.replace(":orgSlug", orgSlug!).replace(":projectSlug", projectSlug!));
             },
             onCompleted() {
                 navigate(
@@ -71,10 +63,7 @@ export const useSurvey = () => {
         });
     };
 
-    const updateSurvey = async (
-        input: SurveyUpdateInput,
-        newTheme?: Partial<ProjectTheme>,
-    ) => {
+    const updateSurvey = async (input: SurveyUpdateInput, newTheme?: Partial<ProjectTheme>) => {
         if (!surveyId || !user || !survey) return;
 
         await updateSurveyMutation({
@@ -95,14 +84,8 @@ export const useSurvey = () => {
                         id: surveyId,
                         name: input.name ?? survey?.survey?.name,
                         reference: survey?.survey?.reference ?? "",
-                        type:
-                            input.type ??
-                            survey?.survey?.type ??
-                            SurveyTypeEnum.Survey,
-                        status:
-                            input.status ??
-                            survey.survey?.status ??
-                            SurveyStatusEnum.Draft,
+                        type: input.type ?? survey?.survey?.type ?? SurveyTypeEnum.Survey,
+                        status: input.status ?? survey.survey?.status ?? SurveyStatusEnum.Draft,
                         slug: input.slug ?? surveySlug ?? "",
                         questions: survey?.survey?.questions ?? {
                             __typename: "SurveyQuestionCountableConnection",
@@ -112,15 +95,12 @@ export const useSurvey = () => {
                             __typename: "SurveyChannelCountableConnection",
                             edges: [],
                         },
-                        createdAt:
-                            survey?.survey?.createdAt ??
-                            new Date().toISOString(),
+                        createdAt: survey?.survey?.createdAt ?? new Date().toISOString(),
                         updatedAt: new Date().toISOString(),
 
                         creator: survey?.survey?.creator ?? user,
                         theme: newTheme ?? survey?.survey?.theme ?? null,
-                        settings:
-                            input.settings ?? survey?.survey?.settings ?? null,
+                        settings: input.settings ?? survey?.survey?.settings ?? null,
                     },
                     surveyErrors: [],
                     errors: [],

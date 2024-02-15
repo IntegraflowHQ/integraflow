@@ -17,6 +17,7 @@ export const QuestionOptions = () => {
     const { parsedQuestions } = useSurvey();
     const [welcomeMessageExists, setWelcomeMessageExists] = useState(false);
     const [thankYouMessageExists, setThankYouMessageExists] = useState(false);
+    const { createQuestion } = useQuestion();
 
     useEffect(() => {
         const welcomeMessage = parsedQuestions.find((question) => question.settings?.type === CTAType.NEXT);
@@ -29,15 +30,13 @@ export const QuestionOptions = () => {
         setThankYouMessageExists(!!thankYouMessage);
     }, [parsedQuestions]);
 
-    const { createQuestionMutation } = useQuestion();
-
     const scrollToBottom = useScrollToBottom();
 
     const handleCreateQuestion = async (type: SurveyQuestionTypeEnum, id: string) => {
         const options = getDefaultValues(type);
 
         if (id === "welcome") {
-            createQuestionMutation({
+            createQuestion({
                 type,
                 ...options,
                 settings: {
@@ -48,7 +47,7 @@ export const QuestionOptions = () => {
             });
             setWelcomeMessageExists(true);
         } else if (id === "thankyou") {
-            createQuestionMutation({
+            createQuestion({
                 type,
                 ...options,
                 settings: {
@@ -59,7 +58,7 @@ export const QuestionOptions = () => {
             });
             setThankYouMessageExists(true);
         } else {
-            createQuestionMutation({ type, ...options });
+            createQuestion({ type, ...options });
         }
     };
 
