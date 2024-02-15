@@ -17,11 +17,11 @@ import "./index.css";
 import { AppCore } from "./layout/AppCore";
 import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
-import { Iframe } from "./modules/surveys/components/studio/create/preview-panel/iframe";
 import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
 import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
 
 const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
+
 if (isDebugMode) {
     loadDevMessages();
     loadErrorMessages();
@@ -87,11 +87,6 @@ const router = createBrowserRouter([
             {
                 path: "/invite/:inviteId/accept",
                 element: <EmailWorkspaceInvitation />,
-            },
-            {
-                //for iframe
-                path: "/iframe",
-                element: <Iframe />,
             },
         ],
     },
