@@ -147,8 +147,9 @@ def load_user_from_request(request):
     project_id = from_global_id_or_none(get_project_from_request(request))
     if project_id is not None:
         project = ProjectByIdLoader(request).load(UUID(project_id)).get()
-        user.project = project
-        user.organization = project.organization
+        if project:
+            user.project = project
+            user.organization = project.organization
 
     if payload.get("is_staff"):
         user.is_staff = True

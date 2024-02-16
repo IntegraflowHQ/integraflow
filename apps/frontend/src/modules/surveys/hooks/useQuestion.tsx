@@ -8,60 +8,41 @@ import {
     useSurveyQuestionDeleteMutation,
     useSurveyQuestionUpdateMutation,
 } from "@/generated/graphql";
-import { QuestionLogic } from "@/types";
-import { createSelectors } from "@/utils/selectors";
-import { CTAType } from "@integraflow/web/src/types";
-import { useCallback, useEffect, useState } from "react";
+import { ParsedQuestion, QuestionSettings } from "@/types";
+import { parseQuestion } from "@/utils";
+import debounce from "lodash.debounce";
+import { useCallback, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { SURVEY_QUESTION } from "../graphql/fragments/surveyFragment";
-import { useSurveyStore } from "../states/survey";
+import { useQuestionStore } from "../states/question";
 import { useSurvey } from "./useSurvey";
 
 export const useQuestion = () => {
     const { surveySlug } = useParams();
-    const { survey, parsedQuestions } = useSurvey();
+    const { parsedQuestions: questions, surveyId, survey } = useSurvey();
 
-    const surveyStore = createSelectors(useSurveyStore);
-    const setOpenQuestion = surveyStore.use.setOpenQuestion();
-    const openQuestion = surveyStore.use.openQuestion();
+    const {
+        question: activeQuestion,
+        switchQuestion,
+        updateQuestion: upsertQuestion,
+        clear,
+    } = useQuestionStore((state) => state);
 
-    const surveyId = survey?.survey?.id;
+    const [createQuestionMutation] = useSurveyQuestionCreateMutation();
+    const [deleteQuestionMutation] = useSurveyQuestionDeleteMutation();
+    const [updateQuestionMutation] = useSurveyQuestionUpdateMutation();
 
-    const welcomeMessage = parsedQuestions.find(
-        (question) => question.settings?.ctaType === CTAType.NEXT,
-    );
-    const thankYouMessage = parsedQuestions.find(
-        (question) => question.settings?.ctaType !== CTAType.NEXT,
-    );
-    const [welcomeMessageExists, setWelcomeMessageExists] = useState<boolean>(
-        !!welcomeMessage,
-    );
-    const [thankYouMessageExists, setThankYouMessageExists] = useState<boolean>(
-        !!thankYouMessage,
-    );
-
-    useEffect(() => {
-        setWelcomeMessageExists(!!welcomeMessage);
-        setThankYouMessageExists(!!thankYouMessage);
-    }, [welcomeMessage, thankYouMessage]);
-
-    const [createQuestion] = useSurveyQuestionCreateMutation();
-    const [deleteQuestion] = useSurveyQuestionDeleteMutation();
-    const [updateQuestion] = useSurveyQuestionUpdateMutation();
-
-    const createQuestionMutation = async (
-        input: Partial<SurveyQuestionCreateInput>,
-    ) => {
+    const createQuestion = async (input: Partial<SurveyQuestionCreateInput>) => {
         const id = crypto.randomUUID();
+        if (!surveyId) return;
         if (input.options) input.options = JSON.stringify([...input.options]);
-        if (input.settings)
-            input.settings = JSON.stringify({ ...input.settings });
-        await createQuestion({
+        if (input.settings) input.settings = JSON.stringify({ ...input.settings });
+        await createQuestionMutation({
             variables: {
                 input: {
                     ...input,
-                    orderNumber: parsedQuestions.length + 1,
-                    surveyId: surveyId ?? "",
+                    orderNumber: questions.length + 1,
+                    surveyId: surveyId,
                 },
             },
             optimisticResponse: {
@@ -75,18 +56,24 @@ export const useQuestion = () => {
                         description: input.description ?? "",
                         label: input.label ?? "",
                         maxPath: 0,
-                        orderNumber: parsedQuestions.length + 1,
+                        orderNumber: questions.length + 1,
                         reference: id,
                         type: input.type!,
                         settings: input.settings ?? {},
                         options: input.options ?? [],
+                        survey: survey?.survey,
                     },
                     surveyErrors: [],
                     errors: [],
                 },
             },
             update: (cache, { data }) => {
-                if (!data?.surveyQuestionCreate?.surveyQuestion) return;
+                if (!data?.surveyQuestionCreate?.surveyQuestion) {
+                    return;
+                }
+
+                switchQuestion(parseQuestion(data.surveyQuestionCreate?.surveyQuestion as SurveyQuestion));
+
                 cache.modify({
                     id: `Survey:${surveyId}`,
                     fields: {
@@ -101,8 +88,7 @@ export const useQuestion = () => {
                                 edges: [
                                     ...existingQuestions.edges,
                                     {
-                                        __typename:
-                                            "SurveyQuestionCountableEdge",
+                                        __typename: "SurveyQuestionCountableEdge",
                                         node: newQuestionRef,
                                     },
                                 ],
@@ -111,28 +97,20 @@ export const useQuestion = () => {
                     },
                 });
             },
-            onCompleted(data) {
-                setOpenQuestion(
-                    data.surveyQuestionCreate?.surveyQuestion as SurveyQuestion,
-                );
-            },
         });
     };
 
-    const updateQuestionMutation = async (
-        input: Partial<SurveyQuestionUpdateInput>,
-    ) => {
+    const questionUpdate = async (input: Partial<SurveyQuestionUpdateInput>) => {
         if (input.options) input.options = JSON.stringify([...input.options]);
 
-        if (input.settings)
-            input.settings = JSON.stringify({ ...input.settings });
+        if (input.settings) input.settings = JSON.stringify({ ...input.settings });
 
-        await updateQuestion({
+        await updateQuestionMutation({
             variables: {
-                id: openQuestion?.id ?? "",
+                id: activeQuestion?.id ?? "",
                 input: {
                     ...input,
-                    orderNumber: openQuestion?.orderNumber ?? 0,
+                    orderNumber: activeQuestion?.orderNumber ?? 0,
                 },
             },
             optimisticResponse: {
@@ -141,30 +119,30 @@ export const useQuestion = () => {
                     __typename: "SurveyQuestionUpdate",
                     surveyQuestion: {
                         __typename: "SurveyQuestion",
-                        ...openQuestion,
-                        id: openQuestion?.id ?? "",
-                        createdAt:
-                            openQuestion?.createdAt ?? new Date().toISOString(),
-                        description:
-                            input.description ??
-                            openQuestion?.description ??
-                            "",
-                        label: openQuestion?.label ?? "",
-                        maxPath: openQuestion?.maxPath ?? 0,
-                        orderNumber: openQuestion?.orderNumber ?? 0,
-                        reference: openQuestion?.reference,
-                        type: openQuestion?.type as SurveyQuestionTypeEnum,
-                        settings: input.settings ?? openQuestion?.settings,
-                        options: input.options ?? openQuestion?.options,
+                        ...activeQuestion,
+                        id: activeQuestion?.id ?? "",
+                        createdAt: activeQuestion?.createdAt ?? new Date().toISOString(),
+                        description: input.description ?? activeQuestion?.description ?? "",
+                        label: activeQuestion?.label ?? "",
+                        maxPath: activeQuestion?.maxPath ?? 0,
+                        orderNumber: activeQuestion?.orderNumber ?? 0,
+                        reference: activeQuestion?.reference,
+                        type: activeQuestion?.type as SurveyQuestionTypeEnum,
+                        settings: input.settings ?? activeQuestion?.settings,
+                        options: input.options ?? activeQuestion?.options,
+                        survey: survey?.survey,
                     },
                     surveyErrors: [],
                     errors: [],
                 },
             },
             update: (cache, { data }) => {
-                if (!data?.surveyQuestionUpdate?.surveyQuestion) return;
+                if (!data?.surveyQuestionUpdate?.surveyQuestion) {
+                    return;
+                }
+
                 cache.writeFragment({
-                    id: `SurveyQuestion:${openQuestion}`,
+                    id: `SurveyQuestion:${activeQuestion}`,
                     fragment: SURVEY_QUESTION,
                     data: data.surveyQuestionUpdate?.surveyQuestion,
                 });
@@ -172,9 +150,12 @@ export const useQuestion = () => {
         });
     };
 
-    const deleteQuestionMutation = async (question: SurveyQuestion) => {
-        if (!surveyId) return;
-        await deleteQuestion({
+    const deleteQuestion = async (question: SurveyQuestion) => {
+        if (!surveyId) {
+            return;
+        }
+
+        await deleteQuestionMutation({
             variables: {
                 id: question.id,
             },
@@ -184,8 +165,8 @@ export const useQuestion = () => {
                     __typename: "SurveyQuestionDelete",
                     surveyQuestion: {
                         __typename: "SurveyQuestion",
+                        ...activeQuestion,
                         ...question,
-                        ...openQuestion,
                     },
 
                     surveyErrors: [],
@@ -194,7 +175,10 @@ export const useQuestion = () => {
             },
 
             update: (cache, { data }) => {
-                if (!data?.surveyQuestionDelete?.surveyQuestion) return;
+                if (!data?.surveyQuestionDelete?.surveyQuestion) {
+                    return;
+                }
+
                 cache.modify({
                     id: `Survey:${surveyId}`,
                     fields: {
@@ -202,9 +186,7 @@ export const useQuestion = () => {
                             return {
                                 __typeName: "SurveyQuestionCountableConnection",
                                 edges: existingQuestions.edges.filter(
-                                    (edge: SurveyQuestionCountableEdge) =>
-                                        readField("id", edge.node) !==
-                                        question.id,
+                                    (edge: SurveyQuestionCountableEdge) => readField("id", edge.node) !== question.id,
                                 ),
                             };
                         },
@@ -214,58 +196,40 @@ export const useQuestion = () => {
         });
     };
 
-    const updateLogic = useCallback(
-        (
-            editValues: QuestionLogic,
-            question: SurveyQuestion,
-            logicIndex: number,
-        ) => {
-            if (!editValues.destination) {
-                return;
+    const debouncedQuestionUpdate = useMemo(() => debounce(questionUpdate, 1000), [activeQuestion?.id]);
+
+    const updateQuestion = useCallback(
+        (input: Partial<ParsedQuestion>, debounce = false) => {
+            upsertQuestion(input);
+            if (debounce) {
+                debouncedQuestionUpdate(input);
+            } else {
+                questionUpdate(input);
             }
-            if (!editValues.groups || editValues.groups?.length == 0) {
-                return;
-            }
-
-            const completeGroups = editValues.groups.filter(
-                (g) => g.fields.length > 0 && g.condition,
-            );
-
-            if (completeGroups.length === 0) {
-                return;
-            }
-
-            const newLogic = {
-                ...editValues,
-                destination: editValues.destination,
-                groups: completeGroups,
-            };
-            const newLogicArray = question.settings.logic.map(
-                (l: QuestionLogic, i: number) =>
-                    i === logicIndex ? newLogic : l,
-            );
-
-            updateQuestionMutation({
-                settings: {
-                    ...question.settings,
-                    logic: newLogicArray,
-                },
-            });
         },
-        [],
+        [debouncedQuestionUpdate, activeQuestion],
+    );
+
+    const updateSettings = useCallback(
+        (input: Partial<QuestionSettings>, debounce = false) => {
+            updateQuestion(
+                {
+                    settings: { ...(activeQuestion?.settings ?? {}), ...input },
+                },
+                debounce,
+            );
+        },
+        [activeQuestion?.settings, updateQuestion],
     );
 
     return {
-        createQuestionMutation,
-        updateLogic,
+        question: activeQuestion,
         surveySlug,
-        openQuestion,
-        setOpenQuestion,
-        updateQuestionMutation,
-        deleteQuestionMutation,
-        welcomeMessageExists,
-        setWelcomeMessageExists,
-        thankYouMessageExists,
-        setThankYouMessageExists,
+        createQuestion,
+        switchQuestion,
+        updateQuestion,
+        updateSettings,
+        deleteQuestion,
+        clear,
     };
 };

@@ -1,4 +1,4 @@
-import { OrganizationInvite } from "@/modules/organizationInvite/components/OrganizationInvite";
+import { OrganizationInvite } from "@/modules/workspace/components/invite/OrganizationInvite";
 import { Header } from "@/ui";
 import React, { useState } from "react";
 

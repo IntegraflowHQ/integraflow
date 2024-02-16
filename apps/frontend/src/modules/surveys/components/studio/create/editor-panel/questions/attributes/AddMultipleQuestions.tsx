@@ -7,23 +7,21 @@ import { useEffect, useState } from "react";
 import TextButton from "./Buttons/TextButton";
 
 interface Props extends DialogProps {
-    question?: QuestionOption[] | FormField[];
+    questionOptions?: QuestionOption[] | FormField[];
 }
 
-export const AddMultipleQuestions = ({ question }: Props) => {
+export const AddMultipleQuestions = ({ questionOptions }: Props) => {
     const [inputValue, setInputValue] = useState(
-        question ? [...question.map((option) => option.label)].join("\n") : "",
+        questionOptions ? [...questionOptions.map((option) => option.label)].join("\n") : "",
     );
 
     const [openModal, setOpenModal] = useState(false);
 
-    const { updateQuestionMutation } = useQuestion();
+    const { updateQuestion } = useQuestion();
 
     useEffect(() => {
         setInputValue(
-            question
-                ? [...question.map((option) => option.label)].join("\n")
-                : "",
+            questionOptions ? [...questionOptions.map((option: QuestionOption) => option.label)].join("\n") : "",
         );
     }, [openModal]);
 
@@ -42,23 +40,17 @@ export const AddMultipleQuestions = ({ question }: Props) => {
                         }}
                     ></textarea>
                     <div className="ml-auto flex w-[45%] gap-2">
-                        <Button
-                            text="Cancel"
-                            variant="secondary"
-                            onClick={() => setOpenModal(!open)}
-                        />
+                        <Button text="Cancel" variant="secondary" onClick={() => setOpenModal(!open)} />
                         <Button
                             text="Update"
                             onClick={() => {
                                 setOpenModal(!openModal);
-                                updateQuestionMutation({
-                                    options: inputValue
-                                        .split("\n")
-                                        .map((option, index) => ({
-                                            id: generateUniqueId(),
-                                            orderNumber: index,
-                                            label: option,
-                                        })),
+                                updateQuestion({
+                                    options: inputValue.split("\n").map((option, index) => ({
+                                        id: generateUniqueId(),
+                                        orderNumber: index,
+                                        label: option,
+                                    })),
                                 });
                             }}
                         />

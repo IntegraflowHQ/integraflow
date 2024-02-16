@@ -4,6 +4,7 @@ export enum AnswerType {
     TEXT = "text",
     DATE = "date",
     CSAT = "csat",
+    CES = "ces",
     SMILEY_SCALE = "smiley_scale",
     NUMERICAL_SCALE = "numerical_scale",
     RATING = "rating",
@@ -97,12 +98,7 @@ export enum CTAType {
     HIDDEN = "hidden"
 }
 
-export type PlacementType =
-    | "bottomLeft"
-    | "bottomRight"
-    | "topLeft"
-    | "topRight"
-    | "center";
+export type PlacementType = "bottomLeft" | "bottomRight" | "topLeft" | "topRight" | "center";
 
 export type ID = string | number;
 
@@ -367,11 +363,7 @@ export interface Listeners {
     onAudienceChanged?: (audience: UserAttributes) => void;
     onSurveyDisplayed?: (surveyId: ID) => void;
     onSurveyClosed?: (surveyId: ID) => void;
-    onQuestionAnswered?: (
-        surveyId: ID,
-        questionId: ID,
-        answers: SurveyAnswer[]
-    ) => void;
+    onQuestionAnswered?: (surveyId: ID, questionId: ID, answers: SurveyAnswer[]) => void;
     onSurveyCompleted?: (surveyId: ID) => void;
 }
 

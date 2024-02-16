@@ -3,35 +3,56 @@ import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { FormLogicGroup, QuestionLogic } from "@/types";
 import { generateUniqueId } from "@/utils";
-import { changeableOperator, getLogicConditions } from "@/utils/defaultOptions";
+import { changeableOperator, conditionOptions, logicValuesOptions } from "@/utils/question";
 import { LogicOperator } from "@integraflow/web/src/types";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { MultiValue, SingleValue } from "react-select";
 import { LogicOperatorBtn } from "../../LogicOperator";
 import { Option, ReactSelect } from "../../ReactSelect";
 
 type Props = {
     groups: FormLogicGroup[];
-    question: SurveyQuestion;
     setEditValues: React.Dispatch<React.SetStateAction<QuestionLogic>>;
     editValues: QuestionLogic;
     logicIndex: number;
 };
 
-export const LogicGroup = ({
-    groups,
-    question,
-    setEditValues,
-    editValues,
-    logicIndex,
-}: Props) => {
-    const { updateLogic, updateQuestionMutation } = useQuestion();
-    const [groupOperator, setGroupOperator] = useState<LogicOperator>(
-        editValues.operator as LogicOperator,
-    );
-    const [fieldOperator, setFieldOperator] = useState<LogicOperator>(
-        editValues.operator as LogicOperator,
-    );
+export const LogicGroup = ({ groups, setEditValues, editValues, logicIndex }: Props) => {
+    const { question, updateQuestion } = useQuestion();
+    const [groupOperator, setGroupOperator] = useState<LogicOperator>(editValues.operator as LogicOperator);
+    const [fieldOperator, setFieldOperator] = useState<LogicOperator>(editValues.operator as LogicOperator);
+
+    const updateLogic = useCallback((editValues: QuestionLogic, question: SurveyQuestion, logicIndex: number) => {
+        if (!editValues.destination) {
+            return;
+        }
+        if (!editValues.groups || editValues.groups?.length == 0) {
+            return;
+        }
+
+        const completeGroups = editValues.groups.filter((g) => g.fields.length > 0 && g.condition);
+
+        if (completeGroups.length === 0) {
+            return;
+        }
+
+        const newLogic = {
+            ...editValues,
+            destination: editValues.destination,
+            groups: completeGroups,
+        };
+        const newLogicArray = question.settings.logic.map((l: QuestionLogic, i: number) =>
+            i === logicIndex ? newLogic : l,
+        );
+
+        updateQuestion({
+            settings: {
+                ...question.settings,
+                logic: newLogicArray,
+            },
+        });
+    }, []);
+
     const handleUpdateFields = (
         values: SingleValue<Option> | MultiValue<Option>,
         group: FormLogicGroup,
@@ -44,20 +65,14 @@ export const LogicGroup = ({
                 g.id === group.id
                     ? {
                           ...g,
-                          fields: (values as MultiValue<Option>)?.map(
-                              (v) => v.value,
-                          ),
+                          fields: (values as MultiValue<Option>)?.map((v) => v.value),
                       }
                     : g,
             ),
             destination: editValues.destination,
         };
-        if (
-            newValues.groups &&
-            newValues.groups[index].fields.length > 0 &&
-            newValues.groups?.[index]?.condition
-        ) {
-            updateLogic(newValues, question, logicIndex);
+        if (newValues.groups && newValues.groups[index].fields.length > 0 && newValues.groups?.[index]?.condition) {
+            updateLogic(newValues, question!, logicIndex);
         }
         if (newValues.groups && newValues.groups[index].fields.length === 0) {
             const newGroup: FormLogicGroup = {
@@ -68,24 +83,20 @@ export const LogicGroup = ({
             };
             newValues = {
                 ...editValues,
-                groups: editValues.groups?.map((g) =>
-                    g.id === group.id ? newGroup : g,
-                ),
+                groups: editValues.groups?.map((g) => (g.id === group.id ? newGroup : g)),
                 destination: editValues.destination,
             };
-            updateLogic(newValues, question, logicIndex);
+            updateLogic(newValues, question!, logicIndex);
         }
         setEditValues(newValues);
     };
 
     const handleRemoveGroup = (group: FormLogicGroup) => {
         if (editValues.groups?.length === 1) {
-            updateQuestionMutation({
+            updateQuestion({
                 settings: {
-                    ...question.settings,
-                    logic: question.settings.logic?.filter(
-                        (l: QuestionLogic) => l.id !== editValues.id,
-                    ),
+                    ...question?.settings,
+                    logic: question?.settings.logic?.filter((l: QuestionLogic) => l.id !== editValues.id),
                 },
             });
         } else {
@@ -95,7 +106,7 @@ export const LogicGroup = ({
                 destination: editValues.destination,
             };
             setEditValues(newValues);
-            updateLogic(newValues, question, logicIndex);
+            updateLogic(newValues, question!, logicIndex);
         }
     };
 
@@ -117,12 +128,8 @@ export const LogicGroup = ({
             destination: editValues.destination,
         };
 
-        if (
-            newValues.groups &&
-            newValues.groups[index].fields.length > 0 &&
-            newValues.groups[index].condition
-        ) {
-            updateLogic(newValues, question, logicIndex);
+        if (newValues.groups && newValues.groups[index].fields.length > 0 && newValues.groups[index].condition) {
+            updateLogic(newValues, question!, logicIndex);
         }
 
         setEditValues(newValues);
@@ -131,15 +138,11 @@ export const LogicGroup = ({
     const handleUpdateGroupOperator = () => {
         const newValue = {
             ...editValues,
-            operator:
-                groupOperator === LogicOperator.AND
-                    ? LogicOperator.OR
-                    : LogicOperator.AND,
+            operator: groupOperator === LogicOperator.AND ? LogicOperator.OR : LogicOperator.AND,
         };
-        console.log(newValue);
         setEditValues(newValue);
         setGroupOperator(newValue.operator as LogicOperator);
-        updateLogic(newValue, question, logicIndex);
+        updateLogic(newValue, question!, logicIndex);
     };
 
     const handleUpdateFieldOperator = (group: FormLogicGroup) => {
@@ -149,20 +152,15 @@ export const LogicGroup = ({
                 g.id === group.id
                     ? {
                           ...g,
-                          operator:
-                              fieldOperator === LogicOperator.AND
-                                  ? LogicOperator.OR
-                                  : LogicOperator.AND,
+                          operator: fieldOperator === LogicOperator.AND ? LogicOperator.OR : LogicOperator.AND,
                       }
                     : g,
             ),
             destination: editValues.destination,
         };
-        console.log(newValue.operator);
-
         setEditValues(newValue);
         setFieldOperator(newValue.operator as LogicOperator);
-        updateLogic(newValue, question, logicIndex);
+        updateLogic(newValue, question!, logicIndex);
     };
 
     return (
@@ -174,76 +172,45 @@ export const LogicGroup = ({
                             {index !== 0 && (
                                 <div className="m-auto w-fit">
                                     <LogicOperatorBtn
-                                        value={
-                                            editValues.operator as LogicOperator
-                                        }
+                                        value={editValues.operator as LogicOperator}
                                         onclick={() => {
                                             handleUpdateGroupOperator();
                                         }}
                                     />
                                 </div>
                             )}
-                            <div
-                                className="relative space-y-6 p-6"
-                                key={group.id}
-                            >
+                            <div className="relative space-y-6 p-6" key={group.id}>
                                 <div className="flex justify-between">
                                     <div>If</div>
                                     <div className="w-[330px]">
                                         <ReactSelect
                                             shouldLogicalOperatorChange={changeableOperator(
-                                                question,
+                                                question?.type as SurveyQuestionTypeEnum,
                                             )}
                                             onOperatorChange={() => {
-                                                handleUpdateFieldOperator(
-                                                    group,
-                                                );
+                                                handleUpdateFieldOperator(group);
                                             }}
                                             logicOperator={fieldOperator}
                                             comboBox={true}
-                                            options={[
-                                                ...(question?.options?.map(
-                                                    (
-                                                        option: SingleValue<Option>,
-                                                    ) => ({
-                                                        value: option?.id,
-                                                        label: option?.label,
-                                                    }),
-                                                ) ?? []),
-                                            ]}
+                                            options={logicValuesOptions(question!)}
                                             defaultValue={
                                                 group.fields.length > 0
-                                                    ? group.fields.map(
-                                                          (field) => ({
-                                                              value: field,
-                                                              label: question?.options?.find(
-                                                                  (o: Option) =>
-                                                                      o.id ===
-                                                                      field,
-                                                              )?.label,
-                                                          }),
-                                                      )
+                                                    ? group.fields.map((field) => ({
+                                                          value: field,
+                                                          label: question?.options?.find((o: Option) => o.id === field)
+                                                              ?.label,
+                                                      }))
                                                     : []
                                             }
                                             value={editValues.groups
                                                 ?.find((g) => g.id === group.id)
                                                 ?.fields.map((field) => ({
                                                     value: field,
-                                                    label: question?.options?.find(
-                                                        (o: Option) =>
-                                                            o.id === field,
-                                                    )?.label,
+                                                    label: question?.options?.find((o: Option) => o.id === field)
+                                                        ?.label,
                                                 }))}
-                                            onchange={(
-                                                values:
-                                                    | SingleValue<Option>
-                                                    | MultiValue<Option>,
-                                            ) => {
-                                                handleUpdateFields(
-                                                    values,
-                                                    group,
-                                                    index,
-                                                );
+                                            onchange={(values: SingleValue<Option> | MultiValue<Option>) => {
+                                                handleUpdateFields(values, group, index);
                                             }}
                                         />
                                     </div>
@@ -254,41 +221,22 @@ export const LogicGroup = ({
                                         <p></p>
                                         <div className="w-[330px]">
                                             <ReactSelect
-                                                options={getLogicConditions(
+                                                options={conditionOptions(question?.type as SurveyQuestionTypeEnum)}
+                                                defaultValue={conditionOptions(
                                                     question?.type as SurveyQuestionTypeEnum,
-                                                )}
-                                                defaultValue={getLogicConditions(
-                                                    question?.type as SurveyQuestionTypeEnum,
-                                                )?.find(
-                                                    (c) =>
-                                                        c.value ===
-                                                        group.condition,
-                                                )}
+                                                )?.find((c) => c.value === group.condition)}
                                                 value={
-                                                    getLogicConditions(
-                                                        question?.type as SurveyQuestionTypeEnum,
-                                                    )?.find(
-                                                        (c) =>
-                                                            c.value ===
-                                                            group.condition,
+                                                    conditionOptions(question?.type as SurveyQuestionTypeEnum)?.find(
+                                                        (c) => c.value === group.condition,
                                                     ) ?? null
                                                 }
-                                                onchange={(
-                                                    value:
-                                                        | SingleValue<Option>
-                                                        | MultiValue<Option>,
-                                                ) => {
-                                                    handleUpdateCondition(
-                                                        value,
-                                                        group,
-                                                        index,
-                                                    );
+                                                onchange={(value: SingleValue<Option> | MultiValue<Option>) => {
+                                                    handleUpdateCondition(value, group, index);
                                                 }}
                                             />
                                         </div>
                                     </div>
                                 )}
-
                                 <div
                                     className="absolute bottom-1/2 right-0 translate-x-1/2 cursor-pointer"
                                     onClick={() => {

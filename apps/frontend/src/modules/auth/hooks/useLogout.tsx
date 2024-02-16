@@ -1,21 +1,30 @@
-import useUserState from "@/modules/users/hooks/useUserState";
-import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
-import { useAuthToken } from "./useAuthToken";
+import { useApolloClient } from "@apollo/client";
+import { useCallback } from "react";
 
-const useLogout = () => {
-    const { clearWorkspace } = useWorkspaceState();
-    const { deleteUser } = useUserState();
-    const { logout } = useAuthToken();
+import { useLogoutMutation } from "@/generated/graphql";
 
-    const handleLogout = () => {
-        deleteUser();
-        logout();
-        clearWorkspace();
-    };
+import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
+import { useAuth } from "./useAuth";
 
+export const useLogout = () => {
+    const { logout: clearAuth } = useAuth();
+    const { reset } = useCurrentUser();
+    const { cache, clearStore } = useApolloClient();
+
+    const onLogout = useCallback(async () => {
+        await clearStore();
+        await cache.reset();
+        clearAuth();
+        reset();
+    }, [cache, clearAuth, clearStore, reset]);
+
+    const [logout] = useLogoutMutation({
+        onCompleted: onLogout,
+        onError: onLogout,
+    });
+
+    const handleLogout = useCallback(() => logout(), [logout]);
     return {
-        handleLogout,
+        logout: handleLogout,
     };
 };
-
-export default useLogout;

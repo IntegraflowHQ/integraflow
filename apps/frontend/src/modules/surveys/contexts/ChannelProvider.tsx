@@ -1,49 +1,34 @@
 import {
-    EventDefinition,
-    PropertyDefinition,
     SurveyChannel,
     SurveyChannelCountableEdge,
     SurveyChannelCreateInput,
     SurveyChannelTypeEnum,
     SurveyChannelUpdateInput,
-    useAudiencePropertiesQuery,
-    useProjectEventsDataQuery,
     useSurveyChannelCreateMutation,
     useSurveyChannelDeleteMutation,
     useSurveyChannelUpdateMutation,
 } from "@/generated/graphql";
-import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
 import { ParsedChannel } from "@/types";
 import { fromSurveyChannel, toSurveyChannel } from "@/utils";
-import { EventProperties } from "@integraflow/web/src/types";
 import { ReactNode, createContext, useCallback, useMemo } from "react";
 import { SURVEY_CHANNEL } from "../graphql/fragments/surveyFragment";
 import { useSurvey } from "../hooks/useSurvey";
 
 function useChannelContextFactory() {
-    const { survey } = useSurvey();
-    const { workspace } = useWorkspaceState();
-
-    const { data: eventsData } = useProjectEventsDataQuery({
-        skip: !workspace?.project.id,
-    });
-
-    const { data: audienceProperties } = useAudiencePropertiesQuery({
-        skip: !workspace?.project.id,
-    });
-
+    const { survey, surveyId } = useSurvey();
     const [createChannelMutation] = useSurveyChannelCreateMutation();
-    const createChannel = async (
-        input: Omit<SurveyChannelCreateInput, "surveyId">,
-    ) => {
-        if (!survey?.survey?.id) return;
+    const [updateChannelMutation] = useSurveyChannelUpdateMutation();
+    const [deleteChannelMutation] = useSurveyChannelDeleteMutation();
+
+    const createChannel = async (input: Omit<SurveyChannelCreateInput, "surveyId">) => {
+        if (!surveyId) return;
         const data: SurveyChannelCreateInput = {
             type: input.type ?? SurveyChannelTypeEnum.WebSdk,
             id: input.id ?? crypto.randomUUID(),
             triggers: input.triggers ?? "{}",
             conditions: input.conditions ?? "{}",
             settings: input.settings ?? "{}",
-            surveyId: survey.survey.id,
+            surveyId,
         };
         await createChannelMutation({
             variables: {
@@ -80,8 +65,7 @@ function useChannelContextFactory() {
                                 edges: [
                                     ...existingChannels.edges,
                                     {
-                                        __typename:
-                                            "SurveyChannelCountableEdge",
+                                        __typename: "SurveyChannelCountableEdge",
                                         node: newChannelRef,
                                     },
                                 ],
@@ -93,11 +77,7 @@ function useChannelContextFactory() {
         });
     };
 
-    const [updateChannelMutation] = useSurveyChannelUpdateMutation();
-    const updateChannel = async (
-        channel: ParsedChannel,
-        input: SurveyChannelUpdateInput,
-    ) => {
+    const updateChannel = async (channel: ParsedChannel, input: SurveyChannelUpdateInput) => {
         const surveyChannel = toSurveyChannel(channel);
 
         await updateChannelMutation({
@@ -115,8 +95,7 @@ function useChannelContextFactory() {
                         type: input.type ?? surveyChannel.type,
                         link: surveyChannel.link ?? "",
                         triggers: input.triggers ?? surveyChannel.triggers,
-                        conditions:
-                            input.conditions ?? surveyChannel.conditions,
+                        conditions: input.conditions ?? surveyChannel.conditions,
                         settings: input.settings ?? surveyChannel.settings,
                         reference: surveyChannel.reference,
                         createdAt: new Date().toISOString(),
@@ -136,7 +115,6 @@ function useChannelContextFactory() {
         });
     };
 
-    const [deleteChannelMutation] = useSurveyChannelDeleteMutation();
     const deleteChannel = async (channel: SurveyChannel) => {
         await deleteChannelMutation({
             variables: {
@@ -163,9 +141,7 @@ function useChannelContextFactory() {
                             return {
                                 __typeName: "SurveyChannelCountableConnection",
                                 edges: existingChannels.edges.filter(
-                                    (edge: SurveyChannelCountableEdge) =>
-                                        readField("id", edge.node) !==
-                                        channel.id,
+                                    (edge: SurveyChannelCountableEdge) => readField("id", edge.node) !== channel.id,
                                 ),
                             };
                         },
@@ -185,71 +161,12 @@ function useChannelContextFactory() {
 
     const getChannels = useCallback(
         (type: SurveyChannelTypeEnum) => {
-            return (
-                channels.filter((channel) => channel.type === type) ||
-                ([] as ParsedChannel[])
-            );
+            return channels.filter((channel) => channel.type === type) || ([] as ParsedChannel[]);
         },
         [channels],
     );
 
-    const eventDefinitions = useMemo(() => {
-        return (
-            eventsData?.eventDefinitions?.edges.map(({ node }) => node) ||
-            ([] as EventDefinition[])
-        );
-    }, [eventsData?.eventDefinitions]);
-
-    const eventProperties = useMemo(() => {
-        return (
-            eventsData?.eventProperties?.edges.map(({ node }) => node) ||
-            ([] as EventProperties[])
-        );
-    }, [eventsData?.eventProperties]);
-
-    const propertyDefinitions = useMemo(() => {
-        return (
-            eventsData?.propertyDefinitions?.edges.map(({ node }) => node) ||
-            ([] as PropertyDefinition[])
-        );
-    }, [eventsData?.propertyDefinitions]);
-
-    const getPropertyDefinition = useCallback(
-        (property: string) => {
-            return propertyDefinitions.find((p) => p.name === property);
-        },
-        [propertyDefinitions],
-    );
-
-    const getProperties = useCallback(
-        (event: string) => {
-            const properties = eventProperties.filter((p) => p.event === event);
-            return properties.map((p) => {
-                const definition = p.property
-                    ? getPropertyDefinition(p.property as string)
-                    : undefined;
-
-                return definition;
-            });
-        },
-        [eventProperties, getPropertyDefinition],
-    );
-
-    const personProperties = useMemo(() => {
-        return (
-            audienceProperties?.propertyDefinitions?.edges.map(
-                (edge) => edge.node,
-            ) || ([] as PropertyDefinition[])
-        );
-    }, [audienceProperties]);
-
     return {
-        eventDefinitions,
-        eventProperties,
-        propertyDefinitions,
-        personProperties,
-        getProperties,
-        getPropertyDefinition,
         createChannel,
         getChannels,
         updateChannel,
@@ -268,9 +185,5 @@ export const ChannelContext = createChannelContext();
 export const ChannelProvider = ({ children }: { children: ReactNode }) => {
     const value = useChannelContextFactory();
 
-    return (
-        <ChannelContext.Provider value={value}>
-            {children}
-        </ChannelContext.Provider>
-    );
+    return <ChannelContext.Provider value={value}>{children}</ChannelContext.Provider>;
 };

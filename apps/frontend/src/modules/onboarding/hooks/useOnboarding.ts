@@ -1,73 +1,98 @@
-import { User, useUserUpdateMutation } from "@/generated/graphql";
-import useRedirect from "@/modules/auth/hooks/useRedirect";
-import useUserState from "@/modules/users/hooks/useUserState";
-import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
-import { createSelectors } from "@/utils/selectors";
-import { DeepOmit } from "@apollo/client/utilities";
-import { useEffect, useMemo } from "react";
+import { useRedirect } from "@/modules/auth/hooks/useRedirect";
+import { useProject } from "@/modules/projects/hooks/useProject";
+import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useOnboardingStore } from "../states/onboarding";
 
 export const useOnboarding = () => {
-    const { workspace } = useWorkspaceState();
-    const { user, updateUser } = useUserState();
+    const { project, updateProject } = useProject();
+    const { user, updateUser } = useCurrentUser();
     const redirect = useRedirect();
-    const onboarding = createSelectors(useOnboardingStore);
-    const steps = onboarding.use.steps();
-    const eventSource = onboarding.use.eventSource();
-    const mobilePlatform = onboarding.use.mobilePlatform();
-    const currentTab = onboarding.use.currentTab();
-    const clearEventSource = onboarding.use.clearEventSource();
-    const setEventSource = onboarding.use.setEventSource();
-    const setMobilePlatform = onboarding.use.setMobilePlatform();
-    const switchTab = onboarding.use.switchTab();
+    const {
+        steps,
+        eventSource,
+        mobilePlatform,
+        currentTab,
+        clearEventSource,
+        setEventSource,
+        setMobilePlatform,
+        switchTab
+    } = useOnboardingStore();
 
-    const [onboardUser, { loading: updatingUser }] = useUserUpdateMutation();
+    const [loading, setLoading] = useState(false);
+
+    const completedKeys = useMemo(() => {
+        if (!project?.hasCompletedOnboardingFor) {
+            return [];
+        }
+
+        return JSON.parse(project.hasCompletedOnboardingFor) as string[];
+    }, [project?.hasCompletedOnboardingFor]);
 
     const completionRate = useMemo(() => {
-        if (!workspace?.project.hasCompletedOnboardingFor) return 0;
-        const completedKeys = JSON.parse(
-            workspace?.project.hasCompletedOnboardingFor,
-        );
+        if (!project?.hasCompletedOnboardingFor) {
+            return 0;
+        }
+
         let completedSteps = 0;
         steps.forEach((step) => {
-            if (completedKeys.includes(step.key)) completedSteps++;
+            if (completedKeys.includes(step.key)) {
+                completedSteps++;
+            }
         });
+
         return (completedSteps / steps.length) * 100;
-    }, [workspace?.project.hasCompletedOnboardingFor, steps]);
+    }, [completedKeys, project?.hasCompletedOnboardingFor, steps]);
+
+    const onboardUser = useCallback(async () => {
+        setLoading(true);
+        await updateUser({
+            isOnboarded: true
+        });
+
+        setLoading(false);
+
+        redirect({
+            ...user,
+            isOnboarded: true
+        });
+    }, [updateUser, user, redirect]);
+
+    const markAsCompleted = useCallback(async (index: number) => {
+        const updatedKeys = [...completedKeys];
+        if (updatedKeys.includes(steps[index].key)) {
+            return;
+        }
+        updatedKeys.push(steps[index].key);
+
+        await updateProject({
+            hasCompletedOnboardingFor: JSON.stringify(updatedKeys),
+        });
+    }, [completedKeys, steps, updateProject]);
 
     useEffect(() => {
-        if (!user) return;
-        if (!user.isOnboarded && completionRate === 100) {
-            onboardUser({
-                variables: {
-                    input: {
-                        isOnboarded: true,
-                    },
-                },
-                onCompleted: (data) => {
-                    if (data.userUpdate?.user?.isOnboarded) {
-                        const newUser = {
-                            ...user,
-                            isOnboarded: data.userUpdate.user.isOnboarded,
-                        } as DeepOmit<User, "__typename">;
-                        updateUser(newUser);
-                        redirect(newUser);
-                    }
-                },
-            });
+        if (user.isOnboarded) {
+            return;
         }
-    }, [completionRate, user]);
+
+        if (!user.isOnboarded && completionRate === 100) {
+            onboardUser();
+        }
+    }, [completionRate, onboardUser, user.isOnboarded]);
 
     return {
         steps,
+        completedKeys,
         completionRate,
         eventSource,
         mobilePlatform,
         currentTab,
-        updatingUser,
+        loading,
+        onboardUser,
         clearEventSource,
         setEventSource,
         setMobilePlatform,
         switchTab,
+        markAsCompleted
     };
 };

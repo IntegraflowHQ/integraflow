@@ -1,9 +1,5 @@
 import { PROPERTY_FIELDS } from "@/constants";
-import {
-    SurveyChannel,
-    SurveyQuestionCountableEdge,
-    User,
-} from "@/generated/graphql";
+import { SurveyChannel, SurveyQuestionCountableEdge, User } from "@/generated/graphql";
 import { DeepOmit } from "@apollo/client/utilities";
 import {
     Audience,
@@ -39,10 +35,7 @@ export type ChannelSettings = {
     singleUse?: boolean;
 };
 
-export type ParsedChannel = Omit<
-    SurveyChannel,
-    "settings" | "triggers" | "conditions"
-> & {
+export type ParsedChannel = Omit<SurveyChannel, "settings" | "triggers" | "conditions"> & {
     settings: ChannelSettings;
     triggers: Trigger;
     conditions: Audience;
@@ -139,10 +132,14 @@ export type QuestionSettings = {
     logic?: QuestionLogic[];
 };
 
-export type ParsedQuestion = Omit<
-    SurveyQuestionCountableEdge["node"],
-    "questions" | "settings"
-> & {
+export enum CTAEnums {
+    BUTTON = "button",
+    LINK = "link",
+    HIDDEN = "hidden",
+    CLOSE = "close",
+}
+
+export type ParsedQuestion = Omit<SurveyQuestionCountableEdge["node"], "questions" | "settings"> & {
     questions: QuestionOption[];
     settings: QuestionSettings;
 };

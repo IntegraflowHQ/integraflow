@@ -1,4 +1,5 @@
 import { SurveyChannelTypeEnum } from "@/generated/graphql";
+import { useProject } from "@/modules/projects/hooks/useProject";
 import useChannels from "@/modules/surveys/hooks/useChannels";
 import { EventFilter, WebChannelAccordionProps } from "@/types";
 import { TextInput } from "@/ui";
@@ -12,8 +13,8 @@ import Event from "./Event";
 const EventIcon = () => <Zap className="text-intg-text" fill="#AFAAC7" />;
 
 export default function Triggers({ channel }: WebChannelAccordionProps) {
-    const { eventDefinitions, getProperties, createChannel, updateChannel } =
-        useChannels();
+    const { createChannel, updateChannel } = useChannels();
+    const { eventDefinitions, getProperties } = useProject();
     const [isAddingEvent, setIsAddingEvent] = useState(false);
     const [eventQ, setEventQ] = useState("");
 

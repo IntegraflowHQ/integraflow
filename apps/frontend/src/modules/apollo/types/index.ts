@@ -1,13 +1,15 @@
 import { ApolloClient } from "@apollo/client";
 
-export type AuthToken = {
+export type AuthParams = {
     token: string | null;
     refreshToken: string | null;
+    currentProjectId?: string | null;
+    refresh: () => Promise<string | undefined>;
 };
 
 export interface ApolloManager<TCacheShape> {
     getClient(): ApolloClient<TCacheShape>;
-    updateAuthToken(authToken: AuthToken | null): void;
+    updateAuthParams(authParams: AuthParams | null): void;
 }
 
 export enum OperationType {
@@ -16,8 +18,3 @@ export enum OperationType {
     Subscription = "subscription",
     Error = "error",
 }
-
-export type ApolloWorkspace = {
-    project: string;
-    organization: string;
-};

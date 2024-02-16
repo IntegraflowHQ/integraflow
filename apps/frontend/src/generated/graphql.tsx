@@ -1884,6 +1884,7 @@ export type SurveyQuestionDelete = {
 
 export enum SurveyQuestionTypeEnum {
   Boolean = 'BOOLEAN',
+  Ces = 'CES',
   Csat = 'CSAT',
   Cta = 'CTA',
   Custom = 'CUSTOM',
@@ -2206,19 +2207,15 @@ export type _Service = {
   sdl?: Maybe<Scalars['String']>;
 };
 
-export type AuthUserFragmentFragment = { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null };
+export type AuthUserFragmentFragment = { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null };
 
 export type AuthOrganizationFragmentFragment = { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number };
 
 export type UserErrorFragmentFragment = { __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode };
 
-export type GoogleUserAuthFragmentFragment = { __typename?: 'GoogleUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> };
+export type GoogleUserAuthFragmentFragment = { __typename?: 'GoogleUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> };
 
-export type EmailTokenUserAuthFragmentFragment = { __typename?: 'EmailTokenUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> };
-
-export type OrganizationCreateFragmentFragment = { __typename?: 'OrganizationCreate', organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
-
-export type OrganizationErrorFragmentFragment = { __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode };
+export type EmailTokenUserAuthFragmentFragment = { __typename?: 'EmailTokenUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> };
 
 export type EmailTokenUserAuthMutationVariables = Exact<{
   email: Scalars['String'];
@@ -2227,7 +2224,7 @@ export type EmailTokenUserAuthMutationVariables = Exact<{
 }>;
 
 
-export type EmailTokenUserAuthMutation = { __typename?: 'Mutation', emailTokenUserAuth?: { __typename?: 'EmailTokenUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> } | null };
+export type EmailTokenUserAuthMutation = { __typename?: 'Mutation', emailTokenUserAuth?: { __typename?: 'EmailTokenUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> } | null };
 
 export type EmailUserAuthChallengeMutationVariables = Exact<{
   email: Scalars['String'];
@@ -2243,20 +2240,12 @@ export type GoogleUserAuthMutationVariables = Exact<{
 }>;
 
 
-export type GoogleUserAuthMutation = { __typename?: 'Mutation', googleUserAuth?: { __typename?: 'GoogleUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> } | null };
+export type GoogleUserAuthMutation = { __typename?: 'Mutation', googleUserAuth?: { __typename?: 'GoogleUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> } | null };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type LogoutMutation = { __typename?: 'Mutation', logout?: { __typename?: 'Logout', userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> } | null };
-
-export type OrganizationCreateMutationVariables = Exact<{
-  input: OrganizationCreateInput;
-  survey?: InputMaybe<OnboardingCustomerSurvey>;
-}>;
-
-
-export type OrganizationCreateMutation = { __typename?: 'Mutation', organizationCreate?: { __typename?: 'OrganizationCreate', organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
 
 export type TokenRefreshMutationVariables = Exact<{
   csrfToken?: InputMaybe<Scalars['String']>;
@@ -2273,69 +2262,24 @@ export type CompleteOnboardingStageMutationVariables = Exact<{
 
 export type CompleteOnboardingStageMutation = { __typename?: 'Mutation', projectUpdate?: { __typename?: 'ProjectUpdate', project?: { __typename: 'Project', id: string, hasCompletedOnboardingFor?: any | null } | null } | null };
 
-export type OrganizationInviteLinkCreateFragmentFragment = { __typename?: 'OrganizationInviteLink', inviteLink: string };
-
-export type OrganizationInviteCreateFragmentFragment = { __typename?: 'OrganizationInviteCreate', organizationInvite?: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel, createdAt: string, updatedAt: string, expired: boolean, inviter: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean }, organization: { __typename?: 'Organization', id: string } } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
-
-export type OrganizationInviteFragmentFragment = { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel, createdAt: string, updatedAt: string, expired: boolean, inviter: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean }, organization: { __typename?: 'Organization', id: string } };
-
-export type OrganizationInviteDetailsFragmentFragment = { __typename?: 'OrganizationInviteDetails', id: string, email: string, firstName?: string | null, expired: boolean, inviter: string, organizationId: string, organizationName: string, organizationLogo?: string | null };
-
-export type OrganizationInviteLinkDetailsFragmentFragment = { __typename?: 'OrganizationInviteLinkDetails', id: string, organizationId: string, organizationName: string, organizationLogo?: string | null };
-
-export type OrganizationJoinFragmentFragment = { __typename?: 'OrganizationJoin', user: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null }, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
-
-export type RefreshOrganizationInviteLinkFragmentFragment = { __typename?: 'OrganizationInviteLinkReset', inviteLink?: string | null, success?: boolean | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
-
-export type OrganizationInviteCreateMutationVariables = Exact<{
-  input: OrganizationInviteCreateInput;
-}>;
-
-
-export type OrganizationInviteCreateMutation = { __typename?: 'Mutation', organizationInviteCreate?: { __typename?: 'OrganizationInviteCreate', organizationInvite?: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel, createdAt: string, updatedAt: string, expired: boolean, inviter: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean }, organization: { __typename?: 'Organization', id: string } } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
-
-export type OrganizationJoinMutationVariables = Exact<{
-  input: OrganizationJoinInput;
-}>;
-
-
-export type OrganizationJoinMutation = { __typename?: 'Mutation', organizationJoin?: { __typename?: 'OrganizationJoin', user: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null }, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
-
-export type OrganizationInviteLinkResetMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type OrganizationInviteLinkResetMutation = { __typename?: 'Mutation', organizationInviteLinkReset?: { __typename?: 'OrganizationInviteLinkReset', inviteLink?: string | null, success?: boolean | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
-
-export type OrganizationInviteDetailsQueryVariables = Exact<{
-  inviteLink: Scalars['String'];
-}>;
-
-
-export type OrganizationInviteDetailsQuery = { __typename?: 'Query', organizationInviteDetails?: { __typename?: 'OrganizationInviteDetails', id: string, email: string, firstName?: string | null, expired: boolean, inviter: string, organizationId: string, organizationName: string, organizationLogo?: string | null } | { __typename?: 'OrganizationInviteLinkDetails', id: string, organizationId: string, organizationName: string, organizationLogo?: string | null } | null };
-
-export type OrganizationInviteLinkCreateQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type OrganizationInviteLinkCreateQuery = { __typename?: 'Query', organizationInviteLink?: { __typename?: 'OrganizationInviteLink', inviteLink: string } | null };
-
-export type ProjectCreateFragmentFragment = { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
+export type ProjectCreateFragmentFragment = { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
 
 export type ProjectErrorFragmentFragment = { __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode };
 
-export type ProjectFragmentFragment = { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } };
+export type ProjectFragmentFragment = { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } };
 
-export type ProjectUpdateFragmentFragment = { __typename?: 'ProjectUpdate', project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
+export type ProjectUpdateFragmentFragment = { __typename?: 'ProjectUpdate', project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
 
-export type ProjectThemeFragmentFragment = { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } };
+export type ProjectThemeFragmentFragment = { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } };
 
-export type ProjectThemeUpdateFragmentFragment = { __typename?: 'ProjectThemeUpdate', projectTheme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
+export type ProjectThemeUpdateFragmentFragment = { __typename?: 'ProjectThemeUpdate', projectTheme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
 
 export type ProjectCreateMutationVariables = Exact<{
   input: ProjectCreateInput;
 }>;
 
 
-export type ProjectCreateMutation = { __typename?: 'Mutation', projectCreate?: { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+export type ProjectCreateMutation = { __typename?: 'Mutation', projectCreate?: { __typename?: 'ProjectCreate', project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
 
 export type ProjectThemeCreateMutationVariables = Exact<{
   input: ProjectThemeCreateInput;
@@ -2350,7 +2294,14 @@ export type ProjectThemeUpdateMutationVariables = Exact<{
 }>;
 
 
-export type ProjectThemeUpdateMutation = { __typename?: 'Mutation', projectThemeUpdate?: { __typename?: 'ProjectThemeUpdate', projectTheme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+export type ProjectThemeUpdateMutation = { __typename?: 'Mutation', projectThemeUpdate?: { __typename?: 'ProjectThemeUpdate', projectTheme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+
+export type ProjectUpdateMutationVariables = Exact<{
+  input: ProjectUpdateInput;
+}>;
+
+
+export type ProjectUpdateMutation = { __typename?: 'Mutation', projectUpdate?: { __typename?: 'ProjectUpdate', project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
 
 export type ThemesQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -2363,11 +2314,11 @@ export type SurveyQuestionFragmentFragment = { __typename?: 'SurveyQuestion', id
 
 export type SurveyChannelFragmentFragment = { __typename?: 'SurveyChannel', id: string, link: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string };
 
-export type SurveyFragmentFragment = { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string, survey?: { __typename?: 'Survey', id: string, reference?: string | null, slug: string, name?: string | null, project?: { __typename?: 'Project', id: string, slug: string, name: string } | null } | null } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, link: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } };
+export type SurveyFragmentFragment = { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string, survey?: { __typename?: 'Survey', id: string, reference?: string | null, slug: string, name?: string | null, project?: { __typename?: 'Project', id: string, slug: string, name: string } | null } | null } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, link: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } };
 
 export type SurveyErrorFragmentFragment = { __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode };
 
-export type SurveyCreateFragmentFragment = { __typename?: 'SurveyCreate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string, survey?: { __typename?: 'Survey', id: string, reference?: string | null, slug: string, name?: string | null, project?: { __typename?: 'Project', id: string, slug: string, name: string } | null } | null } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, link: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null };
+export type SurveyCreateFragmentFragment = { __typename?: 'SurveyCreate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string, survey?: { __typename?: 'Survey', id: string, reference?: string | null, slug: string, name?: string | null, project?: { __typename?: 'Project', id: string, slug: string, name: string } | null } | null } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, link: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null };
 
 export type SurveyUpdateMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -2375,7 +2326,7 @@ export type SurveyUpdateMutationVariables = Exact<{
 }>;
 
 
-export type SurveyUpdateMutation = { __typename?: 'Mutation', surveyUpdate?: { __typename?: 'SurveyUpdate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string, survey?: { __typename?: 'Survey', id: string, reference?: string | null, slug: string, name?: string | null, project?: { __typename?: 'Project', id: string, slug: string, name: string } | null } | null } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, link: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null } | null };
+export type SurveyUpdateMutation = { __typename?: 'Mutation', surveyUpdate?: { __typename?: 'SurveyUpdate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string, survey?: { __typename?: 'Survey', id: string, reference?: string | null, slug: string, name?: string | null, project?: { __typename?: 'Project', id: string, slug: string, name: string } | null } | null } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, link: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null } | null };
 
 export type SurveyQuestionCreateMutationVariables = Exact<{
   input: SurveyQuestionCreateInput;
@@ -2411,7 +2362,7 @@ export type SurveyCreateMutationVariables = Exact<{
 }>;
 
 
-export type SurveyCreateMutation = { __typename?: 'Mutation', surveyCreate?: { __typename?: 'SurveyCreate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string, survey?: { __typename?: 'Survey', id: string, reference?: string | null, slug: string, name?: string | null, project?: { __typename?: 'Project', id: string, slug: string, name: string } | null } | null } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, link: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null } | null };
+export type SurveyCreateMutation = { __typename?: 'Mutation', surveyCreate?: { __typename?: 'SurveyCreate', surveyErrors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, errors: Array<{ __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode }>, survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string, survey?: { __typename?: 'Survey', id: string, reference?: string | null, slug: string, name?: string | null, project?: { __typename?: 'Project', id: string, slug: string, name: string } | null } | null } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, link: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null } | null };
 
 export type SurveyQuestionDeleteMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -2458,9 +2409,9 @@ export type GetSurveyQueryVariables = Exact<{
 }>;
 
 
-export type GetSurveyQuery = { __typename?: 'Query', survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string, survey?: { __typename?: 'Survey', id: string, reference?: string | null, slug: string, name?: string | null, project?: { __typename?: 'Project', id: string, slug: string, name: string } | null } | null } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, link: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null };
+export type GetSurveyQuery = { __typename?: 'Query', survey?: { __typename?: 'Survey', id: string, reference?: string | null, name?: string | null, slug: string, type: SurveyTypeEnum, status: SurveyStatusEnum, settings?: any | null, createdAt: string, updatedAt: string, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, settings?: any | null, createdAt: string, updatedAt: string, project: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } } | null, creator: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null }, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string, survey?: { __typename?: 'Survey', id: string, reference?: string | null, slug: string, name?: string | null, project?: { __typename?: 'Project', id: string, slug: string, name: string } | null } | null } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, link: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } } | null };
 
-export type UserFragmentFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null };
+export type UserFragmentFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null };
 
 export type UserUpdateMutationVariables = Exact<{
   input: UserInput;
@@ -2472,7 +2423,64 @@ export type UserUpdateMutation = { __typename?: 'Mutation', userUpdate?: { __typ
 export type ViewerQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ViewerQuery = { __typename?: 'Query', viewer?: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } | null };
+export type ViewerQuery = { __typename?: 'Query', viewer?: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } | null };
+
+export type OrganizationCreateFragmentFragment = { __typename?: 'OrganizationCreate', organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
+
+export type OrganizationErrorFragmentFragment = { __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode };
+
+export type OrganizationInviteLinkCreateFragmentFragment = { __typename?: 'OrganizationInviteLink', inviteLink: string };
+
+export type OrganizationInviteCreateFragmentFragment = { __typename?: 'OrganizationInviteCreate', organizationInvite?: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel, createdAt: string, updatedAt: string, expired: boolean, inviter: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean }, organization: { __typename?: 'Organization', id: string } } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
+
+export type OrganizationInviteFragmentFragment = { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel, createdAt: string, updatedAt: string, expired: boolean, inviter: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean }, organization: { __typename?: 'Organization', id: string } };
+
+export type OrganizationInviteDetailsFragmentFragment = { __typename?: 'OrganizationInviteDetails', id: string, email: string, firstName?: string | null, expired: boolean, inviter: string, organizationId: string, organizationName: string, organizationLogo?: string | null };
+
+export type OrganizationInviteLinkDetailsFragmentFragment = { __typename?: 'OrganizationInviteLinkDetails', id: string, organizationId: string, organizationName: string, organizationLogo?: string | null };
+
+export type OrganizationJoinFragmentFragment = { __typename?: 'OrganizationJoin', user: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null }, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
+
+export type RefreshOrganizationInviteLinkFragmentFragment = { __typename?: 'OrganizationInviteLinkReset', inviteLink?: string | null, success?: boolean | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
+
+export type OrganizationCreateMutationVariables = Exact<{
+  input: OrganizationCreateInput;
+  survey?: InputMaybe<OnboardingCustomerSurvey>;
+}>;
+
+
+export type OrganizationCreateMutation = { __typename?: 'Mutation', organizationCreate?: { __typename?: 'OrganizationCreate', organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
+
+export type OrganizationInviteCreateMutationVariables = Exact<{
+  input: OrganizationInviteCreateInput;
+}>;
+
+
+export type OrganizationInviteCreateMutation = { __typename?: 'Mutation', organizationInviteCreate?: { __typename?: 'OrganizationInviteCreate', organizationInvite?: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel, createdAt: string, updatedAt: string, expired: boolean, inviter: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean }, organization: { __typename?: 'Organization', id: string } } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
+
+export type OrganizationJoinMutationVariables = Exact<{
+  input: OrganizationJoinInput;
+}>;
+
+
+export type OrganizationJoinMutation = { __typename?: 'Mutation', organizationJoin?: { __typename?: 'OrganizationJoin', user: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null }, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
+
+export type OrganizationInviteLinkResetMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OrganizationInviteLinkResetMutation = { __typename?: 'Mutation', organizationInviteLinkReset?: { __typename?: 'OrganizationInviteLinkReset', inviteLink?: string | null, success?: boolean | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
+
+export type OrganizationInviteDetailsQueryVariables = Exact<{
+  inviteLink: Scalars['String'];
+}>;
+
+
+export type OrganizationInviteDetailsQuery = { __typename?: 'Query', organizationInviteDetails?: { __typename?: 'OrganizationInviteDetails', id: string, email: string, firstName?: string | null, expired: boolean, inviter: string, organizationId: string, organizationName: string, organizationLogo?: string | null } | { __typename?: 'OrganizationInviteLinkDetails', id: string, organizationId: string, organizationName: string, organizationLogo?: string | null } | null };
+
+export type OrganizationInviteLinkCreateQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OrganizationInviteLinkCreateQuery = { __typename?: 'Query', organizationInviteLink?: { __typename?: 'OrganizationInviteLink', inviteLink: string } | null };
 
 export const AuthOrganizationFragmentFragmentDoc = gql`
     fragment AuthOrganizationFragment on AuthOrganization {
@@ -2487,6 +2495,7 @@ export const ProjectFragmentFragmentDoc = gql`
   id
   name
   slug
+  accessControl
   hasCompletedOnboardingFor
   timezone
   organization {
@@ -2547,118 +2556,6 @@ export const EmailTokenUserAuthFragmentFragmentDoc = gql`
 }
     ${AuthUserFragmentFragmentDoc}
 ${UserErrorFragmentFragmentDoc}`;
-export const OrganizationErrorFragmentFragmentDoc = gql`
-    fragment OrganizationErrorFragment on OrganizationError {
-  field
-  message
-  code
-}
-    `;
-export const OrganizationCreateFragmentFragmentDoc = gql`
-    fragment OrganizationCreateFragment on OrganizationCreate {
-  organization {
-    ...AuthOrganizationFragment
-  }
-  user {
-    ...AuthUserFragment
-  }
-  organizationErrors {
-    ...OrganizationErrorFragment
-  }
-  errors {
-    ...OrganizationErrorFragment
-  }
-}
-    ${AuthOrganizationFragmentFragmentDoc}
-${AuthUserFragmentFragmentDoc}
-${OrganizationErrorFragmentFragmentDoc}`;
-export const OrganizationInviteLinkCreateFragmentFragmentDoc = gql`
-    fragment OrganizationInviteLinkCreateFragment on OrganizationInviteLink {
-  inviteLink
-}
-    `;
-export const OrganizationInviteFragmentFragmentDoc = gql`
-    fragment OrganizationInviteFragment on OrganizationInvite {
-  id
-  email
-  firstName
-  role
-  createdAt
-  updatedAt
-  expired
-  inviter {
-    id
-    email
-    firstName
-    lastName
-    isStaff
-    isActive
-  }
-  organization {
-    id
-  }
-}
-    `;
-export const OrganizationInviteCreateFragmentFragmentDoc = gql`
-    fragment OrganizationInviteCreateFragment on OrganizationInviteCreate {
-  organizationInvite {
-    ...OrganizationInviteFragment
-  }
-  organizationErrors {
-    ...OrganizationErrorFragment
-  }
-  errors {
-    ...OrganizationErrorFragment
-  }
-}
-    ${OrganizationInviteFragmentFragmentDoc}
-${OrganizationErrorFragmentFragmentDoc}`;
-export const OrganizationInviteDetailsFragmentFragmentDoc = gql`
-    fragment OrganizationInviteDetailsFragment on OrganizationInviteDetails {
-  id
-  email
-  firstName
-  expired
-  inviter
-  organizationId
-  organizationName
-  organizationLogo
-}
-    `;
-export const OrganizationInviteLinkDetailsFragmentFragmentDoc = gql`
-    fragment OrganizationInviteLinkDetailsFragment on OrganizationInviteLinkDetails {
-  id
-  organizationId
-  organizationName
-  organizationLogo
-}
-    `;
-export const OrganizationJoinFragmentFragmentDoc = gql`
-    fragment OrganizationJoinFragment on OrganizationJoin {
-  user {
-    ...AuthUserFragment
-  }
-  organizationErrors {
-    ...OrganizationErrorFragment
-  }
-  errors {
-    ...OrganizationErrorFragment
-  }
-}
-    ${AuthUserFragmentFragmentDoc}
-${OrganizationErrorFragmentFragmentDoc}`;
-export const RefreshOrganizationInviteLinkFragmentFragmentDoc = gql`
-    fragment RefreshOrganizationInviteLinkFragment on OrganizationInviteLinkReset {
-  inviteLink
-  success
-  organizationErrors {
-    ...OrganizationErrorFragment
-  }
-  errors {
-    ...OrganizationErrorFragment
-  }
-}
-    ${OrganizationErrorFragmentFragmentDoc}`;
 export const ProjectErrorFragmentFragmentDoc = gql`
     fragment ProjectErrorFragment on ProjectError {
   field
@@ -2859,6 +2756,118 @@ export const SurveyCreateFragmentFragmentDoc = gql`
 }
     ${SurveyErrorFragmentFragmentDoc}
 ${SurveyFragmentFragmentDoc}`;
+export const OrganizationErrorFragmentFragmentDoc = gql`
+    fragment OrganizationErrorFragment on OrganizationError {
+  field
+  message
+  code
+}
+    `;
+export const OrganizationCreateFragmentFragmentDoc = gql`
+    fragment OrganizationCreateFragment on OrganizationCreate {
+  organization {
+    ...AuthOrganizationFragment
+  }
+  user {
+    ...AuthUserFragment
+  }
+  organizationErrors {
+    ...OrganizationErrorFragment
+  }
+  errors {
+    ...OrganizationErrorFragment
+  }
+}
+    ${AuthOrganizationFragmentFragmentDoc}
+${AuthUserFragmentFragmentDoc}
+${OrganizationErrorFragmentFragmentDoc}`;
+export const OrganizationInviteLinkCreateFragmentFragmentDoc = gql`
+    fragment OrganizationInviteLinkCreateFragment on OrganizationInviteLink {
+  inviteLink
+}
+    `;
+export const OrganizationInviteFragmentFragmentDoc = gql`
+    fragment OrganizationInviteFragment on OrganizationInvite {
+  id
+  email
+  firstName
+  role
+  createdAt
+  updatedAt
+  expired
+  inviter {
+    id
+    email
+    firstName
+    lastName
+    isStaff
+    isActive
+  }
+  organization {
+    id
+  }
+}
+    `;
+export const OrganizationInviteCreateFragmentFragmentDoc = gql`
+    fragment OrganizationInviteCreateFragment on OrganizationInviteCreate {
+  organizationInvite {
+    ...OrganizationInviteFragment
+  }
+  organizationErrors {
+    ...OrganizationErrorFragment
+  }
+  errors {
+    ...OrganizationErrorFragment
+  }
+}
+    ${OrganizationInviteFragmentFragmentDoc}
+${OrganizationErrorFragmentFragmentDoc}`;
+export const OrganizationInviteDetailsFragmentFragmentDoc = gql`
+    fragment OrganizationInviteDetailsFragment on OrganizationInviteDetails {
+  id
+  email
+  firstName
+  expired
+  inviter
+  organizationId
+  organizationName
+  organizationLogo
+}
+    `;
+export const OrganizationInviteLinkDetailsFragmentFragmentDoc = gql`
+    fragment OrganizationInviteLinkDetailsFragment on OrganizationInviteLinkDetails {
+  id
+  organizationId
+  organizationName
+  organizationLogo
+}
+    `;
+export const OrganizationJoinFragmentFragmentDoc = gql`
+    fragment OrganizationJoinFragment on OrganizationJoin {
+  user {
+    ...AuthUserFragment
+  }
+  organizationErrors {
+    ...OrganizationErrorFragment
+  }
+  errors {
+    ...OrganizationErrorFragment
+  }
+}
+    ${AuthUserFragmentFragmentDoc}
+${OrganizationErrorFragmentFragmentDoc}`;
+export const RefreshOrganizationInviteLinkFragmentFragmentDoc = gql`
+    fragment RefreshOrganizationInviteLinkFragment on OrganizationInviteLinkReset {
+  inviteLink
+  success
+  organizationErrors {
+    ...OrganizationErrorFragment
+  }
+  errors {
+    ...OrganizationErrorFragment
+  }
+}
+    ${OrganizationErrorFragmentFragmentDoc}`;
 export const EmailTokenUserAuthDocument = gql`
     mutation emailTokenUserAuth($email: String!, $token: String!, $inviteLink: String) {
   emailTokenUserAuth(email: $email, token: $token, inviteLink: $inviteLink) {
@@ -3000,40 +3009,6 @@ export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<Logou
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
-export const OrganizationCreateDocument = gql`
-    mutation organizationCreate($input: OrganizationCreateInput!, $survey: OnboardingCustomerSurvey) {
-  organizationCreate(input: $input, survey: $survey) {
-    ...OrganizationCreateFragment
-  }
-}
-    ${OrganizationCreateFragmentFragmentDoc}`;
-export type OrganizationCreateMutationFn = Apollo.MutationFunction<OrganizationCreateMutation, OrganizationCreateMutationVariables>;
-
-/**
- * __useOrganizationCreateMutation__
- *
- * To run a mutation, you first call `useOrganizationCreateMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useOrganizationCreateMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [organizationCreateMutation, { data, loading, error }] = useOrganizationCreateMutation({
- *   variables: {
- *      input: // value for 'input'
- *      survey: // value for 'survey'
- *   },
- * });
- */
-export function useOrganizationCreateMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationCreateMutation, OrganizationCreateMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<OrganizationCreateMutation, OrganizationCreateMutationVariables>(OrganizationCreateDocument, options);
-      }
-export type OrganizationCreateMutationHookResult = ReturnType<typeof useOrganizationCreateMutation>;
-export type OrganizationCreateMutationResult = Apollo.MutationResult<OrganizationCreateMutation>;
-export type OrganizationCreateMutationOptions = Apollo.BaseMutationOptions<OrganizationCreateMutation, OrganizationCreateMutationVariables>;
 export const TokenRefreshDocument = gql`
     mutation tokenRefresh($csrfToken: String, $refreshToken: String) {
   tokenRefresh(csrfToken: $csrfToken, refreshToken: $refreshToken) {
@@ -3108,175 +3083,6 @@ export function useCompleteOnboardingStageMutation(baseOptions?: Apollo.Mutation
 export type CompleteOnboardingStageMutationHookResult = ReturnType<typeof useCompleteOnboardingStageMutation>;
 export type CompleteOnboardingStageMutationResult = Apollo.MutationResult<CompleteOnboardingStageMutation>;
 export type CompleteOnboardingStageMutationOptions = Apollo.BaseMutationOptions<CompleteOnboardingStageMutation, CompleteOnboardingStageMutationVariables>;
-export const OrganizationInviteCreateDocument = gql`
-    mutation organizationInviteCreate($input: OrganizationInviteCreateInput!) {
-  organizationInviteCreate(input: $input) {
-    ...OrganizationInviteCreateFragment
-  }
-}
-    ${OrganizationInviteCreateFragmentFragmentDoc}`;
-export type OrganizationInviteCreateMutationFn = Apollo.MutationFunction<OrganizationInviteCreateMutation, OrganizationInviteCreateMutationVariables>;
-
-/**
- * __useOrganizationInviteCreateMutation__
- *
- * To run a mutation, you first call `useOrganizationInviteCreateMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useOrganizationInviteCreateMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [organizationInviteCreateMutation, { data, loading, error }] = useOrganizationInviteCreateMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useOrganizationInviteCreateMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationInviteCreateMutation, OrganizationInviteCreateMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<OrganizationInviteCreateMutation, OrganizationInviteCreateMutationVariables>(OrganizationInviteCreateDocument, options);
-      }
-export type OrganizationInviteCreateMutationHookResult = ReturnType<typeof useOrganizationInviteCreateMutation>;
-export type OrganizationInviteCreateMutationResult = Apollo.MutationResult<OrganizationInviteCreateMutation>;
-export type OrganizationInviteCreateMutationOptions = Apollo.BaseMutationOptions<OrganizationInviteCreateMutation, OrganizationInviteCreateMutationVariables>;
-export const OrganizationJoinDocument = gql`
-    mutation OrganizationJoin($input: OrganizationJoinInput!) {
-  organizationJoin(input: $input) {
-    ...OrganizationJoinFragment
-  }
-}
-    ${OrganizationJoinFragmentFragmentDoc}`;
-export type OrganizationJoinMutationFn = Apollo.MutationFunction<OrganizationJoinMutation, OrganizationJoinMutationVariables>;
-
-/**
- * __useOrganizationJoinMutation__
- *
- * To run a mutation, you first call `useOrganizationJoinMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useOrganizationJoinMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [organizationJoinMutation, { data, loading, error }] = useOrganizationJoinMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useOrganizationJoinMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationJoinMutation, OrganizationJoinMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<OrganizationJoinMutation, OrganizationJoinMutationVariables>(OrganizationJoinDocument, options);
-      }
-export type OrganizationJoinMutationHookResult = ReturnType<typeof useOrganizationJoinMutation>;
-export type OrganizationJoinMutationResult = Apollo.MutationResult<OrganizationJoinMutation>;
-export type OrganizationJoinMutationOptions = Apollo.BaseMutationOptions<OrganizationJoinMutation, OrganizationJoinMutationVariables>;
-export const OrganizationInviteLinkResetDocument = gql`
-    mutation organizationInviteLinkReset {
-  organizationInviteLinkReset {
-    ...RefreshOrganizationInviteLinkFragment
-  }
-}
-    ${RefreshOrganizationInviteLinkFragmentFragmentDoc}`;
-export type OrganizationInviteLinkResetMutationFn = Apollo.MutationFunction<OrganizationInviteLinkResetMutation, OrganizationInviteLinkResetMutationVariables>;
-
-/**
- * __useOrganizationInviteLinkResetMutation__
- *
- * To run a mutation, you first call `useOrganizationInviteLinkResetMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useOrganizationInviteLinkResetMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [organizationInviteLinkResetMutation, { data, loading, error }] = useOrganizationInviteLinkResetMutation({
- *   variables: {
- *   },
- * });
- */
-export function useOrganizationInviteLinkResetMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationInviteLinkResetMutation, OrganizationInviteLinkResetMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<OrganizationInviteLinkResetMutation, OrganizationInviteLinkResetMutationVariables>(OrganizationInviteLinkResetDocument, options);
-      }
-export type OrganizationInviteLinkResetMutationHookResult = ReturnType<typeof useOrganizationInviteLinkResetMutation>;
-export type OrganizationInviteLinkResetMutationResult = Apollo.MutationResult<OrganizationInviteLinkResetMutation>;
-export type OrganizationInviteLinkResetMutationOptions = Apollo.BaseMutationOptions<OrganizationInviteLinkResetMutation, OrganizationInviteLinkResetMutationVariables>;
-export const OrganizationInviteDetailsDocument = gql`
-    query organizationInviteDetails($inviteLink: String!) {
-  organizationInviteDetails(inviteLink: $inviteLink) {
-    ...OrganizationInviteLinkDetailsFragment
-    ...OrganizationInviteDetailsFragment
-  }
-}
-    ${OrganizationInviteLinkDetailsFragmentFragmentDoc}
-${OrganizationInviteDetailsFragmentFragmentDoc}`;
-
-/**
- * __useOrganizationInviteDetailsQuery__
- *
- * To run a query within a React component, call `useOrganizationInviteDetailsQuery` and pass it any options that fit your needs.
- * When your component renders, `useOrganizationInviteDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useOrganizationInviteDetailsQuery({
- *   variables: {
- *      inviteLink: // value for 'inviteLink'
- *   },
- * });
- */
-export function useOrganizationInviteDetailsQuery(baseOptions: Apollo.QueryHookOptions<OrganizationInviteDetailsQuery, OrganizationInviteDetailsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<OrganizationInviteDetailsQuery, OrganizationInviteDetailsQueryVariables>(OrganizationInviteDetailsDocument, options);
-      }
-export function useOrganizationInviteDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OrganizationInviteDetailsQuery, OrganizationInviteDetailsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<OrganizationInviteDetailsQuery, OrganizationInviteDetailsQueryVariables>(OrganizationInviteDetailsDocument, options);
-        }
-export type OrganizationInviteDetailsQueryHookResult = ReturnType<typeof useOrganizationInviteDetailsQuery>;
-export type OrganizationInviteDetailsLazyQueryHookResult = ReturnType<typeof useOrganizationInviteDetailsLazyQuery>;
-export type OrganizationInviteDetailsQueryResult = Apollo.QueryResult<OrganizationInviteDetailsQuery, OrganizationInviteDetailsQueryVariables>;
-export const OrganizationInviteLinkCreateDocument = gql`
-    query OrganizationInviteLinkCreate {
-  organizationInviteLink {
-    ...OrganizationInviteLinkCreateFragment
-  }
-}
-    ${OrganizationInviteLinkCreateFragmentFragmentDoc}`;
-
-/**
- * __useOrganizationInviteLinkCreateQuery__
- *
- * To run a query within a React component, call `useOrganizationInviteLinkCreateQuery` and pass it any options that fit your needs.
- * When your component renders, `useOrganizationInviteLinkCreateQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useOrganizationInviteLinkCreateQuery({
- *   variables: {
- *   },
- * });
- */
-export function useOrganizationInviteLinkCreateQuery(baseOptions?: Apollo.QueryHookOptions<OrganizationInviteLinkCreateQuery, OrganizationInviteLinkCreateQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<OrganizationInviteLinkCreateQuery, OrganizationInviteLinkCreateQueryVariables>(OrganizationInviteLinkCreateDocument, options);
-      }
-export function useOrganizationInviteLinkCreateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OrganizationInviteLinkCreateQuery, OrganizationInviteLinkCreateQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<OrganizationInviteLinkCreateQuery, OrganizationInviteLinkCreateQueryVariables>(OrganizationInviteLinkCreateDocument, options);
-        }
-export type OrganizationInviteLinkCreateQueryHookResult = ReturnType<typeof useOrganizationInviteLinkCreateQuery>;
-export type OrganizationInviteLinkCreateLazyQueryHookResult = ReturnType<typeof useOrganizationInviteLinkCreateLazyQuery>;
-export type OrganizationInviteLinkCreateQueryResult = Apollo.QueryResult<OrganizationInviteLinkCreateQuery, OrganizationInviteLinkCreateQueryVariables>;
 export const ProjectCreateDocument = gql`
     mutation projectCreate($input: ProjectCreateInput!) {
   projectCreate(input: $input) {
@@ -3393,6 +3199,39 @@ export function useProjectThemeUpdateMutation(baseOptions?: Apollo.MutationHookO
 export type ProjectThemeUpdateMutationHookResult = ReturnType<typeof useProjectThemeUpdateMutation>;
 export type ProjectThemeUpdateMutationResult = Apollo.MutationResult<ProjectThemeUpdateMutation>;
 export type ProjectThemeUpdateMutationOptions = Apollo.BaseMutationOptions<ProjectThemeUpdateMutation, ProjectThemeUpdateMutationVariables>;
+export const ProjectUpdateDocument = gql`
+    mutation projectUpdate($input: ProjectUpdateInput!) {
+  projectUpdate(input: $input) {
+    ...ProjectUpdateFragment
+  }
+}
+    ${ProjectUpdateFragmentFragmentDoc}`;
+export type ProjectUpdateMutationFn = Apollo.MutationFunction<ProjectUpdateMutation, ProjectUpdateMutationVariables>;
+
+/**
+ * __useProjectUpdateMutation__
+ *
+ * To run a mutation, you first call `useProjectUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useProjectUpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [projectUpdateMutation, { data, loading, error }] = useProjectUpdateMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useProjectUpdateMutation(baseOptions?: Apollo.MutationHookOptions<ProjectUpdateMutation, ProjectUpdateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ProjectUpdateMutation, ProjectUpdateMutationVariables>(ProjectUpdateDocument, options);
+      }
+export type ProjectUpdateMutationHookResult = ReturnType<typeof useProjectUpdateMutation>;
+export type ProjectUpdateMutationResult = Apollo.MutationResult<ProjectUpdateMutation>;
+export type ProjectUpdateMutationOptions = Apollo.BaseMutationOptions<ProjectUpdateMutation, ProjectUpdateMutationVariables>;
 export const ThemesDocument = gql`
     query Themes($first: Int) {
   themes(first: $first) {
@@ -4066,3 +3905,206 @@ export function useViewerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Vie
 export type ViewerQueryHookResult = ReturnType<typeof useViewerQuery>;
 export type ViewerLazyQueryHookResult = ReturnType<typeof useViewerLazyQuery>;
 export type ViewerQueryResult = Apollo.QueryResult<ViewerQuery, ViewerQueryVariables>;
+export const OrganizationCreateDocument = gql`
+    mutation organizationCreate($input: OrganizationCreateInput!, $survey: OnboardingCustomerSurvey) {
+  organizationCreate(input: $input, survey: $survey) {
+    ...OrganizationCreateFragment
+  }
+}
+    ${OrganizationCreateFragmentFragmentDoc}`;
+export type OrganizationCreateMutationFn = Apollo.MutationFunction<OrganizationCreateMutation, OrganizationCreateMutationVariables>;
+
+/**
+ * __useOrganizationCreateMutation__
+ *
+ * To run a mutation, you first call `useOrganizationCreateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationCreateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [organizationCreateMutation, { data, loading, error }] = useOrganizationCreateMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *      survey: // value for 'survey'
+ *   },
+ * });
+ */
+export function useOrganizationCreateMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationCreateMutation, OrganizationCreateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OrganizationCreateMutation, OrganizationCreateMutationVariables>(OrganizationCreateDocument, options);
+      }
+export type OrganizationCreateMutationHookResult = ReturnType<typeof useOrganizationCreateMutation>;
+export type OrganizationCreateMutationResult = Apollo.MutationResult<OrganizationCreateMutation>;
+export type OrganizationCreateMutationOptions = Apollo.BaseMutationOptions<OrganizationCreateMutation, OrganizationCreateMutationVariables>;
+export const OrganizationInviteCreateDocument = gql`
+    mutation organizationInviteCreate($input: OrganizationInviteCreateInput!) {
+  organizationInviteCreate(input: $input) {
+    ...OrganizationInviteCreateFragment
+  }
+}
+    ${OrganizationInviteCreateFragmentFragmentDoc}`;
+export type OrganizationInviteCreateMutationFn = Apollo.MutationFunction<OrganizationInviteCreateMutation, OrganizationInviteCreateMutationVariables>;
+
+/**
+ * __useOrganizationInviteCreateMutation__
+ *
+ * To run a mutation, you first call `useOrganizationInviteCreateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationInviteCreateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [organizationInviteCreateMutation, { data, loading, error }] = useOrganizationInviteCreateMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useOrganizationInviteCreateMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationInviteCreateMutation, OrganizationInviteCreateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OrganizationInviteCreateMutation, OrganizationInviteCreateMutationVariables>(OrganizationInviteCreateDocument, options);
+      }
+export type OrganizationInviteCreateMutationHookResult = ReturnType<typeof useOrganizationInviteCreateMutation>;
+export type OrganizationInviteCreateMutationResult = Apollo.MutationResult<OrganizationInviteCreateMutation>;
+export type OrganizationInviteCreateMutationOptions = Apollo.BaseMutationOptions<OrganizationInviteCreateMutation, OrganizationInviteCreateMutationVariables>;
+export const OrganizationJoinDocument = gql`
+    mutation OrganizationJoin($input: OrganizationJoinInput!) {
+  organizationJoin(input: $input) {
+    ...OrganizationJoinFragment
+  }
+}
+    ${OrganizationJoinFragmentFragmentDoc}`;
+export type OrganizationJoinMutationFn = Apollo.MutationFunction<OrganizationJoinMutation, OrganizationJoinMutationVariables>;
+
+/**
+ * __useOrganizationJoinMutation__
+ *
+ * To run a mutation, you first call `useOrganizationJoinMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationJoinMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [organizationJoinMutation, { data, loading, error }] = useOrganizationJoinMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useOrganizationJoinMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationJoinMutation, OrganizationJoinMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OrganizationJoinMutation, OrganizationJoinMutationVariables>(OrganizationJoinDocument, options);
+      }
+export type OrganizationJoinMutationHookResult = ReturnType<typeof useOrganizationJoinMutation>;
+export type OrganizationJoinMutationResult = Apollo.MutationResult<OrganizationJoinMutation>;
+export type OrganizationJoinMutationOptions = Apollo.BaseMutationOptions<OrganizationJoinMutation, OrganizationJoinMutationVariables>;
+export const OrganizationInviteLinkResetDocument = gql`
+    mutation organizationInviteLinkReset {
+  organizationInviteLinkReset {
+    ...RefreshOrganizationInviteLinkFragment
+  }
+}
+    ${RefreshOrganizationInviteLinkFragmentFragmentDoc}`;
+export type OrganizationInviteLinkResetMutationFn = Apollo.MutationFunction<OrganizationInviteLinkResetMutation, OrganizationInviteLinkResetMutationVariables>;
+
+/**
+ * __useOrganizationInviteLinkResetMutation__
+ *
+ * To run a mutation, you first call `useOrganizationInviteLinkResetMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationInviteLinkResetMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [organizationInviteLinkResetMutation, { data, loading, error }] = useOrganizationInviteLinkResetMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOrganizationInviteLinkResetMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationInviteLinkResetMutation, OrganizationInviteLinkResetMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OrganizationInviteLinkResetMutation, OrganizationInviteLinkResetMutationVariables>(OrganizationInviteLinkResetDocument, options);
+      }
+export type OrganizationInviteLinkResetMutationHookResult = ReturnType<typeof useOrganizationInviteLinkResetMutation>;
+export type OrganizationInviteLinkResetMutationResult = Apollo.MutationResult<OrganizationInviteLinkResetMutation>;
+export type OrganizationInviteLinkResetMutationOptions = Apollo.BaseMutationOptions<OrganizationInviteLinkResetMutation, OrganizationInviteLinkResetMutationVariables>;
+export const OrganizationInviteDetailsDocument = gql`
+    query organizationInviteDetails($inviteLink: String!) {
+  organizationInviteDetails(inviteLink: $inviteLink) {
+    ...OrganizationInviteLinkDetailsFragment
+    ...OrganizationInviteDetailsFragment
+  }
+}
+    ${OrganizationInviteLinkDetailsFragmentFragmentDoc}
+${OrganizationInviteDetailsFragmentFragmentDoc}`;
+
+/**
+ * __useOrganizationInviteDetailsQuery__
+ *
+ * To run a query within a React component, call `useOrganizationInviteDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationInviteDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOrganizationInviteDetailsQuery({
+ *   variables: {
+ *      inviteLink: // value for 'inviteLink'
+ *   },
+ * });
+ */
+export function useOrganizationInviteDetailsQuery(baseOptions: Apollo.QueryHookOptions<OrganizationInviteDetailsQuery, OrganizationInviteDetailsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OrganizationInviteDetailsQuery, OrganizationInviteDetailsQueryVariables>(OrganizationInviteDetailsDocument, options);
+      }
+export function useOrganizationInviteDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OrganizationInviteDetailsQuery, OrganizationInviteDetailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OrganizationInviteDetailsQuery, OrganizationInviteDetailsQueryVariables>(OrganizationInviteDetailsDocument, options);
+        }
+export type OrganizationInviteDetailsQueryHookResult = ReturnType<typeof useOrganizationInviteDetailsQuery>;
+export type OrganizationInviteDetailsLazyQueryHookResult = ReturnType<typeof useOrganizationInviteDetailsLazyQuery>;
+export type OrganizationInviteDetailsQueryResult = Apollo.QueryResult<OrganizationInviteDetailsQuery, OrganizationInviteDetailsQueryVariables>;
+export const OrganizationInviteLinkCreateDocument = gql`
+    query OrganizationInviteLinkCreate {
+  organizationInviteLink {
+    ...OrganizationInviteLinkCreateFragment
+  }
+}
+    ${OrganizationInviteLinkCreateFragmentFragmentDoc}`;
+
+/**
+ * __useOrganizationInviteLinkCreateQuery__
+ *
+ * To run a query within a React component, call `useOrganizationInviteLinkCreateQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationInviteLinkCreateQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOrganizationInviteLinkCreateQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOrganizationInviteLinkCreateQuery(baseOptions?: Apollo.QueryHookOptions<OrganizationInviteLinkCreateQuery, OrganizationInviteLinkCreateQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<OrganizationInviteLinkCreateQuery, OrganizationInviteLinkCreateQueryVariables>(OrganizationInviteLinkCreateDocument, options);
+      }
+export function useOrganizationInviteLinkCreateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OrganizationInviteLinkCreateQuery, OrganizationInviteLinkCreateQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<OrganizationInviteLinkCreateQuery, OrganizationInviteLinkCreateQueryVariables>(OrganizationInviteLinkCreateDocument, options);
+        }
+export type OrganizationInviteLinkCreateQueryHookResult = ReturnType<typeof useOrganizationInviteLinkCreateQuery>;
+export type OrganizationInviteLinkCreateLazyQueryHookResult = ReturnType<typeof useOrganizationInviteLinkCreateLazyQuery>;
+export type OrganizationInviteLinkCreateQueryResult = Apollo.QueryResult<OrganizationInviteLinkCreateQuery, OrganizationInviteLinkCreateQueryVariables>;

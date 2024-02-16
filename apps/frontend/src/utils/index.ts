@@ -1,6 +1,6 @@
 import { PROPERTY_FIELDS } from "@/constants";
-import { SurveyChannel } from "@/generated/graphql";
-import { ParsedChannel, QuestionOption } from "@/types";
+import { SurveyChannel, SurveyQuestion } from "@/generated/graphql";
+import { ParsedChannel, ParsedQuestion, QuestionOption } from "@/types";
 import { DeepOmit } from "@apollo/client/utilities";
 import { FilterOperator } from "@integraflow/web/src/types";
 import { toast } from "./toast";
@@ -83,6 +83,25 @@ export const fromSurveyChannel = (channel: SurveyChannel): ParsedChannel => {
         triggers: JSON.parse(channel.triggers ?? "{}"),
         conditions: JSON.parse(channel.conditions ?? "{}"),
     };
+};
+
+export const parseQuestion = (question: SurveyQuestion): ParsedQuestion => {
+    let parsedSettings = question.settings ?? {};
+    let parsedOptions = question.options ?? [];
+
+    if (typeof parsedSettings === "string") {
+        parsedSettings = JSON.parse(parsedSettings);
+    }
+
+    if (typeof parsedOptions === "string") {
+        parsedOptions = JSON.parse(parsedOptions);
+    }
+
+    return {
+        ...question,
+        settings: parsedSettings,
+        options: parsedOptions,
+    } as ParsedQuestion;
 };
 
 export const getFilterLabel = (operator: FilterOperator) => {

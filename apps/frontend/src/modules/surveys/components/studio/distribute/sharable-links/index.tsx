@@ -17,7 +17,7 @@ export default function SharableLinks() {
             settings: JSON.stringify({
                 name: `Link ${linkChannels.length + 1}`,
                 singleUse: false,
-                startDate: linkChannels.length ? "" : new Date().toISOString(),
+                startDate: "",
                 endDate: "",
             } as ChannelSettings),
         });

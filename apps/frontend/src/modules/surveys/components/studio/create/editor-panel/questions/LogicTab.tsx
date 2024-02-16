@@ -1,4 +1,5 @@
-import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { QuestionLogic, QuestionSettings } from "@/types";
 import { cn, generateUniqueId } from "@/utils";
 import { LogicOperator } from "@integraflow/web/src/types";
@@ -10,12 +11,12 @@ import { FormLogicBox } from "./attributes/LogicFields/Form/FormLogic";
 import { LogicBox } from "./attributes/LogicFields/LogicBox";
 
 type Props = {
-    question: SurveyQuestion;
     questionIndex: number;
 };
 
-export const LogicTab = ({ question, questionIndex }: Props) => {
+export const LogicTab = ({ questionIndex }: Props) => {
     const [isCreatingLogic, setIsCreatingLogic] = useState(false);
+    const { question } = useQuestion();
 
     const [logicValues, setLogicValues] = useState<QuestionLogic>({
         id: "",
@@ -23,7 +24,7 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
         values: undefined,
         operator: undefined,
         destination: "",
-        orderNumber: question.settings.logic?.length || 0,
+        orderNumber: question?.settings.logic?.length || 0,
     });
 
     const [formLogicValues, setFormLogicValues] = useState<QuestionLogic>({
@@ -38,17 +39,17 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
         ],
         operator: LogicOperator.AND,
         destination: "",
-        orderNumber: question.settings.logic?.length || 0,
+        orderNumber: question?.settings.logic?.length || 0,
     });
 
     useEffect(() => {
         if (isCreatingLogic) {
-            if (question.type === SurveyQuestionTypeEnum.Form) {
+            if (question?.type === SurveyQuestionTypeEnum.Form) {
                 setFormLogicValues({
                     ...formLogicValues,
                     operator: LogicOperator.AND,
                     id: generateUniqueId(),
-                    orderNumber: question.settings.logic?.length + 1 || 0,
+                    orderNumber: (question?.settings.logic?.length ?? 0) + 1 || 0,
                     groups: [
                         {
                             id: generateUniqueId(),
@@ -62,7 +63,7 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
                 setLogicValues({
                     ...logicValues,
                     id: generateUniqueId(),
-                    orderNumber: question.settings.logic?.length + 1 || 0,
+                    orderNumber: (question?.settings.logic?.length ?? 0) + 1 || 0,
                 });
             }
         } else {
@@ -80,6 +81,7 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
                 destination: "",
                 orderNumber: undefined,
             });
+
             setLogicValues({
                 id: "",
                 condition: undefined,
@@ -91,36 +93,33 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
         }
     }, [isCreatingLogic]);
 
+    if (!question) {
+        return null;
+    }
+
     return (
         <div className="space-y-4">
-            <TabHeader question={question} questionIndex={questionIndex} />
+            <TabHeader questionIndex={questionIndex} />
+
             <div className="">
                 <h3 className="text-sm font-semibold">Add logic</h3>
                 <p className="text-sm">
-                    Wondering how logic works?{" "}
-                    <span className="cursor-pointer underline">Learn more</span>
+                    Wondering how logic works? <span className="cursor-pointer underline">Learn more</span>
                 </p>
             </div>
+
             {question.type === SurveyQuestionTypeEnum.Form ? (
                 <>
-                    {((question.settings as QuestionSettings).logic || [])?.map(
-                        (logic, index) => {
-                            return (
-                                <div className="w-full">
-                                    <FormLogicBox
-                                        logicIndex={index}
-                                        question={question}
-                                        setIsCreatingLogic={setIsCreatingLogic}
-                                        logic={logic}
-                                        key={logic.id}
-                                    />
-                                </div>
-                            );
-                        },
-                    )}
+                    {((question.settings as QuestionSettings).logic || [])?.map((logic, index) => {
+                        return (
+                            <div className="w-full">
+                                <FormLogicBox logicIndex={index} logic={logic} key={logic.id} />
+                            </div>
+                        );
+                    })}
+
                     {
                         <FormLogicDefault
-                            question={question}
                             isCreatingLogic={isCreatingLogic}
                             setIsCreatingLogic={setIsCreatingLogic}
                             formLogicValues={formLogicValues}
@@ -130,24 +129,21 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
                 </>
             ) : (
                 <>
-                    {((question.settings as QuestionSettings).logic || [])?.map(
-                        (logic, index) => {
-                            return (
-                                <LogicBox
-                                    key={logic.id}
-                                    setIsCreatingLogic={setIsCreatingLogic}
-                                    logic={logic}
-                                    question={question}
-                                    logicIndex={index}
-                                    setLogicValues={setLogicValues}
-                                />
-                            );
-                        },
-                    )}
+                    {((question.settings as QuestionSettings).logic || [])?.map((logic, index) => {
+                        return (
+                            <LogicBox
+                                key={logic.id}
+                                setIsCreatingLogic={setIsCreatingLogic}
+                                logic={logic}
+                                logicIndex={index}
+                                setLogicValues={setLogicValues}
+                            />
+                        );
+                    })}
+
                     {isCreatingLogic && (
                         <DefaultLogicBox
                             isCreatingLogic={isCreatingLogic}
-                            question={question}
                             setIsCreatingLogic={setIsCreatingLogic}
                             logicValues={logicValues}
                             setLogicValues={setLogicValues}
@@ -155,6 +151,7 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
                     )}
                 </>
             )}
+
             <div
                 className={cn(
                     isCreatingLogic ? "cursor-not-allowed" : "cursor-pointer",
@@ -164,10 +161,8 @@ export const LogicTab = ({ question, questionIndex }: Props) => {
             >
                 <p className="text-xs underline">Add new Logic</p>
             </div>
-            <p className="text-sm">
-                All other answers will direct the respondents to the next
-                question.
-            </p>
+
+            <p className="text-sm">All other answers will direct the respondents to the next question.</p>
         </div>
     );
 };

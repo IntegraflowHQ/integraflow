@@ -12,9 +12,7 @@ export type LinkProps = {
     link: ParsedChannel;
 };
 
-const LINK_SURVEY_HOST =
-    import.meta.env.VITE_LINK_SURVEY_HOST ??
-    "https://surveys.useintegraflow.com";
+const LINK_SURVEY_HOST = import.meta.env.VITE_LINK_SURVEY_HOST ?? "https://surveys.useintegraflow.com";
 
 export default function Link({ link }: LinkProps) {
     const [editing, setEditing] = useState(false);
@@ -24,18 +22,9 @@ export default function Link({ link }: LinkProps) {
 
     return (
         <div className="flex items-center justify-between rounded-lg bg-intg-bg-14 p-4">
-            <Header
-                variant="3"
-                title={settings.name || "Link"}
-                description={url}
-                font="medium"
-            />
+            <Header variant="3" title={settings.name || "Link"} description={url} font="medium" />
 
-            <div
-                className={cn(
-                    "flex gap-2 transition-opacity duration-300 ease-in",
-                )}
-            >
+            <div className={cn("flex gap-2 transition-opacity duration-300 ease-in")}>
                 <button
                     onClick={() => {
                         copyToClipboard(url, "Link copied to clipboard!");
@@ -53,19 +42,12 @@ export default function Link({ link }: LinkProps) {
                     </DialogContent>
                 </Dialog>
 
-                <Dialog
-                    open={editing}
-                    onOpenChange={(value) => setEditing(value)}
-                >
+                <Dialog open={editing} onOpenChange={(value) => setEditing(value)}>
                     <DialogTrigger onClick={() => setEditing(true)}>
                         <SettingsIcon />
                     </DialogTrigger>
                     <DialogContent title={`${settings.name} settings`}>
-                        <EditLink
-                            link={link}
-                            settings={settings}
-                            close={() => setEditing(false)}
-                        />
+                        <EditLink link={link} settings={settings} close={() => setEditing(false)} />
                     </DialogContent>
                 </Dialog>
 

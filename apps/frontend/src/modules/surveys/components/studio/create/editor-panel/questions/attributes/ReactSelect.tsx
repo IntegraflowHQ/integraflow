@@ -5,7 +5,6 @@ import Select, {
     MultiValue,
     MultiValueGenericProps,
     SingleValue,
-    components,
 } from "react-select";
 import CreatableSelect from "react-select/creatable";
 import { LogicOperatorBtn } from "./LogicOperator";
@@ -76,7 +75,7 @@ export const ReactSelect = ({
             borderRadius: "8px",
             border: "1px solid transparent",
             backgroundColor: "#272138",
-            height: "48px",
+            // height: "48px",
         }),
         indicatorsContainer: (provided: CSSObjectWithLabel) => ({
             ...provided,
@@ -119,27 +118,21 @@ export const ReactSelect = ({
             lineHeight: "17px",
             padding: "10px 12px",
         }),
-        multiValueLabel: (provided: CSSObjectWithLabel) => ({
+        clearIndicator: (provided: CSSObjectWithLabel) => ({
             ...provided,
-            color: "#DBD4EB",
-        }),
-        multiValueRemove: (provided: CSSObjectWithLabel) => ({
-            ...provided,
-            color: "#DBD4EB",
             display: "none",
         }),
     };
 
-    const MultiValueContainer = (props: MultiValueGenericProps<Option>) => {
+    const customMultiValue = (props: MultiValueGenericProps<Option>) => {
         return (
-            <>
+            <div className="flex items-center justify-center">
                 {(props.selectProps.value &&
                     (props.selectProps.value as MultiValue<Option>)[0]
                         ?.value) !== props.data.value ? (
                     <LogicOperatorBtn
                         value={logicalOperatorValue as LogicOperator}
                         onclick={() => {
-                            console.log(shouldLogicalOperatorChange);
                             if (shouldLogicalOperatorChange) {
                                 setLogicalOperatorValue(
                                     logicalOperatorValue === LogicOperator.AND
@@ -157,8 +150,19 @@ export const ReactSelect = ({
                         }}
                     />
                 ) : null}
-                <components.MultiValueContainer {...props} />
-            </>
+
+                <div
+                    onClick={() => {
+                        value = (value as Option[]).filter(
+                            (v) => v.value !== props.data.value,
+                        );
+                        onchange && onchange(value);
+                    }}
+                    className="rounded-lg bg-intg-bg-19 px-2 py-1 text-sm text-intg-text"
+                >
+                    {props.data.label}
+                </div>
+            </div>
         );
     };
 
@@ -182,7 +186,7 @@ export const ReactSelect = ({
                     {enableUserOptions ? (
                         <CreatableSelect<Option, boolean>
                             closeMenuOnSelect={false}
-                            components={{ MultiValueContainer }}
+                            components={{ MultiValue: customMultiValue }}
                             onCreateOption={(inputValue) => {
                                 handleCreate(inputValue);
                                 onchange &&
@@ -204,7 +208,7 @@ export const ReactSelect = ({
                     ) : (
                         <div>
                             <Select
-                                components={{ MultiValueContainer }}
+                                components={{ MultiValue: customMultiValue }}
                                 value={value}
                                 options={options}
                                 defaultValue={defaultValue}
@@ -214,6 +218,7 @@ export const ReactSelect = ({
                                 }}
                                 className={classname}
                                 styles={styles}
+                                closeMenuOnSelect={false}
                             />
                         </div>
                     )}

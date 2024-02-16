@@ -3,12 +3,10 @@ import { useMemo, useRef } from "react";
 
 import { useUpdateEffect } from "@/hooks";
 
-import { useAuthToken } from "@/modules/auth/hooks/useAuthToken";
-import useLogout from "@/modules/auth/hooks/useLogout";
-import useWorkspaceState from "@/modules/workspace/hooks/useWorkspaceState";
-import { setContext } from "@apollo/client/link/context";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { LocalForageWrapper, persistCache } from "apollo3-cache-persist";
 import * as localForage from "localforage";
+
 import { ApolloFactory } from "../services/apollo.factory";
 
 const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
@@ -23,9 +21,8 @@ await persistCache({
 export const useApolloFactory = () => {
     const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
 
-    const { token, refresh, refreshToken } = useAuthToken();
-    const { workspace } = useWorkspaceState();
-    const { handleLogout } = useLogout();
+    const { token, currentProjectId, refresh, refreshToken, logout } =
+        useAuth();
 
     const apolloClient = useMemo(() => {
         apolloRef.current = new ApolloFactory({
@@ -38,42 +35,30 @@ export const useApolloFactory = () => {
             },
             connectToDevTools: isDebugMode,
             // We don't want to re-create the client on token change or it will cause infinite loop
-            initialAuthToken: {
+            initialAuthParams: {
                 token,
                 refreshToken,
+                currentProjectId,
+                refresh,
             },
-            onAccessTokenChange: (token: string) => refresh(token),
-            onUnauthenticatedError: () => {
-                handleLogout();
-            },
-            extraLinks: [
-                setContext(async (_, { headers }) => {
-                    return {
-                        headers: {
-                            ...headers,
-                            Project: workspace?.project.id ?? "",
-                        },
-                    };
-                }),
-            ],
+            onUnauthenticatedError: () => logout(),
+            extraLinks: [],
             isDebugMode,
         });
 
         return apolloRef.current.getClient();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token, refreshToken, workspace?.project.id]);
+    }, [currentProjectId, token, refreshToken, refresh, logout]);
 
     useUpdateEffect(() => {
         if (apolloRef.current) {
-            apolloRef.current.updateAuthToken({ token, refreshToken });
+            apolloRef.current.updateAuthParams({
+                token,
+                refreshToken,
+                currentProjectId,
+                refresh,
+            });
         }
-    }, [token, refreshToken]);
-
-    useUpdateEffect(() => {
-        if (apolloRef.current) {
-            apolloRef.current.getClient().resetStore();
-        }
-    }, [workspace]);
+    }, [currentProjectId, token, refreshToken, refresh]);
 
     return apolloClient;
 };

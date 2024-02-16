@@ -1,4 +1,4 @@
-import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { Popover, PopoverContent, PopoverTrigger } from "@/ui/Popover";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -9,18 +9,19 @@ import { SettingsTab } from "./SettingsTab";
 
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { questionsWithoutSettingsTab } from "@/utils/question";
-import * as Accordion from "@radix-ui/react-accordion";
 
 type Props = {
-    question: SurveyQuestion;
-    currentQuestionType: SurveyQuestionTypeEnum | undefined;
     questionIndex: number;
 };
 
-export const QuestionPanel = ({ question, questionIndex }: Props) => {
-    const { deleteQuestionMutation, openQuestion } = useQuestion();
+export const QuestionPanel = ({ questionIndex }: Props) => {
+    const { question, clear, deleteQuestion } = useQuestion();
     const { parsedQuestions } = useSurvey();
     const lastQuestionIndex = parsedQuestions.length - 1;
+
+    if (!question) {
+        return null;
+    }
 
     return (
         <Tabs.Root
@@ -38,11 +39,9 @@ export const QuestionPanel = ({ question, questionIndex }: Props) => {
                         Edit
                     </Tabs.Trigger>
 
-                    {questionIndex === lastQuestionIndex ||
-                    question.type === SurveyQuestionTypeEnum.Cta ? null : (
+                    {questionIndex === lastQuestionIndex || question.type === SurveyQuestionTypeEnum.Cta ? null : (
                         <>
-                            {Object.keys(question.settings).length ===
-                            0 ? null : (
+                            {Object.keys(question.settings).length === 0 ? null : (
                                 <Tabs.Trigger
                                     key="logic"
                                     value="logic"
@@ -53,12 +52,10 @@ export const QuestionPanel = ({ question, questionIndex }: Props) => {
                             )}
                         </>
                     )}
-                    {questionsWithoutSettingsTab.includes(
-                        question.type,
-                    ) ? null : (
+
+                    {questionsWithoutSettingsTab.includes(question.type) ? null : (
                         <>
-                            {Object.keys(question.settings).length ===
-                            0 ? null : (
+                            {Object.keys(question.settings).length === 0 ? null : (
                                 <Tabs.Trigger
                                     key="settings"
                                     value="settings"
@@ -70,6 +67,7 @@ export const QuestionPanel = ({ question, questionIndex }: Props) => {
                         </>
                     )}
                 </Tabs.List>
+
                 <div className="flex gap-6">
                     <Popover>
                         <PopoverTrigger>
@@ -77,62 +75,35 @@ export const QuestionPanel = ({ question, questionIndex }: Props) => {
                         </PopoverTrigger>
                         <PopoverContent className=" w-fit border text-intg-text">
                             <div className="flex flex-col gap-2">
-                                <p className="cursor-pointer text-sm">
-                                    Duplicate
-                                </p>
-                                <p
-                                    className="cursor-pointer text-sm"
-                                    onClick={() =>
-                                        deleteQuestionMutation(
-                                            openQuestion as SurveyQuestion,
-                                        )
-                                    }
-                                >
+                                <p className="cursor-pointer text-sm">Duplicate</p>
+                                <p className="cursor-pointer text-sm" onClick={() => deleteQuestion(question)}>
                                     Delete
                                 </p>
                             </div>
                         </PopoverContent>
                     </Popover>
-                    <Accordion.Trigger value={question?.id}>
+
+                    <button onClick={clear}>
                         <XIcon className="cursor-pointer" />
-                    </Accordion.Trigger>
+                    </button>
                 </div>
             </div>
 
             <div>
                 <div>
-                    <Tabs.Content
-                        value="edit"
-                        className="flex-1 pt-2"
-                        key="edit"
-                    >
-                        <EditTab
-                            question={question}
-                            questionIndex={questionIndex}
-                        />
+                    <Tabs.Content value="edit" className="flex-1 pt-2" key="edit">
+                        <EditTab questionIndex={questionIndex} />
                     </Tabs.Content>
+
                     {Object.keys(question.settings).length === 0 ? null : (
-                        <Tabs.Content
-                            value="logic"
-                            className="flex-1 pt-2"
-                            key="logic"
-                        >
-                            <LogicTab
-                                question={question}
-                                questionIndex={questionIndex}
-                            />
+                        <Tabs.Content value="logic" className="flex-1 pt-2" key="logic">
+                            <LogicTab questionIndex={questionIndex} />
                         </Tabs.Content>
                     )}
+
                     {Object.keys(question.settings).length === 0 ? null : (
-                        <Tabs.Content
-                            value="settings"
-                            className="flex-1 pt-2"
-                            key="settings"
-                        >
-                            <SettingsTab
-                                question={question}
-                                questionIndex={questionIndex}
-                            />
+                        <Tabs.Content value="settings" className="flex-1 pt-2" key="settings">
+                            <SettingsTab questionIndex={questionIndex} />
                         </Tabs.Content>
                     )}
                 </div>

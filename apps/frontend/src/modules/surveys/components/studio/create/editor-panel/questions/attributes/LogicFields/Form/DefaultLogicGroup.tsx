@@ -1,7 +1,7 @@
 import MinusIcon from "@/assets/icons/studio/MinusIcon";
-import { SurveyQuestion } from "@/generated/graphql";
+import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { FormLogicGroup, QuestionLogic } from "@/types";
-import { changeableOperator, getLogicConditions } from "@/utils/defaultOptions";
+import { changeableOperator, conditionOptions, logicValuesOptions } from "@/utils/question";
 import { LogicOperator } from "@integraflow/web/src/types";
 import { MultiValue, SingleValue } from "react-select";
 import { Option, ReactSelect } from "../../ReactSelect";
@@ -12,29 +12,19 @@ type Props = {
     setFormLogicValues: React.Dispatch<React.SetStateAction<QuestionLogic>>;
     setIsCreatingLogic: React.Dispatch<React.SetStateAction<boolean>>;
     group: FormLogicGroup;
-    question: SurveyQuestion;
 };
 
-export const LogicGroup = ({
-    group,
-    formLogicValues,
-    setFormLogicValues,
-    setIsCreatingLogic,
-    index,
-    question,
-}: Props) => {
-    const handleUpdateFields = (
-        values: SingleValue<Option> | MultiValue<Option>,
-    ) => {
+export const LogicGroup = ({ group, formLogicValues, setFormLogicValues, setIsCreatingLogic, index }: Props) => {
+    const { question } = useQuestion();
+
+    const handleUpdateFields = (values: SingleValue<Option> | MultiValue<Option>) => {
         setFormLogicValues({
             ...formLogicValues,
             groups: formLogicValues.groups?.map((g) =>
                 g.id === group.id
                     ? {
                           ...g,
-                          fields: (values as MultiValue<Option>)?.map(
-                              (v) => v.value,
-                          ),
+                          fields: (values as MultiValue<Option>)?.map((v) => v.value),
                           operator: LogicOperator.AND,
                       }
                     : g,
@@ -54,15 +44,11 @@ export const LogicGroup = ({
         }
         setFormLogicValues({
             ...formLogicValues,
-            groups: (formLogicValues.groups ?? []).filter(
-                (g) => g.id !== group.id,
-            ),
+            groups: (formLogicValues.groups ?? []).filter((g) => g.id !== group.id),
         });
     };
 
-    const handleUpdateCondition = (
-        value: SingleValue<Option> | MultiValue<Option>,
-    ) => {
+    const handleUpdateCondition = (value: SingleValue<Option> | MultiValue<Option>) => {
         setFormLogicValues({
             ...formLogicValues,
             groups: (formLogicValues.groups ?? []).map((g) =>
@@ -83,36 +69,20 @@ export const LogicGroup = ({
                     <div>If</div>
                     <div className="w-[330px]">
                         <ReactSelect
-                            shouldLogicalOperatorChange={changeableOperator(
-                                question,
-                            )}
+                            shouldLogicalOperatorChange={changeableOperator(question?.type!)}
                             onOperatorChange={(value) => {
                                 handleUpdateCondition(value);
                             }}
                             comboBox={true}
-                            options={[
-                                ...(question?.options?.map(
-                                    (option: SingleValue<Option>) => ({
-                                        value: option?.id,
-                                        label: option?.label,
-                                    }),
-                                ) ?? []),
-                            ]}
+                            options={logicValuesOptions(question!)}
                             onchange={(values) => {
                                 handleUpdateFields(values);
                             }}
-                            value={[
-                                ...((
-                                    question?.options?.map(
-                                        (option: SingleValue<Option>) => ({
-                                            value: option?.id,
-                                            label: option?.label,
-                                        }),
-                                    ) ?? []
-                                ).filter((option: Option) =>
+                            value={
+                                logicValuesOptions(question!).filter((option: Option) =>
                                     group.fields.includes(option.value),
-                                ) ?? []),
-                            ]}
+                                ) ?? []
+                            }
                         />
                     </div>
                 </div>
@@ -122,7 +92,7 @@ export const LogicGroup = ({
                         <p></p>
                         <div className="w-[330px]">
                             <ReactSelect
-                                options={getLogicConditions(question?.type!)}
+                                options={conditionOptions(question?.type!)}
                                 onchange={(value) => {
                                     handleUpdateCondition(value);
                                 }}
@@ -131,10 +101,7 @@ export const LogicGroup = ({
                     </div>
                 )}
 
-                <div
-                    className="absolute bottom-1/2 right-0 translate-x-1/2"
-                    onClick={() => handleRemoveGroup()}
-                >
+                <div className="absolute bottom-1/2 right-0 translate-x-1/2" onClick={() => handleRemoveGroup()}>
                     <MinusIcon />
                 </div>
             </div>

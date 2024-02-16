@@ -23,7 +23,7 @@ export default function Studio() {
     const [title, setTitle] = useState("");
     const { enableStudioMode, disableStudioMode } = useStudioState();
     const [activeTab, setActiveTab] = useState(tabs[0].label);
-    const { loadingCreateSurvey, updateSurvey, survey } = useSurvey();
+    const { loadingCreateSurvey, updateSurvey } = useSurvey();
 
     useEffect(() => {
         enableStudioMode();
@@ -34,10 +34,7 @@ export default function Studio() {
     }, []);
 
     const publishSurvey = async () => {
-        if (!survey?.survey?.id) {
-            return;
-        }
-        await updateSurvey(survey?.survey.id, {
+        await updateSurvey({
             status: SurveyStatusEnum.Active,
         });
         toast.success("Survey published successfully");
@@ -46,11 +43,7 @@ export default function Studio() {
     if (loadingCreateSurvey) return <GlobalSpinner />;
 
     return (
-        <Tabs.Root
-            className="h-full w-full"
-            value={activeTab}
-            onValueChange={setActiveTab}
-        >
+        <Tabs.Root className="h-full w-full" value={activeTab} onValueChange={setActiveTab}>
             <header className="fixed z-10 flex w-full items-center justify-between border-b border-intg-bg-4 bg-[#090713] py-[22px] pl-10 pr-12">
                 <input
                     type="text"

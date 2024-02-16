@@ -11,6 +11,7 @@ export const LogicOperatorBtn = ({
 }: Props) => {
     return (
         <div
+            className="cursor-pointer rounded-md px-1 text-xs font-semibold text-intg-text hover:underline"
             onClick={() => {
                 onclick && onclick(value);
             }}
