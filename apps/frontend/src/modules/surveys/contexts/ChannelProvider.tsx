@@ -20,9 +20,7 @@ function useChannelContextFactory() {
     const [updateChannelMutation] = useSurveyChannelUpdateMutation();
     const [deleteChannelMutation] = useSurveyChannelDeleteMutation();
 
-    const createChannel = async (
-        input: Omit<SurveyChannelCreateInput, "surveyId">,
-    ) => {
+    const createChannel = async (input: Omit<SurveyChannelCreateInput, "surveyId">) => {
         if (!surveyId) return;
         const data: SurveyChannelCreateInput = {
             type: input.type ?? SurveyChannelTypeEnum.WebSdk,
@@ -43,6 +41,7 @@ function useChannelContextFactory() {
                     surveyChannel: {
                         __typename: "SurveyChannel",
                         ...data,
+                        link: "",
                         reference: data.id,
                         createdAt: new Date().toISOString(),
                     },
@@ -66,8 +65,7 @@ function useChannelContextFactory() {
                                 edges: [
                                     ...existingChannels.edges,
                                     {
-                                        __typename:
-                                            "SurveyChannelCountableEdge",
+                                        __typename: "SurveyChannelCountableEdge",
                                         node: newChannelRef,
                                     },
                                 ],
@@ -79,10 +77,7 @@ function useChannelContextFactory() {
         });
     };
 
-    const updateChannel = async (
-        channel: ParsedChannel,
-        input: SurveyChannelUpdateInput,
-    ) => {
+    const updateChannel = async (channel: ParsedChannel, input: SurveyChannelUpdateInput) => {
         const surveyChannel = toSurveyChannel(channel);
 
         await updateChannelMutation({
@@ -98,9 +93,9 @@ function useChannelContextFactory() {
                         __typename: "SurveyChannel",
                         id: channel.id,
                         type: input.type ?? surveyChannel.type,
+                        link: surveyChannel.link ?? "",
                         triggers: input.triggers ?? surveyChannel.triggers,
-                        conditions:
-                            input.conditions ?? surveyChannel.conditions,
+                        conditions: input.conditions ?? surveyChannel.conditions,
                         settings: input.settings ?? surveyChannel.settings,
                         reference: surveyChannel.reference,
                         createdAt: new Date().toISOString(),
@@ -146,9 +141,7 @@ function useChannelContextFactory() {
                             return {
                                 __typeName: "SurveyChannelCountableConnection",
                                 edges: existingChannels.edges.filter(
-                                    (edge: SurveyChannelCountableEdge) =>
-                                        readField("id", edge.node) !==
-                                        channel.id,
+                                    (edge: SurveyChannelCountableEdge) => readField("id", edge.node) !== channel.id,
                                 ),
                             };
                         },
@@ -168,10 +161,7 @@ function useChannelContextFactory() {
 
     const getChannels = useCallback(
         (type: SurveyChannelTypeEnum) => {
-            return (
-                channels.filter((channel) => channel.type === type) ||
-                ([] as ParsedChannel[])
-            );
+            return channels.filter((channel) => channel.type === type) || ([] as ParsedChannel[]);
         },
         [channels],
     );
@@ -195,9 +185,5 @@ export const ChannelContext = createChannelContext();
 export const ChannelProvider = ({ children }: { children: ReactNode }) => {
     const value = useChannelContextFactory();
 
-    return (
-        <ChannelContext.Provider value={value}>
-            {children}
-        </ChannelContext.Provider>
-    );
+    return <ChannelContext.Provider value={value}>{children}</ChannelContext.Provider>;
 };

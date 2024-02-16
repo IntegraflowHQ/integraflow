@@ -3,13 +3,13 @@ import graphene
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.connection import (
     CountableConnection,
-    create_connection_slice
+    create_connection_slice,
 )
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_SURVEYS
 from integraflow.graphql.core.fields import (
     FilterConnectionField,
     JSONString,
-    PermissionsField
+    PermissionsField,
 )
 from integraflow.graphql.core.types.common import NonNullList
 from integraflow.graphql.core.types.model import ModelObjectType
@@ -18,7 +18,7 @@ from integraflow.graphql.survey.enums import (
     SurveyChannelTypeEnum,
     SurveyQuestionTypeEnum,
     SurveyStatusEnum,
-    SurveyTypeEnum
+    SurveyTypeEnum,
 )
 from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.survey import models
@@ -321,6 +321,10 @@ class BaseSurveyChannel(ModelObjectType):
         SurveyChannelTypeEnum,
         required=True,
         description="The type of the survey channel",
+    )
+    link = graphene.String(
+        required=True,
+        description="Unique link to the channel.",
     )
     triggers = JSONString(
         description="The options of the question."

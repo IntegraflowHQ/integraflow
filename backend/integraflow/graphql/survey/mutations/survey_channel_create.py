@@ -1,7 +1,7 @@
 from typing import cast
+
 import graphene
 from django.core.exceptions import ValidationError
-
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_SURVEYS
 from integraflow.graphql.core.fields import JSONString
@@ -113,7 +113,7 @@ class SurveyChannelCreate(BaseMutation):
     def perform_mutation(
         cls, _root, info: ResolveInfo, /, **data
     ):
-        cleaned_input = cls.clean_input(info, **data)
+        cleaned_input = cls.clean_input(info, **data["input"])
         instance = models.SurveyChannel.objects.create(**cleaned_input)
 
         return cls(

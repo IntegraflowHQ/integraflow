@@ -29,6 +29,7 @@ export const SURVEY_QUESTION = gql`
 export const SURVEY_CHANNEL = gql`
     fragment SurveyChannelFragment on SurveyChannel {
         id
+        link
         reference
         type
         triggers
