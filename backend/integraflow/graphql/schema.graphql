@@ -654,6 +654,9 @@ type SurveyChannel implements Node @doc(category: "Surveys") {
   """The type of the survey channel"""
   type: SurveyChannelTypeEnum!
 
+  """Unique link to the channel."""
+  link: String!
+
   """The options of the question."""
   triggers: JSONString
 
@@ -1096,6 +1099,9 @@ type BaseSurveyChannel implements Node @doc(category: "Surveys") {
 
   """The type of the survey channel"""
   type: SurveyChannelTypeEnum!
+
+  """Unique link to the channel."""
+  link: String!
 
   """The options of the question."""
   triggers: JSONString
