@@ -13,9 +13,7 @@ const appKey = process.env.NEXT_PUBLIC_INTEGRAFLOW_APP_KEY;
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home({
-    surveys,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Home({ surveys }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     const [completed, setCompleted] = useState(false);
 
     useEffect(() => {
@@ -56,15 +54,15 @@ export default function Home({
     );
 }
 
-export const getServerSideProps = (async (context) => {
-    const { link } = context.params;
+export const getServerSideProps: GetServerSideProps<{ surveys: any[] }> = async (context) => {
+    const { link } = context.params as { link: string };
     const client = new IntegraflowClient({ apiKey, apiUrl });
     const survey = await client.surveyByChannel({ link });
     const surveys = parsedSurveys(survey);
 
     return {
         props: {
-            surveys,
+            surveys: surveys as any[],
         },
     };
-}) satisfies GetServerSideProps<{ surveys: any[] }>;
+};

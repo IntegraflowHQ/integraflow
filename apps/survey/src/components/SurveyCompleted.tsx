@@ -14,20 +14,12 @@ function SurveyCompleted() {
                 }
             >
                 <div>
-                    <img
-                        src={"/images/logo.png"}
-                        alt="Logo"
-                        className="w-[197px] h-[29px]"
-                    />
+                    <img src={"/images/logo.png"} alt="Logo" className="w-[197px] h-[29px]" />
                 </div>
 
                 <header className="flex flex-col gap-2">
-                    <h2 className="text-[28px] font-medium leading-normal text-[#28213B]">
-                        Survey completed
-                    </h2>
-                    <p className="text-base text-[#AFAAC7]">
-                        Thank you for taking the time to complete this survey.
-                    </p>
+                    <h2 className="text-[28px] font-medium leading-normal text-[#28213B]">Survey completed</h2>
+                    <p className="text-base text-[#AFAAC7]">Thank you for taking the time to complete this survey.</p>
                 </header>
 
                 <div />
@@ -51,33 +43,19 @@ function SurveyCompleted() {
                             Redefine customer experience with organic feedback
                         </h2>
                         <p className="max-w-[476px] text-xl ">
-                            Automate. Simplify. Track Your Ever-Changing
-                            Customer's Journey in One Space
+                            Automate. Simplify. Track Your Ever-Changing Customer&apos;s Journey in One Space
                         </p>
                     </header>
 
                     <div className="flex items-center gap-[14px]">
                         <div className="flex w-max">
-                            <img
-                                src={"/images/profile-1.png"}
-                                className="h-10 w-10 rounded-full"
-                                alt="user"
-                            />
-                            <img
-                                src={"/images/profile-2.png"}
-                                className="-ml-4 h-10 w-10 rounded-full"
-                                alt="user"
-                            />
-                            <img
-                                src={"/images/profile-3.png"}
-                                className="-ml-4 h-10 w-10 rounded-full"
-                                alt="user"
-                            />
+                            <img src={"/images/profile-1.png"} className="h-10 w-10 rounded-full" alt="user" />
+                            <img src={"/images/profile-2.png"} className="-ml-4 h-10 w-10 rounded-full" alt="user" />
+                            <img src={"/images/profile-3.png"} className="-ml-4 h-10 w-10 rounded-full" alt="user" />
                         </div>
 
                         <p className="max-w-[295px] text-lg text-[#F2F2F2]]">
-                            Join over <span className="text-white">(50+)</span>{" "}
-                            other businesses from around the globe
+                            Join over <span className="text-white">(50+)</span> other businesses from around the globe
                         </p>
                     </div>
                 </div>

@@ -1,12 +1,5 @@
 import { BaseSurvey, IntegraflowDocument } from "@integraflow/sdk";
-import {
-    Audience,
-    Question,
-    QuestionOption,
-    Survey,
-    SurveySettings,
-    Trigger,
-} from "@integraflow/web";
+import { Audience, Question, QuestionOption, Survey, SurveySettings, Trigger } from "@integraflow/web";
 
 export const parsedSurveys = (survey?: BaseSurvey): Survey[] => {
     if (!survey) {
@@ -36,9 +29,7 @@ export const parsedSurveys = (survey?: BaseSurvey): Survey[] => {
     });
 
     const channel = survey.channels.find((channel) => {
-        return (
-            channel.type === IntegraflowDocument.SurveyChannelTypeEnum.WebSdk
-        );
+        return channel.type === IntegraflowDocument.SurveyChannelTypeEnum.WebSdk;
     }) || { settings: "{}", conditions: "{}", triggers: "{}" };
     const channelSettings = JSON.parse(channel?.settings ?? "{}");
     const settings = JSON.parse(survey.settings ?? "{}");
