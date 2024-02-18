@@ -16,6 +16,7 @@
         "build": "turbo run build",
         "build:sdk": "turbo run build:sdk",
         "build:types": "tsc --project tsconfig.check.json",
+        "build:dashboard": "turbo run build:dashboard",
         "dev": "NODE_ENV=development yarn build",
         "docs": "md-magic --path './packages/**/README.md' --config ./docs/markdown-magic.config.js",
         "generate:clean": "turbo run generate:clean",
