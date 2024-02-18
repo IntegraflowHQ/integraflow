@@ -9,7 +9,7 @@ import * as localForage from "localforage";
 
 import { ApolloFactory } from "../services/apollo.factory";
 
-const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
+const isDebugMode = import.meta.env.MODE === "development";
 
 export const useApolloFactory = () => {
     const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
