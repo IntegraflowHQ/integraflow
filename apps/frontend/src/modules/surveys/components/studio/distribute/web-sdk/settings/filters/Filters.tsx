@@ -22,13 +22,7 @@ type EventFilterProps = {
 
 type Props = AudienceFilterProps | EventFilterProps;
 
-export default function Filters({
-    variant,
-    filters,
-    operator,
-    onOperatorChange,
-    onRemoveFilter,
-}: Props) {
+export default function Filters({ variant, filters, operator, onOperatorChange, onRemoveFilter }: Props) {
     return (
         <>
             {filters?.map((filter, index) => (
@@ -53,9 +47,7 @@ export default function Filters({
                                     },
                                 ]}
                                 onChange={(e) => {
-                                    onOperatorChange(
-                                        e.target.value as LogicOperator,
-                                    );
+                                    onOperatorChange(e.target.value as LogicOperator);
                                 }}
                                 name="operator"
                             />
@@ -67,19 +59,11 @@ export default function Filters({
                             variant === "audience"
                                 ? {
                                       ...filter,
-                                      property: (filter as AudienceFilter)
-                                          .attribute,
+                                      property: (filter as AudienceFilter).attribute,
                                   }
                                 : (filter as EventFilter)
                         }
                         onRemoveFilter={() => onRemoveFilter(index)}
-                        rounded={
-                            index === 0
-                                ? "left"
-                                : index === filters.length - 1
-                                ? "right"
-                                : undefined
-                        }
                     />
                 </Fragment>
             ))}

@@ -9,6 +9,11 @@ type Props = {
 
 export const TabHeader = ({ questionIndex }: Props) => {
     const { question } = useQuestion();
+
+    if (!question) {
+        return null;
+    }
+
     return (
         <div className="flex items-center gap-4">
             <img
@@ -17,7 +22,7 @@ export const TabHeader = ({ questionIndex }: Props) => {
                         SurveyQuestionTypeEnum.Rating,
                         SurveyQuestionTypeEnum.NumericalScale,
                         SurveyQuestionTypeEnum.Csat,
-                        SurveyQuestionTypeEnum.CES,
+                        SurveyQuestionTypeEnum.Ces,
                     ].includes(question?.type)
                         ? RatingIcon
                         : questionTypes.find((type) => type.type === question?.type)?.icon

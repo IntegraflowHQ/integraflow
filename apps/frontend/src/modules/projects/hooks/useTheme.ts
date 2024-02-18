@@ -1,6 +1,7 @@
 import {
     ProjectTheme,
     ThemesQuery,
+    User,
     useProjectThemeCreateMutation,
     useProjectThemeUpdateMutation,
     useThemesQuery,
@@ -65,16 +66,11 @@ export const useThemes = () => {
             onCompleted: (data) => {
                 const themeData = {
                     name: data.projectThemeCreate?.projectTheme?.name ?? "",
-                    colorScheme:
-                        data.projectThemeCreate?.projectTheme?.colorScheme ??
-                        "",
+                    colorScheme: data.projectThemeCreate?.projectTheme?.colorScheme ?? "",
                 };
 
                 data.projectThemeCreate?.projectTheme?.id;
-                updateSurvey(
-                    { themeId: data.projectThemeCreate?.projectTheme?.id },
-                    themeData,
-                );
+                updateSurvey({ themeId: data.projectThemeCreate?.projectTheme?.id }, themeData);
             },
             optimisticResponse: {
                 __typename: "Mutation",
@@ -98,8 +94,7 @@ export const useThemes = () => {
                         themes(existingThemeRefs) {
                             const newThemeRef = cache.writeFragment({
                                 data: {
-                                    ...(data?.projectThemeCreate
-                                        ?.projectTheme ?? {}),
+                                    ...(data?.projectThemeCreate?.projectTheme ?? {}),
                                     settings: "{}",
                                     project: null,
                                     creator: null,
@@ -158,20 +153,21 @@ export const useThemes = () => {
                             name: project?.name ?? "",
                             slug: project?.slug ?? "",
                             hasCompletedOnboardingFor: [],
+                            apiToken: project?.apiToken ?? "",
                             timezone: project?.timezone ?? "",
                             organization: {
                                 id: project?.organization?.id ?? "",
                                 slug: project?.organization?.slug ?? "",
                                 name: project?.organization?.name ?? "",
-                                memberCount:
-                                    project?.organization?.memberCount ?? 0,
+                                memberCount: project?.organization?.memberCount ?? 0,
                             },
                         },
                         createdAt: new Date().toISOString(),
-                        creator: user,
+                        creator: theme.creator ?? (user as User),
                         updatedAt: new Date().toISOString(),
                     },
                     projectErrors: [],
+                    errors: [],
                 },
             },
         });

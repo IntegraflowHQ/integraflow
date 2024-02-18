@@ -72,7 +72,9 @@ export const useQuestion = () => {
                     return;
                 }
 
-                switchQuestion(parseQuestion(data.surveyQuestionCreate?.surveyQuestion as SurveyQuestion));
+                if (!activeQuestion || activeQuestion?.id !== data.surveyQuestionCreate.surveyQuestion.id) {
+                    switchQuestion(parseQuestion(data.surveyQuestionCreate?.surveyQuestion as SurveyQuestion));
+                }
 
                 cache.modify({
                     id: `Survey:${surveyId}`,

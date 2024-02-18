@@ -5,6 +5,7 @@ import {
     EventDefinition,
     Project,
     ProjectUpdateInput,
+    PropertyDefinition,
     useAudiencePropertiesQuery,
     useProjectCreateMutation,
     useProjectEventsDataQuery,
@@ -49,8 +50,7 @@ export const useProject = () => {
         if (
             workspace &&
             newProject &&
-            (workspace.id !== user?.organization?.id ||
-                newProject.id !== user?.project?.id)
+            (workspace.id !== user?.organization?.id || newProject.id !== user?.project?.id)
         ) {
             updateUser(
                 {
@@ -64,15 +64,7 @@ export const useProject = () => {
                 switchProject(newProject.id);
             }
         }
-    }, [
-        user,
-        projects,
-        workspace,
-        updateUser,
-        project,
-        currentProjectId,
-        switchProject,
-    ]);
+    }, [user, projects, workspace, updateUser, project, currentProjectId, switchProject]);
 
     const handleSwitchProject = useCallback(
         (project: Project) => {
@@ -89,26 +81,14 @@ export const useProject = () => {
                 switchProject(project.id);
             }
 
-            if (
-                orgSlug !== organization?.slug ||
-                projectSlug !== project.slug
-            ) {
+            if (orgSlug !== organization?.slug || projectSlug !== project.slug) {
                 redirect({
                     ...(user ?? {}),
                     ...updatedUser,
                 });
             }
         },
-        [
-            currentProjectId,
-            orgSlug,
-            projectSlug,
-            redirect,
-            switchProject,
-            updateUser,
-            user,
-            workspace,
-        ],
+        [currentProjectId, orgSlug, projectSlug, redirect, switchProject, updateUser, user, workspace],
     );
 
     const handleAddProject = useCallback(
@@ -118,10 +98,7 @@ export const useProject = () => {
                 projects: {
                     ...workspace?.projects,
                     totalCount: (workspace?.projects?.totalCount ?? 0) + 1,
-                    edges: [
-                        { node: project },
-                        ...(workspace?.projects?.edges ?? []),
-                    ],
+                    edges: [{ node: project }, ...(workspace?.projects?.edges ?? [])],
                 },
             };
             updateWorkspace(organization);
@@ -222,24 +199,15 @@ export const useProject = () => {
     );
 
     const eventDefinitions = useMemo(() => {
-        return (
-            eventsData?.eventDefinitions?.edges.map(({ node }) => node) ||
-            ([] as EventDefinition[])
-        );
+        return eventsData?.eventDefinitions?.edges.map(({ node }) => node) || ([] as EventDefinition[]);
     }, [eventsData?.eventDefinitions]);
 
     const eventProperties = useMemo(() => {
-        return (
-            eventsData?.eventProperties?.edges.map(({ node }) => node) ||
-            ([] as EventProperties[])
-        );
+        return eventsData?.eventProperties?.edges.map(({ node }) => node) || ([] as EventProperties[]);
     }, [eventsData?.eventProperties]);
 
     const propertyDefinitions = useMemo(() => {
-        return (
-            eventsData?.propertyDefinitions?.edges.map(({ node }) => node) ||
-            ([] as PropertyDefinition[])
-        );
+        return eventsData?.propertyDefinitions?.edges.map(({ node }) => node) || ([] as PropertyDefinition[]);
     }, [eventsData?.propertyDefinitions]);
 
     const getPropertyDefinition = useCallback(
@@ -252,23 +220,19 @@ export const useProject = () => {
     const getProperties = useCallback(
         (event: string) => {
             const properties = eventProperties.filter((p) => p.event === event);
-            return properties.map((p) => {
-                const definition = p.property
-                    ? getPropertyDefinition(p.property as string)
-                    : undefined;
+            return properties
+                .map((p) => {
+                    const definition = p.property ? getPropertyDefinition(p.property as string) : undefined;
 
-                return definition;
-            });
+                    return definition;
+                })
+                .filter((p) => p !== undefined) as PropertyDefinition[];
         },
         [eventProperties, getPropertyDefinition],
     );
 
     const personProperties = useMemo(() => {
-        return (
-            audienceProperties?.propertyDefinitions?.edges.map(
-                (edge) => edge.node,
-            ) || ([] as PropertyDefinition[])
-        );
+        return audienceProperties?.propertyDefinitions?.edges.map((edge) => edge.node) || ([] as PropertyDefinition[]);
     }, [audienceProperties]);
 
     return {

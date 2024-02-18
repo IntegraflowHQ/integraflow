@@ -18,17 +18,14 @@ export const SurveyExperience = () => {
     const surveyId = survey?.survey?.id;
     const surveySettings = survey?.survey?.settings;
 
-    const [surveyExperience, setSurveyExperience] =
-        React.useState<SurveyExperienceProps>({
-            close: false,
-            showProgressBar: false,
-            showBranding: false,
-            submitText: "",
-        });
+    const [surveyExperience, setSurveyExperience] = React.useState<SurveyExperienceProps>({
+        close: false,
+        showProgressBar: false,
+        showBranding: false,
+        submitText: "",
+    });
 
-    const updateSurveyPreferences = (
-        updatedPrefernece: SurveyExperienceProps,
-    ) => {
+    const updateSurveyPreferences = (updatedPrefernece: SurveyExperienceProps) => {
         if (surveyId) {
             updateSurvey({
                 settings: updatedPrefernece as Partial<SurveyUpdateInput>,
@@ -105,45 +102,31 @@ export const SurveyExperience = () => {
                     name="showProgressBar"
                     label="progress bar"
                     value={surveyExperience.showProgressBar}
-                    onChange={(event) =>
-                        handleSwitches(
-                            "showProgressBar",
-                            event?.target.value as boolean,
-                        )
-                    }
+                    onChange={(event) => handleSwitches("showProgressBar", event?.target.value as boolean)}
                 />
 
                 <Switch
                     name="showBranding"
                     value={surveyExperience.showBranding}
                     label="remove integraflow branding"
-                    onChange={(event) =>
-                        handleSwitches(
-                            "showBranding",
-                            event.target.value as boolean,
-                        )
-                    }
+                    onChange={(event) => handleSwitches("showBranding", event.target.value as boolean)}
                 />
 
                 <Switch
                     name="close"
                     label="close button"
                     value={surveyExperience.close}
-                    onChange={(event) =>
-                        handleSwitches("close", event.target.value as boolean)
-                    }
+                    onChange={(event) => handleSwitches("close", event.target.value as boolean)}
                 />
             </div>
 
             <hr className="border-1 my-6 border-intg-bg-14" />
 
             <EditorTextInput
-                name="submitText"
                 placeholder="Submit"
                 label="Proceed to next question"
                 onChange={handleChange}
                 defaultValue={surveyExperience.submitText}
-                characterCount={surveyExperience.submitText.length}
             />
         </div>
     );

@@ -54,7 +54,7 @@ export default function UpdateQuestion() {
                                                                 SurveyQuestionTypeEnum.Rating,
                                                                 SurveyQuestionTypeEnum.Csat,
                                                                 SurveyQuestionTypeEnum.NumericalScale,
-                                                                SurveyQuestionTypeEnum.CES,
+                                                                SurveyQuestionTypeEnum.Ces,
                                                             ].includes(question.type)
                                                                 ? RatingIcon
                                                                 : questionTypes.find(

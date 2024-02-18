@@ -4,6 +4,7 @@ import {
     SurveyStatusEnum,
     SurveyTypeEnum,
     SurveyUpdateInput,
+    User,
     useGetSurveyQuery,
     useSurveyCreateMutation,
     useSurveyUpdateMutation,
@@ -98,8 +99,8 @@ export const useSurvey = () => {
                         createdAt: survey?.survey?.createdAt ?? new Date().toISOString(),
                         updatedAt: new Date().toISOString(),
 
-                        creator: survey?.survey?.creator ?? user,
-                        theme: newTheme ?? survey?.survey?.theme ?? null,
+                        creator: survey?.survey?.creator ?? (user as User),
+                        theme: (newTheme as ProjectTheme) ?? survey?.survey?.theme,
                         settings: input.settings ?? survey?.survey?.settings ?? null,
                     },
                     surveyErrors: [],

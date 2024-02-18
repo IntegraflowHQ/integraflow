@@ -27,8 +27,8 @@ export const EditorTextInput = ({
     ...props
 }: EditorTextProps) => {
     const [atBtnClicked, setAtBtnClicked] = useState(false);
-    const [atIndex, setAtIndex] = useState<number | null>(null);
-    const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+    const [_, setAtIndex] = useState<number | null>(null);
+    const [__, setSelectedOption] = useState<Option | null>(null);
     const [inputValue, setInputValue] = useState(defaultValue || "");
 
     return (
