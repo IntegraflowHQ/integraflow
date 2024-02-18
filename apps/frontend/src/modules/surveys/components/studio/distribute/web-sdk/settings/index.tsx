@@ -28,6 +28,7 @@ const sections = [
 
 const defaultChannel: ParsedChannel = {
     id: "",
+    link: "",
     type: SurveyChannelTypeEnum.WebSdk,
     createdAt: "",
     settings: {},
@@ -43,21 +44,12 @@ const defaultChannel: ParsedChannel = {
 
 export default function Settings() {
     const { getChannels } = useChannels();
-    const channel =
-        getChannels(SurveyChannelTypeEnum.WebSdk)[0] ?? defaultChannel;
+    const channel = getChannels(SurveyChannelTypeEnum.WebSdk)[0] ?? defaultChannel;
 
     return (
-        <Accordion.Root
-            defaultValue={sections[0].id as string}
-            type="single"
-            className="flex flex-col gap-3"
-        >
+        <Accordion.Root defaultValue={sections[0].id as string} type="single" className="flex flex-col gap-3">
             {sections.map(({ name, id, content: Content }) => (
-                <Accordion.Item
-                    key={`${channel.id}-${name}`}
-                    value={id}
-                    className="rounded-lg bg-intg-bg-15"
-                >
+                <Accordion.Item key={`${channel.id}-${name}`} value={id} className="rounded-lg bg-intg-bg-15">
                     <Accordion.Header>
                         <Accordion.Trigger className="group flex w-full justify-between px-4 py-3 text-left text-sm text-intg-text">
                             <span>{name}</span>

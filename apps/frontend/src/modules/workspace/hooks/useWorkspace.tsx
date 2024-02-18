@@ -26,10 +26,7 @@ export const useWorkspace = () => {
     const workspace = useMemo(() => {
         const slug = orgSlug ?? user?.organization?.slug;
 
-        return (
-            organizations.find((organization) => organization?.slug === slug) ??
-            null
-        );
+        return organizations.find((organization) => organization?.slug === slug) ?? null;
     }, [orgSlug, user, organizations]);
 
     const projects = useMemo(() => {
@@ -82,10 +79,7 @@ export const useWorkspace = () => {
 
             const project = organization.projects?.edges?.[0]?.node as Project;
             if (organization && project) {
-                handleSwitchWorkspace(
-                    convertToAuthOrganization(organization) as AuthOrganization,
-                    project,
-                );
+                handleSwitchWorkspace(convertToAuthOrganization(organization) as AuthOrganization, project);
             }
         },
         [handleSwitchWorkspace, updateUser, user.organizations],
@@ -118,10 +112,7 @@ export const useWorkspace = () => {
     );
 
     const handleCreateWorkspace = useCallback(
-        async (
-            input: OrganizationCreateInput,
-            survey?: OnboardingCustomerSurvey,
-        ) => {
+        async (input: OrganizationCreateInput, survey?: OnboardingCustomerSurvey) => {
             try {
                 const response = await createOrganization({
                     variables: {
@@ -136,13 +127,8 @@ export const useWorkspace = () => {
 
                 const { data } = response;
 
-                if (
-                    data &&
-                    data.organizationCreate &&
-                    data.organizationCreate.user
-                ) {
-                    const { organization, project } = data.organizationCreate
-                        .user as AuthUser;
+                if (data && data.organizationCreate && data.organizationCreate.user) {
+                    const { organization, project } = data.organizationCreate.user as AuthUser;
 
                     if (organization && project) {
                         handleAddWorkspace({

@@ -11,18 +11,19 @@ import { ApolloFactory } from "../services/apollo.factory";
 
 const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
 
-const cache = new InMemoryCache();
-
-await persistCache({
-    cache,
-    storage: new LocalForageWrapper(localForage),
-});
-
 export const useApolloFactory = () => {
     const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
 
-    const { token, currentProjectId, refresh, refreshToken, logout } =
-        useAuth();
+    const { token, currentProjectId, refresh, refreshToken, logout } = useAuth();
+
+    const cache = useMemo(() => {
+        const cache = new InMemoryCache();
+        persistCache({
+            cache,
+            storage: new LocalForageWrapper(localForage),
+        });
+        return cache;
+    }, []);
 
     const apolloClient = useMemo(() => {
         apolloRef.current = new ApolloFactory({

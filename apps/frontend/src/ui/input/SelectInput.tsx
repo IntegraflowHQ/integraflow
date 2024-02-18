@@ -6,7 +6,7 @@ import { forwardRef } from "react";
 interface SelectFieldProps extends SelectProps {
     title?: string;
     defaultValue?: string;
-    options: { label: string | number; value: string | number }[];
+    options: { label: string; value: string }[];
     onChange?: (value: { target: { name?: string; value: string } }) => void;
     name?: string;
     error?: string;
@@ -14,41 +14,24 @@ interface SelectFieldProps extends SelectProps {
 }
 
 export const SelectInput = forwardRef<HTMLDivElement, SelectFieldProps>(
-    (
-        {
-            defaultValue,
-            value,
-            options,
-            title,
-            name,
-            onChange,
-            error,
-            className,
-        },
-        ref,
-    ) => {
+    ({ defaultValue, value, options, title, name, onChange, error, className }, ref) => {
         return (
             <div ref={ref} className="w-full">
-                <label className="mb-1.5 text-sm font-medium text-intg-text-2">
-                    {title}
-                </label>
+                <label className="mb-1.5 text-sm font-medium text-intg-text-2">{title}</label>
 
                 <Select.Root
                     value={value}
                     defaultValue={defaultValue}
-                    onValueChange={(value) =>
-                        onChange && onChange({ target: { name, value } })
-                    }
+                    onValueChange={(value) => onChange && onChange({ target: { name, value } })}
                 >
                     <Select.Trigger
                         aria-label={title}
-                        placeholder={title}
                         className={`flex w-full items-center justify-between rounded-lg border border-transparent bg-intg-bg-1 px-3 py-3.5
            text-sm font-medium text-intg-text-3 focus:border-intg-text-3 focus:outline-none ${
                className ?? ""
            }  ${error ? "border-intg-error-text" : ""}`}
                     >
-                        <Select.Value />
+                        <Select.Value placeholder={title} />
                         <Select.Icon>
                             <ChevronDownIcon size={"15px"} color="#B5A4DB" />
                         </Select.Icon>

@@ -44,7 +44,7 @@ function useChannelContextFactory() {
                         link: "",
                         reference: data.id,
                         createdAt: new Date().toISOString(),
-                    },
+                    } as SurveyChannel,
                     surveyErrors: [],
                     errors: [],
                 },
