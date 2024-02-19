@@ -31,6 +31,13 @@
             "dependsOn": ["@integraflow/web#build"],
             "cache": false
         },
+        "@integraflow/survey#build:survey": {
+            "dependsOn": ["@integraflow/web#build"],
+            "cache": false
+        },
+        "@integraflow/survey#start:survey": {
+            "cache": false
+        },
         "lint": {}
     }
 }
