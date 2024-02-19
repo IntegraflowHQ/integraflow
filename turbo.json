@@ -4,7 +4,9 @@
         "@integraflow/web#semantic-release": {
             "dependsOn": ["@integraflow/web#build"]
         },
-        "@integraflow/web#build": {},
+        "@integraflow/web#build": {
+            "dependsOn": ["@integraflow/sdk#build:sdk"]
+        },
         "@integraflow/sdk#build:sdk": {},
         "@integraflow/sdk#generate:doc": {
             "cache": false
@@ -26,6 +28,7 @@
         },
         "@integraflow/codegen-test#build:codegen-test": {},
         "@integraflow/dashboard#build:dashboard": {
+            "dependsOn": ["@integraflow/web#build"],
             "cache": false
         },
         "lint": {}

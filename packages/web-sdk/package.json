@@ -16,7 +16,9 @@
         "dist"
     ],
     "scripts": {
+        "prebuild": "yarn link @integraflow/sdk",
         "build": "rollup -c",
+        "postbuild": "yarn link",
         "clean": "rimraf -G dist .rollup-cache tsconfig.tsbuildinfo",
         "dev": "rollup -c -w",
         "dist": "NODE_ENV=production rollup -c",
