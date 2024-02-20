@@ -140,11 +140,7 @@ type Query {
     slug: String
   ): Survey @doc(category: "Surveys")
 
-  """
-  Look up a survey by channel ID or link.
-  
-  Requires one of the following permissions: AUTHENTICATED_API.
-  """
+  """Look up a survey by channel ID or link."""
   surveyByChannel(
     """The ID of the channel."""
     id: ID

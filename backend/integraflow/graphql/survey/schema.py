@@ -112,7 +112,6 @@ class SurveyQueries(graphene.ObjectType):
             required=False
         ),
         description="Look up a survey by channel ID or link.",
-        permissions=[AuthorizationFilters.AUTHENTICATED_API],
         doc_category=DOC_CATEGORY_SURVEYS,
     )
 
