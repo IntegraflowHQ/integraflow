@@ -7246,7 +7246,7 @@
                     },
                     {
                         "name": "surveyByChannel",
-                        "description": "Look up a survey by channel ID or link.\n\nRequires one of the following permissions: AUTHENTICATED_API.",
+                        "description": "Look up a survey by channel ID or link.",
                         "args": [
                             {
                                 "name": "id",
@@ -10036,6 +10036,12 @@
                         "deprecationReason": null
                     },
                     {
+                        "name": "CES",
+                        "description": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
                         "name": "SMILEY_SCALE",
                         "description": null,
                         "isDeprecated": false,
@@ -12686,13 +12692,7 @@
                 "name": "doc",
                 "description": "Groups fields and operations into named groups.",
                 "isRepeatable": false,
-                "locations": [
-                    "ENUM",
-                    "FIELD",
-                    "FIELD_DEFINITION",
-                    "INPUT_OBJECT",
-                    "OBJECT"
-                ],
+                "locations": ["ENUM", "FIELD", "FIELD_DEFINITION", "INPUT_OBJECT", "OBJECT"],
                 "args": [
                     {
                         "name": "category",
@@ -12764,12 +12764,7 @@
                 "name": "deprecated",
                 "description": "Marks an element of a GraphQL schema as no longer supported.",
                 "isRepeatable": false,
-                "locations": [
-                    "FIELD_DEFINITION",
-                    "ARGUMENT_DEFINITION",
-                    "INPUT_FIELD_DEFINITION",
-                    "ENUM_VALUE"
-                ],
+                "locations": ["FIELD_DEFINITION", "ARGUMENT_DEFINITION", "INPUT_FIELD_DEFINITION", "ENUM_VALUE"],
                 "args": [
                     {
                         "name": "reason",

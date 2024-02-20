@@ -6,14 +6,12 @@ import Error from "next/error";
 import { Inter } from "next/font/google";
 import { useEffect, useState } from "react";
 
-const apiKey = process.env.INTEGRAFLOW_API_KEY;
 const apiUrl = process.env.INTEGRAFLOW_API_URL;
 const apiHost = process.env.NEXT_PUBLIC_INTEGRAFLOW_API_HOST;
-const appKey = process.env.NEXT_PUBLIC_INTEGRAFLOW_APP_KEY;
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home({ surveys }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Home({ surveys, appKey }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     const [completed, setCompleted] = useState(false);
 
     useEffect(() => {
@@ -54,15 +52,16 @@ export default function Home({ surveys }: InferGetServerSidePropsType<typeof get
     );
 }
 
-export const getServerSideProps: GetServerSideProps<{ surveys: any[] }> = async (context) => {
+export const getServerSideProps: GetServerSideProps<{ surveys: any[]; appKey: string }> = async (context) => {
     const { link } = context.params as { link: string };
-    const client = new IntegraflowClient({ apiKey, apiUrl });
+    const client = new IntegraflowClient({ apiUrl });
     const survey = await client.surveyByChannel({ link });
     const surveys = parsedSurveys(survey);
 
     return {
         props: {
             surveys: surveys as any[],
+            appKey: survey?.project?.apiToken ?? "",
         },
     };
 };

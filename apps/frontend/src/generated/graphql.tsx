@@ -1359,11 +1359,7 @@ export type Query = {
    * Requires one of the following permissions: PROJECT_MEMBER_ACCESS, AUTHENTICATED_API.
    */
   survey?: Maybe<Survey>;
-  /**
-   * Look up a survey by channel ID or link.
-   *
-   * Requires one of the following permissions: AUTHENTICATED_API.
-   */
+  /** Look up a survey by channel ID or link. */
   surveyByChannel?: Maybe<BaseSurvey>;
   /**
    * List of the project's surveys.

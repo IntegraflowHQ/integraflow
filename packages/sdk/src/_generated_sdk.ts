@@ -2,10 +2,7 @@ import { DocumentNode } from "graphql/language/ast";
 import * as I from "./_generated_documents";
 
 /** The function for calling the graphql client */
-export type IntegraflowRequest = <
-    Response,
-    Variables extends Record<string, unknown>
->(
+export type IntegraflowRequest = <Response, Variables extends Record<string, unknown>>(
     doc: DocumentNode,
     variables?: Variables
 ) => Promise<Response>;
@@ -41,9 +38,7 @@ export type IntegraflowConnectionVariables = {
  * Default connection variables required for pagination
  * Defaults to 50 as per the Integraflow API
  */
-function defaultConnection<Variables extends IntegraflowConnectionVariables>(
-    variables: Variables
-): Variables {
+function defaultConnection<Variables extends IntegraflowConnectionVariables>(variables: Variables): Variables {
     return {
         ...variables,
         first: variables.first ?? (variables.after ? 100 : undefined),
@@ -61,11 +56,7 @@ export class IntegraflowConnection<Node> extends Request {
 
     public constructor(request: IntegraflowRequest) {
         super(request);
-        this.pageInfo = new PageInfo(request, {
-            hasNextPage: false,
-            hasPreviousPage: false,
-            __typename: "PageInfo"
-        });
+        this.pageInfo = new PageInfo(request, { hasNextPage: false, hasPreviousPage: false, __typename: "PageInfo" });
         this.nodes = [];
     }
 }
@@ -111,20 +102,16 @@ export class Connection<Node> extends IntegraflowConnection<Node> {
     /** Update the pagination end cursor */
     private _appendPageInfo(pageInfo?: PageInfo) {
         if (this.pageInfo) {
-            this.pageInfo.endCursor =
-                pageInfo?.endCursor ?? this.pageInfo.startCursor;
-            this.pageInfo.hasNextPage =
-                pageInfo?.hasNextPage ?? this.pageInfo.hasNextPage;
+            this.pageInfo.endCursor = pageInfo?.endCursor ?? this.pageInfo.startCursor;
+            this.pageInfo.hasNextPage = pageInfo?.hasNextPage ?? this.pageInfo.hasNextPage;
         }
     }
 
     /** Update the pagination start cursor */
     private _prependPageInfo(pageInfo?: PageInfo) {
         if (this.pageInfo) {
-            this.pageInfo.startCursor =
-                pageInfo?.startCursor ?? this.pageInfo.startCursor;
-            this.pageInfo.hasPreviousPage =
-                pageInfo?.hasPreviousPage ?? this.pageInfo.hasPreviousPage;
+            this.pageInfo.startCursor = pageInfo?.startCursor ?? this.pageInfo.startCursor;
+            this.pageInfo.hasPreviousPage = pageInfo?.hasPreviousPage ?? this.pageInfo.hasPreviousPage;
         }
     }
 
@@ -186,10 +173,7 @@ function parseJson(value?: any): Record<string, unknown> | undefined {
  * @param data - I.AuthOrganizationFragment response data
  */
 export class AuthOrganization extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.AuthOrganizationFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.AuthOrganizationFragment) {
         super(request);
         this.id = data.id;
         this.memberCount = data.memberCount;
@@ -230,12 +214,8 @@ export class AuthUser extends Request {
         this.isOnboarded = data.isOnboarded;
         this.isStaff = data.isStaff;
         this.lastName = data.lastName;
-        this.organization = data.organization
-            ? new AuthOrganization(request, data.organization)
-            : undefined;
-        this.project = data.project
-            ? new Project(request, data.project)
-            : undefined;
+        this.organization = data.organization ? new AuthOrganization(request, data.organization) : undefined;
+        this.project = data.project ? new Project(request, data.project) : undefined;
     }
 
     /** The email address of the user. */
@@ -272,10 +252,7 @@ export class AuthUser extends Request {
  * @param data - I.BaseProjectFragment response data
  */
 export class BaseProject extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.BaseProjectFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.BaseProjectFragment) {
         super(request);
         this.apiToken = data.apiToken;
         this.id = data.id;
@@ -296,10 +273,7 @@ export class BaseProject extends Request {
  * @param data - I.BaseProjectThemeFragment response data
  */
 export class BaseProjectTheme extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.BaseProjectThemeFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.BaseProjectThemeFragment) {
         super(request);
         this.colorScheme = data.colorScheme ?? undefined;
         this.id = data.id;
@@ -323,10 +297,7 @@ export class BaseProjectTheme extends Request {
  * @param data - I.BaseSurveyFragment response data
  */
 export class BaseSurvey extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.BaseSurveyFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.BaseSurveyFragment) {
         super(request);
         this.createdAt = parseDate(data.createdAt) ?? new Date();
         this.endDate = parseDate(data.endDate) ?? undefined;
@@ -335,19 +306,11 @@ export class BaseSurvey extends Request {
         this.settings = data.settings ?? undefined;
         this.slug = data.slug;
         this.startDate = parseDate(data.startDate) ?? undefined;
-        this.project = data.project
-            ? new BaseProject(request, data.project)
-            : undefined;
-        this.theme = data.theme
-            ? new BaseProjectTheme(request, data.theme)
-            : undefined;
+        this.project = data.project ? new BaseProject(request, data.project) : undefined;
+        this.theme = data.theme ? new BaseProjectTheme(request, data.theme) : undefined;
         this.status = data.status;
-        this.channels = data.channels.map(
-            node => new BaseSurveyChannel(request, node)
-        );
-        this.questions = data.questions.map(
-            node => new BaseSurveyQuestion(request, node)
-        );
+        this.channels = data.channels.map(node => new BaseSurveyChannel(request, node));
+        this.questions = data.questions.map(node => new BaseSurveyQuestion(request, node));
     }
 
     /** The time at which the survey was created. */
@@ -382,10 +345,7 @@ export class BaseSurvey extends Request {
  * @param data - I.BaseSurveyChannelFragment response data
  */
 export class BaseSurveyChannel extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.BaseSurveyChannelFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.BaseSurveyChannelFragment) {
         super(request);
         this.conditions = data.conditions ?? undefined;
         this.createdAt = parseDate(data.createdAt) ?? new Date();
@@ -441,10 +401,7 @@ export class BaseSurveyCountableConnection extends Connection<BaseSurvey> {
  * @param data - I.BaseSurveyQuestionFragment response data
  */
 export class BaseSurveyQuestion extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.BaseSurveyQuestionFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.BaseSurveyQuestionFragment) {
         super(request);
         this.createdAt = parseDate(data.createdAt) ?? new Date();
         this.description = data.description;
@@ -483,19 +440,14 @@ export class BaseSurveyQuestion extends Request {
  * @param data - I.EmailTokenUserAuthFragment response data
  */
 export class EmailTokenUserAuth extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.EmailTokenUserAuthFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.EmailTokenUserAuthFragment) {
         super(request);
         this.csrfToken = data.csrfToken ?? undefined;
         this.refreshToken = data.refreshToken ?? undefined;
         this.token = data.token ?? undefined;
         this.user = data.user ? new AuthUser(request, data.user) : undefined;
         this.errors = data.errors.map(node => new UserError(request, node));
-        this.userErrors = data.userErrors.map(
-            node => new UserError(request, node)
-        );
+        this.userErrors = data.userErrors.map(node => new UserError(request, node));
     }
 
     /** CSRF token required to re-generate access token. */
@@ -516,17 +468,12 @@ export class EmailTokenUserAuth extends Request {
  * @param data - I.EmailUserAuthChallengeFragment response data
  */
 export class EmailUserAuthChallenge extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.EmailUserAuthChallengeFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.EmailUserAuthChallengeFragment) {
         super(request);
         this.authType = data.authType ?? undefined;
         this.success = data.success ?? undefined;
         this.errors = data.errors.map(node => new UserError(request, node));
-        this.userErrors = data.userErrors.map(
-            node => new UserError(request, node)
-        );
+        this.userErrors = data.userErrors.map(node => new UserError(request, node));
     }
 
     /** Supported challenge for this user. */
@@ -585,16 +532,11 @@ export class Event extends Request {
  * @param data - I.EventCaptureFragment response data
  */
 export class EventCapture extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.EventCaptureFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.EventCaptureFragment) {
         super(request);
         this.status = data.status ?? undefined;
         this.errors = data.errors.map(node => new EventError(request, node));
-        this.eventErrors = data.eventErrors.map(
-            node => new EventError(request, node)
-        );
+        this.eventErrors = data.eventErrors.map(node => new EventError(request, node));
     }
 
     /** Whether the operation was successful. */
@@ -632,10 +574,7 @@ export class EventCountableConnection extends Connection<Event> {
  * @param data - I.EventDefinitionFragment response data
  */
 export class EventDefinition extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.EventDefinitionFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.EventDefinitionFragment) {
         super(request);
         this.createdAt = parseDate(data.createdAt) ?? undefined;
         this.id = data.id;
@@ -666,16 +605,12 @@ export class EventDefinition extends Request {
  * @param fetch - function to trigger a refetch of this EventDefinitionCountableConnection model
  * @param data - EventDefinitionCountableConnection response data
  */
-export class EventDefinitionCountableConnection extends Connection<
-    EventDefinition
-> {
+export class EventDefinitionCountableConnection extends Connection<EventDefinition> {
     public constructor(
         request: IntegraflowRequest,
         fetch: (
             connection?: IntegraflowConnectionVariables
-        ) => IntegraflowFetch<
-            IntegraflowConnection<EventDefinition> | undefined
-        >,
+        ) => IntegraflowFetch<IntegraflowConnection<EventDefinition> | undefined>,
         data: I.EventDefinitionCountableConnectionFragment
     ) {
         super(
@@ -693,10 +628,7 @@ export class EventDefinitionCountableConnection extends Connection<
  * @param data - I.EventErrorFragment response data
  */
 export class EventError extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.EventErrorFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.EventErrorFragment) {
         super(request);
         this.field = data.field ?? undefined;
         this.message = data.message ?? undefined;
@@ -717,10 +649,7 @@ export class EventError extends Request {
  * @param data - I.EventPropertyFragment response data
  */
 export class EventProperty extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.EventPropertyFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.EventPropertyFragment) {
         super(request);
         this.event = data.event;
         this.id = data.id;
@@ -748,9 +677,7 @@ export class EventProperty extends Request {
  * @param fetch - function to trigger a refetch of this EventPropertyCountableConnection model
  * @param data - EventPropertyCountableConnection response data
  */
-export class EventPropertyCountableConnection extends Connection<
-    EventProperty
-> {
+export class EventPropertyCountableConnection extends Connection<EventProperty> {
     public constructor(
         request: IntegraflowRequest,
         fetch: (
@@ -773,10 +700,7 @@ export class EventPropertyCountableConnection extends Connection<
  * @param data - I.GoogleUserAuthFragment response data
  */
 export class GoogleUserAuth extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.GoogleUserAuthFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.GoogleUserAuthFragment) {
         super(request);
         this.csrfToken = data.csrfToken ?? undefined;
         this.refreshToken = data.refreshToken ?? undefined;
@@ -784,9 +708,7 @@ export class GoogleUserAuth extends Request {
         this.token = data.token ?? undefined;
         this.user = data.user ? new AuthUser(request, data.user) : undefined;
         this.errors = data.errors.map(node => new UserError(request, node));
-        this.userErrors = data.userErrors.map(
-            node => new UserError(request, node)
-        );
+        this.userErrors = data.userErrors.map(node => new UserError(request, node));
     }
 
     /** CSRF token required to re-generate access token. */
@@ -814,9 +736,7 @@ export class Logout extends Request {
     public constructor(request: IntegraflowRequest, data: I.LogoutFragment) {
         super(request);
         this.errors = data.errors.map(node => new UserError(request, node));
-        this.userErrors = data.userErrors.map(
-            node => new UserError(request, node)
-        );
+        this.userErrors = data.userErrors.map(node => new UserError(request, node));
     }
 
     public errors: UserError[];
@@ -844,10 +764,7 @@ export class Node extends Request {
  * @param data - I.OrganizationFragment response data
  */
 export class Organization extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.OrganizationFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.OrganizationFragment) {
         super(request);
         this.id = data.id;
         this.memberCount = data.memberCount;
@@ -877,14 +794,8 @@ export class Organization extends Request {
      *
      * Requires one of the following permissions: AUTHENTICATED_USER.
      */
-    public create(
-        input: I.OrganizationCreateInput,
-        variables?: Omit<I.CreateOrganizationMutationVariables, "input">
-    ) {
-        return new CreateOrganizationMutation(this._request).fetch(
-            input,
-            variables
-        );
+    public create(input: I.OrganizationCreateInput, variables?: Omit<I.CreateOrganizationMutationVariables, "input">) {
+        return new CreateOrganizationMutation(this._request).fetch(input, variables);
     }
     /**
      * Joins an organization
@@ -927,21 +838,12 @@ export class OrganizationCountableConnection extends Connection<Organization> {
  * @param data - I.OrganizationCreateFragment response data
  */
 export class OrganizationCreate extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.OrganizationCreateFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.OrganizationCreateFragment) {
         super(request);
-        this.organization = data.organization
-            ? new AuthOrganization(request, data.organization)
-            : undefined;
+        this.organization = data.organization ? new AuthOrganization(request, data.organization) : undefined;
         this.user = data.user ? new AuthUser(request, data.user) : undefined;
-        this.errors = data.errors.map(
-            node => new OrganizationError(request, node)
-        );
-        this.organizationErrors = data.organizationErrors.map(
-            node => new OrganizationError(request, node)
-        );
+        this.errors = data.errors.map(node => new OrganizationError(request, node));
+        this.organizationErrors = data.organizationErrors.map(node => new OrganizationError(request, node));
     }
 
     public errors: OrganizationError[];
@@ -958,10 +860,7 @@ export class OrganizationCreate extends Request {
  * @param data - I.OrganizationErrorFragment response data
  */
 export class OrganizationError extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.OrganizationErrorFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.OrganizationErrorFragment) {
         super(request);
         this.field = data.field ?? undefined;
         this.message = data.message ?? undefined;
@@ -982,10 +881,7 @@ export class OrganizationError extends Request {
  * @param data - I.OrganizationInviteFragment response data
  */
 export class OrganizationInvite extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.OrganizationInviteFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.OrganizationInviteFragment) {
         super(request);
         this.createdAt = parseDate(data.createdAt) ?? new Date();
         this.email = data.email;
@@ -1043,20 +939,13 @@ export class OrganizationInvite extends Request {
  * @param data - I.OrganizationInviteCreateFragment response data
  */
 export class OrganizationInviteCreate extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.OrganizationInviteCreateFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.OrganizationInviteCreateFragment) {
         super(request);
         this.organizationInvite = data.organizationInvite
             ? new OrganizationInvite(request, data.organizationInvite)
             : undefined;
-        this.errors = data.errors.map(
-            node => new OrganizationError(request, node)
-        );
-        this.organizationErrors = data.organizationErrors.map(
-            node => new OrganizationError(request, node)
-        );
+        this.errors = data.errors.map(node => new OrganizationError(request, node));
+        this.organizationErrors = data.organizationErrors.map(node => new OrganizationError(request, node));
     }
 
     public errors: OrganizationError[];
@@ -1070,10 +959,7 @@ export class OrganizationInviteCreate extends Request {
  * @param data - I.OrganizationInviteDetailsFragment response data
  */
 export class OrganizationInviteDetails extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.OrganizationInviteDetailsFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.OrganizationInviteDetailsFragment) {
         super(request);
         this.createdAt = parseDate(data.createdAt) ?? new Date();
         this.email = data.email;
@@ -1118,10 +1004,7 @@ export class OrganizationInviteDetails extends Request {
  * @param data - I.OrganizationInviteLinkFragment response data
  */
 export class OrganizationInviteLink extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.OrganizationInviteLinkFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.OrganizationInviteLinkFragment) {
         super(request);
         this.inviteLink = data.inviteLink;
     }
@@ -1149,10 +1032,7 @@ export class OrganizationInviteLink extends Request {
  * @param data - I.OrganizationInviteLinkDetailsFragment response data
  */
 export class OrganizationInviteLinkDetails extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.OrganizationInviteLinkDetailsFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.OrganizationInviteLinkDetailsFragment) {
         super(request);
         this.id = data.id;
         this.organizationId = data.organizationId;
@@ -1178,19 +1058,12 @@ export class OrganizationInviteLinkDetails extends Request {
  * @param data - I.OrganizationInviteLinkResetFragment response data
  */
 export class OrganizationInviteLinkReset extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.OrganizationInviteLinkResetFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.OrganizationInviteLinkResetFragment) {
         super(request);
         this.inviteLink = data.inviteLink ?? undefined;
         this.success = data.success ?? undefined;
-        this.errors = data.errors.map(
-            node => new OrganizationError(request, node)
-        );
-        this.organizationErrors = data.organizationErrors.map(
-            node => new OrganizationError(request, node)
-        );
+        this.errors = data.errors.map(node => new OrganizationError(request, node));
+        this.organizationErrors = data.organizationErrors.map(node => new OrganizationError(request, node));
     }
 
     /** The current organization invite link. */
@@ -1209,18 +1082,11 @@ export class OrganizationInviteLinkReset extends Request {
  * @param data - I.OrganizationJoinFragment response data
  */
 export class OrganizationJoin extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.OrganizationJoinFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.OrganizationJoinFragment) {
         super(request);
         this.user = new AuthUser(request, data.user);
-        this.errors = data.errors.map(
-            node => new OrganizationError(request, node)
-        );
-        this.organizationErrors = data.organizationErrors.map(
-            node => new OrganizationError(request, node)
-        );
+        this.errors = data.errors.map(node => new OrganizationError(request, node));
+        this.organizationErrors = data.organizationErrors.map(node => new OrganizationError(request, node));
     }
 
     public errors: OrganizationError[];
@@ -1323,8 +1189,7 @@ export class Project extends Request {
         super(request);
         this.accessControl = data.accessControl ?? undefined;
         this.apiToken = data.apiToken;
-        this.hasCompletedOnboardingFor =
-            data.hasCompletedOnboardingFor ?? undefined;
+        this.hasCompletedOnboardingFor = data.hasCompletedOnboardingFor ?? undefined;
         this.id = data.id;
         this.name = data.name;
         this.slug = data.slug;
@@ -1388,18 +1253,11 @@ export class ProjectCountableConnection extends Connection<Project> {
  * @param data - I.ProjectCreateFragment response data
  */
 export class ProjectCreate extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.ProjectCreateFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.ProjectCreateFragment) {
         super(request);
-        this.project = data.project
-            ? new Project(request, data.project)
-            : undefined;
+        this.project = data.project ? new Project(request, data.project) : undefined;
         this.errors = data.errors.map(node => new ProjectError(request, node));
-        this.projectErrors = data.projectErrors.map(
-            node => new ProjectError(request, node)
-        );
+        this.projectErrors = data.projectErrors.map(node => new ProjectError(request, node));
     }
 
     public errors: ProjectError[];
@@ -1413,10 +1271,7 @@ export class ProjectCreate extends Request {
  * @param data - I.ProjectErrorFragment response data
  */
 export class ProjectError extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.ProjectErrorFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.ProjectErrorFragment) {
         super(request);
         this.field = data.field ?? undefined;
         this.message = data.message ?? undefined;
@@ -1437,10 +1292,7 @@ export class ProjectError extends Request {
  * @param data - I.ProjectThemeFragment response data
  */
 export class ProjectTheme extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.ProjectThemeFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.ProjectThemeFragment) {
         super(request);
         this.colorScheme = data.colorScheme ?? undefined;
         this.createdAt = parseDate(data.createdAt) ?? new Date();
@@ -1494,9 +1346,7 @@ export class ProjectTheme extends Request {
      * Requires one of the following permissions: PROJECT_ADMIN_ACCESS.
      */
     public delete() {
-        return this.id
-            ? new DeleteProjectThemeMutation(this._request).fetch(this.id)
-            : undefined;
+        return this.id ? new DeleteProjectThemeMutation(this._request).fetch(this.id) : undefined;
     }
     /**
      * Updates an existing theme
@@ -1504,12 +1354,7 @@ export class ProjectTheme extends Request {
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
      */
     public update(input: I.ProjectThemeUpdateInput) {
-        return this.id
-            ? new UpdateProjectThemeMutation(this._request).fetch(
-                  this.id,
-                  input
-              )
-            : undefined;
+        return this.id ? new UpdateProjectThemeMutation(this._request).fetch(this.id, input) : undefined;
     }
 }
 /**
@@ -1544,18 +1389,11 @@ export class ProjectThemeCountableConnection extends Connection<ProjectTheme> {
  * @param data - I.ProjectThemeCreateFragment response data
  */
 export class ProjectThemeCreate extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.ProjectThemeCreateFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.ProjectThemeCreateFragment) {
         super(request);
-        this.projectTheme = data.projectTheme
-            ? new ProjectTheme(request, data.projectTheme)
-            : undefined;
+        this.projectTheme = data.projectTheme ? new ProjectTheme(request, data.projectTheme) : undefined;
         this.errors = data.errors.map(node => new ProjectError(request, node));
-        this.projectErrors = data.projectErrors.map(
-            node => new ProjectError(request, node)
-        );
+        this.projectErrors = data.projectErrors.map(node => new ProjectError(request, node));
     }
 
     public errors: ProjectError[];
@@ -1571,18 +1409,11 @@ export class ProjectThemeCreate extends Request {
  * @param data - I.ProjectThemeDeleteFragment response data
  */
 export class ProjectThemeDelete extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.ProjectThemeDeleteFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.ProjectThemeDeleteFragment) {
         super(request);
-        this.projectTheme = data.projectTheme
-            ? new ProjectTheme(request, data.projectTheme)
-            : undefined;
+        this.projectTheme = data.projectTheme ? new ProjectTheme(request, data.projectTheme) : undefined;
         this.errors = data.errors.map(node => new ProjectError(request, node));
-        this.projectErrors = data.projectErrors.map(
-            node => new ProjectError(request, node)
-        );
+        this.projectErrors = data.projectErrors.map(node => new ProjectError(request, node));
     }
 
     public errors: ProjectError[];
@@ -1598,18 +1429,11 @@ export class ProjectThemeDelete extends Request {
  * @param data - I.ProjectThemeUpdateFragment response data
  */
 export class ProjectThemeUpdate extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.ProjectThemeUpdateFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.ProjectThemeUpdateFragment) {
         super(request);
-        this.projectTheme = data.projectTheme
-            ? new ProjectTheme(request, data.projectTheme)
-            : undefined;
+        this.projectTheme = data.projectTheme ? new ProjectTheme(request, data.projectTheme) : undefined;
         this.errors = data.errors.map(node => new ProjectError(request, node));
-        this.projectErrors = data.projectErrors.map(
-            node => new ProjectError(request, node)
-        );
+        this.projectErrors = data.projectErrors.map(node => new ProjectError(request, node));
     }
 
     public errors: ProjectError[];
@@ -1623,18 +1447,11 @@ export class ProjectThemeUpdate extends Request {
  * @param data - I.ProjectUpdateFragment response data
  */
 export class ProjectUpdate extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.ProjectUpdateFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.ProjectUpdateFragment) {
         super(request);
-        this.project = data.project
-            ? new Project(request, data.project)
-            : undefined;
+        this.project = data.project ? new Project(request, data.project) : undefined;
         this.errors = data.errors.map(node => new ProjectError(request, node));
-        this.projectErrors = data.projectErrors.map(
-            node => new ProjectError(request, node)
-        );
+        this.projectErrors = data.projectErrors.map(node => new ProjectError(request, node));
     }
 
     public errors: ProjectError[];
@@ -1648,10 +1465,7 @@ export class ProjectUpdate extends Request {
  * @param data - I.PropertyDefinitionFragment response data
  */
 export class PropertyDefinition extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.PropertyDefinitionFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.PropertyDefinitionFragment) {
         super(request);
         this.id = data.id;
         this.isNumerical = data.isNumerical;
@@ -1685,16 +1499,12 @@ export class PropertyDefinition extends Request {
  * @param fetch - function to trigger a refetch of this PropertyDefinitionCountableConnection model
  * @param data - PropertyDefinitionCountableConnection response data
  */
-export class PropertyDefinitionCountableConnection extends Connection<
-    PropertyDefinition
-> {
+export class PropertyDefinitionCountableConnection extends Connection<PropertyDefinition> {
     public constructor(
         request: IntegraflowRequest,
         fetch: (
             connection?: IntegraflowConnectionVariables
-        ) => IntegraflowFetch<
-            IntegraflowConnection<PropertyDefinition> | undefined
-        >,
+        ) => IntegraflowFetch<IntegraflowConnection<PropertyDefinition> | undefined>,
         data: I.PropertyDefinitionCountableConnectionFragment
     ) {
         super(
@@ -1712,16 +1522,11 @@ export class PropertyDefinitionCountableConnection extends Connection<
  * @param data - I.RefreshTokenFragment response data
  */
 export class RefreshToken extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.RefreshTokenFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.RefreshTokenFragment) {
         super(request);
         this.token = data.token ?? undefined;
         this.errors = data.errors.map(node => new UserError(request, node));
-        this.userErrors = data.userErrors.map(
-            node => new UserError(request, node)
-        );
+        this.userErrors = data.userErrors.map(node => new UserError(request, node));
     }
 
     /** Acess token to authenticate the user. */
@@ -1746,12 +1551,8 @@ export class Survey extends Request {
         this.slug = data.slug;
         this.updatedAt = parseDate(data.updatedAt) ?? new Date();
         this.creator = new User(request, data.creator);
-        this.project = data.project
-            ? new Project(request, data.project)
-            : undefined;
-        this.theme = data.theme
-            ? new ProjectTheme(request, data.theme)
-            : undefined;
+        this.project = data.project ? new Project(request, data.project) : undefined;
+        this.theme = data.theme ? new ProjectTheme(request, data.theme) : undefined;
         this.status = data.status;
         this.type = data.type;
     }
@@ -1799,9 +1600,7 @@ export class Survey extends Request {
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
      */
     public channels(variables?: I.Survey_ChannelsQueryVariables) {
-        return new Survey_ChannelsQuery(this._request, variables).fetch(
-            variables
-        );
+        return new Survey_ChannelsQuery(this._request, variables).fetch(variables);
     }
     /**
      * The questions in the the survey
@@ -1809,9 +1608,7 @@ export class Survey extends Request {
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
      */
     public questions(variables?: I.Survey_QuestionsQueryVariables) {
-        return new Survey_QuestionsQuery(this._request, variables).fetch(
-            variables
-        );
+        return new Survey_QuestionsQuery(this._request, variables).fetch(variables);
     }
     /**
      * Creates a new survey
@@ -1827,9 +1624,7 @@ export class Survey extends Request {
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
      */
     public delete() {
-        return this.id
-            ? new DeleteSurveyMutation(this._request).fetch(this.id)
-            : undefined;
+        return this.id ? new DeleteSurveyMutation(this._request).fetch(this.id) : undefined;
     }
     /**
      * Updates a survey
@@ -1837,9 +1632,7 @@ export class Survey extends Request {
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
      */
     public update(input: I.SurveyUpdateInput) {
-        return this.id
-            ? new UpdateSurveyMutation(this._request).fetch(this.id, input)
-            : undefined;
+        return this.id ? new UpdateSurveyMutation(this._request).fetch(this.id, input) : undefined;
     }
 }
 /**
@@ -1849,10 +1642,7 @@ export class Survey extends Request {
  * @param data - I.SurveyChannelFragment response data
  */
 export class SurveyChannel extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.SurveyChannelFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.SurveyChannelFragment) {
         super(request);
         this.conditions = data.conditions ?? undefined;
         this.createdAt = parseDate(data.createdAt) ?? new Date();
@@ -1861,9 +1651,7 @@ export class SurveyChannel extends Request {
         this.reference = data.reference ?? undefined;
         this.settings = data.settings ?? undefined;
         this.triggers = data.triggers ?? undefined;
-        this.survey = data.survey
-            ? new Survey(request, data.survey)
-            : undefined;
+        this.survey = data.survey ? new Survey(request, data.survey) : undefined;
         this.type = data.type;
     }
 
@@ -1904,9 +1692,7 @@ export class SurveyChannel extends Request {
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
      */
     public delete() {
-        return this.id
-            ? new DeleteSurveyChannelMutation(this._request).fetch(this.id)
-            : undefined;
+        return this.id ? new DeleteSurveyChannelMutation(this._request).fetch(this.id) : undefined;
     }
     /**
      * Updates a channel
@@ -1914,12 +1700,7 @@ export class SurveyChannel extends Request {
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
      */
     public update(input: I.SurveyChannelUpdateInput) {
-        return this.id
-            ? new UpdateSurveyChannelMutation(this._request).fetch(
-                  this.id,
-                  input
-              )
-            : undefined;
+        return this.id ? new UpdateSurveyChannelMutation(this._request).fetch(this.id, input) : undefined;
     }
 }
 /**
@@ -1929,9 +1710,7 @@ export class SurveyChannel extends Request {
  * @param fetch - function to trigger a refetch of this SurveyChannelCountableConnection model
  * @param data - SurveyChannelCountableConnection response data
  */
-export class SurveyChannelCountableConnection extends Connection<
-    SurveyChannel
-> {
+export class SurveyChannelCountableConnection extends Connection<SurveyChannel> {
     public constructor(
         request: IntegraflowRequest,
         fetch: (
@@ -1956,18 +1735,11 @@ export class SurveyChannelCountableConnection extends Connection<
  * @param data - I.SurveyChannelCreateFragment response data
  */
 export class SurveyChannelCreate extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.SurveyChannelCreateFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.SurveyChannelCreateFragment) {
         super(request);
-        this.surveyChannel = data.surveyChannel
-            ? new SurveyChannel(request, data.surveyChannel)
-            : undefined;
+        this.surveyChannel = data.surveyChannel ? new SurveyChannel(request, data.surveyChannel) : undefined;
         this.errors = data.errors.map(node => new SurveyError(request, node));
-        this.surveyErrors = data.surveyErrors.map(
-            node => new SurveyError(request, node)
-        );
+        this.surveyErrors = data.surveyErrors.map(node => new SurveyError(request, node));
     }
 
     public errors: SurveyError[];
@@ -1984,18 +1756,11 @@ export class SurveyChannelCreate extends Request {
  * @param data - I.SurveyChannelDeleteFragment response data
  */
 export class SurveyChannelDelete extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.SurveyChannelDeleteFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.SurveyChannelDeleteFragment) {
         super(request);
-        this.surveyChannel = data.surveyChannel
-            ? new SurveyChannel(request, data.surveyChannel)
-            : undefined;
+        this.surveyChannel = data.surveyChannel ? new SurveyChannel(request, data.surveyChannel) : undefined;
         this.errors = data.errors.map(node => new SurveyError(request, node));
-        this.surveyErrors = data.surveyErrors.map(
-            node => new SurveyError(request, node)
-        );
+        this.surveyErrors = data.surveyErrors.map(node => new SurveyError(request, node));
     }
 
     public errors: SurveyError[];
@@ -2011,18 +1776,11 @@ export class SurveyChannelDelete extends Request {
  * @param data - I.SurveyChannelUpdateFragment response data
  */
 export class SurveyChannelUpdate extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.SurveyChannelUpdateFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.SurveyChannelUpdateFragment) {
         super(request);
-        this.surveyChannel = data.surveyChannel
-            ? new SurveyChannel(request, data.surveyChannel)
-            : undefined;
+        this.surveyChannel = data.surveyChannel ? new SurveyChannel(request, data.surveyChannel) : undefined;
         this.errors = data.errors.map(node => new SurveyError(request, node));
-        this.surveyErrors = data.surveyErrors.map(
-            node => new SurveyError(request, node)
-        );
+        this.surveyErrors = data.surveyErrors.map(node => new SurveyError(request, node));
     }
 
     public errors: SurveyError[];
@@ -2061,18 +1819,11 @@ export class SurveyCountableConnection extends Connection<Survey> {
  * @param data - I.SurveyCreateFragment response data
  */
 export class SurveyCreate extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.SurveyCreateFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.SurveyCreateFragment) {
         super(request);
-        this.survey = data.survey
-            ? new Survey(request, data.survey)
-            : undefined;
+        this.survey = data.survey ? new Survey(request, data.survey) : undefined;
         this.errors = data.errors.map(node => new SurveyError(request, node));
-        this.surveyErrors = data.surveyErrors.map(
-            node => new SurveyError(request, node)
-        );
+        this.surveyErrors = data.surveyErrors.map(node => new SurveyError(request, node));
     }
 
     public errors: SurveyError[];
@@ -2088,18 +1839,11 @@ export class SurveyCreate extends Request {
  * @param data - I.SurveyDeleteFragment response data
  */
 export class SurveyDelete extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.SurveyDeleteFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.SurveyDeleteFragment) {
         super(request);
-        this.survey = data.survey
-            ? new Survey(request, data.survey)
-            : undefined;
+        this.survey = data.survey ? new Survey(request, data.survey) : undefined;
         this.errors = data.errors.map(node => new SurveyError(request, node));
-        this.surveyErrors = data.surveyErrors.map(
-            node => new SurveyError(request, node)
-        );
+        this.surveyErrors = data.surveyErrors.map(node => new SurveyError(request, node));
     }
 
     public errors: SurveyError[];
@@ -2113,10 +1857,7 @@ export class SurveyDelete extends Request {
  * @param data - I.SurveyErrorFragment response data
  */
 export class SurveyError extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.SurveyErrorFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.SurveyErrorFragment) {
         super(request);
         this.field = data.field ?? undefined;
         this.message = data.message ?? undefined;
@@ -2137,10 +1878,7 @@ export class SurveyError extends Request {
  * @param data - I.SurveyQuestionFragment response data
  */
 export class SurveyQuestion extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.SurveyQuestionFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.SurveyQuestionFragment) {
         super(request);
         this.createdAt = parseDate(data.createdAt) ?? new Date();
         this.description = data.description;
@@ -2151,9 +1889,7 @@ export class SurveyQuestion extends Request {
         this.orderNumber = data.orderNumber;
         this.reference = data.reference ?? undefined;
         this.settings = data.settings ?? undefined;
-        this.survey = data.survey
-            ? new Survey(request, data.survey)
-            : undefined;
+        this.survey = data.survey ? new Survey(request, data.survey) : undefined;
         this.type = data.type;
     }
 
@@ -2198,9 +1934,7 @@ export class SurveyQuestion extends Request {
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
      */
     public delete() {
-        return this.id
-            ? new DeleteSurveyQuestionMutation(this._request).fetch(this.id)
-            : undefined;
+        return this.id ? new DeleteSurveyQuestionMutation(this._request).fetch(this.id) : undefined;
     }
     /**
      * Updates a question
@@ -2208,12 +1942,7 @@ export class SurveyQuestion extends Request {
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
      */
     public update(input: I.SurveyQuestionUpdateInput) {
-        return this.id
-            ? new UpdateSurveyQuestionMutation(this._request).fetch(
-                  this.id,
-                  input
-              )
-            : undefined;
+        return this.id ? new UpdateSurveyQuestionMutation(this._request).fetch(this.id, input) : undefined;
     }
 }
 /**
@@ -2223,16 +1952,12 @@ export class SurveyQuestion extends Request {
  * @param fetch - function to trigger a refetch of this SurveyQuestionCountableConnection model
  * @param data - SurveyQuestionCountableConnection response data
  */
-export class SurveyQuestionCountableConnection extends Connection<
-    SurveyQuestion
-> {
+export class SurveyQuestionCountableConnection extends Connection<SurveyQuestion> {
     public constructor(
         request: IntegraflowRequest,
         fetch: (
             connection?: IntegraflowConnectionVariables
-        ) => IntegraflowFetch<
-            IntegraflowConnection<SurveyQuestion> | undefined
-        >,
+        ) => IntegraflowFetch<IntegraflowConnection<SurveyQuestion> | undefined>,
         data: I.SurveyQuestionCountableConnectionFragment
     ) {
         super(
@@ -2252,18 +1977,11 @@ export class SurveyQuestionCountableConnection extends Connection<
  * @param data - I.SurveyQuestionCreateFragment response data
  */
 export class SurveyQuestionCreate extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.SurveyQuestionCreateFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.SurveyQuestionCreateFragment) {
         super(request);
-        this.surveyQuestion = data.surveyQuestion
-            ? new SurveyQuestion(request, data.surveyQuestion)
-            : undefined;
+        this.surveyQuestion = data.surveyQuestion ? new SurveyQuestion(request, data.surveyQuestion) : undefined;
         this.errors = data.errors.map(node => new SurveyError(request, node));
-        this.surveyErrors = data.surveyErrors.map(
-            node => new SurveyError(request, node)
-        );
+        this.surveyErrors = data.surveyErrors.map(node => new SurveyError(request, node));
     }
 
     public errors: SurveyError[];
@@ -2279,18 +1997,11 @@ export class SurveyQuestionCreate extends Request {
  * @param data - I.SurveyQuestionDeleteFragment response data
  */
 export class SurveyQuestionDelete extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.SurveyQuestionDeleteFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.SurveyQuestionDeleteFragment) {
         super(request);
-        this.surveyQuestion = data.surveyQuestion
-            ? new SurveyQuestion(request, data.surveyQuestion)
-            : undefined;
+        this.surveyQuestion = data.surveyQuestion ? new SurveyQuestion(request, data.surveyQuestion) : undefined;
         this.errors = data.errors.map(node => new SurveyError(request, node));
-        this.surveyErrors = data.surveyErrors.map(
-            node => new SurveyError(request, node)
-        );
+        this.surveyErrors = data.surveyErrors.map(node => new SurveyError(request, node));
     }
 
     public errors: SurveyError[];
@@ -2306,18 +2017,11 @@ export class SurveyQuestionDelete extends Request {
  * @param data - I.SurveyQuestionUpdateFragment response data
  */
 export class SurveyQuestionUpdate extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.SurveyQuestionUpdateFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.SurveyQuestionUpdateFragment) {
         super(request);
-        this.surveyQuestion = data.surveyQuestion
-            ? new SurveyQuestion(request, data.surveyQuestion)
-            : undefined;
+        this.surveyQuestion = data.surveyQuestion ? new SurveyQuestion(request, data.surveyQuestion) : undefined;
         this.errors = data.errors.map(node => new SurveyError(request, node));
-        this.surveyErrors = data.surveyErrors.map(
-            node => new SurveyError(request, node)
-        );
+        this.surveyErrors = data.surveyErrors.map(node => new SurveyError(request, node));
     }
 
     public errors: SurveyError[];
@@ -2331,17 +2035,12 @@ export class SurveyQuestionUpdate extends Request {
  * @param data - I.SurveyResponseCreateFragment response data
  */
 export class SurveyResponseCreate extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.SurveyResponseCreateFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.SurveyResponseCreateFragment) {
         super(request);
         this.responseId = data.responseId ?? undefined;
         this.status = data.status ?? undefined;
         this.errors = data.errors.map(node => new SurveyError(request, node));
-        this.surveyErrors = data.surveyErrors.map(
-            node => new SurveyError(request, node)
-        );
+        this.surveyErrors = data.surveyErrors.map(node => new SurveyError(request, node));
     }
 
     /** The ID of the response. */
@@ -2358,16 +2057,11 @@ export class SurveyResponseCreate extends Request {
  * @param data - I.SurveyResponseUpdateFragment response data
  */
 export class SurveyResponseUpdate extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.SurveyResponseUpdateFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.SurveyResponseUpdateFragment) {
         super(request);
         this.status = data.status ?? undefined;
         this.errors = data.errors.map(node => new SurveyError(request, node));
-        this.surveyErrors = data.surveyErrors.map(
-            node => new SurveyError(request, node)
-        );
+        this.surveyErrors = data.surveyErrors.map(node => new SurveyError(request, node));
     }
 
     /** Whether the operation was successful. */
@@ -2384,18 +2078,11 @@ export class SurveyResponseUpdate extends Request {
  * @param data - I.SurveyUpdateFragment response data
  */
 export class SurveyUpdate extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.SurveyUpdateFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.SurveyUpdateFragment) {
         super(request);
-        this.survey = data.survey
-            ? new Survey(request, data.survey)
-            : undefined;
+        this.survey = data.survey ? new Survey(request, data.survey) : undefined;
         this.errors = data.errors.map(node => new SurveyError(request, node));
-        this.surveyErrors = data.surveyErrors.map(
-            node => new SurveyError(request, node)
-        );
+        this.surveyErrors = data.surveyErrors.map(node => new SurveyError(request, node));
     }
 
     public errors: SurveyError[];
@@ -2418,12 +2105,8 @@ export class User extends Request {
         this.isOnboarded = data.isOnboarded;
         this.isStaff = data.isStaff;
         this.lastName = data.lastName;
-        this.organization = data.organization
-            ? new AuthOrganization(request, data.organization)
-            : undefined;
-        this.project = data.project
-            ? new Project(request, data.project)
-            : undefined;
+        this.organization = data.organization ? new AuthOrganization(request, data.organization) : undefined;
+        this.project = data.project ? new Project(request, data.project) : undefined;
     }
 
     /** The email address of the user. */
@@ -2515,16 +2198,11 @@ export class UserError extends Request {
  * @param data - I.UserUpdateFragment response data
  */
 export class UserUpdate extends Request {
-    public constructor(
-        request: IntegraflowRequest,
-        data: I.UserUpdateFragment
-    ) {
+    public constructor(request: IntegraflowRequest, data: I.UserUpdateFragment) {
         super(request);
         this.user = data.user ? new User(request, data.user) : undefined;
         this.errors = data.errors.map(node => new UserError(request, node));
-        this.userErrors = data.userErrors.map(
-            node => new UserError(request, node)
-        );
+        this.userErrors = data.userErrors.map(node => new UserError(request, node));
     }
 
     public errors: UserError[];
@@ -2566,19 +2244,16 @@ export class EmailTokenUserAuthMutation extends Request {
     public async fetch(
         email: string,
         token: string,
-        variables?: Omit<
-            I.EmailTokenUserAuthMutationVariables,
-            "email" | "token"
-        >
+        variables?: Omit<I.EmailTokenUserAuthMutationVariables, "email" | "token">
     ): IntegraflowFetch<EmailTokenUserAuth | undefined> {
-        const response = await this._request<
-            I.EmailTokenUserAuthMutation,
-            I.EmailTokenUserAuthMutationVariables
-        >(I.EmailTokenUserAuthDocument, {
-            email,
-            token,
-            ...variables
-        });
+        const response = await this._request<I.EmailTokenUserAuthMutation, I.EmailTokenUserAuthMutationVariables>(
+            I.EmailTokenUserAuthDocument,
+            {
+                email,
+                token,
+                ...variables
+            }
+        );
         const data = response.emailTokenUserAuth;
 
         return data ? new EmailTokenUserAuth(this._request, data) : undefined;
@@ -2615,9 +2290,7 @@ export class EmailUserAuthChallengeMutation extends Request {
         });
         const data = response.emailUserAuthChallenge;
 
-        return data
-            ? new EmailUserAuthChallenge(this._request, data)
-            : undefined;
+        return data ? new EmailUserAuthChallenge(this._request, data) : undefined;
     }
 }
 
@@ -2637,13 +2310,11 @@ export class CaptureEventMutation extends Request {
      * @param variables - variables to pass into the CaptureEventMutation
      * @returns parsed response from CaptureEventMutation
      */
-    public async fetch(
-        variables?: I.CaptureEventMutationVariables
-    ): IntegraflowFetch<EventCapture | undefined> {
-        const response = await this._request<
-            I.CaptureEventMutation,
-            I.CaptureEventMutationVariables
-        >(I.CaptureEventDocument, variables);
+    public async fetch(variables?: I.CaptureEventMutationVariables): IntegraflowFetch<EventCapture | undefined> {
+        const response = await this._request<I.CaptureEventMutation, I.CaptureEventMutationVariables>(
+            I.CaptureEventDocument,
+            variables
+        );
         const data = response.eventCapture;
 
         return data ? new EventCapture(this._request, data) : undefined;
@@ -2671,13 +2342,13 @@ export class GoogleUserAuthMutation extends Request {
         code: string,
         variables?: Omit<I.GoogleUserAuthMutationVariables, "code">
     ): IntegraflowFetch<GoogleUserAuth | undefined> {
-        const response = await this._request<
-            I.GoogleUserAuthMutation,
-            I.GoogleUserAuthMutationVariables
-        >(I.GoogleUserAuthDocument, {
-            code,
-            ...variables
-        });
+        const response = await this._request<I.GoogleUserAuthMutation, I.GoogleUserAuthMutationVariables>(
+            I.GoogleUserAuthDocument,
+            {
+                code,
+                ...variables
+            }
+        );
         const data = response.googleUserAuth;
 
         return data ? new GoogleUserAuth(this._request, data) : undefined;
@@ -2700,10 +2371,7 @@ export class LogoutMutation extends Request {
      * @returns parsed response from LogoutMutation
      */
     public async fetch(): IntegraflowFetch<Logout | undefined> {
-        const response = await this._request<
-            I.LogoutMutation,
-            I.LogoutMutationVariables
-        >(I.LogoutDocument, {});
+        const response = await this._request<I.LogoutMutation, I.LogoutMutationVariables>(I.LogoutDocument, {});
         const data = response.logout;
 
         return data ? new Logout(this._request, data) : undefined;
@@ -2731,13 +2399,13 @@ export class CreateOrganizationMutation extends Request {
         input: I.OrganizationCreateInput,
         variables?: Omit<I.CreateOrganizationMutationVariables, "input">
     ): IntegraflowFetch<OrganizationCreate | undefined> {
-        const response = await this._request<
-            I.CreateOrganizationMutation,
-            I.CreateOrganizationMutationVariables
-        >(I.CreateOrganizationDocument, {
-            input,
-            ...variables
-        });
+        const response = await this._request<I.CreateOrganizationMutation, I.CreateOrganizationMutationVariables>(
+            I.CreateOrganizationDocument,
+            {
+                input,
+                ...variables
+            }
+        );
         const data = response.organizationCreate;
 
         return data ? new OrganizationCreate(this._request, data) : undefined;
@@ -2760,9 +2428,7 @@ export class CreateOrganizationInviteMutation extends Request {
      * @param input - required input to pass to createOrganizationInvite
      * @returns parsed response from CreateOrganizationInviteMutation
      */
-    public async fetch(
-        input: I.OrganizationInviteCreateInput
-    ): IntegraflowFetch<OrganizationInviteCreate | undefined> {
+    public async fetch(input: I.OrganizationInviteCreateInput): IntegraflowFetch<OrganizationInviteCreate | undefined> {
         const response = await this._request<
             I.CreateOrganizationInviteMutation,
             I.CreateOrganizationInviteMutationVariables
@@ -2771,9 +2437,7 @@ export class CreateOrganizationInviteMutation extends Request {
         });
         const data = response.organizationInviteCreate;
 
-        return data
-            ? new OrganizationInviteCreate(this._request, data)
-            : undefined;
+        return data ? new OrganizationInviteCreate(this._request, data) : undefined;
     }
 }
 
@@ -2792,18 +2456,14 @@ export class ResetOrganizationInviteLinkMutation extends Request {
      *
      * @returns parsed response from ResetOrganizationInviteLinkMutation
      */
-    public async fetch(): IntegraflowFetch<
-        OrganizationInviteLinkReset | undefined
-    > {
+    public async fetch(): IntegraflowFetch<OrganizationInviteLinkReset | undefined> {
         const response = await this._request<
             I.ResetOrganizationInviteLinkMutation,
             I.ResetOrganizationInviteLinkMutationVariables
         >(I.ResetOrganizationInviteLinkDocument, {});
         const data = response.organizationInviteLinkReset;
 
-        return data
-            ? new OrganizationInviteLinkReset(this._request, data)
-            : undefined;
+        return data ? new OrganizationInviteLinkReset(this._request, data) : undefined;
     }
 }
 
@@ -2823,15 +2483,13 @@ export class JoinOrganizationMutation extends Request {
      * @param input - required input to pass to joinOrganization
      * @returns parsed response from JoinOrganizationMutation
      */
-    public async fetch(
-        input: I.OrganizationJoinInput
-    ): IntegraflowFetch<OrganizationJoin | undefined> {
-        const response = await this._request<
-            I.JoinOrganizationMutation,
-            I.JoinOrganizationMutationVariables
-        >(I.JoinOrganizationDocument, {
-            input
-        });
+    public async fetch(input: I.OrganizationJoinInput): IntegraflowFetch<OrganizationJoin | undefined> {
+        const response = await this._request<I.JoinOrganizationMutation, I.JoinOrganizationMutationVariables>(
+            I.JoinOrganizationDocument,
+            {
+                input
+            }
+        );
         const data = response.organizationJoin;
 
         return data ? new OrganizationJoin(this._request, data) : undefined;
@@ -2854,15 +2512,13 @@ export class CreateProjectMutation extends Request {
      * @param input - required input to pass to createProject
      * @returns parsed response from CreateProjectMutation
      */
-    public async fetch(
-        input: I.ProjectCreateInput
-    ): IntegraflowFetch<ProjectCreate | undefined> {
-        const response = await this._request<
-            I.CreateProjectMutation,
-            I.CreateProjectMutationVariables
-        >(I.CreateProjectDocument, {
-            input
-        });
+    public async fetch(input: I.ProjectCreateInput): IntegraflowFetch<ProjectCreate | undefined> {
+        const response = await this._request<I.CreateProjectMutation, I.CreateProjectMutationVariables>(
+            I.CreateProjectDocument,
+            {
+                input
+            }
+        );
         const data = response.projectCreate;
 
         return data ? new ProjectCreate(this._request, data) : undefined;
@@ -2885,15 +2541,13 @@ export class CreateProjectThemeMutation extends Request {
      * @param input - required input to pass to createProjectTheme
      * @returns parsed response from CreateProjectThemeMutation
      */
-    public async fetch(
-        input: I.ProjectThemeCreateInput
-    ): IntegraflowFetch<ProjectThemeCreate | undefined> {
-        const response = await this._request<
-            I.CreateProjectThemeMutation,
-            I.CreateProjectThemeMutationVariables
-        >(I.CreateProjectThemeDocument, {
-            input
-        });
+    public async fetch(input: I.ProjectThemeCreateInput): IntegraflowFetch<ProjectThemeCreate | undefined> {
+        const response = await this._request<I.CreateProjectThemeMutation, I.CreateProjectThemeMutationVariables>(
+            I.CreateProjectThemeDocument,
+            {
+                input
+            }
+        );
         const data = response.projectThemeCreate;
 
         return data ? new ProjectThemeCreate(this._request, data) : undefined;
@@ -2916,15 +2570,13 @@ export class DeleteProjectThemeMutation extends Request {
      * @param id - required id to pass to deleteProjectTheme
      * @returns parsed response from DeleteProjectThemeMutation
      */
-    public async fetch(
-        id: string
-    ): IntegraflowFetch<ProjectThemeDelete | undefined> {
-        const response = await this._request<
-            I.DeleteProjectThemeMutation,
-            I.DeleteProjectThemeMutationVariables
-        >(I.DeleteProjectThemeDocument, {
-            id
-        });
+    public async fetch(id: string): IntegraflowFetch<ProjectThemeDelete | undefined> {
+        const response = await this._request<I.DeleteProjectThemeMutation, I.DeleteProjectThemeMutationVariables>(
+            I.DeleteProjectThemeDocument,
+            {
+                id
+            }
+        );
         const data = response.projectThemeDelete;
 
         return data ? new ProjectThemeDelete(this._request, data) : undefined;
@@ -2948,17 +2600,14 @@ export class UpdateProjectThemeMutation extends Request {
      * @param input - required input to pass to updateProjectTheme
      * @returns parsed response from UpdateProjectThemeMutation
      */
-    public async fetch(
-        id: string,
-        input: I.ProjectThemeUpdateInput
-    ): IntegraflowFetch<ProjectThemeUpdate | undefined> {
-        const response = await this._request<
-            I.UpdateProjectThemeMutation,
-            I.UpdateProjectThemeMutationVariables
-        >(I.UpdateProjectThemeDocument, {
-            id,
-            input
-        });
+    public async fetch(id: string, input: I.ProjectThemeUpdateInput): IntegraflowFetch<ProjectThemeUpdate | undefined> {
+        const response = await this._request<I.UpdateProjectThemeMutation, I.UpdateProjectThemeMutationVariables>(
+            I.UpdateProjectThemeDocument,
+            {
+                id,
+                input
+            }
+        );
         const data = response.projectThemeUpdate;
 
         return data ? new ProjectThemeUpdate(this._request, data) : undefined;
@@ -2981,15 +2630,13 @@ export class UpdateProjectMutation extends Request {
      * @param input - required input to pass to updateProject
      * @returns parsed response from UpdateProjectMutation
      */
-    public async fetch(
-        input: I.ProjectUpdateInput
-    ): IntegraflowFetch<ProjectUpdate | undefined> {
-        const response = await this._request<
-            I.UpdateProjectMutation,
-            I.UpdateProjectMutationVariables
-        >(I.UpdateProjectDocument, {
-            input
-        });
+    public async fetch(input: I.ProjectUpdateInput): IntegraflowFetch<ProjectUpdate | undefined> {
+        const response = await this._request<I.UpdateProjectMutation, I.UpdateProjectMutationVariables>(
+            I.UpdateProjectDocument,
+            {
+                input
+            }
+        );
         const data = response.projectUpdate;
 
         return data ? new ProjectUpdate(this._request, data) : undefined;
@@ -3012,15 +2659,13 @@ export class CreateSurveyChannelMutation extends Request {
      * @param input - required input to pass to createSurveyChannel
      * @returns parsed response from CreateSurveyChannelMutation
      */
-    public async fetch(
-        input: I.SurveyChannelCreateInput
-    ): IntegraflowFetch<SurveyChannelCreate | undefined> {
-        const response = await this._request<
-            I.CreateSurveyChannelMutation,
-            I.CreateSurveyChannelMutationVariables
-        >(I.CreateSurveyChannelDocument, {
-            input
-        });
+    public async fetch(input: I.SurveyChannelCreateInput): IntegraflowFetch<SurveyChannelCreate | undefined> {
+        const response = await this._request<I.CreateSurveyChannelMutation, I.CreateSurveyChannelMutationVariables>(
+            I.CreateSurveyChannelDocument,
+            {
+                input
+            }
+        );
         const data = response.surveyChannelCreate;
 
         return data ? new SurveyChannelCreate(this._request, data) : undefined;
@@ -3043,15 +2688,13 @@ export class DeleteSurveyChannelMutation extends Request {
      * @param id - required id to pass to deleteSurveyChannel
      * @returns parsed response from DeleteSurveyChannelMutation
      */
-    public async fetch(
-        id: string
-    ): IntegraflowFetch<SurveyChannelDelete | undefined> {
-        const response = await this._request<
-            I.DeleteSurveyChannelMutation,
-            I.DeleteSurveyChannelMutationVariables
-        >(I.DeleteSurveyChannelDocument, {
-            id
-        });
+    public async fetch(id: string): IntegraflowFetch<SurveyChannelDelete | undefined> {
+        const response = await this._request<I.DeleteSurveyChannelMutation, I.DeleteSurveyChannelMutationVariables>(
+            I.DeleteSurveyChannelDocument,
+            {
+                id
+            }
+        );
         const data = response.surveyChannelDelete;
 
         return data ? new SurveyChannelDelete(this._request, data) : undefined;
@@ -3079,13 +2722,13 @@ export class UpdateSurveyChannelMutation extends Request {
         id: string,
         input: I.SurveyChannelUpdateInput
     ): IntegraflowFetch<SurveyChannelUpdate | undefined> {
-        const response = await this._request<
-            I.UpdateSurveyChannelMutation,
-            I.UpdateSurveyChannelMutationVariables
-        >(I.UpdateSurveyChannelDocument, {
-            id,
-            input
-        });
+        const response = await this._request<I.UpdateSurveyChannelMutation, I.UpdateSurveyChannelMutationVariables>(
+            I.UpdateSurveyChannelDocument,
+            {
+                id,
+                input
+            }
+        );
         const data = response.surveyChannelUpdate;
 
         return data ? new SurveyChannelUpdate(this._request, data) : undefined;
@@ -3108,15 +2751,13 @@ export class CreateSurveyMutation extends Request {
      * @param input - required input to pass to createSurvey
      * @returns parsed response from CreateSurveyMutation
      */
-    public async fetch(
-        input: I.SurveyCreateInput
-    ): IntegraflowFetch<SurveyCreate | undefined> {
-        const response = await this._request<
-            I.CreateSurveyMutation,
-            I.CreateSurveyMutationVariables
-        >(I.CreateSurveyDocument, {
-            input
-        });
+    public async fetch(input: I.SurveyCreateInput): IntegraflowFetch<SurveyCreate | undefined> {
+        const response = await this._request<I.CreateSurveyMutation, I.CreateSurveyMutationVariables>(
+            I.CreateSurveyDocument,
+            {
+                input
+            }
+        );
         const data = response.surveyCreate;
 
         return data ? new SurveyCreate(this._request, data) : undefined;
@@ -3140,12 +2781,12 @@ export class DeleteSurveyMutation extends Request {
      * @returns parsed response from DeleteSurveyMutation
      */
     public async fetch(id: string): IntegraflowFetch<SurveyDelete | undefined> {
-        const response = await this._request<
-            I.DeleteSurveyMutation,
-            I.DeleteSurveyMutationVariables
-        >(I.DeleteSurveyDocument, {
-            id
-        });
+        const response = await this._request<I.DeleteSurveyMutation, I.DeleteSurveyMutationVariables>(
+            I.DeleteSurveyDocument,
+            {
+                id
+            }
+        );
         const data = response.surveyDelete;
 
         return data ? new SurveyDelete(this._request, data) : undefined;
@@ -3168,15 +2809,13 @@ export class CreateSurveyQuestionMutation extends Request {
      * @param input - required input to pass to createSurveyQuestion
      * @returns parsed response from CreateSurveyQuestionMutation
      */
-    public async fetch(
-        input: I.SurveyQuestionCreateInput
-    ): IntegraflowFetch<SurveyQuestionCreate | undefined> {
-        const response = await this._request<
-            I.CreateSurveyQuestionMutation,
-            I.CreateSurveyQuestionMutationVariables
-        >(I.CreateSurveyQuestionDocument, {
-            input
-        });
+    public async fetch(input: I.SurveyQuestionCreateInput): IntegraflowFetch<SurveyQuestionCreate | undefined> {
+        const response = await this._request<I.CreateSurveyQuestionMutation, I.CreateSurveyQuestionMutationVariables>(
+            I.CreateSurveyQuestionDocument,
+            {
+                input
+            }
+        );
         const data = response.surveyQuestionCreate;
 
         return data ? new SurveyQuestionCreate(this._request, data) : undefined;
@@ -3199,15 +2838,13 @@ export class DeleteSurveyQuestionMutation extends Request {
      * @param id - required id to pass to deleteSurveyQuestion
      * @returns parsed response from DeleteSurveyQuestionMutation
      */
-    public async fetch(
-        id: string
-    ): IntegraflowFetch<SurveyQuestionDelete | undefined> {
-        const response = await this._request<
-            I.DeleteSurveyQuestionMutation,
-            I.DeleteSurveyQuestionMutationVariables
-        >(I.DeleteSurveyQuestionDocument, {
-            id
-        });
+    public async fetch(id: string): IntegraflowFetch<SurveyQuestionDelete | undefined> {
+        const response = await this._request<I.DeleteSurveyQuestionMutation, I.DeleteSurveyQuestionMutationVariables>(
+            I.DeleteSurveyQuestionDocument,
+            {
+                id
+            }
+        );
         const data = response.surveyQuestionDelete;
 
         return data ? new SurveyQuestionDelete(this._request, data) : undefined;
@@ -3235,13 +2872,13 @@ export class UpdateSurveyQuestionMutation extends Request {
         id: string,
         input: I.SurveyQuestionUpdateInput
     ): IntegraflowFetch<SurveyQuestionUpdate | undefined> {
-        const response = await this._request<
-            I.UpdateSurveyQuestionMutation,
-            I.UpdateSurveyQuestionMutationVariables
-        >(I.UpdateSurveyQuestionDocument, {
-            id,
-            input
-        });
+        const response = await this._request<I.UpdateSurveyQuestionMutation, I.UpdateSurveyQuestionMutationVariables>(
+            I.UpdateSurveyQuestionDocument,
+            {
+                id,
+                input
+            }
+        );
         const data = response.surveyQuestionUpdate;
 
         return data ? new SurveyQuestionUpdate(this._request, data) : undefined;
@@ -3264,15 +2901,13 @@ export class CreateSurveyResponseMutation extends Request {
      * @param input - required input to pass to createSurveyResponse
      * @returns parsed response from CreateSurveyResponseMutation
      */
-    public async fetch(
-        input: I.SurveyResponseCreateInput
-    ): IntegraflowFetch<SurveyResponseCreate | undefined> {
-        const response = await this._request<
-            I.CreateSurveyResponseMutation,
-            I.CreateSurveyResponseMutationVariables
-        >(I.CreateSurveyResponseDocument, {
-            input
-        });
+    public async fetch(input: I.SurveyResponseCreateInput): IntegraflowFetch<SurveyResponseCreate | undefined> {
+        const response = await this._request<I.CreateSurveyResponseMutation, I.CreateSurveyResponseMutationVariables>(
+            I.CreateSurveyResponseDocument,
+            {
+                input
+            }
+        );
         const data = response.surveyResponseCreate;
 
         return data ? new SurveyResponseCreate(this._request, data) : undefined;
@@ -3300,13 +2935,13 @@ export class UpdateSurveyResponseMutation extends Request {
         id: string,
         input: I.SurveyResponseUpdateInput
     ): IntegraflowFetch<SurveyResponseUpdate | undefined> {
-        const response = await this._request<
-            I.UpdateSurveyResponseMutation,
-            I.UpdateSurveyResponseMutationVariables
-        >(I.UpdateSurveyResponseDocument, {
-            id,
-            input
-        });
+        const response = await this._request<I.UpdateSurveyResponseMutation, I.UpdateSurveyResponseMutationVariables>(
+            I.UpdateSurveyResponseDocument,
+            {
+                id,
+                input
+            }
+        );
         const data = response.surveyResponseUpdate;
 
         return data ? new SurveyResponseUpdate(this._request, data) : undefined;
@@ -3330,17 +2965,14 @@ export class UpdateSurveyMutation extends Request {
      * @param input - required input to pass to updateSurvey
      * @returns parsed response from UpdateSurveyMutation
      */
-    public async fetch(
-        id: string,
-        input: I.SurveyUpdateInput
-    ): IntegraflowFetch<SurveyUpdate | undefined> {
-        const response = await this._request<
-            I.UpdateSurveyMutation,
-            I.UpdateSurveyMutationVariables
-        >(I.UpdateSurveyDocument, {
-            id,
-            input
-        });
+    public async fetch(id: string, input: I.SurveyUpdateInput): IntegraflowFetch<SurveyUpdate | undefined> {
+        const response = await this._request<I.UpdateSurveyMutation, I.UpdateSurveyMutationVariables>(
+            I.UpdateSurveyDocument,
+            {
+                id,
+                input
+            }
+        );
         const data = response.surveyUpdate;
 
         return data ? new SurveyUpdate(this._request, data) : undefined;
@@ -3363,13 +2995,11 @@ export class RefreshTokenMutation extends Request {
      * @param variables - variables to pass into the RefreshTokenMutation
      * @returns parsed response from RefreshTokenMutation
      */
-    public async fetch(
-        variables?: I.RefreshTokenMutationVariables
-    ): IntegraflowFetch<RefreshToken | undefined> {
-        const response = await this._request<
-            I.RefreshTokenMutation,
-            I.RefreshTokenMutationVariables
-        >(I.RefreshTokenDocument, variables);
+    public async fetch(variables?: I.RefreshTokenMutationVariables): IntegraflowFetch<RefreshToken | undefined> {
+        const response = await this._request<I.RefreshTokenMutation, I.RefreshTokenMutationVariables>(
+            I.RefreshTokenDocument,
+            variables
+        );
         const data = response.tokenRefresh;
 
         return data ? new RefreshToken(this._request, data) : undefined;
@@ -3392,15 +3022,13 @@ export class UpdateUserMutation extends Request {
      * @param input - required input to pass to updateUser
      * @returns parsed response from UpdateUserMutation
      */
-    public async fetch(
-        input: I.UserInput
-    ): IntegraflowFetch<UserUpdate | undefined> {
-        const response = await this._request<
-            I.UpdateUserMutation,
-            I.UpdateUserMutationVariables
-        >(I.UpdateUserDocument, {
-            input
-        });
+    public async fetch(input: I.UserInput): IntegraflowFetch<UserUpdate | undefined> {
+        const response = await this._request<I.UpdateUserMutation, I.UpdateUserMutationVariables>(
+            I.UpdateUserDocument,
+            {
+                input
+            }
+        );
         const data = response.userUpdate;
 
         return data ? new UserUpdate(this._request, data) : undefined;
@@ -3426,10 +3054,10 @@ export class ActiveSurveysQuery extends Request {
     public async fetch(
         variables?: I.ActiveSurveysQueryVariables
     ): IntegraflowFetch<BaseSurveyCountableConnection | undefined> {
-        const response = await this._request<
-            I.ActiveSurveysQuery,
-            I.ActiveSurveysQueryVariables
-        >(I.ActiveSurveysDocument, variables);
+        const response = await this._request<I.ActiveSurveysQuery, I.ActiveSurveysQueryVariables>(
+            I.ActiveSurveysDocument,
+            variables
+        );
         const data = response.activeSurveys;
         if (data) {
             return new BaseSurveyCountableConnection(
@@ -3470,10 +3098,7 @@ export class ChannelsQuery extends Request {
         id: string,
         variables?: Omit<I.ChannelsQueryVariables, "id">
     ): IntegraflowFetch<SurveyChannelCountableConnection | undefined> {
-        const response = await this._request<
-            I.ChannelsQuery,
-            I.ChannelsQueryVariables
-        >(I.ChannelsDocument, {
+        const response = await this._request<I.ChannelsQuery, I.ChannelsQueryVariables>(I.ChannelsDocument, {
             id,
             ...variables
         });
@@ -3516,10 +3141,10 @@ export class EventDefinitionsQuery extends Request {
     public async fetch(
         variables?: I.EventDefinitionsQueryVariables
     ): IntegraflowFetch<EventDefinitionCountableConnection | undefined> {
-        const response = await this._request<
-            I.EventDefinitionsQuery,
-            I.EventDefinitionsQueryVariables
-        >(I.EventDefinitionsDocument, variables);
+        const response = await this._request<I.EventDefinitionsQuery, I.EventDefinitionsQueryVariables>(
+            I.EventDefinitionsDocument,
+            variables
+        );
         const data = response.eventDefinitions;
         if (data) {
             return new EventDefinitionCountableConnection(
@@ -3558,10 +3183,10 @@ export class EventPropertiesQuery extends Request {
     public async fetch(
         variables?: I.EventPropertiesQueryVariables
     ): IntegraflowFetch<EventPropertyCountableConnection | undefined> {
-        const response = await this._request<
-            I.EventPropertiesQuery,
-            I.EventPropertiesQueryVariables
-        >(I.EventPropertiesDocument, variables);
+        const response = await this._request<I.EventPropertiesQuery, I.EventPropertiesQueryVariables>(
+            I.EventPropertiesDocument,
+            variables
+        );
         const data = response.eventProperties;
         if (data) {
             return new EventPropertyCountableConnection(
@@ -3597,13 +3222,8 @@ export class EventsQuery extends Request {
      * @param variables - variables to pass into the EventsQuery
      * @returns parsed response from EventsQuery
      */
-    public async fetch(
-        variables?: I.EventsQueryVariables
-    ): IntegraflowFetch<EventCountableConnection | undefined> {
-        const response = await this._request<
-            I.EventsQuery,
-            I.EventsQueryVariables
-        >(I.EventsDocument, variables);
+    public async fetch(variables?: I.EventsQueryVariables): IntegraflowFetch<EventCountableConnection | undefined> {
+        const response = await this._request<I.EventsQuery, I.EventsQueryVariables>(I.EventsDocument, variables);
         const data = response.events;
         if (data) {
             return new EventCountableConnection(
@@ -3639,15 +3259,13 @@ export class OrganizationInviteLinkQuery extends Request {
      * @returns parsed response from OrganizationInviteLinkQuery
      */
     public async fetch(): IntegraflowFetch<OrganizationInviteLink | undefined> {
-        const response = await this._request<
-            I.OrganizationInviteLinkQuery,
-            I.OrganizationInviteLinkQueryVariables
-        >(I.OrganizationInviteLinkDocument, {});
+        const response = await this._request<I.OrganizationInviteLinkQuery, I.OrganizationInviteLinkQueryVariables>(
+            I.OrganizationInviteLinkDocument,
+            {}
+        );
         const data = response.organizationInviteLink;
 
-        return data
-            ? new OrganizationInviteLink(this._request, data)
-            : undefined;
+        return data ? new OrganizationInviteLink(this._request, data) : undefined;
     }
 }
 
@@ -3667,13 +3285,8 @@ export class PersonsQuery extends Request {
      * @param variables - variables to pass into the PersonsQuery
      * @returns parsed response from PersonsQuery
      */
-    public async fetch(
-        variables?: I.PersonsQueryVariables
-    ): IntegraflowFetch<PersonCountableConnection | undefined> {
-        const response = await this._request<
-            I.PersonsQuery,
-            I.PersonsQueryVariables
-        >(I.PersonsDocument, variables);
+    public async fetch(variables?: I.PersonsQueryVariables): IntegraflowFetch<PersonCountableConnection | undefined> {
+        const response = await this._request<I.PersonsQuery, I.PersonsQueryVariables>(I.PersonsDocument, variables);
         const data = response.persons;
         if (data) {
             return new PersonCountableConnection(
@@ -3712,10 +3325,10 @@ export class PropertyDefinitionsQuery extends Request {
     public async fetch(
         variables?: I.PropertyDefinitionsQueryVariables
     ): IntegraflowFetch<PropertyDefinitionCountableConnection | undefined> {
-        const response = await this._request<
-            I.PropertyDefinitionsQuery,
-            I.PropertyDefinitionsQueryVariables
-        >(I.PropertyDefinitionsDocument, variables);
+        const response = await this._request<I.PropertyDefinitionsQuery, I.PropertyDefinitionsQueryVariables>(
+            I.PropertyDefinitionsDocument,
+            variables
+        );
         const data = response.propertyDefinitions;
         if (data) {
             return new PropertyDefinitionCountableConnection(
@@ -3756,10 +3369,7 @@ export class QuestionsQuery extends Request {
         id: string,
         variables?: Omit<I.QuestionsQueryVariables, "id">
     ): IntegraflowFetch<SurveyQuestionCountableConnection | undefined> {
-        const response = await this._request<
-            I.QuestionsQuery,
-            I.QuestionsQueryVariables
-        >(I.QuestionsDocument, {
+        const response = await this._request<I.QuestionsQuery, I.QuestionsQueryVariables>(I.QuestionsDocument, {
             id,
             ...variables
         });
@@ -3799,13 +3409,8 @@ export class SurveyQuery extends Request {
      * @param variables - variables to pass into the SurveyQuery
      * @returns parsed response from SurveyQuery
      */
-    public async fetch(
-        variables?: I.SurveyQueryVariables
-    ): IntegraflowFetch<Survey | undefined> {
-        const response = await this._request<
-            I.SurveyQuery,
-            I.SurveyQueryVariables
-        >(I.SurveyDocument, variables);
+    public async fetch(variables?: I.SurveyQueryVariables): IntegraflowFetch<Survey | undefined> {
+        const response = await this._request<I.SurveyQuery, I.SurveyQueryVariables>(I.SurveyDocument, variables);
         const data = response.survey;
 
         return data ? new Survey(this._request, data) : undefined;
@@ -3828,13 +3433,11 @@ export class SurveyByChannelQuery extends Request {
      * @param variables - variables to pass into the SurveyByChannelQuery
      * @returns parsed response from SurveyByChannelQuery
      */
-    public async fetch(
-        variables?: I.SurveyByChannelQueryVariables
-    ): IntegraflowFetch<BaseSurvey | undefined> {
-        const response = await this._request<
-            I.SurveyByChannelQuery,
-            I.SurveyByChannelQueryVariables
-        >(I.SurveyByChannelDocument, variables);
+    public async fetch(variables?: I.SurveyByChannelQueryVariables): IntegraflowFetch<BaseSurvey | undefined> {
+        const response = await this._request<I.SurveyByChannelQuery, I.SurveyByChannelQueryVariables>(
+            I.SurveyByChannelDocument,
+            variables
+        );
         const data = response.surveyByChannel;
 
         return data ? new BaseSurvey(this._request, data) : undefined;
@@ -3857,13 +3460,8 @@ export class SurveysQuery extends Request {
      * @param variables - variables to pass into the SurveysQuery
      * @returns parsed response from SurveysQuery
      */
-    public async fetch(
-        variables?: I.SurveysQueryVariables
-    ): IntegraflowFetch<SurveyCountableConnection | undefined> {
-        const response = await this._request<
-            I.SurveysQuery,
-            I.SurveysQueryVariables
-        >(I.SurveysDocument, variables);
+    public async fetch(variables?: I.SurveysQueryVariables): IntegraflowFetch<SurveyCountableConnection | undefined> {
+        const response = await this._request<I.SurveysQuery, I.SurveysQueryVariables>(I.SurveysDocument, variables);
         const data = response.surveys;
         if (data) {
             return new SurveyCountableConnection(
@@ -3902,10 +3500,7 @@ export class ThemesQuery extends Request {
     public async fetch(
         variables?: I.ThemesQueryVariables
     ): IntegraflowFetch<ProjectThemeCountableConnection | undefined> {
-        const response = await this._request<
-            I.ThemesQuery,
-            I.ThemesQueryVariables
-        >(I.ThemesDocument, variables);
+        const response = await this._request<I.ThemesQuery, I.ThemesQueryVariables>(I.ThemesDocument, variables);
         const data = response.themes;
         if (data) {
             return new ProjectThemeCountableConnection(
@@ -3941,10 +3536,7 @@ export class ViewerQuery extends Request {
      * @returns parsed response from ViewerQuery
      */
     public async fetch(): IntegraflowFetch<User | undefined> {
-        const response = await this._request<
-            I.ViewerQuery,
-            I.ViewerQueryVariables
-        >(I.ViewerDocument, {});
+        const response = await this._request<I.ViewerQuery, I.ViewerQueryVariables>(I.ViewerDocument, {});
         const data = response.viewer;
 
         return data ? new User(this._request, data) : undefined;
@@ -3960,10 +3552,7 @@ export class ViewerQuery extends Request {
 export class Survey_ChannelsQuery extends Request {
     private _variables?: I.Survey_ChannelsQueryVariables;
 
-    public constructor(
-        request: IntegraflowRequest,
-        variables?: I.Survey_ChannelsQueryVariables
-    ) {
+    public constructor(request: IntegraflowRequest, variables?: I.Survey_ChannelsQueryVariables) {
         super(request);
 
         this._variables = variables;
@@ -3978,10 +3567,10 @@ export class Survey_ChannelsQuery extends Request {
     public async fetch(
         variables?: I.Survey_ChannelsQueryVariables
     ): IntegraflowFetch<SurveyChannelCountableConnection | undefined> {
-        const response = await this._request<
-            I.Survey_ChannelsQuery,
-            I.Survey_ChannelsQueryVariables
-        >(I.Survey_ChannelsDocument, variables);
+        const response = await this._request<I.Survey_ChannelsQuery, I.Survey_ChannelsQueryVariables>(
+            I.Survey_ChannelsDocument,
+            variables
+        );
         const data = response.survey?.channels;
         if (data) {
             return new SurveyChannelCountableConnection(
@@ -4011,10 +3600,7 @@ export class Survey_ChannelsQuery extends Request {
 export class Survey_ProjectQuery extends Request {
     private _variables?: I.Survey_ProjectQueryVariables;
 
-    public constructor(
-        request: IntegraflowRequest,
-        variables?: I.Survey_ProjectQueryVariables
-    ) {
+    public constructor(request: IntegraflowRequest, variables?: I.Survey_ProjectQueryVariables) {
         super(request);
 
         this._variables = variables;
@@ -4026,13 +3612,11 @@ export class Survey_ProjectQuery extends Request {
      * @param variables - variables to pass into the Survey_ProjectQuery
      * @returns parsed response from Survey_ProjectQuery
      */
-    public async fetch(
-        variables?: I.Survey_ProjectQueryVariables
-    ): IntegraflowFetch<Project | undefined> {
-        const response = await this._request<
-            I.Survey_ProjectQuery,
-            I.Survey_ProjectQueryVariables
-        >(I.Survey_ProjectDocument, variables);
+    public async fetch(variables?: I.Survey_ProjectQueryVariables): IntegraflowFetch<Project | undefined> {
+        const response = await this._request<I.Survey_ProjectQuery, I.Survey_ProjectQueryVariables>(
+            I.Survey_ProjectDocument,
+            variables
+        );
         const data = response.survey?.project;
 
         return data ? new Project(this._request, data) : undefined;
@@ -4048,10 +3632,7 @@ export class Survey_ProjectQuery extends Request {
 export class Survey_QuestionsQuery extends Request {
     private _variables?: I.Survey_QuestionsQueryVariables;
 
-    public constructor(
-        request: IntegraflowRequest,
-        variables?: I.Survey_QuestionsQueryVariables
-    ) {
+    public constructor(request: IntegraflowRequest, variables?: I.Survey_QuestionsQueryVariables) {
         super(request);
 
         this._variables = variables;
@@ -4066,10 +3647,10 @@ export class Survey_QuestionsQuery extends Request {
     public async fetch(
         variables?: I.Survey_QuestionsQueryVariables
     ): IntegraflowFetch<SurveyQuestionCountableConnection | undefined> {
-        const response = await this._request<
-            I.Survey_QuestionsQuery,
-            I.Survey_QuestionsQueryVariables
-        >(I.Survey_QuestionsDocument, variables);
+        const response = await this._request<I.Survey_QuestionsQuery, I.Survey_QuestionsQueryVariables>(
+            I.Survey_QuestionsDocument,
+            variables
+        );
         const data = response.survey?.questions;
         if (data) {
             return new SurveyQuestionCountableConnection(
@@ -4099,10 +3680,7 @@ export class Survey_QuestionsQuery extends Request {
 export class Survey_ThemeQuery extends Request {
     private _variables?: I.Survey_ThemeQueryVariables;
 
-    public constructor(
-        request: IntegraflowRequest,
-        variables?: I.Survey_ThemeQueryVariables
-    ) {
+    public constructor(request: IntegraflowRequest, variables?: I.Survey_ThemeQueryVariables) {
         super(request);
 
         this._variables = variables;
@@ -4114,13 +3692,11 @@ export class Survey_ThemeQuery extends Request {
      * @param variables - variables to pass into the Survey_ThemeQuery
      * @returns parsed response from Survey_ThemeQuery
      */
-    public async fetch(
-        variables?: I.Survey_ThemeQueryVariables
-    ): IntegraflowFetch<ProjectTheme | undefined> {
-        const response = await this._request<
-            I.Survey_ThemeQuery,
-            I.Survey_ThemeQueryVariables
-        >(I.Survey_ThemeDocument, variables);
+    public async fetch(variables?: I.Survey_ThemeQueryVariables): IntegraflowFetch<ProjectTheme | undefined> {
+        const response = await this._request<I.Survey_ThemeQuery, I.Survey_ThemeQueryVariables>(
+            I.Survey_ThemeDocument,
+            variables
+        );
         const data = response.survey?.theme;
 
         return data ? new ProjectTheme(this._request, data) : undefined;
@@ -4136,10 +3712,7 @@ export class Survey_ThemeQuery extends Request {
 export class Survey_Project_OrganizationQuery extends Request {
     private _variables?: I.Survey_Project_OrganizationQueryVariables;
 
-    public constructor(
-        request: IntegraflowRequest,
-        variables?: I.Survey_Project_OrganizationQueryVariables
-    ) {
+    public constructor(request: IntegraflowRequest, variables?: I.Survey_Project_OrganizationQueryVariables) {
         super(request);
 
         this._variables = variables;
@@ -4173,10 +3746,7 @@ export class Survey_Project_OrganizationQuery extends Request {
 export class Survey_Theme_ProjectQuery extends Request {
     private _variables?: I.Survey_Theme_ProjectQueryVariables;
 
-    public constructor(
-        request: IntegraflowRequest,
-        variables?: I.Survey_Theme_ProjectQueryVariables
-    ) {
+    public constructor(request: IntegraflowRequest, variables?: I.Survey_Theme_ProjectQueryVariables) {
         super(request);
 
         this._variables = variables;
@@ -4188,13 +3758,11 @@ export class Survey_Theme_ProjectQuery extends Request {
      * @param variables - variables to pass into the Survey_Theme_ProjectQuery
      * @returns parsed response from Survey_Theme_ProjectQuery
      */
-    public async fetch(
-        variables?: I.Survey_Theme_ProjectQueryVariables
-    ): IntegraflowFetch<Project | undefined> {
-        const response = await this._request<
-            I.Survey_Theme_ProjectQuery,
-            I.Survey_Theme_ProjectQueryVariables
-        >(I.Survey_Theme_ProjectDocument, variables);
+    public async fetch(variables?: I.Survey_Theme_ProjectQueryVariables): IntegraflowFetch<Project | undefined> {
+        const response = await this._request<I.Survey_Theme_ProjectQuery, I.Survey_Theme_ProjectQueryVariables>(
+            I.Survey_Theme_ProjectDocument,
+            variables
+        );
         const data = response.survey?.theme?.project;
 
         return data ? new Project(this._request, data) : undefined;
@@ -4210,10 +3778,7 @@ export class Survey_Theme_ProjectQuery extends Request {
 export class Survey_Theme_Project_OrganizationQuery extends Request {
     private _variables?: I.Survey_Theme_Project_OrganizationQueryVariables;
 
-    public constructor(
-        request: IntegraflowRequest,
-        variables?: I.Survey_Theme_Project_OrganizationQueryVariables
-    ) {
+    public constructor(request: IntegraflowRequest, variables?: I.Survey_Theme_Project_OrganizationQueryVariables) {
         super(request);
 
         this._variables = variables;
@@ -4247,10 +3812,7 @@ export class Survey_Theme_Project_OrganizationQuery extends Request {
 export class SurveyByChannel_ProjectQuery extends Request {
     private _variables?: I.SurveyByChannel_ProjectQueryVariables;
 
-    public constructor(
-        request: IntegraflowRequest,
-        variables?: I.SurveyByChannel_ProjectQueryVariables
-    ) {
+    public constructor(request: IntegraflowRequest, variables?: I.SurveyByChannel_ProjectQueryVariables) {
         super(request);
 
         this._variables = variables;
@@ -4262,13 +3824,11 @@ export class SurveyByChannel_ProjectQuery extends Request {
      * @param variables - variables to pass into the SurveyByChannel_ProjectQuery
      * @returns parsed response from SurveyByChannel_ProjectQuery
      */
-    public async fetch(
-        variables?: I.SurveyByChannel_ProjectQueryVariables
-    ): IntegraflowFetch<BaseProject | undefined> {
-        const response = await this._request<
-            I.SurveyByChannel_ProjectQuery,
-            I.SurveyByChannel_ProjectQueryVariables
-        >(I.SurveyByChannel_ProjectDocument, variables);
+    public async fetch(variables?: I.SurveyByChannel_ProjectQueryVariables): IntegraflowFetch<BaseProject | undefined> {
+        const response = await this._request<I.SurveyByChannel_ProjectQuery, I.SurveyByChannel_ProjectQueryVariables>(
+            I.SurveyByChannel_ProjectDocument,
+            variables
+        );
         const data = response.surveyByChannel?.project;
 
         return data ? new BaseProject(this._request, data) : undefined;
@@ -4284,10 +3844,7 @@ export class SurveyByChannel_ProjectQuery extends Request {
 export class SurveyByChannel_ThemeQuery extends Request {
     private _variables?: I.SurveyByChannel_ThemeQueryVariables;
 
-    public constructor(
-        request: IntegraflowRequest,
-        variables?: I.SurveyByChannel_ThemeQueryVariables
-    ) {
+    public constructor(request: IntegraflowRequest, variables?: I.SurveyByChannel_ThemeQueryVariables) {
         super(request);
 
         this._variables = variables;
@@ -4302,10 +3859,10 @@ export class SurveyByChannel_ThemeQuery extends Request {
     public async fetch(
         variables?: I.SurveyByChannel_ThemeQueryVariables
     ): IntegraflowFetch<BaseProjectTheme | undefined> {
-        const response = await this._request<
-            I.SurveyByChannel_ThemeQuery,
-            I.SurveyByChannel_ThemeQueryVariables
-        >(I.SurveyByChannel_ThemeDocument, variables);
+        const response = await this._request<I.SurveyByChannel_ThemeQuery, I.SurveyByChannel_ThemeQueryVariables>(
+            I.SurveyByChannel_ThemeDocument,
+            variables
+        );
         const data = response.surveyByChannel?.theme;
 
         return data ? new BaseProjectTheme(this._request, data) : undefined;
@@ -4328,10 +3885,10 @@ export class Viewer_OrganizationQuery extends Request {
      * @returns parsed response from Viewer_OrganizationQuery
      */
     public async fetch(): IntegraflowFetch<AuthOrganization | undefined> {
-        const response = await this._request<
-            I.Viewer_OrganizationQuery,
-            I.Viewer_OrganizationQueryVariables
-        >(I.Viewer_OrganizationDocument, {});
+        const response = await this._request<I.Viewer_OrganizationQuery, I.Viewer_OrganizationQueryVariables>(
+            I.Viewer_OrganizationDocument,
+            {}
+        );
         const data = response.viewer?.organization;
 
         return data ? new AuthOrganization(this._request, data) : undefined;
@@ -4347,10 +3904,7 @@ export class Viewer_OrganizationQuery extends Request {
 export class Viewer_OrganizationsQuery extends Request {
     private _variables?: I.Viewer_OrganizationsQueryVariables;
 
-    public constructor(
-        request: IntegraflowRequest,
-        variables?: I.Viewer_OrganizationsQueryVariables
-    ) {
+    public constructor(request: IntegraflowRequest, variables?: I.Viewer_OrganizationsQueryVariables) {
         super(request);
 
         this._variables = variables;
@@ -4365,10 +3919,10 @@ export class Viewer_OrganizationsQuery extends Request {
     public async fetch(
         variables?: I.Viewer_OrganizationsQueryVariables
     ): IntegraflowFetch<OrganizationCountableConnection | undefined> {
-        const response = await this._request<
-            I.Viewer_OrganizationsQuery,
-            I.Viewer_OrganizationsQueryVariables
-        >(I.Viewer_OrganizationsDocument, variables);
+        const response = await this._request<I.Viewer_OrganizationsQuery, I.Viewer_OrganizationsQueryVariables>(
+            I.Viewer_OrganizationsDocument,
+            variables
+        );
         const data = response.viewer?.organizations;
         if (data) {
             return new OrganizationCountableConnection(
@@ -4405,10 +3959,10 @@ export class Viewer_ProjectQuery extends Request {
      * @returns parsed response from Viewer_ProjectQuery
      */
     public async fetch(): IntegraflowFetch<Project | undefined> {
-        const response = await this._request<
-            I.Viewer_ProjectQuery,
-            I.Viewer_ProjectQueryVariables
-        >(I.Viewer_ProjectDocument, {});
+        const response = await this._request<I.Viewer_ProjectQuery, I.Viewer_ProjectQueryVariables>(
+            I.Viewer_ProjectDocument,
+            {}
+        );
         const data = response.viewer?.project;
 
         return data ? new Project(this._request, data) : undefined;
@@ -4424,10 +3978,7 @@ export class Viewer_ProjectQuery extends Request {
 export class Viewer_ProjectsQuery extends Request {
     private _variables?: I.Viewer_ProjectsQueryVariables;
 
-    public constructor(
-        request: IntegraflowRequest,
-        variables?: I.Viewer_ProjectsQueryVariables
-    ) {
+    public constructor(request: IntegraflowRequest, variables?: I.Viewer_ProjectsQueryVariables) {
         super(request);
 
         this._variables = variables;
@@ -4442,10 +3993,10 @@ export class Viewer_ProjectsQuery extends Request {
     public async fetch(
         variables?: I.Viewer_ProjectsQueryVariables
     ): IntegraflowFetch<ProjectCountableConnection | undefined> {
-        const response = await this._request<
-            I.Viewer_ProjectsQuery,
-            I.Viewer_ProjectsQueryVariables
-        >(I.Viewer_ProjectsDocument, variables);
+        const response = await this._request<I.Viewer_ProjectsQuery, I.Viewer_ProjectsQueryVariables>(
+            I.Viewer_ProjectsDocument,
+            variables
+        );
         const data = response.viewer?.projects;
         if (data) {
             return new ProjectCountableConnection(
@@ -4513,16 +4064,9 @@ export class IntegraflowSdk extends Request {
     public emailTokenUserAuth(
         email: string,
         token: string,
-        variables?: Omit<
-            I.EmailTokenUserAuthMutationVariables,
-            "email" | "token"
-        >
+        variables?: Omit<I.EmailTokenUserAuthMutationVariables, "email" | "token">
     ): IntegraflowFetch<EmailTokenUserAuth | undefined> {
-        return new EmailTokenUserAuthMutation(this._request).fetch(
-            email,
-            token,
-            variables
-        );
+        return new EmailTokenUserAuthMutation(this._request).fetch(email, token, variables);
     }
     /**
      * Finds or creates a new user account by email and sends an email with token.
@@ -4535,10 +4079,7 @@ export class IntegraflowSdk extends Request {
         email: string,
         variables?: Omit<I.EmailUserAuthChallengeMutationVariables, "email">
     ): IntegraflowFetch<EmailUserAuthChallenge | undefined> {
-        return new EmailUserAuthChallengeMutation(this._request).fetch(
-            email,
-            variables
-        );
+        return new EmailUserAuthChallengeMutation(this._request).fetch(email, variables);
     }
     /**
      * Captures event.
@@ -4546,9 +4087,7 @@ export class IntegraflowSdk extends Request {
      * @param variables - variables to pass into the CaptureEventMutation
      * @returns EventCapture
      */
-    public captureEvent(
-        variables?: I.CaptureEventMutationVariables
-    ): IntegraflowFetch<EventCapture | undefined> {
+    public captureEvent(variables?: I.CaptureEventMutationVariables): IntegraflowFetch<EventCapture | undefined> {
         return new CaptureEventMutation(this._request).fetch(variables);
     }
     /**
@@ -4587,10 +4126,7 @@ export class IntegraflowSdk extends Request {
         input: I.OrganizationCreateInput,
         variables?: Omit<I.CreateOrganizationMutationVariables, "input">
     ): IntegraflowFetch<OrganizationCreate | undefined> {
-        return new CreateOrganizationMutation(this._request).fetch(
-            input,
-            variables
-        );
+        return new CreateOrganizationMutation(this._request).fetch(input, variables);
     }
     /**
      * Creates a new organization invite.
@@ -4612,9 +4148,7 @@ export class IntegraflowSdk extends Request {
      *
      * @returns OrganizationInviteLinkReset
      */
-    public get resetOrganizationInviteLink(): IntegraflowFetch<
-        OrganizationInviteLinkReset | undefined
-    > {
+    public get resetOrganizationInviteLink(): IntegraflowFetch<OrganizationInviteLinkReset | undefined> {
         return new ResetOrganizationInviteLinkMutation(this._request).fetch();
     }
     /**
@@ -4625,9 +4159,7 @@ export class IntegraflowSdk extends Request {
      * @param input - required input to pass to joinOrganization
      * @returns OrganizationJoin
      */
-    public joinOrganization(
-        input: I.OrganizationJoinInput
-    ): IntegraflowFetch<OrganizationJoin | undefined> {
+    public joinOrganization(input: I.OrganizationJoinInput): IntegraflowFetch<OrganizationJoin | undefined> {
         return new JoinOrganizationMutation(this._request).fetch(input);
     }
     /**
@@ -4636,9 +4168,7 @@ export class IntegraflowSdk extends Request {
      * @param input - required input to pass to createProject
      * @returns ProjectCreate
      */
-    public createProject(
-        input: I.ProjectCreateInput
-    ): IntegraflowFetch<ProjectCreate | undefined> {
+    public createProject(input: I.ProjectCreateInput): IntegraflowFetch<ProjectCreate | undefined> {
         return new CreateProjectMutation(this._request).fetch(input);
     }
     /**
@@ -4649,9 +4179,7 @@ export class IntegraflowSdk extends Request {
      * @param input - required input to pass to createProjectTheme
      * @returns ProjectThemeCreate
      */
-    public createProjectTheme(
-        input: I.ProjectThemeCreateInput
-    ): IntegraflowFetch<ProjectThemeCreate | undefined> {
+    public createProjectTheme(input: I.ProjectThemeCreateInput): IntegraflowFetch<ProjectThemeCreate | undefined> {
         return new CreateProjectThemeMutation(this._request).fetch(input);
     }
     /**
@@ -4662,9 +4190,7 @@ export class IntegraflowSdk extends Request {
      * @param id - required id to pass to deleteProjectTheme
      * @returns ProjectThemeDelete
      */
-    public deleteProjectTheme(
-        id: string
-    ): IntegraflowFetch<ProjectThemeDelete | undefined> {
+    public deleteProjectTheme(id: string): IntegraflowFetch<ProjectThemeDelete | undefined> {
         return new DeleteProjectThemeMutation(this._request).fetch(id);
     }
     /**
@@ -4688,9 +4214,7 @@ export class IntegraflowSdk extends Request {
      * @param input - required input to pass to updateProject
      * @returns ProjectUpdate
      */
-    public updateProject(
-        input: I.ProjectUpdateInput
-    ): IntegraflowFetch<ProjectUpdate | undefined> {
+    public updateProject(input: I.ProjectUpdateInput): IntegraflowFetch<ProjectUpdate | undefined> {
         return new UpdateProjectMutation(this._request).fetch(input);
     }
     /**
@@ -4701,9 +4225,7 @@ export class IntegraflowSdk extends Request {
      * @param input - required input to pass to createSurveyChannel
      * @returns SurveyChannelCreate
      */
-    public createSurveyChannel(
-        input: I.SurveyChannelCreateInput
-    ): IntegraflowFetch<SurveyChannelCreate | undefined> {
+    public createSurveyChannel(input: I.SurveyChannelCreateInput): IntegraflowFetch<SurveyChannelCreate | undefined> {
         return new CreateSurveyChannelMutation(this._request).fetch(input);
     }
     /**
@@ -4714,9 +4236,7 @@ export class IntegraflowSdk extends Request {
      * @param id - required id to pass to deleteSurveyChannel
      * @returns SurveyChannelDelete
      */
-    public deleteSurveyChannel(
-        id: string
-    ): IntegraflowFetch<SurveyChannelDelete | undefined> {
+    public deleteSurveyChannel(id: string): IntegraflowFetch<SurveyChannelDelete | undefined> {
         return new DeleteSurveyChannelMutation(this._request).fetch(id);
     }
     /**
@@ -4742,9 +4262,7 @@ export class IntegraflowSdk extends Request {
      * @param input - required input to pass to createSurvey
      * @returns SurveyCreate
      */
-    public createSurvey(
-        input: I.SurveyCreateInput
-    ): IntegraflowFetch<SurveyCreate | undefined> {
+    public createSurvey(input: I.SurveyCreateInput): IntegraflowFetch<SurveyCreate | undefined> {
         return new CreateSurveyMutation(this._request).fetch(input);
     }
     /**
@@ -4755,9 +4273,7 @@ export class IntegraflowSdk extends Request {
      * @param id - required id to pass to deleteSurvey
      * @returns SurveyDelete
      */
-    public deleteSurvey(
-        id: string
-    ): IntegraflowFetch<SurveyDelete | undefined> {
+    public deleteSurvey(id: string): IntegraflowFetch<SurveyDelete | undefined> {
         return new DeleteSurveyMutation(this._request).fetch(id);
     }
     /**
@@ -4781,9 +4297,7 @@ export class IntegraflowSdk extends Request {
      * @param id - required id to pass to deleteSurveyQuestion
      * @returns SurveyQuestionDelete
      */
-    public deleteSurveyQuestion(
-        id: string
-    ): IntegraflowFetch<SurveyQuestionDelete | undefined> {
+    public deleteSurveyQuestion(id: string): IntegraflowFetch<SurveyQuestionDelete | undefined> {
         return new DeleteSurveyQuestionMutation(this._request).fetch(id);
     }
     /**
@@ -4834,10 +4348,7 @@ export class IntegraflowSdk extends Request {
      * @param input - required input to pass to updateSurvey
      * @returns SurveyUpdate
      */
-    public updateSurvey(
-        id: string,
-        input: I.SurveyUpdateInput
-    ): IntegraflowFetch<SurveyUpdate | undefined> {
+    public updateSurvey(id: string, input: I.SurveyUpdateInput): IntegraflowFetch<SurveyUpdate | undefined> {
         return new UpdateSurveyMutation(this._request).fetch(id, input);
     }
     /**
@@ -4846,9 +4357,7 @@ export class IntegraflowSdk extends Request {
      * @param variables - variables to pass into the RefreshTokenMutation
      * @returns RefreshToken
      */
-    public refreshToken(
-        variables?: I.RefreshTokenMutationVariables
-    ): IntegraflowFetch<RefreshToken | undefined> {
+    public refreshToken(variables?: I.RefreshTokenMutationVariables): IntegraflowFetch<RefreshToken | undefined> {
         return new RefreshTokenMutation(this._request).fetch(variables);
     }
     /**
@@ -4859,9 +4368,7 @@ export class IntegraflowSdk extends Request {
      * @param input - required input to pass to updateUser
      * @returns UserUpdate
      */
-    public updateUser(
-        input: I.UserInput
-    ): IntegraflowFetch<UserUpdate | undefined> {
+    public updateUser(input: I.UserInput): IntegraflowFetch<UserUpdate | undefined> {
         return new UpdateUserMutation(this._request).fetch(input);
     }
     /**
@@ -4926,9 +4433,7 @@ export class IntegraflowSdk extends Request {
      * @param variables - variables to pass into the EventsQuery
      * @returns EventCountableConnection
      */
-    public events(
-        variables?: I.EventsQueryVariables
-    ): IntegraflowFetch<EventCountableConnection | undefined> {
+    public events(variables?: I.EventsQueryVariables): IntegraflowFetch<EventCountableConnection | undefined> {
         return new EventsQuery(this._request).fetch(variables);
     }
     /**
@@ -4938,9 +4443,7 @@ export class IntegraflowSdk extends Request {
      *
      * @returns OrganizationInviteLink
      */
-    public get organizationInviteLink(): IntegraflowFetch<
-        OrganizationInviteLink | undefined
-    > {
+    public get organizationInviteLink(): IntegraflowFetch<OrganizationInviteLink | undefined> {
         return new OrganizationInviteLinkQuery(this._request).fetch();
     }
     /**
@@ -4951,9 +4454,7 @@ export class IntegraflowSdk extends Request {
      * @param variables - variables to pass into the PersonsQuery
      * @returns PersonCountableConnection
      */
-    public persons(
-        variables?: I.PersonsQueryVariables
-    ): IntegraflowFetch<PersonCountableConnection | undefined> {
+    public persons(variables?: I.PersonsQueryVariables): IntegraflowFetch<PersonCountableConnection | undefined> {
         return new PersonsQuery(this._request).fetch(variables);
     }
     /**
@@ -4992,22 +4493,16 @@ export class IntegraflowSdk extends Request {
      * @param variables - variables to pass into the SurveyQuery
      * @returns Survey
      */
-    public survey(
-        variables?: I.SurveyQueryVariables
-    ): IntegraflowFetch<Survey | undefined> {
+    public survey(variables?: I.SurveyQueryVariables): IntegraflowFetch<Survey | undefined> {
         return new SurveyQuery(this._request).fetch(variables);
     }
     /**
      * Look up a survey by channel ID or link.
      *
-     * Requires one of the following permissions: AUTHENTICATED_API.
-     *
      * @param variables - variables to pass into the SurveyByChannelQuery
      * @returns BaseSurvey
      */
-    public surveyByChannel(
-        variables?: I.SurveyByChannelQueryVariables
-    ): IntegraflowFetch<BaseSurvey | undefined> {
+    public surveyByChannel(variables?: I.SurveyByChannelQueryVariables): IntegraflowFetch<BaseSurvey | undefined> {
         return new SurveyByChannelQuery(this._request).fetch(variables);
     }
     /**
@@ -5018,9 +4513,7 @@ export class IntegraflowSdk extends Request {
      * @param variables - variables to pass into the SurveysQuery
      * @returns SurveyCountableConnection
      */
-    public surveys(
-        variables?: I.SurveysQueryVariables
-    ): IntegraflowFetch<SurveyCountableConnection | undefined> {
+    public surveys(variables?: I.SurveysQueryVariables): IntegraflowFetch<SurveyCountableConnection | undefined> {
         return new SurveysQuery(this._request).fetch(variables);
     }
     /**
@@ -5031,9 +4524,7 @@ export class IntegraflowSdk extends Request {
      * @param variables - variables to pass into the ThemesQuery
      * @returns ProjectThemeCountableConnection
      */
-    public themes(
-        variables?: I.ThemesQueryVariables
-    ): IntegraflowFetch<ProjectThemeCountableConnection | undefined> {
+    public themes(variables?: I.ThemesQueryVariables): IntegraflowFetch<ProjectThemeCountableConnection | undefined> {
         return new ThemesQuery(this._request).fetch(variables);
     }
     /**

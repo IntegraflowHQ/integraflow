@@ -726,8 +726,7 @@ type Mutation {
 
     Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
     """
-    organizationInviteLinkReset: OrganizationInviteLinkReset
-        @doc(category: "Organizations")
+    organizationInviteLinkReset: OrganizationInviteLinkReset @doc(category: "Organizations")
     """
     Joins an organization
 
@@ -1293,8 +1292,7 @@ type OrganizationInviteLink @doc(category: "Organizations") {
 """
 The organization invite that was created or updated.
 """
-type OrganizationInviteLinkDetails implements Node
-    @doc(category: "Organizations") {
+type OrganizationInviteLinkDetails implements Node @doc(category: "Organizations") {
     """
     The ID of the object.
     """
@@ -1959,8 +1957,7 @@ type Query {
 
     Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
     """
-    organizationInviteLink: OrganizationInviteLink
-        @doc(category: "Organizations")
+    organizationInviteLink: OrganizationInviteLink @doc(category: "Organizations")
     """
     List of persons.
 
@@ -2055,8 +2052,6 @@ type Query {
     ): Survey @doc(category: "Surveys")
     """
     Look up a survey by channel ID or link.
-
-    Requires one of the following permissions: AUTHENTICATED_API.
     """
     surveyByChannel(
         """
@@ -2671,6 +2666,7 @@ type SurveyQuestionDelete @doc(category: "Surveys") {
 
 enum SurveyQuestionTypeEnum {
     BOOLEAN
+    CES
     CSAT
     CTA
     CUSTOM

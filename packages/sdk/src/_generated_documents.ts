@@ -1,12 +1,8 @@
 import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/core";
 export type Maybe<T> = T | null;
-export type Exact<T extends { [key: string]: unknown }> = {
-    [K in keyof T]: T[K];
-};
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
-    { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
-    { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
     ID: string;
@@ -414,9 +410,7 @@ export type GoogleUserAuth = {
     userErrors: Array<UserError>;
 };
 
-export type InviteDetails =
-    | OrganizationInviteDetails
-    | OrganizationInviteLinkDetails;
+export type InviteDetails = OrganizationInviteDetails | OrganizationInviteLinkDetails;
 
 /**
  * Deactivate all JWT tokens of the currently authenticated user.
@@ -1334,11 +1328,7 @@ export type Query = {
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS, AUTHENTICATED_API.
      */
     survey?: Maybe<Survey>;
-    /**
-     * Look up a survey by channel ID or link.
-     *
-     * Requires one of the following permissions: AUTHENTICATED_API.
-     */
+    /** Look up a survey by channel ID or link. */
     surveyByChannel?: Maybe<BaseSurvey>;
     /**
      * List of the project's surveys.
@@ -1843,6 +1833,7 @@ export type SurveyQuestionDelete = {
 
 export enum SurveyQuestionTypeEnum {
     Boolean = "BOOLEAN",
+    Ces = "CES",
     Csat = "CSAT",
     Cta = "CTA",
     Custom = "CUSTOM",
@@ -2163,89 +2154,53 @@ export type _Service = {
     sdl?: Maybe<Scalars["String"]>;
 };
 
-type Node_AuthOrganization_Fragment = { __typename: "AuthOrganization" } & Pick<
-    AuthOrganization,
-    "id"
->;
+type Node_AuthOrganization_Fragment = { __typename: "AuthOrganization" } & Pick<AuthOrganization, "id">;
 
 type Node_AuthUser_Fragment = { __typename: "AuthUser" } & Pick<AuthUser, "id">;
 
-type Node_BaseProject_Fragment = { __typename: "BaseProject" } & Pick<
-    BaseProject,
-    "id"
->;
+type Node_BaseProject_Fragment = { __typename: "BaseProject" } & Pick<BaseProject, "id">;
 
-type Node_BaseProjectTheme_Fragment = { __typename: "BaseProjectTheme" } & Pick<
-    BaseProjectTheme,
-    "id"
->;
+type Node_BaseProjectTheme_Fragment = { __typename: "BaseProjectTheme" } & Pick<BaseProjectTheme, "id">;
 
-type Node_BaseSurvey_Fragment = { __typename: "BaseSurvey" } & Pick<
-    BaseSurvey,
-    "id"
->;
+type Node_BaseSurvey_Fragment = { __typename: "BaseSurvey" } & Pick<BaseSurvey, "id">;
 
-type Node_BaseSurveyChannel_Fragment = {
-    __typename: "BaseSurveyChannel";
-} & Pick<BaseSurveyChannel, "id">;
+type Node_BaseSurveyChannel_Fragment = { __typename: "BaseSurveyChannel" } & Pick<BaseSurveyChannel, "id">;
 
-type Node_BaseSurveyQuestion_Fragment = {
-    __typename: "BaseSurveyQuestion";
-} & Pick<BaseSurveyQuestion, "id">;
+type Node_BaseSurveyQuestion_Fragment = { __typename: "BaseSurveyQuestion" } & Pick<BaseSurveyQuestion, "id">;
 
 type Node_Event_Fragment = { __typename: "Event" } & Pick<Event, "id">;
 
-type Node_EventDefinition_Fragment = { __typename: "EventDefinition" } & Pick<
-    EventDefinition,
+type Node_EventDefinition_Fragment = { __typename: "EventDefinition" } & Pick<EventDefinition, "id">;
+
+type Node_EventProperty_Fragment = { __typename: "EventProperty" } & Pick<EventProperty, "id">;
+
+type Node_Organization_Fragment = { __typename: "Organization" } & Pick<Organization, "id">;
+
+type Node_OrganizationInvite_Fragment = { __typename: "OrganizationInvite" } & Pick<OrganizationInvite, "id">;
+
+type Node_OrganizationInviteDetails_Fragment = { __typename: "OrganizationInviteDetails" } & Pick<
+    OrganizationInviteDetails,
     "id"
 >;
 
-type Node_EventProperty_Fragment = { __typename: "EventProperty" } & Pick<
-    EventProperty,
+type Node_OrganizationInviteLinkDetails_Fragment = { __typename: "OrganizationInviteLinkDetails" } & Pick<
+    OrganizationInviteLinkDetails,
     "id"
 >;
-
-type Node_Organization_Fragment = { __typename: "Organization" } & Pick<
-    Organization,
-    "id"
->;
-
-type Node_OrganizationInvite_Fragment = {
-    __typename: "OrganizationInvite";
-} & Pick<OrganizationInvite, "id">;
-
-type Node_OrganizationInviteDetails_Fragment = {
-    __typename: "OrganizationInviteDetails";
-} & Pick<OrganizationInviteDetails, "id">;
-
-type Node_OrganizationInviteLinkDetails_Fragment = {
-    __typename: "OrganizationInviteLinkDetails";
-} & Pick<OrganizationInviteLinkDetails, "id">;
 
 type Node_Person_Fragment = { __typename: "Person" } & Pick<Person, "id">;
 
 type Node_Project_Fragment = { __typename: "Project" } & Pick<Project, "id">;
 
-type Node_ProjectTheme_Fragment = { __typename: "ProjectTheme" } & Pick<
-    ProjectTheme,
-    "id"
->;
+type Node_ProjectTheme_Fragment = { __typename: "ProjectTheme" } & Pick<ProjectTheme, "id">;
 
-type Node_PropertyDefinition_Fragment = {
-    __typename: "PropertyDefinition";
-} & Pick<PropertyDefinition, "id">;
+type Node_PropertyDefinition_Fragment = { __typename: "PropertyDefinition" } & Pick<PropertyDefinition, "id">;
 
 type Node_Survey_Fragment = { __typename: "Survey" } & Pick<Survey, "id">;
 
-type Node_SurveyChannel_Fragment = { __typename: "SurveyChannel" } & Pick<
-    SurveyChannel,
-    "id"
->;
+type Node_SurveyChannel_Fragment = { __typename: "SurveyChannel" } & Pick<SurveyChannel, "id">;
 
-type Node_SurveyQuestion_Fragment = { __typename: "SurveyQuestion" } & Pick<
-    SurveyQuestion,
-    "id"
->;
+type Node_SurveyQuestion_Fragment = { __typename: "SurveyQuestion" } & Pick<SurveyQuestion, "id">;
 
 type Node_User_Fragment = { __typename: "User" } & Pick<User, "id">;
 
@@ -2273,62 +2228,42 @@ export type NodeFragment =
     | Node_SurveyQuestion_Fragment
     | Node_User_Fragment;
 
-export type EmailTokenUserAuthFragment = {
-    __typename: "EmailTokenUserAuth";
-} & Pick<EmailTokenUserAuth, "token" | "csrfToken" | "refreshToken"> & {
+export type EmailTokenUserAuthFragment = { __typename: "EmailTokenUserAuth" } & Pick<
+    EmailTokenUserAuth,
+    "token" | "csrfToken" | "refreshToken"
+> & {
         user?: Maybe<{ __typename?: "AuthUser" } & AuthUserFragment>;
         errors: Array<{ __typename?: "UserError" } & UserErrorFragment>;
         userErrors: Array<{ __typename?: "UserError" } & UserErrorFragment>;
     };
 
-export type EventCaptureFragment = { __typename: "EventCapture" } & Pick<
-    EventCapture,
-    "status"
-> & {
+export type EventCaptureFragment = { __typename: "EventCapture" } & Pick<EventCapture, "status"> & {
         errors: Array<{ __typename?: "EventError" } & EventErrorFragment>;
         eventErrors: Array<{ __typename?: "EventError" } & EventErrorFragment>;
     };
 
-export type SurveyChannelCreateFragment = {
-    __typename: "SurveyChannelCreate";
-} & {
-    surveyChannel?: Maybe<
-        { __typename?: "SurveyChannel" } & SurveyChannelFragment
-    >;
+export type SurveyChannelCreateFragment = { __typename: "SurveyChannelCreate" } & {
+    surveyChannel?: Maybe<{ __typename?: "SurveyChannel" } & SurveyChannelFragment>;
     errors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
     surveyErrors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
 };
 
-export type OrganizationInviteCreateFragment = {
-    __typename: "OrganizationInviteCreate";
-} & {
-    errors: Array<
-        { __typename?: "OrganizationError" } & OrganizationErrorFragment
-    >;
-    organizationErrors: Array<
-        { __typename?: "OrganizationError" } & OrganizationErrorFragment
-    >;
-    organizationInvite?: Maybe<
-        { __typename?: "OrganizationInvite" } & OrganizationInviteFragment
-    >;
+export type OrganizationInviteCreateFragment = { __typename: "OrganizationInviteCreate" } & {
+    errors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
+    organizationErrors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
+    organizationInvite?: Maybe<{ __typename?: "OrganizationInvite" } & OrganizationInviteFragment>;
 };
 
 export type ProjectCreateFragment = { __typename: "ProjectCreate" } & {
     errors: Array<{ __typename?: "ProjectError" } & ProjectErrorFragment>;
     project?: Maybe<{ __typename?: "Project" } & ProjectFragment>;
-    projectErrors: Array<
-        { __typename?: "ProjectError" } & ProjectErrorFragment
-    >;
+    projectErrors: Array<{ __typename?: "ProjectError" } & ProjectErrorFragment>;
 };
 
-export type SurveyQuestionCreateFragment = {
-    __typename: "SurveyQuestionCreate";
-} & {
+export type SurveyQuestionCreateFragment = { __typename: "SurveyQuestionCreate" } & {
     errors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
     surveyErrors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
-    surveyQuestion?: Maybe<
-        { __typename?: "SurveyQuestion" } & SurveyQuestionFragment
-    >;
+    surveyQuestion?: Maybe<{ __typename?: "SurveyQuestion" } & SurveyQuestionFragment>;
 };
 
 export type SurveyCreateFragment = { __typename: "SurveyCreate" } & {
@@ -2337,40 +2272,25 @@ export type SurveyCreateFragment = { __typename: "SurveyCreate" } & {
     surveyErrors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
 };
 
-export type ProjectThemeCreateFragment = {
-    __typename: "ProjectThemeCreate";
-} & {
+export type ProjectThemeCreateFragment = { __typename: "ProjectThemeCreate" } & {
     errors: Array<{ __typename?: "ProjectError" } & ProjectErrorFragment>;
-    projectErrors: Array<
-        { __typename?: "ProjectError" } & ProjectErrorFragment
-    >;
-    projectTheme?: Maybe<
-        { __typename?: "ProjectTheme" } & ProjectThemeFragment
-    >;
+    projectErrors: Array<{ __typename?: "ProjectError" } & ProjectErrorFragment>;
+    projectTheme?: Maybe<{ __typename?: "ProjectTheme" } & ProjectThemeFragment>;
 };
 
-export type SurveyResponseCreateFragment = {
-    __typename: "SurveyResponseCreate";
-} & Pick<SurveyResponseCreate, "responseId" | "status"> & {
+export type SurveyResponseCreateFragment = { __typename: "SurveyResponseCreate" } & Pick<
+    SurveyResponseCreate,
+    "responseId" | "status"
+> & {
         errors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
-        surveyErrors: Array<
-            { __typename?: "SurveyError" } & SurveyErrorFragment
-        >;
+        surveyErrors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
     };
 
-export type OrganizationCreateFragment = {
-    __typename: "OrganizationCreate";
-} & {
+export type OrganizationCreateFragment = { __typename: "OrganizationCreate" } & {
     user?: Maybe<{ __typename?: "AuthUser" } & AuthUserFragment>;
-    organization?: Maybe<
-        { __typename?: "AuthOrganization" } & AuthOrganizationFragment
-    >;
-    errors: Array<
-        { __typename?: "OrganizationError" } & OrganizationErrorFragment
-    >;
-    organizationErrors: Array<
-        { __typename?: "OrganizationError" } & OrganizationErrorFragment
-    >;
+    organization?: Maybe<{ __typename?: "AuthOrganization" } & AuthOrganizationFragment>;
+    errors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
+    organizationErrors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
 };
 
 export type LogoutFragment = { __typename: "Logout" } & {
@@ -2378,24 +2298,16 @@ export type LogoutFragment = { __typename: "Logout" } & {
     userErrors: Array<{ __typename?: "UserError" } & UserErrorFragment>;
 };
 
-export type SurveyChannelDeleteFragment = {
-    __typename: "SurveyChannelDelete";
-} & {
+export type SurveyChannelDeleteFragment = { __typename: "SurveyChannelDelete" } & {
     errors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
-    surveyChannel?: Maybe<
-        { __typename?: "SurveyChannel" } & SurveyChannelFragment
-    >;
+    surveyChannel?: Maybe<{ __typename?: "SurveyChannel" } & SurveyChannelFragment>;
     surveyErrors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
 };
 
-export type SurveyQuestionDeleteFragment = {
-    __typename: "SurveyQuestionDelete";
-} & {
+export type SurveyQuestionDeleteFragment = { __typename: "SurveyQuestionDelete" } & {
     errors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
     surveyErrors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
-    surveyQuestion?: Maybe<
-        { __typename?: "SurveyQuestion" } & SurveyQuestionFragment
-    >;
+    surveyQuestion?: Maybe<{ __typename?: "SurveyQuestion" } & SurveyQuestionFragment>;
 };
 
 export type SurveyDeleteFragment = { __typename: "SurveyDelete" } & {
@@ -2404,21 +2316,16 @@ export type SurveyDeleteFragment = { __typename: "SurveyDelete" } & {
     surveyErrors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
 };
 
-export type ProjectThemeDeleteFragment = {
-    __typename: "ProjectThemeDelete";
-} & {
+export type ProjectThemeDeleteFragment = { __typename: "ProjectThemeDelete" } & {
     errors: Array<{ __typename?: "ProjectError" } & ProjectErrorFragment>;
-    projectErrors: Array<
-        { __typename?: "ProjectError" } & ProjectErrorFragment
-    >;
-    projectTheme?: Maybe<
-        { __typename?: "ProjectTheme" } & ProjectThemeFragment
-    >;
+    projectErrors: Array<{ __typename?: "ProjectError" } & ProjectErrorFragment>;
+    projectTheme?: Maybe<{ __typename?: "ProjectTheme" } & ProjectThemeFragment>;
 };
 
-export type EmailUserAuthChallengeFragment = {
-    __typename: "EmailUserAuthChallenge";
-} & Pick<EmailUserAuthChallenge, "authType" | "success"> & {
+export type EmailUserAuthChallengeFragment = { __typename: "EmailUserAuthChallenge" } & Pick<
+    EmailUserAuthChallenge,
+    "authType" | "success"
+> & {
         errors: Array<{ __typename?: "UserError" } & UserErrorFragment>;
         userErrors: Array<{ __typename?: "UserError" } & UserErrorFragment>;
     };
@@ -2434,18 +2341,11 @@ export type GoogleUserAuthFragment = { __typename: "GoogleUserAuth" } & Pick<
 
 export type OrganizationJoinFragment = { __typename: "OrganizationJoin" } & {
     user: { __typename?: "AuthUser" } & AuthUserFragment;
-    errors: Array<
-        { __typename?: "OrganizationError" } & OrganizationErrorFragment
-    >;
-    organizationErrors: Array<
-        { __typename?: "OrganizationError" } & OrganizationErrorFragment
-    >;
+    errors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
+    organizationErrors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
 };
 
-export type RefreshTokenFragment = { __typename: "RefreshToken" } & Pick<
-    RefreshToken,
-    "token"
-> & {
+export type RefreshTokenFragment = { __typename: "RefreshToken" } & Pick<RefreshToken, "token"> & {
         errors: Array<{ __typename?: "UserError" } & UserErrorFragment>;
         userErrors: Array<{ __typename?: "UserError" } & UserErrorFragment>;
     };
@@ -2455,46 +2355,21 @@ export type PersonFragment = { __typename: "Person" } & Pick<
     "id" | "attributes" | "distinctIds" | "uuid" | "createdAt" | "isIdentified"
 > & { project: { __typename?: "Project" } & ProjectFragment };
 
-export type BaseProjectFragment = { __typename: "BaseProject" } & Pick<
-    BaseProject,
-    "apiToken" | "name" | "id"
->;
+export type BaseProjectFragment = { __typename: "BaseProject" } & Pick<BaseProject, "apiToken" | "name" | "id">;
 
 export type ProjectFragment = { __typename: "Project" } & Pick<
     Project,
-    | "apiToken"
-    | "name"
-    | "slug"
-    | "id"
-    | "hasCompletedOnboardingFor"
-    | "timezone"
-    | "accessControl"
-> & {
-        organization: {
-            __typename?: "AuthOrganization";
-        } & AuthOrganizationFragment;
-    };
+    "apiToken" | "name" | "slug" | "id" | "hasCompletedOnboardingFor" | "timezone" | "accessControl"
+> & { organization: { __typename?: "AuthOrganization" } & AuthOrganizationFragment };
 
-export type PropertyDefinitionFragment = {
-    __typename: "PropertyDefinition";
-} & Pick<
+export type PropertyDefinitionFragment = { __typename: "PropertyDefinition" } & Pick<
     PropertyDefinition,
     "id" | "name" | "propertyType" | "type" | "isNumerical"
 > & { project: { __typename?: "Project" } & ProjectFragment };
 
-export type BaseSurveyQuestionFragment = {
-    __typename: "BaseSurveyQuestion";
-} & Pick<
+export type BaseSurveyQuestionFragment = { __typename: "BaseSurveyQuestion" } & Pick<
     BaseSurveyQuestion,
-    | "description"
-    | "label"
-    | "id"
-    | "options"
-    | "maxPath"
-    | "orderNumber"
-    | "settings"
-    | "createdAt"
-    | "type"
+    "description" | "label" | "id" | "options" | "maxPath" | "orderNumber" | "settings" | "createdAt" | "type"
 >;
 
 export type SurveyQuestionFragment = { __typename: "SurveyQuestion" } & Pick<
@@ -2511,102 +2386,50 @@ export type SurveyQuestionFragment = { __typename: "SurveyQuestion" } & Pick<
     | "type"
 > & { survey?: Maybe<{ __typename?: "Survey" } & SurveyFragment> };
 
-export type BaseSurveyChannelFragment = {
-    __typename: "BaseSurveyChannel";
-} & Pick<
+export type BaseSurveyChannelFragment = { __typename: "BaseSurveyChannel" } & Pick<
     BaseSurveyChannel,
-    | "id"
-    | "triggers"
-    | "conditions"
-    | "settings"
-    | "createdAt"
-    | "type"
-    | "link"
+    "id" | "triggers" | "conditions" | "settings" | "createdAt" | "type" | "link"
 >;
 
 export type SurveyChannelFragment = { __typename: "SurveyChannel" } & Pick<
     SurveyChannel,
-    | "reference"
-    | "id"
-    | "triggers"
-    | "conditions"
-    | "settings"
-    | "createdAt"
-    | "type"
-    | "link"
+    "reference" | "id" | "triggers" | "conditions" | "settings" | "createdAt" | "type" | "link"
 > & { survey?: Maybe<{ __typename?: "Survey" } & SurveyFragment> };
 
 export type BaseSurveyFragment = { __typename: "BaseSurvey" } & Pick<
     BaseSurvey,
-    | "name"
-    | "slug"
-    | "id"
-    | "endDate"
-    | "startDate"
-    | "settings"
-    | "status"
-    | "createdAt"
+    "name" | "slug" | "id" | "endDate" | "startDate" | "settings" | "status" | "createdAt"
 > & {
-        channels: Array<
-            { __typename?: "BaseSurveyChannel" } & BaseSurveyChannelFragment
-        >;
+        channels: Array<{ __typename?: "BaseSurveyChannel" } & BaseSurveyChannelFragment>;
         project?: Maybe<{ __typename?: "BaseProject" } & BaseProjectFragment>;
-        questions: Array<
-            { __typename?: "BaseSurveyQuestion" } & BaseSurveyQuestionFragment
-        >;
-        theme?: Maybe<
-            { __typename?: "BaseProjectTheme" } & BaseProjectThemeFragment
-        >;
+        questions: Array<{ __typename?: "BaseSurveyQuestion" } & BaseSurveyQuestionFragment>;
+        theme?: Maybe<{ __typename?: "BaseProjectTheme" } & BaseProjectThemeFragment>;
     };
 
 export type SurveyFragment = { __typename: "Survey" } & Pick<
     Survey,
-    | "reference"
-    | "name"
-    | "slug"
-    | "id"
-    | "updatedAt"
-    | "settings"
-    | "status"
-    | "createdAt"
-    | "type"
+    "reference" | "name" | "slug" | "id" | "updatedAt" | "settings" | "status" | "createdAt" | "type"
 > & {
         project?: Maybe<{ __typename?: "Project" } & ProjectFragment>;
         theme?: Maybe<{ __typename?: "ProjectTheme" } & ProjectThemeFragment>;
         creator: { __typename?: "User" } & UserFragment;
     };
 
-export type BaseProjectThemeFragment = {
-    __typename: "BaseProjectTheme";
-} & Pick<BaseProjectTheme, "name" | "id" | "colorScheme" | "settings">;
+export type BaseProjectThemeFragment = { __typename: "BaseProjectTheme" } & Pick<
+    BaseProjectTheme,
+    "name" | "id" | "colorScheme" | "settings"
+>;
 
 export type ProjectThemeFragment = { __typename: "ProjectTheme" } & Pick<
     ProjectTheme,
-    | "reference"
-    | "name"
-    | "id"
-    | "updatedAt"
-    | "colorScheme"
-    | "settings"
-    | "createdAt"
-> & {
-        project: { __typename?: "Project" } & ProjectFragment;
-        creator: { __typename?: "User" } & UserFragment;
-    };
+    "reference" | "name" | "id" | "updatedAt" | "colorScheme" | "settings" | "createdAt"
+> & { project: { __typename?: "Project" } & ProjectFragment; creator: { __typename?: "User" } & UserFragment };
 
 export type AuthUserFragment = { __typename: "AuthUser" } & Pick<
     AuthUser,
-    | "isOnboarded"
-    | "isStaff"
-    | "isActive"
-    | "id"
-    | "email"
-    | "lastName"
-    | "firstName"
+    "isOnboarded" | "isStaff" | "isActive" | "id" | "email" | "lastName" | "firstName"
 > & {
-        organization?: Maybe<
-            { __typename?: "AuthOrganization" } & AuthOrganizationFragment
-        >;
+        organization?: Maybe<{ __typename?: "AuthOrganization" } & AuthOrganizationFragment>;
         project?: Maybe<{ __typename?: "Project" } & ProjectFragment>;
     };
 
@@ -2625,64 +2448,43 @@ export type EventFragment = { __typename: "Event" } & Pick<
     "id" | "distinctId" | "event" | "properties" | "timestamp" | "createdAt"
 > & { project: { __typename?: "Project" } & ProjectFragment };
 
-export type AuthOrganizationFragment = {
-    __typename: "AuthOrganization";
-} & Pick<AuthOrganization, "memberCount" | "name" | "slug" | "id">;
+export type AuthOrganizationFragment = { __typename: "AuthOrganization" } & Pick<
+    AuthOrganization,
+    "memberCount" | "name" | "slug" | "id"
+>;
 
 export type OrganizationFragment = { __typename: "Organization" } & Pick<
     Organization,
     "memberCount" | "name" | "slug" | "id"
 >;
 
-export type EventErrorFragment = { __typename: "EventError" } & Pick<
-    EventError,
+export type EventErrorFragment = { __typename: "EventError" } & Pick<EventError, "field" | "code" | "message">;
+
+export type OrganizationErrorFragment = { __typename: "OrganizationError" } & Pick<
+    OrganizationError,
     "field" | "code" | "message"
 >;
 
-export type OrganizationErrorFragment = {
-    __typename: "OrganizationError";
-} & Pick<OrganizationError, "field" | "code" | "message">;
+export type ProjectErrorFragment = { __typename: "ProjectError" } & Pick<ProjectError, "field" | "code" | "message">;
 
-export type ProjectErrorFragment = { __typename: "ProjectError" } & Pick<
-    ProjectError,
-    "field" | "code" | "message"
->;
+export type SurveyErrorFragment = { __typename: "SurveyError" } & Pick<SurveyError, "field" | "code" | "message">;
 
-export type SurveyErrorFragment = { __typename: "SurveyError" } & Pick<
-    SurveyError,
-    "field" | "code" | "message"
->;
-
-export type UserErrorFragment = { __typename: "UserError" } & Pick<
-    UserError,
-    "field" | "code" | "message"
->;
+export type UserErrorFragment = { __typename: "UserError" } & Pick<UserError, "field" | "code" | "message">;
 
 export type UserFragment = { __typename: "User" } & Pick<
     User,
-    | "isOnboarded"
-    | "isStaff"
-    | "isActive"
-    | "id"
-    | "email"
-    | "lastName"
-    | "firstName"
+    "isOnboarded" | "isStaff" | "isActive" | "id" | "email" | "lastName" | "firstName"
 > & {
-        organization?: Maybe<
-            { __typename?: "AuthOrganization" } & AuthOrganizationFragment
-        >;
+        organization?: Maybe<{ __typename?: "AuthOrganization" } & AuthOrganizationFragment>;
         project?: Maybe<{ __typename?: "Project" } & ProjectFragment>;
     };
 
-export type OrganizationInviteLinkResetFragment = {
-    __typename: "OrganizationInviteLinkReset";
-} & Pick<OrganizationInviteLinkReset, "inviteLink" | "success"> & {
-        errors: Array<
-            { __typename?: "OrganizationError" } & OrganizationErrorFragment
-        >;
-        organizationErrors: Array<
-            { __typename?: "OrganizationError" } & OrganizationErrorFragment
-        >;
+export type OrganizationInviteLinkResetFragment = { __typename: "OrganizationInviteLinkReset" } & Pick<
+    OrganizationInviteLinkReset,
+    "inviteLink" | "success"
+> & {
+        errors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
+        organizationErrors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
     };
 
 export type PageInfoFragment = { __typename: "PageInfo" } & Pick<
@@ -2690,29 +2492,20 @@ export type PageInfoFragment = { __typename: "PageInfo" } & Pick<
     "hasPreviousPage" | "startCursor" | "hasNextPage" | "endCursor"
 >;
 
-export type OrganizationInviteLinkFragment = {
-    __typename: "OrganizationInviteLink";
-} & Pick<OrganizationInviteLink, "inviteLink">;
+export type OrganizationInviteLinkFragment = { __typename: "OrganizationInviteLink" } & Pick<
+    OrganizationInviteLink,
+    "inviteLink"
+>;
 
-export type OrganizationInviteFragment = {
-    __typename: "OrganizationInvite";
-} & Pick<
+export type OrganizationInviteFragment = { __typename: "OrganizationInvite" } & Pick<
     OrganizationInvite,
-    | "firstName"
-    | "expired"
-    | "email"
-    | "updatedAt"
-    | "createdAt"
-    | "id"
-    | "role"
+    "firstName" | "expired" | "email" | "updatedAt" | "createdAt" | "id" | "role"
 > & {
         organization: { __typename?: "Organization" } & OrganizationFragment;
         inviter: { __typename?: "User" } & UserFragment;
     };
 
-export type OrganizationInviteDetailsFragment = {
-    __typename: "OrganizationInviteDetails";
-} & Pick<
+export type OrganizationInviteDetailsFragment = { __typename: "OrganizationInviteDetails" } & Pick<
     OrganizationInviteDetails,
     | "firstName"
     | "expired"
@@ -2727,48 +2520,35 @@ export type OrganizationInviteDetailsFragment = {
     | "role"
 >;
 
-export type OrganizationInviteLinkDetailsFragment = {
-    __typename: "OrganizationInviteLinkDetails";
-} & Pick<
+export type OrganizationInviteLinkDetailsFragment = { __typename: "OrganizationInviteLinkDetails" } & Pick<
     OrganizationInviteLinkDetails,
     "id" | "organizationId" | "organizationLogo" | "organizationName"
 >;
 
-export type SurveyChannelUpdateFragment = {
-    __typename: "SurveyChannelUpdate";
-} & {
+export type SurveyChannelUpdateFragment = { __typename: "SurveyChannelUpdate" } & {
     errors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
-    surveyChannel?: Maybe<
-        { __typename?: "SurveyChannel" } & SurveyChannelFragment
-    >;
+    surveyChannel?: Maybe<{ __typename?: "SurveyChannel" } & SurveyChannelFragment>;
     surveyErrors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
 };
 
 export type ProjectUpdateFragment = { __typename: "ProjectUpdate" } & {
     errors: Array<{ __typename?: "ProjectError" } & ProjectErrorFragment>;
     project?: Maybe<{ __typename?: "Project" } & ProjectFragment>;
-    projectErrors: Array<
-        { __typename?: "ProjectError" } & ProjectErrorFragment
-    >;
+    projectErrors: Array<{ __typename?: "ProjectError" } & ProjectErrorFragment>;
 };
 
-export type SurveyQuestionUpdateFragment = {
-    __typename: "SurveyQuestionUpdate";
-} & {
+export type SurveyQuestionUpdateFragment = { __typename: "SurveyQuestionUpdate" } & {
     errors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
     surveyErrors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
-    surveyQuestion?: Maybe<
-        { __typename?: "SurveyQuestion" } & SurveyQuestionFragment
-    >;
+    surveyQuestion?: Maybe<{ __typename?: "SurveyQuestion" } & SurveyQuestionFragment>;
 };
 
-export type SurveyResponseUpdateFragment = {
-    __typename: "SurveyResponseUpdate";
-} & Pick<SurveyResponseUpdate, "status"> & {
+export type SurveyResponseUpdateFragment = { __typename: "SurveyResponseUpdate" } & Pick<
+    SurveyResponseUpdate,
+    "status"
+> & {
         errors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
-        surveyErrors: Array<
-            { __typename?: "SurveyError" } & SurveyErrorFragment
-        >;
+        surveyErrors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
     };
 
 export type SurveyUpdateFragment = { __typename: "SurveyUpdate" } & {
@@ -2783,77 +2563,74 @@ export type UserUpdateFragment = { __typename: "UserUpdate" } & {
     userErrors: Array<{ __typename?: "UserError" } & UserErrorFragment>;
 };
 
-export type ProjectThemeUpdateFragment = {
-    __typename: "ProjectThemeUpdate";
-} & {
+export type ProjectThemeUpdateFragment = { __typename: "ProjectThemeUpdate" } & {
     errors: Array<{ __typename?: "ProjectError" } & ProjectErrorFragment>;
-    projectErrors: Array<
-        { __typename?: "ProjectError" } & ProjectErrorFragment
-    >;
-    projectTheme?: Maybe<
-        { __typename?: "ProjectTheme" } & ProjectThemeFragment
-    >;
+    projectErrors: Array<{ __typename?: "ProjectError" } & ProjectErrorFragment>;
+    projectTheme?: Maybe<{ __typename?: "ProjectTheme" } & ProjectThemeFragment>;
 };
 
-export type _ServiceFragment = { __typename: "_Service" } & Pick<
-    _Service,
-    "sdl"
->;
+export type _ServiceFragment = { __typename: "_Service" } & Pick<_Service, "sdl">;
 
-export type BaseSurveyCountableConnectionFragment = {
-    __typename: "BaseSurveyCountableConnection";
-} & Pick<BaseSurveyCountableConnection, "totalCount"> & {
+export type BaseSurveyCountableConnectionFragment = { __typename: "BaseSurveyCountableConnection" } & Pick<
+    BaseSurveyCountableConnection,
+    "totalCount"
+> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
         nodes: Array<{ __typename?: "BaseSurvey" } & BaseSurveyFragment>;
     };
 
-export type EventCountableConnectionFragment = {
-    __typename: "EventCountableConnection";
-} & Pick<EventCountableConnection, "totalCount"> & {
+export type EventCountableConnectionFragment = { __typename: "EventCountableConnection" } & Pick<
+    EventCountableConnection,
+    "totalCount"
+> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
         nodes: Array<{ __typename?: "Event" } & EventFragment>;
     };
 
-export type EventDefinitionCountableConnectionFragment = {
-    __typename: "EventDefinitionCountableConnection";
-} & Pick<EventDefinitionCountableConnection, "totalCount"> & {
+export type EventDefinitionCountableConnectionFragment = { __typename: "EventDefinitionCountableConnection" } & Pick<
+    EventDefinitionCountableConnection,
+    "totalCount"
+> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
-        nodes: Array<
-            { __typename?: "EventDefinition" } & EventDefinitionFragment
-        >;
+        nodes: Array<{ __typename?: "EventDefinition" } & EventDefinitionFragment>;
     };
 
-export type EventPropertyCountableConnectionFragment = {
-    __typename: "EventPropertyCountableConnection";
-} & Pick<EventPropertyCountableConnection, "totalCount"> & {
+export type EventPropertyCountableConnectionFragment = { __typename: "EventPropertyCountableConnection" } & Pick<
+    EventPropertyCountableConnection,
+    "totalCount"
+> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
         nodes: Array<{ __typename?: "EventProperty" } & EventPropertyFragment>;
     };
 
-export type OrganizationCountableConnectionFragment = {
-    __typename: "OrganizationCountableConnection";
-} & Pick<OrganizationCountableConnection, "totalCount"> & {
+export type OrganizationCountableConnectionFragment = { __typename: "OrganizationCountableConnection" } & Pick<
+    OrganizationCountableConnection,
+    "totalCount"
+> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
         nodes: Array<{ __typename?: "Organization" } & OrganizationFragment>;
     };
 
-export type PersonCountableConnectionFragment = {
-    __typename: "PersonCountableConnection";
-} & Pick<PersonCountableConnection, "totalCount"> & {
+export type PersonCountableConnectionFragment = { __typename: "PersonCountableConnection" } & Pick<
+    PersonCountableConnection,
+    "totalCount"
+> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
         nodes: Array<{ __typename?: "Person" } & PersonFragment>;
     };
 
-export type ProjectCountableConnectionFragment = {
-    __typename: "ProjectCountableConnection";
-} & Pick<ProjectCountableConnection, "totalCount"> & {
+export type ProjectCountableConnectionFragment = { __typename: "ProjectCountableConnection" } & Pick<
+    ProjectCountableConnection,
+    "totalCount"
+> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
         nodes: Array<{ __typename?: "Project" } & ProjectFragment>;
     };
 
-export type ProjectThemeCountableConnectionFragment = {
-    __typename: "ProjectThemeCountableConnection";
-} & Pick<ProjectThemeCountableConnection, "totalCount"> & {
+export type ProjectThemeCountableConnectionFragment = { __typename: "ProjectThemeCountableConnection" } & Pick<
+    ProjectThemeCountableConnection,
+    "totalCount"
+> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
         nodes: Array<{ __typename?: "ProjectTheme" } & ProjectThemeFragment>;
     };
@@ -2862,40 +2639,37 @@ export type PropertyDefinitionCountableConnectionFragment = {
     __typename: "PropertyDefinitionCountableConnection";
 } & Pick<PropertyDefinitionCountableConnection, "totalCount"> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
-        nodes: Array<
-            { __typename?: "PropertyDefinition" } & PropertyDefinitionFragment
-        >;
+        nodes: Array<{ __typename?: "PropertyDefinition" } & PropertyDefinitionFragment>;
     };
 
-export type SurveyChannelCountableConnectionFragment = {
-    __typename: "SurveyChannelCountableConnection";
-} & Pick<SurveyChannelCountableConnection, "totalCount"> & {
+export type SurveyChannelCountableConnectionFragment = { __typename: "SurveyChannelCountableConnection" } & Pick<
+    SurveyChannelCountableConnection,
+    "totalCount"
+> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
         nodes: Array<{ __typename?: "SurveyChannel" } & SurveyChannelFragment>;
     };
 
-export type SurveyCountableConnectionFragment = {
-    __typename: "SurveyCountableConnection";
-} & Pick<SurveyCountableConnection, "totalCount"> & {
+export type SurveyCountableConnectionFragment = { __typename: "SurveyCountableConnection" } & Pick<
+    SurveyCountableConnection,
+    "totalCount"
+> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
         nodes: Array<{ __typename?: "Survey" } & SurveyFragment>;
     };
 
-export type SurveyQuestionCountableConnectionFragment = {
-    __typename: "SurveyQuestionCountableConnection";
-} & Pick<SurveyQuestionCountableConnection, "totalCount"> & {
+export type SurveyQuestionCountableConnectionFragment = { __typename: "SurveyQuestionCountableConnection" } & Pick<
+    SurveyQuestionCountableConnection,
+    "totalCount"
+> & {
         pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
-        nodes: Array<
-            { __typename?: "SurveyQuestion" } & SurveyQuestionFragment
-        >;
+        nodes: Array<{ __typename?: "SurveyQuestion" } & SurveyQuestionFragment>;
     };
 
-export type UserCountableConnectionFragment = {
-    __typename: "UserCountableConnection";
-} & Pick<UserCountableConnection, "totalCount"> & {
-        pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
-        nodes: Array<{ __typename?: "User" } & UserFragment>;
-    };
+export type UserCountableConnectionFragment = { __typename: "UserCountableConnection" } & Pick<
+    UserCountableConnection,
+    "totalCount"
+> & { pageInfo: { __typename?: "PageInfo" } & PageInfoFragment; nodes: Array<{ __typename?: "User" } & UserFragment> };
 
 export type EmailTokenUserAuthMutationVariables = Exact<{
     email: Scalars["String"];
@@ -2904,9 +2678,7 @@ export type EmailTokenUserAuthMutationVariables = Exact<{
 }>;
 
 export type EmailTokenUserAuthMutation = { __typename?: "Mutation" } & {
-    emailTokenUserAuth?: Maybe<
-        { __typename?: "EmailTokenUserAuth" } & EmailTokenUserAuthFragment
-    >;
+    emailTokenUserAuth?: Maybe<{ __typename?: "EmailTokenUserAuth" } & EmailTokenUserAuthFragment>;
 };
 
 export type EmailUserAuthChallengeMutationVariables = Exact<{
@@ -2915,11 +2687,7 @@ export type EmailUserAuthChallengeMutationVariables = Exact<{
 }>;
 
 export type EmailUserAuthChallengeMutation = { __typename?: "Mutation" } & {
-    emailUserAuthChallenge?: Maybe<
-        {
-            __typename?: "EmailUserAuthChallenge";
-        } & EmailUserAuthChallengeFragment
-    >;
+    emailUserAuthChallenge?: Maybe<{ __typename?: "EmailUserAuthChallenge" } & EmailUserAuthChallengeFragment>;
 };
 
 export type CaptureEventMutationVariables = Exact<{
@@ -2929,9 +2697,7 @@ export type CaptureEventMutationVariables = Exact<{
 }>;
 
 export type CaptureEventMutation = { __typename?: "Mutation" } & {
-    eventCapture?: Maybe<
-        { __typename?: "EventCapture" } & EventCaptureFragment
-    >;
+    eventCapture?: Maybe<{ __typename?: "EventCapture" } & EventCaptureFragment>;
 };
 
 export type GoogleUserAuthMutationVariables = Exact<{
@@ -2940,9 +2706,7 @@ export type GoogleUserAuthMutationVariables = Exact<{
 }>;
 
 export type GoogleUserAuthMutation = { __typename?: "Mutation" } & {
-    googleUserAuth?: Maybe<
-        { __typename?: "GoogleUserAuth" } & GoogleUserAuthFragment
-    >;
+    googleUserAuth?: Maybe<{ __typename?: "GoogleUserAuth" } & GoogleUserAuthFragment>;
 };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never }>;
@@ -2957,9 +2721,7 @@ export type CreateOrganizationMutationVariables = Exact<{
 }>;
 
 export type CreateOrganizationMutation = { __typename?: "Mutation" } & {
-    organizationCreate?: Maybe<
-        { __typename?: "OrganizationCreate" } & OrganizationCreateFragment
-    >;
+    organizationCreate?: Maybe<{ __typename?: "OrganizationCreate" } & OrganizationCreateFragment>;
 };
 
 export type CreateOrganizationInviteMutationVariables = Exact<{
@@ -2967,24 +2729,14 @@ export type CreateOrganizationInviteMutationVariables = Exact<{
 }>;
 
 export type CreateOrganizationInviteMutation = { __typename?: "Mutation" } & {
-    organizationInviteCreate?: Maybe<
-        {
-            __typename?: "OrganizationInviteCreate";
-        } & OrganizationInviteCreateFragment
-    >;
+    organizationInviteCreate?: Maybe<{ __typename?: "OrganizationInviteCreate" } & OrganizationInviteCreateFragment>;
 };
 
-export type ResetOrganizationInviteLinkMutationVariables = Exact<{
-    [key: string]: never;
-}>;
+export type ResetOrganizationInviteLinkMutationVariables = Exact<{ [key: string]: never }>;
 
-export type ResetOrganizationInviteLinkMutation = {
-    __typename?: "Mutation";
-} & {
+export type ResetOrganizationInviteLinkMutation = { __typename?: "Mutation" } & {
     organizationInviteLinkReset?: Maybe<
-        {
-            __typename?: "OrganizationInviteLinkReset";
-        } & OrganizationInviteLinkResetFragment
+        { __typename?: "OrganizationInviteLinkReset" } & OrganizationInviteLinkResetFragment
     >;
 };
 
@@ -2993,9 +2745,7 @@ export type JoinOrganizationMutationVariables = Exact<{
 }>;
 
 export type JoinOrganizationMutation = { __typename?: "Mutation" } & {
-    organizationJoin?: Maybe<
-        { __typename?: "OrganizationJoin" } & OrganizationJoinFragment
-    >;
+    organizationJoin?: Maybe<{ __typename?: "OrganizationJoin" } & OrganizationJoinFragment>;
 };
 
 export type CreateProjectMutationVariables = Exact<{
@@ -3003,9 +2753,7 @@ export type CreateProjectMutationVariables = Exact<{
 }>;
 
 export type CreateProjectMutation = { __typename?: "Mutation" } & {
-    projectCreate?: Maybe<
-        { __typename?: "ProjectCreate" } & ProjectCreateFragment
-    >;
+    projectCreate?: Maybe<{ __typename?: "ProjectCreate" } & ProjectCreateFragment>;
 };
 
 export type CreateProjectThemeMutationVariables = Exact<{
@@ -3013,9 +2761,7 @@ export type CreateProjectThemeMutationVariables = Exact<{
 }>;
 
 export type CreateProjectThemeMutation = { __typename?: "Mutation" } & {
-    projectThemeCreate?: Maybe<
-        { __typename?: "ProjectThemeCreate" } & ProjectThemeCreateFragment
-    >;
+    projectThemeCreate?: Maybe<{ __typename?: "ProjectThemeCreate" } & ProjectThemeCreateFragment>;
 };
 
 export type DeleteProjectThemeMutationVariables = Exact<{
@@ -3023,9 +2769,7 @@ export type DeleteProjectThemeMutationVariables = Exact<{
 }>;
 
 export type DeleteProjectThemeMutation = { __typename?: "Mutation" } & {
-    projectThemeDelete?: Maybe<
-        { __typename?: "ProjectThemeDelete" } & ProjectThemeDeleteFragment
-    >;
+    projectThemeDelete?: Maybe<{ __typename?: "ProjectThemeDelete" } & ProjectThemeDeleteFragment>;
 };
 
 export type UpdateProjectThemeMutationVariables = Exact<{
@@ -3034,9 +2778,7 @@ export type UpdateProjectThemeMutationVariables = Exact<{
 }>;
 
 export type UpdateProjectThemeMutation = { __typename?: "Mutation" } & {
-    projectThemeUpdate?: Maybe<
-        { __typename?: "ProjectThemeUpdate" } & ProjectThemeUpdateFragment
-    >;
+    projectThemeUpdate?: Maybe<{ __typename?: "ProjectThemeUpdate" } & ProjectThemeUpdateFragment>;
 };
 
 export type UpdateProjectMutationVariables = Exact<{
@@ -3044,9 +2786,7 @@ export type UpdateProjectMutationVariables = Exact<{
 }>;
 
 export type UpdateProjectMutation = { __typename?: "Mutation" } & {
-    projectUpdate?: Maybe<
-        { __typename?: "ProjectUpdate" } & ProjectUpdateFragment
-    >;
+    projectUpdate?: Maybe<{ __typename?: "ProjectUpdate" } & ProjectUpdateFragment>;
 };
 
 export type CreateSurveyChannelMutationVariables = Exact<{
@@ -3054,9 +2794,7 @@ export type CreateSurveyChannelMutationVariables = Exact<{
 }>;
 
 export type CreateSurveyChannelMutation = { __typename?: "Mutation" } & {
-    surveyChannelCreate?: Maybe<
-        { __typename?: "SurveyChannelCreate" } & SurveyChannelCreateFragment
-    >;
+    surveyChannelCreate?: Maybe<{ __typename?: "SurveyChannelCreate" } & SurveyChannelCreateFragment>;
 };
 
 export type DeleteSurveyChannelMutationVariables = Exact<{
@@ -3064,9 +2802,7 @@ export type DeleteSurveyChannelMutationVariables = Exact<{
 }>;
 
 export type DeleteSurveyChannelMutation = { __typename?: "Mutation" } & {
-    surveyChannelDelete?: Maybe<
-        { __typename?: "SurveyChannelDelete" } & SurveyChannelDeleteFragment
-    >;
+    surveyChannelDelete?: Maybe<{ __typename?: "SurveyChannelDelete" } & SurveyChannelDeleteFragment>;
 };
 
 export type UpdateSurveyChannelMutationVariables = Exact<{
@@ -3075,9 +2811,7 @@ export type UpdateSurveyChannelMutationVariables = Exact<{
 }>;
 
 export type UpdateSurveyChannelMutation = { __typename?: "Mutation" } & {
-    surveyChannelUpdate?: Maybe<
-        { __typename?: "SurveyChannelUpdate" } & SurveyChannelUpdateFragment
-    >;
+    surveyChannelUpdate?: Maybe<{ __typename?: "SurveyChannelUpdate" } & SurveyChannelUpdateFragment>;
 };
 
 export type CreateSurveyMutationVariables = Exact<{
@@ -3085,9 +2819,7 @@ export type CreateSurveyMutationVariables = Exact<{
 }>;
 
 export type CreateSurveyMutation = { __typename?: "Mutation" } & {
-    surveyCreate?: Maybe<
-        { __typename?: "SurveyCreate" } & SurveyCreateFragment
-    >;
+    surveyCreate?: Maybe<{ __typename?: "SurveyCreate" } & SurveyCreateFragment>;
 };
 
 export type DeleteSurveyMutationVariables = Exact<{
@@ -3095,9 +2827,7 @@ export type DeleteSurveyMutationVariables = Exact<{
 }>;
 
 export type DeleteSurveyMutation = { __typename?: "Mutation" } & {
-    surveyDelete?: Maybe<
-        { __typename?: "SurveyDelete" } & SurveyDeleteFragment
-    >;
+    surveyDelete?: Maybe<{ __typename?: "SurveyDelete" } & SurveyDeleteFragment>;
 };
 
 export type CreateSurveyQuestionMutationVariables = Exact<{
@@ -3105,9 +2835,7 @@ export type CreateSurveyQuestionMutationVariables = Exact<{
 }>;
 
 export type CreateSurveyQuestionMutation = { __typename?: "Mutation" } & {
-    surveyQuestionCreate?: Maybe<
-        { __typename?: "SurveyQuestionCreate" } & SurveyQuestionCreateFragment
-    >;
+    surveyQuestionCreate?: Maybe<{ __typename?: "SurveyQuestionCreate" } & SurveyQuestionCreateFragment>;
 };
 
 export type DeleteSurveyQuestionMutationVariables = Exact<{
@@ -3115,9 +2843,7 @@ export type DeleteSurveyQuestionMutationVariables = Exact<{
 }>;
 
 export type DeleteSurveyQuestionMutation = { __typename?: "Mutation" } & {
-    surveyQuestionDelete?: Maybe<
-        { __typename?: "SurveyQuestionDelete" } & SurveyQuestionDeleteFragment
-    >;
+    surveyQuestionDelete?: Maybe<{ __typename?: "SurveyQuestionDelete" } & SurveyQuestionDeleteFragment>;
 };
 
 export type UpdateSurveyQuestionMutationVariables = Exact<{
@@ -3126,9 +2852,7 @@ export type UpdateSurveyQuestionMutationVariables = Exact<{
 }>;
 
 export type UpdateSurveyQuestionMutation = { __typename?: "Mutation" } & {
-    surveyQuestionUpdate?: Maybe<
-        { __typename?: "SurveyQuestionUpdate" } & SurveyQuestionUpdateFragment
-    >;
+    surveyQuestionUpdate?: Maybe<{ __typename?: "SurveyQuestionUpdate" } & SurveyQuestionUpdateFragment>;
 };
 
 export type CreateSurveyResponseMutationVariables = Exact<{
@@ -3136,9 +2860,7 @@ export type CreateSurveyResponseMutationVariables = Exact<{
 }>;
 
 export type CreateSurveyResponseMutation = { __typename?: "Mutation" } & {
-    surveyResponseCreate?: Maybe<
-        { __typename?: "SurveyResponseCreate" } & SurveyResponseCreateFragment
-    >;
+    surveyResponseCreate?: Maybe<{ __typename?: "SurveyResponseCreate" } & SurveyResponseCreateFragment>;
 };
 
 export type UpdateSurveyResponseMutationVariables = Exact<{
@@ -3147,9 +2869,7 @@ export type UpdateSurveyResponseMutationVariables = Exact<{
 }>;
 
 export type UpdateSurveyResponseMutation = { __typename?: "Mutation" } & {
-    surveyResponseUpdate?: Maybe<
-        { __typename?: "SurveyResponseUpdate" } & SurveyResponseUpdateFragment
-    >;
+    surveyResponseUpdate?: Maybe<{ __typename?: "SurveyResponseUpdate" } & SurveyResponseUpdateFragment>;
 };
 
 export type UpdateSurveyMutationVariables = Exact<{
@@ -3158,9 +2878,7 @@ export type UpdateSurveyMutationVariables = Exact<{
 }>;
 
 export type UpdateSurveyMutation = { __typename?: "Mutation" } & {
-    surveyUpdate?: Maybe<
-        { __typename?: "SurveyUpdate" } & SurveyUpdateFragment
-    >;
+    surveyUpdate?: Maybe<{ __typename?: "SurveyUpdate" } & SurveyUpdateFragment>;
 };
 
 export type RefreshTokenMutationVariables = Exact<{
@@ -3169,9 +2887,7 @@ export type RefreshTokenMutationVariables = Exact<{
 }>;
 
 export type RefreshTokenMutation = { __typename?: "Mutation" } & {
-    tokenRefresh?: Maybe<
-        { __typename?: "RefreshToken" } & RefreshTokenFragment
-    >;
+    tokenRefresh?: Maybe<{ __typename?: "RefreshToken" } & RefreshTokenFragment>;
 };
 
 export type UpdateUserMutationVariables = Exact<{
@@ -3198,11 +2914,7 @@ export type ActiveSurveysQueryVariables = Exact<{
 }>;
 
 export type ActiveSurveysQuery = { __typename?: "Query" } & {
-    activeSurveys?: Maybe<
-        {
-            __typename?: "BaseSurveyCountableConnection";
-        } & BaseSurveyCountableConnectionFragment
-    >;
+    activeSurveys?: Maybe<{ __typename?: "BaseSurveyCountableConnection" } & BaseSurveyCountableConnectionFragment>;
 };
 
 export type ChannelsQueryVariables = Exact<{
@@ -3214,11 +2926,7 @@ export type ChannelsQueryVariables = Exact<{
 }>;
 
 export type ChannelsQuery = { __typename?: "Query" } & {
-    channels?: Maybe<
-        {
-            __typename?: "SurveyChannelCountableConnection";
-        } & SurveyChannelCountableConnectionFragment
-    >;
+    channels?: Maybe<{ __typename?: "SurveyChannelCountableConnection" } & SurveyChannelCountableConnectionFragment>;
 };
 
 export type EventDefinitionsQueryVariables = Exact<{
@@ -3230,9 +2938,7 @@ export type EventDefinitionsQueryVariables = Exact<{
 
 export type EventDefinitionsQuery = { __typename?: "Query" } & {
     eventDefinitions?: Maybe<
-        {
-            __typename?: "EventDefinitionCountableConnection";
-        } & EventDefinitionCountableConnectionFragment
+        { __typename?: "EventDefinitionCountableConnection" } & EventDefinitionCountableConnectionFragment
     >;
 };
 
@@ -3246,9 +2952,7 @@ export type EventPropertiesQueryVariables = Exact<{
 
 export type EventPropertiesQuery = { __typename?: "Query" } & {
     eventProperties?: Maybe<
-        {
-            __typename?: "EventPropertyCountableConnection";
-        } & EventPropertyCountableConnectionFragment
+        { __typename?: "EventPropertyCountableConnection" } & EventPropertyCountableConnectionFragment
     >;
 };
 
@@ -3260,23 +2964,13 @@ export type EventsQueryVariables = Exact<{
 }>;
 
 export type EventsQuery = { __typename?: "Query" } & {
-    events?: Maybe<
-        {
-            __typename?: "EventCountableConnection";
-        } & EventCountableConnectionFragment
-    >;
+    events?: Maybe<{ __typename?: "EventCountableConnection" } & EventCountableConnectionFragment>;
 };
 
-export type OrganizationInviteLinkQueryVariables = Exact<{
-    [key: string]: never;
-}>;
+export type OrganizationInviteLinkQueryVariables = Exact<{ [key: string]: never }>;
 
 export type OrganizationInviteLinkQuery = { __typename?: "Query" } & {
-    organizationInviteLink?: Maybe<
-        {
-            __typename?: "OrganizationInviteLink";
-        } & OrganizationInviteLinkFragment
-    >;
+    organizationInviteLink?: Maybe<{ __typename?: "OrganizationInviteLink" } & OrganizationInviteLinkFragment>;
 };
 
 export type PersonsQueryVariables = Exact<{
@@ -3287,11 +2981,7 @@ export type PersonsQueryVariables = Exact<{
 }>;
 
 export type PersonsQuery = { __typename?: "Query" } & {
-    persons?: Maybe<
-        {
-            __typename?: "PersonCountableConnection";
-        } & PersonCountableConnectionFragment
-    >;
+    persons?: Maybe<{ __typename?: "PersonCountableConnection" } & PersonCountableConnectionFragment>;
 };
 
 export type PropertyDefinitionsQueryVariables = Exact<{
@@ -3304,9 +2994,7 @@ export type PropertyDefinitionsQueryVariables = Exact<{
 
 export type PropertyDefinitionsQuery = { __typename?: "Query" } & {
     propertyDefinitions?: Maybe<
-        {
-            __typename?: "PropertyDefinitionCountableConnection";
-        } & PropertyDefinitionCountableConnectionFragment
+        { __typename?: "PropertyDefinitionCountableConnection" } & PropertyDefinitionCountableConnectionFragment
     >;
 };
 
@@ -3319,11 +3007,7 @@ export type QuestionsQueryVariables = Exact<{
 }>;
 
 export type QuestionsQuery = { __typename?: "Query" } & {
-    questions?: Maybe<
-        {
-            __typename?: "SurveyQuestionCountableConnection";
-        } & SurveyQuestionCountableConnectionFragment
-    >;
+    questions?: Maybe<{ __typename?: "SurveyQuestionCountableConnection" } & SurveyQuestionCountableConnectionFragment>;
 };
 
 export type SurveyQueryVariables = Exact<{
@@ -3331,9 +3015,7 @@ export type SurveyQueryVariables = Exact<{
     slug?: Maybe<Scalars["String"]>;
 }>;
 
-export type SurveyQuery = { __typename?: "Query" } & {
-    survey?: Maybe<{ __typename?: "Survey" } & SurveyFragment>;
-};
+export type SurveyQuery = { __typename?: "Query" } & { survey?: Maybe<{ __typename?: "Survey" } & SurveyFragment> };
 
 export type Survey_ChannelsQueryVariables = Exact<{
     id?: Maybe<Scalars["ID"]>;
@@ -3347,9 +3029,7 @@ export type Survey_ChannelsQueryVariables = Exact<{
 export type Survey_ChannelsQuery = { __typename?: "Query" } & {
     survey?: Maybe<
         { __typename?: "Survey" } & {
-            channels: {
-                __typename?: "SurveyChannelCountableConnection";
-            } & SurveyChannelCountableConnectionFragment;
+            channels: { __typename?: "SurveyChannelCountableConnection" } & SurveyChannelCountableConnectionFragment;
         }
     >;
 };
@@ -3360,11 +3040,7 @@ export type Survey_ProjectQueryVariables = Exact<{
 }>;
 
 export type Survey_ProjectQuery = { __typename?: "Query" } & {
-    survey?: Maybe<
-        { __typename?: "Survey" } & {
-            project?: Maybe<{ __typename?: "Project" } & ProjectFragment>;
-        }
-    >;
+    survey?: Maybe<{ __typename?: "Survey" } & { project?: Maybe<{ __typename?: "Project" } & ProjectFragment> }>;
 };
 
 export type Survey_Project_OrganizationQueryVariables = Exact<{
@@ -3377,9 +3053,7 @@ export type Survey_Project_OrganizationQuery = { __typename?: "Query" } & {
         { __typename?: "Survey" } & {
             project?: Maybe<
                 { __typename?: "Project" } & {
-                    organization: {
-                        __typename?: "AuthOrganization";
-                    } & AuthOrganizationFragment;
+                    organization: { __typename?: "AuthOrganization" } & AuthOrganizationFragment;
                 }
             >;
         }
@@ -3398,9 +3072,7 @@ export type Survey_QuestionsQueryVariables = Exact<{
 export type Survey_QuestionsQuery = { __typename?: "Query" } & {
     survey?: Maybe<
         { __typename?: "Survey" } & {
-            questions: {
-                __typename?: "SurveyQuestionCountableConnection";
-            } & SurveyQuestionCountableConnectionFragment;
+            questions: { __typename?: "SurveyQuestionCountableConnection" } & SurveyQuestionCountableConnectionFragment;
         }
     >;
 };
@@ -3412,11 +3084,7 @@ export type Survey_ThemeQueryVariables = Exact<{
 
 export type Survey_ThemeQuery = { __typename?: "Query" } & {
     survey?: Maybe<
-        { __typename?: "Survey" } & {
-            theme?: Maybe<
-                { __typename?: "ProjectTheme" } & ProjectThemeFragment
-            >;
-        }
+        { __typename?: "Survey" } & { theme?: Maybe<{ __typename?: "ProjectTheme" } & ProjectThemeFragment> }
     >;
 };
 
@@ -3428,11 +3096,7 @@ export type Survey_Theme_ProjectQueryVariables = Exact<{
 export type Survey_Theme_ProjectQuery = { __typename?: "Query" } & {
     survey?: Maybe<
         { __typename?: "Survey" } & {
-            theme?: Maybe<
-                { __typename?: "ProjectTheme" } & {
-                    project: { __typename?: "Project" } & ProjectFragment;
-                }
-            >;
+            theme?: Maybe<{ __typename?: "ProjectTheme" } & { project: { __typename?: "Project" } & ProjectFragment }>;
         }
     >;
 };
@@ -3442,17 +3106,13 @@ export type Survey_Theme_Project_OrganizationQueryVariables = Exact<{
     slug?: Maybe<Scalars["String"]>;
 }>;
 
-export type Survey_Theme_Project_OrganizationQuery = {
-    __typename?: "Query";
-} & {
+export type Survey_Theme_Project_OrganizationQuery = { __typename?: "Query" } & {
     survey?: Maybe<
         { __typename?: "Survey" } & {
             theme?: Maybe<
                 { __typename?: "ProjectTheme" } & {
                     project: { __typename?: "Project" } & {
-                        organization: {
-                            __typename?: "AuthOrganization";
-                        } & AuthOrganizationFragment;
+                        organization: { __typename?: "AuthOrganization" } & AuthOrganizationFragment;
                     };
                 }
             >;
@@ -3476,11 +3136,7 @@ export type SurveyByChannel_ProjectQueryVariables = Exact<{
 
 export type SurveyByChannel_ProjectQuery = { __typename?: "Query" } & {
     surveyByChannel?: Maybe<
-        { __typename?: "BaseSurvey" } & {
-            project?: Maybe<
-                { __typename?: "BaseProject" } & BaseProjectFragment
-            >;
-        }
+        { __typename?: "BaseSurvey" } & { project?: Maybe<{ __typename?: "BaseProject" } & BaseProjectFragment> }
     >;
 };
 
@@ -3492,9 +3148,7 @@ export type SurveyByChannel_ThemeQueryVariables = Exact<{
 export type SurveyByChannel_ThemeQuery = { __typename?: "Query" } & {
     surveyByChannel?: Maybe<
         { __typename?: "BaseSurvey" } & {
-            theme?: Maybe<
-                { __typename?: "BaseProjectTheme" } & BaseProjectThemeFragment
-            >;
+            theme?: Maybe<{ __typename?: "BaseProjectTheme" } & BaseProjectThemeFragment>;
         }
     >;
 };
@@ -3509,11 +3163,7 @@ export type SurveysQueryVariables = Exact<{
 }>;
 
 export type SurveysQuery = { __typename?: "Query" } & {
-    surveys?: Maybe<
-        {
-            __typename?: "SurveyCountableConnection";
-        } & SurveyCountableConnectionFragment
-    >;
+    surveys?: Maybe<{ __typename?: "SurveyCountableConnection" } & SurveyCountableConnectionFragment>;
 };
 
 export type ThemesQueryVariables = Exact<{
@@ -3524,27 +3174,19 @@ export type ThemesQueryVariables = Exact<{
 }>;
 
 export type ThemesQuery = { __typename?: "Query" } & {
-    themes?: Maybe<
-        {
-            __typename?: "ProjectThemeCountableConnection";
-        } & ProjectThemeCountableConnectionFragment
-    >;
+    themes?: Maybe<{ __typename?: "ProjectThemeCountableConnection" } & ProjectThemeCountableConnectionFragment>;
 };
 
 export type ViewerQueryVariables = Exact<{ [key: string]: never }>;
 
-export type ViewerQuery = { __typename?: "Query" } & {
-    viewer?: Maybe<{ __typename?: "User" } & UserFragment>;
-};
+export type ViewerQuery = { __typename?: "Query" } & { viewer?: Maybe<{ __typename?: "User" } & UserFragment> };
 
 export type Viewer_OrganizationQueryVariables = Exact<{ [key: string]: never }>;
 
 export type Viewer_OrganizationQuery = { __typename?: "Query" } & {
     viewer?: Maybe<
         { __typename?: "User" } & {
-            organization?: Maybe<
-                { __typename?: "AuthOrganization" } & AuthOrganizationFragment
-            >;
+            organization?: Maybe<{ __typename?: "AuthOrganization" } & AuthOrganizationFragment>;
         }
     >;
 };
@@ -3560,9 +3202,7 @@ export type Viewer_OrganizationsQuery = { __typename?: "Query" } & {
     viewer?: Maybe<
         { __typename?: "User" } & {
             organizations?: Maybe<
-                {
-                    __typename?: "OrganizationCountableConnection";
-                } & OrganizationCountableConnectionFragment
+                { __typename?: "OrganizationCountableConnection" } & OrganizationCountableConnectionFragment
             >;
         }
     >;
@@ -3571,25 +3211,17 @@ export type Viewer_OrganizationsQuery = { __typename?: "Query" } & {
 export type Viewer_ProjectQueryVariables = Exact<{ [key: string]: never }>;
 
 export type Viewer_ProjectQuery = { __typename?: "Query" } & {
-    viewer?: Maybe<
-        { __typename?: "User" } & {
-            project?: Maybe<{ __typename?: "Project" } & ProjectFragment>;
-        }
-    >;
+    viewer?: Maybe<{ __typename?: "User" } & { project?: Maybe<{ __typename?: "Project" } & ProjectFragment> }>;
 };
 
-export type Viewer_Project_OrganizationQueryVariables = Exact<{
-    [key: string]: never;
-}>;
+export type Viewer_Project_OrganizationQueryVariables = Exact<{ [key: string]: never }>;
 
 export type Viewer_Project_OrganizationQuery = { __typename?: "Query" } & {
     viewer?: Maybe<
         { __typename?: "User" } & {
             project?: Maybe<
                 { __typename?: "Project" } & {
-                    organization: {
-                        __typename?: "AuthOrganization";
-                    } & AuthOrganizationFragment;
+                    organization: { __typename?: "AuthOrganization" } & AuthOrganizationFragment;
                 }
             >;
         }
@@ -3607,11 +3239,7 @@ export type Viewer_ProjectsQueryVariables = Exact<{
 export type Viewer_ProjectsQuery = { __typename?: "Query" } & {
     viewer?: Maybe<
         { __typename?: "User" } & {
-            projects?: Maybe<
-                {
-                    __typename?: "ProjectCountableConnection";
-                } & ProjectCountableConnectionFragment
-            >;
+            projects?: Maybe<{ __typename?: "ProjectCountableConnection" } & ProjectCountableConnectionFragment>;
         }
     >;
 };
@@ -3622,17 +3250,11 @@ export const NodeFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "Node" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "Node" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "Node" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } }
                 ]
             }
@@ -3645,21 +3267,12 @@ export const AuthOrganizationFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "AuthOrganization" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "AuthOrganization" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "AuthOrganization" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "memberCount" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "memberCount" } },
                     { kind: "Field", name: { kind: "Name", value: "name" } },
                     { kind: "Field", name: { kind: "Name", value: "slug" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } }
@@ -3674,55 +3287,26 @@ export const ProjectFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "Project" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "Project" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "Project" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "apiToken" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "apiToken" } },
                     { kind: "Field", name: { kind: "Name", value: "name" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "organization" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "AuthOrganization"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "AuthOrganization" } }]
                         }
                     },
                     { kind: "Field", name: { kind: "Name", value: "slug" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
-                    {
-                        kind: "Field",
-                        name: {
-                            kind: "Name",
-                            value: "hasCompletedOnboardingFor"
-                        }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "timezone" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "accessControl" }
-                    }
+                    { kind: "Field", name: { kind: "Name", value: "hasCompletedOnboardingFor" } },
+                    { kind: "Field", name: { kind: "Name", value: "timezone" } },
+                    { kind: "Field", name: { kind: "Name", value: "accessControl" } }
                 ]
             }
         }
@@ -3734,41 +3318,21 @@ export const AuthUserFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "AuthUser" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "AuthUser" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "AuthUser" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "isOnboarded" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "isOnboarded" } },
                     { kind: "Field", name: { kind: "Name", value: "isStaff" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "isActive" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "isActive" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "organization" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "AuthOrganization"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "AuthOrganization" } }]
                         }
                     },
                     {
@@ -3776,23 +3340,12 @@ export const AuthUserFragmentDoc = ({
                         name: { kind: "Name", value: "project" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Project" } }]
                         }
                     },
                     { kind: "Field", name: { kind: "Name", value: "email" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "lastName" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "firstName" }
-                    }
+                    { kind: "Field", name: { kind: "Name", value: "lastName" } },
+                    { kind: "Field", name: { kind: "Name", value: "firstName" } }
                 ]
             }
         }
@@ -3804,17 +3357,11 @@ export const UserErrorFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "UserError" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "UserError" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "UserError" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "field" } },
                     { kind: "Field", name: { kind: "Name", value: "code" } },
                     { kind: "Field", name: { kind: "Name", value: "message" } }
@@ -3829,50 +3376,28 @@ export const EmailTokenUserAuthFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "EmailTokenUserAuth" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "EmailTokenUserAuth" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "EmailTokenUserAuth" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "user" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "AuthUser" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "AuthUser" } }]
                         }
                     },
                     { kind: "Field", name: { kind: "Name", value: "token" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "csrfToken" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "refreshToken" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "csrfToken" } },
+                    { kind: "Field", name: { kind: "Name", value: "refreshToken" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "UserError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "UserError" } }]
                         }
                     },
                     {
@@ -3880,12 +3405,7 @@ export const EmailTokenUserAuthFragmentDoc = ({
                         name: { kind: "Name", value: "userErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "UserError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "UserError" } }]
                         }
                     }
                 ]
@@ -3899,17 +3419,11 @@ export const EventErrorFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "EventError" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "EventError" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "EventError" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "field" } },
                     { kind: "Field", name: { kind: "Name", value: "code" } },
                     { kind: "Field", name: { kind: "Name", value: "message" } }
@@ -3924,29 +3438,18 @@ export const EventCaptureFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "EventCapture" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "EventCapture" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "EventCapture" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "status" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "EventError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "EventError" } }]
                         }
                     },
                     {
@@ -3954,12 +3457,7 @@ export const EventCaptureFragmentDoc = ({
                         name: { kind: "Name", value: "eventErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "EventError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "EventError" } }]
                         }
                     }
                 ]
@@ -3973,41 +3471,21 @@ export const UserFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "User" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "User" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "User" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "isOnboarded" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "isOnboarded" } },
                     { kind: "Field", name: { kind: "Name", value: "isStaff" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "isActive" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "isActive" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "organization" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "AuthOrganization"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "AuthOrganization" } }]
                         }
                     },
                     {
@@ -4015,23 +3493,12 @@ export const UserFragmentDoc = ({
                         name: { kind: "Name", value: "project" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Project" } }]
                         }
                     },
                     { kind: "Field", name: { kind: "Name", value: "email" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "lastName" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "firstName" }
-                    }
+                    { kind: "Field", name: { kind: "Name", value: "lastName" } },
+                    { kind: "Field", name: { kind: "Name", value: "firstName" } }
                 ]
             }
         }
@@ -4043,63 +3510,32 @@ export const ProjectThemeFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "ProjectTheme" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "ProjectTheme" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "ProjectTheme" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "reference" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "reference" } },
                     { kind: "Field", name: { kind: "Name", value: "name" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "updatedAt" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "project" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Project" } }]
                         }
                     },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "colorScheme" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "settings" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createdAt" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "colorScheme" } },
+                    { kind: "Field", name: { kind: "Name", value: "settings" } },
+                    { kind: "Field", name: { kind: "Name", value: "createdAt" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "creator" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "User" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "User" } }]
                         }
                     }
                 ]
@@ -4113,78 +3549,42 @@ export const SurveyFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "Survey" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "Survey" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "Survey" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "reference" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "reference" } },
                     { kind: "Field", name: { kind: "Name", value: "name" } },
                     { kind: "Field", name: { kind: "Name", value: "slug" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "updatedAt" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "project" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Project" } }]
                         }
                     },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "settings" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "settings" } },
                     { kind: "Field", name: { kind: "Name", value: "status" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "theme" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectTheme"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectTheme" } }]
                         }
                     },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createdAt" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "createdAt" } },
                     { kind: "Field", name: { kind: "Name", value: "type" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "creator" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "User" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "User" } }]
                         }
                     }
                 ]
@@ -4198,51 +3598,25 @@ export const SurveyChannelFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyChannel" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "SurveyChannel" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyChannel" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "reference" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "reference" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "triggers" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "triggers" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "survey" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Survey" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Survey" } }]
                         }
                     },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "conditions" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "settings" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createdAt" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "conditions" } },
+                    { kind: "Field", name: { kind: "Name", value: "settings" } },
+                    { kind: "Field", name: { kind: "Name", value: "createdAt" } },
                     { kind: "Field", name: { kind: "Name", value: "type" } },
                     { kind: "Field", name: { kind: "Name", value: "link" } }
                 ]
@@ -4256,17 +3630,11 @@ export const SurveyErrorFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyError" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "SurveyError" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyError" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "field" } },
                     { kind: "Field", name: { kind: "Name", value: "code" } },
                     { kind: "Field", name: { kind: "Name", value: "message" } }
@@ -4281,31 +3649,17 @@ export const SurveyChannelCreateFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyChannelCreate" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "SurveyChannelCreate" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyChannelCreate" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "surveyChannel" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyChannel"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyChannel" } }]
                         }
                     },
                     {
@@ -4313,12 +3667,7 @@ export const SurveyChannelCreateFragmentDoc = ({
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     },
                     {
@@ -4326,12 +3675,7 @@ export const SurveyChannelCreateFragmentDoc = ({
                         name: { kind: "Name", value: "surveyErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     }
                 ]
@@ -4345,17 +3689,11 @@ export const OrganizationErrorFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "OrganizationError" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "OrganizationError" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationError" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "field" } },
                     { kind: "Field", name: { kind: "Name", value: "code" } },
                     { kind: "Field", name: { kind: "Name", value: "message" } }
@@ -4370,21 +3708,12 @@ export const OrganizationFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "Organization" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "Organization" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "Organization" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "memberCount" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "memberCount" } },
                     { kind: "Field", name: { kind: "Name", value: "name" } },
                     { kind: "Field", name: { kind: "Name", value: "slug" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } }
@@ -4399,47 +3728,24 @@ export const OrganizationInviteFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "OrganizationInvite" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "OrganizationInvite" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationInvite" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "firstName" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "firstName" } },
                     { kind: "Field", name: { kind: "Name", value: "expired" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "organization" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "Organization"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Organization" } }]
                         }
                     },
                     { kind: "Field", name: { kind: "Name", value: "email" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "updatedAt" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createdAt" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
+                    { kind: "Field", name: { kind: "Name", value: "createdAt" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
                     { kind: "Field", name: { kind: "Name", value: "role" } },
                     {
@@ -4447,12 +3753,7 @@ export const OrganizationInviteFragmentDoc = ({
                         name: { kind: "Name", value: "inviter" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "User" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "User" } }]
                         }
                     }
                 ]
@@ -4466,31 +3767,17 @@ export const OrganizationInviteCreateFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "OrganizationInviteCreate" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "OrganizationInviteCreate" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationInviteCreate" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "OrganizationError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
                         }
                     },
                     {
@@ -4498,15 +3785,7 @@ export const OrganizationInviteCreateFragmentDoc = ({
                         name: { kind: "Name", value: "organizationErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "OrganizationError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
                         }
                     },
                     {
@@ -4515,13 +3794,7 @@ export const OrganizationInviteCreateFragmentDoc = ({
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "OrganizationInvite"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationInvite" } }
                             ]
                         }
                     }
@@ -4536,17 +3809,11 @@ export const ProjectErrorFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "ProjectError" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "ProjectError" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "ProjectError" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "field" } },
                     { kind: "Field", name: { kind: "Name", value: "code" } },
                     { kind: "Field", name: { kind: "Name", value: "message" } }
@@ -4561,31 +3828,17 @@ export const ProjectCreateFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "ProjectCreate" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "ProjectCreate" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "ProjectCreate" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectError" } }]
                         }
                     },
                     {
@@ -4593,12 +3846,7 @@ export const ProjectCreateFragmentDoc = ({
                         name: { kind: "Name", value: "project" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Project" } }]
                         }
                     },
                     {
@@ -4606,15 +3854,7 @@ export const ProjectCreateFragmentDoc = ({
                         name: { kind: "Name", value: "projectErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectError" } }]
                         }
                     }
                 ]
@@ -4628,54 +3868,28 @@ export const SurveyQuestionFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyQuestion" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "SurveyQuestion" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyQuestion" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "description" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "reference" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "description" } },
+                    { kind: "Field", name: { kind: "Name", value: "reference" } },
                     { kind: "Field", name: { kind: "Name", value: "label" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
                     { kind: "Field", name: { kind: "Name", value: "options" } },
                     { kind: "Field", name: { kind: "Name", value: "maxPath" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "orderNumber" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "orderNumber" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "survey" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Survey" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Survey" } }]
                         }
                     },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "settings" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createdAt" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "settings" } },
+                    { kind: "Field", name: { kind: "Name", value: "createdAt" } },
                     { kind: "Field", name: { kind: "Name", value: "type" } }
                 ]
             }
@@ -4688,28 +3902,17 @@ export const SurveyQuestionCreateFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyQuestionCreate" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "SurveyQuestionCreate" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyQuestionCreate" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     },
                     {
@@ -4717,12 +3920,7 @@ export const SurveyQuestionCreateFragmentDoc = ({
                         name: { kind: "Name", value: "surveyErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     },
                     {
@@ -4730,15 +3928,7 @@ export const SurveyQuestionCreateFragmentDoc = ({
                         name: { kind: "Name", value: "surveyQuestion" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyQuestion"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyQuestion" } }]
                         }
                     }
                 ]
@@ -4752,28 +3942,17 @@ export const SurveyCreateFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyCreate" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "SurveyCreate" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyCreate" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     },
                     {
@@ -4781,12 +3960,7 @@ export const SurveyCreateFragmentDoc = ({
                         name: { kind: "Name", value: "survey" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Survey" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Survey" } }]
                         }
                     },
                     {
@@ -4794,12 +3968,7 @@ export const SurveyCreateFragmentDoc = ({
                         name: { kind: "Name", value: "surveyErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     }
                 ]
@@ -4813,31 +3982,17 @@ export const ProjectThemeCreateFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "ProjectThemeCreate" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "ProjectThemeCreate" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "ProjectThemeCreate" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectError" } }]
                         }
                     },
                     {
@@ -4845,15 +4000,7 @@ export const ProjectThemeCreateFragmentDoc = ({
                         name: { kind: "Name", value: "projectErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectError" } }]
                         }
                     },
                     {
@@ -4861,15 +4008,7 @@ export const ProjectThemeCreateFragmentDoc = ({
                         name: { kind: "Name", value: "projectTheme" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectTheme"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectTheme" } }]
                         }
                     }
                 ]
@@ -4883,33 +4022,19 @@ export const SurveyResponseCreateFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyResponseCreate" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "SurveyResponseCreate" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyResponseCreate" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "responseId" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "responseId" } },
                     { kind: "Field", name: { kind: "Name", value: "status" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     },
                     {
@@ -4917,12 +4042,7 @@ export const SurveyResponseCreateFragmentDoc = ({
                         name: { kind: "Name", value: "surveyErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     }
                 ]
@@ -4936,28 +4056,17 @@ export const OrganizationCreateFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "OrganizationCreate" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "OrganizationCreate" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationCreate" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "user" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "AuthUser" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "AuthUser" } }]
                         }
                     },
                     {
@@ -4965,15 +4074,7 @@ export const OrganizationCreateFragmentDoc = ({
                         name: { kind: "Name", value: "organization" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "AuthOrganization"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "AuthOrganization" } }]
                         }
                     },
                     {
@@ -4981,15 +4082,7 @@ export const OrganizationCreateFragmentDoc = ({
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "OrganizationError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
                         }
                     },
                     {
@@ -4997,15 +4090,7 @@ export const OrganizationCreateFragmentDoc = ({
                         name: { kind: "Name", value: "organizationErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "OrganizationError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
                         }
                     }
                 ]
@@ -5019,28 +4104,17 @@ export const LogoutFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "Logout" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "Logout" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "Logout" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "UserError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "UserError" } }]
                         }
                     },
                     {
@@ -5048,12 +4122,7 @@ export const LogoutFragmentDoc = ({
                         name: { kind: "Name", value: "userErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "UserError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "UserError" } }]
                         }
                     }
                 ]
@@ -5067,28 +4136,17 @@ export const SurveyChannelDeleteFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyChannelDelete" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "SurveyChannelDelete" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyChannelDelete" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     },
                     {
@@ -5096,15 +4154,7 @@ export const SurveyChannelDeleteFragmentDoc = ({
                         name: { kind: "Name", value: "surveyChannel" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyChannel"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyChannel" } }]
                         }
                     },
                     {
@@ -5112,12 +4162,7 @@ export const SurveyChannelDeleteFragmentDoc = ({
                         name: { kind: "Name", value: "surveyErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     }
                 ]
@@ -5131,28 +4176,17 @@ export const SurveyQuestionDeleteFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyQuestionDelete" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "SurveyQuestionDelete" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyQuestionDelete" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     },
                     {
@@ -5160,12 +4194,7 @@ export const SurveyQuestionDeleteFragmentDoc = ({
                         name: { kind: "Name", value: "surveyErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     },
                     {
@@ -5173,15 +4202,7 @@ export const SurveyQuestionDeleteFragmentDoc = ({
                         name: { kind: "Name", value: "surveyQuestion" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyQuestion"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyQuestion" } }]
                         }
                     }
                 ]
@@ -5195,28 +4216,17 @@ export const SurveyDeleteFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyDelete" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "SurveyDelete" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyDelete" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     },
                     {
@@ -5224,12 +4234,7 @@ export const SurveyDeleteFragmentDoc = ({
                         name: { kind: "Name", value: "survey" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Survey" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Survey" } }]
                         }
                     },
                     {
@@ -5237,12 +4242,7 @@ export const SurveyDeleteFragmentDoc = ({
                         name: { kind: "Name", value: "surveyErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     }
                 ]
@@ -5256,31 +4256,17 @@ export const ProjectThemeDeleteFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "ProjectThemeDelete" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "ProjectThemeDelete" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "ProjectThemeDelete" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectError" } }]
                         }
                     },
                     {
@@ -5288,15 +4274,7 @@ export const ProjectThemeDeleteFragmentDoc = ({
                         name: { kind: "Name", value: "projectErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectError" } }]
                         }
                     },
                     {
@@ -5304,15 +4282,7 @@ export const ProjectThemeDeleteFragmentDoc = ({
                         name: { kind: "Name", value: "projectTheme" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectTheme"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectTheme" } }]
                         }
                     }
                 ]
@@ -5326,33 +4296,19 @@ export const EmailUserAuthChallengeFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "EmailUserAuthChallenge" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "EmailUserAuthChallenge" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "EmailUserAuthChallenge" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "authType" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "authType" } },
                     { kind: "Field", name: { kind: "Name", value: "success" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "UserError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "UserError" } }]
                         }
                     },
                     {
@@ -5360,12 +4316,7 @@ export const EmailUserAuthChallengeFragmentDoc = ({
                         name: { kind: "Name", value: "userErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "UserError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "UserError" } }]
                         }
                     }
                 ]
@@ -5379,51 +4330,29 @@ export const GoogleUserAuthFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "GoogleUserAuth" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "GoogleUserAuth" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "GoogleUserAuth" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "user" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "AuthUser" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "AuthUser" } }]
                         }
                     },
                     { kind: "Field", name: { kind: "Name", value: "token" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "csrfToken" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "refreshToken" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "csrfToken" } },
+                    { kind: "Field", name: { kind: "Name", value: "refreshToken" } },
                     { kind: "Field", name: { kind: "Name", value: "success" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "UserError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "UserError" } }]
                         }
                     },
                     {
@@ -5431,12 +4360,7 @@ export const GoogleUserAuthFragmentDoc = ({
                         name: { kind: "Name", value: "userErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "UserError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "UserError" } }]
                         }
                     }
                 ]
@@ -5450,28 +4374,17 @@ export const OrganizationJoinFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "OrganizationJoin" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "OrganizationJoin" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationJoin" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "user" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "AuthUser" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "AuthUser" } }]
                         }
                     },
                     {
@@ -5479,15 +4392,7 @@ export const OrganizationJoinFragmentDoc = ({
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "OrganizationError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
                         }
                     },
                     {
@@ -5495,15 +4400,7 @@ export const OrganizationJoinFragmentDoc = ({
                         name: { kind: "Name", value: "organizationErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "OrganizationError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
                         }
                     }
                 ]
@@ -5517,29 +4414,18 @@ export const RefreshTokenFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "RefreshToken" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "RefreshToken" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "RefreshToken" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "token" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "UserError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "UserError" } }]
                         }
                     },
                     {
@@ -5547,12 +4433,7 @@ export const RefreshTokenFragmentDoc = ({
                         name: { kind: "Name", value: "userErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "UserError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "UserError" } }]
                         }
                     }
                 ]
@@ -5566,36 +4447,19 @@ export const OrganizationInviteLinkResetFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "OrganizationInviteLinkReset" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "OrganizationInviteLinkReset" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationInviteLinkReset" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "inviteLink" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "inviteLink" } },
                     { kind: "Field", name: { kind: "Name", value: "success" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "OrganizationError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
                         }
                     },
                     {
@@ -5603,15 +4467,7 @@ export const OrganizationInviteLinkResetFragmentDoc = ({
                         name: { kind: "Name", value: "organizationErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "OrganizationError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
                         }
                     }
                 ]
@@ -5625,21 +4481,12 @@ export const OrganizationInviteLinkFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "OrganizationInviteLink" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "OrganizationInviteLink" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationInviteLink" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "inviteLink" }
-                    }
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "inviteLink" } }
                 ]
             }
         }
@@ -5651,44 +4498,20 @@ export const OrganizationInviteDetailsFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "OrganizationInviteDetails" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "OrganizationInviteDetails" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationInviteDetails" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "firstName" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "firstName" } },
                     { kind: "Field", name: { kind: "Name", value: "expired" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "organizationId" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "organizationId" } },
                     { kind: "Field", name: { kind: "Name", value: "email" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "updatedAt" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "organizationLogo" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "organizationName" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
+                    { kind: "Field", name: { kind: "Name", value: "organizationLogo" } },
+                    { kind: "Field", name: { kind: "Name", value: "organizationName" } },
                     { kind: "Field", name: { kind: "Name", value: "inviter" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createdAt" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "createdAt" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
                     { kind: "Field", name: { kind: "Name", value: "role" } }
                 ]
@@ -5702,30 +4525,15 @@ export const OrganizationInviteLinkDetailsFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "OrganizationInviteLinkDetails" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "OrganizationInviteLinkDetails" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationInviteLinkDetails" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "organizationId" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "organizationLogo" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "organizationName" }
-                    }
+                    { kind: "Field", name: { kind: "Name", value: "organizationId" } },
+                    { kind: "Field", name: { kind: "Name", value: "organizationLogo" } },
+                    { kind: "Field", name: { kind: "Name", value: "organizationName" } }
                 ]
             }
         }
@@ -5737,28 +4545,17 @@ export const SurveyChannelUpdateFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyChannelUpdate" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "SurveyChannelUpdate" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyChannelUpdate" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     },
                     {
@@ -5766,15 +4563,7 @@ export const SurveyChannelUpdateFragmentDoc = ({
                         name: { kind: "Name", value: "surveyChannel" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyChannel"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyChannel" } }]
                         }
                     },
                     {
@@ -5782,12 +4571,7 @@ export const SurveyChannelUpdateFragmentDoc = ({
                         name: { kind: "Name", value: "surveyErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     }
                 ]
@@ -5801,31 +4585,17 @@ export const ProjectUpdateFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "ProjectUpdate" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "ProjectUpdate" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "ProjectUpdate" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectError" } }]
                         }
                     },
                     {
@@ -5833,12 +4603,7 @@ export const ProjectUpdateFragmentDoc = ({
                         name: { kind: "Name", value: "project" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Project" } }]
                         }
                     },
                     {
@@ -5846,15 +4611,7 @@ export const ProjectUpdateFragmentDoc = ({
                         name: { kind: "Name", value: "projectErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectError" } }]
                         }
                     }
                 ]
@@ -5868,28 +4625,17 @@ export const SurveyQuestionUpdateFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyQuestionUpdate" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "SurveyQuestionUpdate" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyQuestionUpdate" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     },
                     {
@@ -5897,12 +4643,7 @@ export const SurveyQuestionUpdateFragmentDoc = ({
                         name: { kind: "Name", value: "surveyErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     },
                     {
@@ -5910,15 +4651,7 @@ export const SurveyQuestionUpdateFragmentDoc = ({
                         name: { kind: "Name", value: "surveyQuestion" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyQuestion"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyQuestion" } }]
                         }
                     }
                 ]
@@ -5932,29 +4665,18 @@ export const SurveyResponseUpdateFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyResponseUpdate" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "SurveyResponseUpdate" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyResponseUpdate" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "status" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     },
                     {
@@ -5962,12 +4684,7 @@ export const SurveyResponseUpdateFragmentDoc = ({
                         name: { kind: "Name", value: "surveyErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     }
                 ]
@@ -5981,28 +4698,17 @@ export const SurveyUpdateFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyUpdate" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "SurveyUpdate" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyUpdate" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     },
                     {
@@ -6010,12 +4716,7 @@ export const SurveyUpdateFragmentDoc = ({
                         name: { kind: "Name", value: "survey" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Survey" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Survey" } }]
                         }
                     },
                     {
@@ -6023,12 +4724,7 @@ export const SurveyUpdateFragmentDoc = ({
                         name: { kind: "Name", value: "surveyErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "SurveyError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyError" } }]
                         }
                     }
                 ]
@@ -6042,28 +4738,17 @@ export const UserUpdateFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "UserUpdate" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "UserUpdate" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "UserUpdate" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "UserError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "UserError" } }]
                         }
                     },
                     {
@@ -6071,12 +4756,7 @@ export const UserUpdateFragmentDoc = ({
                         name: { kind: "Name", value: "user" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "User" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "User" } }]
                         }
                     },
                     {
@@ -6084,12 +4764,7 @@ export const UserUpdateFragmentDoc = ({
                         name: { kind: "Name", value: "userErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "UserError" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "UserError" } }]
                         }
                     }
                 ]
@@ -6103,31 +4778,17 @@ export const ProjectThemeUpdateFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "ProjectThemeUpdate" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "ProjectThemeUpdate" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "ProjectThemeUpdate" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "errors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectError" } }]
                         }
                     },
                     {
@@ -6135,15 +4796,7 @@ export const ProjectThemeUpdateFragmentDoc = ({
                         name: { kind: "Name", value: "projectErrors" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectError"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectError" } }]
                         }
                     },
                     {
@@ -6151,15 +4804,7 @@ export const ProjectThemeUpdateFragmentDoc = ({
                         name: { kind: "Name", value: "projectTheme" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectTheme"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectTheme" } }]
                         }
                     }
                 ]
@@ -6173,17 +4818,11 @@ export const _ServiceFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "_Service" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "_Service" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "_Service" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "sdl" } }
                 ]
             }
@@ -6196,33 +4835,15 @@ export const PageInfoFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "PageInfo" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "PageInfo" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "PageInfo" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "hasPreviousPage" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "startCursor" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "hasNextPage" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "endCursor" }
-                    }
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "hasPreviousPage" } },
+                    { kind: "Field", name: { kind: "Name", value: "startCursor" } },
+                    { kind: "Field", name: { kind: "Name", value: "hasNextPage" } },
+                    { kind: "Field", name: { kind: "Name", value: "endCursor" } }
                 ]
             }
         }
@@ -6234,34 +4855,16 @@ export const BaseSurveyChannelFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "BaseSurveyChannel" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "BaseSurveyChannel" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "BaseSurveyChannel" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "triggers" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "conditions" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "settings" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createdAt" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "triggers" } },
+                    { kind: "Field", name: { kind: "Name", value: "conditions" } },
+                    { kind: "Field", name: { kind: "Name", value: "settings" } },
+                    { kind: "Field", name: { kind: "Name", value: "createdAt" } },
                     { kind: "Field", name: { kind: "Name", value: "type" } },
                     { kind: "Field", name: { kind: "Name", value: "link" } }
                 ]
@@ -6275,21 +4878,12 @@ export const BaseProjectFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "BaseProject" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "BaseProject" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "BaseProject" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "apiToken" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "apiToken" } },
                     { kind: "Field", name: { kind: "Name", value: "name" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } }
                 ]
@@ -6303,37 +4897,19 @@ export const BaseSurveyQuestionFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "BaseSurveyQuestion" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "BaseSurveyQuestion" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "BaseSurveyQuestion" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "description" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "description" } },
                     { kind: "Field", name: { kind: "Name", value: "label" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
                     { kind: "Field", name: { kind: "Name", value: "options" } },
                     { kind: "Field", name: { kind: "Name", value: "maxPath" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "orderNumber" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "settings" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createdAt" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "orderNumber" } },
+                    { kind: "Field", name: { kind: "Name", value: "settings" } },
+                    { kind: "Field", name: { kind: "Name", value: "createdAt" } },
                     { kind: "Field", name: { kind: "Name", value: "type" } }
                 ]
             }
@@ -6346,23 +4922,14 @@ export const BaseProjectThemeFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "BaseProjectTheme" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "BaseProjectTheme" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "BaseProjectTheme" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "name" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "colorScheme" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "colorScheme" } },
                     { kind: "Field", name: { kind: "Name", value: "settings" } }
                 ]
             }
@@ -6375,39 +4942,22 @@ export const BaseSurveyFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "BaseSurvey" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "BaseSurvey" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "BaseSurvey" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "name" } },
                     { kind: "Field", name: { kind: "Name", value: "slug" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
                     { kind: "Field", name: { kind: "Name", value: "endDate" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "startDate" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "startDate" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "channels" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "BaseSurveyChannel"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "BaseSurveyChannel" } }]
                         }
                     },
                     {
@@ -6415,12 +4965,7 @@ export const BaseSurveyFragmentDoc = ({
                         name: { kind: "Name", value: "project" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "BaseProject" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "BaseProject" } }]
                         }
                     },
                     {
@@ -6429,41 +4974,21 @@ export const BaseSurveyFragmentDoc = ({
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "BaseSurveyQuestion"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "BaseSurveyQuestion" } }
                             ]
                         }
                     },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "settings" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "settings" } },
                     { kind: "Field", name: { kind: "Name", value: "status" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "theme" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "BaseProjectTheme"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "BaseProjectTheme" } }]
                         }
                     },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createdAt" }
-                    }
+                    { kind: "Field", name: { kind: "Name", value: "createdAt" } }
                 ]
             }
         }
@@ -6475,32 +5000,18 @@ export const BaseSurveyCountableConnectionFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "BaseSurveyCountableConnection" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "BaseSurveyCountableConnection" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "BaseSurveyCountableConnection" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "totalCount" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "totalCount" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "pageInfo" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "PageInfo" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "PageInfo" } }]
                         }
                     },
                     {
@@ -6508,12 +5019,7 @@ export const BaseSurveyCountableConnectionFragmentDoc = ({
                         name: { kind: "Name", value: "nodes" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "BaseSurvey" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "BaseSurvey" } }]
                         }
                     }
                 ]
@@ -6527,48 +5033,25 @@ export const EventFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "Event" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "Event" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "Event" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "distinctId" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "distinctId" } },
                     { kind: "Field", name: { kind: "Name", value: "event" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "properties" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "properties" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "project" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Project" } }]
                         }
                     },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "timestamp" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createdAt" }
-                    }
+                    { kind: "Field", name: { kind: "Name", value: "timestamp" } },
+                    { kind: "Field", name: { kind: "Name", value: "createdAt" } }
                 ]
             }
         }
@@ -6580,32 +5063,18 @@ export const EventCountableConnectionFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "EventCountableConnection" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "EventCountableConnection" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "EventCountableConnection" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "totalCount" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "totalCount" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "pageInfo" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "PageInfo" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "PageInfo" } }]
                         }
                     },
                     {
@@ -6613,12 +5082,7 @@ export const EventCountableConnectionFragmentDoc = ({
                         name: { kind: "Name", value: "nodes" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Event" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Event" } }]
                         }
                     }
                 ]
@@ -6632,17 +5096,11 @@ export const EventDefinitionFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "EventDefinition" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "EventDefinition" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "EventDefinition" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
                     { kind: "Field", name: { kind: "Name", value: "name" } },
                     {
@@ -6650,22 +5108,11 @@ export const EventDefinitionFragmentDoc = ({
                         name: { kind: "Name", value: "project" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Project" } }]
                         }
                     },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createdAt" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "lastSeenAt" }
-                    }
+                    { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                    { kind: "Field", name: { kind: "Name", value: "lastSeenAt" } }
                 ]
             }
         }
@@ -6677,35 +5124,18 @@ export const EventDefinitionCountableConnectionFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "EventDefinitionCountableConnection" },
-            typeCondition: {
-                kind: "NamedType",
-                name: {
-                    kind: "Name",
-                    value: "EventDefinitionCountableConnection"
-                }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "EventDefinitionCountableConnection" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "totalCount" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "totalCount" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "pageInfo" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "PageInfo" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "PageInfo" } }]
                         }
                     },
                     {
@@ -6713,42 +5143,25 @@ export const EventDefinitionCountableConnectionFragmentDoc = ({
                         name: { kind: "Name", value: "nodes" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "EventDefinition"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "EventDefinition" } }]
                         }
                     }
                 ]
             }
         }
     ]
-} as unknown) as DocumentNode<
-    EventDefinitionCountableConnectionFragment,
-    unknown
->;
+} as unknown) as DocumentNode<EventDefinitionCountableConnectionFragment, unknown>;
 export const EventPropertyFragmentDoc = ({
     kind: "Document",
     definitions: [
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "EventProperty" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "EventProperty" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "EventProperty" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
                     { kind: "Field", name: { kind: "Name", value: "event" } },
                     {
@@ -6756,12 +5169,7 @@ export const EventPropertyFragmentDoc = ({
                         name: { kind: "Name", value: "project" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Project" } }]
                         }
                     },
                     { kind: "Field", name: { kind: "Name", value: "property" } }
@@ -6776,35 +5184,18 @@ export const EventPropertyCountableConnectionFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "EventPropertyCountableConnection" },
-            typeCondition: {
-                kind: "NamedType",
-                name: {
-                    kind: "Name",
-                    value: "EventPropertyCountableConnection"
-                }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "EventPropertyCountableConnection" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "totalCount" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "totalCount" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "pageInfo" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "PageInfo" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "PageInfo" } }]
                         }
                     },
                     {
@@ -6812,57 +5203,32 @@ export const EventPropertyCountableConnectionFragmentDoc = ({
                         name: { kind: "Name", value: "nodes" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "EventProperty"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "EventProperty" } }]
                         }
                     }
                 ]
             }
         }
     ]
-} as unknown) as DocumentNode<
-    EventPropertyCountableConnectionFragment,
-    unknown
->;
+} as unknown) as DocumentNode<EventPropertyCountableConnectionFragment, unknown>;
 export const OrganizationCountableConnectionFragmentDoc = ({
     kind: "Document",
     definitions: [
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "OrganizationCountableConnection" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "OrganizationCountableConnection" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationCountableConnection" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "totalCount" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "totalCount" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "pageInfo" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "PageInfo" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "PageInfo" } }]
                         }
                     },
                     {
@@ -6870,15 +5236,7 @@ export const OrganizationCountableConnectionFragmentDoc = ({
                         name: { kind: "Name", value: "nodes" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "Organization"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Organization" } }]
                         }
                     }
                 ]
@@ -6892,48 +5250,25 @@ export const PersonFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "Person" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "Person" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "Person" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "attributes" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "distinctIds" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "attributes" } },
+                    { kind: "Field", name: { kind: "Name", value: "distinctIds" } },
                     { kind: "Field", name: { kind: "Name", value: "uuid" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "project" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Project" } }]
                         }
                     },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "createdAt" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "isIdentified" }
-                    }
+                    { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                    { kind: "Field", name: { kind: "Name", value: "isIdentified" } }
                 ]
             }
         }
@@ -6945,32 +5280,18 @@ export const PersonCountableConnectionFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "PersonCountableConnection" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "PersonCountableConnection" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "PersonCountableConnection" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "totalCount" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "totalCount" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "pageInfo" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "PageInfo" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "PageInfo" } }]
                         }
                     },
                     {
@@ -6978,12 +5299,7 @@ export const PersonCountableConnectionFragmentDoc = ({
                         name: { kind: "Name", value: "nodes" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Person" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Person" } }]
                         }
                     }
                 ]
@@ -6997,32 +5313,18 @@ export const ProjectCountableConnectionFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "ProjectCountableConnection" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "ProjectCountableConnection" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "ProjectCountableConnection" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "totalCount" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "totalCount" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "pageInfo" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "PageInfo" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "PageInfo" } }]
                         }
                     },
                     {
@@ -7030,12 +5332,7 @@ export const ProjectCountableConnectionFragmentDoc = ({
                         name: { kind: "Name", value: "nodes" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Project" } }]
                         }
                     }
                 ]
@@ -7049,32 +5346,18 @@ export const ProjectThemeCountableConnectionFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "ProjectThemeCountableConnection" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "ProjectThemeCountableConnection" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "ProjectThemeCountableConnection" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "totalCount" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "totalCount" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "pageInfo" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "PageInfo" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "PageInfo" } }]
                         }
                     },
                     {
@@ -7082,15 +5365,7 @@ export const ProjectThemeCountableConnectionFragmentDoc = ({
                         name: { kind: "Name", value: "nodes" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectTheme"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectTheme" } }]
                         }
                     }
                 ]
@@ -7104,17 +5379,11 @@ export const PropertyDefinitionFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "PropertyDefinition" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "PropertyDefinition" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "PropertyDefinition" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
                     { kind: "Field", name: { kind: "Name", value: "id" } },
                     { kind: "Field", name: { kind: "Name", value: "name" } },
                     {
@@ -7122,23 +5391,12 @@ export const PropertyDefinitionFragmentDoc = ({
                         name: { kind: "Name", value: "project" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Project" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Project" } }]
                         }
                     },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "propertyType" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "propertyType" } },
                     { kind: "Field", name: { kind: "Name", value: "type" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "isNumerical" }
-                    }
+                    { kind: "Field", name: { kind: "Name", value: "isNumerical" } }
                 ]
             }
         }
@@ -7149,39 +5407,22 @@ export const PropertyDefinitionCountableConnectionFragmentDoc = ({
     definitions: [
         {
             kind: "FragmentDefinition",
-            name: {
-                kind: "Name",
-                value: "PropertyDefinitionCountableConnection"
-            },
+            name: { kind: "Name", value: "PropertyDefinitionCountableConnection" },
             typeCondition: {
                 kind: "NamedType",
-                name: {
-                    kind: "Name",
-                    value: "PropertyDefinitionCountableConnection"
-                }
+                name: { kind: "Name", value: "PropertyDefinitionCountableConnection" }
             },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "totalCount" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "totalCount" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "pageInfo" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "PageInfo" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "PageInfo" } }]
                         }
                     },
                     {
@@ -7190,13 +5431,7 @@ export const PropertyDefinitionCountableConnectionFragmentDoc = ({
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "PropertyDefinition"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "PropertyDefinition" } }
                             ]
                         }
                     }
@@ -7204,45 +5439,25 @@ export const PropertyDefinitionCountableConnectionFragmentDoc = ({
             }
         }
     ]
-} as unknown) as DocumentNode<
-    PropertyDefinitionCountableConnectionFragment,
-    unknown
->;
+} as unknown) as DocumentNode<PropertyDefinitionCountableConnectionFragment, unknown>;
 export const SurveyChannelCountableConnectionFragmentDoc = ({
     kind: "Document",
     definitions: [
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyChannelCountableConnection" },
-            typeCondition: {
-                kind: "NamedType",
-                name: {
-                    kind: "Name",
-                    value: "SurveyChannelCountableConnection"
-                }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyChannelCountableConnection" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "totalCount" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "totalCount" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "pageInfo" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "PageInfo" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "PageInfo" } }]
                         }
                     },
                     {
@@ -7250,57 +5465,32 @@ export const SurveyChannelCountableConnectionFragmentDoc = ({
                         name: { kind: "Name", value: "nodes" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyChannel"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyChannel" } }]
                         }
                     }
                 ]
             }
         }
     ]
-} as unknown) as DocumentNode<
-    SurveyChannelCountableConnectionFragment,
-    unknown
->;
+} as unknown) as DocumentNode<SurveyChannelCountableConnectionFragment, unknown>;
 export const SurveyCountableConnectionFragmentDoc = ({
     kind: "Document",
     definitions: [
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyCountableConnection" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "SurveyCountableConnection" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyCountableConnection" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "totalCount" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "totalCount" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "pageInfo" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "PageInfo" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "PageInfo" } }]
                         }
                     },
                     {
@@ -7308,12 +5498,7 @@ export const SurveyCountableConnectionFragmentDoc = ({
                         name: { kind: "Name", value: "nodes" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Survey" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Survey" } }]
                         }
                     }
                 ]
@@ -7327,35 +5512,18 @@ export const SurveyQuestionCountableConnectionFragmentDoc = ({
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "SurveyQuestionCountableConnection" },
-            typeCondition: {
-                kind: "NamedType",
-                name: {
-                    kind: "Name",
-                    value: "SurveyQuestionCountableConnection"
-                }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyQuestionCountableConnection" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "totalCount" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "totalCount" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "pageInfo" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "PageInfo" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "PageInfo" } }]
                         }
                     },
                     {
@@ -7363,57 +5531,32 @@ export const SurveyQuestionCountableConnectionFragmentDoc = ({
                         name: { kind: "Name", value: "nodes" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyQuestion"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyQuestion" } }]
                         }
                     }
                 ]
             }
         }
     ]
-} as unknown) as DocumentNode<
-    SurveyQuestionCountableConnectionFragment,
-    unknown
->;
+} as unknown) as DocumentNode<SurveyQuestionCountableConnectionFragment, unknown>;
 export const UserCountableConnectionFragmentDoc = ({
     kind: "Document",
     definitions: [
         {
             kind: "FragmentDefinition",
             name: { kind: "Name", value: "UserCountableConnection" },
-            typeCondition: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "UserCountableConnection" }
-            },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "UserCountableConnection" } },
             selectionSet: {
                 kind: "SelectionSet",
                 selections: [
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "__typename" }
-                    },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "totalCount" }
-                    },
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "totalCount" } },
                     {
                         kind: "Field",
                         name: { kind: "Name", value: "pageInfo" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "PageInfo" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "PageInfo" } }]
                         }
                     },
                     {
@@ -7421,12 +5564,7 @@ export const UserCountableConnectionFragmentDoc = ({
                         name: { kind: "Name", value: "nodes" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "User" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "User" } }]
                         }
                     }
                 ]
@@ -7444,42 +5582,18 @@ export const EmailTokenUserAuthDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "email" }
-                    },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "String" }
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "email" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "inviteLink" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "inviteLink" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "token" }
-                    },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "String" }
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "token" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } }
                 }
             ],
             selectionSet: {
@@ -7492,38 +5606,23 @@ export const EmailTokenUserAuthDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "email" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "email" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "email" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "inviteLink" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "inviteLink" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "inviteLink" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "token" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "token" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "token" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "EmailTokenUserAuth"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "EmailTokenUserAuth" } }
                             ]
                         }
                     }
@@ -7536,10 +5635,7 @@ export const EmailTokenUserAuthDocument = ({
         ...ProjectFragmentDoc.definitions,
         ...UserErrorFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    EmailTokenUserAuthMutation,
-    EmailTokenUserAuthMutationVariables
->;
+} as unknown) as DocumentNode<EmailTokenUserAuthMutation, EmailTokenUserAuthMutationVariables>;
 export const EmailUserAuthChallengeDocument = ({
     kind: "Document",
     definitions: [
@@ -7550,28 +5646,13 @@ export const EmailUserAuthChallengeDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "email" }
-                    },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "String" }
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "email" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "inviteLink" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "inviteLink" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 }
             ],
             selectionSet: {
@@ -7584,30 +5665,18 @@ export const EmailUserAuthChallengeDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "email" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "email" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "email" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "inviteLink" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "inviteLink" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "inviteLink" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "EmailUserAuthChallenge"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "EmailUserAuthChallenge" } }
                             ]
                         }
                     }
@@ -7617,10 +5686,7 @@ export const EmailUserAuthChallengeDocument = ({
         ...EmailUserAuthChallengeFragmentDoc.definitions,
         ...UserErrorFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    EmailUserAuthChallengeMutation,
-    EmailUserAuthChallengeMutationVariables
->;
+} as unknown) as DocumentNode<EmailUserAuthChallengeMutation, EmailUserAuthChallengeMutationVariables>;
 export const CaptureEventDocument = ({
     kind: "Document",
     definitions: [
@@ -7631,45 +5697,24 @@ export const CaptureEventDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "batch" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "batch" } },
                     type: {
                         kind: "ListType",
                         type: {
                             kind: "NonNullType",
-                            type: {
-                                kind: "NamedType",
-                                name: {
-                                    kind: "Name",
-                                    value: "EventCaptureInput"
-                                }
-                            }
+                            type: { kind: "NamedType", name: { kind: "Name", value: "EventCaptureInput" } }
                         }
                     }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "EventCaptureInput" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "EventCaptureInput" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "sentAt" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "DateTime" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "sentAt" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "DateTime" } }
                 }
             ],
             selectionSet: {
@@ -7682,39 +5727,22 @@ export const CaptureEventDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "batch" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "batch" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "batch" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "sentAt" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "sentAt" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "sentAt" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "EventCapture"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "EventCapture" } }]
                         }
                     }
                 ]
@@ -7723,10 +5751,7 @@ export const CaptureEventDocument = ({
         ...EventCaptureFragmentDoc.definitions,
         ...EventErrorFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    CaptureEventMutation,
-    CaptureEventMutationVariables
->;
+} as unknown) as DocumentNode<CaptureEventMutation, CaptureEventMutationVariables>;
 export const GoogleUserAuthDocument = ({
     kind: "Document",
     definitions: [
@@ -7737,28 +5762,13 @@ export const GoogleUserAuthDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "code" }
-                    },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "String" }
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "code" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "String" } } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "inviteLink" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "inviteLink" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 }
             ],
             selectionSet: {
@@ -7771,31 +5781,17 @@ export const GoogleUserAuthDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "code" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "code" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "code" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "inviteLink" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "inviteLink" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "inviteLink" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "GoogleUserAuth"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "GoogleUserAuth" } }]
                         }
                     }
                 ]
@@ -7807,10 +5803,7 @@ export const GoogleUserAuthDocument = ({
         ...ProjectFragmentDoc.definitions,
         ...UserErrorFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    GoogleUserAuthMutation,
-    GoogleUserAuthMutationVariables
->;
+} as unknown) as DocumentNode<GoogleUserAuthMutation, GoogleUserAuthMutationVariables>;
 export const LogoutDocument = ({
     kind: "Document",
     definitions: [
@@ -7826,12 +5819,7 @@ export const LogoutDocument = ({
                         name: { kind: "Name", value: "logout" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Logout" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Logout" } }]
                         }
                     }
                 ]
@@ -7851,34 +5839,16 @@ export const CreateOrganizationDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
                     type: {
                         kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: {
-                                kind: "Name",
-                                value: "OrganizationCreateInput"
-                            }
-                        }
+                        type: { kind: "NamedType", name: { kind: "Name", value: "OrganizationCreateInput" } }
                     }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "survey" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: {
-                            kind: "Name",
-                            value: "OnboardingCustomerSurvey"
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "survey" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "OnboardingCustomerSurvey" } }
                 }
             ],
             selectionSet: {
@@ -7891,30 +5861,18 @@ export const CreateOrganizationDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "survey" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "survey" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "survey" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "OrganizationCreate"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationCreate" } }
                             ]
                         }
                     }
@@ -7927,10 +5885,7 @@ export const CreateOrganizationDocument = ({
         ...ProjectFragmentDoc.definitions,
         ...OrganizationErrorFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    CreateOrganizationMutation,
-    CreateOrganizationMutationVariables
->;
+} as unknown) as DocumentNode<CreateOrganizationMutation, CreateOrganizationMutationVariables>;
 export const CreateOrganizationInviteDocument = ({
     kind: "Document",
     definitions: [
@@ -7941,19 +5896,10 @@ export const CreateOrganizationInviteDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
                     type: {
                         kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: {
-                                kind: "Name",
-                                value: "OrganizationInviteCreateInput"
-                            }
-                        }
+                        type: { kind: "NamedType", name: { kind: "Name", value: "OrganizationInviteCreateInput" } }
                     }
                 }
             ],
@@ -7962,30 +5908,18 @@ export const CreateOrganizationInviteDocument = ({
                 selections: [
                     {
                         kind: "Field",
-                        name: {
-                            kind: "Name",
-                            value: "organizationInviteCreate"
-                        },
+                        name: { kind: "Name", value: "organizationInviteCreate" },
                         arguments: [
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "OrganizationInviteCreate"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationInviteCreate" } }
                             ]
                         }
                     }
@@ -8000,10 +5934,7 @@ export const CreateOrganizationInviteDocument = ({
         ...AuthOrganizationFragmentDoc.definitions,
         ...ProjectFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    CreateOrganizationInviteMutation,
-    CreateOrganizationInviteMutationVariables
->;
+} as unknown) as DocumentNode<CreateOrganizationInviteMutation, CreateOrganizationInviteMutationVariables>;
 export const ResetOrganizationInviteLinkDocument = ({
     kind: "Document",
     definitions: [
@@ -8016,20 +5947,11 @@ export const ResetOrganizationInviteLinkDocument = ({
                 selections: [
                     {
                         kind: "Field",
-                        name: {
-                            kind: "Name",
-                            value: "organizationInviteLinkReset"
-                        },
+                        name: { kind: "Name", value: "organizationInviteLinkReset" },
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "OrganizationInviteLinkReset"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationInviteLinkReset" } }
                             ]
                         }
                     }
@@ -8039,10 +5961,7 @@ export const ResetOrganizationInviteLinkDocument = ({
         ...OrganizationInviteLinkResetFragmentDoc.definitions,
         ...OrganizationErrorFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    ResetOrganizationInviteLinkMutation,
-    ResetOrganizationInviteLinkMutationVariables
->;
+} as unknown) as DocumentNode<ResetOrganizationInviteLinkMutation, ResetOrganizationInviteLinkMutationVariables>;
 export const JoinOrganizationDocument = ({
     kind: "Document",
     definitions: [
@@ -8053,19 +5972,10 @@ export const JoinOrganizationDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
                     type: {
                         kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: {
-                                kind: "Name",
-                                value: "OrganizationJoinInput"
-                            }
-                        }
+                        type: { kind: "NamedType", name: { kind: "Name", value: "OrganizationJoinInput" } }
                     }
                 }
             ],
@@ -8079,23 +5989,12 @@ export const JoinOrganizationDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "OrganizationJoin"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationJoin" } }]
                         }
                     }
                 ]
@@ -8107,10 +6006,7 @@ export const JoinOrganizationDocument = ({
         ...ProjectFragmentDoc.definitions,
         ...OrganizationErrorFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    JoinOrganizationMutation,
-    JoinOrganizationMutationVariables
->;
+} as unknown) as DocumentNode<JoinOrganizationMutation, JoinOrganizationMutationVariables>;
 export const CreateProjectDocument = ({
     kind: "Document",
     definitions: [
@@ -8121,16 +6017,10 @@ export const CreateProjectDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
                     type: {
                         kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "ProjectCreateInput" }
-                        }
+                        type: { kind: "NamedType", name: { kind: "Name", value: "ProjectCreateInput" } }
                     }
                 }
             ],
@@ -8144,23 +6034,12 @@ export const CreateProjectDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectCreate"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectCreate" } }]
                         }
                     }
                 ]
@@ -8171,10 +6050,7 @@ export const CreateProjectDocument = ({
         ...ProjectFragmentDoc.definitions,
         ...AuthOrganizationFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    CreateProjectMutation,
-    CreateProjectMutationVariables
->;
+} as unknown) as DocumentNode<CreateProjectMutation, CreateProjectMutationVariables>;
 export const CreateProjectThemeDocument = ({
     kind: "Document",
     definitions: [
@@ -8185,19 +6061,10 @@ export const CreateProjectThemeDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
                     type: {
                         kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: {
-                                kind: "Name",
-                                value: "ProjectThemeCreateInput"
-                            }
-                        }
+                        type: { kind: "NamedType", name: { kind: "Name", value: "ProjectThemeCreateInput" } }
                     }
                 }
             ],
@@ -8211,22 +6078,13 @@ export const CreateProjectThemeDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectThemeCreate"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "ProjectThemeCreate" } }
                             ]
                         }
                     }
@@ -8240,10 +6098,7 @@ export const CreateProjectThemeDocument = ({
         ...AuthOrganizationFragmentDoc.definitions,
         ...UserFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    CreateProjectThemeMutation,
-    CreateProjectThemeMutationVariables
->;
+} as unknown) as DocumentNode<CreateProjectThemeMutation, CreateProjectThemeMutationVariables>;
 export const DeleteProjectThemeDocument = ({
     kind: "Document",
     definitions: [
@@ -8254,17 +6109,8 @@ export const DeleteProjectThemeDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "ID" }
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "ID" } } }
                 }
             ],
             selectionSet: {
@@ -8277,22 +6123,13 @@ export const DeleteProjectThemeDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectThemeDelete"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "ProjectThemeDelete" } }
                             ]
                         }
                     }
@@ -8306,10 +6143,7 @@ export const DeleteProjectThemeDocument = ({
         ...AuthOrganizationFragmentDoc.definitions,
         ...UserFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    DeleteProjectThemeMutation,
-    DeleteProjectThemeMutationVariables
->;
+} as unknown) as DocumentNode<DeleteProjectThemeMutation, DeleteProjectThemeMutationVariables>;
 export const UpdateProjectThemeDocument = ({
     kind: "Document",
     definitions: [
@@ -8320,33 +6154,15 @@ export const UpdateProjectThemeDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "ID" }
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "ID" } } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
                     type: {
                         kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: {
-                                kind: "Name",
-                                value: "ProjectThemeUpdateInput"
-                            }
-                        }
+                        type: { kind: "NamedType", name: { kind: "Name", value: "ProjectThemeUpdateInput" } }
                     }
                 }
             ],
@@ -8360,30 +6176,18 @@ export const UpdateProjectThemeDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectThemeUpdate"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "ProjectThemeUpdate" } }
                             ]
                         }
                     }
@@ -8397,10 +6201,7 @@ export const UpdateProjectThemeDocument = ({
         ...AuthOrganizationFragmentDoc.definitions,
         ...UserFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    UpdateProjectThemeMutation,
-    UpdateProjectThemeMutationVariables
->;
+} as unknown) as DocumentNode<UpdateProjectThemeMutation, UpdateProjectThemeMutationVariables>;
 export const UpdateProjectDocument = ({
     kind: "Document",
     definitions: [
@@ -8411,16 +6212,10 @@ export const UpdateProjectDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
                     type: {
                         kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "ProjectUpdateInput" }
-                        }
+                        type: { kind: "NamedType", name: { kind: "Name", value: "ProjectUpdateInput" } }
                     }
                 }
             ],
@@ -8434,23 +6229,12 @@ export const UpdateProjectDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectUpdate"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "ProjectUpdate" } }]
                         }
                     }
                 ]
@@ -8461,10 +6245,7 @@ export const UpdateProjectDocument = ({
         ...ProjectFragmentDoc.definitions,
         ...AuthOrganizationFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    UpdateProjectMutation,
-    UpdateProjectMutationVariables
->;
+} as unknown) as DocumentNode<UpdateProjectMutation, UpdateProjectMutationVariables>;
 export const CreateSurveyChannelDocument = ({
     kind: "Document",
     definitions: [
@@ -8475,19 +6256,10 @@ export const CreateSurveyChannelDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
                     type: {
                         kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: {
-                                kind: "Name",
-                                value: "SurveyChannelCreateInput"
-                            }
-                        }
+                        type: { kind: "NamedType", name: { kind: "Name", value: "SurveyChannelCreateInput" } }
                     }
                 }
             ],
@@ -8501,22 +6273,13 @@ export const CreateSurveyChannelDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyChannelCreate"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "SurveyChannelCreate" } }
                             ]
                         }
                     }
@@ -8532,10 +6295,7 @@ export const CreateSurveyChannelDocument = ({
         ...UserFragmentDoc.definitions,
         ...SurveyErrorFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    CreateSurveyChannelMutation,
-    CreateSurveyChannelMutationVariables
->;
+} as unknown) as DocumentNode<CreateSurveyChannelMutation, CreateSurveyChannelMutationVariables>;
 export const DeleteSurveyChannelDocument = ({
     kind: "Document",
     definitions: [
@@ -8546,17 +6306,8 @@ export const DeleteSurveyChannelDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "ID" }
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "ID" } } }
                 }
             ],
             selectionSet: {
@@ -8569,22 +6320,13 @@ export const DeleteSurveyChannelDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyChannelDelete"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "SurveyChannelDelete" } }
                             ]
                         }
                     }
@@ -8600,10 +6342,7 @@ export const DeleteSurveyChannelDocument = ({
         ...ProjectThemeFragmentDoc.definitions,
         ...UserFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    DeleteSurveyChannelMutation,
-    DeleteSurveyChannelMutationVariables
->;
+} as unknown) as DocumentNode<DeleteSurveyChannelMutation, DeleteSurveyChannelMutationVariables>;
 export const UpdateSurveyChannelDocument = ({
     kind: "Document",
     definitions: [
@@ -8614,33 +6353,15 @@ export const UpdateSurveyChannelDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "ID" }
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "ID" } } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
                     type: {
                         kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: {
-                                kind: "Name",
-                                value: "SurveyChannelUpdateInput"
-                            }
-                        }
+                        type: { kind: "NamedType", name: { kind: "Name", value: "SurveyChannelUpdateInput" } }
                     }
                 }
             ],
@@ -8654,30 +6375,18 @@ export const UpdateSurveyChannelDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyChannelUpdate"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "SurveyChannelUpdate" } }
                             ]
                         }
                     }
@@ -8693,10 +6402,7 @@ export const UpdateSurveyChannelDocument = ({
         ...ProjectThemeFragmentDoc.definitions,
         ...UserFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    UpdateSurveyChannelMutation,
-    UpdateSurveyChannelMutationVariables
->;
+} as unknown) as DocumentNode<UpdateSurveyChannelMutation, UpdateSurveyChannelMutationVariables>;
 export const CreateSurveyDocument = ({
     kind: "Document",
     definitions: [
@@ -8707,16 +6413,10 @@ export const CreateSurveyDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
                     type: {
                         kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "SurveyCreateInput" }
-                        }
+                        type: { kind: "NamedType", name: { kind: "Name", value: "SurveyCreateInput" } }
                     }
                 }
             ],
@@ -8730,23 +6430,12 @@ export const CreateSurveyDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyCreate"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyCreate" } }]
                         }
                     }
                 ]
@@ -8760,10 +6449,7 @@ export const CreateSurveyDocument = ({
         ...ProjectThemeFragmentDoc.definitions,
         ...UserFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    CreateSurveyMutation,
-    CreateSurveyMutationVariables
->;
+} as unknown) as DocumentNode<CreateSurveyMutation, CreateSurveyMutationVariables>;
 export const DeleteSurveyDocument = ({
     kind: "Document",
     definitions: [
@@ -8774,17 +6460,8 @@ export const DeleteSurveyDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "ID" }
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "ID" } } }
                 }
             ],
             selectionSet: {
@@ -8797,23 +6474,12 @@ export const DeleteSurveyDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyDelete"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyDelete" } }]
                         }
                     }
                 ]
@@ -8827,10 +6493,7 @@ export const DeleteSurveyDocument = ({
         ...ProjectThemeFragmentDoc.definitions,
         ...UserFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    DeleteSurveyMutation,
-    DeleteSurveyMutationVariables
->;
+} as unknown) as DocumentNode<DeleteSurveyMutation, DeleteSurveyMutationVariables>;
 export const CreateSurveyQuestionDocument = ({
     kind: "Document",
     definitions: [
@@ -8841,19 +6504,10 @@ export const CreateSurveyQuestionDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
                     type: {
                         kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: {
-                                kind: "Name",
-                                value: "SurveyQuestionCreateInput"
-                            }
-                        }
+                        type: { kind: "NamedType", name: { kind: "Name", value: "SurveyQuestionCreateInput" } }
                     }
                 }
             ],
@@ -8867,22 +6521,13 @@ export const CreateSurveyQuestionDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyQuestionCreate"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "SurveyQuestionCreate" } }
                             ]
                         }
                     }
@@ -8898,10 +6543,7 @@ export const CreateSurveyQuestionDocument = ({
         ...ProjectThemeFragmentDoc.definitions,
         ...UserFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    CreateSurveyQuestionMutation,
-    CreateSurveyQuestionMutationVariables
->;
+} as unknown) as DocumentNode<CreateSurveyQuestionMutation, CreateSurveyQuestionMutationVariables>;
 export const DeleteSurveyQuestionDocument = ({
     kind: "Document",
     definitions: [
@@ -8912,17 +6554,8 @@ export const DeleteSurveyQuestionDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "ID" }
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "ID" } } }
                 }
             ],
             selectionSet: {
@@ -8935,22 +6568,13 @@ export const DeleteSurveyQuestionDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyQuestionDelete"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "SurveyQuestionDelete" } }
                             ]
                         }
                     }
@@ -8966,10 +6590,7 @@ export const DeleteSurveyQuestionDocument = ({
         ...ProjectThemeFragmentDoc.definitions,
         ...UserFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    DeleteSurveyQuestionMutation,
-    DeleteSurveyQuestionMutationVariables
->;
+} as unknown) as DocumentNode<DeleteSurveyQuestionMutation, DeleteSurveyQuestionMutationVariables>;
 export const UpdateSurveyQuestionDocument = ({
     kind: "Document",
     definitions: [
@@ -8980,33 +6601,15 @@ export const UpdateSurveyQuestionDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "ID" }
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "ID" } } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
                     type: {
                         kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: {
-                                kind: "Name",
-                                value: "SurveyQuestionUpdateInput"
-                            }
-                        }
+                        type: { kind: "NamedType", name: { kind: "Name", value: "SurveyQuestionUpdateInput" } }
                     }
                 }
             ],
@@ -9020,30 +6623,18 @@ export const UpdateSurveyQuestionDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyQuestionUpdate"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "SurveyQuestionUpdate" } }
                             ]
                         }
                     }
@@ -9059,10 +6650,7 @@ export const UpdateSurveyQuestionDocument = ({
         ...ProjectThemeFragmentDoc.definitions,
         ...UserFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    UpdateSurveyQuestionMutation,
-    UpdateSurveyQuestionMutationVariables
->;
+} as unknown) as DocumentNode<UpdateSurveyQuestionMutation, UpdateSurveyQuestionMutationVariables>;
 export const CreateSurveyResponseDocument = ({
     kind: "Document",
     definitions: [
@@ -9073,19 +6661,10 @@ export const CreateSurveyResponseDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
                     type: {
                         kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: {
-                                kind: "Name",
-                                value: "SurveyResponseCreateInput"
-                            }
-                        }
+                        type: { kind: "NamedType", name: { kind: "Name", value: "SurveyResponseCreateInput" } }
                     }
                 }
             ],
@@ -9099,22 +6678,13 @@ export const CreateSurveyResponseDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyResponseCreate"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "SurveyResponseCreate" } }
                             ]
                         }
                     }
@@ -9124,10 +6694,7 @@ export const CreateSurveyResponseDocument = ({
         ...SurveyResponseCreateFragmentDoc.definitions,
         ...SurveyErrorFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    CreateSurveyResponseMutation,
-    CreateSurveyResponseMutationVariables
->;
+} as unknown) as DocumentNode<CreateSurveyResponseMutation, CreateSurveyResponseMutationVariables>;
 export const UpdateSurveyResponseDocument = ({
     kind: "Document",
     definitions: [
@@ -9138,33 +6705,15 @@ export const UpdateSurveyResponseDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "ID" }
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "ID" } } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
                     type: {
                         kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: {
-                                kind: "Name",
-                                value: "SurveyResponseUpdateInput"
-                            }
-                        }
+                        type: { kind: "NamedType", name: { kind: "Name", value: "SurveyResponseUpdateInput" } }
                     }
                 }
             ],
@@ -9178,30 +6727,18 @@ export const UpdateSurveyResponseDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyResponseUpdate"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "SurveyResponseUpdate" } }
                             ]
                         }
                     }
@@ -9211,10 +6748,7 @@ export const UpdateSurveyResponseDocument = ({
         ...SurveyResponseUpdateFragmentDoc.definitions,
         ...SurveyErrorFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    UpdateSurveyResponseMutation,
-    UpdateSurveyResponseMutationVariables
->;
+} as unknown) as DocumentNode<UpdateSurveyResponseMutation, UpdateSurveyResponseMutationVariables>;
 export const UpdateSurveyDocument = ({
     kind: "Document",
     definitions: [
@@ -9225,30 +6759,15 @@ export const UpdateSurveyDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "ID" }
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "ID" } } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
                     type: {
                         kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "SurveyUpdateInput" }
-                        }
+                        type: { kind: "NamedType", name: { kind: "Name", value: "SurveyUpdateInput" } }
                     }
                 }
             ],
@@ -9262,31 +6781,17 @@ export const UpdateSurveyDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyUpdate"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyUpdate" } }]
                         }
                     }
                 ]
@@ -9300,10 +6805,7 @@ export const UpdateSurveyDocument = ({
         ...ProjectThemeFragmentDoc.definitions,
         ...UserFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    UpdateSurveyMutation,
-    UpdateSurveyMutationVariables
->;
+} as unknown) as DocumentNode<UpdateSurveyMutation, UpdateSurveyMutationVariables>;
 export const RefreshTokenDocument = ({
     kind: "Document",
     definitions: [
@@ -9314,25 +6816,13 @@ export const RefreshTokenDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "csrfToken" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "csrfToken" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "refreshToken" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "refreshToken" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 }
             ],
             selectionSet: {
@@ -9345,34 +6835,17 @@ export const RefreshTokenDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "csrfToken" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "csrfToken" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "csrfToken" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "refreshToken" },
-                                value: {
-                                    kind: "Variable",
-                                    name: {
-                                        kind: "Name",
-                                        value: "refreshToken"
-                                    }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "refreshToken" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "RefreshToken"
-                                    }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "RefreshToken" } }]
                         }
                     }
                 ]
@@ -9381,10 +6854,7 @@ export const RefreshTokenDocument = ({
         ...RefreshTokenFragmentDoc.definitions,
         ...UserErrorFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    RefreshTokenMutation,
-    RefreshTokenMutationVariables
->;
+} as unknown) as DocumentNode<RefreshTokenMutation, RefreshTokenMutationVariables>;
 export const UpdateUserDocument = ({
     kind: "Document",
     definitions: [
@@ -9395,16 +6865,10 @@ export const UpdateUserDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "input" }
-                    },
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
                     type: {
                         kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "UserInput" }
-                        }
+                        type: { kind: "NamedType", name: { kind: "Name", value: "UserInput" } }
                     }
                 }
             ],
@@ -9418,20 +6882,12 @@ export const UpdateUserDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "input" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "input" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "UserUpdate" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "UserUpdate" } }]
                         }
                     }
                 ]
@@ -9459,12 +6915,7 @@ export const _ServiceDocument = ({
                         name: { kind: "Name", value: "_service" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "_Service" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "_Service" } }]
                         }
                     }
                 ]
@@ -9483,69 +6934,33 @@ export const ActiveSurveysDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "after" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "after" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "before" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "before" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "filter" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "SurveyFilterInput" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "filter" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "SurveyFilterInput" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "first" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "first" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "last" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "sortBy" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "SurveySortingInput" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "sortBy" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "SurveySortingInput" } }
                 }
             ],
             selectionSet: {
@@ -9558,50 +6973,32 @@ export const ActiveSurveysDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "after" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "after" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "after" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "before" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "before" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "before" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "filter" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "filter" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "filter" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "first" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "first" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "first" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "last" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "last" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "last" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "sortBy" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "sortBy" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "sortBy" } }
                             }
                         ],
                         selectionSet: {
@@ -9609,10 +7006,7 @@ export const ActiveSurveysDocument = ({
                             selections: [
                                 {
                                     kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "BaseSurveyCountableConnection"
-                                    }
+                                    name: { kind: "Name", value: "BaseSurveyCountableConnection" }
                                 }
                             ]
                         }
@@ -9639,61 +7033,28 @@ export const ChannelsDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "after" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "after" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "before" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "before" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "first" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "first" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "ID" }
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "ID" } } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "last" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 }
             ],
             selectionSet: {
@@ -9706,42 +7067,27 @@ export const ChannelsDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "after" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "after" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "after" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "before" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "before" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "before" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "first" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "first" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "first" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "last" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "last" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "last" } }
                             }
                         ],
                         selectionSet: {
@@ -9749,11 +7095,7 @@ export const ChannelsDocument = ({
                             selections: [
                                 {
                                     kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value:
-                                            "SurveyChannelCountableConnection"
-                                    }
+                                    name: { kind: "Name", value: "SurveyChannelCountableConnection" }
                                 }
                             ]
                         }
@@ -9781,47 +7123,23 @@ export const EventDefinitionsDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "after" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "after" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "before" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "before" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "first" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "first" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "last" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 }
             ],
             selectionSet: {
@@ -9834,34 +7152,22 @@ export const EventDefinitionsDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "after" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "after" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "after" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "before" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "before" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "before" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "first" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "first" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "first" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "last" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "last" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "last" } }
                             }
                         ],
                         selectionSet: {
@@ -9869,11 +7175,7 @@ export const EventDefinitionsDocument = ({
                             selections: [
                                 {
                                     kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value:
-                                            "EventDefinitionCountableConnection"
-                                    }
+                                    name: { kind: "Name", value: "EventDefinitionCountableConnection" }
                                 }
                             ]
                         }
@@ -9887,10 +7189,7 @@ export const EventDefinitionsDocument = ({
         ...ProjectFragmentDoc.definitions,
         ...AuthOrganizationFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    EventDefinitionsQuery,
-    EventDefinitionsQueryVariables
->;
+} as unknown) as DocumentNode<EventDefinitionsQuery, EventDefinitionsQueryVariables>;
 export const EventPropertiesDocument = ({
     kind: "Document",
     definitions: [
@@ -9901,58 +7200,28 @@ export const EventPropertiesDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "after" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "after" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "before" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "before" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "event" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "event" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "first" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "first" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "last" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 }
             ],
             selectionSet: {
@@ -9965,42 +7234,27 @@ export const EventPropertiesDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "after" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "after" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "after" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "before" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "before" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "before" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "event" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "event" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "event" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "first" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "first" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "first" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "last" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "last" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "last" } }
                             }
                         ],
                         selectionSet: {
@@ -10008,11 +7262,7 @@ export const EventPropertiesDocument = ({
                             selections: [
                                 {
                                     kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value:
-                                            "EventPropertyCountableConnection"
-                                    }
+                                    name: { kind: "Name", value: "EventPropertyCountableConnection" }
                                 }
                             ]
                         }
@@ -10026,10 +7276,7 @@ export const EventPropertiesDocument = ({
         ...ProjectFragmentDoc.definitions,
         ...AuthOrganizationFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    EventPropertiesQuery,
-    EventPropertiesQueryVariables
->;
+} as unknown) as DocumentNode<EventPropertiesQuery, EventPropertiesQueryVariables>;
 export const EventsDocument = ({
     kind: "Document",
     definitions: [
@@ -10040,47 +7287,23 @@ export const EventsDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "after" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "after" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "before" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "before" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "first" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "first" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "last" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 }
             ],
             selectionSet: {
@@ -10093,46 +7316,28 @@ export const EventsDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "after" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "after" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "after" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "before" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "before" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "before" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "first" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "first" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "first" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "last" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "last" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "last" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "EventCountableConnection"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "EventCountableConnection" } }
                             ]
                         }
                     }
@@ -10162,13 +7367,7 @@ export const OrganizationInviteLinkDocument = ({
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "OrganizationInviteLink"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationInviteLink" } }
                             ]
                         }
                     }
@@ -10177,10 +7376,7 @@ export const OrganizationInviteLinkDocument = ({
         },
         ...OrganizationInviteLinkFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    OrganizationInviteLinkQuery,
-    OrganizationInviteLinkQueryVariables
->;
+} as unknown) as DocumentNode<OrganizationInviteLinkQuery, OrganizationInviteLinkQueryVariables>;
 export const PersonsDocument = ({
     kind: "Document",
     definitions: [
@@ -10191,47 +7387,23 @@ export const PersonsDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "after" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "after" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "before" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "before" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "first" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "first" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "last" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 }
             ],
             selectionSet: {
@@ -10244,46 +7416,28 @@ export const PersonsDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "after" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "after" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "after" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "before" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "before" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "before" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "first" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "first" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "first" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "last" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "last" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "last" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "PersonCountableConnection"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "PersonCountableConnection" } }
                             ]
                         }
                     }
@@ -10307,61 +7461,28 @@ export const PropertyDefinitionsDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "after" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "after" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "before" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "before" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "definitionType" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: {
-                            kind: "Name",
-                            value: "PropertyDefinitionTypeEnum"
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "definitionType" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "PropertyDefinitionTypeEnum" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "first" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "first" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "last" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 }
             ],
             selectionSet: {
@@ -10374,45 +7495,27 @@ export const PropertyDefinitionsDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "after" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "after" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "after" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "before" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "before" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "before" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "definitionType" },
-                                value: {
-                                    kind: "Variable",
-                                    name: {
-                                        kind: "Name",
-                                        value: "definitionType"
-                                    }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "definitionType" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "first" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "first" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "first" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "last" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "last" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "last" } }
                             }
                         ],
                         selectionSet: {
@@ -10420,11 +7523,7 @@ export const PropertyDefinitionsDocument = ({
                             selections: [
                                 {
                                     kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value:
-                                            "PropertyDefinitionCountableConnection"
-                                    }
+                                    name: { kind: "Name", value: "PropertyDefinitionCountableConnection" }
                                 }
                             ]
                         }
@@ -10438,10 +7537,7 @@ export const PropertyDefinitionsDocument = ({
         ...ProjectFragmentDoc.definitions,
         ...AuthOrganizationFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    PropertyDefinitionsQuery,
-    PropertyDefinitionsQueryVariables
->;
+} as unknown) as DocumentNode<PropertyDefinitionsQuery, PropertyDefinitionsQueryVariables>;
 export const QuestionsDocument = ({
     kind: "Document",
     definitions: [
@@ -10452,61 +7548,28 @@ export const QuestionsDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "after" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "after" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "before" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "before" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "first" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "first" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NonNullType",
-                        type: {
-                            kind: "NamedType",
-                            name: { kind: "Name", value: "ID" }
-                        }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "ID" } } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "last" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 }
             ],
             selectionSet: {
@@ -10519,42 +7582,27 @@ export const QuestionsDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "after" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "after" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "after" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "before" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "before" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "before" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "first" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "first" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "first" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "last" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "last" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "last" } }
                             }
                         ],
                         selectionSet: {
@@ -10562,11 +7610,7 @@ export const QuestionsDocument = ({
                             selections: [
                                 {
                                     kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value:
-                                            "SurveyQuestionCountableConnection"
-                                    }
+                                    name: { kind: "Name", value: "SurveyQuestionCountableConnection" }
                                 }
                             ]
                         }
@@ -10594,25 +7638,13 @@ export const SurveyDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "ID" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "ID" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "slug" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "slug" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 }
             ],
             selectionSet: {
@@ -10625,28 +7657,17 @@ export const SurveyDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "slug" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "slug" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "slug" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "Survey" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Survey" } }]
                         }
                     }
                 ]
@@ -10669,69 +7690,33 @@ export const Survey_ChannelsDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "ID" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "ID" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "slug" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "slug" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "after" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "after" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "before" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "before" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "first" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "first" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "last" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 }
             ],
             selectionSet: {
@@ -10744,18 +7729,12 @@ export const Survey_ChannelsDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "slug" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "slug" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "slug" } }
                             }
                         ],
                         selectionSet: {
@@ -10767,59 +7746,23 @@ export const Survey_ChannelsDocument = ({
                                     arguments: [
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "after"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "after"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "after" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "after" } }
                                         },
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "before"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "before"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "before" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "before" } }
                                         },
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "first"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "first"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "first" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "first" } }
                                         },
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "last"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "last"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "last" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "last" } }
                                         }
                                     ],
                                     selectionSet: {
@@ -10827,11 +7770,7 @@ export const Survey_ChannelsDocument = ({
                                         selections: [
                                             {
                                                 kind: "FragmentSpread",
-                                                name: {
-                                                    kind: "Name",
-                                                    value:
-                                                        "SurveyChannelCountableConnection"
-                                                }
+                                                name: { kind: "Name", value: "SurveyChannelCountableConnection" }
                                             }
                                         ]
                                     }
@@ -10851,10 +7790,7 @@ export const Survey_ChannelsDocument = ({
         ...ProjectThemeFragmentDoc.definitions,
         ...UserFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    Survey_ChannelsQuery,
-    Survey_ChannelsQueryVariables
->;
+} as unknown) as DocumentNode<Survey_ChannelsQuery, Survey_ChannelsQueryVariables>;
 export const Survey_ProjectDocument = ({
     kind: "Document",
     definitions: [
@@ -10865,25 +7801,13 @@ export const Survey_ProjectDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "ID" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "ID" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "slug" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "slug" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 }
             ],
             selectionSet: {
@@ -10896,18 +7820,12 @@ export const Survey_ProjectDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "slug" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "slug" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "slug" } }
                             }
                         ],
                         selectionSet: {
@@ -10919,13 +7837,7 @@ export const Survey_ProjectDocument = ({
                                     selectionSet: {
                                         kind: "SelectionSet",
                                         selections: [
-                                            {
-                                                kind: "FragmentSpread",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "Project"
-                                                }
-                                            }
+                                            { kind: "FragmentSpread", name: { kind: "Name", value: "Project" } }
                                         ]
                                     }
                                 }
@@ -10938,10 +7850,7 @@ export const Survey_ProjectDocument = ({
         ...ProjectFragmentDoc.definitions,
         ...AuthOrganizationFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    Survey_ProjectQuery,
-    Survey_ProjectQueryVariables
->;
+} as unknown) as DocumentNode<Survey_ProjectQuery, Survey_ProjectQueryVariables>;
 export const Survey_Project_OrganizationDocument = ({
     kind: "Document",
     definitions: [
@@ -10952,25 +7861,13 @@ export const Survey_Project_OrganizationDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "ID" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "ID" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "slug" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "slug" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 }
             ],
             selectionSet: {
@@ -10983,18 +7880,12 @@ export const Survey_Project_OrganizationDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "slug" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "slug" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "slug" } }
                             }
                         ],
                         selectionSet: {
@@ -11008,21 +7899,13 @@ export const Survey_Project_OrganizationDocument = ({
                                         selections: [
                                             {
                                                 kind: "Field",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "organization"
-                                                },
+                                                name: { kind: "Name", value: "organization" },
                                                 selectionSet: {
                                                     kind: "SelectionSet",
                                                     selections: [
                                                         {
-                                                            kind:
-                                                                "FragmentSpread",
-                                                            name: {
-                                                                kind: "Name",
-                                                                value:
-                                                                    "AuthOrganization"
-                                                            }
+                                                            kind: "FragmentSpread",
+                                                            name: { kind: "Name", value: "AuthOrganization" }
                                                         }
                                                     ]
                                                 }
@@ -11038,10 +7921,7 @@ export const Survey_Project_OrganizationDocument = ({
         },
         ...AuthOrganizationFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    Survey_Project_OrganizationQuery,
-    Survey_Project_OrganizationQueryVariables
->;
+} as unknown) as DocumentNode<Survey_Project_OrganizationQuery, Survey_Project_OrganizationQueryVariables>;
 export const Survey_QuestionsDocument = ({
     kind: "Document",
     definitions: [
@@ -11052,69 +7932,33 @@ export const Survey_QuestionsDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "ID" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "ID" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "slug" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "slug" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "after" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "after" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "before" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "before" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "first" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "first" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "last" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 }
             ],
             selectionSet: {
@@ -11127,18 +7971,12 @@ export const Survey_QuestionsDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "slug" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "slug" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "slug" } }
                             }
                         ],
                         selectionSet: {
@@ -11150,59 +7988,23 @@ export const Survey_QuestionsDocument = ({
                                     arguments: [
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "after"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "after"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "after" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "after" } }
                                         },
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "before"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "before"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "before" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "before" } }
                                         },
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "first"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "first"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "first" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "first" } }
                                         },
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "last"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "last"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "last" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "last" } }
                                         }
                                     ],
                                     selectionSet: {
@@ -11210,11 +8012,7 @@ export const Survey_QuestionsDocument = ({
                                         selections: [
                                             {
                                                 kind: "FragmentSpread",
-                                                name: {
-                                                    kind: "Name",
-                                                    value:
-                                                        "SurveyQuestionCountableConnection"
-                                                }
+                                                name: { kind: "Name", value: "SurveyQuestionCountableConnection" }
                                             }
                                         ]
                                     }
@@ -11234,10 +8032,7 @@ export const Survey_QuestionsDocument = ({
         ...ProjectThemeFragmentDoc.definitions,
         ...UserFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    Survey_QuestionsQuery,
-    Survey_QuestionsQueryVariables
->;
+} as unknown) as DocumentNode<Survey_QuestionsQuery, Survey_QuestionsQueryVariables>;
 export const Survey_ThemeDocument = ({
     kind: "Document",
     definitions: [
@@ -11248,25 +8043,13 @@ export const Survey_ThemeDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "ID" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "ID" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "slug" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "slug" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 }
             ],
             selectionSet: {
@@ -11279,18 +8062,12 @@ export const Survey_ThemeDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "slug" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "slug" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "slug" } }
                             }
                         ],
                         selectionSet: {
@@ -11302,13 +8079,7 @@ export const Survey_ThemeDocument = ({
                                     selectionSet: {
                                         kind: "SelectionSet",
                                         selections: [
-                                            {
-                                                kind: "FragmentSpread",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "ProjectTheme"
-                                                }
-                                            }
+                                            { kind: "FragmentSpread", name: { kind: "Name", value: "ProjectTheme" } }
                                         ]
                                     }
                                 }
@@ -11334,25 +8105,13 @@ export const Survey_Theme_ProjectDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "ID" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "ID" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "slug" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "slug" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 }
             ],
             selectionSet: {
@@ -11365,18 +8124,12 @@ export const Survey_Theme_ProjectDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "slug" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "slug" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "slug" } }
                             }
                         ],
                         selectionSet: {
@@ -11390,20 +8143,13 @@ export const Survey_Theme_ProjectDocument = ({
                                         selections: [
                                             {
                                                 kind: "Field",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "project"
-                                                },
+                                                name: { kind: "Name", value: "project" },
                                                 selectionSet: {
                                                     kind: "SelectionSet",
                                                     selections: [
                                                         {
-                                                            kind:
-                                                                "FragmentSpread",
-                                                            name: {
-                                                                kind: "Name",
-                                                                value: "Project"
-                                                            }
+                                                            kind: "FragmentSpread",
+                                                            name: { kind: "Name", value: "Project" }
                                                         }
                                                     ]
                                                 }
@@ -11420,10 +8166,7 @@ export const Survey_Theme_ProjectDocument = ({
         ...ProjectFragmentDoc.definitions,
         ...AuthOrganizationFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    Survey_Theme_ProjectQuery,
-    Survey_Theme_ProjectQueryVariables
->;
+} as unknown) as DocumentNode<Survey_Theme_ProjectQuery, Survey_Theme_ProjectQueryVariables>;
 export const Survey_Theme_Project_OrganizationDocument = ({
     kind: "Document",
     definitions: [
@@ -11434,25 +8177,13 @@ export const Survey_Theme_Project_OrganizationDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "ID" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "ID" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "slug" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "slug" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 }
             ],
             selectionSet: {
@@ -11465,18 +8196,12 @@ export const Survey_Theme_Project_OrganizationDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "slug" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "slug" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "slug" } }
                             }
                         ],
                         selectionSet: {
@@ -11490,32 +8215,21 @@ export const Survey_Theme_Project_OrganizationDocument = ({
                                         selections: [
                                             {
                                                 kind: "Field",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "project"
-                                                },
+                                                name: { kind: "Name", value: "project" },
                                                 selectionSet: {
                                                     kind: "SelectionSet",
                                                     selections: [
                                                         {
                                                             kind: "Field",
-                                                            name: {
-                                                                kind: "Name",
-                                                                value:
-                                                                    "organization"
-                                                            },
+                                                            name: { kind: "Name", value: "organization" },
                                                             selectionSet: {
-                                                                kind:
-                                                                    "SelectionSet",
+                                                                kind: "SelectionSet",
                                                                 selections: [
                                                                     {
-                                                                        kind:
-                                                                            "FragmentSpread",
+                                                                        kind: "FragmentSpread",
                                                                         name: {
-                                                                            kind:
-                                                                                "Name",
-                                                                            value:
-                                                                                "AuthOrganization"
+                                                                            kind: "Name",
+                                                                            value: "AuthOrganization"
                                                                         }
                                                                     }
                                                                 ]
@@ -11535,10 +8249,7 @@ export const Survey_Theme_Project_OrganizationDocument = ({
         },
         ...AuthOrganizationFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    Survey_Theme_Project_OrganizationQuery,
-    Survey_Theme_Project_OrganizationQueryVariables
->;
+} as unknown) as DocumentNode<Survey_Theme_Project_OrganizationQuery, Survey_Theme_Project_OrganizationQueryVariables>;
 export const SurveyByChannelDocument = ({
     kind: "Document",
     definitions: [
@@ -11549,25 +8260,13 @@ export const SurveyByChannelDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "ID" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "ID" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "link" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "link" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 }
             ],
             selectionSet: {
@@ -11580,28 +8279,17 @@ export const SurveyByChannelDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "link" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "link" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "link" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "BaseSurvey" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "BaseSurvey" } }]
                         }
                     }
                 ]
@@ -11613,10 +8301,7 @@ export const SurveyByChannelDocument = ({
         ...BaseSurveyQuestionFragmentDoc.definitions,
         ...BaseProjectThemeFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    SurveyByChannelQuery,
-    SurveyByChannelQueryVariables
->;
+} as unknown) as DocumentNode<SurveyByChannelQuery, SurveyByChannelQueryVariables>;
 export const SurveyByChannel_ProjectDocument = ({
     kind: "Document",
     definitions: [
@@ -11627,25 +8312,13 @@ export const SurveyByChannel_ProjectDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "ID" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "ID" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "link" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "link" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 }
             ],
             selectionSet: {
@@ -11658,18 +8331,12 @@ export const SurveyByChannel_ProjectDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "link" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "link" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "link" } }
                             }
                         ],
                         selectionSet: {
@@ -11681,13 +8348,7 @@ export const SurveyByChannel_ProjectDocument = ({
                                     selectionSet: {
                                         kind: "SelectionSet",
                                         selections: [
-                                            {
-                                                kind: "FragmentSpread",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "BaseProject"
-                                                }
-                                            }
+                                            { kind: "FragmentSpread", name: { kind: "Name", value: "BaseProject" } }
                                         ]
                                     }
                                 }
@@ -11699,10 +8360,7 @@ export const SurveyByChannel_ProjectDocument = ({
         },
         ...BaseProjectFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    SurveyByChannel_ProjectQuery,
-    SurveyByChannel_ProjectQueryVariables
->;
+} as unknown) as DocumentNode<SurveyByChannel_ProjectQuery, SurveyByChannel_ProjectQueryVariables>;
 export const SurveyByChannel_ThemeDocument = ({
     kind: "Document",
     definitions: [
@@ -11713,25 +8371,13 @@ export const SurveyByChannel_ThemeDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "id" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "ID" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "ID" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "link" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "link" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 }
             ],
             selectionSet: {
@@ -11744,18 +8390,12 @@ export const SurveyByChannel_ThemeDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "id" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "id" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "link" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "link" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "link" } }
                             }
                         ],
                         selectionSet: {
@@ -11769,10 +8409,7 @@ export const SurveyByChannel_ThemeDocument = ({
                                         selections: [
                                             {
                                                 kind: "FragmentSpread",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "BaseProjectTheme"
-                                                }
+                                                name: { kind: "Name", value: "BaseProjectTheme" }
                                             }
                                         ]
                                     }
@@ -11785,10 +8422,7 @@ export const SurveyByChannel_ThemeDocument = ({
         },
         ...BaseProjectThemeFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    SurveyByChannel_ThemeQuery,
-    SurveyByChannel_ThemeQueryVariables
->;
+} as unknown) as DocumentNode<SurveyByChannel_ThemeQuery, SurveyByChannel_ThemeQueryVariables>;
 export const SurveysDocument = ({
     kind: "Document",
     definitions: [
@@ -11799,69 +8433,33 @@ export const SurveysDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "after" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "after" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "before" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "before" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "filter" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "SurveyFilterInput" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "filter" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "SurveyFilterInput" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "first" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "first" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "last" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "sortBy" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "SurveySortingInput" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "sortBy" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "SurveySortingInput" } }
                 }
             ],
             selectionSet: {
@@ -11874,62 +8472,38 @@ export const SurveysDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "after" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "after" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "after" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "before" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "before" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "before" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "filter" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "filter" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "filter" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "first" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "first" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "first" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "last" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "last" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "last" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "sortBy" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "sortBy" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "sortBy" } }
                             }
                         ],
                         selectionSet: {
                             kind: "SelectionSet",
                             selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "SurveyCountableConnection"
-                                    }
-                                }
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "SurveyCountableConnection" } }
                             ]
                         }
                     }
@@ -11955,47 +8529,23 @@ export const ThemesDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "after" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "after" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "before" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "before" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "first" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "first" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "last" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 }
             ],
             selectionSet: {
@@ -12008,34 +8558,22 @@ export const ThemesDocument = ({
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "after" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "after" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "after" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "before" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "before" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "before" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "first" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "first" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "first" } }
                             },
                             {
                                 kind: "Argument",
                                 name: { kind: "Name", value: "last" },
-                                value: {
-                                    kind: "Variable",
-                                    name: { kind: "Name", value: "last" }
-                                }
+                                value: { kind: "Variable", name: { kind: "Name", value: "last" } }
                             }
                         ],
                         selectionSet: {
@@ -12043,10 +8581,7 @@ export const ThemesDocument = ({
                             selections: [
                                 {
                                     kind: "FragmentSpread",
-                                    name: {
-                                        kind: "Name",
-                                        value: "ProjectThemeCountableConnection"
-                                    }
+                                    name: { kind: "Name", value: "ProjectThemeCountableConnection" }
                                 }
                             ]
                         }
@@ -12077,12 +8612,7 @@ export const ViewerDocument = ({
                         name: { kind: "Name", value: "viewer" },
                         selectionSet: {
                             kind: "SelectionSet",
-                            selections: [
-                                {
-                                    kind: "FragmentSpread",
-                                    name: { kind: "Name", value: "User" }
-                                }
-                            ]
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "User" } }]
                         }
                     }
                 ]
@@ -12111,19 +8641,13 @@ export const Viewer_OrganizationDocument = ({
                             selections: [
                                 {
                                     kind: "Field",
-                                    name: {
-                                        kind: "Name",
-                                        value: "organization"
-                                    },
+                                    name: { kind: "Name", value: "organization" },
                                     selectionSet: {
                                         kind: "SelectionSet",
                                         selections: [
                                             {
                                                 kind: "FragmentSpread",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "AuthOrganization"
-                                                }
+                                                name: { kind: "Name", value: "AuthOrganization" }
                                             }
                                         ]
                                     }
@@ -12136,10 +8660,7 @@ export const Viewer_OrganizationDocument = ({
         },
         ...AuthOrganizationFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    Viewer_OrganizationQuery,
-    Viewer_OrganizationQueryVariables
->;
+} as unknown) as DocumentNode<Viewer_OrganizationQuery, Viewer_OrganizationQueryVariables>;
 export const Viewer_OrganizationsDocument = ({
     kind: "Document",
     definitions: [
@@ -12150,47 +8671,23 @@ export const Viewer_OrganizationsDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "after" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "after" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "before" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "before" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "first" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "first" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "last" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 }
             ],
             selectionSet: {
@@ -12204,66 +8701,27 @@ export const Viewer_OrganizationsDocument = ({
                             selections: [
                                 {
                                     kind: "Field",
-                                    name: {
-                                        kind: "Name",
-                                        value: "organizations"
-                                    },
+                                    name: { kind: "Name", value: "organizations" },
                                     arguments: [
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "after"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "after"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "after" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "after" } }
                                         },
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "before"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "before"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "before" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "before" } }
                                         },
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "first"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "first"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "first" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "first" } }
                                         },
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "last"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "last"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "last" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "last" } }
                                         }
                                     ],
                                     selectionSet: {
@@ -12271,11 +8729,7 @@ export const Viewer_OrganizationsDocument = ({
                                         selections: [
                                             {
                                                 kind: "FragmentSpread",
-                                                name: {
-                                                    kind: "Name",
-                                                    value:
-                                                        "OrganizationCountableConnection"
-                                                }
+                                                name: { kind: "Name", value: "OrganizationCountableConnection" }
                                             }
                                         ]
                                     }
@@ -12290,10 +8744,7 @@ export const Viewer_OrganizationsDocument = ({
         ...PageInfoFragmentDoc.definitions,
         ...OrganizationFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    Viewer_OrganizationsQuery,
-    Viewer_OrganizationsQueryVariables
->;
+} as unknown) as DocumentNode<Viewer_OrganizationsQuery, Viewer_OrganizationsQueryVariables>;
 export const Viewer_ProjectDocument = ({
     kind: "Document",
     definitions: [
@@ -12316,13 +8767,7 @@ export const Viewer_ProjectDocument = ({
                                     selectionSet: {
                                         kind: "SelectionSet",
                                         selections: [
-                                            {
-                                                kind: "FragmentSpread",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "Project"
-                                                }
-                                            }
+                                            { kind: "FragmentSpread", name: { kind: "Name", value: "Project" } }
                                         ]
                                     }
                                 }
@@ -12335,10 +8780,7 @@ export const Viewer_ProjectDocument = ({
         ...ProjectFragmentDoc.definitions,
         ...AuthOrganizationFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    Viewer_ProjectQuery,
-    Viewer_ProjectQueryVariables
->;
+} as unknown) as DocumentNode<Viewer_ProjectQuery, Viewer_ProjectQueryVariables>;
 export const Viewer_Project_OrganizationDocument = ({
     kind: "Document",
     definitions: [
@@ -12363,21 +8805,13 @@ export const Viewer_Project_OrganizationDocument = ({
                                         selections: [
                                             {
                                                 kind: "Field",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "organization"
-                                                },
+                                                name: { kind: "Name", value: "organization" },
                                                 selectionSet: {
                                                     kind: "SelectionSet",
                                                     selections: [
                                                         {
-                                                            kind:
-                                                                "FragmentSpread",
-                                                            name: {
-                                                                kind: "Name",
-                                                                value:
-                                                                    "AuthOrganization"
-                                                            }
+                                                            kind: "FragmentSpread",
+                                                            name: { kind: "Name", value: "AuthOrganization" }
                                                         }
                                                     ]
                                                 }
@@ -12393,10 +8827,7 @@ export const Viewer_Project_OrganizationDocument = ({
         },
         ...AuthOrganizationFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    Viewer_Project_OrganizationQuery,
-    Viewer_Project_OrganizationQueryVariables
->;
+} as unknown) as DocumentNode<Viewer_Project_OrganizationQuery, Viewer_Project_OrganizationQueryVariables>;
 export const Viewer_ProjectsDocument = ({
     kind: "Document",
     definitions: [
@@ -12407,58 +8838,28 @@ export const Viewer_ProjectsDocument = ({
             variableDefinitions: [
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "after" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "after" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "before" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "String" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "before" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "first" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "first" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "last" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "Int" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
                 {
                     kind: "VariableDefinition",
-                    variable: {
-                        kind: "Variable",
-                        name: { kind: "Name", value: "orderBy" }
-                    },
-                    type: {
-                        kind: "NamedType",
-                        name: { kind: "Name", value: "ProjectSortingInput" }
-                    }
+                    variable: { kind: "Variable", name: { kind: "Name", value: "orderBy" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "ProjectSortingInput" } }
                 }
             ],
             selectionSet: {
@@ -12476,73 +8877,28 @@ export const Viewer_ProjectsDocument = ({
                                     arguments: [
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "after"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "after"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "after" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "after" } }
                                         },
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "before"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "before"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "before" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "before" } }
                                         },
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "first"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "first"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "first" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "first" } }
                                         },
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "last"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "last"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "last" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "last" } }
                                         },
                                         {
                                             kind: "Argument",
-                                            name: {
-                                                kind: "Name",
-                                                value: "orderBy"
-                                            },
-                                            value: {
-                                                kind: "Variable",
-                                                name: {
-                                                    kind: "Name",
-                                                    value: "orderBy"
-                                                }
-                                            }
+                                            name: { kind: "Name", value: "orderBy" },
+                                            value: { kind: "Variable", name: { kind: "Name", value: "orderBy" } }
                                         }
                                     ],
                                     selectionSet: {
@@ -12550,11 +8906,7 @@ export const Viewer_ProjectsDocument = ({
                                         selections: [
                                             {
                                                 kind: "FragmentSpread",
-                                                name: {
-                                                    kind: "Name",
-                                                    value:
-                                                        "ProjectCountableConnection"
-                                                }
+                                                name: { kind: "Name", value: "ProjectCountableConnection" }
                                             }
                                         ]
                                     }
@@ -12570,7 +8922,4 @@ export const Viewer_ProjectsDocument = ({
         ...ProjectFragmentDoc.definitions,
         ...AuthOrganizationFragmentDoc.definitions
     ]
-} as unknown) as DocumentNode<
-    Viewer_ProjectsQuery,
-    Viewer_ProjectsQueryVariables
->;
+} as unknown) as DocumentNode<Viewer_ProjectsQuery, Viewer_ProjectsQueryVariables>;

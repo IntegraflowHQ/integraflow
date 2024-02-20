@@ -1542,14 +1542,7 @@ query activeSurveys(
     # Sort surveys.
     $sortBy: SurveySortingInput
 ) {
-    activeSurveys(
-        after: $after
-        before: $before
-        filter: $filter
-        first: $first
-        last: $last
-        sortBy: $sortBy
-    ) {
+    activeSurveys(after: $after, before: $before, filter: $filter, first: $first, last: $last, sortBy: $sortBy) {
         ...BaseSurveyCountableConnection
     }
 }
@@ -1568,13 +1561,7 @@ query channels(
     # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
     $last: Int
 ) {
-    channels(
-        after: $after
-        before: $before
-        first: $first
-        id: $id
-        last: $last
-    ) {
+    channels(after: $after, before: $before, first: $first, id: $id, last: $last) {
         ...SurveyChannelCountableConnection
     }
 }
@@ -1591,12 +1578,7 @@ query eventDefinitions(
     # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
     $last: Int
 ) {
-    eventDefinitions(
-        after: $after
-        before: $before
-        first: $first
-        last: $last
-    ) {
+    eventDefinitions(after: $after, before: $before, first: $first, last: $last) {
         ...EventDefinitionCountableConnection
     }
 }
@@ -1615,13 +1597,7 @@ query eventProperties(
     # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
     $last: Int
 ) {
-    eventProperties(
-        after: $after
-        before: $before
-        event: $event
-        first: $first
-        last: $last
-    ) {
+    eventProperties(after: $after, before: $before, event: $event, first: $first, last: $last) {
         ...EventPropertyCountableConnection
     }
 }
@@ -1682,13 +1658,7 @@ query propertyDefinitions(
     # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
     $last: Int
 ) {
-    propertyDefinitions(
-        after: $after
-        before: $before
-        definitionType: $definitionType
-        first: $first
-        last: $last
-    ) {
+    propertyDefinitions(after: $after, before: $before, definitionType: $definitionType, first: $first, last: $last) {
         ...PropertyDefinitionCountableConnection
     }
 }
@@ -1707,13 +1677,7 @@ query questions(
     # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
     $last: Int
 ) {
-    questions(
-        after: $after
-        before: $before
-        first: $first
-        id: $id
-        last: $last
-    ) {
+    questions(after: $after, before: $before, first: $first, id: $id, last: $last) {
         ...SurveyQuestionCountableConnection
     }
 }
@@ -1856,8 +1820,6 @@ query survey_theme_project_organization(
     }
 }
 # Look up a survey by channel ID or link.
-#
-# Requires one of the following permissions: AUTHENTICATED_API.
 query surveyByChannel(
     # The ID of the channel.
     $id: ID
@@ -1911,14 +1873,7 @@ query surveys(
     # Sort surveys.
     $sortBy: SurveySortingInput
 ) {
-    surveys(
-        after: $after
-        before: $before
-        filter: $filter
-        first: $first
-        last: $last
-        sortBy: $sortBy
-    ) {
+    surveys(after: $after, before: $before, filter: $filter, first: $first, last: $last, sortBy: $sortBy) {
         ...SurveyCountableConnection
     }
 }
@@ -1971,12 +1926,7 @@ query viewer_organizations(
     $last: Int
 ) {
     viewer {
-        organizations(
-            after: $after
-            before: $before
-            first: $first
-            last: $last
-        ) {
+        organizations(after: $after, before: $before, first: $first, last: $last) {
             ...OrganizationCountableConnection
         }
     }
@@ -2017,13 +1967,7 @@ query viewer_projects(
     $orderBy: ProjectSortingInput
 ) {
     viewer {
-        projects(
-            after: $after
-            before: $before
-            first: $first
-            last: $last
-            orderBy: $orderBy
-        ) {
+        projects(after: $after, before: $before, first: $first, last: $last, orderBy: $orderBy) {
             ...ProjectCountableConnection
         }
     }
