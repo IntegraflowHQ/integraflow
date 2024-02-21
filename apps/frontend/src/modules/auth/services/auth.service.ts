@@ -101,7 +101,7 @@ export const logout = async (token: string) => {
     });
 
     if (errors || !data || data.logout?.userErrors?.length) {
-        throw new Error("Something went wrong during token renewal");
+        throw new Error("Something went wrong during token revocation");
     }
 
     return true;

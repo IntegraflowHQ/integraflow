@@ -1,5 +1,5 @@
 import { InMemoryCache, NormalizedCacheObject } from "@apollo/client";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { useUpdateEffect } from "@/hooks";
 
@@ -13,22 +13,31 @@ const isDebugMode = import.meta.env.MODE === "development";
 
 export const useApolloFactory = () => {
     const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
+    const cacheRef = useRef<InMemoryCache | null>(null);
 
     const { token, currentProjectId, refresh, refreshToken, logout } = useAuth();
 
-    const cache = useMemo(() => {
-        const cache = new InMemoryCache();
-        persistCache({
-            cache,
-            storage: new LocalForageWrapper(localForage),
-        });
-        return cache;
+    useEffect(() => {
+        if (!cacheRef.current) {
+            const cache = new InMemoryCache();
+            persistCache({
+                cache,
+                storage: new LocalForageWrapper(localForage),
+            })
+                .then(() => {
+                    cacheRef.current = cache;
+                })
+                .catch((error) => {
+                    console.error("Error persisting cache", error);
+                    cacheRef.current = cache;
+                });
+        }
     }, []);
 
     const apolloClient = useMemo(() => {
         apolloRef.current = new ApolloFactory({
             uri: `${import.meta.env.VITE_SERVER_BASE_URL}/graphql`,
-            cache,
+            cache: cacheRef.current ? cacheRef.current : new InMemoryCache(),
             defaultOptions: {
                 query: {
                     fetchPolicy: "cache-first",
@@ -48,7 +57,7 @@ export const useApolloFactory = () => {
         });
 
         return apolloRef.current.getClient();
-    }, [currentProjectId, token, refreshToken, refresh, logout]);
+    }, [currentProjectId, token, refreshToken, refresh, logout, cacheRef.current]);
 
     useUpdateEffect(() => {
         if (apolloRef.current) {

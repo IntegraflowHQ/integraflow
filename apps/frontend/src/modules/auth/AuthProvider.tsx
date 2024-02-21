@@ -44,6 +44,7 @@ export type AuthContextValue = {
     refresh: () => Promise<string | undefined>;
     switchProject: (projectId: string) => void;
     logout: () => void;
+    reset: () => void;
 };
 
 export type AuthResult = {
@@ -201,6 +202,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             refresh: handleRefreshToken,
             switchProject,
             logout: handleLogout,
+            reset,
         }),
         [
             loading,
@@ -214,6 +216,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             handleRefreshToken,
             switchProject,
             handleLogout,
+            reset,
         ],
     );
 

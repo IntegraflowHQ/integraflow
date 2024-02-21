@@ -12,7 +12,6 @@ import dj_email_url
 import django_cache_url
 import django_stubs_ext
 import jaeger_client.config
-from kombu import Exchange, Queue
 import sentry_sdk
 import sentry_sdk.utils
 from corsheaders.defaults import default_headers
@@ -23,6 +22,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.management.utils import get_random_secret_key
 from django.core.validators import URLValidator
 from graphql.execution import executor
+from kombu import Exchange, Queue
 from pytimeparse import parse
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
@@ -723,16 +723,16 @@ CACHES["default"]["TIMEOUT"] = parse(os.environ.get("CACHE_TIMEOUT", "7 days"))
 JWT_EXPIRE = True
 JWT_TTL_ACCESS = timedelta(
     seconds=parse(
-        os.environ.get("JWT_TTL_ACCESS", "5 minutes")
+        os.environ.get("JWT_TTL_ACCESS", "30 days")
     )  # type: ignore
 )
 JWT_TTL_APP_ACCESS = timedelta(
     seconds=parse(
-        os.environ.get("JWT_TTL_APP_ACCESS", "5 minutes")
+        os.environ.get("JWT_TTL_APP_ACCESS", "30 days")
     )  # type: ignore
 )
 JWT_TTL_REFRESH = timedelta(
-    seconds=parse(os.environ.get("JWT_TTL_REFRESH", "30 days"))  # type: ignore
+    seconds=parse(os.environ.get("JWT_TTL_REFRESH", "60 days"))  # type: ignore
 )
 
 JWT_TTL_REQUEST_EMAIL_CHANGE = timedelta(
