@@ -6,20 +6,14 @@ import SurveyView from "./components/Survey";
 
 interface AppProps {
     survey: Survey;
-    getNextQuestionId: (
-        question: Question,
-        answers: SurveyAnswer[]
-    ) => ID | null;
+    getNextQuestionId: (question: Question, answers: SurveyAnswer[]) => ID | null;
     replaceTags: (surveyId: ID, content: string) => string;
     onSurveyDisplayed?: (survey: Survey) => Promise<void>;
     onSurveyClosed?: (surveyId: ID) => Promise<void>;
-    onQuestionAnswered?: (
-        surveyId: ID,
-        questionId: ID,
-        answers: SurveyAnswer[]
-    ) => Promise<void>;
+    onQuestionAnswered?: (surveyId: ID, questionId: ID, answers: SurveyAnswer[]) => Promise<void>;
     onSurveyCompleted?: (surveyId: ID) => Promise<void>;
     fullScreen?: boolean;
+    startFrom?: ID;
 }
 
 export default function App({
@@ -30,7 +24,8 @@ export default function App({
     onSurveyClosed,
     onQuestionAnswered,
     onSurveyCompleted,
-    fullScreen
+    fullScreen,
+    startFrom
 }: AppProps): VNode {
     const [isOpen, setIsOpen] = useState(true);
 
@@ -57,6 +52,7 @@ export default function App({
             onQuestionAnswered={onQuestionAnswered}
             onSurveyCompleted={onSurveyCompleted}
             fullScreen={fullScreen}
+            startFrom={startFrom}
         />
     );
 }

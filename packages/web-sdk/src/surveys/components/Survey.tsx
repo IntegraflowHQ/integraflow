@@ -2,33 +2,19 @@ import { VNode, h } from "preact";
 import { useCallback, useLayoutEffect, useRef, useState } from "preact/hooks";
 
 import { Wrapper } from "../../components";
-import {
-    AnswerType,
-    CTASettings,
-    CTAType,
-    ID,
-    Question,
-    Survey,
-    SurveyAnswer
-} from "../../types";
+import { AnswerType, CTASettings, CTAType, ID, Question, Survey, SurveyAnswer } from "../../types";
 import { cn } from "../../utils";
 import Response from "./Response";
 
 interface SurveyProps {
     survey: Survey;
     close: (force?: boolean) => void;
-    getNextQuestionId: (
-        question: Question,
-        answers: SurveyAnswer[]
-    ) => ID | null;
+    getNextQuestionId: (question: Question, answers: SurveyAnswer[]) => ID | null;
     replaceTags: (surveyId: ID, content: string) => string;
-    onQuestionAnswered?: (
-        surveyId: ID,
-        questionId: ID,
-        answers: SurveyAnswer[]
-    ) => Promise<void>;
+    onQuestionAnswered?: (surveyId: ID, questionId: ID, answers: SurveyAnswer[]) => Promise<void>;
     onSurveyCompleted?: (surveyId: ID) => Promise<void>;
     fullScreen?: boolean;
+    startFrom?: ID;
 }
 
 export default function Survey({
@@ -38,13 +24,25 @@ export default function Survey({
     onSurveyCompleted,
     getNextQuestionId,
     replaceTags,
-    fullScreen
+    fullScreen,
+    startFrom
 }: SurveyProps): VNode {
     const [activeQuestion, setActiveQuestion] = useState(survey.questions[0]);
     const [responseCount, setResponseCount] = useState(0);
     const [loading, setLoading] = useState(false);
 
     const contentRef = useRef<HTMLDivElement>(null);
+
+    useLayoutEffect(() => {
+        if (!startFrom) {
+            return;
+        }
+
+        const index = survey.questions.findIndex(question => question.id === startFrom);
+        if (index > -1) {
+            setActiveQuestion(survey.questions[index]);
+        }
+    }, [startFrom]);
 
     //Scroll to top when question changes
     useLayoutEffect(() => {
@@ -77,13 +75,9 @@ export default function Survey({
 
             let nextQuestion = null;
             if (nextQuestionId) {
-                nextQuestion = survey.questions.find(
-                    question => question.id === nextQuestionId
-                );
+                nextQuestion = survey.questions.find(question => question.id === nextQuestionId);
             } else {
-                const index = survey.questions.findIndex(
-                    question => question.id === activeQuestion.id
-                );
+                const index = survey.questions.findIndex(question => question.id === activeQuestion.id);
 
                 if (index >= 0 && index + 1 < survey.questions.length) {
                     nextQuestion = survey.questions[index + 1];
@@ -97,9 +91,7 @@ export default function Survey({
 
     const isLastQuestion = useCallback(
         (questionId: ID) => {
-            return (
-                questionId === survey.questions[survey.questions.length - 1].id
-            );
+            return questionId === survey.questions[survey.questions.length - 1].id;
         },
         [survey]
     );
@@ -143,28 +135,19 @@ export default function Survey({
             settings={survey.settings}
             theme={survey.theme}
             maxWidth={
-                ["rating", "nps", "smiley_scale", "numerical_scale"].includes(
-                    activeQuestion.type
-                )
-                    ? "520px"
-                    : "304px"
+                ["rating", "nps", "smiley_scale", "numerical_scale"].includes(activeQuestion.type) ? "520px" : "304px"
             }
             minWidth="304px"
             fullScreen={fullScreen}
         >
-            <div
-                ref={contentRef}
-                className={cn(loading ? "animate-pulse opacity-60" : "")}
-            >
+            <div ref={contentRef} className={cn(loading ? "animate-pulse opacity-60" : "")}>
                 {survey.questions.map(
                     question =>
                         activeQuestion.id === question.id && (
                             <Response
                                 key={question.id}
                                 onAnswered={onAnswered}
-                                replaceTags={content =>
-                                    replaceTags(survey.id, content)
-                                }
+                                replaceTags={content => replaceTags(survey.id, content)}
                                 question={question}
                                 theme={survey.theme}
                                 submitText={survey.settings.submitText}

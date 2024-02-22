@@ -1,12 +1,6 @@
 import { Context, RootFrame, SyncManager } from "./core";
 import { SurveyManager } from "./surveys";
-import {
-    Configuration,
-    EventProperties,
-    ID,
-    SurveyAnswer,
-    UserAttributes
-} from "./types";
+import { Configuration, EventProperties, ID, SurveyAnswer, UserAttributes } from "./types";
 
 export default class Integraflow {
     private readonly config: Configuration;
@@ -25,11 +19,7 @@ export default class Integraflow {
 
         this.rootFrame = new RootFrame();
 
-        this.surveyManager = new SurveyManager(
-            this,
-            this.context,
-            this.rootFrame
-        );
+        this.surveyManager = new SurveyManager(this, this.context, this.rootFrame);
 
         this.syncManager = new SyncManager(this.context);
     }
@@ -47,9 +37,7 @@ export default class Integraflow {
 
     static getClient() {
         if (!this.client || !this.initialized) {
-            throw new Error(
-                "You need to initialise the SDK before using its methods."
-            );
+            throw new Error("You need to initialise the SDK before using its methods.");
         }
 
         return this.client;
@@ -73,14 +61,8 @@ export default class Integraflow {
         return userId;
     }
 
-    async identify(
-        identifier: string,
-        attributes?: UserAttributes
-    ): Promise<void> {
-        const user = await this.syncManager.identifyUser(
-            identifier,
-            attributes
-        );
+    async identify(identifier: string, attributes?: UserAttributes): Promise<void> {
+        const user = await this.syncManager.identifyUser(identifier, attributes);
         this.context.listeners.onAudienceChanged?.(user);
     }
 
@@ -94,10 +76,7 @@ export default class Integraflow {
     }
 
     async track(event: string, properties?: EventProperties): Promise<void> {
-        const trackedEvent = await this.syncManager.trackEvent(
-            event,
-            properties
-        );
+        const trackedEvent = await this.syncManager.trackEvent(event, properties);
         this.context.listeners.onEventTracked?.(trackedEvent);
     }
 
@@ -120,8 +99,8 @@ export default class Integraflow {
         window.addEventListener("load", this.trackRouteChange);
     }
 
-    showSurvey(surveyId: ID) {
-        this.surveyManager.showSurvey(surveyId);
+    showSurvey(surveyId: ID, startFrom?: ID) {
+        this.surveyManager.showSurvey(surveyId, startFrom);
     }
 
     async closeSurvey(surveyId: ID) {
@@ -131,16 +110,8 @@ export default class Integraflow {
         this.context.listeners.onSurveyClosed?.(surveyId);
     }
 
-    async markSurveyAsSeen(
-        surveyId: ID,
-        presentationTime?: Date,
-        isRecurring?: boolean
-    ) {
-        await this.syncManager.markSurveyAsSeen(
-            surveyId,
-            presentationTime,
-            isRecurring
-        );
+    async markSurveyAsSeen(surveyId: ID, presentationTime?: Date, isRecurring?: boolean) {
+        await this.syncManager.markSurveyAsSeen(surveyId, presentationTime, isRecurring);
         this.context.listeners.onSurveyDisplayed?.(surveyId);
     }
 
@@ -149,21 +120,9 @@ export default class Integraflow {
         this.context.listeners.onSurveyCompleted?.(surveyId);
     }
 
-    async persistSurveyAnswers(
-        surveyId: ID,
-        questionId: ID,
-        answers: SurveyAnswer[]
-    ) {
-        await this.syncManager.persistSurveyAnswers(
-            surveyId,
-            questionId,
-            answers
-        );
-        this.context.listeners.onQuestionAnswered?.(
-            surveyId,
-            questionId,
-            answers
-        );
+    async persistSurveyAnswers(surveyId: ID, questionId: ID, answers: SurveyAnswer[]) {
+        await this.syncManager.persistSurveyAnswers(surveyId, questionId, answers);
+        this.context.listeners.onQuestionAnswered?.(surveyId, questionId, answers);
     }
 }
 

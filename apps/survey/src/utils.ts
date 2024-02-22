@@ -34,7 +34,7 @@ export const parsedSurveys = (survey?: BaseSurvey): Survey[] => {
     const channelSettings = JSON.parse(channel?.settings ?? "{}");
     const settings = JSON.parse(survey.settings ?? "{}");
     const surveySettings: SurveySettings = {
-        placement: channelSettings.placement,
+        placement: channelSettings.placement ?? "bottomRight",
         recurring: channelSettings.recurring ?? false,
         recurringPeriod: channelSettings.recurringPeriod ?? 0,
         showProgressBar: settings.showProgressBar ?? true,

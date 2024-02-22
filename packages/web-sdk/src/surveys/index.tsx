@@ -1,14 +1,7 @@
 import { h, render } from "preact";
 
 import Integraflow from "..";
-import {
-    Context,
-    RootFrame,
-    RootFrameContainer,
-    SdkEvent,
-    TagManager,
-    TargetingEngine
-} from "../core";
+import { Context, RootFrame, RootFrameContainer, SdkEvent, TagManager, TargetingEngine } from "../core";
 import { ID, Survey, SurveyAnswer } from "../types";
 import { deferSurveyActivation } from "../utils";
 
@@ -81,20 +74,12 @@ export class SurveyManager {
         }
     }
 
-    private onQuestionAnswered = async (
-        surveyId: ID,
-        questionId: ID,
-        answers: SurveyAnswer[]
-    ) => {
+    private onQuestionAnswered = async (surveyId: ID, questionId: ID, answers: SurveyAnswer[]) => {
         await this.client.persistSurveyAnswers(surveyId, questionId, answers);
     };
 
     private onSurveyDisplayed = async (survey: Survey) => {
-        await this.client.markSurveyAsSeen(
-            survey.id,
-            new Date(),
-            survey.settings?.recurring
-        );
+        await this.client.markSurveyAsSeen(survey.id, new Date(), survey.settings?.recurring);
     };
 
     private onSurveyClosed = async (surveyId: ID) => {
@@ -116,9 +101,7 @@ export class SurveyManager {
         this.rootFrame.removeContainer(name);
         this.surveyContainer = this.rootFrame.createContainer(name);
 
-        const idx = this.activeSurveys.findIndex(
-            survey => survey.id === surveyId
-        );
+        const idx = this.activeSurveys.findIndex(survey => survey.id === surveyId);
         if (idx === -1) {
             this.setState("ready");
             return;
@@ -129,18 +112,18 @@ export class SurveyManager {
         this.setState("ready");
     }
 
-    private renderSurvey(survey?: Survey) {
+    private renderSurvey(survey?: Survey, startFrom?: ID) {
         if (survey) {
-            this.render(survey);
+            this.render(survey, startFrom);
             return;
         }
 
         if (this.activeSurveys.length > 0) {
-            this.render(this.activeSurveys[0]);
+            this.render(this.activeSurveys[0], startFrom);
         }
     }
 
-    private render(survey: Survey) {
+    private render(survey: Survey, startFrom?: ID) {
         if (!this.state || !survey) {
             return;
         }
@@ -151,9 +134,7 @@ export class SurveyManager {
 
         this.setState("running");
 
-        const orderedQuestions = survey.questions.sort(
-            (a, b) => a.orderNumber - b.orderNumber
-        );
+        const orderedQuestions = survey.questions.sort((a, b) => a.orderNumber - b.orderNumber);
         survey.questions = orderedQuestions;
 
         render(
@@ -166,6 +147,7 @@ export class SurveyManager {
                 onSurveyClosed={this.onSurveyClosed}
                 onSurveyCompleted={this.onSurveyCompleted}
                 fullScreen={this.context.fullScreen}
+                startFrom={startFrom}
             />,
             this.surveyContainer.element
         );
@@ -179,10 +161,7 @@ export class SurveyManager {
         }
 
         for (let survey of state?.surveys || []) {
-            const isMatched = this.targetingEngine.evaluateAttributes(
-                survey,
-                state?.user
-            );
+            const isMatched = this.targetingEngine.evaluateAttributes(survey, state?.user);
             if (isMatched) {
                 this.surveys.push(survey);
             }
@@ -198,11 +177,7 @@ export class SurveyManager {
     }
 
     private activateSurvey(survey: Survey) {
-        if (
-            this.activeSurveys.findIndex(
-                activeSurvey => survey.id === activeSurvey.id
-            ) > -1
-        ) {
+        if (this.activeSurveys.findIndex(activeSurvey => survey.id === activeSurvey.id) > -1) {
             return;
         }
 
@@ -230,21 +205,17 @@ export class SurveyManager {
         this.renderSurvey();
     }
 
-    showSurvey(surveyId: ID) {
-        const survey = this.context.surveys?.find(
-            survey => survey.id === surveyId
-        );
+    showSurvey(surveyId: ID, startFrom?: ID) {
+        const survey = this.context.surveys?.find(survey => survey.id === surveyId);
 
         if (survey) {
-            const idx = this.activeSurveys.findIndex(
-                survey => survey.id === surveyId
-            );
+            const idx = this.activeSurveys.findIndex(survey => survey.id === surveyId);
             if (idx >= 0) {
                 this.activeSurveys.splice(idx, 1);
             }
 
             this.activeSurveys.unshift(survey);
-            this.renderSurvey();
+            this.renderSurvey(survey, startFrom);
         }
     }
 }

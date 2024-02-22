@@ -32,10 +32,7 @@ const tabs = [
 
 export default function Create() {
     return (
-        <Tabs.Root
-            className="flex h-screen pt-[84px]"
-            defaultValue={tabs[0].label}
-        >
+        <Tabs.Root className="flex h-screen pt-[84px]" defaultValue={tabs[0].label}>
             <Tabs.List className="flex h-full flex-col gap-6 border-r border-intg-bg-4 px-[18px] pt-12">
                 {tabs.map(({ id, label, icon }, index: React.Key) => (
                     <Tabs.Trigger
@@ -84,6 +81,7 @@ export default function Create() {
                         </Tabs.Content>
                     ))}
                 </ScrollToBottom>
+
                 <div className="min-w-[580px] flex-1 pb-8">
                     <Preview />
                 </div>
