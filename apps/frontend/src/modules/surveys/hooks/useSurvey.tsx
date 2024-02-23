@@ -23,7 +23,7 @@ export const useSurvey = () => {
     const [createSurveyMutation, { loading: loadingCreateSurvey }] = useSurveyCreateMutation();
     const [updateSurveyMutation] = useSurveyUpdateMutation();
 
-    const { data: survey } = useGetSurveyQuery({
+    const { data: survey, loading: fetchingSurvey } = useGetSurveyQuery({
         variables: {
             slug: surveySlug,
         },
@@ -131,7 +131,7 @@ export const useSurvey = () => {
         surveySlug,
         survey,
         parsedQuestions,
-        loadingCreateSurvey,
+        loading: fetchingSurvey || loadingCreateSurvey,
         surveyId,
     };
 };

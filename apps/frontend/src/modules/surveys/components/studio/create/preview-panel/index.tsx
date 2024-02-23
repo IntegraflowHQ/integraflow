@@ -1,6 +1,7 @@
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { Header } from "@/ui";
+import { cn } from "@/utils";
 import EmptySurvey from "assets/images/surveys/empty.png";
 import { createRef, useEffect, useState } from "react";
 
@@ -45,27 +46,26 @@ export const Preview = () => {
         };
     }, []);
 
-    if (parsedQuestions.length === 0) {
-        return (
-            <div className="flex h-full flex-col items-center justify-center rounded-xl bg-intg-bg-9">
-                <div className="space-y-8">
-                    <img src={EmptySurvey} alt="" />
-                    <Header
-                        title="Nothing to see here yet."
-                        description="Add your first question first!"
-                        className="text-center"
-                    />
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <iframe
-            src={`${LINK_SURVEY_HOST}/preview`}
-            className="h-full w-full rounded-xl bg-intg-bg-9"
-            title="Survey preview"
-            ref={iframe}
-        />
+        <>
+            <iframe
+                src={`${LINK_SURVEY_HOST}/preview`}
+                className={cn("h-full w-full rounded-xl bg-intg-bg-9", parsedQuestions.length === 0 ? "hidden" : "")}
+                title="Survey preview"
+                ref={iframe}
+            />
+            {parsedQuestions.length === 0 && (
+                <div className="flex h-full flex-col items-center justify-center rounded-xl bg-intg-bg-9">
+                    <div className="space-y-8">
+                        <img src={EmptySurvey} alt="" />
+                        <Header
+                            title="Nothing to see here yet."
+                            description="Add your first question first!"
+                            className="text-center"
+                        />
+                    </div>
+                </div>
+            )}
+        </>
     );
 };

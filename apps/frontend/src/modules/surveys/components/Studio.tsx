@@ -23,7 +23,7 @@ export default function Studio() {
     const [title, setTitle] = useState("");
     const { enableStudioMode, disableStudioMode } = useStudioState();
     const [activeTab, setActiveTab] = useState(tabs[0].label);
-    const { loadingCreateSurvey, updateSurvey } = useSurvey();
+    const { loading, updateSurvey } = useSurvey();
 
     useEffect(() => {
         enableStudioMode();
@@ -40,7 +40,7 @@ export default function Studio() {
         toast.success("Survey published successfully");
     };
 
-    if (loadingCreateSurvey) return <GlobalSpinner />;
+    if (loading) return <GlobalSpinner />;
 
     return (
         <Tabs.Root className="h-full w-full" value={activeTab} onValueChange={setActiveTab}>
