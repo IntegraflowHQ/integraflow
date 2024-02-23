@@ -8,6 +8,7 @@ from django.utils.functional import SimpleLazyObject
 from integraflow.app.models import App
 from integraflow.core.auth import get_token_from_request
 from integraflow.core.jwt import jwt_decode_with_exception_handler
+from integraflow.project.models import Project
 from integraflow.user.models import User
 
 from .api import API_PATH
@@ -48,13 +49,18 @@ def set_app_on_context(request: IntegraflowContext):
         request.app = get_app_promise(request).get()
 
 
-def set_project_on_context(request: IntegraflowContext):
-    if request.path == API_PATH and not hasattr(request, "project"):
-        if request.user and request.user.project:
-            request.project = request.user.project
-            return
+def get_project(request: IntegraflowContext) -> Optional[Project]:
+    if not hasattr(request, "_cached_project"):
+        request._cached_project = get_project_promise(request).get()
 
-        request.project = get_project_promise(request).get()
+    return request._cached_project
+
+
+def set_project_on_context(request: IntegraflowContext):
+    def project():
+        return get_project(request)
+
+    request.project = SimpleLazyObject(project)  # type: ignore
 
 
 def get_user(request: IntegraflowContext) -> Optional[User]:

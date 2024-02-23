@@ -60,10 +60,13 @@ def promise_project(context: IntegraflowContext) -> Promise[Optional[Project]]:
 def get_project_promise(
     context: IntegraflowContext
 ) -> Promise[Optional[Project]]:
-    if hasattr(context, "project"):
-        project = context.project
-        if isinstance(project, LazyObject):
-            project = unwrap_lazy(project)
-        return Promise.resolve(project)
+    user = None
+    if hasattr(context, "user"):
+        user = context.user
+        if isinstance(user, LazyObject):
+            user = unwrap_lazy(user)
+
+    if user and user.project:
+        return Promise.resolve(user.project)
 
     return promise_project(context)

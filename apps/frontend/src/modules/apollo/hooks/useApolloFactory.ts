@@ -57,7 +57,7 @@ export const useApolloFactory = () => {
         });
 
         return apolloRef.current.getClient();
-    }, [currentProjectId, token, refreshToken, refresh, logout, cacheRef.current]);
+    }, [currentProjectId, token, refreshToken, refresh, logout]);
 
     useUpdateEffect(() => {
         if (apolloRef.current) {

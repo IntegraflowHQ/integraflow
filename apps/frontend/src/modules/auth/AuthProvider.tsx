@@ -179,12 +179,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return token;
     }, [refreshToken, refresh]);
 
-    const handleLogout = useCallback(async () => {
+    const handleLogout = useCallback(() => {
         if (!token) {
             return;
         }
 
-        await logout(token);
+        logout(token);
         reset();
     }, [token, reset]);
 

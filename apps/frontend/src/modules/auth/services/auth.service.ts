@@ -96,7 +96,9 @@ export const logout = async (token: string) => {
     const { data, errors } = await client.mutate<LogoutMutation, LogoutMutationVariables>({
         mutation: LogoutDocument,
         context: {
-            authorization: `Bearer ${token}`,
+            headers: {
+                authorization: `Bearer ${token}`,
+            },
         },
     });
 
