@@ -23,7 +23,12 @@ export const Preview = () => {
                 type: "survey",
                 survey: {
                     ...survey.survey,
-                    questions: parsedQuestions,
+                    questions: parsedQuestions.map((q) => {
+                        if (q.id === question?.id) {
+                            return question;
+                        }
+                        return q;
+                    }),
                     channels: survey?.survey?.channels.edges.map((edge) => edge.node),
                 },
                 startFrom: question ? question.id : undefined,
