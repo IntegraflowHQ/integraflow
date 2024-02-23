@@ -16,6 +16,7 @@ import { useRedirect } from "@/modules/auth/hooks/useRedirect";
 import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
 import { convertToAuthOrganization } from "@/modules/users/states/user";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
+import { useApolloClient } from "@apollo/client";
 import { EventProperties } from "@integraflow/web/src/types";
 
 export const useProject = () => {
@@ -29,6 +30,7 @@ export const useProject = () => {
     const [projectUpdate] = useProjectUpdateMutation();
     const { data: eventsData } = useProjectEventsDataQuery();
     const { data: audienceProperties } = useAudiencePropertiesQuery();
+    const { cache, clearStore } = useApolloClient();
 
     const project = useMemo(() => {
         if (!workspace) {
@@ -87,6 +89,9 @@ export const useProject = () => {
                     ...updatedUser,
                 });
             }
+
+            clearStore();
+            cache.reset();
         },
         [currentProjectId, orgSlug, projectSlug, redirect, switchProject, updateUser, user, workspace],
     );
