@@ -4,8 +4,8 @@ import webviewLight from "@/assets/images/surveys/studio/webview-light.svg";
 import webview from "@/assets/images/surveys/studio/webview.svg";
 import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import useChannels from "@/modules/surveys/hooks/useChannels";
-import { ChannelSettings, ParsedChannel } from "@/types";
-import { DatePicker, Switch, TextInput } from "@/ui";
+import { ChannelSettings, WebChannelAccordionProps } from "@/types";
+import { DatePicker, NumberInput, Switch } from "@/ui";
 import { BottomLeft, BottomRight, Center, TopLeft, TopRight } from "@/ui/icons";
 import { cn } from "@/utils";
 import { logDebug } from "@/utils/log";
@@ -16,37 +16,32 @@ import { Ban, Moon, Sun } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
-type Position = {
-    value: PlacementType;
-    icon: React.ReactNode;
-};
-
 type Background = {
     label: string;
     value: "dark" | "light" | "none";
     icon: React.ReactNode;
 };
 
-const positions: Position[] = [
+const positions = [
     {
         value: "bottomRight",
-        icon: <BottomRight />,
+        icon: BottomRight,
     },
     {
         value: "bottomLeft",
-        icon: <BottomLeft />,
+        icon: BottomLeft,
     },
     {
         value: "center",
-        icon: <Center />,
+        icon: Center,
     },
     {
         value: "topRight",
-        icon: <TopRight />,
+        icon: TopRight,
     },
     {
         value: "topLeft",
-        icon: <TopLeft />,
+        icon: TopLeft,
     },
 ];
 
@@ -68,46 +63,20 @@ const backgrounds: Background[] = [
     },
 ];
 
-export default function Behavior() {
-    const { getChannels, updateChannel, createChannel } = useChannels();
-
-    const channel =
-        getChannels(SurveyChannelTypeEnum.WebSdk)[0] ??
-        ({
-            id: "",
-            type: SurveyChannelTypeEnum.WebSdk,
-            createdAt: "",
-            settings: {
-                placement: "bottomRight",
-                recurring: false,
-                recurringPeriod: 0,
-                startDate: "",
-                endDate: "",
-                backgroundOverlay: "light",
-                closeOnLimit: false,
-                responseLimit: 0,
-            },
-        } as ParsedChannel);
+export default function Behavior({ channel }: WebChannelAccordionProps) {
+    const { updateChannel, createChannel } = useChannels();
 
     const { register, watch, setValue } = useForm<ChannelSettings>({
-        defaultValues: {
+        values: {
             ...channel.settings,
-            startDate: channel.settings?.startDate
-                ? new Date(channel.settings?.startDate)
-                : undefined,
-            endDate: channel.settings?.endDate
-                ? new Date(channel.settings.endDate)
-                : undefined,
         },
     });
 
     useEffect(() => {
         const subscription = watch((value) => {
             if (!value) return;
-            if (value.recurring && !value.recurringPeriod)
-                return toast.error("Please enter recurring period");
-            if (value.closeOnLimit && !value.responseLimit)
-                return toast.error("Please enter response limit");
+            if (value.recurring && !value.recurringPeriod) return toast.error("Please enter recurring period");
+            if (value.closeOnLimit && !value.responseLimit) return toast.error("Please enter response limit");
             if (!channel.id) {
                 logDebug("create channel", value);
                 createChannel({
@@ -132,50 +101,36 @@ export default function Behavior() {
             <div className="h-max w-[312px] rounded-lg bg-intg-bg-9 p-[14px]">
                 <div className="flex flex-col gap-3">
                     <div className="w-full space-y-2 rounded-lg bg-intg-bg-15 p-[14px]">
-                        <span className="text-sm text-intg-text">
-                            Survey position
-                        </span>
+                        <span className="text-sm text-intg-text">Survey position</span>
                         <div className="flex w-full justify-between">
-                            {positions.map((position) => (
+                            {positions.map(({ value, icon: Icon }) => (
                                 <button
-                                    key={position.value}
+                                    key={value}
                                     className={cn(
                                         "w-max rounded bg-intg-bg-18 px-[14px] py-[8px] hover:bg-gradient-button hover:text-white",
-                                        watch("placement") === position.value
-                                            ? "bg-gradient-button text-white"
-                                            : "",
+                                        watch("placement") === value ? "bg-gradient-button" : "",
                                     )}
-                                    onClick={() =>
-                                        setValue("placement", position.value)
-                                    }
+                                    onClick={() => setValue("placement", value as PlacementType)}
                                 >
-                                    {position.icon}
+                                    <Icon color={watch("placement") === value ? "#FFFFFF" : "#AFAAC7"} />
                                 </button>
                             ))}
                         </div>
                     </div>
 
                     <div className="space-y-2 rounded-lg bg-intg-bg-15 p-3">
-                        <span className="text-sm text-intg-text">
-                            Background overlay
-                        </span>
+                        <span className="text-sm text-intg-text">Background overlay</span>
                         <div className="flex w-full justify-between gap-2 rounded bg-intg-bg-18 p-1">
                             {backgrounds.map((item) => (
                                 <button
                                     key={item.value}
                                     className={cn(
                                         "flex items-center justify-center gap-1 rounded px-3 py-2 text-xs leading-[18px] text-intg-text hover:bg-gradient-button hover:text-white",
-                                        watch("backgroundOverlay") ===
-                                            item.value
+                                        watch("backgroundOverlay") === item.value
                                             ? "bg-gradient-button text-white"
                                             : "",
                                     )}
-                                    onClick={() =>
-                                        setValue(
-                                            "backgroundOverlay",
-                                            item.value,
-                                        )
-                                    }
+                                    onClick={() => setValue("backgroundOverlay", item.value)}
                                 >
                                     {item.icon}
                                     <span>{item.label}</span>
@@ -191,62 +146,46 @@ export default function Behavior() {
 
                 <div className="flex w-full flex-col gap-3">
                     <Switch
+                        name={"recurring"}
                         label="Recurring"
                         value={watch("recurring")}
                         onChange={(e) => setValue("recurring", e.target.value)}
                     />
-                    {watch("recurring") && (
-                        <TextInput
-                            type="number"
-                            label="Recurring period"
-                            {...register("recurringPeriod")}
-                        />
-                    )}
+                    {watch("recurring") && <NumberInput label="Recurring period" {...register("recurringPeriod")} />}
                     <Switch
+                        name={"closeOnLimit"}
                         label="Close survey on response limit"
                         value={watch("closeOnLimit")}
-                        onChange={(e) =>
-                            setValue("closeOnLimit", e.target.value)
-                        }
+                        onChange={(e) => setValue("closeOnLimit", e.target.value)}
                     />
-                    {watch("closeOnLimit") && (
-                        <TextInput
-                            type="number"
-                            label="Response limit"
-                            {...register("responseLimit")}
-                        />
-                    )}
+                    {watch("closeOnLimit") && <NumberInput label="Response limit" {...register("responseLimit")} />}
                     <div className="flex gap-1">
                         <DatePicker
                             label="Start date"
-                            value={watch("startDate") as Date | undefined}
+                            value={watch("startDate") ? new Date(watch("startDate") as string) : undefined}
                             onChange={(e) => {
-                                setValue("startDate", e.target.value);
+                                if (e.target.value) {
+                                    setValue("startDate", e.target.value.toISOString());
+                                } else {
+                                    setValue("startDate", "");
+                                }
                             }}
                             displayFormat="dd/MM/yyyy"
-                            toDate={
-                                watch("endDate")
-                                    ? subDays(
-                                          new Date(watch("endDate") as Date),
-                                          1,
-                                      )
-                                    : undefined
-                            }
+                            toDate={watch("endDate") ? subDays(new Date(watch("endDate") as string), 1) : undefined}
                         />
                         <DatePicker
                             label="End date"
-                            value={watch("endDate") as Date | undefined}
-                            onChange={(e) =>
-                                setValue("endDate", e.target.value)
-                            }
+                            value={watch("endDate") ? new Date(watch("endDate") as string) : undefined}
+                            onChange={(e) => {
+                                if (e.target.value) {
+                                    setValue("endDate", e.target.value.toISOString());
+                                } else {
+                                    setValue("endDate", "");
+                                }
+                            }}
                             displayFormat="dd/MM/yyyy"
                             fromDate={
-                                watch("startDate")
-                                    ? addDays(
-                                          new Date(watch("startDate") as Date),
-                                          1,
-                                      )
-                                    : undefined
+                                watch("startDate") ? addDays(new Date(watch("startDate") as string), 1) : undefined
                             }
                         />
                     </div>
@@ -261,8 +200,8 @@ export default function Behavior() {
                         watch("backgroundOverlay") === "dark"
                             ? webviewDark
                             : watch("backgroundOverlay") === "none"
-                            ? webview
-                            : webviewLight
+                              ? webview
+                              : webviewLight
                     })`,
                     backgroundSize: "cover",
                     backgroundRepeat: "no-repeat",
@@ -273,18 +212,10 @@ export default function Behavior() {
                     alt="sample"
                     className={cn(
                         "absolute",
-                        watch("placement") === "bottomRight"
-                            ? "bottom-0 right-0"
-                            : "",
-                        watch("placement") === "bottomLeft"
-                            ? "bottom-0 left-0"
-                            : "",
-                        watch("placement") === "center"
-                            ? "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                            : "",
-                        watch("placement") === "topRight"
-                            ? "right-0 top-0"
-                            : "",
+                        watch("placement") === "bottomRight" ? "bottom-0 right-0" : "",
+                        watch("placement") === "bottomLeft" ? "bottom-0 left-0" : "",
+                        watch("placement") === "center" ? "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" : "",
+                        watch("placement") === "topRight" ? "right-0 top-0" : "",
                         watch("placement") === "topLeft" ? "left-0 top-0" : "",
                     )}
                 />

@@ -4,6 +4,7 @@ export enum AnswerType {
   TEXT = 'text',
   DATE = 'date',
   CSAT = 'csat',
+  CES = 'ces',
   SMILEY_SCALE = 'smiley_scale',
   NUMERICAL_SCALE = 'numerical_scale',
   RATING = 'rating',
@@ -348,6 +349,7 @@ export interface Event {
   uuid: string;
   timestamp: number;
   properties?: EventProperties;
+  attributes?: UserAttributes;
   userId?: ID;
 }
 

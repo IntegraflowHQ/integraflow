@@ -1,9 +1,12 @@
+import { SurveyStatusEnum } from "@/generated/graphql";
+import { useProject } from "@/modules/projects/hooks/useProject";
 import { ROUTES } from "@/routes";
 import { Button, GlobalSpinner } from "@/ui";
+import { toast } from "@/utils/toast";
 import * as Tabs from "@radix-ui/react-tabs";
 import debounce from "lodash.debounce";
 import { XIcon } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useStudioState from "../hooks/useStudioState";
 import { useSurvey } from "../hooks/useSurvey";
@@ -12,50 +15,48 @@ import Create from "./studio/create";
 import Distribute from "./studio/distribute";
 
 const tabs = [
-    { id: crypto.randomUUID(), label: "Create", screen: Create },
+    { label: "Create", screen: Create },
     {
-        id: crypto.randomUUID(),
         label: "Distribute",
         screen: Distribute,
     },
-    { id: crypto.randomUUID(), label: "Analyze", screen: Analyze },
+    { label: "Analyze", screen: Analyze },
 ];
 
 export default function Studio() {
     const params = useParams();
     const navigate = useNavigate();
     const { loading, survey, updateSurvey } = useSurvey();
-    const [surveyTitle, setSurveyTitle] = React.useState<string>("");
+    const [surveyTitle, setSurveyTitle] = useState("");
     const { enableStudioMode, disableStudioMode } = useStudioState();
+    const [activeTab, setActiveTab] = useState(tabs[0].label);
 
     const { orgSlug, projectSlug } = params;
-    const surveyName = survey?.survey?.name;
+    const surveyName = survey?.name;
+    const { project } = useProject();
+
+    console.log("Project: ", project);
+
+    console.log("Survey: ", survey);
 
     const updateSurveyTitle = React.useCallback(
         debounce((value: string) => {
-            if (survey.survey && value.trim() !== "" && value !== surveyName) {
-                updateSurvey(survey.survey, { name: value });
+            if (survey && value.trim() !== "" && value !== surveyName) {
+                updateSurvey(survey, { name: value });
             }
         }, 1000),
-        [survey?.survey, surveyName],
+        [survey, surveyName],
     );
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.target;
         setSurveyTitle(value);
-
         updateSurveyTitle(value);
     };
 
-    // using the disableStudioMode state value alone doesn't cut it. We still need to navigate to the survey list page
     const closeStudio = () => {
         disableStudioMode();
-        navigate(
-            ROUTES.SURVEY_LIST.replace(":orgSlug", orgSlug!).replace(
-                ":projectSlug",
-                projectSlug!,
-            ),
-        );
+        navigate(ROUTES.SURVEY_LIST.replace(":orgSlug", orgSlug!).replace(":projectSlug", projectSlug!));
     };
 
     React.useEffect(() => {
@@ -72,10 +73,19 @@ export default function Studio() {
         };
     }, []);
 
-    // if (loading) return <GlobalSpinner />;
+    const publishSurvey = async () => {
+        if (!survey) return;
+
+        await updateSurvey(survey, {
+            status: SurveyStatusEnum.Active,
+        });
+        toast.success("Survey published successfully");
+    };
+
+    if (loading) return <GlobalSpinner />;
 
     return (
-        <Tabs.Root className="h-full w-full" defaultValue={tabs[0].id}>
+        <Tabs.Root className="h-full w-full" value={activeTab} onValueChange={setActiveTab}>
             <header className="fixed z-10 flex w-full items-center justify-between border-b border-intg-bg-4 bg-[#090713] py-[22px] pl-10 pr-12">
                 <input
                     type="text"
@@ -90,8 +100,8 @@ export default function Studio() {
                 <Tabs.List className="flex gap-[15px]">
                     {tabs.map((tab) => (
                         <Tabs.Trigger
-                            key={tab.id}
-                            value={tab.id}
+                            key={tab.label}
+                            value={tab.label}
                             className={`rounded-md px-3 py-2 text-sm text-intg-text transition-all ease-in hover:bg-[#272138] data-[state=active]:bg-[#272138] data-[state=active]:text-white`}
                         >
                             {tab.label}
@@ -100,20 +110,26 @@ export default function Studio() {
                 </Tabs.List>
 
                 <div className="flex gap-[35px]">
-                    <Button text="Next" className="px-[16px] py-[8px]" />
+                    <Button
+                        className="px-[16px] py-[8px]"
+                        text={activeTab === tabs[1].label ? "Publish" : "Next"}
+                        onClick={() => {
+                            if (activeTab === tabs[1].label) {
+                                publishSurvey();
+                            } else {
+                                setActiveTab(tabs[1].label);
+                            }
+                        }}
+                    />
                     <button onClick={closeStudio}>
                         <XIcon color="#AFAAC7" />
                     </button>
                 </div>
             </header>
 
-            {tabs.map(({ screen: Screen, id }) => (
-                <Tabs.Content key={id} value={id}>
-                    <Screen
-                        loading={loading}
-                        loader={<GlobalSpinner inStudio />}
-                    />
-                    {/* {loading ? <GlobalSpinner inStudio /> : <Screen />} */}
+            {tabs.map(({ screen: Screen, label }) => (
+                <Tabs.Content key={label} value={label}>
+                    <Screen />
                 </Tabs.Content>
             ))}
         </Tabs.Root>

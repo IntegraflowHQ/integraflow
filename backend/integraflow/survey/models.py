@@ -1,10 +1,12 @@
 from functools import partial
+from typing import Any
 from django.db import models
 from django.utils.crypto import get_random_string
 
 from integraflow.core.models import UUIDModel
 from integraflow.core.utils import (
-    MAX_SLUG_LENGTH
+    MAX_SLUG_LENGTH,
+    create_with_unique_string
 )
 
 
@@ -90,6 +92,7 @@ class SurveyQuestion(UUIDModel):
         TEXT = "text", "text"
         DATE = "date", "date"
         CSAT = "csat", "csat"
+        CES = "ces", "ces"
         SMILEY_SCALE = "smiley_scale", "smiley scale"
         NUMERICAL_SCALE = "numerical_scale", "numerical scale"
         RATING = "rating", "rating"
@@ -129,6 +132,16 @@ class SurveyQuestion(UUIDModel):
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
 
 
+class SurveyChannelManager(models.Manager):
+    def create(self, *args: Any, **kwargs: Any):
+        return create_with_unique_string(
+            super().create,
+            'link',
+            *args,
+            **kwargs
+        )
+
+
 class SurveyChannel(UUIDModel):
     class Type(models.TextChoices):
         EMAIL = "email", "email"
@@ -142,6 +155,12 @@ class SurveyChannel(UUIDModel):
         verbose_name = "SurveyChannel"
         verbose_name_plural = "SurveyChannels"
         db_table = "survey_channels"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["link"],
+                name="unique_link_for_survey_channel"
+            ),
+        ]
 
     survey: models.ForeignKey = models.ForeignKey(
         Survey,
@@ -154,7 +173,131 @@ class SurveyChannel(UUIDModel):
         choices=Type.choices,
         default=Type.LINK
     )
+    link: models.CharField = models.CharField(
+        max_length=MAX_SLUG_LENGTH,
+        default=partial(get_random_string, length=6)
+    )
     triggers: models.JSONField = models.JSONField(blank=True, null=True)
     conditions: models.JSONField = models.JSONField(blank=True, null=True)
     settings: models.JSONField = models.JSONField(blank=True, null=True)
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
+
+    objects: SurveyChannelManager = SurveyChannelManager()
+
+
+class SurveyResponse(UUIDModel):
+    class Status(models.TextChoices):
+        IN_PROGRESS = "in_progress" "in progress"
+        COMPLETED = "completed" "completed"
+        ARCHIVED = "archived" "archived"
+
+    class Meta:
+        verbose_name = "SurveyResponse"
+        verbose_name_plural = "SurveyResponses"
+        db_table = "survey_responses"
+
+    survey: models.ForeignKey = models.ForeignKey(
+        Survey,
+        on_delete=models.CASCADE,
+        related_name="survey_responses",
+        related_query_name="survey_response",
+    )
+    response: models.JSONField = models.JSONField(default=dict)
+    status: models.CharField = models.CharField(
+        max_length=40,
+        choices=Status.choices,
+        default=Status.IN_PROGRESS
+    )
+    distinct_id: models.CharField = models.CharField(max_length=200)
+    person_id: models.UUIDField = models.UUIDField(
+        db_index=True,
+        blank=True,
+        null=True
+    )
+    metadata: models.JSONField = models.JSONField(default=dict)
+    user_attributes: models.JSONField = models.JSONField(default=dict)
+    is_processed: models.BooleanField = models.BooleanField(default=False)
+    created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
+    updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
+    completed_at: models.DateTimeField = models.DateTimeField(
+        blank=True,
+        null=True
+    )
+    time_taken: models.DateTimeField = models.DateTimeField(
+        blank=True,
+        null=True
+    )
+
+
+class ResponseNote(UUIDModel):
+    class Meta:
+        verbose_name = "SurveyResponseNote"
+        verbose_name_plural = "SurveyResponseNotes"
+        db_table = "response_notes"
+
+    response: models.ForeignKey = models.ForeignKey(
+        SurveyResponse,
+        on_delete=models.CASCADE,
+        related_name="response_notes",
+        related_query_name="response_note",
+    )
+    description: models.CharField = models.CharField(
+        max_length=400,
+        blank=True
+    )
+    is_resolved: models.BooleanField = models.BooleanField(default=False)
+    is_completed: models.BooleanField = models.BooleanField(default=False)
+    created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
+    updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
+
+
+class Tag(UUIDModel):
+    class Meta:
+        verbose_name = "Tag"
+        verbose_name_plural = "Tags"
+        db_table = "tags"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "name"],
+                name="unique tag name for project"
+            )
+        ]
+
+    project: models.ForeignKey = models.ForeignKey(
+        "project.Project",
+        on_delete=models.CASCADE,
+        related_name="tags",
+        related_query_name="tag",
+    )
+    name: models.CharField = models.CharField(
+        max_length=400,
+        blank=True
+    )
+    created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
+    updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
+
+
+class ResponseTag(UUIDModel):
+    class Meta:
+        verbose_name = "ResponseTag"
+        verbose_name_plural = "ResponseTags"
+        db_table = "response_tags"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["response", "tag"],
+                name="unique tag for response"
+            )
+        ]
+
+    response: models.ForeignKey = models.ForeignKey(
+        SurveyResponse,
+        on_delete=models.CASCADE,
+        related_name="response_tags",
+        related_query_name="response_tag",
+    )
+    tag: models.ForeignKey = models.ForeignKey(
+        Tag,
+        on_delete=models.CASCADE
+    )
+    created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
+    updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)

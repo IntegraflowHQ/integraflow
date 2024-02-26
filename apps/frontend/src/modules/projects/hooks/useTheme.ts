@@ -1,15 +1,17 @@
 import {
+    Project,
     ProjectTheme,
     ThemesQuery,
+    User,
     useProjectThemeCreateMutation,
     useProjectThemeDeleteMutation,
     useProjectThemeUpdateMutation,
-    useThemeQuery,
+    useThemesQuery,
 } from "@/generated/graphql";
-import useUserState from "@/modules/users/hooks/useUserState";
-import useWorkspace from "@/modules/workspace/hooks/useWorkspace";
+import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
 import { Reference } from "@apollo/client";
 import { PROJECT_THEME } from "../graphql/fragments/projectFragments";
+import { useProject } from "./useProject";
 
 export type ColorScheme = {
     answer: string;
@@ -20,8 +22,8 @@ export type ColorScheme = {
 };
 
 export const useTheme = () => {
-    const { workspace } = useWorkspace();
-    const { user } = useUserState();
+    const { user } = useCurrentUser();
+    const { project } = useProject();
     const [createThemeMutation] = useProjectThemeCreateMutation();
     const [updateThemeMutation] = useProjectThemeUpdateMutation();
     const [deleteThemeMutation] = useProjectThemeDeleteMutation();
@@ -31,14 +33,9 @@ export const useTheme = () => {
         loading,
         error,
         refetch,
-    } = useThemeQuery({
+    } = useThemesQuery({
         variables: { first: 20 },
         notifyOnNetworkStatusChange: true,
-        context: {
-            headers: {
-                Project: workspace?.project.id,
-            },
-        },
     });
 
     const transformThemes = (themes: ThemesQuery) => {
@@ -68,26 +65,7 @@ export const useTheme = () => {
                     colorScheme: JSON.stringify(theme.colorScheme ?? {}),
                 },
             },
-
             notifyOnNetworkStatusChange: true,
-            context: {
-                headers: {
-                    Project: workspace?.project.id,
-                },
-            },
-
-            onCompleted: (data) => {
-                const newThemeData = {
-                    id: data.projectThemeCreate?.projectTheme?.id ?? "",
-                    name: data.projectThemeCreate?.projectTheme?.name ?? "",
-                    colorScheme:
-                        data.projectThemeCreate?.projectTheme?.colorScheme ??
-                        "",
-                };
-
-                return newThemeData;
-            },
-
             optimisticResponse: {
                 __typename: "Mutation",
                 projectThemeCreate: {
@@ -110,8 +88,7 @@ export const useTheme = () => {
                         themes(existingThemeRefs) {
                             const newThemeRef = cache.writeFragment({
                                 data: {
-                                    ...(data?.projectThemeCreate
-                                        ?.projectTheme ?? {}),
+                                    ...(data?.projectThemeCreate?.projectTheme ?? {}),
                                     settings: "{}",
                                     project: null,
                                     creator: null,
@@ -159,11 +136,6 @@ export const useTheme = () => {
                 },
             },
             notifyOnNetworkStatusChange: true,
-            context: {
-                headers: {
-                    Project: workspace?.project.id,
-                },
-            },
             optimisticResponse: {
                 __typename: "Mutation",
                 projectThemeUpdate: {
@@ -175,58 +147,8 @@ export const useTheme = () => {
                         name: theme.name ?? "",
                         reference: "",
                         settings: "",
-                        project: {
-                            __typename: "Project",
-                            id: "",
-                            name: "",
-                            slug: "",
-                            hasCompletedOnboardingFor: null,
-                            timezone: "",
-                            organization: {
-                                id: workspace?.organization.id ?? "",
-                                slug: workspace?.organization.slug ?? "",
-                                name: workspace?.organization.name ?? "",
-                                memberCount:
-                                    workspace?.organization.memberCount ?? 0,
-                            },
-                        },
-
-                        creator: {
-                            __typename: "User",
-                            firstName: user?.firstName ?? "",
-                            lastName: user?.lastName ?? "",
-                            email: user?.email ?? "",
-                            id: user?.id ?? "",
-                            isActive: user?.isActive ?? false,
-                            isStaff: user?.isStaff ?? false,
-                            isOnboarded: user?.isOnboarded ?? false,
-                            organization: {
-                                id: workspace?.organization.id ?? "",
-                                slug: workspace?.organization.slug ?? "",
-                                name: workspace?.organization.name ?? "",
-                                memberCount:
-                                    workspace?.organization.memberCount ?? 0,
-                            },
-                            project: {
-                                id: workspace?.project.id ?? "",
-                                name: workspace?.project.name ?? "",
-                                slug: workspace?.project.slug ?? "",
-                                hasCompletedOnboardingFor: null,
-                                timezone: "",
-                                organization: {
-                                    id: workspace?.organization.id ?? "",
-                                    slug: workspace?.organization.slug ?? "",
-                                    name: workspace?.organization.name ?? "",
-                                    memberCount:
-                                        workspace?.organization.memberCount ??
-                                        0,
-                                },
-                            },
-                            organizations: {
-                                __typename: "OrganizationCountableConnection",
-                                edges: [],
-                            },
-                        },
+                        project: project as Project,
+                        creator: user as User,
                         createdAt: new Date().toISOString(),
                         updatedAt: new Date().toISOString(),
                         colorScheme: JSON.stringify(theme.colorScheme ?? {}),
@@ -259,11 +181,6 @@ export const useTheme = () => {
             variables: {
                 id: themeId,
             },
-            context: {
-                headers: {
-                    Project: workspace?.project.id,
-                },
-            },
             notifyOnNetworkStatusChange: true,
 
             optimisticResponse: {
@@ -280,31 +197,9 @@ export const useTheme = () => {
                         colorScheme: "",
                         settings: "",
                         createdAt: new Date().toISOString(),
+                        creator: user as User,
                         updatedAt: new Date().toISOString(),
-
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        creator: {
-                            firstName: "",
-                            lastName: "",
-                            email: "",
-                        },
-
-                        project: {
-                            __typename: "Project",
-                            id: "",
-                            name: "",
-                            slug: "",
-                            hasCompletedOnboardingFor: null,
-                            timezone: "",
-                            organization: {
-                                id: workspace?.organization.id ?? "",
-                                slug: workspace?.organization.slug ?? "",
-                                name: workspace?.organization.name ?? "",
-                                memberCount:
-                                    workspace?.organization.memberCount ?? 0,
-                            },
-                        },
+                        project: project as Project,
                     },
                     errors: [],
                     projectErrors: [],
@@ -319,14 +214,9 @@ export const useTheme = () => {
                         themes(existingThemeRefs, { readField }) {
                             return {
                                 ...existingThemeRefs,
-                                edges: existingThemeRefs.edges.filter(
-                                    (themeRef: Reference) => {
-                                        return (
-                                            themeId !==
-                                            readField("id", themeRef)
-                                        );
-                                    },
-                                ),
+                                edges: existingThemeRefs.edges.filter((themeRef: Reference) => {
+                                    return themeId !== readField("id", themeRef);
+                                }),
                             };
                         },
                     },

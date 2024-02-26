@@ -38,18 +38,6 @@
     }
 }
 
-.tooltip__arrow:before {
-    content: "";
-    width: 0;
-    height: 0;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-right: 17px solid #181325;
-    position: absolute;
-    left: 23px;
-    top: 10px;
-}
-
 .editor-input__placeholder::placeholder {
     color: red !important;
 }

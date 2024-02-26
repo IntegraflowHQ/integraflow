@@ -1,11 +1,12 @@
 import {
+    GetSurveyQuery,
     OrderDirection,
     PageInfo,
+    Project,
+    ProjectTheme,
     Survey,
-    SurveyError,
     SurveyFilterInput,
-    SurveyQuestionCountableEdge,
-    SurveyQuestionTypeEnum,
+    SurveyQuestion,
     SurveySortField,
     SurveyStatusEnum,
     SurveyTypeEnum,
@@ -14,60 +15,42 @@ import {
     useGetSurveyQuery,
     useSurveyCreateMutation,
     useSurveyDeleteMutation,
-    useSurveyQuestionCreateMutation,
     useSurveyUpdateMutation,
 } from "@/generated/graphql";
 import { ROUTES } from "@/routes";
-import { generateRandomString } from "@/utils";
-import { createSelectors } from "@/utils/selectors";
+import { ParsedQuestion } from "@/types";
+import { generateRandomString, parseQuestion } from "@/utils";
 import { ApolloError, InMemoryCache } from "@apollo/client";
-import { Reference, relayStylePagination } from "@apollo/client/utilities";
+import { DeepPartial, Reference, relayStylePagination } from "@apollo/client/utilities";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useScrollToBottom } from "react-scroll-to-bottom";
-import useWorkspace from "../workspace/hooks/useWorkspace";
-import {
-    SURVEY_CREATE,
-    SURVEY_QUESTION,
-} from "./graphql/fragments/surveyFragment";
-import { useSurveyStore } from "./states/survey";
+import { SURVEY_CREATE } from "./graphql/fragments/surveyFragment";
 
 export interface SurveyProviderProp {
     children: React.ReactNode;
 }
 
-export type SurveyResponse = {
-    surveyErrors: SurveyError[] | null;
-    survey?: Survey | null;
-};
-
 export type SurveyList = {
-    pageInfo: PageInfo;
-    totalCount: number | undefined;
-    edges: Array<Survey>;
+    pageInfo?: PageInfo;
+    totalCount?: number | null;
+    edges: Survey[];
 };
 
 export type SurveyContextValues = {
     loading: boolean;
     surveysOnPage: number;
     error: ApolloError | undefined;
-    openQuestion: string;
-    createSurvey: (template?: string) => Promise<SurveyResponse>;
-    setOpenQuestion: (value: string) => void;
-    updateSurvey: (
-        survey: Partial<Survey>,
-        input: SurveyUpdateInput,
-    ) => Promise<SurveyResponse | undefined>;
-    survey: SurveyResponse;
+    parsedQuestions: ParsedQuestion[];
+    surveyId: string;
+    createSurvey: (template?: string) => Promise<void>;
+    updateSurvey: (survey: DeepPartial<Survey>, input: SurveyUpdateInput) => Promise<void>;
+    survey: GetSurveyQuery["survey"];
     surveyList: SurveyList;
-    questions: SurveyQuestionCountableEdge | undefined;
     deleteSurvey: (survey: Survey) => Promise<void | undefined>;
     getMoreSurveys: (direction: string) => Promise<void | undefined>;
-    createQuestion: (type: SurveyQuestionTypeEnum) => Promise<void | undefined>;
 };
 
-const createSurveyContext = () =>
-    React.createContext<SurveyContextValues | null>(null);
+const createSurveyContext = () => React.createContext<SurveyContextValues | null>(null);
 
 export const SurveyContext = createSurveyContext();
 
@@ -75,21 +58,14 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     const SURVEYS_PER_PAGE = 10;
 
     const navigate = useNavigate();
-    const { workspace } = useWorkspace();
-    const scrollToBottom = useScrollToBottom();
     const { orgSlug, projectSlug, surveySlug } = useParams();
 
-    const surveyStore = createSelectors(useSurveyStore);
-    const openQuestion = surveyStore.use.openQuestion();
-    const setOpenQuestion = surveyStore.use.setOpenQuestion();
-
     const [createSurveyMutation] = useSurveyCreateMutation();
-    const [createQuestionMutaton] = useSurveyQuestionCreateMutation({});
     const [updateSurveyMutation, { error }] = useSurveyUpdateMutation({});
     const [deleteSurveyMutation] = useSurveyDeleteMutation();
 
     const {
-        data: survey,
+        data: surveyQueryResponse,
         loading: loadingSurvey,
         refetch: refetchSurvey,
     } = useGetSurveyQuery({
@@ -99,31 +75,27 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
         skip: !surveySlug,
     });
 
-    const [
-        getSurveyList,
-        { refetch, fetchMore, data: surveyList, loading: surveyListLoading },
-    ] = useGetSurveyListLazyQuery();
+    const [getSurveyList, { refetch, fetchMore, data: surveyList, loading: surveyListLoading }] =
+        useGetSurveyListLazyQuery();
 
-    const surveyId = survey?.survey?.id ?? "";
+    const surveyId = surveyQueryResponse?.survey?.id ?? "";
 
-    console.log("HERE", surveyList);
+    const parsedQuestions = React.useMemo(() => {
+        const questions = surveyQueryResponse?.survey?.questions?.edges || [];
+
+        return [...questions]
+            .sort((a, b) => a.node.orderNumber - b.node.orderNumber)
+            .map(({ node: question }) => parseQuestion(question as SurveyQuestion));
+    }, [surveyQueryResponse?.survey?.questions.edges]);
 
     const surveyListData = React.useMemo(() => {
         return {
             pageInfo: surveyList?.surveys?.pageInfo,
             totalCount: surveyList?.surveys?.totalCount,
-            edges: surveyList?.surveys?.edges?.map((survey) => survey.node),
+            edges: surveyList?.surveys?.edges?.map((survey) => survey.node as Survey) || ([] as Survey[]),
         };
     }, [surveyList]);
 
-    // this could make the dependencies of the createQuestion callback
-    // change on every render. Wrapping it in a Memo fixes it i guess.
-    const questions = React.useMemo(
-        () => survey?.survey?.questions?.edges || [],
-        [survey?.survey?.questions.edges],
-    );
-
-    // unique survey
     React.useEffect(() => {
         refetchSurvey();
     }, [surveySlug, refetchSurvey]);
@@ -137,20 +109,15 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                     direction: OrderDirection.Desc,
                 },
             },
-            // TODO: Remove context later on. Apollo should handle this.
-            context: {
-                headers: {
-                    Project: workspace?.project.id,
-                },
-            },
             notifyOnNetworkStatusChange: true,
             fetchPolicy: "network-only",
         });
-    }, [getSurveyList, projectSlug, workspace?.project?.id]);
+    }, [getSurveyList, projectSlug]);
 
     const createSurvey = React.useCallback(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         async (_template?: string) => {
+            // TODO: Implement create survey from template
             const surveySlug = `survey-${generateRandomString(10)}`;
             navigate(
                 ROUTES.STUDIO.replace(":orgSlug", orgSlug!)
@@ -183,13 +150,60 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                             theme: null,
                             createdAt: new Date().toISOString(),
                             updatedAt: new Date().toISOString(),
-
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-ignore
+                            project: {
+                                __typename: "Project",
+                                id: "",
+                                name: "",
+                                slug: "",
+                                apiToken: "",
+                                accessControl: false,
+                                hasCompletedOnboardingFor: null,
+                                timezone: "",
+                                organization: {
+                                    __typename: "AuthOrganization",
+                                    id: "",
+                                    slug: "",
+                                    name: "",
+                                    memberCount: 1,
+                                },
+                            },
                             creator: {
+                                __typename: "User",
+                                id: "",
                                 email: "",
                                 firstName: "",
                                 lastName: "",
+                                isStaff: false,
+                                isActive: true,
+                                isOnboarded: false,
+                                organization: {
+                                    __typename: "AuthOrganization",
+                                    id: "",
+                                    slug: "",
+                                    name: "",
+                                    memberCount: 1,
+                                },
+                                project: {
+                                    __typename: "Project",
+                                    id: "",
+                                    name: "",
+                                    slug: "",
+                                    apiToken: "",
+                                    accessControl: false,
+                                    hasCompletedOnboardingFor: null,
+                                    timezone: "",
+                                    organization: {
+                                        __typename: "AuthOrganization",
+                                        id: "",
+                                        slug: "",
+                                        name: "",
+                                        memberCount: 1,
+                                    },
+                                },
+                                organizations: {
+                                    __typename: "OrganizationCountableConnection",
+                                    edges: [],
+                                },
                             },
 
                             questions: {
@@ -233,12 +247,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                 },
 
                 onError: () => {
-                    navigate(
-                        ROUTES.SURVEY_LIST.replace(
-                            ":orgSlug",
-                            orgSlug!,
-                        ).replace(":projectSlug", projectSlug!),
-                    );
+                    navigate(ROUTES.SURVEY_LIST.replace(":orgSlug", orgSlug!).replace(":projectSlug", projectSlug!));
                 },
             });
         },
@@ -264,9 +273,6 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
 
             fetchMore({
                 variables: paginationVariables,
-
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
                 updateQuery: (prevResult, { fetchMoreResult }) => {
                     if (!fetchMoreResult) return prevResult;
 
@@ -276,7 +282,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                     return newEdges?.length
                         ? {
                               surveys: {
-                                  pageInfo,
+                                  pageInfo: pageInfo as PageInfo,
                                   edges: newEdges,
                                   __typename: prevResult.surveys?.__typename,
                                   totalCount: prevResult.surveys?.totalCount,
@@ -302,11 +308,8 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
         [fetchMore, surveyList],
     );
 
-    // Future work...
     const filterSurveyList = React.useCallback(
         async (input: SurveyFilterInput) => {
-            // console.log("here's your input", input);
-
             await refetch({
                 filter: input,
             });
@@ -315,8 +318,8 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     );
 
     const updateSurvey = React.useCallback(
-        async (survey: Partial<Survey>, input: SurveyUpdateInput) => {
-            const response = await updateSurveyMutation({
+        async (survey: DeepPartial<Survey>, input: SurveyUpdateInput) => {
+            await updateSurveyMutation({
                 variables: {
                     id: survey.id!,
                     input,
@@ -326,9 +329,6 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                     __typename: "Mutation",
                     surveyUpdate: {
                         __typename: "SurveyUpdate",
-
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
                         survey: {
                             __typename: "Survey",
                             id: survey.id!,
@@ -336,30 +336,73 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                             name: input?.name ?? survey.name,
                             slug: input?.slug ?? survey.slug ?? "",
                             type: survey.type ?? SurveyTypeEnum.Survey,
-                            status:
-                                input.status ??
-                                survey.status ??
-                                SurveyStatusEnum.Draft,
-                            settings: input?.settings ?? survey.settings,
-                            createdAt:
-                                survey.createdAt ?? new Date().toISOString(),
-                            updatedAt:
-                                survey.updatedAt ?? new Date().toISOString(),
+                            status: input.status ?? survey.status ?? SurveyStatusEnum.Draft,
+                            settings: input?.settings ?? survey.settings ?? "{}",
+                            createdAt: survey.createdAt ?? new Date().toISOString(),
+                            updatedAt: survey.updatedAt ?? new Date().toISOString(),
+                            project: survey.project
+                                ? (survey.project as Project)
+                                : {
+                                      __typename: "Project",
+                                      id: "",
+                                      name: "",
+                                      slug: "",
+                                      apiToken: "",
+                                      accessControl: false,
+                                      hasCompletedOnboardingFor: null,
+                                      timezone: "",
+                                      organization: {
+                                          __typename: "AuthOrganization",
+                                          id: "",
+                                          slug: "",
+                                          name: "",
+                                          memberCount: 1,
+                                      },
+                                  },
 
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-ignore
                             theme: {
                                 id: input?.themeId ?? survey.theme?.id ?? "",
                                 name: survey.theme?.name ?? "",
                                 colorScheme: survey.theme?.colorScheme ?? "",
                                 reference: survey.theme?.reference ?? "",
-                            },
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-ignore
+                            } as ProjectTheme,
                             creator: {
-                                lastName: survey.creator?.lastName ?? "",
-                                firstName: survey.creator?.firstName ?? "",
+                                __typename: "User",
+                                id: survey?.creator?.id ?? "",
                                 email: survey.creator?.email ?? "",
+                                firstName: survey.creator?.firstName ?? "",
+                                lastName: survey.creator?.lastName ?? "",
+                                isStaff: false,
+                                isActive: true,
+                                isOnboarded: false,
+                                organization: {
+                                    __typename: "AuthOrganization",
+                                    id: "",
+                                    slug: "",
+                                    name: "",
+                                    memberCount: 1,
+                                },
+                                project: {
+                                    __typename: "Project",
+                                    id: "",
+                                    name: "",
+                                    slug: "",
+                                    apiToken: "",
+                                    accessControl: false,
+                                    hasCompletedOnboardingFor: null,
+                                    timezone: "",
+                                    organization: {
+                                        __typename: "AuthOrganization",
+                                        id: "",
+                                        slug: "",
+                                        name: "",
+                                        memberCount: 1,
+                                    },
+                                },
+                                organizations: {
+                                    __typename: "OrganizationCountableConnection",
+                                    edges: [],
+                                },
                             },
                             questions: {
                                 __typename: "SurveyQuestionCountableConnection",
@@ -391,32 +434,16 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                     });
                 },
             });
-
-            const updatedSurvey = response?.data?.surveyUpdate?.survey;
-
-            const surveyUpdateResponse: SurveyResponse = {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                survey: updatedSurvey,
-                surveyErrors: response?.data?.surveyUpdate?.surveyErrors || [],
-            };
-
-            return surveyUpdateResponse;
         },
         [updateSurveyMutation],
     );
 
     const deleteSurvey = React.useCallback(
         async (survey: Survey) => {
-            console.log('delete Survey', survey);
+            console.log("delete Survey", survey);
             await deleteSurveyMutation({
                 variables: {
                     id: survey.id,
-                },
-                context: {
-                    headers: {
-                        Project: workspace?.project.id,
-                    },
                 },
 
                 optimisticResponse: {
@@ -431,44 +458,65 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                             reference: "",
                             name: "",
                             slug: surveySlug ?? "",
-                            status: survey.status ?? '',
+                            status: survey.status ?? "",
                             settings: "",
                             theme: null,
+                            project: survey.project
+                                ? (survey.project as Project)
+                                : {
+                                      __typename: "Project",
+                                      id: "",
+                                      name: "",
+                                      slug: "",
+                                      apiToken: "",
+                                      accessControl: false,
+                                      hasCompletedOnboardingFor: null,
+                                      timezone: "",
+                                      organization: {
+                                          __typename: "AuthOrganization",
+                                          id: "",
+                                          slug: "",
+                                          name: "",
+                                          memberCount: 1,
+                                      },
+                                  },
                             creator: {
-                                ...survey.creator,
-                                id: '',
-                                lastName: '',
-                                firstName: '',
-                                email: '',
+                                __typename: "User",
+                                id: survey.creator.id ?? "",
+                                email: survey.creator.email ?? "",
+                                firstName: survey.creator.firstName ?? "",
+                                lastName: survey.creator.lastName ?? "",
                                 isStaff: false,
                                 isActive: true,
+                                isOnboarded: false,
+                                organization: survey.creator.organization ?? {
+                                    __typename: "AuthOrganization",
+                                    id: "",
+                                    slug: "",
+                                    name: "",
+                                    memberCount: 1,
+                                },
                                 project: {
                                     __typename: "Project",
-                                    id: '',
-                                    name: '',
-                                    slug: '',
-                                    hasCompletedOnboardingFor: '',
-                                    timezone: '',
+                                    id: "",
+                                    name: "",
+                                    slug: "",
+                                    apiToken: "",
+                                    accessControl: false,
+                                    hasCompletedOnboardingFor: null,
+                                    timezone: "",
                                     organization: {
-                                        __typename: 'AuthOrganization',
-                                        id: '',
-                                        name: '',
-                                        memberCount: 0,
-                                        slug: ''
-                                    }
-                                },
-                                isOnboarded: false,
-                                organization: {
-                                    __typename: 'AuthOrganization',
-                                    id: '',
-                                    name: '',
-                                    memberCount: 0,
-                                    slug: ''
+                                        __typename: "AuthOrganization",
+                                        id: "",
+                                        slug: "",
+                                        name: "",
+                                        memberCount: 1,
+                                    },
                                 },
                                 organizations: {
-                                    __typename: 'OrganizationCountableConnection',
-                                    edges: []
-                                }
+                                    __typename: "OrganizationCountableConnection",
+                                    edges: [],
+                                },
                             },
                             questions: {
                                 __typename: "SurveyQuestionCountableConnection",
@@ -478,7 +526,6 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                                 __typename: "SurveyChannelCountableConnection",
                                 edges: [],
                             },
-
                         },
                         errors: [],
                         surveyErrors: [],
@@ -492,161 +539,58 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                     cache.modify({
                         fields: {
                             surveys(existingSurveyRefs, { readField }) {
-                                console.log('Existing Surveys', existingSurveyRefs);
+                                console.log("Existing Surveys", existingSurveyRefs);
                                 return {
                                     ...existingSurveyRefs,
                                     edges: existingSurveyRefs.edges.filter(({ node }: { node: Reference }) => {
-                                        console.log('Existing Survey', readField('id', node), survey.id !== readField('id', node));
-                                        return survey.id !== readField('id', node);
-                                    })
-                                }
+                                        console.log(
+                                            "Existing Survey",
+                                            readField("id", node),
+                                            survey.id !== readField("id", node),
+                                        );
+                                        return survey.id !== readField("id", node);
+                                    }),
+                                };
                             },
                         },
                     });
-
-                    /* const normalizedId = cache.identify({
-                        id: surveyId,
-                        __typename: "Survey",
-                    }); */
-                    // cache.evict({ id: normalizedId });
-                    // cache.gc();
 
                     console.log("cache2: ", cache);
                 },
             });
         },
-        [deleteSurveyMutation, workspace?.project.id],
+        [deleteSurveyMutation],
     );
-
-    const createQuestion = React.useCallback(
-        async (type: SurveyQuestionTypeEnum) => {
-            const id = crypto.randomUUID();
-            if (!surveyId) return;
-
-            await createQuestionMutaton({
-                variables: {
-                    input: {
-                        orderNumber: questions.length + 1,
-                        surveyId: surveyId,
-                        id,
-                        type: type,
-                    },
-                },
-                optimisticResponse: {
-                    __typename: "Mutation",
-                    surveyQuestionCreate: {
-                        __typename: "SurveyQuestionCreate",
-                        surveyQuestion: {
-                            __typename: "SurveyQuestion",
-                            id: "temp-id",
-                            createdAt: new Date().toISOString(),
-                            description: "",
-                            label: "",
-                            maxPath: 0,
-                            orderNumber: questions.length + 1,
-                            reference: id,
-                            type: type,
-                            settings: null,
-                            options: null,
-                        },
-                        surveyErrors: [],
-                        errors: [],
-                    },
-                },
-                update: (cache, { data }) => {
-                    if (!data?.surveyQuestionCreate?.surveyQuestion) return;
-                    cache.modify({
-                        id: `Survey:${surveyId}`,
-                        fields: {
-                            questions(existingQuestions = []) {
-                                const newQuestionRef = cache.writeFragment({
-                                    data: data.surveyQuestionCreate
-                                        ?.surveyQuestion,
-                                    fragment: SURVEY_QUESTION,
-                                });
-
-                                return {
-                                    __typename:
-                                        "SurveyQuestionCountableConnection",
-                                    edges: [
-                                        ...existingQuestions.edges,
-                                        {
-                                            __typename:
-                                                "SurveyQuestionCountableEdge",
-                                            node: newQuestionRef,
-                                        },
-                                    ],
-                                };
-                            },
-                        },
-                    });
-                },
-                onCompleted: ({ surveyQuestionCreate }) => {
-                    const { surveyQuestion } = surveyQuestionCreate ?? {};
-                    setOpenQuestion(surveyQuestion?.id as string);
-                    scrollToBottom();
-                },
-            });
-        },
-        [
-            createQuestionMutaton,
-            questions?.length,
-            scrollToBottom,
-            setOpenQuestion,
-            surveyId,
-        ],
-    );
-
     const values = React.useMemo<SurveyContextValues>(
         () => ({
             error,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            questions,
-
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-
             createSurvey,
-            openQuestion,
-            createQuestion,
-            setOpenQuestion,
             surveysOnPage: SURVEYS_PER_PAGE,
-
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            survey,
+            survey: surveyQueryResponse?.survey,
             deleteSurvey,
             updateSurvey,
             getMoreSurveys,
             filterSurveyByName: filterSurveyList,
-
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             surveyList: surveyListData,
             loading: loadingSurvey || surveyListLoading,
+            parsedQuestions,
+            surveyId,
         }),
         [
             error,
-            survey,
-            questions,
-            filterSurveyList,
-            updateSurvey,
-            createSurvey,
-            deleteSurvey,
-            openQuestion,
+            surveyQueryResponse?.survey,
             loadingSurvey,
-            createQuestion,
-            setOpenQuestion,
+            parsedQuestions,
+            surveyId,
             surveyListLoading,
-            getMoreSurveys,
             surveyListData,
+            filterSurveyList,
+            createSurvey,
+            updateSurvey,
+            deleteSurvey,
+            getMoreSurveys,
         ],
     );
 
-    return (
-        <SurveyContext.Provider value={values}>
-            {children}
-        </SurveyContext.Provider>
-    );
+    return <SurveyContext.Provider value={values}>{children}</SurveyContext.Provider>;
 };

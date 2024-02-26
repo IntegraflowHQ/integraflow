@@ -27,6 +27,8 @@ export const PROJECT = gql`
         id
         name
         slug
+        apiToken
+        accessControl
         hasCompletedOnboardingFor
         timezone
         organization {

@@ -12,12 +12,24 @@ export const SURVEY_QUESTION = gql`
         orderNumber
         maxPath
         createdAt
+        survey {
+            id
+            reference
+            slug
+            name
+            project {
+                id
+                slug
+                name
+            }
+        }
     }
 `;
 
 export const SURVEY_CHANNEL = gql`
     fragment SurveyChannelFragment on SurveyChannel {
         id
+        link
         reference
         type
         triggers
@@ -41,6 +53,9 @@ export const SURVEY = gql`
         }
         creator {
             ...UserFragment
+        }
+        project {
+            ...ProjectFragment
         }
         questions(first: 50) {
             edges {

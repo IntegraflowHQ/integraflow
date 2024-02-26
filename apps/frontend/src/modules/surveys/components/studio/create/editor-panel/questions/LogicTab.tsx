@@ -1,59 +1,168 @@
-import { surveyConditions } from "@/utils/survey";
-import TextButton from "./attributes/Buttons/TextButton";
-import { ComboBox } from "./attributes/ComboBox";
-import { SurveyQuestion } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
+import { QuestionLogic, QuestionSettings } from "@/types";
+import { cn, generateUniqueId } from "@/utils";
+import { LogicOperator } from "@integraflow/web/src/types";
+import { useEffect, useState } from "react";
+import { TabHeader } from "./TabHeader";
+import { DefaultLogicBox } from "./attributes/LogicFields/DefaultLogicBox";
+import FormLogicDefault from "./attributes/LogicFields/Form/DefaultFormLogic";
+import { FormLogicBox } from "./attributes/LogicFields/Form/FormLogic";
+import { LogicBox } from "./attributes/LogicFields/LogicBox";
 
 type Props = {
-    questionType: string;
-    question: SurveyQuestion;
+    questionIndex: number;
 };
 
-export const LogicTab = ({ questionType, question }: Props) => {
+export const LogicTab = ({ questionIndex }: Props) => {
+    const [isCreatingLogic, setIsCreatingLogic] = useState(false);
+    const { question } = useQuestion();
+
+    const [logicValues, setLogicValues] = useState<QuestionLogic>({
+        id: "",
+        condition: undefined,
+        values: undefined,
+        operator: undefined,
+        destination: "",
+        orderNumber: question?.settings.logic?.length || 0,
+    });
+
+    const [formLogicValues, setFormLogicValues] = useState<QuestionLogic>({
+        id: "",
+        groups: [
+            {
+                id: "",
+                condition: "",
+                operator: "",
+                fields: [],
+            },
+        ],
+        operator: LogicOperator.AND,
+        destination: "",
+        orderNumber: question?.settings.logic?.length || 0,
+    });
+
+    useEffect(() => {
+        if (isCreatingLogic) {
+            if (question?.type === SurveyQuestionTypeEnum.Form) {
+                setFormLogicValues({
+                    ...formLogicValues,
+                    operator: LogicOperator.AND,
+                    id: generateUniqueId(),
+                    orderNumber: (question?.settings.logic?.length ?? 0) + 1 || 0,
+                    groups: [
+                        {
+                            id: generateUniqueId(),
+                            condition: "",
+                            operator: LogicOperator.AND,
+                            fields: [],
+                        },
+                    ],
+                });
+            } else {
+                setLogicValues({
+                    ...logicValues,
+                    id: generateUniqueId(),
+                    orderNumber: (question?.settings.logic?.length ?? 0) + 1 || 0,
+                });
+            }
+        } else {
+            setFormLogicValues({
+                id: generateUniqueId(),
+                groups: [
+                    {
+                        id: "",
+                        condition: "",
+                        operator: "",
+                        fields: [],
+                    },
+                ],
+                operator: undefined,
+                destination: "",
+                orderNumber: undefined,
+            });
+
+            setLogicValues({
+                id: "",
+                condition: undefined,
+                values: undefined,
+                operator: undefined,
+                destination: "",
+                orderNumber: undefined,
+            });
+        }
+    }, [isCreatingLogic]);
+
+    if (!question) {
+        return null;
+    }
+
     return (
         <div className="space-y-4">
+            <TabHeader questionIndex={questionIndex} />
+
             <div className="">
                 <h3 className="text-sm font-semibold">Add logic</h3>
                 <p className="text-sm">
-                    Wondering how logic works?{" "}
-                    <span className="cursor-pointer underline">Learn more</span>
+                    Wondering how logic works? <span className="cursor-pointer underline">Learn more</span>
                 </p>
             </div>
-            <div className="rounded-md border border-intg-bg-4">
-                <div className="p-6 text-center">
-                    <TextButton
-                        size="md"
-                        text="Add new logic"
-                        classname="text-sm"
-                    />
-                </div>
-                <div className="space-y-6 p-6">
-                    <div className="flex justify-between">
-                        <p>If</p>
-                        <div className="w-[330px]">
-                            <ComboBox options={surveyConditions} />
-                        </div>
-                    </div>
-                    <div className="flex justify-between">
-                        <div></div>
-                        <div className="w-[330px]">
-                            <ComboBox options={[{ label: "1", value: "1" }]} />
-                        </div>
-                    </div>
-                    <div>
-                        <div className="flex justify-between gap-14">
-                            <p>then</p>
-                            <div className="w-[330px]">
-                                <ComboBox options={surveyConditions} />
+
+            {question.type === SurveyQuestionTypeEnum.Form ? (
+                <>
+                    {((question.settings as QuestionSettings).logic || [])?.map((logic, index) => {
+                        return (
+                            <div className="w-full">
+                                <FormLogicBox logicIndex={index} logic={logic} key={logic.id} />
                             </div>
-                        </div>
-                    </div>
-                </div>
+                        );
+                    })}
+
+                    {
+                        <FormLogicDefault
+                            isCreatingLogic={isCreatingLogic}
+                            setIsCreatingLogic={setIsCreatingLogic}
+                            formLogicValues={formLogicValues}
+                            setFormLogicValues={setFormLogicValues}
+                        />
+                    }
+                </>
+            ) : (
+                <>
+                    {((question.settings as QuestionSettings).logic || [])?.map((logic, index) => {
+                        return (
+                            <LogicBox
+                                key={logic.id}
+                                setIsCreatingLogic={setIsCreatingLogic}
+                                logic={logic}
+                                logicIndex={index}
+                                setLogicValues={setLogicValues}
+                            />
+                        );
+                    })}
+
+                    {isCreatingLogic && (
+                        <DefaultLogicBox
+                            isCreatingLogic={isCreatingLogic}
+                            setIsCreatingLogic={setIsCreatingLogic}
+                            logicValues={logicValues}
+                            setLogicValues={setLogicValues}
+                        />
+                    )}
+                </>
+            )}
+
+            <div
+                className={cn(
+                    isCreatingLogic ? "cursor-not-allowed" : "cursor-pointer",
+                    "border-3 rounded-md border border-dotted border-intg-bg-4 p-6 text-center",
+                )}
+                onClick={() => setIsCreatingLogic(true)}
+            >
+                <p className="text-xs underline">Add new Logic</p>
             </div>
-            <TextButton text="Add new logic" />
-            <p className="text-sm">
-                All other answers will direct the respondents to the next
-                question.
-            </p>
+
+            <p className="text-sm">All other answers will direct the respondents to the next question.</p>
         </div>
     );
 };

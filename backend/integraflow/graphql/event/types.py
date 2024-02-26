@@ -4,6 +4,7 @@ from integraflow.event import models
 from integraflow.graphql.core.connection import CountableConnection
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_EVENTS
 from integraflow.graphql.core.fields import JSONString, PermissionsField
+from integraflow.graphql.core.scalars import UUID
 from integraflow.graphql.core.types.common import NonNullList
 from integraflow.graphql.core.types.model import ModelObjectType
 from integraflow.graphql.event.enums import (
@@ -141,7 +142,7 @@ class Person(ModelObjectType):
             AuthorizationFilters.PROJECT_MEMBER_ACCESS,
         ],
     )
-    uuid = graphene.UUID(
+    uuid = UUID(
         description="The person's uuid",
         required=True
     )

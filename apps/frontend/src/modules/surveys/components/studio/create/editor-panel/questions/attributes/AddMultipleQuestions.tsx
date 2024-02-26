@@ -1,46 +1,57 @@
+import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { Button, Dialog, DialogContent, DialogTrigger } from "@/ui";
+import { generateUniqueId } from "@/utils";
+import { FormField, QuestionOption } from "@integraflow/web/src/types";
 import type { DialogProps } from "@radix-ui/react-dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TextButton from "./Buttons/TextButton";
 
 interface Props extends DialogProps {
-    getValue?: (values: string[]) => void;
+    questionOptions?: QuestionOption[] | FormField[];
 }
 
-export const AddMultipleQuestions = ({ getValue }: Props) => {
-    const [inputValue, setInputValue] = useState("");
-    const [open, setOpen] = useState(false);
+export const AddMultipleQuestions = ({ questionOptions }: Props) => {
+    const [inputValue, setInputValue] = useState(
+        questionOptions ? [...questionOptions.map((option) => option.label)].join("\n") : "",
+    );
 
-    const handleInputChange = (
-        event: React.ChangeEvent<HTMLTextAreaElement>,
-    ) => {
-        setInputValue(event.target.value);
-        console.log(event.target.value);
-    };
+    const [openModal, setOpenModal] = useState(false);
+
+    const { updateQuestion } = useQuestion();
+
+    useEffect(() => {
+        setInputValue(
+            questionOptions ? [...questionOptions.map((option: QuestionOption) => option.label)].join("\n") : "",
+        );
+    }, [openModal]);
 
     return (
-        <Dialog onOpenChange={(value) => setOpen(value)} open={open}>
-            <DialogTrigger asChild>
-                <TextButton text={"Add multiple at once"} onclick={() => {}} />
+        <Dialog onOpenChange={(value) => setOpenModal(value)} open={openModal}>
+            <DialogTrigger>
+                <TextButton text={"Add multiple at once"} />
             </DialogTrigger>
             <DialogContent title="Add multiple at once">
                 <div className="min-w-[770px] space-y-6">
                     <textarea
                         className="h-[299px] w-full resize-none bg-[#2B2045] p-4 text-intg-text-1"
                         value={inputValue}
-                        onChange={handleInputChange}
+                        onChange={(e) => {
+                            setInputValue(e.target.value);
+                        }}
                     ></textarea>
                     <div className="ml-auto flex w-[45%] gap-2">
-                        <Button
-                            text="Cancel"
-                            variant="secondary"
-                            onClick={() => setOpen(!open)}
-                        />
+                        <Button text="Cancel" variant="secondary" onClick={() => setOpenModal(!open)} />
                         <Button
                             text="Update"
                             onClick={() => {
-                                getValue && getValue(inputValue.split("\n"));
-                                setOpen(!open);
+                                setOpenModal(!openModal);
+                                updateQuestion({
+                                    options: inputValue.split("\n").map((option, index) => ({
+                                        id: generateUniqueId(),
+                                        orderNumber: index,
+                                        label: option,
+                                    })),
+                                });
                             }}
                         />
                     </div>

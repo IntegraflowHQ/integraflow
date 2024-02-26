@@ -30,17 +30,9 @@ const tabs = [
     },
 ];
 
-interface CreateScreenProps {
-    loader: React.ReactNode;
-    loading: boolean;
-}
-
-export default function Create({ loader, loading }: CreateScreenProps) {
+export default function Create() {
     return (
-        <Tabs.Root
-            className="flex h-screen pt-[84px]"
-            defaultValue={tabs[0].label}
-        >
+        <Tabs.Root className="flex h-screen pt-[84px]" defaultValue={tabs[0].label}>
             <Tabs.List className="flex h-full flex-col gap-6 border-r border-intg-bg-4 px-[18px] pt-12">
                 {tabs.map(({ id, label, icon }, index: React.Key) => (
                     <Tabs.Trigger
@@ -51,16 +43,23 @@ export default function Create({ loader, loading }: CreateScreenProps) {
                     >
                         <div>
                             <Tooltip.Provider>
-                                <Tooltip.Root key={id}>
-                                    <Tooltip.Trigger className="h-9 rounded px-2 ease-in-out hover:bg-[#272138] hover:transition-all">
+                                <Tooltip.Root key={id} delayDuration={200}>
+                                    <Tooltip.Trigger className="h-9 rounded px-2 ease-in-out hover:bg-intg-bg-15 hover:transition-all">
                                         {icon}
                                     </Tooltip.Trigger>
 
                                     <Tooltip.Portal>
-                                        <Tooltip.Content className="tooltip__arrow">
-                                            <div className="absolute -left-6 top-1 ml-16 rounded-md border border-intg-text-4 bg-intg-bg-9 px-1 py-2 text-xs text-intg-text-4">
-                                                <p className="w-28">{label}</p>
-                                            </div>
+                                        <Tooltip.Content
+                                            side="right"
+                                            align="center"
+                                            className="rounded border border-intg-bg-10 bg-intg-bg-9 px-2 py-3 text-xs leading-[18px] text-intg-text"
+                                        >
+                                            {label}
+                                            <Tooltip.Arrow
+                                                width={18}
+                                                height={16}
+                                                className="-mt-[1px] fill-[#181325] stroke-intg-bg-10"
+                                            />
                                         </Tooltip.Content>
                                     </Tooltip.Portal>
                                 </Tooltip.Root>
@@ -70,26 +69,22 @@ export default function Create({ loader, loading }: CreateScreenProps) {
                 ))}
             </Tabs.List>
 
-            {!loading ? (
-                <div className="flex max-h-[calc(100vh-110px)] flex-1 gap-[38px] pl-5 pr-12 pt-6">
-                    <ScrollToBottom
-                        mode="top"
-                        scrollViewClassName="scrollbar-hide overflow-y-auto max-h-[calc(100vh-110px)] h-full"
-                        className="max-h-[calc(100vh-110px)] w-[519px] pb-8"
-                    >
-                        {tabs.map(({ content, label, id }) => (
-                            <Tabs.Content key={id} value={label}>
-                                {content}
-                            </Tabs.Content>
-                        ))}
-                    </ScrollToBottom>
-                    <div className="min-w-[580px] flex-1 pb-8">
-                        <Preview />
-                    </div>
+            <div className="flex max-h-[calc(100vh-110px)] flex-1 gap-[38px] pl-5 pr-12 pt-6">
+                <ScrollToBottom
+                    mode="top"
+                    scrollViewClassName="scrollbar-hide overflow-y-auto max-h-[calc(100vh-110px)] h-full"
+                    className="max-h-[calc(100vh-110px)] w-[519px] pb-8"
+                >
+                    {tabs.map(({ content, label, id }) => (
+                        <Tabs.Content key={id} value={label}>
+                            {content}
+                        </Tabs.Content>
+                    ))}
+                </ScrollToBottom>
+                <div className="min-w-[580px] flex-1 pb-8">
+                    <Preview />
                 </div>
-            ) : (
-                loader
-            )}
+            </div>
         </Tabs.Root>
     );
 }

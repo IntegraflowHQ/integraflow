@@ -22,7 +22,8 @@ import { SurveyProvider } from "./modules/surveys/SurveyProvider";
 import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
 import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
 
-const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
+const isDebugMode = import.meta.env.MODE === "development";
+
 if (isDebugMode) {
     loadDevMessages();
     loadErrorMessages();

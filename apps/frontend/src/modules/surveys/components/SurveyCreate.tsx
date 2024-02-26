@@ -1,5 +1,5 @@
 import { CreateSurvey } from "@/types";
-import { Header } from "@/ui";
+import { GlobalSpinner, Header } from "@/ui";
 import { List, PlusCircle } from "@/ui/icons";
 import { cn } from "@/utils";
 import { useSurvey } from "../hooks/useSurvey";
@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function SurveyCreate({ className, size = "lg" }: Props) {
-    const { createSurvey } = useSurvey();
+    const { createSurvey, loadingCreateSurvey } = useSurvey();
     const surveyCreateOptions = [
         {
             id: CreateSurvey.START_FROM_SCRATCH,
@@ -31,6 +31,10 @@ export default function SurveyCreate({ className, size = "lg" }: Props) {
         },
     ];
 
+    if (loadingCreateSurvey) {
+        return <GlobalSpinner />;
+    }
+
     return (
         <div
             className={cn(
@@ -43,7 +47,9 @@ export default function SurveyCreate({ className, size = "lg" }: Props) {
                 <div
                     key={option.title}
                     className="flex flex-1 flex-col items-center justify-center gap-3 rounded-lg bg-[#261F36]"
-                    onClick={() => createSurvey(option.id)}
+                    onClick={() => {
+                        createSurvey();
+                    }}
                 >
                     {option.icon}
                     <Header

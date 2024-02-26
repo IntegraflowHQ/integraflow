@@ -112,6 +112,19 @@ type Query {
   ): Survey @doc(category: "Surveys")
 
   """
+  Look up a survey by channel ID or link.
+  
+  Requires one of the following permissions: AUTHENTICATED_API.
+  """
+  surveyByChannel(
+    """The ID of the channel."""
+    id: ID
+
+    """Unique link of the channel."""
+    link: String
+  ): BaseSurvey @doc(category: "Surveys")
+
+  """
   List of the project's themes.
   
   Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -399,6 +412,9 @@ type Project implements Node @doc(category: "Projects") {
   """Name of the project."""
   name: String!
 
+  """API token for project."""
+  apiToken: String!
+
   """Slug of the project."""
   slug: String!
 
@@ -424,6 +440,7 @@ type OrganizationCountableConnection @doc(category: "Organizations") {
 
   """A total count of items in the collection."""
   totalCount: Int
+  nodes: [Organization!]!
 }
 
 """
@@ -533,6 +550,7 @@ type UserCountableConnection @doc(category: "Users") {
 
   """A total count of items in the collection."""
   totalCount: Int
+  nodes: [User!]!
 }
 
 type UserCountableEdge @doc(category: "Users") {
@@ -580,6 +598,7 @@ type ProjectCountableConnection @doc(category: "Projects") {
 
   """A total count of items in the collection."""
   totalCount: Int
+  nodes: [Project!]!
 }
 
 type ProjectCountableEdge @doc(category: "Projects") {
@@ -616,6 +635,7 @@ type SurveyChannelCountableConnection @doc(category: "Surveys") {
 
   """A total count of items in the collection."""
   totalCount: Int
+  nodes: [SurveyChannel!]!
 }
 
 type SurveyChannelCountableEdge @doc(category: "Surveys") {
@@ -631,11 +651,11 @@ type SurveyChannel implements Node @doc(category: "Surveys") {
   """The ID of the channel."""
   id: ID!
 
-  """For internal purpose."""
-  reference: ID
-
   """The type of the survey channel"""
   type: SurveyChannelTypeEnum!
+
+  """Unique link to the channel."""
+  link: String!
 
   """The options of the question."""
   triggers: JSONString
@@ -648,6 +668,9 @@ type SurveyChannel implements Node @doc(category: "Surveys") {
 
   """The time at which the channel was created."""
   createdAt: DateTime!
+
+  """For internal purpose."""
+  reference: ID
 
   """
   The project the survey belongs to
@@ -791,9 +814,6 @@ type ProjectTheme implements Node @doc(category: "Projects") {
   """The ID of the theme."""
   id: ID!
 
-  """For internal purpose."""
-  reference: ID
-
   """Name of the theme."""
   name: String!
 
@@ -802,6 +822,9 @@ type ProjectTheme implements Node @doc(category: "Projects") {
 
   """The settings of the theme."""
   settings: JSONString
+
+  """For internal purpose."""
+  reference: ID
 
   """
   The project the theme belongs to.
@@ -831,6 +854,7 @@ type SurveyQuestionCountableConnection @doc(category: "Surveys") {
 
   """A total count of items in the collection."""
   totalCount: Int
+  nodes: [SurveyQuestion!]!
 }
 
 type SurveyQuestionCountableEdge @doc(category: "Surveys") {
@@ -845,9 +869,6 @@ type SurveyQuestionCountableEdge @doc(category: "Surveys") {
 type SurveyQuestion implements Node @doc(category: "Surveys") {
   """The ID of the question."""
   id: ID!
-
-  """For internal purpose."""
-  reference: ID
 
   """Label of the question."""
   label: String!
@@ -870,15 +891,18 @@ type SurveyQuestion implements Node @doc(category: "Surveys") {
   """The position of the question."""
   maxPath: Int!
 
+  """The time at which the question was created."""
+  createdAt: DateTime!
+
+  """For internal purpose."""
+  reference: ID
+
   """
   The project the survey belongs to
   
   Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
   """
   survey: Survey
-
-  """The time at which the question was created."""
-  createdAt: DateTime!
 }
 
 enum SurveyQuestionTypeEnum {
@@ -887,6 +911,7 @@ enum SurveyQuestionTypeEnum {
   TEXT
   DATE
   CSAT
+  CES
   SMILEY_SCALE
   NUMERICAL_SCALE
   RATING
@@ -906,6 +931,7 @@ type SurveyCountableConnection @doc(category: "Surveys") {
 
   """A total count of items in the collection."""
   totalCount: Int
+  nodes: [Survey!]!
 }
 
 type SurveyCountableEdge @doc(category: "Surveys") {
@@ -917,6 +943,8 @@ type SurveyCountableEdge @doc(category: "Surveys") {
 }
 
 input SurveyFilterInput @doc(category: "Surveys") {
+  search: String
+
   """Filter by type"""
   type: SurveyTypeEnum
   status: SurveyStatusEnum
@@ -977,6 +1005,129 @@ enum SurveySortField @doc(category: "Surveys") {
   LAST_MODIFIED_AT
 }
 
+"""Represents a survey from used by our sdk."""
+type BaseSurvey implements Node @doc(category: "Surveys") {
+  """The ID of the survey."""
+  id: ID!
+
+  """Slug of the survey."""
+  slug: String!
+
+  """Name of the survey."""
+  name: String
+
+  """The status of the survey"""
+  status: SurveyStatusEnum!
+
+  """The settings of the survey."""
+  settings: JSONString
+
+  """The theme of the survey."""
+  theme: BaseProjectTheme
+
+  """The questions in the the survey"""
+  questions: [BaseSurveyQuestion!]!
+
+  """The distribution channels supported by the survey"""
+  channels(
+    """The type of the distribution channel"""
+    channelType: SurveyChannelTypeEnum
+  ): [BaseSurveyChannel!]!
+
+  """The project the survey belongs to"""
+  project: BaseProject
+
+  """The time at which the survey was created."""
+  createdAt: DateTime!
+
+  """The date at which the survey was started."""
+  startDate: DateTime
+
+  """The date at which the survey was ended."""
+  endDate: DateTime
+}
+
+"""Represents a theme."""
+type BaseProjectTheme implements Node @doc(category: "Projects") {
+  """The ID of the theme."""
+  id: ID!
+
+  """Name of the theme."""
+  name: String!
+
+  """The settings of the theme."""
+  colorScheme: JSONString
+
+  """The settings of the theme."""
+  settings: JSONString
+}
+
+"""Represents a question."""
+type BaseSurveyQuestion implements Node @doc(category: "Surveys") {
+  """The ID of the question."""
+  id: ID!
+
+  """Label of the question."""
+  label: String!
+
+  """Description of the question."""
+  description: String!
+
+  """The type of the question"""
+  type: SurveyQuestionTypeEnum!
+
+  """The options of the question."""
+  options: JSONString
+
+  """The settings of the question."""
+  settings: JSONString
+
+  """The position of the question."""
+  orderNumber: Int!
+
+  """The position of the question."""
+  maxPath: Int!
+
+  """The time at which the question was created."""
+  createdAt: DateTime!
+}
+
+"""Represents a survey channel."""
+type BaseSurveyChannel implements Node @doc(category: "Surveys") {
+  """The ID of the channel."""
+  id: ID!
+
+  """The type of the survey channel"""
+  type: SurveyChannelTypeEnum!
+
+  """Unique link to the channel."""
+  link: String!
+
+  """The options of the question."""
+  triggers: JSONString
+
+  """The settings of the question."""
+  conditions: JSONString
+
+  """The settings of the question."""
+  settings: JSONString
+
+  """The time at which the channel was created."""
+  createdAt: DateTime!
+}
+
+"""Represents a project."""
+type BaseProject implements Node @doc(category: "Projects") {
+  """The ID of the project."""
+  id: ID!
+
+  """Name of the project."""
+  name: String!
+
+  """API token for project."""
+  apiToken: String!
+}
+
 type ProjectThemeCountableConnection @doc(category: "Projects") {
   """Pagination data for this connection."""
   pageInfo: PageInfo!
@@ -984,6 +1135,7 @@ type ProjectThemeCountableConnection @doc(category: "Projects") {
 
   """A total count of items in the collection."""
   totalCount: Int
+  nodes: [ProjectTheme!]!
 }
 
 type ProjectThemeCountableEdge @doc(category: "Projects") {
@@ -1069,6 +1221,7 @@ type EventCountableConnection @doc(category: "Events") {
 
   """A total count of items in the collection."""
   totalCount: Int
+  nodes: [Event!]!
 }
 
 type EventCountableEdge @doc(category: "Events") {
@@ -1114,6 +1267,7 @@ type EventDefinitionCountableConnection @doc(category: "Events") {
 
   """A total count of items in the collection."""
   totalCount: Int
+  nodes: [EventDefinition!]!
 }
 
 type EventDefinitionCountableEdge @doc(category: "Events") {
@@ -1153,6 +1307,7 @@ type EventPropertyCountableConnection @doc(category: "Events") {
 
   """A total count of items in the collection."""
   totalCount: Int
+  nodes: [EventProperty!]!
 }
 
 type EventPropertyCountableEdge @doc(category: "Events") {
@@ -1189,6 +1344,7 @@ type PersonCountableConnection @doc(category: "Events") {
 
   """A total count of items in the collection."""
   totalCount: Int
+  nodes: [Person!]!
 }
 
 type PersonCountableEdge @doc(category: "Events") {
@@ -1227,10 +1383,6 @@ type Person implements Node @doc(category: "Events") {
   createdAt: DateTime
 }
 
-"""
-Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
-in fields, resolvers and input.
-"""
 scalar UUID
 
 type PropertyDefinitionCountableConnection @doc(category: "Events") {
@@ -1240,6 +1392,7 @@ type PropertyDefinitionCountableConnection @doc(category: "Events") {
 
   """A total count of items in the collection."""
   totalCount: Int
+  nodes: [PropertyDefinition!]!
 }
 
 type PropertyDefinitionCountableEdge @doc(category: "Events") {
@@ -1437,6 +1590,21 @@ type Mutation {
     input: SurveyQuestionUpdateInput!
   ): SurveyQuestionUpdate @doc(category: "Surveys")
 
+  """Creates a response to survey."""
+  surveyResponseCreate(
+    """The details for the response to create."""
+    input: SurveyResponseCreateInput!
+  ): SurveyResponseCreate @doc(category: "Surveys")
+
+  """Updates a response."""
+  surveyResponseUpdate(
+    """The ID of the response."""
+    id: ID!
+
+    """The partial response object to update"""
+    input: SurveyResponseUpdateInput!
+  ): SurveyResponseUpdate @doc(category: "Surveys")
+
   """
   Updates a survey 
   
@@ -1606,7 +1774,7 @@ type AuthUser implements Node @doc(category: "Users") {
 """Represents errors in user mutations."""
 type UserError @doc(category: "Users") {
   """
-  Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field.
+  Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
   """
   field: String
 
@@ -1718,15 +1886,16 @@ Creates a new distibution channel
 Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
 """
 type SurveyChannelCreate @doc(category: "Surveys") {
+  """The checkout with the added gift card or voucher."""
+  surveyChannel: SurveyChannel
   surveyErrors: [SurveyError!]!
   errors: [SurveyError!]!
-  surveyChannel: SurveyChannel
 }
 
 """Represents errors in survey mutations."""
 type SurveyError @doc(category: "Surveys") {
   """
-  Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field.
+  Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
   """
   field: String
 
@@ -1734,15 +1903,14 @@ type SurveyError @doc(category: "Surveys") {
   message: String
 
   """The error code."""
-  code: ProjectErrorCode!
+  code: SurveyErrorCode!
 }
 
 """An enumeration."""
-enum ProjectErrorCode @doc(category: "Projects") {
-  ALREADY_EXISTS
+enum SurveyErrorCode @doc(category: "Surveys") {
   GRAPHQL_ERROR
+  INACTIVE
   INVALID
-  INVALID_PERMISSION
   NOT_FOUND
   REQUIRED
   UNIQUE
@@ -1925,7 +2093,78 @@ input SurveyQuestionUpdateInput @doc(category: "Surveys") {
   options: JSONString
 
   """The settings of the question."""
-  orderNumber: Int!
+  orderNumber: Int
+}
+
+"""Creates a response to survey."""
+type SurveyResponseCreate @doc(category: "Surveys") {
+  """The ID of the response."""
+  responseId: ID
+
+  """Whether the operation was successful."""
+  status: Boolean
+  surveyErrors: [SurveyError!]!
+  errors: [SurveyError!]!
+}
+
+input SurveyResponseCreateInput @doc(category: "Surveys") {
+  """The partial response for the survey."""
+  response: JSONString
+
+  """The time the survey started."""
+  startedAt: DateTime
+
+  """Whether the response is completed."""
+  completed: Boolean = false
+
+  """The time the survey completed."""
+  completedAt: DateTime
+
+  """The user distinct ID."""
+  userId: ID
+
+  """The response metadata."""
+  metadata: JSONString
+
+  """The user attributes."""
+  attributes: JSONString
+
+  """The ID of the response."""
+  id: UUID
+
+  """The survey ID the response belongs to."""
+  surveyId: ID!
+}
+
+"""Updates a response."""
+type SurveyResponseUpdate @doc(category: "Surveys") {
+  """Whether the operation was successful."""
+  status: Boolean
+  surveyErrors: [SurveyError!]!
+  errors: [SurveyError!]!
+}
+
+input SurveyResponseUpdateInput @doc(category: "Surveys") {
+  """The partial response for the survey."""
+  response: JSONString
+
+  """The time the survey started."""
+  startedAt: DateTime
+
+  """Whether the response is completed."""
+  completed: Boolean = false
+
+  """The time the survey completed."""
+  completedAt: DateTime
+
+  """The user distinct ID."""
+  userId: ID
+
+  """The response metadata."""
+  metadata: JSONString
+
+  """The user attributes."""
+  attributes: JSONString
 }
 
 """
@@ -1969,7 +2208,7 @@ type ProjectCreate @doc(category: "Projects") {
 """Represents errors in project mutations."""
 type ProjectError @doc(category: "Projects") {
   """
-  Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field.
+  Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
   """
   field: String
 
@@ -1978,6 +2217,17 @@ type ProjectError @doc(category: "Projects") {
 
   """The error code."""
   code: ProjectErrorCode!
+}
+
+"""An enumeration."""
+enum ProjectErrorCode @doc(category: "Projects") {
+  ALREADY_EXISTS
+  GRAPHQL_ERROR
+  INVALID
+  INVALID_PERMISSION
+  NOT_FOUND
+  REQUIRED
+  UNIQUE
 }
 
 input ProjectCreateInput @doc(category: "Projects") {
@@ -2092,7 +2342,7 @@ type OrganizationCreate @doc(category: "Organizations") {
 """Represents errors in organization mutations."""
 type OrganizationError @doc(category: "Organizations") {
   """
-  Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field.
+  Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
   """
   field: String
 
@@ -2240,7 +2490,7 @@ type EventCapture @doc(category: "Events") {
 """Represents errors in event mutations."""
 type EventError @doc(category: "Events") {
   """
-  Name of a field that caused the error. A value of `null` ndicates that the error isn't associated with a particular field.
+  Name of a field that caused the error. A value of `null` indicates that the error isn't associated with a particular field.
   """
   field: String
 
@@ -2262,10 +2512,10 @@ input EventCaptureInput @doc(category: "Events") {
   """The name of the event."""
   event: String!
 
-  """The payload ID."""
+  """The event payload ID."""
   uuid: UUID
 
-  """The distinct ID."""
+  """The user distinct ID."""
   userId: ID
 
   """The event properties."""

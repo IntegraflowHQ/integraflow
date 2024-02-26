@@ -32,7 +32,7 @@ export const UpdateDesignEditor = () => {
 
     // triggered when the 'Create theme' button in the colorPicker is clicked
     const handleCreateTheme = async () => {
-        if (theme?.name && theme?.colorScheme && survey.survey) {
+        if (theme?.name && theme?.colorScheme && survey) {
             if (theme.id) {
                 updateTheme(theme);
                 setOpenState(!newThemeOpenState);
@@ -43,7 +43,7 @@ export const UpdateDesignEditor = () => {
                 });
 
                 if (response) {
-                    updateSurvey(survey.survey, {
+                    updateSurvey(survey, {
                         themeId: response.newThemeData?.id,
                     });
                 } else {
@@ -58,10 +58,10 @@ export const UpdateDesignEditor = () => {
     };
 
     const handleDeleteTheme = async () => {
-        if (theme?.id && survey.survey) {
+        if (theme?.id && survey) {
             try {
                 await deleteTheme(theme.id);
-                await updateSurvey(survey.survey, { themeId: undefined });
+                await updateSurvey(survey, { themeId: undefined });
                 refetch();
             } catch (error) {
                 toast.error(error as string);
@@ -85,16 +85,11 @@ export const UpdateDesignEditor = () => {
         setOpenState(true);
     };
 
-    const handleSelectedThemeOption = (
-        themeInfo: (typeof THEMES_INFO)[0],
-        color: string,
-    ) => {
+    const handleSelectedThemeOption = (themeInfo: (typeof THEMES_INFO)[0], color: string) => {
         const colorScheme: { [key: string]: string } = {};
 
         for (let i = 0; i < THEMES_INFO.length; i++) {
-            colorScheme[THEMES_INFO[i]?.name] =
-                theme?.colorScheme?.[THEMES_INFO[i]?.name] ??
-                THEMES_INFO[i].color;
+            colorScheme[THEMES_INFO[i]?.name] = theme?.colorScheme?.[THEMES_INFO[i]?.name] ?? THEMES_INFO[i].color;
 
             if (THEMES_INFO[i]?.name === themeInfo.name) {
                 colorScheme[THEMES_INFO[i]?.name] = color;
@@ -111,9 +106,7 @@ export const UpdateDesignEditor = () => {
         const colorScheme: { [key: string]: string } = {};
 
         for (let i = 0; i < THEMES_INFO.length; i++) {
-            colorScheme[THEMES_INFO[i]?.name] =
-                theme?.colorScheme?.[THEMES_INFO[i]?.name] ??
-                THEMES_INFO[i].color;
+            colorScheme[THEMES_INFO[i]?.name] = theme?.colorScheme?.[THEMES_INFO[i]?.name] ?? THEMES_INFO[i].color;
         }
 
         setTheme({
@@ -128,10 +121,7 @@ export const UpdateDesignEditor = () => {
             <div className="delay-400 h-fit rounded-md bg-intg-bg-9 px-4 py-2 transition-all ease-in-out">
                 <Tabs.Root className="flex justify-between border-b border-intg-bg-14">
                     <Tabs.List aria-label="create a new theme">
-                        <Tabs.Trigger
-                            value="theme-name"
-                            className="border-b border-[#6941c6]"
-                        >
+                        <Tabs.Trigger value="theme-name" className="border-b border-[#6941c6]">
                             <input
                                 type="text"
                                 value={theme?.name ?? ""}
@@ -143,10 +133,7 @@ export const UpdateDesignEditor = () => {
                     </Tabs.List>
 
                     <div className="mt-2 flex gap-2">
-                        <div
-                            className="hover:cursor-pointer"
-                            onClick={() => setOpenState(!true)}
-                        >
+                        <div className="hover:cursor-pointer" onClick={() => setOpenState(!true)}>
                             <X size={25} color="#AFAAC7" />
                         </div>
                     </div>
@@ -159,26 +146,18 @@ export const UpdateDesignEditor = () => {
                                 key={themeInfo.id}
                                 className="my-3 mb-3 flex w-full justify-between rounded-md bg-intg-bg-15 px-3 py-3"
                             >
-                                <p className="py-1 text-sm font-normal capitalize text-intg-text-2">
-                                    {themeInfo.name}
-                                </p>
+                                <p className="py-1 text-sm font-normal capitalize text-intg-text-2">{themeInfo.name}</p>
 
                                 <ColorPicker
                                     onChange={(color) => {
-                                        handleSelectedThemeOption(
-                                            themeInfo,
-                                            color,
-                                        );
+                                        handleSelectedThemeOption(themeInfo, color);
                                     }}
                                 >
                                     {" "}
                                     <div
                                         className="h-8 w-8 cursor-pointer rounded-full"
                                         style={{
-                                            background:
-                                                theme?.colorScheme?.[
-                                                    themeInfo.name
-                                                ] ?? themeInfo.color,
+                                            background: theme?.colorScheme?.[themeInfo.name] ?? themeInfo.color,
                                         }}
                                     />
                                 </ColorPicker>
@@ -199,11 +178,7 @@ export const UpdateDesignEditor = () => {
                 ) : null}
                 <Button
                     onClick={() => handleCreateTheme()}
-                    text={
-                        editThemeState === true
-                            ? "Update theme"
-                            : "Create theme"
-                    }
+                    text={editThemeState === true ? "Update theme" : "Create theme"}
                     className="w-max px-[12px] py-[12px] font-normal"
                 />
             </div>
@@ -214,10 +189,7 @@ export const UpdateDesignEditor = () => {
         <>
             {!newThemeOpenState ? (
                 <div className="h-fit rounded-md bg-intg-bg-9 px-4 py-2 text-white">
-                    <Tabs.Root
-                        className="flex justify-between border-b border-intg-bg-14"
-                        defaultValue="theme"
-                    >
+                    <Tabs.Root className="flex justify-between border-b border-intg-bg-14" defaultValue="theme">
                         <Tabs.List aria-label="update your theme survey">
                             <Tabs.Trigger
                                 value="theme"

@@ -1,0 +1,15 @@
+overwrite: true
+schema: ./src/schema.graphql
+hooks:
+  afterOneFileWrite:
+    - prettier --write
+config:
+  skipComments:
+    - "[Internal]"
+    - "[INTERNAL]"
+    - "[ALPHA]"
+  dedupeFragments: true
+generates:
+  src/_generated_documents.graphql:
+    plugins:
+      - "@integraflow/codegen-doc"

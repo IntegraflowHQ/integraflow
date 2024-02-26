@@ -39,7 +39,6 @@ const config: Config = {
                         "6": "#B5A4DB",
                         "7": "#F1F1F1",
                         "8": "#7F76A9",
-                        "9": "#705F97",
                         DEFAULT: "#AFAAC7",
                     },
                     black: {
@@ -63,3 +62,4 @@ const config: Config = {
 };
 
 export default config;
+

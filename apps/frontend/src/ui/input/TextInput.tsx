@@ -34,14 +34,14 @@ export const TextInput = forwardRef<HTMLInputElement, InputFieldProps>(
                         {label}
                     </label>
                 )}
+
                 <TremorTextInput
                     {...props}
                     ref={ref}
-                    className="rounded-lg border border-transparent bg-[#272138] py-[6px] pl-1 text-sm
-           font-medium tracking-[-0.408px] text-intg-text-1 placeholder:text-intg-text-3 
-           focus:border-intg-text-3 focus:outline-none"
+                    className="rounded-lg border border-transparent bg-[#272138] py-[6px] pl-1 text-sm font-medium tracking-[-0.408px] text-intg-text-1 placeholder:text-intg-text-3 focus:border-intg-text-3 focus:outline-none"
                     icon={prefix ? Prefix : icon}
                 />
+
                 {props.rightIcon && (
                     <div className="absolute right-0 top-0 -translate-x-3 translate-y-4 text-intg-text">
                         {props.rightIcon}

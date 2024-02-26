@@ -12,8 +12,7 @@ export const GlobalSpinner = ({ message, inStudio }: Props) => {
         <div
             className="fixed inset-0 flex h-screen w-full flex-col bg-intg-black"
             style={{
-                backgroundImage:
-                    "radial-gradient(rgba(28, 15, 89, 0.30) 50%, rgba(5, 5, 5, 0.30))",
+                backgroundImage: "radial-gradient(rgba(28, 15, 89, 0.30) 50%, rgba(5, 5, 5, 0.30))",
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "center",
                 backgroundSize: "cover",
@@ -24,16 +23,12 @@ export const GlobalSpinner = ({ message, inStudio }: Props) => {
                     <img src={Logo} alt="Logo" />
                 </div>
             ) : null}
-            <div className=" flex h-[100%] w-full flex-1 flex-col  items-center justify-center space-y-2">
+            <div className="flex h-[100%] w-full flex-1 flex-col items-center justify-center space-y-2">
                 <div className="relative -mt-48 ">
-                    <img
-                        src={Spinner}
-                        className="spinner__circle"
-                        alt="spinner"
-                    />
+                    <img src={Spinner} className="spinner__circle" alt="spinner" />
                     <img
                         src={LogoIcon}
-                        alt=""
+                        alt="logo"
                         className="absolute left-1/2 top-[50%] -translate-x-[50%] -translate-y-[50%]"
                     />
                 </div>
