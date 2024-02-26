@@ -58,14 +58,10 @@ export default function SharableLinks() {
             ) : (
                 <div className="flex h-full w-full flex-1 flex-col items-center justify-center gap-6">
                     <div className="flex flex-col items-center gap-2">
-                        <LinkIcon
-                            className="text-intg-text"
-                            size={62}
-                            strokeWidth={2}
-                        />
+                        <LinkIcon className="text-intg-text" size={62} strokeWidth={2} />
                         <p className="max-w-[371px] text-center text-sm text-intg-text">
-                            There is no link created. Click on 'Add link button
-                            to create your first shareable link for this survey.
+                            There is no link created. Click on 'Add link button to create your first shareable link for
+                            this survey.
                         </p>
                     </div>
                     <Button

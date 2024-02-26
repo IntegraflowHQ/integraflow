@@ -35,9 +35,9 @@ const Button = React.forwardRef(
                     size === "full" ? "px-8 py-4" : "p-3",
                     icon ? "flex items-center gap-2" : "",
                     variant === "primary"
-                        ? "bg-gradient-button text-white transition-all ease-in-out hover:bg-gradient-button-hover"
+                        ? "bg-gradient-button text-white transition-all duration-300 ease-in hover:bg-gradient-button-hover"
                         : variant === "secondary"
-                        ? "border border-intg-bg-2 bg-intg-bg-3 text-white transition-all ease-in-out hover:bg-gradient-button-hover"
+                        ? "border border-intg-bg-2 bg-intg-bg-3 text-white transition-all duration-300 ease-in hover:bg-gradient-button-hover"
                         : "",
                     className ?? "",
                 )}

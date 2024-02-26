@@ -4,30 +4,28 @@ import Spinner from "assets/images/Spinner.png";
 
 type Props = {
     message?: string;
+    inStudio?: boolean;
 };
 
-export const GlobalSpinner = ({ message }: Props) => {
+export const GlobalSpinner = ({ message, inStudio }: Props) => {
     return (
         <div
             className="fixed inset-0 flex h-screen w-full flex-col bg-intg-black"
             style={{
-                backgroundImage:
-                    "radial-gradient(rgba(28, 15, 89, 0.30) 50%, rgba(5, 5, 5, 0.30))",
+                backgroundImage: "radial-gradient(rgba(28, 15, 89, 0.30) 50%, rgba(5, 5, 5, 0.30))",
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "center",
                 backgroundSize: "cover",
             }}
         >
-            <div className="px-12 pb-8 pt-12">
-                <img src={Logo} alt="Logo" />
-            </div>
+            {!inStudio ? (
+                <div className="px-12 pb-8 pt-12">
+                    <img src={Logo} alt="Logo" />
+                </div>
+            ) : null}
             <div className="flex h-[100%] w-full flex-1 flex-col items-center justify-center space-y-2">
                 <div className="relative -mt-48 ">
-                    <img
-                        src={Spinner}
-                        className="spinner__circle"
-                        alt="spinner"
-                    />
+                    <img src={Spinner} className="spinner__circle" alt="spinner" />
                     <img
                         src={LogoIcon}
                         alt="logo"

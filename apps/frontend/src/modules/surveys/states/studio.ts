@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 export type StudioState = {
     studioModeIsActive: boolean;
+    editTheme: boolean;
     currentEvent: string;
     addingAudienceProperty: boolean;
 };
@@ -14,6 +15,7 @@ export type StudioActions = {
 
 const initialState: StudioState = {
     studioModeIsActive: false,
+    editTheme: false,
     currentEvent: "",
     addingAudienceProperty: false,
 };

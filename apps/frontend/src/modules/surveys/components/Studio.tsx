@@ -1,9 +1,12 @@
 import { SurveyStatusEnum } from "@/generated/graphql";
+import { ROUTES } from "@/routes";
 import { Button, GlobalSpinner } from "@/ui";
 import { toast } from "@/utils/toast";
 import * as Tabs from "@radix-ui/react-tabs";
+import debounce from "lodash.debounce";
 import { XIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import useStudioState from "../hooks/useStudioState";
 import { useSurvey } from "../hooks/useSurvey";
 import Analyze from "./studio/analyze";
@@ -20,12 +23,43 @@ const tabs = [
 ];
 
 export default function Studio() {
-    const [title, setTitle] = useState("");
+    const params = useParams();
+    const navigate = useNavigate();
+    const { loading, survey, updateSurvey } = useSurvey();
+    const [surveyTitle, setSurveyTitle] = useState("");
     const { enableStudioMode, disableStudioMode } = useStudioState();
     const [activeTab, setActiveTab] = useState(tabs[0].label);
-    const { loadingCreateSurvey, updateSurvey } = useSurvey();
 
-    useEffect(() => {
+    const { orgSlug, projectSlug } = params;
+    const surveyName = survey?.name;
+
+    const updateSurveyTitle = React.useCallback(
+        debounce((value: string) => {
+            if (survey && value.trim() !== "" && value !== surveyName) {
+                updateSurvey(survey, { name: value });
+            }
+        }, 1000),
+        [survey, surveyName],
+    );
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.target;
+        setSurveyTitle(value);
+        updateSurveyTitle(value);
+    };
+
+    const closeStudio = () => {
+        disableStudioMode();
+        navigate(ROUTES.SURVEY_LIST.replace(":orgSlug", orgSlug!).replace(":projectSlug", projectSlug!));
+    };
+
+    React.useEffect(() => {
+        if (surveyName) {
+            setSurveyTitle(surveyName);
+        }
+    }, [survey, surveyName]);
+
+    React.useEffect(() => {
         enableStudioMode();
 
         return () => {
@@ -34,13 +68,15 @@ export default function Studio() {
     }, []);
 
     const publishSurvey = async () => {
-        await updateSurvey({
+        if (!survey) return;
+
+        await updateSurvey(survey, {
             status: SurveyStatusEnum.Active,
         });
         toast.success("Survey published successfully");
     };
 
-    if (loadingCreateSurvey) return <GlobalSpinner />;
+    if (loading) return <GlobalSpinner />;
 
     return (
         <Tabs.Root className="h-full w-full" value={activeTab} onValueChange={setActiveTab}>
@@ -50,9 +86,9 @@ export default function Studio() {
                     name="title"
                     id="title"
                     placeholder="Enter Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="w-[96px] bg-transparent px-2 py-1 text-sm text-white"
+                    value={surveyTitle}
+                    onChange={(e) => handleChange(e)}
+                    className="w-[120px] text-ellipsis bg-transparent px-2 py-1 text-sm text-white"
                 />
 
                 <Tabs.List className="flex gap-[15px]">
@@ -79,7 +115,7 @@ export default function Studio() {
                             }
                         }}
                     />
-                    <button>
+                    <button onClick={closeStudio}>
                         <XIcon color="#AFAAC7" />
                     </button>
                 </div>

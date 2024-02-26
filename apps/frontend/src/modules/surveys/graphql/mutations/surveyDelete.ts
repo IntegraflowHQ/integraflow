@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
-export const SURVEY_UPDATE = gql`
-    mutation SurveyUpdate($id: ID!, $input: SurveyUpdateInput!) {
-        surveyUpdate(id: $id, input: $input) {
+export const SURVEY_DELETE = gql`
+    mutation SurveyDelete($id: ID!) {
+        surveyDelete(id: $id) {
             surveyErrors {
                 ...SurveyErrorFragment
             }

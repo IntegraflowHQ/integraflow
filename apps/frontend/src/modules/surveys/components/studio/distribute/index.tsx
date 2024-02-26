@@ -1,14 +1,6 @@
 import { ChannelProvider } from "@/modules/surveys/contexts/ChannelProvider";
 import * as Tabs from "@radix-ui/react-tabs";
-import {
-    Blocks,
-    Globe,
-    LinkIcon,
-    Mail,
-    MessageCircle,
-    TabletSmartphone,
-    WifiOff,
-} from "lucide-react";
+import { Blocks, Globe, LinkIcon, Mail, MessageCircle, TabletSmartphone, WifiOff } from "lucide-react";
 import SharableLinks from "./sharable-links";
 import WebSDK from "./web-sdk";
 
@@ -60,10 +52,7 @@ const tabs = [
 export default function Distribute() {
     return (
         <ChannelProvider>
-            <Tabs.Root
-                className="flex w-full gap-12 pl-10 pr-[45px]"
-                defaultValue={tabs[0].id}
-            >
+            <Tabs.Root className="flex w-full gap-12 pl-10 pr-[45px]" defaultValue={tabs[0].id}>
                 <div className="w-[386px] pt-[155px]">
                     <Tabs.List className="flex max-w-[302px] flex-col gap-2 pt-[25px]">
                         {tabs.map(({ id, icon: Icon, name }) => (
@@ -73,9 +62,7 @@ export default function Distribute() {
                                 className="flex items-center gap-3 rounded-lg p-6 text-intg-text hover:bg-intg-bg-9 data-[state=active]:bg-intg-bg-9"
                             >
                                 <Icon />
-                                <span className="min-w-max text-base">
-                                    {name}
-                                </span>
+                                <span className="min-w-max text-base">{name}</span>
                             </Tabs.Trigger>
                         ))}
                     </Tabs.List>
