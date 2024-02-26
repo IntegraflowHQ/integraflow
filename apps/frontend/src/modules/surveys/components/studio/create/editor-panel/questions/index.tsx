@@ -71,7 +71,9 @@ export default function UpdateQuestion() {
                                                     {question.label ? (
                                                         addEllipsis(question.label, 40)
                                                     ) : (
-                                                        <p>Enter your text here</p>
+                                                        <p className="px-[1rem] py-[.8rem] text-sm">
+                                                            Enter your text here
+                                                        </p>
                                                     )}
                                                 </div>
                                             </div>

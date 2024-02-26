@@ -17,9 +17,7 @@ export function generateUniqueId() {
 }
 
 export function omitTypename<T>(obj: T): DeepOmit<T, "__typename"> {
-    return JSON.parse(JSON.stringify(obj), (key: string, value: any) =>
-        key === "__typename" ? undefined : value,
-    );
+    return JSON.parse(JSON.stringify(obj), (key: string, value: any) => (key === "__typename" ? undefined : value));
 }
 
 export function isOver24Hours(previousTimestamp: number): boolean {
@@ -51,13 +49,10 @@ export const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export const generateRandomString = (length: number) => {
     let result = "";
-    const characters =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const charactersLength = characters.length;
     for (let i = 0; i < length; i++) {
-        result += characters.charAt(
-            Math.floor(Math.random() * charactersLength),
-        );
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
 };
@@ -105,10 +100,11 @@ export const parseQuestion = (question: SurveyQuestion): ParsedQuestion => {
 };
 
 export const getFilterLabel = (operator: FilterOperator) => {
-    const operators = Object.values(PROPERTY_FIELDS).reduce(
-        (acc, curr) => [...acc, ...curr],
-        [],
-    );
+    const operators = Object.values(PROPERTY_FIELDS).reduce((acc, curr) => [...acc, ...curr], []);
     const operatorObj = operators.find((o) => o.operator === operator);
     return operatorObj?.label;
+};
+
+export const stripHtmlTags = (value: string): string => {
+    return value.replace(/<[^>]*>/g, "");
 };

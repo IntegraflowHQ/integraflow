@@ -1,8 +1,9 @@
-import { cn } from "@/utils";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { TextInput } from "@tremor/react";
-import { useState } from "react";
-import { Option } from "../questions/attributes/ReactSelect";
+import { cn, stripHtmlTags } from "@/utils";
+import { StringMap } from "quill";
+import "quill-mention";
+import { useMemo, useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 export interface EditorTextProps {
     label?: string;
@@ -11,8 +12,11 @@ export interface EditorTextProps {
     showCharacterCount?: boolean;
     maxCharacterCount?: number;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    options?: Option[];
-    attributes?: Option[];
+    options?: {
+        id: string;
+        value: string;
+        type: string;
+    }[];
     defaultValue?: string;
 }
 
@@ -21,89 +25,137 @@ export const EditorTextInput = ({
     className,
     showCharacterCount = true,
     maxCharacterCount = 500,
-    placeholder,
     defaultValue,
+    options,
     onChange,
-    ...props
 }: EditorTextProps) => {
-    const [atBtnClicked, setAtBtnClicked] = useState(false);
-    const [atIndex, setAtIndex] = useState<number | null>(null);
-    const [selectedOption, setSelectedOption] = useState<Option | null>(null);
-    const [inputValue, setInputValue] = useState(defaultValue || "");
+    const [textContent, setTextContent] = useState(decode(defaultValue ?? ""));
+
+    const [displayFallbackField, setDisplayFallbackField] = useState(false);
+
+    const modules: StringMap = useMemo(() => {
+        return {
+            toolbar: false,
+            syntax: false,
+            mention: {
+                allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
+                allowInlineMentionChar: true,
+                isolateCharacter: true,
+                mentionDenotationChars: ["@"],
+                showDenotationChar: false,
+                spaceAfterInsert: true,
+                positioningStrategy: "absolute",
+                source: function (searchTerm, renderList, mentionChar) {
+                    if (searchTerm.startsWith(" ")) {
+                        renderList([]);
+                        return;
+                    }
+                    renderList(options);
+                },
+                onSelect: function (item, insertItem) {
+                    const newItem = item;
+                    const details = newItem.id.split(" ");
+                    insertItem({ ...newItem, value: item.value, id: details[0], type: details[1] });
+                },
+            },
+        };
+    }, []);
+
+    function resolveQuestionIndex(questionId: string): string {
+        const option = options?.find((o) => {
+            const optionId = o.id.split(" ")[0];
+            return questionId === optionId;
+        });
+
+        return option?.value as string;
+    }
+
+    function encode(textContent: string): string {
+        // Replace span tags with placeholders
+        const encodedText = textContent.replace(
+            /<span class="mention"([^>]*)data-id="([^"]*)"([^>]*)data-type="([^"]*)"([^>]*)>(.*?)<\/span>/g,
+            (_, __, dataId, ___, dataType) => {
+                if (dataId === "attribute") {
+                    return `{{${dataType}}}`;
+                }
+                return `{{${dataType}:${dataId}}}`;
+            },
+        );
+
+        return encodedText.split("</span>").join("");
+    }
+
+    function decode(encodedText: string): string {
+        // Replace placeholders with actual HTML tags
+        const decodedText = encodedText
+            .replace(/{{answer:([^}]+)}}/g, (match, id) => {
+                return `<span class="mention" data-index="4" data-denotation-char="" data-value="${resolveQuestionIndex(id)}" data-id="${id}" data-type="answer">﻿<span contenteditable="false">${resolveQuestionIndex(id)}</span>﻿</span>`;
+            })
+            .replace(/{{attribute.([^}]+)}}/g, (_, attr) => {
+                return `<span class="mention" data-index="4" data-denotation-char="" data-value="${attr}" data-id="attribute" data-type="attribute.${attr}">﻿<span contenteditable="false">${attr}</span>﻿</span>`;
+            });
+
+        return decodedText + " ";
+    }
+
+    const handleMentionClicked = (event: Event) => {
+        setDisplayFallbackField(true);
+    };
 
     return (
         <div className={cn(`${className} relative w-full`)}>
+            <style>
+                {`
+                .mention{
+                background-color: #392D72;
+                    padding: 4px;
+                    border-radius: 4px;
+                }
+                .mention::first-letter {
+                    visibility: hidden;
+                }
+                .ql-mention-list-container {
+                    overflow-y:scroll;
+                    overflow-x: hidden;
+                    width: 100px;
+                    padding: 4px;
+                    position: absolute;
+                    z-index: 1000;
+                    max-height: 200px;
+                    background-color: #392D72;
+                }
+                .mention[aria-disabled="true"]{
+                    background-color: purple;
+
+                }
+                `}
+            </style>
             <label htmlFor={label} className="text-sm font-normal text-intg-text-2">
                 {label}
             </label>
-
-            {atBtnClicked && (
-                <DropdownMenu.Root open={atBtnClicked} onOpenChange={() => setAtBtnClicked(!atBtnClicked)}>
-                    <DropdownMenu.Trigger asChild className="invisible">
-                        <button>hello</button>
-                    </DropdownMenu.Trigger>
-                    <DropdownMenu.Portal>
-                        <DropdownMenu.Content
-                            sideOffset={40}
-                            align="start"
-                            alignOffset={3}
-                            className="max-h-40 overflow-auto rounded-md bg-intg-bg-4 text-intg-text"
-                        >
-                            {props.attributes && (
-                                <DropdownMenu.Label className="px-2 py-1 text-xs uppercase">
-                                    attributes
-                                </DropdownMenu.Label>
-                            )}
-                            {props.attributes &&
-                                props.attributes.map((option) => (
-                                    <DropdownMenu.Item
-                                        key={option.value}
-                                        className="cursor-pointer px-2 py-1 text-sm"
-                                        onClick={() => {
-                                            setSelectedOption(option);
-                                            setAtBtnClicked(false);
-                                        }}
-                                    >
-                                        {option.label}
-                                    </DropdownMenu.Item>
-                                ))}
-                            <DropdownMenu.Separator className="border"></DropdownMenu.Separator>
-                            {props.options && (
-                                <DropdownMenu.Label className="px-2 py-1 text-xs uppercase">
-                                    Recall from
-                                </DropdownMenu.Label>
-                            )}
-                            {props.options &&
-                                props.options.map((option) => (
-                                    <DropdownMenu.Item key={option.value} className="cursor-pointer px-2 py-1 text-sm">
-                                        {option.label}
-                                    </DropdownMenu.Item>
-                                ))}
-                        </DropdownMenu.Content>
-                    </DropdownMenu.Portal>
-                </DropdownMenu.Root>
-            )}
-
-            <TextInput
-                onChange={(e) => {
-                    setInputValue(e.target.value);
-                    onChange(e);
+            <ReactQuill
+                theme="bubble"
+                onChange={(value, delta, source, editor) => {
+                    setTextContent(value);
+                    onChange({
+                        target: {
+                            value: encode(value),
+                        },
+                    } as React.ChangeEvent<HTMLInputElement>);
                 }}
-                onKeyUp={(e) => {
-                    if (e.key === "@") {
-                        setAtBtnClicked(true);
-                        setAtIndex(e.currentTarget.selectionStart!);
-                    }
+                value={textContent}
+                defaultValue={defaultValue}
+                style={{
+                    height: "2.5rem",
+                    width: "100%",
+                    backgroundColor: "#272138",
                 }}
-                value={inputValue}
-                placeholder={placeholder}
-                className="rounded-lg border border-transparent bg-[#272138] py-[6px] pl-1 text-sm font-medium tracking-[-0.408px] text-intg-text-1 placeholder:text-intg-text-3 focus:border-intg-text-3 focus:outline-none"
-                disabled={maxCharacterCount === inputValue.length}
+                formats={["mention"]}
+                modules={modules}
             />
-
             {showCharacterCount && (
                 <div className="absolute bottom-0 right-0 translate-y-1/2 rounded bg-[#2B2045] p-1 text-xs text-intg-text">
-                    {inputValue.length}/{maxCharacterCount}
+                    {stripHtmlTags(defaultValue!)?.length}/{maxCharacterCount}
                 </div>
             )}
         </div>

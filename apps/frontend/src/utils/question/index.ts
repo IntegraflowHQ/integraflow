@@ -1,7 +1,7 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { Option } from "@/modules/surveys/components/studio/create/editor-panel/questions/attributes/ReactSelect";
 import { LogicConditionEnum, ParsedQuestion, QuestionOption } from "@/types";
 import { LogicOperator } from "@integraflow/web/src/types";
+import { stripHtmlTags } from "..";
 
 export const questionsWithoutSettingsTab = [SurveyQuestionTypeEnum.Csat, "CES"];
 
@@ -132,10 +132,7 @@ export const conditionOptions = (type: SurveyQuestionTypeEnum) => {
     if (type === SurveyQuestionTypeEnum.Multiple) {
         return MultipleLogicConditions;
     }
-    if (
-        type === SurveyQuestionTypeEnum.Single ||
-        type === SurveyQuestionTypeEnum.Dropdown
-    ) {
+    if (type === SurveyQuestionTypeEnum.Single || type === SurveyQuestionTypeEnum.Dropdown) {
         return SingleLogicConditions;
     }
     if (type === SurveyQuestionTypeEnum.Boolean) {
@@ -188,10 +185,7 @@ export const getLogicOperator = (condition: LogicConditionEnum) => {
     }
 };
 
-export const generateNumericalOptions = (
-    start: number,
-    end: number,
-): { label: string; value: number }[] => {
+export const generateNumericalOptions = (start: number, end: number): { label: string; value: number }[] => {
     const options = [];
     for (let i = start; i <= end; i++) {
         options.push({
@@ -203,29 +197,19 @@ export const generateNumericalOptions = (
 };
 
 export const changeableOperator = (type: SurveyQuestionTypeEnum) => {
-    if (
-        type === SurveyQuestionTypeEnum.Text ||
-        type === SurveyQuestionTypeEnum.Form
-    ) {
+    if (type === SurveyQuestionTypeEnum.Text || type === SurveyQuestionTypeEnum.Form) {
         return true;
     } else {
         return false;
     }
 };
 
-export const destinationOptions = (
-    questions: ParsedQuestion[],
-    openQuestion: ParsedQuestion,
-) => {
+export const destinationOptions = (questions: ParsedQuestion[], openQuestion: ParsedQuestion) => {
     return [
-        ...questions
-            .slice(questions.findIndex((q) => q.id === openQuestion?.id) + 1)
-            .map((q) => ({
-                value: q.id,
-                label: q.label
-                    ? `${q.orderNumber}- ${q.label} `
-                    : `${q.orderNumber}- Empty Question`,
-            })),
+        ...questions.slice(questions.findIndex((q) => q.id === openQuestion?.id) + 1).map((q) => ({
+            value: q.id,
+            label: q.label ? `${q.orderNumber}- ${q.label} ` : `${q.orderNumber}- Empty Question`,
+        })),
         {
             value: "-1",
             label: "End survey",
@@ -253,14 +237,9 @@ export const rangeOptions = (question: ParsedQuestion) => {
     });
 };
 
-export const recallOptions = (
-    questions: ParsedQuestion[],
-    openQuestion: ParsedQuestion,
-) => {
+const recallOptions = (questions: ParsedQuestion[], openQuestion: ParsedQuestion) => {
     const newQuestions = questions.filter(
-        (q) =>
-            q.type !== SurveyQuestionTypeEnum.Form &&
-            q.type !== SurveyQuestionTypeEnum.Cta,
+        (q) => q.type !== SurveyQuestionTypeEnum.Form && q.type !== SurveyQuestionTypeEnum.Cta,
     );
     return [
         ...newQuestions
@@ -269,21 +248,88 @@ export const recallOptions = (
                 questions.findIndex((q) => q.id === openQuestion?.id),
             )
             .map((q) => ({
-                value: q.id,
-                label: q.label
-                    ? `${q.orderNumber}- ${q.label} `
-                    : `${q.orderNumber}- Empty Question`,
+                value: ` ${q.orderNumber}. ${!stripHtmlTags(q.label) ? "-" : stripHtmlTags(q.label)}`,
+                id: q.id + " " + `answer`,
+                type: "recalledQuestion",
             })),
     ];
 };
-
-export const userAttributeOptions: Option[] = [
+const attributes = [
     {
-        label: "first name",
-        value: "first name",
+        node: {
+            id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwMC1lZTgwLWE1OTE0MDNkZDk0YQ==",
+            name: "name",
+            isNumerical: false,
+            type: "PERSON",
+            propertyType: "String",
+            __typename: "PropertyDefinition",
+        },
+        __typename: "PropertyDefinitionCountableEdge",
     },
     {
-        label: "last name",
-        value: "last name",
+        node: {
+            id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwMS02MGRlLTNjODBlY2MwYTA1Yw==",
+            name: "sex",
+            isNumerical: false,
+            type: "PERSON",
+            propertyType: "String",
+            __typename: "PropertyDefinition",
+        },
+        __typename: "PropertyDefinitionCountableEdge",
+    },
+    {
+        node: {
+            id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwMi0wOTg1LWMxM2MxYTMzMWNiZA==",
+            name: "city",
+            isNumerical: false,
+            type: "PERSON",
+            propertyType: "String",
+            __typename: "PropertyDefinition",
+        },
+        __typename: "PropertyDefinitionCountableEdge",
+    },
+    {
+        node: {
+            id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwMy04ZDc5LWEwNGI4NjdlYzM4YQ==",
+            name: "age",
+            isNumerical: true,
+            type: "PERSON",
+            propertyType: "Numeric",
+            __typename: "PropertyDefinition",
+        },
+        __typename: "PropertyDefinitionCountableEdge",
+    },
+    {
+        node: {
+            id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwNC0wMzM3LTE3Y2MzM2MyY2Y3Nw==",
+            name: "enabled",
+            isNumerical: false,
+            type: "PERSON",
+            propertyType: "Boolean",
+            __typename: "PropertyDefinition",
+        },
+        __typename: "PropertyDefinitionCountableEdge",
     },
 ];
+const userAttributeOptions = attributes.map((attr) => ({
+    value: attr.node.name,
+    id: "attribute" + " " + `attribute.${attr.node.name}`,
+    type: "userAttribute",
+}));
+export const tagOptions = (questions: ParsedQuestion[], openQuestion: ParsedQuestion) => {
+    const recallOpts = recallOptions(questions, openQuestion);
+    const userAttrOpts = userAttributeOptions;
+
+    if (recallOpts.length === 0) {
+        return [{ id: "UserAttribute", value: "User Attribute" }, ...userAttrOpts];
+    } else if (userAttrOpts.length === 0) {
+        return [{ id: "recalledQuestion", value: "recall from" }, ...recallOpts];
+    } else {
+        return [
+            { id: "recalledQuestion", value: "recall from", disabled: true },
+            ...recallOpts,
+            { id: "UserAttribute", value: "User Attribute", disabled: true },
+            ...userAttrOpts,
+        ];
+    }
+};

@@ -1,6 +1,6 @@
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { recallOptions, userAttributeOptions } from "@/utils/question";
+import { tagOptions } from "@/utils/question";
 import { useEffect, useState } from "react";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import MinusButton from "../Buttons/MinimizeButton";
@@ -21,8 +21,7 @@ export const CTAFields = () => {
         <div>
             <EditorTextInput
                 placeholder=""
-                options={recallOptions(parsedQuestions, question!)}
-                attributes={userAttributeOptions}
+                options={tagOptions(parsedQuestions, question!)}
                 onChange={(e) => {
                     updateQuestion(
                         {
