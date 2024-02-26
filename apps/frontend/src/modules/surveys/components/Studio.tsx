@@ -1,5 +1,4 @@
 import { SurveyStatusEnum } from "@/generated/graphql";
-import { useProject } from "@/modules/projects/hooks/useProject";
 import { ROUTES } from "@/routes";
 import { Button, GlobalSpinner } from "@/ui";
 import { toast } from "@/utils/toast";
@@ -33,11 +32,6 @@ export default function Studio() {
 
     const { orgSlug, projectSlug } = params;
     const surveyName = survey?.name;
-    const { project } = useProject();
-
-    console.log("Project: ", project);
-
-    console.log("Survey: ", survey);
 
     const updateSurveyTitle = React.useCallback(
         debounce((value: string) => {
