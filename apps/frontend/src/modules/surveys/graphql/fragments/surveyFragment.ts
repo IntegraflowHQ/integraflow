@@ -39,20 +39,30 @@ export const SURVEY_CHANNEL = gql`
     }
 `;
 
+export const SURVEY_CORE = gql`
+    fragment SurveyCore on Survey {
+        id
+        slug
+        name
+        status
+        createdAt
+        updatedAt
+        reference
+        creator {
+            firstName
+            lastName
+            email
+        }
+    }
+`;
+
 export const SURVEY = gql`
     fragment SurveyFragment on Survey {
-        id
-        reference
-        name
-        slug
+        ...SurveyCore
         type
-        status
         settings
         theme {
             ...ProjectThemeFragment
-        }
-        creator {
-            ...UserFragment
         }
         project {
             ...ProjectFragment
@@ -71,8 +81,6 @@ export const SURVEY = gql`
                 }
             }
         }
-        createdAt
-        updatedAt
     }
 `;
 
@@ -80,18 +88,7 @@ export const SURVEYS = gql`
     fragment SurveyListFragment on SurveyCountableConnection {
         edges {
             node {
-                id
-                slug
-                name
-                status
-                createdAt
-                updatedAt
-                reference
-                creator {
-                    firstName
-                    lastName
-                    email
-                }
+                ...SurveyCore
             }
         }
         pageInfo {

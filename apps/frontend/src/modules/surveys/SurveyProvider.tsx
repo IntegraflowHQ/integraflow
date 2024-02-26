@@ -11,7 +11,7 @@ import {
     SurveyStatusEnum,
     SurveyTypeEnum,
     SurveyUpdateInput,
-    useGetSurveyListLazyQuery,
+    useGetSurveyListQuery,
     useGetSurveyQuery,
     useSurveyCreateMutation,
     useSurveyDeleteMutation,
@@ -20,11 +20,11 @@ import {
 import { ROUTES } from "@/routes";
 import { ParsedQuestion } from "@/types";
 import { generateRandomString, parseQuestion } from "@/utils";
-import { ApolloError, InMemoryCache } from "@apollo/client";
-import { DeepPartial, Reference, relayStylePagination } from "@apollo/client/utilities";
+import { ApolloError } from "@apollo/client";
+import { DeepPartial, Reference } from "@apollo/client/utilities";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { SURVEY_CREATE } from "./graphql/fragments/surveyFragment";
+import { SURVEY_CORE, SURVEY_CREATE } from "./graphql/fragments/surveyFragment";
 
 export interface SurveyProviderProp {
     children: React.ReactNode;
@@ -75,8 +75,21 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
         skip: !surveySlug,
     });
 
-    const [getSurveyList, { refetch, fetchMore, data: surveyList, loading: surveyListLoading }] =
-        useGetSurveyListLazyQuery();
+    const {
+        refetch,
+        fetchMore,
+        data: surveyList,
+        loading: surveyListLoading,
+    } = useGetSurveyListQuery({
+        variables: {
+            first: SURVEYS_PER_PAGE,
+            sortBy: {
+                field: SurveySortField.CreatedAt,
+                direction: OrderDirection.Desc,
+            },
+        },
+        skip: !projectSlug,
+    });
 
     const surveyId = surveyQueryResponse?.survey?.id ?? "";
 
@@ -94,25 +107,11 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             totalCount: surveyList?.surveys?.totalCount,
             edges: surveyList?.surveys?.edges?.map((survey) => survey.node as Survey) || ([] as Survey[]),
         };
-    }, [surveyList]);
+    }, [surveyList?.surveys?.edges]);
 
     React.useEffect(() => {
         refetchSurvey();
     }, [surveySlug, refetchSurvey]);
-
-    React.useEffect(() => {
-        getSurveyList({
-            variables: {
-                first: SURVEYS_PER_PAGE,
-                sortBy: {
-                    field: SurveySortField.CreatedAt,
-                    direction: OrderDirection.Desc,
-                },
-            },
-            notifyOnNetworkStatusChange: true,
-            fetchPolicy: "network-only",
-        });
-    }, [getSurveyList, projectSlug]);
 
     const createSurvey = React.useCallback(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -169,41 +168,9 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                             },
                             creator: {
                                 __typename: "User",
-                                id: "",
                                 email: "",
                                 firstName: "",
                                 lastName: "",
-                                isStaff: false,
-                                isActive: true,
-                                isOnboarded: false,
-                                organization: {
-                                    __typename: "AuthOrganization",
-                                    id: "",
-                                    slug: "",
-                                    name: "",
-                                    memberCount: 1,
-                                },
-                                project: {
-                                    __typename: "Project",
-                                    id: "",
-                                    name: "",
-                                    slug: "",
-                                    apiToken: "",
-                                    accessControl: false,
-                                    hasCompletedOnboardingFor: null,
-                                    timezone: "",
-                                    organization: {
-                                        __typename: "AuthOrganization",
-                                        id: "",
-                                        slug: "",
-                                        name: "",
-                                        memberCount: 1,
-                                    },
-                                },
-                                organizations: {
-                                    __typename: "OrganizationCountableConnection",
-                                    edges: [],
-                                },
                             },
 
                             questions: {
@@ -291,19 +258,6 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                         : prevResult;
                 },
             });
-
-            new InMemoryCache({
-                typePolicies: {
-                    Query: {
-                        fields: {
-                            // its better to use Relay's pagination style to handle our cache
-                            // save us the burden of writing a cache logic and worrying about which edges nodes
-                            // to merge with the existing cache
-                            surveys: relayStylePagination(),
-                        },
-                    },
-                },
-            });
         },
         [fetchMore, surveyList],
     );
@@ -368,41 +322,9 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                             } as ProjectTheme,
                             creator: {
                                 __typename: "User",
-                                id: survey?.creator?.id ?? "",
                                 email: survey.creator?.email ?? "",
                                 firstName: survey.creator?.firstName ?? "",
                                 lastName: survey.creator?.lastName ?? "",
-                                isStaff: false,
-                                isActive: true,
-                                isOnboarded: false,
-                                organization: {
-                                    __typename: "AuthOrganization",
-                                    id: "",
-                                    slug: "",
-                                    name: "",
-                                    memberCount: 1,
-                                },
-                                project: {
-                                    __typename: "Project",
-                                    id: "",
-                                    name: "",
-                                    slug: "",
-                                    apiToken: "",
-                                    accessControl: false,
-                                    hasCompletedOnboardingFor: null,
-                                    timezone: "",
-                                    organization: {
-                                        __typename: "AuthOrganization",
-                                        id: "",
-                                        slug: "",
-                                        name: "",
-                                        memberCount: 1,
-                                    },
-                                },
-                                organizations: {
-                                    __typename: "OrganizationCountableConnection",
-                                    edges: [],
-                                },
                             },
                             questions: {
                                 __typename: "SurveyQuestionCountableConnection",
@@ -421,16 +343,10 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                 update: (cache, { data }) => {
                     if (!data?.surveyUpdate?.survey) return;
 
-                    cache.modify({
-                        id: cache.identify(data?.surveyUpdate?.survey),
-                        fields: {
-                            survey(existingSurvey = {}) {
-                                return {
-                                    ...existingSurvey,
-                                    edges: [...existingSurvey.edges],
-                                };
-                            },
-                        },
+                    cache.writeFragment({
+                        id: `Survey:${survey.id}`,
+                        fragment: SURVEY_CORE,
+                        data: data?.surveyUpdate?.survey,
                     });
                 },
             });
@@ -440,7 +356,6 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
 
     const deleteSurvey = React.useCallback(
         async (survey: Survey) => {
-            console.log("delete Survey", survey);
             await deleteSurveyMutation({
                 variables: {
                     id: survey.id,
@@ -482,41 +397,9 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                                   },
                             creator: {
                                 __typename: "User",
-                                id: survey.creator.id ?? "",
                                 email: survey.creator.email ?? "",
                                 firstName: survey.creator.firstName ?? "",
                                 lastName: survey.creator.lastName ?? "",
-                                isStaff: false,
-                                isActive: true,
-                                isOnboarded: false,
-                                organization: survey.creator.organization ?? {
-                                    __typename: "AuthOrganization",
-                                    id: "",
-                                    slug: "",
-                                    name: "",
-                                    memberCount: 1,
-                                },
-                                project: {
-                                    __typename: "Project",
-                                    id: "",
-                                    name: "",
-                                    slug: "",
-                                    apiToken: "",
-                                    accessControl: false,
-                                    hasCompletedOnboardingFor: null,
-                                    timezone: "",
-                                    organization: {
-                                        __typename: "AuthOrganization",
-                                        id: "",
-                                        slug: "",
-                                        name: "",
-                                        memberCount: 1,
-                                    },
-                                },
-                                organizations: {
-                                    __typename: "OrganizationCountableConnection",
-                                    edges: [],
-                                },
                             },
                             questions: {
                                 __typename: "SurveyQuestionCountableConnection",
@@ -534,28 +417,19 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
 
                 update: (cache, { data }) => {
                     if (!data?.surveyDelete?.survey) return;
-                    console.log("cache: ", cache);
 
                     cache.modify({
                         fields: {
                             surveys(existingSurveyRefs, { readField }) {
-                                console.log("Existing Surveys", existingSurveyRefs);
                                 return {
                                     ...existingSurveyRefs,
                                     edges: existingSurveyRefs.edges.filter(({ node }: { node: Reference }) => {
-                                        console.log(
-                                            "Existing Survey",
-                                            readField("id", node),
-                                            survey.id !== readField("id", node),
-                                        );
                                         return survey.id !== readField("id", node);
                                     }),
                                 };
                             },
                         },
                     });
-
-                    console.log("cache2: ", cache);
                 },
             });
         },

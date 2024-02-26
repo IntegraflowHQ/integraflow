@@ -3,15 +3,7 @@ import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ROUTES } from "@/routes";
 import { Dialog, DialogContent, DialogTrigger } from "@/ui";
 import * as Popover from "@radix-ui/react-popover";
-import {
-    Icon,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeaderCell,
-    TableRow,
-} from "@tremor/react";
+import { Icon, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
 import {
     Archive,
@@ -42,18 +34,10 @@ const headers = [
 export const SurveyList = () => {
     const navigate = useNavigate();
     const { orgSlug, projectSlug } = useParams();
-    const {
-        updateSurvey,
-        deleteSurvey,
-        loading,
-        getMoreSurveys,
-        surveyList,
-        surveysOnPage,
-    } = useSurvey();
+    const { updateSurvey, deleteSurvey, loading, getMoreSurveys, surveyList, surveysOnPage } = useSurvey();
 
     const [page, setPage] = React.useState<number>(1);
-    const [selectedSurveyName, setSelectedSurveyName] =
-        React.useState<string>("");
+    const [selectedSurveyName, setSelectedSurveyName] = React.useState<string>("");
 
     const handleGetMoreSurveys = (direction: string) => {
         if (direction === "forward") {
@@ -73,23 +57,15 @@ export const SurveyList = () => {
         );
     };
 
-    const getSurveyNameOnSelect = (
-        id: string,
-        e: React.MouseEvent<HTMLDivElement>,
-    ) => {
+    const getSurveyNameOnSelect = (id: string, e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
 
-        const findSurvey = surveyList?.edges?.find(
-            (survey) => survey.id === id,
-        );
+        const findSurvey = surveyList?.edges?.find((survey) => survey.id === id);
         const surveyName = findSurvey?.name;
         setSelectedSurveyName(surveyName ?? "");
     };
 
-    const handleSurveyDelete = (
-        event: React.MouseEvent<HTMLButtonElement>,
-        survey: Survey,
-    ) => {
+    const handleSurveyDelete = (event: React.MouseEvent<HTMLButtonElement>, survey: Survey) => {
         event.stopPropagation();
         event.preventDefault();
 
@@ -97,10 +73,7 @@ export const SurveyList = () => {
     };
 
     const surveyStartIndex = (page - 1) * surveysOnPage + 1;
-    const surveyEndIndex = Math.min(
-        page * surveysOnPage,
-        surveyList?.totalCount ?? 0,
-    );
+    const surveyEndIndex = Math.min(page * surveysOnPage, surveyList?.totalCount ?? 0);
 
     return (
         <div className="h-full w-full px-6 py-4 text-white">
@@ -113,10 +86,7 @@ export const SurveyList = () => {
                             <CreateSurveyButton />
                         </div>
                     </DialogTrigger>
-                    <DialogContent
-                        title="Create new survey"
-                        description="Pick a method that suits you best"
-                    >
+                    <DialogContent title="Create new survey" description="Pick a method that suits you best">
                         <SurveyCreate className="h-[357px] w-[762px] pt-8" />
                     </DialogContent>
                 </Dialog>
@@ -128,10 +98,7 @@ export const SurveyList = () => {
                         <TableRow>
                             {headers.map(({ title, id }) => {
                                 return (
-                                    <TableHeaderCell
-                                        className="text-md font-normal"
-                                        key={id}
-                                    >
+                                    <TableHeaderCell className="text-md font-normal" key={id}>
                                         {title}
                                     </TableHeaderCell>
                                 );
@@ -146,11 +113,7 @@ export const SurveyList = () => {
                                     key={survey.id}
                                     className="border-intg-bg-4 text-center font-light transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-8"
                                 >
-                                    <TableCell
-                                        onClick={() =>
-                                            handleGetSurvey(survey?.slug ?? "")
-                                        }
-                                    >
+                                    <TableCell onClick={() => handleGetSurvey(survey?.slug ?? "")}>
                                         {survey.name}
                                     </TableCell>
                                     <TableCell>
@@ -158,41 +121,27 @@ export const SurveyList = () => {
                                             ? "Unknown User"
                                             : `${survey?.creator.firstName} ${survey?.creator.lastName}`}
                                         <br />
-                                        <span className="text-[12px] text-intg-text-4">
-                                            {survey?.creator?.email}
-                                        </span>
+                                        <span className="text-[12px] text-intg-text-4">{survey?.creator?.email}</span>
                                     </TableCell>
                                     <TableCell>
                                         <StatusBadge survey={survey} />
                                     </TableCell>
                                     <TableCell>
                                         <span className="first-letter:capitalize">
-                                            {formatDistanceToNow(
-                                                parseISO(
-                                                    survey.createdAt ?? "",
-                                                ),
-                                                {
-                                                    addSuffix: true,
-                                                },
-                                            )}
+                                            {formatDistanceToNow(parseISO(survey.createdAt ?? ""), {
+                                                addSuffix: true,
+                                            })}
                                         </span>
                                         <br />
                                         <span className="text-[12px] text-intg-text-4">
-                                            {format(
-                                                new Date(
-                                                    survey.createdAt ?? "",
-                                                ),
-                                                "MMM dd, yyyy",
-                                            )}
+                                            {format(new Date(survey.createdAt ?? ""), "MMM dd, yyyy")}
                                         </span>
                                     </TableCell>
                                     <TableCell className="px-12">0</TableCell>
                                     <TableCell className="text-center">
                                         <Popover.Root>
                                             <Popover.Trigger asChild>
-                                                <button
-                                                    className="w-fit rounded-md px-1 py-1 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 data-[state=a]:bg-intg-bg-1"
-                                                >
+                                                <button className="w-fit rounded-md px-1 py-1 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 data-[state=a]:bg-intg-bg-1">
                                                     <MoreHorizontal color="#AFAAC7" />
                                                 </button>
                                             </Popover.Trigger>
@@ -204,129 +153,86 @@ export const SurveyList = () => {
                                                     className="w-[140px] rounded-md border border-intg-bg-4 bg-intg-bg-8 px-3 py-4 uppercase"
                                                 >
                                                     <div
-                                                        onClick={() =>
-                                                            handleGetSurvey(
-                                                                survey?.slug ??
-                                                                    "",
-                                                            )
-                                                        }
+                                                        onClick={() => handleGetSurvey(survey?.slug ?? "")}
                                                         className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
                                                     >
-                                                        <Edit
-                                                            size="18"
-                                                            color="#AFAAC7"
-                                                        />
+                                                        <Edit size="18" color="#AFAAC7" />
                                                         Edit
                                                     </div>
-                                                    {survey.status ===
-                                                        SurveyStatusEnum.Draft && (
+                                                    {survey.status === SurveyStatusEnum.Draft && (
                                                         <div
                                                             onClick={() =>
-                                                                updateSurvey(
-                                                                    survey,
-                                                                    { status: SurveyStatusEnum.Active }
-                                                                )
+                                                                updateSurvey(survey, {
+                                                                    status: SurveyStatusEnum.Active,
+                                                                })
                                                             }
                                                             className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
                                                         >
-                                                            <Radio
-                                                                size="18"
-                                                                color="#AFAAC7"
-                                                            />
+                                                            <Radio size="18" color="#AFAAC7" />
                                                             Publish
                                                         </div>
                                                     )}
-                                                    {survey.status ===
-                                                        SurveyStatusEnum.Active && (
+                                                    {survey.status === SurveyStatusEnum.Active && (
                                                         <>
                                                             <div
                                                                 onClick={() =>
-                                                                    updateSurvey(
-                                                                        survey,
-                                                                        { status: SurveyStatusEnum.Paused }
-                                                                    )
+                                                                    updateSurvey(survey, {
+                                                                        status: SurveyStatusEnum.Paused,
+                                                                    })
                                                                 }
                                                                 className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
                                                             >
-                                                                <PauseCircle
-                                                                    size="18"
-                                                                    color="#AFAAC7"
-                                                                />
+                                                                <PauseCircle size="18" color="#AFAAC7" />
                                                                 Pause
                                                             </div>
                                                             <div
                                                                 onClick={() =>
-                                                                    updateSurvey(
-                                                                        survey,
-                                                                        { status: SurveyStatusEnum.Completed }
-                                                                    )
+                                                                    updateSurvey(survey, {
+                                                                        status: SurveyStatusEnum.Completed,
+                                                                    })
                                                                 }
                                                                 className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
                                                             >
-                                                                <ClipboardCheck
-                                                                    size="18"
-                                                                    color="#AFAAC7"
-                                                                />
+                                                                <ClipboardCheck size="18" color="#AFAAC7" />
                                                                 Complete
                                                             </div>
                                                         </>
                                                     )}
-                                                    {survey.status !==
-                                                        SurveyStatusEnum.Archived && (
+                                                    {survey.status !== SurveyStatusEnum.Archived && (
                                                         <div
                                                             onClick={() =>
-                                                                updateSurvey(
-                                                                    survey,
-                                                                    { status: SurveyStatusEnum.Archived }
-                                                                )
+                                                                updateSurvey(survey, {
+                                                                    status: SurveyStatusEnum.Archived,
+                                                                })
                                                             }
                                                             className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
                                                         >
                                                             <span>
-                                                                <Archive
-                                                                    size="18"
-                                                                    color="#AFAAC7"
-                                                                />
+                                                                <Archive size="18" color="#AFAAC7" />
                                                             </span>
                                                             Archive
                                                         </div>
                                                     )}
-                                                    {survey.status ===
-                                                        SurveyStatusEnum.Archived && (
+                                                    {survey.status === SurveyStatusEnum.Archived && (
                                                         <div
                                                             onClick={() =>
-                                                                updateSurvey(
-                                                                    survey,
-                                                                    { status: SurveyStatusEnum.Draft }
-                                                                )
+                                                                updateSurvey(survey, { status: SurveyStatusEnum.Draft })
                                                             }
                                                             className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
                                                         >
-                                                            <Radio
-                                                                size="18"
-                                                                color="#AFAAC7"
-                                                            />
+                                                            <Radio size="18" color="#AFAAC7" />
                                                             Restore
                                                         </div>
                                                     )}
                                                     <Dialog>
                                                         <DialogTrigger asChild>
                                                             <div
-                                                                onClick={(
-                                                                    event,
-                                                                ) =>
-                                                                    getSurveyNameOnSelect(
-                                                                        survey?.id ??
-                                                                            "",
-                                                                        event,
-                                                                    )
+                                                                onClick={(event) =>
+                                                                    getSurveyNameOnSelect(survey?.id ?? "", event)
                                                                 }
                                                                 className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
                                                             >
-                                                                <Trash2
-                                                                    size="18"
-                                                                    color="#AFAAC7"
-                                                                />
+                                                                <Trash2 size="18" color="#AFAAC7" />
                                                                 Delete
                                                             </div>
                                                         </DialogTrigger>
@@ -337,21 +243,13 @@ export const SurveyList = () => {
                                                             description="Are you sure you want to delete this survey?"
                                                         >
                                                             <button
-                                                                disabled={
-                                                                    loading
-                                                                }
-                                                                onClick={(e) =>
-                                                                    handleSurveyDelete(e, survey as Survey)
-                                                                }
+                                                                disabled={loading}
+                                                                onClick={(e) => handleSurveyDelete(e, survey as Survey)}
                                                                 className={`${
-                                                                    loading
-                                                                        ? "opacity-50"
-                                                                        : ""
+                                                                    loading ? "opacity-50" : ""
                                                                 } mt-[30px] w-full rounded-md bg-red-600 py-3 text-center transition-all duration-300 ease-in hover:cursor-pointer`}
                                                             >
-                                                                {loading
-                                                                    ? "Deleting..."
-                                                                    : "Delete"}
+                                                                {loading ? "Deleting..." : "Delete"}
                                                             </button>
                                                         </DialogContent>
                                                     </Dialog>
@@ -368,16 +266,10 @@ export const SurveyList = () => {
                         <tr className="">
                             <td className="table-cell px-4 py-4">
                                 <button
-                                    disabled={
-                                        !surveyList?.pageInfo?.hasPreviousPage
-                                    }
-                                    onClick={() =>
-                                        handleGetMoreSurveys("backward")
-                                    }
+                                    disabled={!surveyList?.pageInfo?.hasPreviousPage}
+                                    onClick={() => handleGetMoreSurveys("backward")}
                                     className={`${
-                                        !surveyList?.pageInfo?.hasPreviousPage
-                                            ? "cursor-not-allowed opacity-50"
-                                            : ""
+                                        !surveyList?.pageInfo?.hasPreviousPage ? "cursor-not-allowed opacity-50" : ""
                                     } hover:bg-intg-bg-8} rounded-md border border-intg-bg-4 transition-all duration-300 ease-in`}
                                 >
                                     <Icon
@@ -389,16 +281,10 @@ export const SurveyList = () => {
                             </td>
                             <td className="table-cell">
                                 <button
-                                    disabled={
-                                        !surveyList?.pageInfo?.hasNextPage
-                                    }
-                                    onClick={() =>
-                                        handleGetMoreSurveys("forward")
-                                    }
+                                    disabled={!surveyList?.pageInfo?.hasNextPage}
+                                    onClick={() => handleGetMoreSurveys("forward")}
                                     className={`${
-                                        !surveyList?.pageInfo?.hasNextPage
-                                            ? "cursor-not-allowed opacity-50"
-                                            : ""
+                                        !surveyList?.pageInfo?.hasNextPage ? "cursor-not-allowed opacity-50" : ""
                                     } rounded-md border border-intg-bg-4  transition-all duration-300 ease-in hover:bg-intg-bg-8`}
                                 >
                                     <Icon
@@ -416,8 +302,7 @@ export const SurveyList = () => {
                             </td>
 
                             <td className="table-cell whitespace-nowrap px-4 py-4 text-sm font-normal text-intg-text-4">
-                                {surveyStartIndex} - {surveyEndIndex} of{" "}
-                                {surveyList?.totalCount} Surveys
+                                {surveyStartIndex} - {surveyEndIndex} of {surveyList?.totalCount} Surveys
                             </td>
                         </tr>
                     </tfoot>
