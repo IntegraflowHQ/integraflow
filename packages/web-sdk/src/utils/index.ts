@@ -1,16 +1,5 @@
-import {
-    BaseSurveyCountableConnection,
-    IntegraflowDocument
-} from "@integraflow/sdk";
-import {
-    Audience,
-    LogicOperator,
-    Question,
-    QuestionOption,
-    Survey,
-    SurveySettings,
-    Trigger
-} from "../types";
+import { BaseSurveyCountableConnection, IntegraflowDocument } from "@integraflow/sdk";
+import { Audience, LogicOperator, Question, QuestionOption, Survey, SurveySettings, Theme, Trigger } from "../types";
 
 export function onDOMReady(fn: () => void) {
     if (document.readyState !== "loading") {
@@ -24,10 +13,7 @@ export function cn(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
 
-export function deferSurveyActivation(
-    survey: Survey,
-    activateFn: (survey: Survey) => void
-) {
+export function deferSurveyActivation(survey: Survey, activateFn: (survey: Survey) => void) {
     if (survey.trigger?.delay === undefined || survey.trigger.delay < 0) {
         return false;
     }
@@ -42,23 +28,15 @@ export function deferSurveyActivation(
 // See: https://stackoverflow.com/a/2117523
 export function uuidv4() {
     if (typeof crypto === "undefined") {
-        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(
-            c
-        ) {
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
             var r = (Math.random() * 16) | 0,
                 v = c == "x" ? r : (r & 0x3) | 0x8;
             return v.toString(16);
         });
     }
 
-    return ((1e7).toString() + -1e3 + -4e3 + -8e3 + -1e11).replace(
-        /[018]/g,
-        c =>
-            (
-                Number(c) ^
-                (crypto.getRandomValues(new Uint8Array(1))[0] &
-                    (15 >> (Number(c) / 4)))
-            ).toString(16)
+    return ((1e7).toString() + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+        (Number(c) ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (Number(c) / 4)))).toString(16)
     );
 }
 
@@ -67,10 +45,7 @@ export function escapeRegExp(str: string): string {
     return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-export function propConditionsMatched(
-    conditions: boolean[],
-    operator: LogicOperator
-) {
+export function propConditionsMatched(conditions: boolean[], operator: LogicOperator) {
     let conditionMatched = conditions.some(matched => matched);
     if (operator === LogicOperator.AND) {
         conditionMatched = conditions.every(matched => matched);
@@ -86,10 +61,7 @@ function shuffle(options: QuestionOption[]) {
     }
 }
 
-export function shuffleArray(
-    options: QuestionOption[],
-    shuffleOption: "all" | "exceptLast"
-) {
+export function shuffleArray(options: QuestionOption[], shuffleOption: "all" | "exceptLast") {
     const optionsCopy = [...options];
 
     if (shuffleOption === "all") {
@@ -139,9 +111,7 @@ export function hexToRgba(hex: string, opacity: number): string {
     return `rgba(${red}, ${green}, ${blue}, ${opacity})`;
 }
 
-export const parsedSurveys = (
-    surveys?: BaseSurveyCountableConnection
-): Survey[] => {
+export const parsedSurveys = (surveys?: BaseSurveyCountableConnection): Survey[] => {
     if (!surveys) {
         return [] as Survey[];
     }
@@ -172,10 +142,7 @@ export const parsedSurveys = (
         });
 
         const channel = survey.channels.find(channel => {
-            return (
-                channel.type ===
-                IntegraflowDocument.SurveyChannelTypeEnum.WebSdk
-            );
+            return channel.type === IntegraflowDocument.SurveyChannelTypeEnum.WebSdk;
         }) || { settings: "{}", conditions: "{}", triggers: "{}" };
         const channelSettings = JSON.parse(channel?.settings ?? "{}");
         const settings = JSON.parse(survey.settings ?? "{}");
@@ -191,6 +158,7 @@ export const parsedSurveys = (
 
         const audience: Audience = JSON.parse(channel.conditions ?? "{}");
         const trigger: Trigger = JSON.parse(channel.triggers ?? "{}");
+        const theme: Theme = JSON.parse(survey.theme?.colorScheme ?? "{}");
 
         surveyList.push({
             id: survey.id,
@@ -198,7 +166,8 @@ export const parsedSurveys = (
             questions: questions,
             trigger: trigger,
             audience: audience,
-            settings: surveySettings
+            settings: surveySettings,
+            theme
         });
     }
 
@@ -208,11 +177,7 @@ export const parsedSurveys = (
 function getDeviceType() {
     const ua: string = navigator.userAgent.toLowerCase();
 
-    if (
-        /mobile|iphone|ipod|android|blackberry|opera mini|opera mobi|iemobile|windows phone|kindle/i.test(
-            ua
-        )
-    ) {
+    if (/mobile|iphone|ipod|android|blackberry|opera mini|opera mobi|iemobile|windows phone|kindle/i.test(ua)) {
         return "Mobile";
     } else if (/ipad|tablet/i.test(ua)) {
         return "Tablet";
@@ -262,10 +227,7 @@ function getBrowser() {
     let browser: string;
     let version: string;
 
-    const matchArray =
-        ua.match(
-            /(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i
-        ) || [];
+    const matchArray = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
 
     if (/trident/i.test(matchArray[1])) {
         tem = /\brv[ :]+(\d+)/g.exec(ua);

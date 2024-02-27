@@ -1,5 +1,5 @@
 import { BaseSurvey, IntegraflowDocument } from "@integraflow/sdk";
-import { Audience, Question, QuestionOption, Survey, SurveySettings, Trigger } from "@integraflow/web";
+import { Audience, Question, QuestionOption, Survey, SurveySettings, Theme, Trigger } from "@integraflow/web";
 
 export const parsedSurveys = (survey?: BaseSurvey): Survey[] => {
     if (!survey) {
@@ -45,6 +45,7 @@ export const parsedSurveys = (survey?: BaseSurvey): Survey[] => {
 
     const audience: Audience = JSON.parse(channel.conditions ?? "{}");
     const trigger: Trigger = JSON.parse(channel.triggers ?? "{}");
+    const theme: Theme = JSON.parse(survey.theme?.colorScheme ?? "{}");
 
     surveyList.push({
         id: survey.id,
@@ -53,6 +54,7 @@ export const parsedSurveys = (survey?: BaseSurvey): Survey[] => {
         trigger: trigger,
         audience: audience,
         settings: surveySettings,
+        theme,
     });
 
     return JSON.parse(JSON.stringify(surveyList));
