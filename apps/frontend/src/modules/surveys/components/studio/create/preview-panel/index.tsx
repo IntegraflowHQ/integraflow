@@ -1,3 +1,4 @@
+import { SurveyChannelCountableEdge } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { Header } from "@/ui";
@@ -22,14 +23,16 @@ export const Preview = () => {
             {
                 type: "survey",
                 survey: {
-                    ...survey.survey,
+                    ...survey,
                     questions: parsedQuestions.map((q) => {
                         if (q.id === question?.id) {
                             return question;
                         }
                         return q;
                     }),
-                    channels: survey?.survey?.channels.edges.map((edge) => edge.node),
+                    channels: survey?.channels.edges.map(
+                        (edge: Omit<SurveyChannelCountableEdge, "cursor">) => edge.node,
+                    ),
                 },
                 startFrom: question ? question.id : undefined,
             },

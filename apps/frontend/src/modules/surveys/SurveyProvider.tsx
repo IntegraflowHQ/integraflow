@@ -48,6 +48,7 @@ export type SurveyContextValues = {
     surveyList: SurveyList;
     deleteSurvey: (survey: Survey) => Promise<void | undefined>;
     getMoreSurveys: (direction: string) => Promise<void | undefined>;
+    creatingSurvey: boolean;
 };
 
 const createSurveyContext = () => React.createContext<SurveyContextValues | null>(null);
@@ -60,7 +61,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     const navigate = useNavigate();
     const { orgSlug, projectSlug, surveySlug } = useParams();
 
-    const [createSurveyMutation] = useSurveyCreateMutation();
+    const [createSurveyMutation, { loading: creatingSurvey }] = useSurveyCreateMutation();
     const [updateSurveyMutation, { error }] = useSurveyUpdateMutation({});
     const [deleteSurveyMutation] = useSurveyDeleteMutation();
 
@@ -449,6 +450,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             loading: loadingSurvey || surveyListLoading,
             parsedQuestions,
             surveyId,
+            creatingSurvey,
         }),
         [
             error,
@@ -463,6 +465,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             updateSurvey,
             deleteSurvey,
             getMoreSurveys,
+            creatingSurvey,
         ],
     );
 
