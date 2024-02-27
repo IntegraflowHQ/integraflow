@@ -1,9 +1,5 @@
 import { PROPERTY_FIELDS } from "@/constants";
-import {
-    SurveyChannel,
-    SurveyQuestionCountableEdge,
-    User,
-} from "@/generated/graphql";
+import { SurveyChannel, SurveyQuestionCountableEdge, User } from "@/generated/graphql";
 import { DeepOmit } from "@apollo/client/utilities";
 import {
     Audience,
@@ -15,7 +11,7 @@ import {
     LogicOperator,
     PlacementType,
     Trigger,
-} from "@integraflow/web/src/types";
+} from "@integraflow/web";
 
 export type CachedViewer = DeepOmit<User, "__typename">;
 
@@ -39,10 +35,7 @@ export type ChannelSettings = {
     singleUse?: boolean;
 };
 
-export type ParsedChannel = Omit<
-    SurveyChannel,
-    "settings" | "triggers" | "conditions"
-> & {
+export type ParsedChannel = Omit<SurveyChannel, "settings" | "triggers" | "conditions"> & {
     settings: ChannelSettings;
     triggers: Trigger;
     conditions: Audience;
@@ -53,6 +46,38 @@ export type LinkSettings = {
     singleUse: boolean;
     startDate: string | null;
     endDate: string | null;
+};
+
+export type EventFilter = {
+    property: string;
+    operator: FilterOperator;
+    value: FilterValue;
+};
+
+export type AudienceFilter = {
+    attribute: string;
+    operator: FilterOperator;
+    value: FilterValue;
+};
+
+export type TriggerCondition = {
+    event: string;
+    operator: LogicOperator;
+    filters?: EventFilter[];
+};
+
+export type TriggerConditionInput = {
+    type: keyof typeof PROPERTY_FIELDS;
+    property: string;
+};
+
+export type WebChannelAccordionProps = {
+    channel: ParsedChannel;
+};
+
+export type IntegraflowIconProps = {
+    color?: string;
+    size?: number;
 };
 
 export type QuestionOption = {
@@ -114,10 +139,7 @@ export enum CTAEnums {
     CLOSE = "close",
 }
 
-export type ParsedQuestion = Omit<
-    SurveyQuestionCountableEdge["node"],
-    "questions" | "settings"
-> & {
+export type ParsedQuestion = Omit<SurveyQuestionCountableEdge["node"], "questions" | "settings"> & {
     questions: QuestionOption[];
     settings: QuestionSettings;
 };
@@ -142,34 +164,3 @@ export enum LogicConditionEnum {
     INCLUDES_ALL = "includes_all",
     INCLUDES_ANY = "includes_any",
 }
-export type EventFilter = {
-    property: string;
-    operator: FilterOperator;
-    value: FilterValue;
-};
-
-export type AudienceFilter = {
-    attribute: string;
-    operator: FilterOperator;
-    value: FilterValue;
-};
-
-export type TriggerCondition = {
-    event: string;
-    operator: LogicOperator;
-    filters?: EventFilter[];
-};
-
-export type TriggerConditionInput = {
-    type: keyof typeof PROPERTY_FIELDS;
-    property: string;
-};
-
-export type WebChannelAccordionProps = {
-    channel: ParsedChannel;
-};
-
-export type IntegraflowIconProps = {
-    color?: string;
-    size?: number;
-};

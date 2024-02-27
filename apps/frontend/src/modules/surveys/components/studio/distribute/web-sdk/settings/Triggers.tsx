@@ -1,7 +1,7 @@
 import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import { useProject } from "@/modules/projects/hooks/useProject";
 import useChannels from "@/modules/surveys/hooks/useChannels";
-import { EventFilter, WebChannelAccordionProps } from "@/types";
+import { EventFilter, TriggerCondition, WebChannelAccordionProps } from "@/types";
 import { TextInput } from "@/ui";
 import { Popover, PopoverContent, PopoverTrigger } from "@/ui/Popover";
 import { Info, Search } from "@/ui/icons";
@@ -18,7 +18,7 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
     const [isAddingEvent, setIsAddingEvent] = useState(false);
     const [eventQ, setEventQ] = useState("");
 
-    const selectedEvents = channel?.triggers?.conditions?.map((condition) => condition.event);
+    const selectedEvents = channel?.triggers?.conditions?.map((condition: TriggerCondition) => condition.event);
     const availableEvents = eventDefinitions.filter((event) => !selectedEvents?.includes(event.name));
 
     const filteredOptions = availableEvents.filter((option) =>
@@ -64,7 +64,9 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
     const handleRemoveEvent = (event: string) => {
         if (!channel.id || !channel.triggers || !channel.triggers.conditions) return;
 
-        const conditions = channel?.triggers?.conditions?.filter((condition) => condition.event !== event);
+        const conditions = channel?.triggers?.conditions?.filter(
+            (condition: TriggerCondition) => condition.event !== event,
+        );
 
         updateChannel(channel, {
             triggers: JSON.stringify({
@@ -77,7 +79,7 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
     const handleAddFilter = (event: string, filter: EventFilter) => {
         if (!channel.id || !channel.triggers || !channel.triggers.conditions) return;
 
-        const conditions = channel?.triggers?.conditions?.map((condition) => {
+        const conditions = channel?.triggers?.conditions?.map((condition: TriggerCondition) => {
             if (condition.event !== event) return condition;
 
             return {
@@ -95,7 +97,7 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
     };
 
     const handleRemoveFilter = (event: string, index: number) => {
-        const conditions = channel?.triggers?.conditions?.map((condition) => {
+        const conditions = channel?.triggers?.conditions?.map((condition: TriggerCondition) => {
             if (condition.event !== event) return condition;
             if (!condition.filters) return condition;
 
@@ -117,7 +119,7 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
     };
 
     const handleOperatorChange = (event: string, operator: LogicOperator) => {
-        const conditions = channel?.triggers?.conditions?.map((condition) => {
+        const conditions = channel?.triggers?.conditions?.map((condition: TriggerCondition) => {
             if (condition.event !== event) return condition;
 
             return {
@@ -144,7 +146,7 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
                     </header>
 
                     <div className="space-y-2">
-                        {channel?.triggers?.conditions?.map((condition, index) => (
+                        {channel?.triggers?.conditions?.map((condition: TriggerCondition, index: number) => (
                             <Event
                                 key={index}
                                 condition={condition}

@@ -1,29 +1,22 @@
 import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
 
-import { useLogoutMutation } from "@/generated/graphql";
-
 import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
 import { useAuth } from "./useAuth";
 
 export const useLogout = () => {
     const { logout: clearAuth } = useAuth();
     const { reset } = useCurrentUser();
-    const { cache, clearStore } = useApolloClient();
+    const client = useApolloClient();
 
-    const onLogout = useCallback(async () => {
-        await clearStore();
-        await cache.reset();
+    const handleLogout = useCallback(async () => {
         clearAuth();
         reset();
-    }, [cache, clearAuth, clearStore, reset]);
+        await client.clearStore();
+        await client.cache.reset();
 
-    const [logout] = useLogoutMutation({
-        onCompleted: onLogout,
-        onError: onLogout,
-    });
+    }, [clearAuth, client, reset]);
 
-    const handleLogout = useCallback(() => logout(), [logout]);
     return {
         logout: handleLogout,
     };

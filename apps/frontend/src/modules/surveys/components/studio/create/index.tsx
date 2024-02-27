@@ -81,6 +81,7 @@ export default function Create() {
                         </Tabs.Content>
                     ))}
                 </ScrollToBottom>
+
                 <div className="min-w-[580px] flex-1 pb-8">
                     <Preview />
                 </div>

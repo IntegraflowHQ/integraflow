@@ -1,5 +1,4 @@
 import graphene
-
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.connection import (
     CountableConnection,
@@ -45,7 +44,7 @@ class BaseSurvey(ModelObjectType):
     settings = JSONString(
         description="The settings of the survey."
     )
-    theme = PermissionsField(
+    theme = graphene.Field(
         "integraflow.graphql.project.types.BaseProjectTheme",
         description="The theme of the survey.",
     )
@@ -64,7 +63,7 @@ class BaseSurvey(ModelObjectType):
             required=False,
         ),
     )
-    project = PermissionsField(
+    project = graphene.Field(
         "integraflow.graphql.project.types.BaseProject",
         description="The project the survey belongs to",
     )

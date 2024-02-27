@@ -96,12 +96,14 @@ export const logout = async (token: string) => {
     const { data, errors } = await client.mutate<LogoutMutation, LogoutMutationVariables>({
         mutation: LogoutDocument,
         context: {
-            authorization: `Bearer ${token}`,
+            headers: {
+                authorization: `Bearer ${token}`,
+            },
         },
     });
 
     if (errors || !data || data.logout?.userErrors?.length) {
-        throw new Error("Something went wrong during token renewal");
+        throw new Error("Something went wrong during token revocation");
     }
 
     return true;

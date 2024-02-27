@@ -10,7 +10,7 @@ import NPS from "assets/images/surveys/NPS.svg";
 import Single from "assets/images/surveys/Single.svg";
 import Star from "assets/images/surveys/Star.svg";
 import Text from "assets/images/surveys/Text.svg";
-import Welcome from "assets/images/surveys/welcome.svg";
+import Welcome from "assets/images/surveys/Welcome.svg";
 import { Link, useParams } from "react-router-dom";
 import CreateSurveyButton from "./partials/CreateSurveyButton";
 import Template from "./partials/Template";
@@ -18,75 +18,63 @@ import Template from "./partials/Template";
 export const surveyTypes: TemplateProps[] = [
     {
         title: "Welcome message",
-        description:
-            "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
         image: Welcome,
     },
     {
         title: "Single answer selection",
-        description:
-            "Get people to select only one option. Good for getting definite answers.",
+        description: "Get people to select only one option. Good for getting definite answers.",
         image: Single,
     },
     {
         title: "Multiple answer selection",
-        description:
-            "Let people choose multiple answers from a list. Use it when more than one answer applies.",
+        description: "Let people choose multiple answers from a list. Use it when more than one answer applies.",
         image: Multiple,
     },
     {
         title: "Text answer",
-        description:
-            "Provide a text box so people can share written, open-ended feedback.",
+        description: "Provide a text box so people can share written, open-ended feedback.",
         image: Text,
     },
     {
         title: "Rating scale",
-        description:
-            "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
         image: Star,
     },
     {
         title: "NPS®",
-        description:
-            "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
         image: NPS,
         right: true,
     },
     {
         title: "Contact form",
-        description:
-            "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
         image: Contact,
     },
     {
         title: "Birthday",
-        description:
-            "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
         image: Birthday,
     },
     {
         title: "Dropdown list",
-        description:
-            "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
         image: Dropdown,
     },
     {
         title: "Boolean",
-        description:
-            "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
         image: Boolean,
     },
     {
         title: "Smiley scale",
-        description:
-            "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
         image: Welcome,
     },
     {
         title: "Thank you",
-        description:
-            "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
         image: Welcome,
     },
 ];
@@ -102,12 +90,7 @@ export default function Templates() {
                     className="max-w-[386px]"
                 />
 
-                <Link
-                    to={ROUTES.STUDIO.replace(
-                        ":projectSlug",
-                        projectSlug!,
-                    ).replace(":orgSlug", orgSlug!)}
-                >
+                <Link to={ROUTES.STUDIO.replace(":projectSlug", projectSlug!).replace(":orgSlug", orgSlug!)}>
                     <CreateSurveyButton />
                 </Link>
             </div>

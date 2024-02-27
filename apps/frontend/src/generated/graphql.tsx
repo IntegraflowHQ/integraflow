@@ -161,6 +161,24 @@ export type BaseSurveyChannel = Node & {
   type: SurveyChannelTypeEnum;
 };
 
+export type BaseSurveyCountableConnection = {
+  __typename?: 'BaseSurveyCountableConnection';
+  edges: Array<BaseSurveyCountableEdge>;
+  nodes: Array<BaseSurvey>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type BaseSurveyCountableEdge = {
+  __typename?: 'BaseSurveyCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: BaseSurvey;
+};
+
 /** Represents a question. */
 export type BaseSurveyQuestion = Node & {
   __typename?: 'BaseSurveyQuestion';
@@ -1280,6 +1298,12 @@ export type Query = {
   _entities?: Maybe<Array<Maybe<_Entity>>>;
   _service?: Maybe<_Service>;
   /**
+   * List of the project's surveys.
+   *
+   * Requires one of the following permissions: AUTHENTICATED_API.
+   */
+  activeSurveys?: Maybe<BaseSurveyCountableConnection>;
+  /**
    * List of channels for a specific survey.
    *
    * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -1332,14 +1356,10 @@ export type Query = {
   /**
    * Look up a survey by ID or slug.
    *
-   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS, AUTHENTICATED_API.
    */
   survey?: Maybe<Survey>;
-  /**
-   * Look up a survey by channel ID or link.
-   *
-   * Requires one of the following permissions: AUTHENTICATED_API.
-   */
+  /** Look up a survey by channel ID or link. */
   surveyByChannel?: Maybe<BaseSurvey>;
   /**
    * List of the project's surveys.
@@ -1364,6 +1384,16 @@ export type Query = {
 
 export type Query_EntitiesArgs = {
   representations?: InputMaybe<Array<InputMaybe<Scalars['_Any']>>>;
+};
+
+
+export type QueryActiveSurveysArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<SurveyFilterInput>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  sortBy?: InputMaybe<SurveySortingInput>;
 };
 
 

@@ -99,9 +99,38 @@ type Query {
   ): SurveyCountableConnection @doc(category: "Surveys")
 
   """
+  List of the project's surveys.
+  
+  Requires one of the following permissions: AUTHENTICATED_API.
+  """
+  activeSurveys(
+    """Filtering options for surveys."""
+    filter: SurveyFilterInput
+
+    """Sort surveys."""
+    sortBy: SurveySortingInput
+
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): BaseSurveyCountableConnection @doc(category: "Surveys")
+
+  """
   Look up a survey by ID or slug.
   
-  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS, AUTHENTICATED_API.
   """
   survey(
     """The ID of the survey."""
@@ -111,11 +140,7 @@ type Query {
     slug: String
   ): Survey @doc(category: "Surveys")
 
-  """
-  Look up a survey by channel ID or link.
-  
-  Requires one of the following permissions: AUTHENTICATED_API.
-  """
+  """Look up a survey by channel ID or link."""
   surveyByChannel(
     """The ID of the channel."""
     id: ID
@@ -1003,6 +1028,24 @@ enum SurveySortField @doc(category: "Surveys") {
 
   """Sort surveys by last modified at."""
   LAST_MODIFIED_AT
+}
+
+type BaseSurveyCountableConnection @doc(category: "Surveys") {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+  edges: [BaseSurveyCountableEdge!]!
+
+  """A total count of items in the collection."""
+  totalCount: Int
+  nodes: [BaseSurvey!]!
+}
+
+type BaseSurveyCountableEdge @doc(category: "Surveys") {
+  """The item at the end of the edge."""
+  node: BaseSurvey!
+
+  """A cursor for use in pagination."""
+  cursor: String!
 }
 
 """Represents a survey from used by our sdk."""

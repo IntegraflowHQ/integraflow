@@ -6,7 +6,7 @@ import { cn, copyToClipboard } from "@/utils";
 import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 import EditLink from "./EditLink";
-import QRCodeView from "./QRCodevie";
+import QRCodeView from "./QRCodeview";
 
 export type LinkProps = {
     link: ParsedChannel;
