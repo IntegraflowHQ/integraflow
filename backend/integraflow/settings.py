@@ -723,16 +723,16 @@ CACHES["default"]["TIMEOUT"] = parse(os.environ.get("CACHE_TIMEOUT", "7 days"))
 JWT_EXPIRE = True
 JWT_TTL_ACCESS = timedelta(
     seconds=parse(
-        os.environ.get("JWT_TTL_ACCESS", "30 days")
+        os.environ.get("JWT_TTL_ACCESS", "5 minutes")
     )  # type: ignore
 )
 JWT_TTL_APP_ACCESS = timedelta(
     seconds=parse(
-        os.environ.get("JWT_TTL_APP_ACCESS", "30 days")
+        os.environ.get("JWT_TTL_APP_ACCESS", "5 minutes")
     )  # type: ignore
 )
 JWT_TTL_REFRESH = timedelta(
-    seconds=parse(os.environ.get("JWT_TTL_REFRESH", "60 days"))  # type: ignore
+    seconds=parse(os.environ.get("JWT_TTL_REFRESH", "30 days"))  # type: ignore
 )
 
 JWT_TTL_REQUEST_EMAIL_CHANGE = timedelta(
