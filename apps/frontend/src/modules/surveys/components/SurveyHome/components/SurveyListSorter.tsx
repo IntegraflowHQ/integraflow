@@ -1,7 +1,6 @@
 import * as Select from "@radix-ui/react-select";
 import { ChevronDown } from "lucide-react";
 
-// next year
 export const SurveyListSorter = () => {
     return (
         <Select.Root>

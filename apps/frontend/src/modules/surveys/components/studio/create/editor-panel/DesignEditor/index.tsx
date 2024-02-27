@@ -30,7 +30,6 @@ export const UpdateDesignEditor = () => {
     const [theme, setTheme] = React.useState<Partial<ProjectTheme>>();
     const [newThemeOpenState, setOpenState] = React.useState<boolean>(false);
 
-    // triggered when the 'Create theme' button in the colorPicker is clicked
     const handleCreateTheme = async () => {
         if (theme?.name && theme?.colorScheme && survey) {
             if (theme.id) {
