@@ -15,20 +15,20 @@ import { SURVEY_CHANNEL } from "../graphql/fragments/surveyFragment";
 import { useSurvey } from "../hooks/useSurvey";
 
 function useChannelContextFactory() {
-    const { survey, surveyId } = useSurvey();
+    const { survey } = useSurvey();
     const [createChannelMutation] = useSurveyChannelCreateMutation();
     const [updateChannelMutation] = useSurveyChannelUpdateMutation();
     const [deleteChannelMutation] = useSurveyChannelDeleteMutation();
 
     const createChannel = async (input: Omit<SurveyChannelCreateInput, "surveyId">) => {
-        if (!surveyId) return;
+        if (!survey) return;
         const data: SurveyChannelCreateInput = {
             type: input.type ?? SurveyChannelTypeEnum.WebSdk,
             id: input.id ?? crypto.randomUUID(),
             triggers: input.triggers ?? "{}",
             conditions: input.conditions ?? "{}",
             settings: input.settings ?? "{}",
-            surveyId,
+            surveyId: survey.id,
         };
         await createChannelMutation({
             variables: {
@@ -52,7 +52,7 @@ function useChannelContextFactory() {
             update: (cache, { data }) => {
                 if (!data?.surveyChannelCreate?.surveyChannel) return;
                 cache.modify({
-                    id: `Survey:${survey?.survey?.id}`,
+                    id: `Survey:${survey.id}`,
                     fields: {
                         channels(existingChannels) {
                             const newChannelRef = cache.writeFragment({
@@ -115,7 +115,11 @@ function useChannelContextFactory() {
         });
     };
 
-    const deleteChannel = async (channel: SurveyChannel) => {
+    const deleteChannel = async (channel: ParsedChannel) => {
+        if (!survey) return;
+
+        const surveyChannel = toSurveyChannel(channel);
+
         await deleteChannelMutation({
             variables: {
                 id: channel.id,
@@ -126,7 +130,7 @@ function useChannelContextFactory() {
                     __typename: "SurveyChannelDelete",
                     surveyChannel: {
                         __typename: "SurveyChannel",
-                        ...channel,
+                        ...surveyChannel,
                     },
                     surveyErrors: [],
                     errors: [],
@@ -135,13 +139,14 @@ function useChannelContextFactory() {
             update: (cache, { data }) => {
                 if (!data?.surveyChannelDelete?.surveyChannel) return;
                 cache.modify({
-                    id: `Survey:${survey?.survey?.id}`,
+                    id: `Survey:${survey?.id}`,
                     fields: {
                         channels(existingChannels, { readField }) {
                             return {
                                 __typeName: "SurveyChannelCountableConnection",
                                 edges: existingChannels.edges.filter(
-                                    (edge: SurveyChannelCountableEdge) => readField("id", edge.node) !== channel.id,
+                                    (edge: SurveyChannelCountableEdge) =>
+                                        readField("id", edge.node) !== surveyChannel.id,
                                 ),
                             };
                         },
@@ -153,11 +158,11 @@ function useChannelContextFactory() {
 
     const channels = useMemo(() => {
         return (
-            survey?.survey?.channels?.edges.map((edge) => {
+            survey?.channels?.edges.map((edge) => {
                 return fromSurveyChannel(edge.node);
             }) || ([] as ParsedChannel[])
         );
-    }, [survey?.survey?.channels?.edges]);
+    }, [survey?.channels?.edges]);
 
     const getChannels = useCallback(
         (type: SurveyChannelTypeEnum) => {

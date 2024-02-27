@@ -1,4 +1,5 @@
-import { useThemes } from "@/modules/projects/hooks/useTheme";
+import { ProjectTheme } from "@/generated/graphql";
+import { useTheme } from "@/modules/projects/hooks/useTheme";
 import { toast } from "@/utils/toast";
 
 const PRESET_THEMES = [
@@ -10,6 +11,16 @@ const PRESET_THEMES = [
             progress: "#ff2a05",
             button: "#d0a689",
             background: "#db420a",
+        },
+    },
+    {
+        name: "Deep Space",
+        colorScheme: {
+            answer: "#041b3f",
+            background: "#0b1527",
+            button: "#6799e5",
+            progress: "#071f41",
+            question: "#010c1e",
         },
     },
     {
@@ -32,16 +43,6 @@ const PRESET_THEMES = [
             background: "#ec7e0f",
         },
     },
-    {
-        name: "Battle cat",
-        colorScheme: {
-            question: "#9CB4CC",
-            answer: "#FF8FB1",
-            progress: "#D3CEDF",
-            button: "#FCE8DA",
-            background: "#F2D7D9",
-        },
-    },
 ];
 
 const getPresetThemes = () => {
@@ -54,15 +55,28 @@ const getPresetThemes = () => {
     return themes;
 };
 
-export const PresetThemes = () => {
+export interface PresetThemesProps {
+    onThemeSelected?: (theme: Partial<ProjectTheme>) => void;
+}
+
+export const PresetThemes = ({
+    onThemeSelected,
+}: PresetThemesProps) => {
     const presetThemes = getPresetThemes();
-    const { createTheme, error } = useThemes();
+    const { createTheme, error } = useTheme();
 
     const handleCreateTheme = async (index: number) => {
         const theme = presetThemes[index];
 
         try {
-            createTheme(theme);
+            const response = await createTheme({
+                name: theme.name,
+                colorScheme: theme.colorScheme,
+            });
+
+            if (response.newThemeData) {
+                onThemeSelected?.(response.newThemeData);
+            }
         } catch (err) {
             toast.error(error?.message || error?.networkError?.message || "");
         }

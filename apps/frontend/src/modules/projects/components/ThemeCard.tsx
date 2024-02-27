@@ -1,4 +1,5 @@
 import { ProjectTheme } from "@/generated/graphql";
+import { useStudioStore } from "@/modules/surveys/states/studio";
 import { CheckCircle, Pen } from "lucide-react";
 import React from "react";
 
@@ -24,6 +25,11 @@ export const ThemeCard = ({
 
     const getColorScheme = (theme: Partial<ProjectTheme>, key: string) => {
         return theme.colorScheme[key];
+    };
+
+    const editTheme = () => {
+        useStudioStore.setState({ editTheme: true });
+        toggleNewThemeModal();
     };
 
     return (
@@ -73,14 +79,14 @@ export const ThemeCard = ({
                 </div>
             </div>
 
-            {isHovered ? (
+            {isHovered && (
                 <Pen
                     size={8}
                     color="#AFAAC7"
-                    onClick={toggleNewThemeModal}
+                    onClick={() => editTheme()}
                     className={`mt-[6px] h-9 w-9 rounded-md bg-intg-bg-11 px-1 py-2 text-sm transition-all duration-500 ease-in-out hover:cursor-pointer hover:bg-intg-bg-9`}
                 />
-            ) : null}
+            )}
         </div>
     );
 };
