@@ -20,38 +20,7 @@ from integraflow.event.models import (
 )
 from integraflow.project.models import Project
 
-
-def _get_person(project_id: str, distinct_id: str):
-    return Person.objects.get(
-        project_id=project_id,
-        persondistinctid__project_id=project_id,
-        persondistinctid__distinct_id=distinct_id
-    )
-
-
-def _get_or_create_person(project_id: str, distinct_id: str):
-    try:
-        person = Person.objects.get(
-            project_id=project_id,
-            persondistinctid__project_id=project_id,
-            persondistinctid__distinct_id=str(distinct_id)
-        )
-    except Person.DoesNotExist:
-        try:
-            person = Person.objects.create(
-                project_id=project_id,
-                distinct_ids=[str(distinct_id)]
-            )
-            # Catch race condition where in between getting and creating,
-            # another request already created this person
-        except IntegrityError:
-            person = Person.objects.get(
-                project_id=project_id,
-                persondistinctid__project_id=project_id,
-                persondistinctid__distinct_id=str(distinct_id)
-            )
-
-    return person
+from .utils import get_or_create_person, get_person
 
 
 def _alias(
@@ -64,12 +33,15 @@ def _alias(
     new_person: Optional[Person] = None
 
     try:
-        old_person = _get_person(project_id, distinct_id=previous_distinct_id)
+        old_person = get_person(
+            project_id,
+            distinct_id=previous_distinct_id
+        )
     except Person.DoesNotExist:
         pass
 
     try:
-        new_person = _get_person(project_id, distinct_id)
+        new_person = get_person(project_id, distinct_id)
     except Person.DoesNotExist:
         pass
 
@@ -118,12 +90,20 @@ def _set_is_identified(
     distinct_id: str,
     is_identified: bool = True
 ) -> Person:
-    person = _get_or_create_person(project_id, distinct_id)
+    person = get_or_create_person(project_id, distinct_id)
     if not person.is_identified:
         person.is_identified = is_identified
         person.save()
 
     return person
+
+
+def is_valid_datetime(date):
+    try:
+        parser.isoparse(date)
+        return True
+    except ValueError:
+        return False
 
 
 def handle_timestamp(data: dict, now: str, sent_at: Optional[str]) -> datetime:
@@ -184,7 +164,7 @@ def _from_value_get_property_type(value):
     if isinstance(value, Number):
         return PropertyType.Numeric
 
-    if isinstance(value, datetime):
+    if is_valid_datetime(value):
         return PropertyType.Datetime
 
     return PropertyType.String
@@ -287,7 +267,7 @@ def _capture(
     event = sanitize_event_name(event)
 
     if not person:
-        person = _get_or_create_person(project_id, distinct_id)
+        person = get_or_create_person(project_id, distinct_id)
 
     person_attributes = person.attributes or {}
     person_attributes.update(attributes)
@@ -313,6 +293,13 @@ def _capture(
         person.attributes.update(properties)
     else:
         person.attributes = person_attributes
+
+        if attributes:
+            store_names_and_properties(
+                project=project,
+                event="$identify",
+                properties=person_attributes
+            )
 
     person.save()
 

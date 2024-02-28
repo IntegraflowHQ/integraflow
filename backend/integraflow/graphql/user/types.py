@@ -14,14 +14,20 @@ from integraflow.graphql.core.doc_category import (
     DOC_CATEGORY_USERS,
 )
 from integraflow.graphql.core.federation import federated_entity
-from integraflow.graphql.core.fields import FilterConnectionField, PermissionsField
+from integraflow.graphql.core.fields import (
+    FilterConnectionField,
+    PermissionsField
+)
 from integraflow.graphql.core.types.model import ModelObjectType
 from integraflow.graphql.organization.types import (
     AuthOrganization,
     OrganizationCountableConnection,
 )
 from integraflow.graphql.project.sorters import ProjectSortingInput
-from integraflow.graphql.project.types import Project, ProjectCountableConnection
+from integraflow.graphql.project.types import (
+    Project,
+    ProjectCountableConnection
+)
 from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.user import models
 
@@ -115,7 +121,7 @@ class User(AuthUser):
         **kwargs
     ):
         return create_connection_slice(
-            _root.organizations,
+            _root.organizations,  # type: ignore
             info,
             kwargs,
             OrganizationCountableConnection

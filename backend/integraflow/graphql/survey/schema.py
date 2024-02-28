@@ -21,16 +21,20 @@ from .mutations import (
     SurveyQuestionCreate,
     SurveyQuestionDelete,
     SurveyQuestionUpdate,
+    SurveyResponseCreate,
+    SurveyResponseUpdate,
     SurveyUpdate
 )
 from .resolvers import (
     resolve_channels,
     resolve_questions,
     resolve_survey,
+    resolve_survey_by_channel,
     resolve_surveys
 )
 from .sorters import SurveySortingInput
 from .types import (
+    BaseSurvey,
     Survey,
     SurveyChannelCountableConnection,
     SurveyCountableConnection,
@@ -85,6 +89,22 @@ class SurveyQueries(graphene.ObjectType):
         permissions=[AuthorizationFilters.PROJECT_MEMBER_ACCESS],
         doc_category=DOC_CATEGORY_SURVEYS,
     )
+    survey_by_channel = PermissionsField(
+        BaseSurvey,
+        id=graphene.Argument(
+            graphene.ID,
+            description="The ID of the channel.",
+            required=False
+        ),
+        link=graphene.Argument(
+            graphene.String,
+            description="Unique link of the channel.",
+            required=False
+        ),
+        description="Look up a survey by channel ID or link.",
+        permissions=[AuthorizationFilters.AUTHENTICATED_API],
+        doc_category=DOC_CATEGORY_SURVEYS,
+    )
 
     @staticmethod
     def resolve_channels(_root, info, **kwargs):
@@ -121,6 +141,10 @@ class SurveyQueries(graphene.ObjectType):
     def resolve_survey(_root, info, *, id=None, slug=None):
         return resolve_survey(info, id, slug)
 
+    @staticmethod
+    def resolve_survey_by_channel(_root, info, *, id=None, link=None):
+        return resolve_survey_by_channel(info, id, link)
+
 
 class SurveyMutations(graphene.ObjectType):
     survey_channel_create = SurveyChannelCreate.Field()
@@ -131,4 +155,6 @@ class SurveyMutations(graphene.ObjectType):
     survey_question_create = SurveyQuestionCreate.Field()
     survey_question_delete = SurveyQuestionDelete.Field()
     survey_question_update = SurveyQuestionUpdate.Field()
+    survey_response_create = SurveyResponseCreate.Field()
+    survey_response_update = SurveyResponseUpdate.Field()
     survey_update = SurveyUpdate.Field()
