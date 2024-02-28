@@ -1,13 +1,6 @@
 import { IntegraflowError, IntegraflowErrorType } from "@integraflow/sdk";
-import {
-    Event,
-    EventProperties,
-    ID,
-    QueuedRequest,
-    SurveyAnswer,
-    UserAttributes
-} from "../types";
-import { onDOMReady, parsedSurveys, uuidv4 } from "../utils";
+import { Event, EventProperties, ID, QueuedRequest, SurveyAnswer, UserAttributes } from "../types";
+import { getEventAttributes, getUserAttributes, onDOMReady, parsedSurveys, uuidv4 } from "../utils";
 import { Context } from "./context";
 import { RequestQueue, RetryQueue } from "./queue";
 import { getState, persistState, resetState } from "./storage";
@@ -27,20 +20,13 @@ export class SyncManager {
 
     init() {
         if (this.context.syncPolicy !== "off") {
-            this.requestQueue = new RequestQueue(
-                this.handleRequestQueue.bind(this)
-            );
-            this.retryQueue = new RetryQueue(
-                this.handleRequestQueue.bind(this)
-            );
+            this.requestQueue = new RequestQueue(this.handleRequestQueue.bind(this));
+            this.retryQueue = new RetryQueue(this.handleRequestQueue.bind(this));
             this.startSync();
         }
 
         // Use `onpagehide` if available, see https://calendar.perfplanet.com/2020/beaconing-in-practice/#beaconing-reliability-avoiding-abandons
-        window?.addEventListener?.(
-            "onpagehide" in self ? "pagehide" : "unload",
-            this.handleUnload.bind(this)
-        );
+        window?.addEventListener?.("onpagehide" in self ? "pagehide" : "unload", this.handleUnload.bind(this));
     }
 
     async startSync() {
@@ -105,24 +91,16 @@ export class SyncManager {
         return state.user.id;
     }
 
-    async identifyUser(
-        id: ID,
-        attributes?: UserAttributes
-    ): Promise<UserAttributes> {
+    async identifyUser(id: ID, attributes?: UserAttributes): Promise<UserAttributes> {
         const state = await getState(this.context);
-        if (
-            state.user?.id &&
-            state.user?.id !== id &&
-            state.user.id !== state.installId
-        ) {
-            throw new Error(
-                "User ID cannot be changed after it has been set. You need to reset the user first."
-            );
+        if (state.user?.id && state.user?.id !== id && state.user.id !== state.installId) {
+            throw new Error("User ID cannot be changed after it has been set. You need to reset the user first.");
         }
 
         state.user = {
             ...(state.user ?? {}),
             ...(attributes ?? {}),
+            ...getUserAttributes(),
             id
         };
 
@@ -134,9 +112,7 @@ export class SyncManager {
         return state.user;
     }
 
-    async updateUserAttribute(
-        attributes: UserAttributes
-    ): Promise<UserAttributes> {
+    async updateUserAttribute(attributes: UserAttributes): Promise<UserAttributes> {
         const state = await getState(this.context);
 
         const userId = state.user?.id || state.installId;
@@ -148,11 +124,7 @@ export class SyncManager {
         this.context.broadcast("audienceUpdated", {});
     }
 
-    async trackEvent(
-        name: string,
-        properties?: EventProperties,
-        attributes?: UserAttributes
-    ): Promise<Event> {
+    async trackEvent(name: string, properties?: EventProperties, attributes?: UserAttributes): Promise<Event> {
         const state = await getState(this.context);
 
         const event: Event = {
@@ -162,7 +134,8 @@ export class SyncManager {
             properties,
             userId: state.user?.id,
             attributes: {
-                ...(attributes ?? {})
+                ...(attributes ?? {}),
+                ...getEventAttributes()
             }
         };
 
@@ -178,10 +151,7 @@ export class SyncManager {
             payload: {
                 ...event,
                 timestamp: new Date(event.timestamp),
-                userId:
-                    typeof state.user?.id === "number"
-                        ? String(state.user?.id)
-                        : state.user?.id,
+                userId: typeof state.user?.id === "number" ? String(state.user?.id) : state.user?.id,
                 properties: JSON.stringify(event.properties ?? {}),
                 attributes: JSON.stringify(state.user ?? {})
             }
@@ -190,11 +160,7 @@ export class SyncManager {
         return event;
     }
 
-    async markSurveyAsSeen(
-        surveyId: ID,
-        presentationTime: Date = new Date(),
-        isRecurring: boolean = false
-    ) {
+    async markSurveyAsSeen(surveyId: ID, presentationTime: Date = new Date(), isRecurring: boolean = false) {
         const state = await getState(this.context);
 
         const {
@@ -235,20 +201,13 @@ export class SyncManager {
             payload: {
                 id: responseId,
                 surveyId,
-                userId:
-                    typeof state.user?.id === "number"
-                        ? String(state.user?.id)
-                        : state.user?.id,
+                userId: typeof state.user?.id === "number" ? String(state.user?.id) : state.user?.id,
                 attributes: JSON.stringify(state.user ?? {})
             }
         });
     }
 
-    async persistSurveyAnswers(
-        surveyId: ID,
-        questionId: ID,
-        answers: SurveyAnswer[]
-    ) {
+    async persistSurveyAnswers(surveyId: ID, questionId: ID, answers: SurveyAnswer[]) {
         const state = await getState(this.context);
 
         const { surveyAnswers = {}, surveyResponses = new Map() } = state;
@@ -273,10 +232,7 @@ export class SyncManager {
             payloadId: responseId,
             payload: {
                 response: JSON.stringify([{ questionId, answers }]),
-                userId:
-                    typeof state.user?.id === "number"
-                        ? String(state.user?.id)
-                        : state.user?.id,
+                userId: typeof state.user?.id === "number" ? String(state.user?.id) : state.user?.id,
                 attributes: JSON.stringify(state.user ?? {})
             }
         });
@@ -312,10 +268,7 @@ export class SyncManager {
             payload: {
                 completedAt: new Date(),
                 completed: true,
-                userId:
-                    typeof state.user?.id === "number"
-                        ? String(state.user?.id)
-                        : state.user?.id,
+                userId: typeof state.user?.id === "number" ? String(state.user?.id) : state.user?.id,
                 attributes: JSON.stringify(state.user ?? {})
             }
         });
@@ -324,10 +277,7 @@ export class SyncManager {
     private async handleRequestQueue(request: QueuedRequest) {
         try {
             if (request.payloadId) {
-                await (this.context.client as any)[request.action](
-                    request.payloadId,
-                    request.payload
-                );
+                await (this.context.client as any)[request.action](request.payloadId, request.payload);
                 return;
             }
 
@@ -335,8 +285,7 @@ export class SyncManager {
         } catch (e) {
             if (
                 e instanceof IntegraflowError &&
-                (e.type === IntegraflowErrorType.NetworkError ||
-                    e.type === IntegraflowErrorType.Unknown)
+                (e.type === IntegraflowErrorType.NetworkError || e.type === IntegraflowErrorType.Unknown)
             ) {
                 this.retryQueue?.enqueue(request);
                 return;

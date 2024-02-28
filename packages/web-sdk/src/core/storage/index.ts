@@ -1,13 +1,8 @@
 import { State } from "../../types";
-import { parsedSurveys, uuidv4 } from "../../utils";
+import { getUserAttributes, parsedSurveys, uuidv4 } from "../../utils";
 import { Context } from "../context";
 import { Survey } from "./../../types/index";
-import {
-    Store,
-    del as idbDel,
-    get as idbGet,
-    set as idbSet
-} from "./idb-keyval";
+import { Store, del as idbDel, get as idbGet, set as idbSet } from "./idb-keyval";
 
 let store: Store;
 if (typeof indexedDB !== "undefined") {
@@ -29,10 +24,7 @@ export function get<T>(key: IDBValidKey): Promise<T> {
     return idbGet(key, store);
 }
 
-export async function set<T extends any>(
-    key: IDBValidKey,
-    value: T
-): Promise<T> {
+export async function set<T extends any>(key: IDBValidKey, value: T): Promise<T> {
     if (store) {
         await idbSet(key, value, store);
     }
@@ -52,8 +44,7 @@ export async function getState(ctx: Context): Promise<State> {
     const cacheKeys = getCacheKeys("state");
     let state: State = (await get<State>(cacheKeys.STATE_CACHE_KEY)) ?? {};
 
-    const lastLoadTime =
-        (await get<number>(cacheKeys.STATE_CACHE_KEY_UPDATED)) ?? 0;
+    const lastLoadTime = (await get<number>(cacheKeys.STATE_CACHE_KEY_UPDATED)) ?? 0;
     let updatedRemoteState = false;
 
     if (Date.now() - lastLoadTime > MAX_CACHE_AGE_MS) {
@@ -75,7 +66,7 @@ export async function getState(ctx: Context): Promise<State> {
             state = {
                 surveys,
                 installId,
-                user: state.user ?? { id: installId },
+                user: state.user ?? { id: installId, ...getUserAttributes() },
                 seenSurveyIds: state.seenSurveyIds ?? new Set(),
                 lastPresentationTimes: state.lastPresentationTimes ?? new Map(),
                 surveyAnswers: state.surveyAnswers ?? {}
@@ -104,10 +95,7 @@ export async function persistState(ctx: Context, state: State): Promise<void> {
     ctx.setState(state);
 }
 
-export async function resetState(
-    ctx: Context,
-    resetInstallId: boolean
-): Promise<void> {
+export async function resetState(ctx: Context, resetInstallId: boolean): Promise<void> {
     const state = await getState(ctx);
 
     state.user = undefined;

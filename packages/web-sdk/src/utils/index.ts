@@ -253,7 +253,24 @@ function getBrowser() {
     };
 }
 
-export function getBrowserInfo() {
+export function getEventAttributes() {
+    if (typeof window === "undefined") {
+        return {};
+    }
+
+    const browser = getBrowser();
+    const os = getOperatingSystem();
+
+    return {
+        os: os.os,
+        os_version: os.version,
+        browser: browser.browser,
+        browser_version: browser.version,
+        device_type: getDeviceType()
+    };
+}
+
+export function getUserAttributes() {
     if (typeof window === "undefined") {
         return {};
     }
@@ -276,6 +293,9 @@ export function getBrowserInfo() {
         current_url: window.location.href,
         host: window.location.host,
         pathname: window.location.pathname,
-        time: new Date().toISOString()
+        time: new Date().toISOString(),
+        lib: "web-sdk",
+        lib_version: process.env.VERSION ?? "Unknown",
+        bucket: Math.ceil(Math.random() * 1000)
     };
 }
