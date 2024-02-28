@@ -22,7 +22,7 @@ export const CTAFields = () => {
             <EditorTextInput
                 placeholder=""
                 showMention={true}
-                options={tagOptions(parsedQuestions, question!)}
+                tagOptions={tagOptions(parsedQuestions, question!)}
                 onChange={(e) => {
                     updateQuestion(
                         {

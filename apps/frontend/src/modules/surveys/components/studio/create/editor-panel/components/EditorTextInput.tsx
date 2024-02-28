@@ -1,9 +1,11 @@
 import { cn, stripHtmlTags } from "@/utils";
+import { getfromDB, sendToDB } from "@/utils/question";
 import { StringMap } from "quill";
 import "quill-mention";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { useObserveScrollPosition } from "react-scroll-to-bottom";
 
 export interface EditorTextProps {
     label?: string;
@@ -12,10 +14,11 @@ export interface EditorTextProps {
     showCharacterCount?: boolean;
     maxCharacterCount?: number;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    options?: {
+    tagOptions?: {
         id: string;
         value: string;
         type: string;
+        disabled: boolean;
     }[];
     defaultValue?: string;
     showMention: boolean;
@@ -27,64 +30,57 @@ export const EditorTextInput = ({
     showCharacterCount = true,
     maxCharacterCount = 500,
     defaultValue,
-    options,
+    tagOptions,
     onChange,
-    showMention = true,
+    showMention = false,
 }: EditorTextProps) => {
-    const [textContent, setTextContent] = useState(decode(defaultValue ?? ""));
+    const [textContent, setTextContent] = useState(getfromDB(defaultValue ?? "", tagOptions ?? []));
     const [displayInputField, setDisplayInputField] = useState(false);
     const [fallbackValue, setFallbackValue] = useState(" ");
     const [inputFieldPosition, setInputFieldPosition] = useState({ left: 0, bottom: 0 });
 
     const ref = useRef<ReactQuill>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
     const mentionRef = useRef<HTMLSpanElement>();
-    console.log("textContent: ", textContent);
+
+    useEffect(() => {
+        if (displayInputField && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [displayInputField]);
 
     useEffect(() => {
         if (!ref.current) {
             return;
         }
-        console.log("fallback: ", fallbackValue);
         const editor = ref.current.getEditor();
         const unprivilegedEditor = ref.current.makeUnprivilegedEditor(editor);
         onChange({
             target: {
-                value: encode(unprivilegedEditor?.getHTML()),
+                value: sendToDB(unprivilegedEditor?.getHTML()),
             },
         } as React.ChangeEvent<HTMLInputElement>);
-        // console.log(unprivilegedEditor.getHTML());
     }, [fallbackValue]);
 
-    // useEffect(() => {
-    //     const calculateFallbackPosition = () => {
-    //         if (!mentionRef.current) {
-    //             return;
-    //         }
+    const calculateFallbackPosition = useCallback(() => {
+        if (!mentionRef.current) {
+            return;
+        }
+        const { left, top } = mentionRef.current.getBoundingClientRect();
+        setInputFieldPosition({ left, bottom: window.innerHeight - top });
+    }, [mentionRef]);
 
-    //         const { left, top } = mentionRef.current.getBoundingClientRect();
-
-    //         setDisplayInputField(true);
-    //         setInputFieldPosition({ left, bottom: window.innerHeight - top });
-    //     };
-
-    //     mentionRef.current?.addEventListener("scroll", calculateFallbackPosition);
-    //     window.addEventListener("resize", calculateFallbackPosition);
-
-    //     return () => {
-    //         mentionRef.current?.removeEventListener("", calculateFallbackPosition);
-    //         window.removeEventListener("resize", calculateFallbackPosition);
-    //     };
-    // }, [mentionRef]);
+    useObserveScrollPosition(calculateFallbackPosition);
 
     useEffect(() => {
-        const handleMentionClick = (event) => {
-            const mentionSpan = event.target.closest(".mention");
-
+        const handleMentionClick = (event: MouseEvent) => {
+            const mentionSpan = (event.target as HTMLSpanElement)?.closest(".mention");
             if (mentionSpan) {
-                mentionRef.current = mentionSpan;
-                const { left, top } = mentionSpan.getBoundingClientRect();
+                mentionRef.current = mentionSpan as HTMLSpanElement;
+                const newFallbackValue = mentionSpan.getAttribute("data-fallback");
                 setDisplayInputField(true);
-                setInputFieldPosition({ left, bottom: window.innerHeight - top });
+                setFallbackValue(newFallbackValue ?? "");
+                calculateFallbackPosition();
             }
         };
 
@@ -92,27 +88,7 @@ export const EditorTextInput = ({
         return () => {
             document.removeEventListener("click", handleMentionClick);
         };
-    }, [displayInputField]);
-
-    useEffect(() => {
-        const handleInputChange = (event) => {
-            const mentionSpan = document.querySelector('.mention[data-fallback="true"]');
-            if (mentionSpan) {
-                mentionSpan.setAttribute("data-fallback", event.target.value);
-            }
-        };
-
-        const inputField = document.querySelector(".mention-input");
-        if (inputField) {
-            inputField.addEventListener("input", handleInputChange);
-        }
-
-        return () => {
-            if (inputField) {
-                inputField.removeEventListener("input", handleInputChange);
-            }
-        };
-    }, []);
+    }, [displayInputField, fallbackValue]);
 
     const modules: StringMap = useMemo(() => {
         return {
@@ -126,60 +102,31 @@ export const EditorTextInput = ({
                 showDenotationChar: false,
                 spaceAfterInsert: true,
                 positioningStrategy: "absolute",
-                source: function (searchTerm, renderList, mentionChar) {
+                source: function (searchTerm: string, renderList: (list: unknown[]) => void) {
+                    console.log(renderList);
                     if (searchTerm.startsWith(" ")) {
                         renderList([]);
                         return;
                     }
-                    renderList(options);
+                    renderList(tagOptions as []);
                 },
-                onSelect: function (item, insertItem) {
+                onSelect: function (item: DOMStringMap, insertItem: (args: unknown) => unknown) {
                     const newItem = item;
-                    const details = newItem.id.split(" ");
-                    insertItem({ ...newItem, value: item.value, id: details[0], type: details[1], fallback: " " });
+                    const details = newItem?.id?.split(" ");
+                    insertItem({
+                        ...newItem,
+                        value: item.value,
+                        id: details ? details[0] : "",
+                        type: details ? details[1] : "",
+                        fallback: "",
+                    });
                 },
             },
         };
     }, []);
 
-    function resolveQuestionIndex(questionId: string): string {
-        const option = options?.find((o) => {
-            const optionId = o.id.split(" ")[0];
-            return questionId === optionId;
-        });
-
-        return option?.value as string;
-    }
-
-    function encode(textContent: string): string {
-        const encodedText = textContent.replace(
-            /<span class="mention"([^>]*)data-id="([^"]*)"([^>]*)data-type="([^"]*)"([^>]*)data-fallback="([^"]*)"([^>]*)>(.*?)<\/span>/g,
-            (_, __, dataId, ___, dataType, ____, fallback) => {
-                console.log(dataId, dataType, fallback);
-                if (dataId === "attribute") {
-                    return `{{${dataType}|${fallback}}}`;
-                }
-                return `{{${dataType}:${dataId}|${fallback}}}`;
-            },
-        );
-
-        return encodedText.split("</span>").join("");
-    }
-
-    function decode(encodedText: string): string {
-        const decodedText = encodedText
-            .replace(/{{answer:([^}]+)\|([^}]+)}}/g, (_, id, fallback) => {
-                return `<span class="mention" data-index="4" data-denotation-char="" data-value="${resolveQuestionIndex(id)}" data-id="${id}" data-type="answer" data-fallback="${fallback}">﻿<span contenteditable="false">${resolveQuestionIndex(id)}</span>﻿</span>`;
-            })
-            .replace(/{{attribute.([^}]+)\|([^}]+)}}/g, (_, attr, fallback) => {
-                return `<span class="mention" data-index="4" data-denotation-char="" data-value="${attr}" data-id="attribute" data-type="attribute.${attr}" data-fallback="${fallback}">﻿<span contenteditable="false">${attr}</span>﻿</span>`;
-            });
-
-        return decodedText + " ";
-    }
-
     return (
-        <div className={cn(`${className} w-full`)}>
+        <div className={cn(`${className} relative w-full`)}>
             <style>
                 {`
                 .mention{
@@ -193,7 +140,7 @@ export const EditorTextInput = ({
                 .ql-mention-list-container {
                     overflow-y:scroll;
                     overflow-x: hidden;
-                    width: 100px;
+                    max-width: 250px;
                     padding: 4px;
                     position: absolute;
                     z-index: 1000;
@@ -213,22 +160,23 @@ export const EditorTextInput = ({
             {displayInputField && (
                 <input
                     type="text"
+                    ref={inputRef}
+                    value={fallbackValue}
                     onChange={(e) => {
                         if (mentionRef.current) {
-                            if (e.target.value === "") {
-                                mentionRef.current.setAttribute("data-fallback", " ");
-                                setFallbackValue(e.target.value);
-                            } else if (e.target.value) {
-                                mentionRef.current.setAttribute("data-fallback", e.target.value);
-                                setFallbackValue(e.target.value);
-                            }
+                            mentionRef.current.setAttribute("data-fallback", e.target.value);
+                            setFallbackValue(e.target.value);
                         }
                     }}
-                    className="mention-input"
+                    className="mention-input border-0 bg-intg-bg-4 p-0.5 text-xs text-intg-text"
+                    onBlur={() => {
+                        setDisplayInputField(false);
+                    }}
                     style={{
                         position: "fixed",
+                        zIndex: 9,
                         left: inputFieldPosition.left,
-                        bottom: inputFieldPosition.bottom,
+                        bottom: inputFieldPosition.bottom + 5,
                     }}
                 />
             )}
@@ -236,15 +184,15 @@ export const EditorTextInput = ({
                 <ReactQuill
                     ref={ref}
                     theme="bubble"
-                    onChange={(value, delta, source, editor) => {
+                    onChange={(value) => {
                         setTextContent(value);
                         onChange({
                             target: {
-                                value: encode(value),
+                                value: sendToDB(value),
                             },
                         } as React.ChangeEvent<HTMLInputElement>);
                     }}
-                    value={textContent}
+                    defaultValue={textContent}
                     style={{
                         width: "100%",
                         backgroundColor: "#272138",
@@ -256,23 +204,21 @@ export const EditorTextInput = ({
                 <ReactQuill
                     ref={ref}
                     theme="snow"
-                    onChange={(value, delta, source, editor) => {
+                    onChange={(value) => {
                         setTextContent(value);
                         onChange({
                             target: {
-                                value: encode(value),
+                                value: sendToDB(value),
                             },
                         } as React.ChangeEvent<HTMLInputElement>);
                     }}
                     modules={{
                         toolbar: false,
                     }}
-                    value={textContent}
+                    defaultValue={textContent}
                     style={{
-                        height: "2.5rem",
                         width: "100%",
-                        border: "1px solid red",
-                        backgroundColor: "red",
+                        backgroundColor: "#272138",
                     }}
                 />
             )}
