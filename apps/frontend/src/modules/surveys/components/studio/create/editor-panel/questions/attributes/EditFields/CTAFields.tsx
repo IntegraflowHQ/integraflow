@@ -21,6 +21,7 @@ export const CTAFields = () => {
         <div>
             <EditorTextInput
                 placeholder=""
+                showMention={true}
                 options={tagOptions(parsedQuestions, question!)}
                 onChange={(e) => {
                     updateQuestion(
@@ -36,6 +37,7 @@ export const CTAFields = () => {
             {showDescription ? (
                 <div className="mt-4 flex items-center justify-between gap-4">
                     <EditorTextInput
+                        showMention={false}
                         label={"Description"}
                         placeholder=""
                         className="flex-1"

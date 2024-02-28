@@ -2,7 +2,7 @@ import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ParsedQuestion } from "@/types";
-import { addEllipsis } from "@/utils";
+import { addEllipsis, stripHtmlTags } from "@/utils";
 import { questionTypes } from "@/utils/survey";
 import * as Accordion from "@radix-ui/react-accordion";
 import RatingIcon from "assets/icons/studio/rating.png";
@@ -69,11 +69,9 @@ export default function UpdateQuestion() {
                                                 </div>
                                                 <div className="w-[415px] rounded-lg bg-intg-bg-15 px-[16px] py-4 text-start text-sm text-intg-text-1 ">
                                                     {question.label ? (
-                                                        addEllipsis(question.label, 40)
+                                                        addEllipsis(stripHtmlTags(question.label), 40)
                                                     ) : (
-                                                        <p className="px-[1rem] py-[.8rem] text-sm">
-                                                            Enter your text here
-                                                        </p>
+                                                        <p className="text-sm">Enter your text here</p>
                                                     )}
                                                 </div>
                                             </div>

@@ -1,7 +1,7 @@
 import { cn, stripHtmlTags } from "@/utils";
 import { StringMap } from "quill";
 import "quill-mention";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
@@ -18,6 +18,7 @@ export interface EditorTextProps {
         type: string;
     }[];
     defaultValue?: string;
+    showMention: boolean;
 }
 
 export const EditorTextInput = ({
@@ -28,10 +29,90 @@ export const EditorTextInput = ({
     defaultValue,
     options,
     onChange,
+    showMention = true,
 }: EditorTextProps) => {
     const [textContent, setTextContent] = useState(decode(defaultValue ?? ""));
+    const [displayInputField, setDisplayInputField] = useState(false);
+    const [fallbackValue, setFallbackValue] = useState(" ");
+    const [inputFieldPosition, setInputFieldPosition] = useState({ left: 0, bottom: 0 });
 
-    const [displayFallbackField, setDisplayFallbackField] = useState(false);
+    const ref = useRef<ReactQuill>(null);
+    const mentionRef = useRef<HTMLSpanElement>();
+    console.log("textContent: ", textContent);
+
+    useEffect(() => {
+        if (!ref.current) {
+            return;
+        }
+        console.log("fallback: ", fallbackValue);
+        const editor = ref.current.getEditor();
+        const unprivilegedEditor = ref.current.makeUnprivilegedEditor(editor);
+        onChange({
+            target: {
+                value: encode(unprivilegedEditor?.getHTML()),
+            },
+        } as React.ChangeEvent<HTMLInputElement>);
+        // console.log(unprivilegedEditor.getHTML());
+    }, [fallbackValue]);
+
+    // useEffect(() => {
+    //     const calculateFallbackPosition = () => {
+    //         if (!mentionRef.current) {
+    //             return;
+    //         }
+
+    //         const { left, top } = mentionRef.current.getBoundingClientRect();
+
+    //         setDisplayInputField(true);
+    //         setInputFieldPosition({ left, bottom: window.innerHeight - top });
+    //     };
+
+    //     mentionRef.current?.addEventListener("scroll", calculateFallbackPosition);
+    //     window.addEventListener("resize", calculateFallbackPosition);
+
+    //     return () => {
+    //         mentionRef.current?.removeEventListener("", calculateFallbackPosition);
+    //         window.removeEventListener("resize", calculateFallbackPosition);
+    //     };
+    // }, [mentionRef]);
+
+    useEffect(() => {
+        const handleMentionClick = (event) => {
+            const mentionSpan = event.target.closest(".mention");
+
+            if (mentionSpan) {
+                mentionRef.current = mentionSpan;
+                const { left, top } = mentionSpan.getBoundingClientRect();
+                setDisplayInputField(true);
+                setInputFieldPosition({ left, bottom: window.innerHeight - top });
+            }
+        };
+
+        document.addEventListener("click", handleMentionClick);
+        return () => {
+            document.removeEventListener("click", handleMentionClick);
+        };
+    }, [displayInputField]);
+
+    useEffect(() => {
+        const handleInputChange = (event) => {
+            const mentionSpan = document.querySelector('.mention[data-fallback="true"]');
+            if (mentionSpan) {
+                mentionSpan.setAttribute("data-fallback", event.target.value);
+            }
+        };
+
+        const inputField = document.querySelector(".mention-input");
+        if (inputField) {
+            inputField.addEventListener("input", handleInputChange);
+        }
+
+        return () => {
+            if (inputField) {
+                inputField.removeEventListener("input", handleInputChange);
+            }
+        };
+    }, []);
 
     const modules: StringMap = useMemo(() => {
         return {
@@ -55,7 +136,7 @@ export const EditorTextInput = ({
                 onSelect: function (item, insertItem) {
                     const newItem = item;
                     const details = newItem.id.split(" ");
-                    insertItem({ ...newItem, value: item.value, id: details[0], type: details[1] });
+                    insertItem({ ...newItem, value: item.value, id: details[0], type: details[1], fallback: " " });
                 },
             },
         };
@@ -71,14 +152,14 @@ export const EditorTextInput = ({
     }
 
     function encode(textContent: string): string {
-        // Replace span tags with placeholders
         const encodedText = textContent.replace(
-            /<span class="mention"([^>]*)data-id="([^"]*)"([^>]*)data-type="([^"]*)"([^>]*)>(.*?)<\/span>/g,
-            (_, __, dataId, ___, dataType) => {
+            /<span class="mention"([^>]*)data-id="([^"]*)"([^>]*)data-type="([^"]*)"([^>]*)data-fallback="([^"]*)"([^>]*)>(.*?)<\/span>/g,
+            (_, __, dataId, ___, dataType, ____, fallback) => {
+                console.log(dataId, dataType, fallback);
                 if (dataId === "attribute") {
-                    return `{{${dataType}}}`;
+                    return `{{${dataType}|${fallback}}}`;
                 }
-                return `{{${dataType}:${dataId}}}`;
+                return `{{${dataType}:${dataId}|${fallback}}}`;
             },
         );
 
@@ -86,24 +167,19 @@ export const EditorTextInput = ({
     }
 
     function decode(encodedText: string): string {
-        // Replace placeholders with actual HTML tags
         const decodedText = encodedText
-            .replace(/{{answer:([^}]+)}}/g, (match, id) => {
-                return `<span class="mention" data-index="4" data-denotation-char="" data-value="${resolveQuestionIndex(id)}" data-id="${id}" data-type="answer">﻿<span contenteditable="false">${resolveQuestionIndex(id)}</span>﻿</span>`;
+            .replace(/{{answer:([^}]+)\|([^}]+)}}/g, (_, id, fallback) => {
+                return `<span class="mention" data-index="4" data-denotation-char="" data-value="${resolveQuestionIndex(id)}" data-id="${id}" data-type="answer" data-fallback="${fallback}">﻿<span contenteditable="false">${resolveQuestionIndex(id)}</span>﻿</span>`;
             })
-            .replace(/{{attribute.([^}]+)}}/g, (_, attr) => {
-                return `<span class="mention" data-index="4" data-denotation-char="" data-value="${attr}" data-id="attribute" data-type="attribute.${attr}">﻿<span contenteditable="false">${attr}</span>﻿</span>`;
+            .replace(/{{attribute.([^}]+)\|([^}]+)}}/g, (_, attr, fallback) => {
+                return `<span class="mention" data-index="4" data-denotation-char="" data-value="${attr}" data-id="attribute" data-type="attribute.${attr}" data-fallback="${fallback}">﻿<span contenteditable="false">${attr}</span>﻿</span>`;
             });
 
         return decodedText + " ";
     }
 
-    const handleMentionClicked = (event: Event) => {
-        setDisplayFallbackField(true);
-    };
-
     return (
-        <div className={cn(`${className} relative w-full`)}>
+        <div className={cn(`${className} w-full`)}>
             <style>
                 {`
                 .mention{
@@ -133,26 +209,73 @@ export const EditorTextInput = ({
             <label htmlFor={label} className="text-sm font-normal text-intg-text-2">
                 {label}
             </label>
-            <ReactQuill
-                theme="bubble"
-                onChange={(value, delta, source, editor) => {
-                    setTextContent(value);
-                    onChange({
-                        target: {
-                            value: encode(value),
-                        },
-                    } as React.ChangeEvent<HTMLInputElement>);
-                }}
-                value={textContent}
-                defaultValue={defaultValue}
-                style={{
-                    height: "2.5rem",
-                    width: "100%",
-                    backgroundColor: "#272138",
-                }}
-                formats={["mention"]}
-                modules={modules}
-            />
+
+            {displayInputField && (
+                <input
+                    type="text"
+                    onChange={(e) => {
+                        if (mentionRef.current) {
+                            if (e.target.value === "") {
+                                mentionRef.current.setAttribute("data-fallback", " ");
+                                setFallbackValue(e.target.value);
+                            } else if (e.target.value) {
+                                mentionRef.current.setAttribute("data-fallback", e.target.value);
+                                setFallbackValue(e.target.value);
+                            }
+                        }
+                    }}
+                    className="mention-input"
+                    style={{
+                        position: "fixed",
+                        left: inputFieldPosition.left,
+                        bottom: inputFieldPosition.bottom,
+                    }}
+                />
+            )}
+            {showMention ? (
+                <ReactQuill
+                    ref={ref}
+                    theme="bubble"
+                    onChange={(value, delta, source, editor) => {
+                        setTextContent(value);
+                        onChange({
+                            target: {
+                                value: encode(value),
+                            },
+                        } as React.ChangeEvent<HTMLInputElement>);
+                    }}
+                    value={textContent}
+                    style={{
+                        width: "100%",
+                        backgroundColor: "#272138",
+                    }}
+                    formats={["mention"]}
+                    modules={modules}
+                />
+            ) : (
+                <ReactQuill
+                    ref={ref}
+                    theme="snow"
+                    onChange={(value, delta, source, editor) => {
+                        setTextContent(value);
+                        onChange({
+                            target: {
+                                value: encode(value),
+                            },
+                        } as React.ChangeEvent<HTMLInputElement>);
+                    }}
+                    modules={{
+                        toolbar: false,
+                    }}
+                    value={textContent}
+                    style={{
+                        height: "2.5rem",
+                        width: "100%",
+                        border: "1px solid red",
+                        backgroundColor: "red",
+                    }}
+                />
+            )}
             {showCharacterCount && (
                 <div className="absolute bottom-0 right-0 translate-y-1/2 rounded bg-[#2B2045] p-1 text-xs text-intg-text">
                     {stripHtmlTags(defaultValue!)?.length}/{maxCharacterCount}
