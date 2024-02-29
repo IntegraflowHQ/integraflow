@@ -237,24 +237,25 @@ export const rangeOptions = (question: ParsedQuestion) => {
     });
 };
 
-const recallOptions = (questions: ParsedQuestion[], openQuestion: ParsedQuestion) => {
+export const recallOptions = (questions: ParsedQuestion[], openQuestion: ParsedQuestion) => {
     const newQuestions = questions.filter(
         (q) => q.type !== SurveyQuestionTypeEnum.Form && q.type !== SurveyQuestionTypeEnum.Cta,
     );
+
     return [
         ...newQuestions
             .slice(
                 0,
-                questions.findIndex((q) => q.id === openQuestion?.id),
+                newQuestions.findIndex((q) => q.id === openQuestion?.id),
             )
             .map((q) => ({
                 value: ` ${q.orderNumber}. ${!stripHtmlTags(q.label) ? "-" : stripHtmlTags(q.label)}`,
                 id: q.id + " " + `answer`,
                 type: "recalledQuestion",
-                // disabled: false,
             })),
     ];
 };
+
 const attributes = [
     {
         node: {
@@ -317,7 +318,6 @@ const userAttributeOptions = attributes.map((attr) => ({
     value: attr.node.name,
     id: "attribute" + " " + `attribute.${attr.node.name}`,
     type: "userAttribute",
-    // disabled: false,
 }));
 
 export const tagOptions = (questions: ParsedQuestion[], openQuestion: ParsedQuestion): TagOption[] => {
@@ -327,10 +327,10 @@ export const tagOptions = (questions: ParsedQuestion[], openQuestion: ParsedQues
     if (recallOpts.length === 0) {
         return [{ id: "UserAttribute", value: "User Attribute", disabled: true, type: "" }, ...userAttrOpts];
     } else if (userAttrOpts.length === 0) {
-        return [{ id: "recalledQuestion", value: "recall from", disabled: true, type: "" }, ...recallOpts];
+        return [{ id: "recalledQuestion", value: "Recall from", disabled: true, type: "" }, ...recallOpts];
     } else {
         return [
-            { id: "recalledQuestion", value: "recall from", disabled: true, type: "" },
+            { id: "recalledQuestion", value: "Recall from", disabled: true, type: "" },
             ...recallOpts,
             { id: "UserAttribute", value: "User Attribute", disabled: true, type: "" },
             ...userAttrOpts,
@@ -363,10 +363,10 @@ export function sendToDB(textContent: string): string {
 
 export function getfromDB(encodedText: string, tagOptions: TagOption[]): string {
     const decodedText = encodedText
-        .replace(/{{answer:([^}]+) \| "([^}]+)"}}/g, (_, id, fallback) => {
+        .replace(/{{answer:([^ ]+) \| "([^"]*)"}}/g, (_, id, fallback) => {
             return `<span class="mention" data-index="4" data-denotation-char="" data-value="${resolveQuestionIndex(id, tagOptions)}" data-id="${id}" data-type="answer" data-fallback="${fallback}"><span contenteditable="false">${resolveQuestionIndex(id, tagOptions)}</span></span>`;
         })
-        .replace(/{{attribute.([^}]+) \| "([^}]+)"}}/g, (_, attr, fallback) => {
+        .replace(/{{attribute.([^ ]+) \| "([^"]*)"}}/g, (_, attr, fallback) => {
             return `<span class="mention" data-index="4" data-denotation-char="" data-value="${attr}" data-id="attribute" data-type="attribute.${attr}" data-fallback="${fallback}"><span contenteditable="false">${attr}</span></span>`;
         });
 

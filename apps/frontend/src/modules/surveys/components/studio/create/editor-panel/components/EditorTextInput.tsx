@@ -32,7 +32,6 @@ export const EditorTextInput = ({
     placeholder,
     showMention = false,
 }: EditorTextProps) => {
-    const [textContent, setTextContent] = useState(getfromDB(defaultValue ?? "", tagOptions ?? []));
     const [displayInputField, setDisplayInputField] = useState(false);
     const [fallbackValue, setFallbackValue] = useState(" ");
     const [inputFieldPosition, setInputFieldPosition] = useState({ left: 0, bottom: 0 });
@@ -101,7 +100,6 @@ export const EditorTextInput = ({
                 spaceAfterInsert: true,
                 positioningStrategy: "absolute",
                 source: function (searchTerm: string, renderList: (list: unknown[]) => void) {
-                    console.log(renderList);
                     if (searchTerm.startsWith(" ")) {
                         renderList([]);
                         return;
@@ -128,7 +126,7 @@ export const EditorTextInput = ({
             <style>
                 {`
                 .mention{
-                background-color: #392D72;
+                    background-color: #392D72;
                     padding: 4px;
                     border-radius: 4px;
                 }
@@ -136,14 +134,24 @@ export const EditorTextInput = ({
                     visibility: hidden;
                 }
                 .ql-mention-list-container {
+                    border-radius:4px;
                     overflow-y:scroll;
                     overflow-x: hidden;
-                    max-width: 250px;
+                    width: 180px;
                     padding: 4px;
                     position: absolute;
                     z-index: 1000;
                     max-height: 200px;
                     background-color: #392D72;
+                }
+                .ql-mention-list-item {
+                    cursor: pointer;
+                    padding: 1px 1px;
+                }
+                .ql-mention-list-item[data-disabled="true"]{
+                    pointer-events:none;
+                    font-weight:600;
+                    font-size: 12px;
                 }
                 .mention[aria-disabled="true"]{
                     background-color: purple;
@@ -185,17 +193,17 @@ export const EditorTextInput = ({
                     ref={ref}
                     theme="bubble"
                     onChange={(value) => {
-                        setTextContent(value);
                         onChange({
                             target: {
                                 value: sendToDB(value),
                             },
                         } as React.ChangeEvent<HTMLInputElement>);
                     }}
-                    defaultValue={textContent}
+                    defaultValue={getfromDB(defaultValue ?? "", tagOptions ?? [])}
                     style={{
                         width: "100%",
                         backgroundColor: "#272138",
+                        borderRadius: "8px",
                     }}
                     formats={["mention"]}
                     modules={modules}
@@ -203,10 +211,9 @@ export const EditorTextInput = ({
             ) : (
                 <TextInput
                     onChange={(e) => {
-                        setTextContent(e.target.value);
                         onChange(e);
                     }}
-                    defaultValue={textContent}
+                    defaultValue={defaultValue}
                     placeholder={placeholder}
                     className="rounded-lg border border-transparent bg-[#272138] py-[6px] pl-1 text-sm font-medium tracking-[-0.408px] text-intg-text-1 placeholder:text-intg-text-3 focus:border-intg-text-3 focus:outline-none"
                     disabled={maxCharacterCount === stripHtmlTags(defaultValue!)?.length}

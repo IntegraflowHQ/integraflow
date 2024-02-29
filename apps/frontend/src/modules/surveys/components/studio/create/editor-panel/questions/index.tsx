@@ -19,6 +19,7 @@ export default function UpdateQuestion() {
             switchQuestion(parsedQuestions[0]);
         }
     }, [parsedQuestions, question]);
+    const emptyLabel = "<p><br></p>";
 
     return (
         <div className="h-full w-full space-y-4 pt-2">
@@ -67,11 +68,11 @@ export default function UpdateQuestion() {
                                                 <div className="text-intg-text-9 text-sm font-bold">
                                                     {index + 1 < 10 ? `0${index + 1}` : index + 1}
                                                 </div>
-                                                <div className="w-[415px] rounded-lg bg-intg-bg-15 px-[16px] py-4 text-start text-sm text-intg-text-1 ">
-                                                    {question.label ? (
+                                                <div className="w-[415px] rounded-lg bg-intg-bg-15 px-[16px] py-4 text-start text-sm text-intg-text ">
+                                                    {question.label && question.label !== emptyLabel ? (
                                                         addEllipsis(stripHtmlTags(question.label), 40)
                                                     ) : (
-                                                        <p className="text-sm">Enter your text here</p>
+                                                        <p className="text-sm text-intg-text">Enter your text here</p>
                                                     )}
                                                 </div>
                                             </div>

@@ -1,6 +1,6 @@
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { tagOptions } from "@/utils/question";
+import { recallOptions, tagOptions } from "@/utils/question";
 import { useEffect, useState } from "react";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import MinusButton from "../Buttons/MinimizeButton";
@@ -16,6 +16,8 @@ export const CTAFields = () => {
             setShowDescription(true);
         }
     }, [question?.description]);
+
+    console.log(recallOptions(parsedQuestions, question));
 
     return (
         <div>
