@@ -238,18 +238,14 @@ export const rangeOptions = (question: ParsedQuestion) => {
 };
 
 export const recallOptions = (questions: ParsedQuestion[], openQuestion: ParsedQuestion) => {
-    const newQuestions = questions.filter(
-        (q) => q.type !== SurveyQuestionTypeEnum.Form && q.type !== SurveyQuestionTypeEnum.Cta,
-    );
+    const openQuestionIndex = questions.findIndex((q) => q.id === openQuestion?.id);
 
     return [
-        ...newQuestions
-            .slice(
-                0,
-                newQuestions.findIndex((q) => q.id === openQuestion?.id),
-            )
+        ...questions
+            .slice(0, openQuestionIndex !== -1 ? openQuestionIndex : 0)
+            .filter((q) => q.type !== SurveyQuestionTypeEnum.Form && q.type !== SurveyQuestionTypeEnum.Cta)
             .map((q) => ({
-                value: ` ${q.orderNumber}. ${!stripHtmlTags(q.label) ? "-" : stripHtmlTags(q.label)}`,
+                value: `${questions.findIndex((o) => o.id == q.id) + 1}. ${!stripHtmlTags(q.label) ? "-" : stripHtmlTags(q.label)}`,
                 id: q.id + " " + `answer`,
                 type: "recalledQuestion",
             })),
