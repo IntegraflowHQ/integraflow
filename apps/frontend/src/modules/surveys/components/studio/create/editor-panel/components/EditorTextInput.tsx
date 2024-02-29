@@ -18,7 +18,8 @@ export interface EditorTextProps {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     tagOptions?: TagOption[];
     defaultValue?: string;
-    showMention: boolean;
+    showMention?: boolean;
+    value?: string;
 }
 
 export const EditorTextInput = ({
@@ -31,6 +32,7 @@ export const EditorTextInput = ({
     onChange,
     placeholder,
     showMention = false,
+    value,
 }: EditorTextProps) => {
     const [displayInputField, setDisplayInputField] = useState(false);
     const [fallbackValue, setFallbackValue] = useState(" ");
@@ -213,9 +215,10 @@ export const EditorTextInput = ({
                     onChange={(e) => {
                         onChange(e);
                     }}
+                    value={value}
                     defaultValue={defaultValue}
                     placeholder={placeholder}
-                    className="rounded-lg border border-transparent bg-[#272138] py-[6px] pl-1 text-sm font-medium tracking-[-0.408px] text-intg-text-1 placeholder:text-intg-text-3 focus:border-intg-text-3 focus:outline-none"
+                    className="rounded-lg border border-transparent bg-[#272138] text-sm text-intg-text-1 placeholder:text-intg-text-3 focus:border-intg-text-3 focus:outline-none"
                     disabled={maxCharacterCount === stripHtmlTags(defaultValue!)?.length}
                 />
             )}

@@ -38,9 +38,9 @@ export const FormFieldList = () => {
                             <div className="grid grid-cols-2 items-center gap-2">
                                 <ReactSelect
                                     options={formOptions}
-                                    defaultValue={question?.options[index]}
+                                    defaultValue={formOptions.find((o) => o.value === option.type)}
                                     onchange={(value) => {
-                                        const newOptions = [...question?.options];
+                                        const newOptions = [...question.options];
                                         newOptions[index].type = (value as SingleValue<Option>)?.value;
                                         newOptions[index].label = (value as SingleValue<Option>)?.label;
 
@@ -51,10 +51,11 @@ export const FormFieldList = () => {
                                 />
 
                                 <EditorTextInput
+                                    value={option.label}
                                     showCharacterCount={false}
-                                    defaultValue={option.label ?? ""}
+                                    defaultValue={option.label}
                                     onChange={(e) => {
-                                        const newOptions = [...question?.options];
+                                        const newOptions = [...question.options];
                                         newOptions[index].label = e.target.value;
                                         updateQuestion(
                                             {
@@ -69,7 +70,7 @@ export const FormFieldList = () => {
                             <StarBtn
                                 color={option.required ? "active" : "default"}
                                 onClick={() => {
-                                    const newOptions = [...question?.options];
+                                    const newOptions = [...question.options];
                                     newOptions[index].required = !option.required;
                                     updateQuestion({
                                         options: newOptions,
@@ -80,7 +81,7 @@ export const FormFieldList = () => {
                             {question?.options.length > 2 ? (
                                 <MinusButton
                                     onclick={() => {
-                                        const newOptions = [...question?.options];
+                                        const newOptions = [...question.options];
                                         newOptions.splice(index, 1);
                                         updateQuestion({
                                             options: newOptions,
@@ -97,7 +98,7 @@ export const FormFieldList = () => {
                 text={"Add next field"}
                 onclick={() => {
                     const highestOrderNumber = getHighestOrderNumber(question?.options);
-                    const newOptions = [...question?.options];
+                    const newOptions = [...question.options];
                     newOptions.push({
                         id: generateUniqueId(),
                         orderNumber: highestOrderNumber + 1,

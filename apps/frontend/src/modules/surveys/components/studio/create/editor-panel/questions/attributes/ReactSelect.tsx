@@ -1,11 +1,6 @@
 import { LogicOperator } from "@integraflow/web/src/types";
 import { useState } from "react";
-import Select, {
-    CSSObjectWithLabel,
-    MultiValue,
-    MultiValueGenericProps,
-    SingleValue,
-} from "react-select";
+import Select, { CSSObjectWithLabel, MultiValue, MultiValueGenericProps, SingleValue } from "react-select";
 import CreatableSelect from "react-select/creatable";
 import { LogicOperatorBtn } from "./LogicOperator";
 
@@ -16,9 +11,7 @@ type Props = {
     defaultValue?: Option | Option[];
     label?: string;
     value?: Option | Option[] | null;
-    onchange?: (
-        value: Option | SingleValue<Option> | MultiValue<Option>,
-    ) => void;
+    onchange?: (value: Option | SingleValue<Option> | MultiValue<Option>) => void;
     shouldLogicalOperatorChange?: boolean;
     onOperatorChange?: (value: Option) => void;
     logicOperator?: LogicOperator;
@@ -52,8 +45,7 @@ export const ReactSelect = ({
 }: Props) => {
     const [values, setValue] = useState<Option | Option[]>([]);
     const [userOptions, setUserOptions] = useState<Option[]>([]);
-    const [logicalOperatorValue, setLogicalOperatorValue] =
-        useState<LogicOperator>(logicOperator as LogicOperator);
+    const [logicalOperatorValue, setLogicalOperatorValue] = useState<LogicOperator>(logicOperator as LogicOperator);
 
     const handleCreate = (inputValue: string) => {
         setTimeout(() => {
@@ -127,17 +119,14 @@ export const ReactSelect = ({
     const customMultiValue = (props: MultiValueGenericProps<Option>) => {
         return (
             <div className="flex items-center justify-center">
-                {(props.selectProps.value &&
-                    (props.selectProps.value as MultiValue<Option>)[0]
-                        ?.value) !== props.data.value ? (
+                {(props.selectProps.value && (props.selectProps.value as MultiValue<Option>)[0]?.value) !==
+                props.data.value ? (
                     <LogicOperatorBtn
                         value={logicalOperatorValue as LogicOperator}
                         onclick={() => {
                             if (shouldLogicalOperatorChange) {
                                 setLogicalOperatorValue(
-                                    logicalOperatorValue === LogicOperator.AND
-                                        ? LogicOperator.OR
-                                        : LogicOperator.AND,
+                                    logicalOperatorValue === LogicOperator.AND ? LogicOperator.OR : LogicOperator.AND,
                                 );
                                 onOperatorChange &&
                                     onOperatorChange({
@@ -153,9 +142,7 @@ export const ReactSelect = ({
 
                 <div
                     onClick={() => {
-                        value = (value as Option[]).filter(
-                            (v) => v.value !== props.data.value,
-                        );
+                        value = (value as Option[]).filter((v) => v.value !== props.data.value);
                         onchange && onchange(value);
                     }}
                     className="rounded-lg bg-intg-bg-19 px-2 py-1 text-sm text-intg-text"
@@ -189,11 +176,7 @@ export const ReactSelect = ({
                             components={{ MultiValue: customMultiValue }}
                             onCreateOption={(inputValue) => {
                                 handleCreate(inputValue);
-                                onchange &&
-                                    onchange([
-                                        ...(values as Option[]),
-                                        createOption(inputValue),
-                                    ]);
+                                onchange && onchange([...(values as Option[]), createOption(inputValue)]);
                             }}
                             value={value}
                             isMulti
