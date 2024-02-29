@@ -1,5 +1,7 @@
+import { TagOption } from "@/types";
 import { cn, stripHtmlTags } from "@/utils";
 import { getfromDB, sendToDB } from "@/utils/question";
+import { TextInput } from "@tremor/react";
 import { StringMap } from "quill";
 import "quill-mention";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -14,12 +16,7 @@ export interface EditorTextProps {
     showCharacterCount?: boolean;
     maxCharacterCount?: number;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    tagOptions?: {
-        id: string;
-        value: string;
-        type: string;
-        disabled: boolean;
-    }[];
+    tagOptions?: TagOption[];
     defaultValue?: string;
     showMention: boolean;
 }
@@ -32,6 +29,7 @@ export const EditorTextInput = ({
     defaultValue,
     tagOptions,
     onChange,
+    placeholder,
     showMention = false,
 }: EditorTextProps) => {
     const [textContent, setTextContent] = useState(getfromDB(defaultValue ?? "", tagOptions ?? []));
@@ -162,6 +160,7 @@ export const EditorTextInput = ({
                     type="text"
                     ref={inputRef}
                     value={fallbackValue}
+                    placeholder="Fallback"
                     onChange={(e) => {
                         if (mentionRef.current) {
                             mentionRef.current.setAttribute("data-fallback", e.target.value);
@@ -178,6 +177,7 @@ export const EditorTextInput = ({
                         left: inputFieldPosition.left,
                         bottom: inputFieldPosition.bottom + 5,
                     }}
+                    disabled={maxCharacterCount === stripHtmlTags(defaultValue!)?.length}
                 />
             )}
             {showMention ? (
@@ -201,25 +201,15 @@ export const EditorTextInput = ({
                     modules={modules}
                 />
             ) : (
-                <ReactQuill
-                    ref={ref}
-                    theme="snow"
-                    onChange={(value) => {
-                        setTextContent(value);
-                        onChange({
-                            target: {
-                                value: sendToDB(value),
-                            },
-                        } as React.ChangeEvent<HTMLInputElement>);
-                    }}
-                    modules={{
-                        toolbar: false,
+                <TextInput
+                    onChange={(e) => {
+                        setTextContent(e.target.value);
+                        onChange(e);
                     }}
                     defaultValue={textContent}
-                    style={{
-                        width: "100%",
-                        backgroundColor: "#272138",
-                    }}
+                    placeholder={placeholder}
+                    className="rounded-lg border border-transparent bg-[#272138] py-[6px] pl-1 text-sm font-medium tracking-[-0.408px] text-intg-text-1 placeholder:text-intg-text-3 focus:border-intg-text-3 focus:outline-none"
+                    disabled={maxCharacterCount === stripHtmlTags(defaultValue!)?.length}
                 />
             )}
             {showCharacterCount && (

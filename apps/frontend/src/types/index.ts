@@ -1,9 +1,5 @@
 import { PROPERTY_FIELDS } from "@/constants";
-import {
-    SurveyChannel,
-    SurveyQuestionCountableEdge,
-    User,
-} from "@/generated/graphql";
+import { SurveyChannel, SurveyQuestionCountableEdge, User } from "@/generated/graphql";
 import { DeepOmit } from "@apollo/client/utilities";
 import {
     Audience,
@@ -39,10 +35,7 @@ export type ChannelSettings = {
     singleUse?: boolean;
 };
 
-export type ParsedChannel = Omit<
-    SurveyChannel,
-    "settings" | "triggers" | "conditions"
-> & {
+export type ParsedChannel = Omit<SurveyChannel, "settings" | "triggers" | "conditions"> & {
     settings: ChannelSettings;
     triggers: Trigger;
     conditions: Audience;
@@ -114,10 +107,7 @@ export enum CTAEnums {
     CLOSE = "close",
 }
 
-export type ParsedQuestion = Omit<
-    SurveyQuestionCountableEdge["node"],
-    "questions" | "settings"
-> & {
+export type ParsedQuestion = Omit<SurveyQuestionCountableEdge["node"], "questions" | "settings"> & {
     questions: QuestionOption[];
     settings: QuestionSettings;
 };
@@ -133,8 +123,6 @@ export enum LogicConditionEnum {
     ANSWER_CONTAINS = "contains",
     ANSWER_DOES_NOT_CONTAIN = "not_contain",
     HAS_ANY_VALUE = "any_value",
-    QUESTION_IS_ANSWERED = "answered",
-    QUESTION_IS_NOT_ANSWERED = "not_answered",
     DOES_NOT_INCLUDE_ANY = "not_include_any",
     IS_FILLED_IN = "filled",
     IS_NOT_FILLED_IN = "not_filled",
@@ -172,4 +160,10 @@ export type WebChannelAccordionProps = {
 export type IntegraflowIconProps = {
     color?: string;
     size?: number;
+};
+export type TagOption = {
+    id: string;
+    value: string;
+    disabled?: boolean;
+    type: string;
 };

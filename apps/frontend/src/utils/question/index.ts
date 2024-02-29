@@ -1,5 +1,5 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { LogicConditionEnum, ParsedQuestion, QuestionOption } from "@/types";
+import { LogicConditionEnum, ParsedQuestion, QuestionOption, TagOption } from "@/types";
 import { LogicOperator } from "@integraflow/web/src/types";
 import { stripHtmlTags } from "..";
 
@@ -251,7 +251,7 @@ const recallOptions = (questions: ParsedQuestion[], openQuestion: ParsedQuestion
                 value: ` ${q.orderNumber}. ${!stripHtmlTags(q.label) ? "-" : stripHtmlTags(q.label)}`,
                 id: q.id + " " + `answer`,
                 type: "recalledQuestion",
-                disabled: false,
+                // disabled: false,
             })),
     ];
 };
@@ -317,10 +317,10 @@ const userAttributeOptions = attributes.map((attr) => ({
     value: attr.node.name,
     id: "attribute" + " " + `attribute.${attr.node.name}`,
     type: "userAttribute",
-    disabled: false,
+    // disabled: false,
 }));
 
-export const tagOptions = (questions: ParsedQuestion[], openQuestion: ParsedQuestion) => {
+export const tagOptions = (questions: ParsedQuestion[], openQuestion: ParsedQuestion): TagOption[] => {
     const recallOpts = recallOptions(questions, openQuestion);
     const userAttrOpts = userAttributeOptions;
 
@@ -338,10 +338,7 @@ export const tagOptions = (questions: ParsedQuestion[], openQuestion: ParsedQues
     }
 };
 
-function resolveQuestionIndex(
-    questionId: string,
-    tagOptions: { id: string; value: string; disabled: boolean }[],
-): string {
+function resolveQuestionIndex(questionId: string, tagOptions: TagOption[]): string {
     const option = tagOptions?.find((o) => {
         const optionId = o.id.split(" ")[0];
         return questionId === optionId;
@@ -364,10 +361,10 @@ export function sendToDB(textContent: string): string {
     return encodedText.split("</span>").join("");
 }
 
-export function getfromDB(encodedText: string, tagOptions: { id: string; value: string; disabled: boolean }[]): string {
+export function getfromDB(encodedText: string, tagOptions: TagOption[]): string {
     const decodedText = encodedText
         .replace(/{{answer:([^}]+) \| "([^}]+)"}}/g, (_, id, fallback) => {
-            return `<span class="mention" data-index="4" data-denotation-char="" data-value="${resolveQuestionIndex(id, tagOptions)}" data-id="${id}" data-type="answer" data-fallback="${fallback}"><span contenteditable="false">${resolveQuestionIndex(id)}</span></span>`;
+            return `<span class="mention" data-index="4" data-denotation-char="" data-value="${resolveQuestionIndex(id, tagOptions)}" data-id="${id}" data-type="answer" data-fallback="${fallback}"><span contenteditable="false">${resolveQuestionIndex(id, tagOptions)}</span></span>`;
         })
         .replace(/{{attribute.([^}]+) \| "([^}]+)"}}/g, (_, attr, fallback) => {
             return `<span class="mention" data-index="4" data-denotation-char="" data-value="${attr}" data-id="attribute" data-type="attribute.${attr}" data-fallback="${fallback}"><span contenteditable="false">${attr}</span></span>`;
