@@ -252,73 +252,81 @@ export const recallOptions = (questions: ParsedQuestion[], openQuestion: ParsedQ
     ];
 };
 
-const attributes = [
-    {
-        node: {
-            id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwMC1lZTgwLWE1OTE0MDNkZDk0YQ==",
-            name: "name",
-            isNumerical: false,
-            type: "PERSON",
-            propertyType: "String",
-            __typename: "PropertyDefinition",
-        },
-        __typename: "PropertyDefinitionCountableEdge",
-    },
-    {
-        node: {
-            id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwMS02MGRlLTNjODBlY2MwYTA1Yw==",
-            name: "sex",
-            isNumerical: false,
-            type: "PERSON",
-            propertyType: "String",
-            __typename: "PropertyDefinition",
-        },
-        __typename: "PropertyDefinitionCountableEdge",
-    },
-    {
-        node: {
-            id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwMi0wOTg1LWMxM2MxYTMzMWNiZA==",
-            name: "city",
-            isNumerical: false,
-            type: "PERSON",
-            propertyType: "String",
-            __typename: "PropertyDefinition",
-        },
-        __typename: "PropertyDefinitionCountableEdge",
-    },
-    {
-        node: {
-            id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwMy04ZDc5LWEwNGI4NjdlYzM4YQ==",
-            name: "age",
-            isNumerical: true,
-            type: "PERSON",
-            propertyType: "Numeric",
-            __typename: "PropertyDefinition",
-        },
-        __typename: "PropertyDefinitionCountableEdge",
-    },
-    {
-        node: {
-            id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwNC0wMzM3LTE3Y2MzM2MyY2Y3Nw==",
-            name: "enabled",
-            isNumerical: false,
-            type: "PERSON",
-            propertyType: "Boolean",
-            __typename: "PropertyDefinition",
-        },
-        __typename: "PropertyDefinitionCountableEdge",
-    },
-];
+// const attributes = [
+//     {
+//         node: {
+//             id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwMC1lZTgwLWE1OTE0MDNkZDk0YQ==",
+//             name: "name",
+//             isNumerical: false,
+//             type: "PERSON",
+//             propertyType: "String",
+//             __typename: "PropertyDefinition",
+//         },
+//         __typename: "PropertyDefinitionCountableEdge",
+//     },
+//     {
+//         node: {
+//             id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwMS02MGRlLTNjODBlY2MwYTA1Yw==",
+//             name: "sex",
+//             isNumerical: false,
+//             type: "PERSON",
+//             propertyType: "String",
+//             __typename: "PropertyDefinition",
+//         },
+//         __typename: "PropertyDefinitionCountableEdge",
+//     },
+//     {
+//         node: {
+//             id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwMi0wOTg1LWMxM2MxYTMzMWNiZA==",
+//             name: "city",
+//             isNumerical: false,
+//             type: "PERSON",
+//             propertyType: "String",
+//             __typename: "PropertyDefinition",
+//         },
+//         __typename: "PropertyDefinitionCountableEdge",
+//     },
+//     {
+//         node: {
+//             id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwMy04ZDc5LWEwNGI4NjdlYzM4YQ==",
+//             name: "age",
+//             isNumerical: true,
+//             type: "PERSON",
+//             propertyType: "Numeric",
+//             __typename: "PropertyDefinition",
+//         },
+//         __typename: "PropertyDefinitionCountableEdge",
+//     },
+//     {
+//         node: {
+//             id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwNC0wMzM3LTE3Y2MzM2MyY2Y3Nw==",
+//             name: "enabled",
+//             isNumerical: false,
+//             type: "PERSON",
+//             propertyType: "Boolean",
+//             __typename: "PropertyDefinition",
+//         },
+//         __typename: "PropertyDefinitionCountableEdge",
+//     },
+// ];
 
-const userAttributeOptions = attributes.map((attr) => ({
-    value: attr.node.name,
-    id: "attribute" + " " + `attribute.${attr.node.name}`,
-    type: "userAttribute",
-}));
+// const userAttributeOptions = attributes.map((attr) => ({
+//     value: attr.node.name,
+//     id: "attribute" + " " + `attribute.${attr.node.name}`,
+//     type: "userAttribute",
+// }));
 
-export const tagOptions = (questions: ParsedQuestion[], openQuestion: ParsedQuestion): TagOption[] => {
+export const tagOptions = (
+    questions: ParsedQuestion[],
+    openQuestion: ParsedQuestion,
+    userAttributes: PropertyDefinition[],
+): TagOption[] => {
     const recallOpts = recallOptions(questions, openQuestion);
-    const userAttrOpts = userAttributeOptions;
+    const userAttrOpts = userAttributes.map((attr) => ({
+        value: attr.name,
+        id: "attribute" + " " + `attribute.${attr.name}`,
+        type: "userAttribute",
+    }));
 
     if (recallOpts.length === 0) {
         return [{ id: "UserAttribute", value: "User Attribute", disabled: true, type: "" }, ...userAttrOpts];
@@ -343,7 +351,7 @@ function resolveQuestionIndex(questionId: string, tagOptions: TagOption[]): stri
     return option?.value as string;
 }
 
-export function sendToDB(textContent: string): string {
+export function encodeText(textContent: string): string {
     const encodedText = textContent.replace(
         /<span class="mention"([^>]*)data-id="([^"]*)"([^>]*)data-type="([^"]*)"([^>]*)data-fallback="([^"]*)"([^>]*)>(.*?)<\/span>/g,
         (_, __, dataId, ___, dataType, ____, fallback) => {
@@ -357,7 +365,7 @@ export function sendToDB(textContent: string): string {
     return encodedText.split("</span>").join("");
 }
 
-export function getfromDB(encodedText: string, tagOptions: TagOption[]): string {
+export function decodeText(encodedText: string, tagOptions: TagOption[]): string {
     const decodedText = encodedText
         .replace(/{{answer:([^ ]+) \| "([^"]*)"}}/g, (_, id, fallback) => {
             return `<span class="mention" data-index="4" data-denotation-char="" data-value="${resolveQuestionIndex(id, tagOptions)}" data-id="${id}" data-type="answer" data-fallback="${fallback}"><span contenteditable="false">${resolveQuestionIndex(id, tagOptions)}</span></span>`;

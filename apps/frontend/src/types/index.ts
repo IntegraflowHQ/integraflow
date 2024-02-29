@@ -162,43 +162,10 @@ export enum LogicConditionEnum {
     INCLUDES_ALL = "includes_all",
     INCLUDES_ANY = "includes_any",
 }
-<<<<<<< HEAD
-export type EventFilter = {
-    property: string;
-    operator: FilterOperator;
-    value: FilterValue;
-};
 
-export type AudienceFilter = {
-    attribute: string;
-    operator: FilterOperator;
-    value: FilterValue;
-};
-
-export type TriggerCondition = {
-    event: string;
-    operator: LogicOperator;
-    filters?: EventFilter[];
-};
-
-export type TriggerConditionInput = {
-    type: keyof typeof PROPERTY_FIELDS;
-    property: string;
-};
-
-export type WebChannelAccordionProps = {
-    channel: ParsedChannel;
-};
-
-export type IntegraflowIconProps = {
-    color?: string;
-    size?: number;
-};
 export type TagOption = {
-    id: string;
     value: string;
+    id: string;
     disabled?: boolean;
     type: string;
 };
-=======
->>>>>>> ENG-91

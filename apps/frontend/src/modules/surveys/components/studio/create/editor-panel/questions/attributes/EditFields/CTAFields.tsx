@@ -1,3 +1,4 @@
+import { useProject } from "@/modules/projects/hooks/useProject";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { tagOptions } from "@/utils/question";
@@ -10,6 +11,7 @@ export const CTAFields = () => {
     const { updateQuestion, question } = useQuestion();
     const { parsedQuestions } = useSurvey();
     const [showDescription, setShowDescription] = useState(false);
+    const { personProperties } = useProject();
 
     useEffect(() => {
         if (question?.description) {
@@ -22,7 +24,7 @@ export const CTAFields = () => {
             <EditorTextInput
                 placeholder=""
                 showMention={true}
-                tagOptions={tagOptions(parsedQuestions, question!)}
+                tagOptions={tagOptions(parsedQuestions, question!, personProperties)}
                 onChange={(e) => {
                     updateQuestion(
                         {

@@ -1,6 +1,6 @@
 import { TagOption } from "@/types";
 import { cn, stripHtmlTags } from "@/utils";
-import { getfromDB, sendToDB } from "@/utils/question";
+import { decodeText, encodeText } from "@/utils/question";
 import { TextInput } from "@tremor/react";
 import { StringMap } from "quill";
 import "quill-mention";
@@ -34,20 +34,19 @@ export const EditorTextInput = ({
     showMention = false,
     value,
 }: EditorTextProps) => {
-<<<<<<< HEAD
-    const [displayInputField, setDisplayInputField] = useState(false);
+    const [displayFallbackField, setDisplayFallbackField] = useState(false);
     const [fallbackValue, setFallbackValue] = useState(" ");
-    const [inputFieldPosition, setInputFieldPosition] = useState({ left: 0, bottom: 0 });
+    const [fallbackFieldPosition, setFallbackFieldPosition] = useState({ left: 0, bottom: 0 });
 
     const ref = useRef<ReactQuill>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const mentionRef = useRef<HTMLSpanElement>();
 
     useEffect(() => {
-        if (displayInputField && inputRef.current) {
+        if (displayFallbackField && inputRef.current) {
             inputRef.current.focus();
         }
-    }, [displayInputField]);
+    }, [displayFallbackField]);
 
     useEffect(() => {
         if (!ref.current) {
@@ -57,7 +56,7 @@ export const EditorTextInput = ({
         const unprivilegedEditor = ref.current.makeUnprivilegedEditor(editor);
         onChange({
             target: {
-                value: sendToDB(unprivilegedEditor?.getHTML()),
+                value: encodeText(unprivilegedEditor?.getHTML()),
             },
         } as React.ChangeEvent<HTMLInputElement>);
     }, [fallbackValue]);
@@ -67,7 +66,7 @@ export const EditorTextInput = ({
             return;
         }
         const { left, top } = mentionRef.current.getBoundingClientRect();
-        setInputFieldPosition({ left, bottom: window.innerHeight - top });
+        setFallbackFieldPosition({ left, bottom: window.innerHeight - top });
     }, [mentionRef]);
 
     useObserveScrollPosition(calculateFallbackPosition);
@@ -78,7 +77,7 @@ export const EditorTextInput = ({
             if (mentionSpan) {
                 mentionRef.current = mentionSpan as HTMLSpanElement;
                 const newFallbackValue = mentionSpan.getAttribute("data-fallback");
-                setDisplayInputField(true);
+                setDisplayFallbackField(true);
                 setFallbackValue(newFallbackValue ?? "");
                 calculateFallbackPosition();
             }
@@ -88,7 +87,7 @@ export const EditorTextInput = ({
         return () => {
             document.removeEventListener("click", handleMentionClick);
         };
-    }, [displayInputField, fallbackValue]);
+    }, [displayFallbackField, fallbackValue]);
 
     const modules: StringMap = useMemo(() => {
         return {
@@ -123,12 +122,6 @@ export const EditorTextInput = ({
             },
         };
     }, []);
-=======
-    const [atBtnClicked, setAtBtnClicked] = useState(false);
-    const [_, setAtIndex] = useState<number | null>(null);
-    const [__, setSelectedOption] = useState<Option | null>(null);
-    const [inputValue, setInputValue] = useState(defaultValue || "");
->>>>>>> ENG-91
 
     return (
         <div className={cn(`${className} relative w-full`)}>
@@ -172,7 +165,7 @@ export const EditorTextInput = ({
                 {label}
             </label>
 
-            {displayInputField && (
+            {displayFallbackField && (
                 <input
                     type="text"
                     ref={inputRef}
@@ -186,13 +179,13 @@ export const EditorTextInput = ({
                     }}
                     className="mention-input border-0 bg-intg-bg-4 p-0.5 text-xs text-intg-text"
                     onBlur={() => {
-                        setDisplayInputField(false);
+                        setDisplayFallbackField(false);
                     }}
                     style={{
                         position: "fixed",
                         zIndex: 9,
-                        left: inputFieldPosition.left,
-                        bottom: inputFieldPosition.bottom + 5,
+                        left: fallbackFieldPosition.left,
+                        bottom: fallbackFieldPosition.bottom + 5,
                     }}
                     disabled={maxCharacterCount === stripHtmlTags(defaultValue!)?.length}
                 />
@@ -204,11 +197,11 @@ export const EditorTextInput = ({
                     onChange={(value) => {
                         onChange({
                             target: {
-                                value: sendToDB(value),
+                                value: encodeText(value),
                             },
                         } as React.ChangeEvent<HTMLInputElement>);
                     }}
-                    defaultValue={getfromDB(defaultValue ?? "", tagOptions ?? [])}
+                    defaultValue={decodeText(defaultValue ?? "", tagOptions ?? [])}
                     style={{
                         width: "100%",
                         backgroundColor: "#272138",

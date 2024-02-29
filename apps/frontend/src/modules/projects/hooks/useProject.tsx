@@ -225,14 +225,9 @@ export const useProject = () => {
     const getProperties = useCallback(
         (event: string) => {
             const properties = eventProperties.filter((p) => p.event === event);
-<<<<<<< HEAD
-            return properties.map((p) => {
-                const definition = p.property ? getPropertyDefinition(p.property as string) : undefined;
-=======
             return properties
                 .map((p) => {
                     const definition = p.property ? getPropertyDefinition(p.property as string) : undefined;
->>>>>>> ENG-91
 
                     return definition;
                 })
