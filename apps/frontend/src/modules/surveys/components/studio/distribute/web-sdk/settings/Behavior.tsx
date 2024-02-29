@@ -75,10 +75,8 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
     useEffect(() => {
         const subscription = watch((value) => {
             if (!value) return;
-            if (value.recurring && !value.recurringPeriod)
-                return toast.error("Please enter recurring period");
-            if (value.closeOnLimit && !value.responseLimit)
-                return toast.error("Please enter response limit");
+            if (value.recurring && !value.recurringPeriod) return toast.error("Please enter recurring period");
+            if (value.closeOnLimit && !value.responseLimit) return toast.error("Please enter response limit");
             if (!channel.id) {
                 logDebug("create channel", value);
                 createChannel({
@@ -103,59 +101,36 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
             <div className="h-max w-[312px] rounded-lg bg-intg-bg-9 p-[14px]">
                 <div className="flex flex-col gap-3">
                     <div className="w-full space-y-2 rounded-lg bg-intg-bg-15 p-[14px]">
-                        <span className="text-sm text-intg-text">
-                            Survey position
-                        </span>
+                        <span className="text-sm text-intg-text">Survey position</span>
                         <div className="flex w-full justify-between">
                             {positions.map(({ value, icon: Icon }) => (
                                 <button
                                     key={value}
                                     className={cn(
                                         "w-max rounded bg-intg-bg-18 px-[14px] py-[8px] hover:bg-gradient-button hover:text-white",
-                                        watch("placement") === value
-                                            ? "bg-gradient-button"
-                                            : "",
+                                        watch("placement") === value ? "bg-gradient-button" : "",
                                     )}
-                                    onClick={() =>
-                                        setValue(
-                                            "placement",
-                                            value as PlacementType,
-                                        )
-                                    }
+                                    onClick={() => setValue("placement", value as PlacementType)}
                                 >
-                                    <Icon
-                                        color={
-                                            watch("placement") === value
-                                                ? "#FFFFFF"
-                                                : "#AFAAC7"
-                                        }
-                                    />
+                                    <Icon color={watch("placement") === value ? "#FFFFFF" : "#AFAAC7"} />
                                 </button>
                             ))}
                         </div>
                     </div>
 
                     <div className="space-y-2 rounded-lg bg-intg-bg-15 p-3">
-                        <span className="text-sm text-intg-text">
-                            Background overlay
-                        </span>
+                        <span className="text-sm text-intg-text">Background overlay</span>
                         <div className="flex w-full justify-between gap-2 rounded bg-intg-bg-18 p-1">
                             {backgrounds.map((item) => (
                                 <button
                                     key={item.value}
                                     className={cn(
                                         "flex items-center justify-center gap-1 rounded px-3 py-2 text-xs leading-[18px] text-intg-text hover:bg-gradient-button hover:text-white",
-                                        watch("backgroundOverlay") ===
-                                            item.value
+                                        watch("backgroundOverlay") === item.value
                                             ? "bg-gradient-button text-white"
                                             : "",
                                     )}
-                                    onClick={() =>
-                                        setValue(
-                                            "backgroundOverlay",
-                                            item.value,
-                                        )
-                                    }
+                                    onClick={() => setValue("backgroundOverlay", item.value)}
                                 >
                                     {item.icon}
                                     <span>{item.label}</span>
@@ -176,81 +151,41 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
                         value={watch("recurring")}
                         onChange={(e) => setValue("recurring", e.target.value)}
                     />
-                    {watch("recurring") && (
-                        <NumberInput
-                            label="Recurring period"
-                            {...register("recurringPeriod")}
-                        />
-                    )}
+                    {watch("recurring") && <NumberInput label="Recurring period" {...register("recurringPeriod")} />}
                     <Switch
                         name={"closeOnLimit"}
                         label="Close survey on response limit"
                         value={watch("closeOnLimit")}
-                        onChange={(e) =>
-                            setValue("closeOnLimit", e.target.value)
-                        }
+                        onChange={(e) => setValue("closeOnLimit", e.target.value)}
                     />
-                    {watch("closeOnLimit") && (
-                        <NumberInput
-                            label="Response limit"
-                            {...register("responseLimit")}
-                        />
-                    )}
+                    {watch("closeOnLimit") && <NumberInput label="Response limit" {...register("responseLimit")} />}
                     <div className="flex gap-1">
                         <DatePicker
                             label="Start date"
-                            value={
-                                watch("startDate")
-                                    ? new Date(watch("startDate") as string)
-                                    : undefined
-                            }
+                            value={watch("startDate") ? new Date(watch("startDate") as string) : undefined}
                             onChange={(e) => {
                                 if (e.target.value) {
-                                    setValue(
-                                        "startDate",
-                                        e.target.value.toISOString(),
-                                    );
+                                    setValue("startDate", e.target.value.toISOString());
                                 } else {
                                     setValue("startDate", "");
                                 }
                             }}
                             displayFormat="dd/MM/yyyy"
-                            toDate={
-                                watch("endDate")
-                                    ? subDays(
-                                          new Date(watch("endDate") as string),
-                                          1,
-                                      )
-                                    : undefined
-                            }
+                            toDate={watch("endDate") ? subDays(new Date(watch("endDate") as string), 1) : undefined}
                         />
                         <DatePicker
                             label="End date"
-                            value={
-                                watch("endDate")
-                                    ? new Date(watch("endDate") as string)
-                                    : undefined
-                            }
+                            value={watch("endDate") ? new Date(watch("endDate") as string) : undefined}
                             onChange={(e) => {
                                 if (e.target.value) {
-                                    setValue(
-                                        "endDate",
-                                        e.target.value.toISOString(),
-                                    );
+                                    setValue("endDate", e.target.value.toISOString());
                                 } else {
                                     setValue("endDate", "");
                                 }
                             }}
                             displayFormat="dd/MM/yyyy"
                             fromDate={
-                                watch("startDate")
-                                    ? addDays(
-                                          new Date(
-                                              watch("startDate") as string,
-                                          ),
-                                          1,
-                                      )
-                                    : undefined
+                                watch("startDate") ? addDays(new Date(watch("startDate") as string), 1) : undefined
                             }
                         />
                     </div>
@@ -265,8 +200,8 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
                         watch("backgroundOverlay") === "dark"
                             ? webviewDark
                             : watch("backgroundOverlay") === "none"
-                            ? webview
-                            : webviewLight
+                              ? webview
+                              : webviewLight
                     })`,
                     backgroundSize: "cover",
                     backgroundRepeat: "no-repeat",
@@ -277,18 +212,10 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
                     alt="sample"
                     className={cn(
                         "absolute",
-                        watch("placement") === "bottomRight"
-                            ? "bottom-0 right-0"
-                            : "",
-                        watch("placement") === "bottomLeft"
-                            ? "bottom-0 left-0"
-                            : "",
-                        watch("placement") === "center"
-                            ? "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                            : "",
-                        watch("placement") === "topRight"
-                            ? "right-0 top-0"
-                            : "",
+                        watch("placement") === "bottomRight" ? "bottom-0 right-0" : "",
+                        watch("placement") === "bottomLeft" ? "bottom-0 left-0" : "",
+                        watch("placement") === "center" ? "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" : "",
+                        watch("placement") === "topRight" ? "right-0 top-0" : "",
                         watch("placement") === "topLeft" ? "left-0 top-0" : "",
                     )}
                 />

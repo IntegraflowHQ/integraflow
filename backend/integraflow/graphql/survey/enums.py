@@ -23,6 +23,7 @@ class SurveyQuestionTypeEnum(graphene.Enum):
     TEXT = "text"
     DATE = "date"
     CSAT = "csat"
+    CES = "ces"
     SMILEY_SCALE = "smiley_scale"
     NUMERICAL_SCALE = "numerical_scale"
     RATING = "rating"

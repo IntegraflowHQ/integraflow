@@ -1,7 +1,7 @@
 import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import { useProject } from "@/modules/projects/hooks/useProject";
 import useChannels from "@/modules/surveys/hooks/useChannels";
-import { EventFilter, WebChannelAccordionProps } from "@/types";
+import { EventFilter, TriggerCondition, WebChannelAccordionProps } from "@/types";
 import { TextInput } from "@/ui";
 import { Popover, PopoverContent, PopoverTrigger } from "@/ui/Popover";
 import { Info, Search } from "@/ui/icons";
@@ -18,15 +18,11 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
     const [isAddingEvent, setIsAddingEvent] = useState(false);
     const [eventQ, setEventQ] = useState("");
 
-    const selectedEvents = channel?.triggers?.conditions?.map(
-        (condition) => condition.event,
-    );
-    const availableEvents = eventDefinitions.filter(
-        (event) => !selectedEvents?.includes(event.name),
-    );
+    const selectedEvents = channel?.triggers?.conditions?.map((condition: TriggerCondition) => condition.event);
+    const availableEvents = eventDefinitions.filter((event) => !selectedEvents?.includes(event.name));
 
-    const filteredOptions = availableEvents.filter(
-        (option) => option?.name.toLowerCase().includes(eventQ.toLowerCase()),
+    const filteredOptions = availableEvents.filter((option) =>
+        option?.name.toLowerCase().includes(eventQ.toLowerCase()),
     );
 
     const handleAddEvent = (event: string) => {
@@ -66,11 +62,10 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
     };
 
     const handleRemoveEvent = (event: string) => {
-        if (!channel.id || !channel.triggers || !channel.triggers.conditions)
-            return;
+        if (!channel.id || !channel.triggers || !channel.triggers.conditions) return;
 
         const conditions = channel?.triggers?.conditions?.filter(
-            (condition) => condition.event !== event,
+            (condition: TriggerCondition) => condition.event !== event,
         );
 
         updateChannel(channel, {
@@ -82,10 +77,9 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
     };
 
     const handleAddFilter = (event: string, filter: EventFilter) => {
-        if (!channel.id || !channel.triggers || !channel.triggers.conditions)
-            return;
+        if (!channel.id || !channel.triggers || !channel.triggers.conditions) return;
 
-        const conditions = channel?.triggers?.conditions?.map((condition) => {
+        const conditions = channel?.triggers?.conditions?.map((condition: TriggerCondition) => {
             if (condition.event !== event) return condition;
 
             return {
@@ -103,7 +97,7 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
     };
 
     const handleRemoveFilter = (event: string, index: number) => {
-        const conditions = channel?.triggers?.conditions?.map((condition) => {
+        const conditions = channel?.triggers?.conditions?.map((condition: TriggerCondition) => {
             if (condition.event !== event) return condition;
             if (!condition.filters) return condition;
 
@@ -125,7 +119,7 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
     };
 
     const handleOperatorChange = (event: string, operator: LogicOperator) => {
-        const conditions = channel?.triggers?.conditions?.map((condition) => {
+        const conditions = channel?.triggers?.conditions?.map((condition: TriggerCondition) => {
             if (condition.event !== event) return condition;
 
             return {
@@ -147,40 +141,22 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
             <div className="rounded-lg bg-intg-bg-9 p-6">
                 <div className="space-y-2">
                     <header className="flex items-center gap-2">
-                        <h3 className="text-base font-medium text-white">
-                            When to send
-                        </h3>
+                        <h3 className="text-base font-medium text-white">When to send</h3>
                         <Info />
                     </header>
 
                     <div className="space-y-2">
-                        {channel?.triggers?.conditions?.map(
-                            (condition, index) => (
-                                <Event
-                                    key={index}
-                                    condition={condition}
-                                    properties={getProperties(condition.event)}
-                                    onRemove={() =>
-                                        handleRemoveEvent(condition.event)
-                                    }
-                                    onAddFilter={(filter) =>
-                                        handleAddFilter(condition.event, filter)
-                                    }
-                                    onOperatorChange={(operator) =>
-                                        handleOperatorChange(
-                                            condition.event,
-                                            operator,
-                                        )
-                                    }
-                                    onRemoveFilter={(index) =>
-                                        handleRemoveFilter(
-                                            condition.event,
-                                            index,
-                                        )
-                                    }
-                                />
-                            ),
-                        )}
+                        {channel?.triggers?.conditions?.map((condition: TriggerCondition, index: number) => (
+                            <Event
+                                key={index}
+                                condition={condition}
+                                properties={getProperties(condition.event)}
+                                onRemove={() => handleRemoveEvent(condition.event)}
+                                onAddFilter={(filter) => handleAddFilter(condition.event, filter)}
+                                onOperatorChange={(operator) => handleOperatorChange(condition.event, operator)}
+                                onRemoveFilter={(index) => handleRemoveFilter(condition.event, index)}
+                            />
+                        ))}
 
                         <Popover
                             open={isAddingEvent}
@@ -190,9 +166,7 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
                             }}
                         >
                             <PopoverTrigger asChild>
-                                <button className="text-intg-text underline">
-                                    Add event rule
-                                </button>
+                                <button className="text-intg-text underline">Add event rule</button>
                             </PopoverTrigger>
 
                             <PopoverContent className="flex flex-col gap-2 rounded-lg border border-intg-bg-10 bg-intg-bg-9 px-2 py-3 text-intg-text">
@@ -223,9 +197,7 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
                                     {filteredOptions.length === 0 ? (
                                         <div className="flex h-full flex-col items-center justify-center">
                                             <EventIcon />
-                                            <span className="text-intg-text">
-                                                No events found
-                                            </span>
+                                            <span className="text-intg-text">No events found</span>
                                         </div>
                                     ) : null}
                                 </div>

@@ -1,16 +1,17 @@
 import graphene
 
+from django.utils.crypto import get_random_string
 from django.utils.text import slugify
 
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_SURVEYS
 from integraflow.graphql.core.fields import JSONString
 from integraflow.graphql.core.mutations import ModelMutation
+from integraflow.graphql.core.scalars import UUID
 from integraflow.graphql.core.types.base import BaseInputObjectType
 from integraflow.graphql.core.types.common import SurveyError
 from integraflow.core.utils import (
     MAX_SLUG_LENGTH,
-    generate_random_short_suffix
 )
 from integraflow.graphql.survey.enums import SurveyStatusEnum, SurveyTypeEnum
 from integraflow.permission.auth_filters import AuthorizationFilters
@@ -44,7 +45,7 @@ class SurveyInput(BaseInputObjectType):
 
 
 class SurveyCreateInput(SurveyInput):
-    id = graphene.UUID(
+    id = UUID(
         description="The id of the survey."
     )
 
@@ -81,7 +82,7 @@ class SurveyCreate(ModelMutation):
         if name and not slug:
             cleaned_input["slug"] = (
                 f"{slugify(name)[:MAX_SLUG_LENGTH - 7]}-"
-                f"{generate_random_short_suffix(6).lower()}"
+                f"{get_random_string(6).lower()}"
             )
 
         theme = cleaned_input.get("theme_id")

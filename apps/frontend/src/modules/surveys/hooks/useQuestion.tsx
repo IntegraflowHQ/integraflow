@@ -61,7 +61,7 @@ export const useQuestion = () => {
                         type: input.type!,
                         settings: input.settings ?? {},
                         options: input.options ?? [],
-                        survey: survey?.survey,
+                        survey: survey,
                     },
                     surveyErrors: [],
                     errors: [],
@@ -72,7 +72,9 @@ export const useQuestion = () => {
                     return;
                 }
 
-                switchQuestion(parseQuestion(data.surveyQuestionCreate?.surveyQuestion as SurveyQuestion));
+                if (!activeQuestion || activeQuestion?.id !== data.surveyQuestionCreate.surveyQuestion.id) {
+                    switchQuestion(parseQuestion(data.surveyQuestionCreate?.surveyQuestion as SurveyQuestion));
+                }
 
                 cache.modify({
                     id: `Survey:${surveyId}`,
@@ -130,7 +132,7 @@ export const useQuestion = () => {
                         type: activeQuestion?.type as SurveyQuestionTypeEnum,
                         settings: input.settings ?? activeQuestion?.settings,
                         options: input.options ?? activeQuestion?.options,
-                        survey: survey?.survey,
+                        survey: survey,
                     },
                     surveyErrors: [],
                     errors: [],

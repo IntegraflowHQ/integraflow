@@ -4,7 +4,7 @@ import { Context } from './context';
 export class TagManager {
   private readonly tags = {
     attribute: RegExp("\\{\\{attribute\\.(\\S+)(?:\\s?\\|\\s?\"([^\"]*)\")?\\}\\}", 'gi'),
-    answer: RegExp("\\{\\{answer:(\\d+)(?:\\s?\\|\\s?\"([^\"]*)\")?\\}\\}", 'gi')
+    answer: RegExp("\\{\\{answer:(\\S+)(?:\\s?\\|\\s?\"([^\"]*)\")?\\}\\}", 'gi')
   };
   private readonly context: Context;
 

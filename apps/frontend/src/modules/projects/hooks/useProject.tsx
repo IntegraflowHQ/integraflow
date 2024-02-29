@@ -5,6 +5,7 @@ import {
     EventDefinition,
     Project,
     ProjectUpdateInput,
+    PropertyDefinition,
     useAudiencePropertiesQuery,
     useProjectCreateMutation,
     useProjectEventsDataQuery,
@@ -15,6 +16,7 @@ import { useRedirect } from "@/modules/auth/hooks/useRedirect";
 import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
 import { convertToAuthOrganization } from "@/modules/users/states/user";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
+import { useApolloClient } from "@apollo/client";
 import { EventProperties } from "@integraflow/web/src/types";
 
 export const useProject = () => {
@@ -28,6 +30,7 @@ export const useProject = () => {
     const [projectUpdate] = useProjectUpdateMutation();
     const { data: eventsData } = useProjectEventsDataQuery();
     const { data: audienceProperties } = useAudiencePropertiesQuery();
+    const { cache, clearStore } = useApolloClient();
 
     const project = useMemo(() => {
         if (!workspace) {
@@ -86,6 +89,9 @@ export const useProject = () => {
                     ...updatedUser,
                 });
             }
+
+            clearStore();
+            cache.reset();
         },
         [currentProjectId, orgSlug, projectSlug, redirect, switchProject, updateUser, user, workspace],
     );
@@ -219,11 +225,18 @@ export const useProject = () => {
     const getProperties = useCallback(
         (event: string) => {
             const properties = eventProperties.filter((p) => p.event === event);
+<<<<<<< HEAD
             return properties.map((p) => {
                 const definition = p.property ? getPropertyDefinition(p.property as string) : undefined;
+=======
+            return properties
+                .map((p) => {
+                    const definition = p.property ? getPropertyDefinition(p.property as string) : undefined;
+>>>>>>> ENG-91
 
-                return definition;
-            });
+                    return definition;
+                })
+                .filter((p) => p !== undefined) as PropertyDefinition[];
         },
         [eventProperties, getPropertyDefinition],
     );

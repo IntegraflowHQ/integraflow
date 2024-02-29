@@ -11,7 +11,7 @@ import {
     LogicOperator,
     PlacementType,
     Trigger,
-} from "@integraflow/web/src/types";
+} from "@integraflow/web";
 
 export type CachedViewer = DeepOmit<User, "__typename">;
 
@@ -46,6 +46,38 @@ export type LinkSettings = {
     singleUse: boolean;
     startDate: string | null;
     endDate: string | null;
+};
+
+export type EventFilter = {
+    property: string;
+    operator: FilterOperator;
+    value: FilterValue;
+};
+
+export type AudienceFilter = {
+    attribute: string;
+    operator: FilterOperator;
+    value: FilterValue;
+};
+
+export type TriggerCondition = {
+    event: string;
+    operator: LogicOperator;
+    filters?: EventFilter[];
+};
+
+export type TriggerConditionInput = {
+    type: keyof typeof PROPERTY_FIELDS;
+    property: string;
+};
+
+export type WebChannelAccordionProps = {
+    channel: ParsedChannel;
+};
+
+export type IntegraflowIconProps = {
+    color?: string;
+    size?: number;
 };
 
 export type QuestionOption = {
@@ -130,6 +162,7 @@ export enum LogicConditionEnum {
     INCLUDES_ALL = "includes_all",
     INCLUDES_ANY = "includes_any",
 }
+<<<<<<< HEAD
 export type EventFilter = {
     property: string;
     operator: FilterOperator;
@@ -167,3 +200,5 @@ export type TagOption = {
     disabled?: boolean;
     type: string;
 };
+=======
+>>>>>>> ENG-91

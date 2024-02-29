@@ -27,9 +27,7 @@ export const DialogContent = forwardRef<HTMLDivElement, Props>(
                 {alignHeader === "left" && (
                     <>
                         <div className="flex justify-between">
-                            <DialogPrimitive.Title className="text-600 mb-3 text-2xl">
-                                {title}
-                            </DialogPrimitive.Title>
+                            <DialogPrimitive.Title className="text-600 mb-3 text-2xl">{title}</DialogPrimitive.Title>
                             <DialogPrimitive.Close aria-label="Close">
                                 <XIcon />
                             </DialogPrimitive.Close>
@@ -47,9 +45,7 @@ export const DialogContent = forwardRef<HTMLDivElement, Props>(
                             </DialogPrimitive.Close>
                         </div>
                         <div className="text-center">
-                            <DialogPrimitive.Title className="text-600 text-2xl">
-                                {title}
-                            </DialogPrimitive.Title>
+                            <DialogPrimitive.Title className="text-600 text-2xl">{title}</DialogPrimitive.Title>
                             <DialogPrimitive.Description className="text-sm text-intg-text">
                                 {props.description}
                             </DialogPrimitive.Description>

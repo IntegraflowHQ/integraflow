@@ -14,6 +14,7 @@ from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_EVENTS
 from integraflow.graphql.core.fields import JSONString
 from integraflow.graphql.core.mutations import BaseMutation
+from integraflow.graphql.core.scalars import UUID
 from integraflow.graphql.core.types.base import BaseInputObjectType
 from integraflow.graphql.core.types.common import EventError, NonNullList
 from integraflow.permission.auth_filters import AuthorizationFilters
@@ -26,12 +27,12 @@ class EventCaptureInput(BaseInputObjectType):
         description="The name of the event.",
         required=True
     )
-    uuid = graphene.UUID(
-        description="The payload ID.",
+    uuid = UUID(
+        description="The event payload ID.",
         required=False
     )
     user_id = graphene.ID(
-        description="The distinct ID.",
+        description="The user distinct ID.",
         required=False
     )
     properties = JSONString(
@@ -131,8 +132,11 @@ class EventCapture(BaseMutation):
     ):
         if not cls.check_permissions(
             info.context,
-            [AuthorizationFilters.AUTHENTICATED_API],
-            require_all_permissions=True
+            [
+                AuthorizationFilters.AUTHENTICATED_API,
+                AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS
+            ],
+            require_all_permissions=False
         ):
             raise PermissionDenied(
                 "API key not provided. You can find your project API key "
@@ -159,10 +163,9 @@ class EventCapture(BaseMutation):
 
         for event, event_uuid, distinct_id in processed_events:
             task_name = "integraflow.event.task.process_event"
-            celery_queue = settings.CELERY_DEFAULT_QUEUE
             celery_app.send_task(
                 name=task_name,
-                queue=celery_queue,
+                queue=settings.CELERY_DEFAULT_QUEUE,
                 args=[
                     distinct_id,
                     event_uuid,

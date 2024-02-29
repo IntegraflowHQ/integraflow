@@ -5,15 +5,7 @@
     "python.languageServer": "Pylance",
     "python.linting.mypyEnabled": true,
     "python.analysis.typeCheckingMode": "basic",
-    "cSpell.words": [
-        "dataloaders",
-        "Integraflow",
-        "intg",
-        "preorder",
-        "preorders",
-        "undiscounted",
-        "upsert"
-    ],
+    "cSpell.words": ["dataloaders", "Integraflow", "intg", "preorder", "preorders", "undiscounted", "upsert"],
     "python.linting.enabled": true,
     "editor.tabSize": 4,
     "editor.insertSpaces": true,

@@ -59,110 +59,66 @@ export default function FilterOperators({
                 >
                     {conditionDetails && (
                         <div>
-                            {PROPERTY_FIELDS[conditionDetails?.type].map(
-                                (field, index) => (
-                                    <div key={index}>
-                                        <button
-                                            key={field.operator}
-                                            className="flex w-full items-center gap-2 rounded p-2 text-intg-text hover:bg-intg-bg-15"
-                                            onClick={() => {
-                                                setFocused(field.operator);
-                                                if (
-                                                    booleanOperators.includes(
-                                                        field.operator,
-                                                    )
-                                                ) {
-                                                    onInput?.({
-                                                        property:
-                                                            conditionDetails.property,
-                                                        operator:
-                                                            field.operator,
-                                                        value: true,
-                                                        type: conditionDetails.type,
-                                                    });
-                                                }
-                                            }}
-                                        >
-                                            {focused === field.operator ? (
-                                                <CheckComplete />
-                                            ) : (
-                                                <CheckPending />
-                                            )}
-                                            <span>{field.label}</span>
-                                        </button>
+                            {PROPERTY_FIELDS[conditionDetails?.type].map((field, index) => (
+                                <div key={index}>
+                                    <button
+                                        key={field.operator}
+                                        className="flex w-full items-center gap-2 rounded p-2 text-intg-text hover:bg-intg-bg-15"
+                                        onClick={() => {
+                                            setFocused(field.operator);
+                                            if (booleanOperators.includes(field.operator)) {
+                                                onInput?.({
+                                                    property: conditionDetails.property,
+                                                    operator: field.operator,
+                                                    value: true,
+                                                });
+                                            }
+                                        }}
+                                    >
+                                        {focused === field.operator ? <CheckComplete /> : <CheckPending />}
+                                        <span>{field.label}</span>
+                                    </button>
 
-                                        {!booleanOperators.includes(
-                                            field.operator,
-                                        ) ? (
-                                            <div
-                                                className={cn(
-                                                    focused === field.operator
-                                                        ? "h-max p-2"
-                                                        : "h-0 overflow-hidden",
-                                                )}
-                                            >
-                                                {["Numeric", "String"].includes(
-                                                    conditionDetails.type,
-                                                ) ? (
-                                                    <input
-                                                        type={
-                                                            conditionDetails.type ===
-                                                            "Numeric"
-                                                                ? "number"
-                                                                : "text"
-                                                        }
-                                                        autoFocus={
-                                                            focused ===
-                                                            field.operator
-                                                        }
-                                                        className="w-full rounded-lg border border-intg-text bg-transparent px-2 py-1 text-intg-text"
-                                                        placeholder="Enter value"
-                                                        onChange={(e) => {
-                                                            onInput?.({
-                                                                property:
-                                                                    conditionDetails.property,
-                                                                operator:
-                                                                    field.operator,
-                                                                value:
-                                                                    conditionDetails.type ===
-                                                                    "Numeric"
-                                                                        ? Number(
-                                                                              e
-                                                                                  .target
-                                                                                  .value,
-                                                                          )
-                                                                        : e
-                                                                              .target
-                                                                              .value,
-                                                                type: conditionDetails.type,
-                                                            });
-                                                        }}
-                                                    />
-                                                ) : null}
-                                                {conditionDetails.type ===
-                                                "Datetime" ? (
-                                                    <DatePicker
-                                                        onChange={(e) => {
-                                                            if (!e.target.value)
-                                                                return;
-                                                            onInput?.({
-                                                                property:
-                                                                    conditionDetails.property,
-                                                                operator:
-                                                                    field.operator,
-                                                                value:
-                                                                    e.target.value?.toISOString() ??
-                                                                    "",
-                                                                type: conditionDetails.type,
-                                                            });
-                                                        }}
-                                                    />
-                                                ) : null}
-                                            </div>
-                                        ) : null}
-                                    </div>
-                                ),
-                            )}
+                                    {!booleanOperators.includes(field.operator) ? (
+                                        <div
+                                            className={cn(
+                                                focused === field.operator ? "h-max p-2" : "h-0 overflow-hidden",
+                                            )}
+                                        >
+                                            {["Numeric", "String"].includes(conditionDetails.type) ? (
+                                                <input
+                                                    type={conditionDetails.type === "Numeric" ? "number" : "text"}
+                                                    autoFocus={focused === field.operator}
+                                                    className="w-full rounded-lg border border-intg-text bg-transparent px-2 py-1 text-intg-text"
+                                                    placeholder="Enter value"
+                                                    onChange={(e) => {
+                                                        onInput?.({
+                                                            property: conditionDetails.property,
+                                                            operator: field.operator,
+                                                            value:
+                                                                conditionDetails.type === "Numeric"
+                                                                    ? Number(e.target.value)
+                                                                    : e.target.value,
+                                                        });
+                                                    }}
+                                                />
+                                            ) : null}
+                                            {conditionDetails.type === "Datetime" ? (
+                                                <DatePicker
+                                                    onChange={(e) => {
+                                                        if (!e.target.value) return;
+                                                        onInput?.({
+                                                            property: conditionDetails.property,
+                                                            operator: field.operator,
+                                                            value: e.target.value?.toISOString() ?? "",
+                                                        });
+                                                    }}
+                                                />
+                                            ) : null}
+                                        </div>
+                                    ) : null}
+                                </div>
+                            ))}
                         </div>
                     )}
                     <Popover.Arrow className="fill-intg-bg-9" />

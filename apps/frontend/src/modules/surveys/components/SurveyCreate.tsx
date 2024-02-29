@@ -10,16 +10,11 @@ type Props = {
 };
 
 export default function SurveyCreate({ className, size = "lg" }: Props) {
-    const { createSurvey, loadingCreateSurvey } = useSurvey();
+    const { createSurvey, creatingSurvey } = useSurvey();
     const surveyCreateOptions = [
         {
             id: CreateSurvey.START_FROM_SCRATCH,
-            icon: (
-                <PlusCircle
-                    color="#AFAAC7"
-                    size={size === "sm" ? "44" : "48"}
-                />
-            ),
+            icon: <PlusCircle color="#AFAAC7" size={size === "sm" ? "44" : "48"} />,
             title: "Start form scratch",
             description: "Craft and design your unique survey",
         },
@@ -31,18 +26,12 @@ export default function SurveyCreate({ className, size = "lg" }: Props) {
         },
     ];
 
-    if (loadingCreateSurvey) {
+    if (creatingSurvey) {
         return <GlobalSpinner />;
     }
 
     return (
-        <div
-            className={cn(
-                "flex",
-                size === "sm" ? "gap-2" : "gap-4",
-                className ?? "",
-            )}
-        >
+        <div className={cn("flex", size === "sm" ? "gap-2" : "gap-4", className ?? "")}>
             {surveyCreateOptions.map((option, index) => (
                 <div
                     key={option.title}
@@ -55,10 +44,7 @@ export default function SurveyCreate({ className, size = "lg" }: Props) {
                     <Header
                         title={option.title}
                         description={option.description}
-                        className={cn(
-                            "text-center",
-                            size === "sm" && index === 1 ? "px-8" : "",
-                        )}
+                        className={cn("text-center", size === "sm" && index === 1 ? "px-8" : "")}
                         variant={size === "sm" ? "3" : "2"}
                         font="medium"
                     />

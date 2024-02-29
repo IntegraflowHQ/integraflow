@@ -20,7 +20,7 @@ import {
 
 import { ApolloFactory } from "@/modules/apollo/services/apollo.factory";
 
-const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
+const isDebugMode = import.meta.env.MODE === "development";
 
 // Create an apollo client to call auth graphql mutations
 const client = new ApolloFactory({
@@ -39,42 +39,33 @@ const client = new ApolloFactory({
 }).getClient();
 
 export const emailAuthChallenge = (email: string, inviteLink?: string) => {
-    return client.mutate<
-        EmailUserAuthChallengeMutation,
-        EmailUserAuthChallengeMutationVariables
-    >({
+    return client.mutate<EmailUserAuthChallengeMutation, EmailUserAuthChallengeMutationVariables>({
         mutation: EmailUserAuthChallengeDocument,
         variables: {
             email,
-            inviteLink
-        }
+            inviteLink,
+        },
     });
 };
 
 export const verifyAuthToken = (email: string, token: string, inviteLink?: string) => {
-    return client.mutate<
-        EmailTokenUserAuthMutation,
-        EmailTokenUserAuthMutationVariables
-    >({
+    return client.mutate<EmailTokenUserAuthMutation, EmailTokenUserAuthMutationVariables>({
         mutation: EmailTokenUserAuthDocument,
         variables: {
             email,
             token,
-            inviteLink
-        }
+            inviteLink,
+        },
     });
 };
 
 export const googleAuthLogin = (code: string, inviteLink?: string) => {
-    return client.mutate<
-        GoogleUserAuthMutation,
-        GoogleUserAuthMutationVariables
-    >({
+    return client.mutate<GoogleUserAuthMutation, GoogleUserAuthMutationVariables>({
         mutation: GoogleUserAuthDocument,
         variables: {
             code,
-            inviteLink
-        }
+            inviteLink,
+        },
     });
 };
 
@@ -84,20 +75,12 @@ export const googleAuthLogin = (code: string, inviteLink?: string) => {
  * @returns string
  */
 export const refreshToken = async (token: string) => {
-    const { data, errors } = await client.mutate<
-        TokenRefreshMutation,
-        TokenRefreshMutationVariables
-    >({
+    const { data, errors } = await client.mutate<TokenRefreshMutation, TokenRefreshMutationVariables>({
         mutation: TokenRefreshDocument,
-        variables: { refreshToken: token }
+        variables: { refreshToken: token },
     });
 
-    if (
-        errors ||
-        !data ||
-        data.tokenRefresh?.errors?.length ||
-        !data.tokenRefresh?.token
-    ) {
+    if (errors || !data || data.tokenRefresh?.errors?.length || !data.tokenRefresh?.token) {
         throw new Error("Something went wrong during token renewal");
     }
 
@@ -110,22 +93,17 @@ export const refreshToken = async (token: string) => {
  * @returns string
  */
 export const logout = async (token: string) => {
-    const { data, errors } = await client.mutate<
-        LogoutMutation,
-        LogoutMutationVariables
-    >({
+    const { data, errors } = await client.mutate<LogoutMutation, LogoutMutationVariables>({
         mutation: LogoutDocument,
         context: {
-            authorization: `Bearer ${token}`
-        }
+            headers: {
+                authorization: `Bearer ${token}`,
+            },
+        },
     });
 
-    if (
-        errors ||
-        !data ||
-        data.logout?.userErrors?.length
-    ) {
-        throw new Error("Something went wrong during token renewal");
+    if (errors || !data || data.logout?.userErrors?.length) {
+        throw new Error("Something went wrong during token revocation");
     }
 
     return true;

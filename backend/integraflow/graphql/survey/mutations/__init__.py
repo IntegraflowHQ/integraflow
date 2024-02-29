@@ -6,6 +6,8 @@ from .survey_delete import SurveyDelete
 from .survey_question_create import SurveyQuestionCreate
 from .survey_question_delete import SurveyQuestionDelete
 from .survey_question_update import SurveyQuestionUpdate
+from .survey_response_create import SurveyResponseCreate
+from .survey_response_update import SurveyResponseUpdate
 from .survey_update import SurveyUpdate
 
 __all__ = [
@@ -17,5 +19,7 @@ __all__ = [
     "SurveyQuestionCreate",
     "SurveyQuestionDelete",
     "SurveyQuestionUpdate",
+    "SurveyResponseCreate",
+    "SurveyResponseUpdate",
     "SurveyUpdate"
 ]

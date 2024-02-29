@@ -34,6 +34,7 @@ export const EditorTextInput = ({
     showMention = false,
     value,
 }: EditorTextProps) => {
+<<<<<<< HEAD
     const [displayInputField, setDisplayInputField] = useState(false);
     const [fallbackValue, setFallbackValue] = useState(" ");
     const [inputFieldPosition, setInputFieldPosition] = useState({ left: 0, bottom: 0 });
@@ -122,6 +123,12 @@ export const EditorTextInput = ({
             },
         };
     }, []);
+=======
+    const [atBtnClicked, setAtBtnClicked] = useState(false);
+    const [_, setAtIndex] = useState<number | null>(null);
+    const [__, setSelectedOption] = useState<Option | null>(null);
+    const [inputValue, setInputValue] = useState(defaultValue || "");
+>>>>>>> ENG-91
 
     return (
         <div className={cn(`${className} relative w-full`)}>

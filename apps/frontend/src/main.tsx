@@ -17,10 +17,11 @@ import "./index.css";
 import { AppCore } from "./layout/AppCore";
 import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
+import { SurveyShell } from "./layout/SurveyShell";
 import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
 import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
 
-const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
+const isDebugMode = import.meta.env.MODE === "development";
 
 if (isDebugMode) {
     loadDevMessages();
@@ -59,24 +60,26 @@ const router = createBrowserRouter([
                 element: <AppCore />,
                 children: [
                     {
-                        path: "projects/:projectSlug/get-started",
-                        element: <Onboarding />,
-                    },
-                    {
-                        path: "projects/:projectSlug/surveys",
-                        element: <Surveys />,
-                    },
-                    {
-                        path: "projects/:projectSlug/surveys/templates",
-                        element: <SurveyTemplates />,
-                    },
-                    {
-                        path: "/:orgSlug/projects/:projectSlug/survey/:surveySlug",
-                        element: <SurveyStudio />,
-                    },
-                    {
-                        path: "/:orgSlug/projects/:projectSlug/surveys",
-                        element: <Surveys />,
+                        path: "projects/:projectSlug",
+                        element: <SurveyShell />,
+                        children: [
+                            {
+                                path: "get-started",
+                                element: <Onboarding />,
+                            },
+                            {
+                                path: "surveys",
+                                element: <Surveys />,
+                            },
+                            {
+                                path: "templates",
+                                element: <SurveyTemplates />,
+                            },
+                            {
+                                path: "survey/:surveySlug",
+                                element: <SurveyStudio />,
+                            },
+                        ],
                     },
                 ],
             },

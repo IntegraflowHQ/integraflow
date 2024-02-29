@@ -105,6 +105,7 @@ export default function Response({
       );
       break;
     case AnswerType.CSAT:
+    case AnswerType.CES:
       element = (
         <CSATResponse
           question={question}
