@@ -5,14 +5,17 @@ import {
     Project,
     ProjectTheme,
     Survey,
+    SurveyChannelCountableConnection,
     SurveyFilterInput,
+    SurveyFragmentFragmentDoc,
     SurveyQuestion,
+    SurveyQuestionCountableConnection,
     SurveySortField,
     SurveyStatusEnum,
     SurveyTypeEnum,
     SurveyUpdateInput,
+    useGetSurveyLazyQuery,
     useGetSurveyListQuery,
-    useGetSurveyQuery,
     useSurveyCreateMutation,
     useSurveyDeleteMutation,
     useSurveyUpdateMutation,
@@ -24,7 +27,6 @@ import { ApolloError } from "@apollo/client";
 import { DeepPartial, Reference } from "@apollo/client/utilities";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { SURVEY_CORE, SURVEY_CREATE } from "./graphql/fragments/surveyFragment";
 
 export interface SurveyProviderProp {
     children: React.ReactNode;
@@ -65,16 +67,8 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     const [updateSurveyMutation, { error }] = useSurveyUpdateMutation({});
     const [deleteSurveyMutation] = useSurveyDeleteMutation();
 
-    const {
-        data: surveyQueryResponse,
-        loading: loadingSurvey,
-        refetch: refetchSurvey,
-    } = useGetSurveyQuery({
-        variables: {
-            slug: surveySlug,
-        },
-        skip: !surveySlug,
-    });
+    const [getSurvey, { data: surveyQueryResponse, loading: loadingSurvey, refetch: refetchSurvey }] =
+        useGetSurveyLazyQuery();
 
     const {
         refetch,
@@ -111,7 +105,11 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     }, [surveyList?.surveys?.edges]);
 
     React.useEffect(() => {
-        refetchSurvey();
+        getSurvey({
+            variables: {
+                slug: surveySlug,
+            },
+        });
     }, [surveySlug, refetchSurvey]);
 
     const createSurvey = React.useCallback(
@@ -137,7 +135,6 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                     __typename: "Mutation",
                     surveyCreate: {
                         __typename: "SurveyCreate",
-
                         survey: {
                             __typename: "Survey",
                             id: surveyId ?? "",
@@ -196,7 +193,8 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                             surveys(existingSurveys = []) {
                                 const newSurveyRef = cache.writeFragment({
                                     data: data.surveyCreate?.survey,
-                                    fragment: SURVEY_CREATE,
+                                    fragment: SurveyFragmentFragmentDoc,
+                                    fragmentName: "SurveyFragment",
                                 });
 
                                 return {
@@ -315,26 +313,32 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                                       },
                                   },
 
-                            theme: {
-                                id: input?.themeId ?? survey.theme?.id ?? "",
-                                name: survey.theme?.name ?? "",
-                                colorScheme: survey.theme?.colorScheme ?? "",
-                                reference: survey.theme?.reference ?? "",
-                            } as ProjectTheme,
+                            theme: survey.theme
+                                ? (survey.theme as ProjectTheme)
+                                : ({
+                                      id: "",
+                                      name: "",
+                                      colorScheme: "{}",
+                                      reference: "",
+                                  } as ProjectTheme),
                             creator: {
                                 __typename: "User",
                                 email: survey.creator?.email ?? "",
                                 firstName: survey.creator?.firstName ?? "",
                                 lastName: survey.creator?.lastName ?? "",
                             },
-                            questions: {
-                                __typename: "SurveyQuestionCountableConnection",
-                                edges: [],
-                            },
-                            channels: {
-                                __typename: "SurveyChannelCountableConnection",
-                                edges: [],
-                            },
+                            questions: survey.questions
+                                ? (survey.questions as SurveyQuestionCountableConnection)
+                                : {
+                                      __typename: "SurveyQuestionCountableConnection",
+                                      edges: [],
+                                  },
+                            channels: survey.channels
+                                ? (survey.channels as SurveyChannelCountableConnection)
+                                : {
+                                      __typename: "SurveyChannelCountableConnection",
+                                      edges: [],
+                                  },
                         },
                         surveyErrors: [],
                         errors: [],
@@ -346,8 +350,9 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
 
                     cache.writeFragment({
                         id: `Survey:${survey.id}`,
-                        fragment: SURVEY_CORE,
+                        fragment: SurveyFragmentFragmentDoc,
                         data: data?.surveyUpdate?.survey,
+                        fragmentName: "SurveyFragment",
                     });
                 },
             });

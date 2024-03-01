@@ -48,7 +48,13 @@ export const DesignEditorContent = ({ onOpen }: ContentProp) => {
         (theme: Partial<ProjectTheme>) => {
             if (survey) {
                 setSelectedTheme(theme);
-                updateSurvey(survey, { themeId: theme.id });
+                updateSurvey(
+                    {
+                        ...survey,
+                        theme: { ...survey.theme, ...theme, colorScheme: JSON.stringify(theme.colorScheme ?? "{}") },
+                    },
+                    { themeId: theme.id },
+                );
             }
         },
         [survey, updateSurvey],

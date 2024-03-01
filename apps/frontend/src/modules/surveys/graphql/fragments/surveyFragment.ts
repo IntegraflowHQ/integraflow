@@ -84,42 +84,11 @@ export const SURVEY = gql`
     }
 `;
 
-export const SURVEYS = gql`
-    fragment SurveyListFragment on SurveyCountableConnection {
-        edges {
-            node {
-                ...SurveyCore
-            }
-        }
-        pageInfo {
-            hasNextPage
-            hasPreviousPage
-            endCursor
-            startCursor
-        }
-        totalCount
-    }
-`;
-
 export const SURVEY_ERROR = gql`
     fragment SurveyErrorFragment on SurveyError {
         field
         message
         code
-    }
-`;
-
-export const SURVEY_CREATE = gql`
-    fragment SurveyCreateFragment on SurveyCreate {
-        surveyErrors {
-            ...SurveyErrorFragment
-        }
-        errors {
-            ...SurveyErrorFragment
-        }
-        survey {
-            ...SurveyFragment
-        }
     }
 `;
 
