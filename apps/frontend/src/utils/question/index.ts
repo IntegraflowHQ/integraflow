@@ -226,7 +226,6 @@ export const logicValuesOptions = (question: ParsedQuestion) => {
     ];
 };
 
-///settings
 export const rangeOptions = (question: ParsedQuestion) => {
     return [...Array(question?.options.length).keys()].map((i) => {
         return {
@@ -252,70 +251,6 @@ export const recallOptions = (questions: ParsedQuestion[], openQuestion: ParsedQ
     ];
 };
 
-// const attributes = [
-//     {
-//         node: {
-//             id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwMC1lZTgwLWE1OTE0MDNkZDk0YQ==",
-//             name: "name",
-//             isNumerical: false,
-//             type: "PERSON",
-//             propertyType: "String",
-//             __typename: "PropertyDefinition",
-//         },
-//         __typename: "PropertyDefinitionCountableEdge",
-//     },
-//     {
-//         node: {
-//             id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwMS02MGRlLTNjODBlY2MwYTA1Yw==",
-//             name: "sex",
-//             isNumerical: false,
-//             type: "PERSON",
-//             propertyType: "String",
-//             __typename: "PropertyDefinition",
-//         },
-//         __typename: "PropertyDefinitionCountableEdge",
-//     },
-//     {
-//         node: {
-//             id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwMi0wOTg1LWMxM2MxYTMzMWNiZA==",
-//             name: "city",
-//             isNumerical: false,
-//             type: "PERSON",
-//             propertyType: "String",
-//             __typename: "PropertyDefinition",
-//         },
-//         __typename: "PropertyDefinitionCountableEdge",
-//     },
-//     {
-//         node: {
-//             id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwMy04ZDc5LWEwNGI4NjdlYzM4YQ==",
-//             name: "age",
-//             isNumerical: true,
-//             type: "PERSON",
-//             propertyType: "Numeric",
-//             __typename: "PropertyDefinition",
-//         },
-//         __typename: "PropertyDefinitionCountableEdge",
-//     },
-//     {
-//         node: {
-//             id: "UHJvcGVydHlEZWZpbml0aW9uOjAxOGM3MzVlLTkwZmMtMDAwNC0wMzM3LTE3Y2MzM2MyY2Y3Nw==",
-//             name: "enabled",
-//             isNumerical: false,
-//             type: "PERSON",
-//             propertyType: "Boolean",
-//             __typename: "PropertyDefinition",
-//         },
-//         __typename: "PropertyDefinitionCountableEdge",
-//     },
-// ];
-
-// const userAttributeOptions = attributes.map((attr) => ({
-//     value: attr.node.name,
-//     id: "attribute" + " " + `attribute.${attr.node.name}`,
-//     type: "userAttribute",
-// }));
-
 export const tagOptions = (
     questions: ParsedQuestion[],
     openQuestion: ParsedQuestion,
@@ -327,8 +262,9 @@ export const tagOptions = (
         id: "attribute" + " " + `attribute.${attr.name}`,
         type: "userAttribute",
     }));
-
-    if (recallOpts.length === 0) {
+    if (recallOpts.length === 0 && userAttrOpts.length === 0) {
+        return [];
+    } else if (recallOpts.length === 0) {
         return [{ id: "UserAttribute", value: "User Attribute", disabled: true, type: "" }, ...userAttrOpts];
     } else if (userAttrOpts.length === 0) {
         return [{ id: "recalledQuestion", value: "Recall from", disabled: true, type: "" }, ...recallOpts];

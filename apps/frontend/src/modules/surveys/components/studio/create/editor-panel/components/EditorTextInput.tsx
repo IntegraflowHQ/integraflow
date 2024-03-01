@@ -132,9 +132,6 @@ export const EditorTextInput = ({
                     padding: 4px;
                     border-radius: 4px;
                 }
-                .mention::first-letter {
-                    visibility: hidden;
-                }
                 .ql-mention-list-container {
                     border-radius:4px;
                     overflow-y:scroll;
@@ -157,7 +154,6 @@ export const EditorTextInput = ({
                 }
                 .mention[aria-disabled="true"]{
                     background-color: purple;
-
                 }
                 `}
             </style>
