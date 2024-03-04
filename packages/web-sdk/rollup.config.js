@@ -1,4 +1,3 @@
-import alias from "@rollup/plugin-alias";
 import babel from "@rollup/plugin-babel";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
@@ -19,17 +18,8 @@ const plugins = [
         packageJsonPath: "./package.json"
     }),
     nodePolyfills(),
-    alias({
-        entries: [
-            { find: "react", replacement: "preact/compat" },
-            { find: "react-dom/test-utils", replacement: "preact/test-utils" },
-            { find: "react-dom", replacement: "preact/compat" },
-            { find: "react/jsx-runtime", replacement: "preact/jsx-runtime" }
-        ]
-    }),
     resolve({
         browser: true,
-        dedupe: ["react", "react-dom"],
         preferBuiltins: true
     }),
     commonjs(),
@@ -38,11 +28,7 @@ const plugins = [
         preventAssignment: true
     }),
     babel({
-        presets: [
-            "@babel/preset-react",
-            "@babel/preset-typescript",
-            "@babel/preset-env"
-        ],
+        presets: ["@babel/preset-react", "@babel/preset-typescript", "@babel/preset-env"],
         plugins: ["@babel/plugin-transform-react-jsx"],
         babelHelpers: "bundled",
         exclude: ["../../node_modules/**", "node_modules/**"]

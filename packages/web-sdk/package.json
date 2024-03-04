@@ -48,7 +48,6 @@
     "devDependencies": {
         "@babel/preset-react": "^7.23.3",
         "@integraflow/sdk": "*",
-        "@rollup/plugin-alias": "^5.1.0",
         "@rollup/plugin-babel": "^6.0.0",
         "@rollup/plugin-commonjs": "^17.1.0",
         "@rollup/plugin-node-resolve": "^11.2.0",
