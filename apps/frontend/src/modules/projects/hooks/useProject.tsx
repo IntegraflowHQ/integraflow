@@ -30,7 +30,7 @@ export const useProject = () => {
     const [projectUpdate] = useProjectUpdateMutation();
     const { data: eventsData } = useProjectEventsDataQuery();
     const { data: audienceProperties } = useAudiencePropertiesQuery();
-    const { cache, clearStore } = useApolloClient();
+    const client = useApolloClient();
 
     const project = useMemo(() => {
         if (!workspace) {
@@ -45,28 +45,6 @@ export const useProject = () => {
 
         return projects?.find((project) => project?.slug === slug) ?? null;
     }, [user, orgSlug, projectSlug, projects, workspace]);
-
-    useEffect(() => {
-        const newProject = project ?? projects?.[0];
-
-        if (
-            workspace &&
-            newProject &&
-            (workspace.id !== user?.organization?.id || newProject.id !== user?.project?.id)
-        ) {
-            updateUser(
-                {
-                    organization: convertToAuthOrganization(workspace),
-                    project: newProject,
-                },
-                true,
-            );
-
-            if (newProject.id && currentProjectId !== newProject.id) {
-                switchProject(newProject.id);
-            }
-        }
-    }, [user, projects, workspace, updateUser, project, currentProjectId, switchProject]);
 
     const handleSwitchProject = useCallback(
         (project: Project) => {
@@ -90,11 +68,33 @@ export const useProject = () => {
                 });
             }
 
-            clearStore();
-            cache.reset();
+            client.clearStore();
+            client.cache.reset();
         },
-        [currentProjectId, orgSlug, projectSlug, redirect, switchProject, updateUser, user, workspace],
+        [currentProjectId, orgSlug, projectSlug, redirect, switchProject, updateUser, user, workspace, client],
     );
+
+    useEffect(() => {
+        const newProject = project ?? projects?.[0];
+
+        if (
+            workspace &&
+            newProject &&
+            (workspace.id !== user?.organization?.id || newProject.id !== user?.project?.id)
+        ) {
+            updateUser(
+                {
+                    organization: convertToAuthOrganization(workspace),
+                    project: newProject,
+                },
+                true,
+            );
+
+            if (newProject.id && currentProjectId !== newProject.id) {
+                handleSwitchProject(newProject as Project);
+            }
+        }
+    }, [user, projects, workspace, updateUser, project, currentProjectId, handleSwitchProject]);
 
     const handleAddProject = useCallback(
         (project: Project) => {

@@ -25,12 +25,14 @@ export const BooleanSettings = () => {
         <div className="space-y-6">
             <EditorTextInput
                 label="Positive text"
+                maxCharacterCount={100}
                 placeholder="Positive text"
                 defaultValue={question?.settings?.positiveText}
                 onChange={(e) => updateSettings({ positiveText: e.target.value }, true)}
             />
 
             <EditorTextInput
+                maxCharacterCount={100}
                 label="Negative text"
                 placeholder="Negative text"
                 defaultValue={question?.settings?.negativeText}

@@ -155,8 +155,6 @@ export enum LogicConditionEnum {
     ANSWER_CONTAINS = "contains",
     ANSWER_DOES_NOT_CONTAIN = "not_contain",
     HAS_ANY_VALUE = "any_value",
-    QUESTION_IS_ANSWERED = "answered",
-    QUESTION_IS_NOT_ANSWERED = "not_answered",
     DOES_NOT_INCLUDE_ANY = "not_include_any",
     IS_FILLED_IN = "filled",
     IS_NOT_FILLED_IN = "not_filled",
@@ -164,3 +162,15 @@ export enum LogicConditionEnum {
     INCLUDES_ALL = "includes_all",
     INCLUDES_ANY = "includes_any",
 }
+
+export type MentionItem = {
+    value: string;
+    id: string;
+    type: string;
+    disabled?: boolean;
+};
+
+export type MentionOption = {
+    title: string;
+    items: MentionItem[];
+};

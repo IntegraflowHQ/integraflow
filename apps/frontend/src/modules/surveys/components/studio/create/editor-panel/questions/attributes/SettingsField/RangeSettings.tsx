@@ -41,6 +41,7 @@ export const RangeSettings = () => {
                                 onChange={(e) => {
                                     updateSettings({ leftText: e.target.value }, true);
                                 }}
+                                maxCharacterCount={100}
                             />
                         </div>
                     </div>
@@ -48,6 +49,7 @@ export const RangeSettings = () => {
                         <p>Text on the right</p>
                         <div>
                             <EditorTextInput
+                                maxCharacterCount={100}
                                 defaultValue={question?.settings.rightText}
                                 onChange={(e) => {
                                     updateSettings({ rightText: e.target.value }, true);
@@ -71,12 +73,14 @@ export const RangeSettings = () => {
                 <>
                     <EditorTextInput
                         label="Right text"
+                        maxCharacterCount={100}
                         placeholder=""
                         defaultValue={question?.settings.rightText}
                         onChange={(e) => updateSettings({ rightText: e.target.value }, true)}
                     />
                     <EditorTextInput
                         label="Left text"
+                        maxCharacterCount={100}
                         placeholder=""
                         defaultValue={question?.settings.leftText}
                         onChange={(e) => updateSettings({ leftText: e.target.value })}

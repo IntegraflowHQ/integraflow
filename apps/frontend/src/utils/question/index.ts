@@ -1,9 +1,11 @@
-import { SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { Option } from "@/modules/surveys/components/studio/create/editor-panel/questions/attributes/ReactSelect";
-import { LogicConditionEnum, ParsedQuestion, QuestionOption } from "@/types";
+import { PropertyDefinition, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { LogicConditionEnum, MentionOption, ParsedQuestion, QuestionOption } from "@/types";
 import { LogicOperator } from "@integraflow/web/src/types";
+import { addEllipsis, stripHtmlTags } from "..";
 
-export const questionsWithoutSettingsTab = [SurveyQuestionTypeEnum.Csat, "CES"];
+const ANSWER_TAG_SUFFIX = "answer";
+export const questionsWithoutSettingsTab = [SurveyQuestionTypeEnum.Csat, "CES", SurveyQuestionTypeEnum.Date];
+export const emptyLabel = "<p><br></p>";
 
 const MultipleLogicConditions = [
     {
@@ -132,10 +134,7 @@ export const conditionOptions = (type: SurveyQuestionTypeEnum) => {
     if (type === SurveyQuestionTypeEnum.Multiple) {
         return MultipleLogicConditions;
     }
-    if (
-        type === SurveyQuestionTypeEnum.Single ||
-        type === SurveyQuestionTypeEnum.Dropdown
-    ) {
+    if (type === SurveyQuestionTypeEnum.Single || type === SurveyQuestionTypeEnum.Dropdown) {
         return SingleLogicConditions;
     }
     if (type === SurveyQuestionTypeEnum.Boolean) {
@@ -188,10 +187,7 @@ export const getLogicOperator = (condition: LogicConditionEnum) => {
     }
 };
 
-export const generateNumericalOptions = (
-    start: number,
-    end: number,
-): { label: string; value: number }[] => {
+export const generateNumericalOptions = (start: number, end: number): { label: string; value: number }[] => {
     const options = [];
     for (let i = start; i <= end; i++) {
         options.push({
@@ -203,29 +199,22 @@ export const generateNumericalOptions = (
 };
 
 export const changeableOperator = (type: SurveyQuestionTypeEnum) => {
-    if (
-        type === SurveyQuestionTypeEnum.Text ||
-        type === SurveyQuestionTypeEnum.Form
-    ) {
+    if (type === SurveyQuestionTypeEnum.Text || type === SurveyQuestionTypeEnum.Form) {
         return true;
     } else {
         return false;
     }
 };
 
-export const destinationOptions = (
-    questions: ParsedQuestion[],
-    openQuestion: ParsedQuestion,
-) => {
+export const destinationOptions = (questions: ParsedQuestion[], openQuestion: ParsedQuestion) => {
     return [
-        ...questions
-            .slice(questions.findIndex((q) => q.id === openQuestion?.id) + 1)
-            .map((q) => ({
-                value: q.id,
-                label: q.label
-                    ? `${q.orderNumber}- ${q.label} `
+        ...questions.slice(questions.findIndex((q) => q.id === openQuestion?.id) + 1).map((q) => ({
+            value: q.id,
+            label:
+                stripHtmlTags(q.label) && stripHtmlTags(q.label) !== emptyLabel
+                    ? `${q.orderNumber}- ${addEllipsis(stripHtmlTags(q.label), 40)} `
                     : `${q.orderNumber}- Empty Question`,
-            })),
+        })),
         {
             value: "-1",
             label: "End survey",
@@ -242,7 +231,6 @@ export const logicValuesOptions = (question: ParsedQuestion) => {
     ];
 };
 
-///settings
 export const rangeOptions = (question: ParsedQuestion) => {
     return [...Array(question?.options.length).keys()].map((i) => {
         return {
@@ -253,37 +241,89 @@ export const rangeOptions = (question: ParsedQuestion) => {
     });
 };
 
-export const recallOptions = (
+export function getAttrOpts(userAttributes: PropertyDefinition[]): MentionOption {
+    return {
+        title: "User Attribute",
+        items: userAttributes.map((attr) => ({
+            value: attr.name,
+            id: "attribute" + " " + `attribute.${attr.name}`,
+            type: "userAttribute",
+        })),
+    };
+}
+
+export function getRecallOptions(openQuestion: ParsedQuestion, questions: ParsedQuestion[]): MentionOption {
+    const openQuestionIndex = questions.findIndex((q) => q.id === openQuestion?.id);
+
+    return {
+        title: "Recall From",
+        items: questions
+            .slice(0, openQuestionIndex !== -1 ? openQuestionIndex : 0)
+            .filter((q) => q.type !== SurveyQuestionTypeEnum.Form && q.type !== SurveyQuestionTypeEnum.Cta)
+            .map((q) => ({
+                value: addEllipsis(
+                    `${questions.findIndex((o) => o.id == q.id) + 1}. ${!stripHtmlTags(q.label) ? "-" : stripHtmlTags(q.label)}`,
+                    20,
+                ),
+                id: q.id + " " + ANSWER_TAG_SUFFIX,
+                type: "recalledQuestion",
+            })),
+    };
+}
+
+export const tagOptions = (
     questions: ParsedQuestion[],
     openQuestion: ParsedQuestion,
-) => {
-    const newQuestions = questions.filter(
-        (q) =>
-            q.type !== SurveyQuestionTypeEnum.Form &&
-            q.type !== SurveyQuestionTypeEnum.Cta,
-    );
-    return [
-        ...newQuestions
-            .slice(
-                0,
-                questions.findIndex((q) => q.id === openQuestion?.id),
-            )
-            .map((q) => ({
-                value: q.id,
-                label: q.label
-                    ? `${q.orderNumber}- ${q.label} `
-                    : `${q.orderNumber}- Empty Question`,
-            })),
-    ];
+    userAttributes: PropertyDefinition[],
+): MentionOption[] => {
+    const opts: MentionOption[] = [];
+    const userAttrOpts = getAttrOpts(userAttributes);
+    const recallOpts = getRecallOptions(openQuestion, questions);
+
+    if (userAttrOpts.items.length > 0) {
+        opts.push(userAttrOpts);
+    }
+
+    if (recallOpts.items.length > 0) {
+        opts.push(recallOpts);
+    }
+    return opts;
 };
 
-export const userAttributeOptions: Option[] = [
-    {
-        label: "first name",
-        value: "first name",
-    },
-    {
-        label: "last name",
-        value: "last name",
-    },
-];
+function resolveTaggedQuestion(questionId: string, tagOptions: MentionOption[]): string {
+    const option = tagOptions
+        .flatMap((opts) => opts.items)
+        .filter((item) => item.id.endsWith(ANSWER_TAG_SUFFIX))
+        .find((o) => {
+            const optionId = o.id.split(" ")[0];
+            return questionId === optionId;
+        });
+
+    return option?.value ?? "";
+}
+
+export function encodeText(textContent: string): string {
+    const encodedText = textContent.replace(
+        /<span class="mention"([^>]*)data-id="([^"]*)"([^>]*)data-type="([^"]*)"([^>]*)data-fallback="([^"]*)"([^>]*)>(.*?)<\/span>/g,
+        (_, __, dataId, ___, dataType, ____, fallback) => {
+            if (dataId === "attribute") {
+                return `{{${dataType} | "${fallback}"}}`;
+            }
+            return `{{${dataType}:${dataId} | "${fallback}"}}`;
+        },
+    );
+
+    return encodedText.split("</span>").join("");
+}
+
+export function decodeText(encodedText: string, tagOptions: MentionOption[]): string {
+    const decodedText = encodedText
+        .replace(/{{answer:([^ ]+) \| "([^"]*)"}}/g, (_, id, fallback) => {
+            return `<span class="mention" data-index="4" data-denotation-char="" data-value="${resolveTaggedQuestion(id, tagOptions)}" data-id="${id}" data-type="answer" data-fallback="${fallback}"><span contenteditable="false">${resolveTaggedQuestion(id, tagOptions)}</span></span>`;
+        })
+        .replace(/{{attribute.([^ ]+) \| "([^"]*)"}}/g, (_, attr, fallback) => {
+            return `<span class="mention" data-index="4" data-denotation-char="" data-value="${attr}" data-id="attribute" data-type="attribute.${attr}" data-fallback="${fallback}"><span contenteditable="false">${attr}</span></span>`;
+        });
+
+    return decodedText + " ";
+}

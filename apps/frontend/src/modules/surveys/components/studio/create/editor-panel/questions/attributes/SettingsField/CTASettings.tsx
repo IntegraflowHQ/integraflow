@@ -51,6 +51,7 @@ export const CTASettings = () => {
 
                     {question?.settings.type === CTAType.LINK && (
                         <EditorTextInput
+                            maxCharacterCount={100}
                             label="Button link"
                             defaultValue={question?.settings.link}
                             onChange={(e) => {

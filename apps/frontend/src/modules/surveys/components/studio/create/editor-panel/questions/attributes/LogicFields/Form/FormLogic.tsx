@@ -6,7 +6,7 @@ import { destinationOptions } from "@/utils/question";
 import { LogicOperator } from "@integraflow/web/src/types";
 import { PlusIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { SingleValue } from "react-select";
+import { MultiValue, SingleValue } from "react-select";
 import { Option, ReactSelect } from "../../ReactSelect";
 import { LogicGroup } from "./LogicGroup";
 
@@ -17,7 +17,7 @@ type Props = {
 
 export const FormLogicBox = ({ logic, logicIndex }: Props) => {
     const { parsedQuestions } = useSurvey();
-    const { question } = useQuestion();
+    const { question, updateQuestion } = useQuestion();
     const [allowAddLogic, setAllowAddLogic] = useState(false);
     const [editValues, setEditValues] = useState(logic);
 
@@ -40,6 +40,24 @@ export const FormLogicBox = ({ logic, logicIndex }: Props) => {
                     operator: LogicOperator.AND,
                 },
             ],
+        });
+    };
+
+    const handleUpdateDestination = (value: MultiValue<Option> | SingleValue<Option>) => {
+        const newLogic = {
+            ...editValues,
+            destination: (value as SingleValue<Option>)?.value,
+        };
+        setEditValues(newLogic);
+        updateQuestion({
+            settings: {
+                ...question?.settings,
+                logic: [
+                    ...(question?.settings.logic as QuestionLogic[]).map((l: QuestionLogic, i: number) =>
+                        i === logicIndex ? newLogic : l,
+                    ),
+                ],
+            },
         });
     };
 
@@ -71,24 +89,11 @@ export const FormLogicBox = ({ logic, logicIndex }: Props) => {
                 <div className="w-[330px]">
                     <ReactSelect
                         options={destinationOptions(parsedQuestions, question!)}
-                        defaultValue={
-                            parsedQuestions.find((q) => q.id === logic.destination)
-                                ? {
-                                      value: logic.destination,
-                                      label:
-                                          parsedQuestions.find((q) => q.id === logic.destination)?.label ||
-                                          "Empty Question",
-                                  }
-                                : {
-                                      value: "-1",
-                                      label: "End survey",
-                                  }
-                        }
+                        defaultValue={destinationOptions(parsedQuestions, question!).find(
+                            (q) => q.value === logic.destination,
+                        )}
                         onchange={(value) => {
-                            setEditValues({
-                                ...editValues,
-                                destination: (value as SingleValue<Option>)?.value,
-                            });
+                            handleUpdateDestination(value);
                         }}
                     />
                 </div>

@@ -1,6 +1,8 @@
+import { PropertyDefinition } from "@/generated/graphql";
+import { useProject } from "@/modules/projects/hooks/useProject";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { recallOptions, userAttributeOptions } from "@/utils/question";
+import { decodeText, encodeText, tagOptions } from "@/utils/question";
 import { useEffect, useState } from "react";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import MinusButton from "../Buttons/MinimizeButton";
@@ -10,6 +12,7 @@ export const CTAFields = () => {
     const { updateQuestion, question } = useQuestion();
     const { parsedQuestions } = useSurvey();
     const [showDescription, setShowDescription] = useState(false);
+    const { personProperties } = useProject();
 
     useEffect(() => {
         if (question?.description) {
@@ -17,48 +20,58 @@ export const CTAFields = () => {
         }
     }, [question?.description]);
 
+    const mentionOptions = !question
+        ? []
+        : tagOptions(parsedQuestions, question, personProperties as PropertyDefinition[]);
+
     return (
         <div>
             <EditorTextInput
                 placeholder=""
-                options={recallOptions(parsedQuestions, question!)}
-                attributes={userAttributeOptions}
+                showMention={true}
+                mentionOptions={mentionOptions}
                 onChange={(e) => {
                     updateQuestion(
                         {
-                            label: e.target.value,
+                            label: encodeText(e.target.value),
                         },
                         true,
                     );
                 }}
-                defaultValue={question?.label}
+                defaultValue={decodeText(question?.label ?? "", mentionOptions)}
+                maxCharacterCount={225}
             />
 
             {showDescription ? (
                 <div className="mt-4 flex items-center justify-between gap-4">
                     <EditorTextInput
+                        showMention={true}
                         label={"Description"}
                         placeholder=""
                         className="flex-1"
-                        defaultValue={question?.description}
+                        mentionOptions={mentionOptions}
+                        defaultValue={decodeText(question?.description ?? "", mentionOptions)}
                         onChange={(e) => {
                             updateQuestion(
                                 {
-                                    description: e.target.value,
+                                    description: encodeText(e.target.value),
                                 },
                                 true,
                             );
                         }}
+                        maxCharacterCount={5000}
                     />
 
-                    <MinusButton
-                        onclick={() => {
-                            setShowDescription(false);
-                            updateQuestion({
-                                description: "",
-                            });
-                        }}
-                    />
+                    <div className="self-end">
+                        <MinusButton
+                            onclick={() => {
+                                setShowDescription(false);
+                                updateQuestion({
+                                    description: "",
+                                });
+                            }}
+                        />
+                    </div>
                 </div>
             ) : null}
 

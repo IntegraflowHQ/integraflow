@@ -21,7 +21,7 @@ export const useWorkspace = () => {
     const { user, organizations, updateUser } = useCurrentUser();
     const redirect = useRedirect();
     const [createOrganization, { loading }] = useOrganizationCreateMutation();
-    const { cache, clearStore } = useApolloClient();
+    const client = useApolloClient();
 
     const workspace = useMemo(() => {
         const slug = orgSlug ?? user?.organization?.slug;
@@ -53,10 +53,10 @@ export const useWorkspace = () => {
                 });
             }
 
-            clearStore();
-            cache.reset();
+            client.clearStore();
+            client.cache.reset();
         },
-        [orgSlug, redirect, updateUser, user],
+        [orgSlug, redirect, updateUser, user, client],
     );
 
     const handleAddWorkspace = useCallback(

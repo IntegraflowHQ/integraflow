@@ -74,7 +74,7 @@ export const ChoiceSettings = () => {
             question?.type === SurveyQuestionTypeEnum.Dropdown ||
             question?.type === SurveyQuestionTypeEnum.Multiple ? (
                 <>
-                    <div className="rounded bg-[#272138] p-3">
+                    <div className="rounded bg-[#272138]">
                         <Switch
                             name="randomizeAnswers"
                             label="Randomize answers"
@@ -85,7 +85,7 @@ export const ChoiceSettings = () => {
                         />
                     </div>
 
-                    <div className="rounded bg-[#272138] p-3">
+                    <div className="rounded bg-[#272138]">
                         <Switch
                             name="randomizeAnswersExceptLast"
                             label="Randomize except last"
