@@ -1,10 +1,10 @@
-import { SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { LogicConditionEnum, ParsedQuestion, QuestionOption, TagOption } from "@/types";
+import { PropertyDefinition, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { LogicConditionEnum, MentionOption, ParsedQuestion, QuestionOption } from "@/types";
 import { LogicOperator } from "@integraflow/web/src/types";
 import { addEllipsis, stripHtmlTags } from "..";
 
+const ANSWER_TAG_SUFFIX = "answer";
 export const questionsWithoutSettingsTab = [SurveyQuestionTypeEnum.Csat, "CES", SurveyQuestionTypeEnum.Date];
-
 export const emptyLabel = "<p><br></p>";
 
 const MultipleLogicConditions = [
@@ -241,6 +241,62 @@ export const rangeOptions = (question: ParsedQuestion) => {
     });
 };
 
+export function getAttrOpts(userAttributes: PropertyDefinition[]): MentionOption {
+    return {
+        title: "User Attribute",
+        items: userAttributes.map((attr) => ({
+            value: attr.name,
+            id: "attribute" + " " + `attribute.${attr.name}`,
+            type: "userAttribute",
+        })),
+    };
+}
+
+export function getRecallOptions(openQuestion: ParsedQuestion, questions: ParsedQuestion[]): MentionOption {
+    const openQuestionIndex = questions.findIndex((q) => q.id === openQuestion?.id);
+
+    return {
+        title: "Recall From",
+        items: questions
+            .slice(0, openQuestionIndex !== -1 ? openQuestionIndex : 0)
+            .filter((q) => q.type !== SurveyQuestionTypeEnum.Form && q.type !== SurveyQuestionTypeEnum.Cta)
+            .map((q) => ({
+                value: `${questions.findIndex((o) => o.id == q.id) + 1}. ${!stripHtmlTags(q.label) ? "-" : stripHtmlTags(q.label)}`,
+                id: q.id + " " + ANSWER_TAG_SUFFIX,
+                type: "recalledQuestion",
+            })),
+    };
+}
+
+export const tagOptions = (
+    questions: ParsedQuestion[],
+    openQuestion: ParsedQuestion,
+    userAttributes: PropertyDefinition[],
+): MentionOption[] => {
+    const opts: MentionOption[] = [];
+    const userAttrOpts = getAttrOpts(userAttributes);
+    const recallOpts = getRecallOptions(openQuestion, questions);
+    if (userAttrOpts.items.length > 0) {
+        opts.push(userAttrOpts);
+    }
+    if (recallOpts.items.length > 0) {
+        opts.push(recallOpts);
+    }
+    return opts;
+};
+
+function resolveQuestionIndex(questionId: string, tagOptions: MentionOption[]): string {
+    const option = tagOptions
+        .flatMap((opts) => opts.items)
+        .filter((item) => item.id.endsWith(ANSWER_TAG_SUFFIX))
+        .find((o) => {
+            const optionId = o.id.split(" ")[0];
+            return questionId === optionId;
+        });
+
+    return option?.value as string;
+}
+
 export const recallOptions = (questions: ParsedQuestion[], openQuestion: ParsedQuestion) => {
     const openQuestionIndex = questions.findIndex((q) => q.id === openQuestion?.id);
 
@@ -259,42 +315,6 @@ export const recallOptions = (questions: ParsedQuestion[], openQuestion: ParsedQ
     ];
 };
 
-export const tagOptions = (
-    questions: ParsedQuestion[],
-    openQuestion: ParsedQuestion,
-    userAttributes: PropertyDefinition[],
-): TagOption[] => {
-    const recallOpts = recallOptions(questions, openQuestion);
-    const userAttrOpts = userAttributes.map((attr) => ({
-        value: attr.name,
-        id: "attribute" + " " + `attribute.${attr.name}`,
-        type: "userAttribute",
-    }));
-    if (recallOpts.length === 0 && userAttrOpts.length === 0) {
-        return [];
-    } else if (recallOpts.length === 0) {
-        return [{ id: "UserAttribute", value: "User Attribute", disabled: true, type: "" }, ...userAttrOpts];
-    } else if (userAttrOpts.length === 0) {
-        return [{ id: "recalledQuestion", value: "Recall from", disabled: true, type: "" }, ...recallOpts];
-    } else {
-        return [
-            { id: "recalledQuestion", value: "Recall from", disabled: true, type: "" },
-            ...recallOpts,
-            { id: "UserAttribute", value: "User Attribute", disabled: true, type: "" },
-            ...userAttrOpts,
-        ];
-    }
-};
-
-function resolveQuestionIndex(questionId: string, tagOptions: TagOption[]): string {
-    const option = tagOptions?.find((o) => {
-        const optionId = o.id.split(" ")[0];
-        return questionId === optionId;
-    });
-
-    return option?.value as string;
-}
-
 export function encodeText(textContent: string): string {
     const encodedText = textContent.replace(
         /<span class="mention"([^>]*)data-id="([^"]*)"([^>]*)data-type="([^"]*)"([^>]*)data-fallback="([^"]*)"([^>]*)>(.*?)<\/span>/g,
@@ -309,7 +329,7 @@ export function encodeText(textContent: string): string {
     return encodedText.split("</span>").join("");
 }
 
-export function decodeText(encodedText: string, tagOptions: TagOption[]): string {
+export function decodeText(encodedText: string, tagOptions: MentionOption[]): string {
     const decodedText = encodedText
         .replace(/{{answer:([^ ]+) \| "([^"]*)"}}/g, (_, id, fallback) => {
             return `<span class="mention" data-index="4" data-denotation-char="" data-value="${resolveQuestionIndex(id, tagOptions)}" data-id="${id}" data-type="answer" data-fallback="${fallback}"><span contenteditable="false">${resolveQuestionIndex(id, tagOptions)}</span></span>`;

@@ -1,6 +1,6 @@
-import { TagOption } from "@/types";
+import { MentionItem, MentionOption } from "@/types";
 import { cn, stripHtmlTags } from "@/utils";
-import { decodeText, encodeText } from "@/utils/question";
+import { encodeText } from "@/utils/question";
 import { TextInput } from "@tremor/react";
 import { StringMap } from "quill";
 import "quill-mention";
@@ -16,7 +16,7 @@ export interface EditorTextProps {
     showCharacterCount?: boolean;
     maxCharacterCount?: number;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    tagOptions?: TagOption[];
+    mentionOptions?: MentionOption[];
     defaultValue?: string;
     showMention?: boolean;
     value?: string;
@@ -28,7 +28,7 @@ export const EditorTextInput = ({
     showCharacterCount = true,
     maxCharacterCount = 500,
     defaultValue,
-    tagOptions,
+    mentionOptions = [],
     onChange,
     placeholder,
     showMention = false,
@@ -84,6 +84,11 @@ export const EditorTextInput = ({
     useObserveScrollPosition(calculateFallbackPosition);
 
     const modules: StringMap = useMemo(() => {
+        const tagOptions: MentionItem[] = mentionOptions.flatMap((opts) => [
+            { id: opts.title, value: opts.title, type: opts.title, disabled: true },
+            ...opts.items,
+        ]);
+
         return {
             toolbar: false,
             syntax: false,
@@ -191,7 +196,7 @@ export const EditorTextInput = ({
                         left: fallbackFieldPosition.left,
                         bottom: fallbackFieldPosition.bottom + 5,
                     }}
-                    disabled={maxCharacterCount === stripHtmlTags(defaultValue!)?.length}
+                    disabled={maxCharacterCount === stripHtmlTags(defaultValue ?? "")?.length}
                 />
             )}
             {showMention ? (
@@ -202,11 +207,11 @@ export const EditorTextInput = ({
                     onChange={(value) => {
                         onChange({
                             target: {
-                                value: encodeText(value),
+                                value,
                             },
                         } as React.ChangeEvent<HTMLInputElement>);
                     }}
-                    defaultValue={decodeText(defaultValue ?? "", tagOptions ?? [])}
+                    defaultValue={defaultValue}
                     style={{
                         width: "100%",
                         backgroundColor: "#272138",
@@ -224,12 +229,12 @@ export const EditorTextInput = ({
                     defaultValue={defaultValue}
                     placeholder={placeholder}
                     className="rounded-lg border border-transparent bg-[#272138] text-sm text-intg-text-1 placeholder:text-intg-text-3 focus:border-intg-text-3 focus:outline-none"
-                    disabled={maxCharacterCount === stripHtmlTags(defaultValue!)?.length}
+                    disabled={maxCharacterCount === stripHtmlTags(defaultValue ?? "")?.length}
                 />
             )}
             {showCharacterCount && (
                 <div className="absolute bottom-0 right-0 translate-y-1/2 rounded bg-[#2B2045] p-1 text-xs text-intg-text">
-                    {stripHtmlTags(defaultValue!)?.length}/{maxCharacterCount}
+                    {stripHtmlTags(defaultValue ?? "")?.length}/{maxCharacterCount}
                 </div>
             )}
         </div>

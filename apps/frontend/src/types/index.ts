@@ -163,9 +163,14 @@ export enum LogicConditionEnum {
     INCLUDES_ANY = "includes_any",
 }
 
-export type TagOption = {
+export type MentionItem = {
     value: string;
     id: string;
-    disabled?: boolean;
     type: string;
+    disabled?: boolean;
+};
+
+export type MentionOption = {
+    title: string;
+    items: MentionItem[];
 };
