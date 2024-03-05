@@ -118,7 +118,6 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic, setLogicValues
         handleLogicUpdate(newValues);
     };
     const handleConditionChange = (value: SingleValue<Option> | MultiValue<Option>) => {
-        console.log("changing condition");
         const newValue = {
             ...editValues,
             condition: (value as SingleValue<Option>)?.value,
