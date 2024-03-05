@@ -56,23 +56,22 @@ export const EditorTextInput = ({
     };
 
     useEffect(() => {
-        if (displayFallbackField && inputRef.current) {
-            inputRef.current.focus();
-        }
-    }, [displayFallbackField]);
+        document.getElementById(id)?.addEventListener("click", handleMentionClick);
+        return () => {
+            document.getElementById(id)?.removeEventListener("click", handleMentionClick);
+        };
+    }, [id]);
 
-    useEffect(() => {
-        if (!ref.current) {
+    const handleFallbackChange = () => {
+        if (!ref.current?.unprivilegedEditor) {
             return;
         }
-        const editor = ref.current.getEditor();
-        const unprivilegedEditor = ref.current.makeUnprivilegedEditor(editor);
         onChange({
             target: {
-                value: encodeText(unprivilegedEditor?.getHTML()),
+                value: encodeText(ref.current.unprivilegedEditor.getHTML()),
             },
         } as React.ChangeEvent<HTMLInputElement>);
-    }, [fallbackValue]);
+    };
 
     const calculateFallbackPosition = useCallback(() => {
         if (!mentionRef.current) {
@@ -83,13 +82,6 @@ export const EditorTextInput = ({
     }, [mentionRef]);
 
     useObserveScrollPosition(calculateFallbackPosition);
-
-    useEffect(() => {
-        document.getElementById(id)?.addEventListener("click", handleMentionClick);
-        return () => {
-            document.getElementById(id)?.removeEventListener("click", handleMentionClick);
-        };
-    }, [id]);
 
     const modules: StringMap = useMemo(() => {
         return {
@@ -167,17 +159,19 @@ export const EditorTextInput = ({
                 <input
                     type="text"
                     ref={inputRef}
-                    value={fallbackValue}
+                    defaultValue={fallbackValue}
                     placeholder="Fallback"
+                    autoFocus={true}
                     onChange={(e) => {
                         if (mentionRef.current) {
                             mentionRef.current.setAttribute("data-fallback", e.target.value);
-                            setFallbackValue(e.target.value);
+                            handleFallbackChange();
                         }
                     }}
                     className="mention-input border-0 bg-intg-bg-4 p-0.5 text-xs text-intg-text"
                     onBlur={() => {
                         setDisplayFallbackField(false);
+                        setFallbackValue("");
                     }}
                     style={{
                         position: "fixed",
