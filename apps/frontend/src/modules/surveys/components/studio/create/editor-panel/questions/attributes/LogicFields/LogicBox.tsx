@@ -2,7 +2,7 @@ import MinusIcon from "@/assets/icons/studio/MinusIcon";
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { LogicConditionEnum, QuestionLogic } from "@/types";
+import { LogicConditionEnum, ParsedQuestion, QuestionLogic } from "@/types";
 import { generateUniqueId } from "@/utils";
 import {
     changeableOperator,
@@ -24,7 +24,7 @@ type Props = {
     setLogicValues: React.Dispatch<React.SetStateAction<QuestionLogic>>;
 };
 
-export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
+export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic, setLogicValues }: Props) => {
     const { parsedQuestions } = useSurvey();
     const { updateQuestion, question } = useQuestion();
     const [enableUserOptions, setEnableUserOptions] = useState(false);
@@ -75,10 +75,10 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
         }
     };
 
-    const handleMinMaxChange = (minValue: any, maxValue: any) => {
+    const handleMinMaxChange = (minValue: SingleValue<Option>, maxValue: SingleValue<Option>) => {
         const newValues = {
             ...editValues,
-            values: [minValue.value, maxValue.value],
+            values: [minValue?.value, maxValue?.value],
         };
 
         setEditValues(newValues);
@@ -89,12 +89,12 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
         let newValues;
         newValues = {
             ...editValues,
-            values: (values as MultiValue<Option>)?.map((v: any) => v.value),
+            values: (values as MultiValue<Option>)?.map((v: SingleValue<Option>) => v?.value),
         };
         if ((values as MultiValue<Option>).length > 0) {
             newValues = {
                 ...editValues,
-                values: (values as MultiValue<Option>)?.map((v: any) => v.value),
+                values: (values as MultiValue<Option>)?.map((v: SingleValue<Option>) => v?.value),
             };
         } else {
             newValues = {
@@ -109,26 +109,28 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
         handleLogicUpdate(newValues);
     };
 
-    const handleDestinationChange = (value: any) => {
+    const handleDestinationChange = (value: SingleValue<Option> | MultiValue<Option>) => {
         const newValues = {
             ...editValues,
-            destination: value?.value,
+            destination: (value as SingleValue<Option>)?.value,
         };
         setEditValues(newValues);
         handleLogicUpdate(newValues);
     };
-    const handleConditionChange = (value: any) => {
-        let newValue;
-        newValue = {
+    const handleConditionChange = (value: SingleValue<Option> | MultiValue<Option>) => {
+        console.log("changing condition");
+        const newValue = {
             ...editValues,
-            condition: value?.value,
-            operator: getLogicOperator(value?.value),
+            condition: (value as SingleValue<Option>)?.value,
+            operator: getLogicOperator((value as SingleValue<Option>)?.value),
             destination: "",
             values: [],
         };
         handleLogicUpdate(newValue);
-        setEditValues(newValue);
+        setIsCreatingLogic(true);
+        setLogicValues(newValue);
     };
+    console.log(editValues);
 
     const handleOperatorChange = () => {
         const newValues = {
@@ -147,9 +149,9 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
                 <p>If answer</p>
                 <div className="w-[330px]">
                     <ReactSelect
-                        options={conditionOptions(question?.type!)}
+                        options={conditionOptions((question as ParsedQuestion).type!)}
                         onchange={(value: SingleValue<Option> | MultiValue<Option>) => handleConditionChange(value)}
-                        value={conditionOptions(question?.type!)?.find(
+                        value={conditionOptions((question as ParsedQuestion).type!)?.find(
                             (c) => editValues.condition !== undefined && c.value === editValues.condition,
                         )}
                         defaultValue={conditionOptions(question?.type as SurveyQuestionTypeEnum)?.find(
@@ -185,11 +187,11 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
                                             (o: Option) => o.id === (value as SingleValue<Option>)?.value,
                                         )?.label,
                                     },
-                                    value,
+                                    value as SingleValue<Option>,
                                 );
                             }}
                             minChange={(value) => {
-                                handleMinMaxChange(value, {
+                                handleMinMaxChange(value as SingleValue<Option>, {
                                     value: editValues.values?.[0] ?? value,
                                     label: question?.options?.find(
                                         (o: Option) => o.id === (value as SingleValue<Option>)?.value,
@@ -201,10 +203,14 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
                 </div>
             )}
 
-            {editValues.condition !== LogicConditionEnum.BETWEEN &&
-            editValues.condition !== LogicConditionEnum.HAS_ANY_VALUE &&
-            editValues.condition !== LogicConditionEnum.QUESTION_IS_ANSWERED &&
-            editValues.condition !== LogicConditionEnum.QUESTION_IS_NOT_ANSWERED ? (
+            {![
+                LogicConditionEnum.NOT_ANSWERED,
+                LogicConditionEnum.HAS_ANY_VALUE,
+                LogicConditionEnum.ANSWERED,
+                LogicConditionEnum.IS_FALSE,
+                LogicConditionEnum.IS_TRUE,
+                LogicConditionEnum.BETWEEN,
+            ].includes(editValues.condition as LogicConditionEnum) ? (
                 <div className="flex justify-between">
                     <div />
                     <div className="w-[330px]">
@@ -245,19 +251,9 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic }: Props) => {
                 <p>then</p>
                 <div className="w-[330px]">
                     <ReactSelect
-                        defaultValue={
-                            parsedQuestions.find((q) => q.id === logic.destination)
-                                ? {
-                                      value: logic.destination,
-                                      label:
-                                          parsedQuestions.find((q) => q.id === logic.destination)?.label ||
-                                          "Empty Question",
-                                  }
-                                : {
-                                      value: "-1",
-                                      label: "End survey",
-                                  }
-                        }
+                        defaultValue={destinationOptions(parsedQuestions, question!).find(
+                            (q) => q.value === logic.destination,
+                        )}
                         options={destinationOptions(parsedQuestions, question!)}
                         onchange={handleDestinationChange}
                     />

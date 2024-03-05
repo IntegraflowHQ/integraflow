@@ -3,6 +3,7 @@ import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ParsedQuestion } from "@/types";
 import { addEllipsis, stripHtmlTags } from "@/utils";
+import { emptyLabel } from "@/utils/question";
 import { questionTypes } from "@/utils/survey";
 import * as Accordion from "@radix-ui/react-accordion";
 import RatingIcon from "assets/icons/studio/rating.png";
@@ -19,7 +20,6 @@ export default function UpdateQuestion() {
             switchQuestion(parsedQuestions[0]);
         }
     }, [parsedQuestions, question]);
-    const emptyLabel = "<p><br></p>";
 
     return (
         <div className="h-full w-full space-y-4 pt-2">

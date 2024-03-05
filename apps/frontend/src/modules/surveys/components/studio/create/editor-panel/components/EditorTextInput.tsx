@@ -121,34 +121,46 @@ export const EditorTextInput = ({
         <div className={cn(`${className} relative w-full`)}>
             <style>
                 {`
-                .mention{
-                    background-color: #392D72;
-                    padding: 4px;
-                    border-radius: 4px;
-                }
-                .ql-mention-list-container {
-                    border-radius:4px;
-                    overflow-y:scroll;
-                    overflow-x: hidden;
-                    width: 180px;
-                    padding: 4px;
-                    position: absolute;
-                    z-index: 1000;
-                    max-height: 200px;
-                    background-color: #392D72;
-                }
-                .ql-mention-list-item {
-                    cursor: pointer;
-                    padding: 1px 1px;
-                }
-                .ql-mention-list-item[data-disabled="true"]{
-                    pointer-events:none;
-                    font-weight:600;
-                    font-size: 12px;
-                }
-                .mention[aria-disabled="true"]{
-                    background-color: purple;
-                }
+                    .mention{
+                        background-color: #392D72;
+                        border-radius: 2px;
+                        padding:4px
+                    }
+                    .ql-mention-list-container {
+                        border-radius:4px;
+                        overflow-y:scroll;
+                        overflow-x: hidden;
+                        position: absolute;
+                        z-index: 1000;
+                        max-height: 200px;
+                        width:180px;
+                        padding-left:6px;
+                    }
+                    .ql-mention-list-container-bottom{
+                        background-color:#272138;
+                        width: 180px;
+                    }
+                    .ql-mention-list {
+                        width:100%;
+                    }
+                    .ql-mention-list-item {
+                        cursor: pointer;
+                        font-size: 14px;
+                        padding:3px 4px;
+                        width: 100%;
+                    }
+                    .ql-mention-list-item:hover {
+                        background-color: #fff;
+                        color: #272138;
+                    }
+                    .ql-mention-list-item[data-disabled="true"]{
+                        pointer-events:none;
+                        font-weight:600;
+                        font-size: 14px;
+                    }
+                    .mention[aria-disabled="true"]{
+                        background-color: purple;
+                    }
                 `}
             </style>
             <label htmlFor={label} className="text-sm font-normal text-intg-text-2">

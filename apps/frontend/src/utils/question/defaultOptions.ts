@@ -40,7 +40,12 @@ export const createRangeOptions = (type: SurveyQuestionTypeEnum, length: number)
         options.push({
             id: generateUniqueId(),
             orderNumber: i,
-            label: type === SurveyQuestionTypeEnum.Csat ? CSATOptions[i - 1] : type === "CES" ? CESOptions[i - 1] : "",
+            label:
+                type === SurveyQuestionTypeEnum.Csat
+                    ? CSATOptions[i - 1]
+                    : type === SurveyQuestionTypeEnum.Ces
+                      ? CESOptions[i - 1]
+                      : `${i}`,
         });
     }
     return options;
@@ -54,12 +59,12 @@ export const createOptions = (type: SurveyQuestionTypeEnum): QuestionOption[] | 
     if (
         type === SurveyQuestionTypeEnum.Rating ||
         type === SurveyQuestionTypeEnum.Csat ||
-        type === "CES" ||
+        type === SurveyQuestionTypeEnum.Ces ||
         type === SurveyQuestionTypeEnum.Nps ||
         type === SurveyQuestionTypeEnum.NumericalScale ||
         type === SurveyQuestionTypeEnum.SmileyScale
     ) {
-        const length = type === SurveyQuestionTypeEnum.Nps ? 10 : type === "CES" ? 7 : 5;
+        const length = type === SurveyQuestionTypeEnum.Nps ? 10 : type === SurveyQuestionTypeEnum.Ces ? 7 : 5;
         return createRangeOptions(type, length);
     }
 

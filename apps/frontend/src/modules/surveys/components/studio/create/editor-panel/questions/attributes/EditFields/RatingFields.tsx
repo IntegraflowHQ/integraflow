@@ -119,9 +119,10 @@ export const RatingFields = () => {
                             return (
                                 <div key={option.id} className="mb-4">
                                     <EditorTextInput
+                                        maxCharacterCount={100}
                                         defaultValue={option.label}
                                         onChange={(e) => {
-                                            const newOptions = [...question?.options];
+                                            const newOptions = [...question.options];
                                             newOptions[index].label = e.target.value;
                                             updateQuestion(
                                                 {

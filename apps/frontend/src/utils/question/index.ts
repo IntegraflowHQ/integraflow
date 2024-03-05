@@ -1,9 +1,11 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { LogicConditionEnum, ParsedQuestion, QuestionOption, TagOption } from "@/types";
 import { LogicOperator } from "@integraflow/web/src/types";
-import { stripHtmlTags } from "..";
+import { addEllipsis, stripHtmlTags } from "..";
 
-export const questionsWithoutSettingsTab = [SurveyQuestionTypeEnum.Csat, "CES"];
+export const questionsWithoutSettingsTab = [SurveyQuestionTypeEnum.Csat, "CES", SurveyQuestionTypeEnum.Date];
+
+export const emptyLabel = "<p><br></p>";
 
 const MultipleLogicConditions = [
     {
@@ -208,7 +210,10 @@ export const destinationOptions = (questions: ParsedQuestion[], openQuestion: Pa
     return [
         ...questions.slice(questions.findIndex((q) => q.id === openQuestion?.id) + 1).map((q) => ({
             value: q.id,
-            label: q.label ? `${q.orderNumber}- ${q.label} ` : `${q.orderNumber}- Empty Question`,
+            label:
+                stripHtmlTags(q.label) && stripHtmlTags(q.label) !== emptyLabel
+                    ? `${q.orderNumber}- ${addEllipsis(stripHtmlTags(q.label), 40)} `
+                    : `${q.orderNumber}- Empty Question`,
         })),
         {
             value: "-1",
@@ -244,7 +249,10 @@ export const recallOptions = (questions: ParsedQuestion[], openQuestion: ParsedQ
             .slice(0, openQuestionIndex !== -1 ? openQuestionIndex : 0)
             .filter((q) => q.type !== SurveyQuestionTypeEnum.Form && q.type !== SurveyQuestionTypeEnum.Cta)
             .map((q) => ({
-                value: `${questions.findIndex((o) => o.id == q.id) + 1}. ${!stripHtmlTags(q.label) ? "-" : stripHtmlTags(q.label)}`,
+                value: addEllipsis(
+                    `${questions.findIndex((o) => o.id == q.id) + 1}. ${!stripHtmlTags(q.label) ? "-" : stripHtmlTags(q.label)}`,
+                    20,
+                ),
                 id: q.id + " " + `answer`,
                 type: "recalledQuestion",
             })),

@@ -59,6 +59,7 @@ export const FormSettings = () => {
                                     true,
                                 );
                             }}
+                            maxCharacterCount={100}
                             defaultValue={question?.settings.disclaimerText}
                             label={"Disclaimer content"}
                             placeholder="Type in your disclaimer here"
@@ -98,6 +99,7 @@ export const FormSettings = () => {
                                     true,
                                 );
                             }}
+                            maxCharacterCount={100}
                             defaultValue={question.settings.consentText}
                             placeholder="Type in consent label here"
                         />

@@ -34,6 +34,7 @@ export const CTAFields = () => {
                     );
                 }}
                 defaultValue={question?.label}
+                maxCharacterCount={225}
             />
 
             {showDescription ? (
@@ -53,6 +54,7 @@ export const CTAFields = () => {
                                 true,
                             );
                         }}
+                        maxCharacterCount={5000}
                     />
 
                     <MinusButton

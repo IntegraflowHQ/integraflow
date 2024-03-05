@@ -51,6 +51,7 @@ export const FormFieldList = () => {
                                 />
 
                                 <EditorTextInput
+                                    maxCharacterCount={100}
                                     value={option.label}
                                     showCharacterCount={false}
                                     defaultValue={option.label}

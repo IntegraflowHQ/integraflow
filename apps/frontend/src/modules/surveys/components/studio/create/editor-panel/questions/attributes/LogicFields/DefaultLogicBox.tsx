@@ -1,7 +1,7 @@
 import MinusIcon from "@/assets/icons/studio/MinusIcon";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { LogicConditionEnum, QuestionLogic } from "@/types";
+import { LogicConditionEnum, ParsedQuestion, QuestionLogic } from "@/types";
 import {
     changeableOperator,
     conditionOptions,
@@ -54,15 +54,15 @@ export const DefaultLogicBox: React.FC<Props> = ({
         });
     };
 
-    const handleMinChange = (option: any) => {
+    const handleMinChange = (option: SingleValue<Option> | MultiValue<Option>) => {
         const newValues = [...(logicValues.values || [])];
-        newValues[0] = option?.value;
+        newValues[0] = (option as SingleValue<Option>)?.value;
         setLogicValues({ ...logicValues, values: newValues });
     };
 
-    const handleMaxChange = (option: any) => {
+    const handleMaxChange = (option: SingleValue<Option> | MultiValue<Option>) => {
         const newValues = [...(logicValues.values || [])];
-        newValues[1] = option?.value;
+        newValues[1] = (option as SingleValue<Option>)?.value;
         setLogicValues({ ...logicValues, values: newValues });
     };
 
@@ -73,7 +73,7 @@ export const DefaultLogicBox: React.FC<Props> = ({
         });
     };
 
-    const handleDestinationSelection = (value: any) => {
+    const handleDestinationSelection = (option: SingleValue<Option> | MultiValue<Option>) => {
         updateQuestion({
             settings: {
                 ...question?.settings,
@@ -81,7 +81,7 @@ export const DefaultLogicBox: React.FC<Props> = ({
                     ...(question?.settings.logic || []),
                     {
                         ...logicValues,
-                        destination: value?.value,
+                        destination: (option as SingleValue<Option>)?.value,
                     },
                 ],
             },
@@ -124,12 +124,12 @@ export const DefaultLogicBox: React.FC<Props> = ({
                 <p>If answer</p>
                 <div className="w-[330px]">
                     <ReactSelect
-                        options={conditionOptions(question?.type!)}
+                        options={conditionOptions((question as ParsedQuestion).type)}
                         onchange={handleConditionChange}
-                        defaultValue={conditionOptions(question?.type!)?.find(
+                        defaultValue={conditionOptions((question as ParsedQuestion).type!)?.find(
                             (option: Option) => option.value === (logicValues.condition as string),
                         )}
-                        value={conditionOptions(question?.type!)?.find(
+                        value={conditionOptions((question as ParsedQuestion).type!)?.find(
                             (option: Option) => option.value === (logicValues.condition as string),
                         )}
                     />
@@ -154,14 +154,19 @@ export const DefaultLogicBox: React.FC<Props> = ({
             )}
 
             {logicValues.condition &&
-                !["not_answered", "any_value", "answered", "is_false", "between", "is_true"].includes(
-                    logicValues.condition,
-                ) && (
+                ![
+                    LogicConditionEnum.NOT_ANSWERED,
+                    LogicConditionEnum.HAS_ANY_VALUE,
+                    LogicConditionEnum.ANSWERED,
+                    LogicConditionEnum.IS_FALSE,
+                    LogicConditionEnum.IS_TRUE,
+                    LogicConditionEnum.BETWEEN,
+                ].includes(logicValues.condition) && (
                     <div className="flex justify-between">
                         <div></div>
                         <div className="w-[330px]">
                             <ReactSelect
-                                shouldLogicalOperatorChange={changeableOperator(question?.type!)}
+                                shouldLogicalOperatorChange={changeableOperator((question as ParsedQuestion).type!)}
                                 enableUserOptions={enableUserOptions || false}
                                 logicOperator={logicOperator}
                                 onOperatorChange={() => {

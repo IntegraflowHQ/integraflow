@@ -47,9 +47,10 @@ export const OptionsList = () => {
                             <div key={option.id} className="flex items-center gap-2">
                                 <MoreButton />
                                 <EditorTextInput
+                                    maxCharacterCount={100}
                                     defaultValue={option.label}
                                     onChange={(e) => {
-                                        const newOptions = [...question?.options];
+                                        const newOptions = [...question.options];
                                         newOptions[index].label = e.target.value;
 
                                         updateQuestion(
@@ -70,7 +71,7 @@ export const OptionsList = () => {
                                     <CommentButton
                                         color={option.comment ? "active" : "default"}
                                         onClick={() => {
-                                            const newOptions = [...question?.options];
+                                            const newOptions = [...question.options];
                                             newOptions[index].comment = !option.comment;
 
                                             updateQuestion({
@@ -83,7 +84,7 @@ export const OptionsList = () => {
                                 {question?.options.length < 3 ? null : (
                                     <MinusButton
                                         onclick={() => {
-                                            const newOptions = [...question?.options];
+                                            const newOptions = [...question.options];
                                             newOptions.splice(index, 1);
                                             updateQuestion({
                                                 options: newOptions,
@@ -100,7 +101,7 @@ export const OptionsList = () => {
                     text={"Add an answer at choice"}
                     onclick={() => {
                         const highestOrderNumber = getHighestOrderNumber(question?.options);
-                        const newOptions = [...question?.options];
+                        const newOptions = [...question.options];
                         newOptions.push({
                             id: generateUniqueId(),
                             orderNumber: highestOrderNumber + 1,
