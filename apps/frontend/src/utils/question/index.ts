@@ -261,7 +261,10 @@ export function getRecallOptions(openQuestion: ParsedQuestion, questions: Parsed
             .slice(0, openQuestionIndex !== -1 ? openQuestionIndex : 0)
             .filter((q) => q.type !== SurveyQuestionTypeEnum.Form && q.type !== SurveyQuestionTypeEnum.Cta)
             .map((q) => ({
-                value: `${questions.findIndex((o) => o.id == q.id) + 1}. ${!stripHtmlTags(q.label) ? "-" : stripHtmlTags(q.label)}`,
+                value: addEllipsis(
+                    `${questions.findIndex((o) => o.id == q.id) + 1}. ${!stripHtmlTags(q.label) ? "-" : stripHtmlTags(q.label)}`,
+                    20,
+                ),
                 id: q.id + " " + ANSWER_TAG_SUFFIX,
                 type: "recalledQuestion",
             })),
