@@ -130,7 +130,6 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic, setLogicValues
         setIsCreatingLogic(true);
         setLogicValues(newValue);
     };
-    console.log(editValues);
 
     const handleOperatorChange = () => {
         const newValues = {
