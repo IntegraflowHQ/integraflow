@@ -35,7 +35,7 @@ export const EditorTextInput = ({
     value,
 }: EditorTextProps) => {
     const [displayFallbackField, setDisplayFallbackField] = useState(false);
-    const [fallbackValue, setFallbackValue] = useState(" ");
+    const [fallbackValue, setFallbackValue] = useState("");
     const [fallbackFieldPosition, setFallbackFieldPosition] = useState({ left: 0, bottom: 0 });
 
     const id = useId();
