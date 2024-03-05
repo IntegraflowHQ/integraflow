@@ -4,7 +4,7 @@ import { decodeText, encodeText } from "@/utils/question";
 import { TextInput } from "@tremor/react";
 import { StringMap } from "quill";
 import "quill-mention";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useObserveScrollPosition } from "react-scroll-to-bottom";
@@ -38,9 +38,22 @@ export const EditorTextInput = ({
     const [fallbackValue, setFallbackValue] = useState(" ");
     const [fallbackFieldPosition, setFallbackFieldPosition] = useState({ left: 0, bottom: 0 });
 
+    const id = useId();
+
     const ref = useRef<ReactQuill>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const mentionRef = useRef<HTMLSpanElement>();
+
+    const handleMentionClick = (event: MouseEvent) => {
+        const mentionSpan = (event.target as HTMLSpanElement)?.closest(".mention");
+        if (mentionSpan) {
+            mentionRef.current = mentionSpan as HTMLSpanElement;
+            const newFallbackValue = mentionSpan.getAttribute("data-fallback");
+            setDisplayFallbackField(true);
+            setFallbackValue(newFallbackValue ?? "");
+            calculateFallbackPosition();
+        }
+    };
 
     useEffect(() => {
         if (displayFallbackField && inputRef.current) {
@@ -72,22 +85,11 @@ export const EditorTextInput = ({
     useObserveScrollPosition(calculateFallbackPosition);
 
     useEffect(() => {
-        const handleMentionClick = (event: MouseEvent) => {
-            const mentionSpan = (event.target as HTMLSpanElement)?.closest(".mention");
-            if (mentionSpan) {
-                mentionRef.current = mentionSpan as HTMLSpanElement;
-                const newFallbackValue = mentionSpan.getAttribute("data-fallback");
-                setDisplayFallbackField(true);
-                setFallbackValue(newFallbackValue ?? "");
-                calculateFallbackPosition();
-            }
-        };
-
-        document.addEventListener("click", handleMentionClick);
+        document.getElementById(id)?.addEventListener("click", handleMentionClick);
         return () => {
-            document.removeEventListener("click", handleMentionClick);
+            document.getElementById(id)?.removeEventListener("click", handleMentionClick);
         };
-    }, [displayFallbackField, fallbackValue]);
+    }, [id]);
 
     const modules: StringMap = useMemo(() => {
         return {
@@ -188,6 +190,7 @@ export const EditorTextInput = ({
             )}
             {showMention ? (
                 <ReactQuill
+                    id={id}
                     ref={ref}
                     theme="bubble"
                     onChange={(value) => {

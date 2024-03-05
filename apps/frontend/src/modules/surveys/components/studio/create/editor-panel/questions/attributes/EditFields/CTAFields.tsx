@@ -39,10 +39,11 @@ export const CTAFields = () => {
             {showDescription ? (
                 <div className="mt-4 flex items-center justify-between gap-4">
                     <EditorTextInput
-                        showMention={false}
+                        showMention={true}
                         label={"Description"}
                         placeholder=""
                         className="flex-1"
+                        tagOptions={tagOptions(parsedQuestions, question!, personProperties)}
                         defaultValue={question?.description}
                         onChange={(e) => {
                             updateQuestion(
