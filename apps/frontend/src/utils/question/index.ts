@@ -279,16 +279,18 @@ export const tagOptions = (
     const opts: MentionOption[] = [];
     const userAttrOpts = getAttrOpts(userAttributes);
     const recallOpts = getRecallOptions(openQuestion, questions);
+
     if (userAttrOpts.items.length > 0) {
         opts.push(userAttrOpts);
     }
+
     if (recallOpts.items.length > 0) {
         opts.push(recallOpts);
     }
     return opts;
 };
 
-function resolveQuestionIndex(questionId: string, tagOptions: MentionOption[]): string {
+function resolveTaggedQuestion(questionId: string, tagOptions: MentionOption[]): string {
     const option = tagOptions
         .flatMap((opts) => opts.items)
         .filter((item) => item.id.endsWith(ANSWER_TAG_SUFFIX))
@@ -297,26 +299,8 @@ function resolveQuestionIndex(questionId: string, tagOptions: MentionOption[]): 
             return questionId === optionId;
         });
 
-    return option?.value as string;
+    return option?.value ?? "";
 }
-
-export const recallOptions = (questions: ParsedQuestion[], openQuestion: ParsedQuestion) => {
-    const openQuestionIndex = questions.findIndex((q) => q.id === openQuestion?.id);
-
-    return [
-        ...questions
-            .slice(0, openQuestionIndex !== -1 ? openQuestionIndex : 0)
-            .filter((q) => q.type !== SurveyQuestionTypeEnum.Form && q.type !== SurveyQuestionTypeEnum.Cta)
-            .map((q) => ({
-                value: addEllipsis(
-                    `${questions.findIndex((o) => o.id == q.id) + 1}. ${!stripHtmlTags(q.label) ? "-" : stripHtmlTags(q.label)}`,
-                    20,
-                ),
-                id: q.id + " " + `answer`,
-                type: "recalledQuestion",
-            })),
-    ];
-};
 
 export function encodeText(textContent: string): string {
     const encodedText = textContent.replace(
@@ -335,7 +319,7 @@ export function encodeText(textContent: string): string {
 export function decodeText(encodedText: string, tagOptions: MentionOption[]): string {
     const decodedText = encodedText
         .replace(/{{answer:([^ ]+) \| "([^"]*)"}}/g, (_, id, fallback) => {
-            return `<span class="mention" data-index="4" data-denotation-char="" data-value="${resolveQuestionIndex(id, tagOptions)}" data-id="${id}" data-type="answer" data-fallback="${fallback}"><span contenteditable="false">${resolveQuestionIndex(id, tagOptions)}</span></span>`;
+            return `<span class="mention" data-index="4" data-denotation-char="" data-value="${resolveTaggedQuestion(id, tagOptions)}" data-id="${id}" data-type="answer" data-fallback="${fallback}"><span contenteditable="false">${resolveTaggedQuestion(id, tagOptions)}</span></span>`;
         })
         .replace(/{{attribute.([^ ]+) \| "([^"]*)"}}/g, (_, attr, fallback) => {
             return `<span class="mention" data-index="4" data-denotation-char="" data-value="${attr}" data-id="attribute" data-type="attribute.${attr}" data-fallback="${fallback}"><span contenteditable="false">${attr}</span></span>`;
