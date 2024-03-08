@@ -1,5 +1,5 @@
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { renderQuestionIcon } from "@/utils/question";
+import { getQuestionIcon } from "@/utils/question";
 
 type Props = {
     questionIndex: number;
@@ -14,7 +14,7 @@ export const TabHeader = ({ questionIndex }: Props) => {
 
     return (
         <div className="flex items-center gap-4">
-            <img src={renderQuestionIcon(question)} alt="icon" />
+            <img src={getQuestionIcon(question)} alt="icon" />
 
             <span className="text-intg-text-9 text-sm font-bold">
                 {questionIndex + 1 < 10 ? `0${questionIndex + 1}` : questionIndex + 1}

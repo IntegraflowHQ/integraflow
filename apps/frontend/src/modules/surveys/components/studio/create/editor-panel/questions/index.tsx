@@ -2,7 +2,7 @@ import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ParsedQuestion } from "@/types";
 import { addEllipsis, stripHtmlTags } from "@/utils";
-import { emptyLabel, renderQuestionIcon } from "@/utils/question";
+import { emptyLabel, getQuestionIcon } from "@/utils/question";
 import * as Accordion from "@radix-ui/react-accordion";
 import { useEffect } from "react";
 import { QuestionPanel } from "./QuestionPanel";
@@ -46,7 +46,7 @@ export default function UpdateQuestion() {
                                         >
                                             <div className="flex items-center gap-4">
                                                 <div>
-                                                    <img src={renderQuestionIcon(question)} alt="icon" />
+                                                    <img src={getQuestionIcon(question)} alt="icon" />
                                                 </div>
                                                 <div className="text-intg-text-9 text-sm font-bold">
                                                     {index + 1 < 10 ? `0${index + 1}` : index + 1}

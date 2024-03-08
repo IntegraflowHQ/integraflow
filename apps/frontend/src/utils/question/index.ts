@@ -331,7 +331,7 @@ export function decodeText(encodedText: string, tagOptions: MentionOption[]): st
     return decodedText + " ";
 }
 
-export const renderQuestionIcon = (question: ParsedQuestion) => {
+export const getQuestionIcon = (question: ParsedQuestion) => {
     if (question.type === SurveyQuestionTypeEnum.Cta && question.settings.type !== CTAType.NEXT) {
         return ThankYouIcon;
     }
