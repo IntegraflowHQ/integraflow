@@ -22,6 +22,13 @@ export enum CreateSurvey {
 
 export type BackgroundOverLayType = "none" | "dark" | "light";
 
+export type SurveySettings = {
+    close?: boolean;
+    showProgressBar?: boolean;
+    showBranding?: boolean;
+    submitText?: string;
+};
+
 export type ChannelSettings = {
     name?: string;
     recurring?: boolean;

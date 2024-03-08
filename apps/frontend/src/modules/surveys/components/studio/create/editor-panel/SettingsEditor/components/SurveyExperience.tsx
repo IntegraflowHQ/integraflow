@@ -1,84 +1,43 @@
 import { SurveyUpdateInput } from "@/generated/graphql";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
+import { SurveySettings } from "@/types";
 import { Switch } from "@/ui";
 import debounce from "lodash.debounce";
-import React from "react";
+import { useCallback } from "react";
 import { EditorTextInput } from "../../components/EditorTextInput";
 
-interface SurveyExperienceProps {
-    close: boolean;
-    showProgressBar: boolean;
-    showBranding: boolean;
-    submitText: string;
-}
+const defaultSettings = '{"submitText": "", "close": true, "showBranding": true, "showProgressBar": true}';
 
 export const SurveyExperience = () => {
-    const { updateSurvey, error, survey } = useSurvey();
+    const { updateSurvey, survey } = useSurvey();
+    const parsedSettings = JSON.parse(survey?.settings ?? defaultSettings) as SurveySettings;
 
-    const settings = survey?.settings;
-
-    const [surveyExperience, setSurveyExperience] = React.useState<SurveyExperienceProps>({
-        close: false,
-        showProgressBar: false,
-        showBranding: false,
-        submitText: "",
-    });
-
-    const updateSurveyPreferences = async (updatedPreferences: SurveyExperienceProps) => {
-        if (survey && error === undefined) {
-            updateSurvey(survey, {
-                settings: JSON.stringify(updatedPreferences) as Partial<SurveyUpdateInput>,
-            });
-        }
-    };
-
-    const handleSubmitText = React.useCallback(
+    const handleSubmitText = useCallback(
         debounce((value: string) => {
-            if (value.trim() !== "") {
-                updateSurveyPreferences({
-                    ...surveyExperience,
-                    submitText: value,
+            if (value.trim() !== "" && survey) {
+                updateSurvey(survey, {
+                    settings: JSON.stringify({
+                        ...parsedSettings,
+                        submitText: value,
+                    }) as Partial<SurveyUpdateInput>,
                 });
             }
         }, 1000),
-        [surveyExperience],
+        [parsedSettings],
     );
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { value } = event.target;
-        setSurveyExperience((previousState) => ({
-            ...previousState,
-            submitText: value,
-        }));
-
-        handleSubmitText(value);
-    };
-
     const handleSwitches = (name: string, value: boolean) => {
-        setSurveyExperience((previousState) => {
-            const updatedState = {
-                ...previousState,
+        if (!survey) {
+            return;
+        }
+
+        updateSurvey(survey, {
+            settings: JSON.stringify({
+                ...parsedSettings,
                 [name]: value,
-            };
-
-            updateSurveyPreferences(updatedState);
-
-            return updatedState;
+            }) as Partial<SurveyUpdateInput>,
         });
     };
-
-    React.useEffect(() => {
-        if (settings) {
-            const parsedSettingsRes = JSON.parse(settings);
-
-            if (parsedSettingsRes) {
-                setSurveyExperience((previousState) => ({
-                    ...previousState,
-                    ...parsedSettingsRes,
-                }));
-            }
-        }
-    }, []);
 
     return (
         <div className="w-full flex-col py-3">
@@ -86,22 +45,22 @@ export const SurveyExperience = () => {
                 <Switch
                     name="showProgressBar"
                     label="progress bar"
-                    value={surveyExperience.showProgressBar}
-                    onChange={(event) => handleSwitches("showProgressBar", event?.target.value as boolean)}
+                    value={parsedSettings.showProgressBar}
+                    onChange={(event) => handleSwitches("showProgressBar", event?.target.value)}
                 />
 
                 <Switch
-                    name="showBranding"
-                    value={surveyExperience.showBranding}
+                    name="hideBranding"
+                    value={!parsedSettings.showBranding}
                     label="remove Integraflow branding"
-                    onChange={(event) => handleSwitches("showBranding", event.target.value as boolean)}
+                    onChange={(event) => handleSwitches("showBranding", !event.target.value)}
                 />
 
                 <Switch
                     name="close"
                     label="close button"
-                    value={surveyExperience.close}
-                    onChange={(event) => handleSwitches("close", event.target.value as boolean)}
+                    value={parsedSettings.close}
+                    onChange={(event) => handleSwitches("close", event.target.value)}
                 />
             </div>
 
@@ -110,8 +69,8 @@ export const SurveyExperience = () => {
             <EditorTextInput
                 placeholder="Submit"
                 label="Proceed to next question"
-                onChange={handleChange}
-                defaultValue={surveyExperience.submitText}
+                onChange={(e) => handleSubmitText(e.target.value)}
+                defaultValue={parsedSettings.submitText}
             />
         </div>
     );
