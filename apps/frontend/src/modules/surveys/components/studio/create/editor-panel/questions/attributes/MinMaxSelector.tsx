@@ -12,66 +12,45 @@ type Props = {
     maxDefault?: Option | Option[];
 };
 
-const MinMaxSelector = ({
-    options,
-    maxChange,
-    minChange,
-    minValue,
-    maxValue,
-    maxDefault,
-    minDefault,
-}: Props) => {
+const MinMaxSelector = ({ options, maxChange, minChange, minValue, maxValue, maxDefault, minDefault }: Props) => {
     const [min, setMin] = useState<Option | null>(minValue || null);
     const [max, setMax] = useState<Option | null>(maxValue || null);
 
-    const handleMinChange = (
-        option: SingleValue<Option> | MultiValue<Option>,
-    ) => {
+    const handleMinChange = (option: SingleValue<Option> | MultiValue<Option>) => {
         const index = (option as SingleValue<Option>)?.index;
-        if (max && option && index) {
-            if (index > (max?.index ?? 0)) {
-                setMax(option as Option);
-            }
-            maxChange(option);
-        }
         setMin(option as Option);
         minChange(option);
+
+        if (max && option && (index || index == 0)) {
+            if (index > (max?.index ?? 0)) {
+                setMax(option as Option);
+                maxChange(option);
+            }
+        }
     };
 
-    const handleMaxChange = (
-        option: SingleValue<Option> | MultiValue<Option>,
-    ) => {
+    const handleMaxChange = (option: SingleValue<Option> | MultiValue<Option>) => {
         const index = (option as SingleValue<Option>)?.index;
+        setMax(option as Option);
+        maxChange(option);
 
-        if (min && option && index) {
-            if (index < (min?.index ?? 0)) {
+        if (min?.index && option && (index || index == 0)) {
+            if (index < min?.index ?? 0) {
                 setMin(option as Option);
                 minChange(option);
             }
         }
-        setMax(option as Option);
-        maxChange(option);
     };
 
     return (
         <div className="flex gap-4">
             <div className="flex-1">
                 <p className="text-sm">Min</p>
-                <ReactSelect
-                    onchange={handleMinChange}
-                    options={options}
-                    value={min}
-                    defaultValue={minDefault}
-                />
+                <ReactSelect onchange={handleMinChange} options={options} value={min} defaultValue={minDefault} />
             </div>
             <div className="flex-1">
                 <p className="text-sm">Max</p>
-                <ReactSelect
-                    onchange={handleMaxChange}
-                    options={options}
-                    value={max}
-                    defaultValue={maxDefault}
-                />
+                <ReactSelect onchange={handleMaxChange} options={options} value={max} defaultValue={maxDefault} />
             </div>
         </div>
     );

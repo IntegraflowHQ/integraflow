@@ -127,17 +127,20 @@ export const EditorTextInput = ({
                         padding:4px
                     }
                     .ql-mention-list-container {
-                        border-radius:4px;
+                        background-color:#181325;
+                        border: 2px solid #392D72;
+                        border-radius:8px;
                         overflow-y:scroll;
                         overflow-x: hidden;
                         position: absolute;
                         z-index: 1000;
                         max-height: 200px;
                         width:180px;
-                        padding-left:6px;
+                        padding:0 .5rem;
+                        font-family: inherit;
                     }
                     .ql-mention-list-container-bottom{
-                        background-color:#272138;
+                        background-color:#181325;
                         width: 180px;
                     }
                     .ql-mention-list {
@@ -146,17 +149,18 @@ export const EditorTextInput = ({
                     .ql-mention-list-item {
                         cursor: pointer;
                         font-size: 14px;
-                        padding:3px 4px;
+                        padding:8px;
                         width: 100%;
                     }
                     .ql-mention-list-item:hover {
-                        background-color: #fff;
-                        color: #272138;
+                        background-color:#272138;
+                        border-radius:8px;
                     }
                     .ql-mention-list-item[data-disabled="true"]{
                         pointer-events:none;
                         font-weight:600;
                         font-size: 14px;
+                        margin-bottom: -6px;
                     }
                     .mention[aria-disabled="true"]{
                         background-color: purple;
