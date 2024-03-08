@@ -72,7 +72,7 @@ const router = createBrowserRouter([
                                 element: <Surveys />,
                             },
                             {
-                                path: "templates",
+                                path: "surveys/templates",
                                 element: <SurveyTemplates />,
                             },
                             {

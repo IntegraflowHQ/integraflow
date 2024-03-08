@@ -9,6 +9,7 @@ export { NavLink } from "./NavItem/NavLink";
 export { ProgressRadial } from "./ProgressRadial";
 export { Screen } from "./Screen/Screen";
 export { GlobalSpinner } from "./Spinner/GlobalSpinner";
+export { Spinner } from "./Spinner/Spinner";
 export { Switch } from "./Switch/Switch";
 export { Tab } from "./Tab";
 export { CodeBlock } from "./Typography/CodeBlock";
