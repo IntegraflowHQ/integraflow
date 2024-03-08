@@ -25,7 +25,7 @@ export const CTAFields = () => {
         : tagOptions(parsedQuestions, question, personProperties as PropertyDefinition[]);
 
     return (
-        <div className="space-x-8px">
+        <div>
             <EditorTextInput
                 placeholder=""
                 showMention={true}
