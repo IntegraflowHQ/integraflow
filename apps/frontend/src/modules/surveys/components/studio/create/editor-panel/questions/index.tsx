@@ -1,12 +1,9 @@
-import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ParsedQuestion } from "@/types";
 import { addEllipsis, stripHtmlTags } from "@/utils";
-import { emptyLabel } from "@/utils/question";
-import { questionTypes } from "@/utils/survey";
+import { emptyLabel, renderQuestionIcon } from "@/utils/question";
 import * as Accordion from "@radix-ui/react-accordion";
-import RatingIcon from "assets/icons/studio/rating.png";
 import { useEffect } from "react";
 import { QuestionPanel } from "./QuestionPanel";
 import { QuestionOptions } from "./attributes/QuestionTypes";
@@ -49,21 +46,7 @@ export default function UpdateQuestion() {
                                         >
                                             <div className="flex items-center gap-4">
                                                 <div>
-                                                    <img
-                                                        src={
-                                                            [
-                                                                SurveyQuestionTypeEnum.Rating,
-                                                                SurveyQuestionTypeEnum.Csat,
-                                                                SurveyQuestionTypeEnum.NumericalScale,
-                                                                SurveyQuestionTypeEnum.Ces,
-                                                            ].includes(question.type)
-                                                                ? RatingIcon
-                                                                : questionTypes.find(
-                                                                      (type) => type.type === question.type,
-                                                                  )?.icon
-                                                        }
-                                                        alt="icon"
-                                                    />
+                                                    <img src={renderQuestionIcon(question)} alt="icon" />
                                                 </div>
                                                 <div className="text-intg-text-9 text-sm font-bold">
                                                     {index + 1 < 10 ? `0${index + 1}` : index + 1}

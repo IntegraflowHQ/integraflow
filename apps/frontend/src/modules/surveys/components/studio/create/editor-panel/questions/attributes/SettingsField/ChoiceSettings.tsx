@@ -25,7 +25,9 @@ const limitRange = [
 
 export const ChoiceSettings = () => {
     const { question, updateSettings } = useQuestion();
-    const [rangeOption, setRangeOption] = useState(limitRange[0].value);
+    const [rangeOption, setRangeOption] = useState(
+        question?.settings.choice?.min === question?.settings.choice?.max ? limitRange[0].value : limitRange[1].value,
+    );
 
     const handleMaxChange = (option: SingleValue<Option> | MultiValue<Option>) => {
         const newSettings = question?.settings ? { ...question?.settings } : {};
@@ -104,7 +106,11 @@ export const ChoiceSettings = () => {
                         <p className="text-sm">Selection limit Range</p>
                         <ReactSelect
                             options={limitRange}
-                            defaultValue={limitRange[0]}
+                            defaultValue={
+                                question?.settings.choice?.min === question?.settings.choice?.max
+                                    ? limitRange[0]
+                                    : limitRange[1]
+                            }
                             onchange={(option) => {
                                 setRangeOption((option as SingleValue<Option>)?.value);
                             }}

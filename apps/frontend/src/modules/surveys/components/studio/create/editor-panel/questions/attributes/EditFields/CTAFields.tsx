@@ -20,7 +20,7 @@ export const CTAFields = () => {
     }, [question?.description]);
 
     return (
-        <div>
+        <div className="space-x-8px">
             <EditorTextInput
                 placeholder=""
                 showMention={true}
@@ -69,7 +69,7 @@ export const CTAFields = () => {
             ) : null}
 
             <TextButton
-                classname={`${showDescription ? "hidden" : "block"}`}
+                classname={`${showDescription ? "hidden" : "block"} mt-2`}
                 text="Add description"
                 onclick={() => setShowDescription(true)}
             />

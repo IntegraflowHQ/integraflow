@@ -118,7 +118,7 @@ export const EditorTextInput = ({
     }, []);
 
     return (
-        <div className={cn(`${className} relative w-full`)}>
+        <div className={cn(`${className} ${label ? "space-y-2" : ""} relative w-full`)}>
             <style>
                 {`
                     .mention{
@@ -130,18 +130,19 @@ export const EditorTextInput = ({
                         background-color:#181325;
                         border: 2px solid #392D72;
                         border-radius:8px;
-                        overflow-y:scroll;
+                        overflow-y:auto;
                         overflow-x: hidden;
                         position: absolute;
-                        z-index: 1000;
                         max-height: 200px;
-                        width:180px;
-                        padding:0 .5rem;
+                        padding: 8px;
+                        width: 180px;
+                        z-index:1000;
                         font-family: inherit;
                     }
                     .ql-mention-list-container-bottom{
-                        background-color:#181325;
+                        background-color: #181325;
                         width: 180px;
+                        padding: 8px;
                     }
                     .ql-mention-list {
                         width:100%;
@@ -167,7 +168,7 @@ export const EditorTextInput = ({
                     }
                 `}
             </style>
-            <label htmlFor={label} className="text-sm font-normal text-intg-text-2">
+            <label htmlFor={label} className="text-sm font-normal  text-intg-text-2">
                 {label}
             </label>
 

@@ -14,7 +14,7 @@ const TextButton = ({ text, onclick, classname, size = "sm" }: Props) => {
             className={cn(
                 `${classname} ${
                     size === "md" ? "text-sm" : "text-xs"
-                } cursor-pointer text-intg-text underline transition-colors delay-75 duration-500 ease-in hover:text-white `,
+                } w-fit cursor-pointer text-intg-text underline transition-colors delay-75 duration-500 ease-in hover:text-white `,
             )}
         >
             {text}

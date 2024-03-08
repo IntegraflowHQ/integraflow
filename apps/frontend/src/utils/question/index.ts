@@ -1,7 +1,11 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { LogicConditionEnum, ParsedQuestion, QuestionOption, TagOption } from "@/types";
+import { CTAType } from "@integraflow/web";
 import { LogicOperator } from "@integraflow/web/src/types";
+import RatingIcon from "assets/icons/studio/rating.png";
+import ThankYouIcon from "assets/icons/studio/thankyou.png";
 import { addEllipsis, stripHtmlTags } from "..";
+import { questionTypes } from "../survey";
 
 export const questionsWithoutSettingsTab = [SurveyQuestionTypeEnum.Csat, "CES", SurveyQuestionTypeEnum.Date];
 
@@ -320,3 +324,21 @@ export function decodeText(encodedText: string, tagOptions: TagOption[]): string
 
     return decodedText + " ";
 }
+
+export const renderQuestionIcon = (question: ParsedQuestion) => {
+    if (question.type === SurveyQuestionTypeEnum.Cta && question.settings.type !== CTAType.NEXT) {
+        return ThankYouIcon;
+    }
+    if (
+        [
+            SurveyQuestionTypeEnum.Rating,
+            SurveyQuestionTypeEnum.NumericalScale,
+            SurveyQuestionTypeEnum.Csat,
+            SurveyQuestionTypeEnum.Ces,
+        ].includes(question?.type)
+    ) {
+        return RatingIcon;
+    }
+
+    return questionTypes.find((type) => type.type === question?.type)?.icon;
+};

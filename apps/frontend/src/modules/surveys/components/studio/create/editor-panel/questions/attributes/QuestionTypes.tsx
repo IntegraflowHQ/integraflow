@@ -41,7 +41,7 @@ export const QuestionOptions = () => {
                 ...options,
                 settings: {
                     ...options.settings,
-                    text: "",
+                    text: "Submit",
                     type: CTAType.NEXT,
                 },
             });
@@ -53,7 +53,7 @@ export const QuestionOptions = () => {
                 settings: {
                     ...options.settings,
                     type: CTAType.CLOSE,
-                    text: "",
+                    text: "Submit",
                 },
             });
             setThankYouMessageExists(true);
