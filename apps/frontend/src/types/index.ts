@@ -22,6 +22,13 @@ export enum CreateSurvey {
 
 export type BackgroundOverLayType = "none" | "dark" | "light";
 
+export type SurveySettings = {
+    close?: boolean;
+    showProgressBar?: boolean;
+    showBranding?: boolean;
+    submitText?: string;
+};
+
 export type ChannelSettings = {
     name?: string;
     recurring?: boolean;
@@ -163,9 +170,14 @@ export enum LogicConditionEnum {
     INCLUDES_ANY = "includes_any",
 }
 
-export type TagOption = {
+export type MentionItem = {
     value: string;
     id: string;
-    disabled?: boolean;
     type: string;
+    disabled?: boolean;
+};
+
+export type MentionOption = {
+    title: string;
+    items: MentionItem[];
 };

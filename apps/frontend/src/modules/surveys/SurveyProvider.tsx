@@ -117,11 +117,6 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
         async (_template?: string) => {
             // TODO: Implement create survey from template
             const surveySlug = `survey-${generateRandomString(10)}`;
-            navigate(
-                ROUTES.STUDIO.replace(":orgSlug", orgSlug!)
-                    .replace(":projectSlug", projectSlug!)
-                    .replace(":surveySlug", surveySlug),
-            );
             const surveyId = crypto.randomUUID();
 
             await createSurveyMutation({
@@ -131,85 +126,14 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                         slug: surveySlug,
                     },
                 },
-                optimisticResponse: {
-                    __typename: "Mutation",
-                    surveyCreate: {
-                        __typename: "SurveyCreate",
-                        survey: {
-                            __typename: "Survey",
-                            id: surveyId ?? "",
-                            slug: surveySlug ?? "",
-                            reference: "",
-                            name: "",
-                            type: SurveyTypeEnum.Survey,
-                            status: SurveyStatusEnum.Draft,
-                            settings: "",
-                            theme: null,
-                            createdAt: new Date().toISOString(),
-                            updatedAt: new Date().toISOString(),
-                            project: {
-                                __typename: "Project",
-                                id: "",
-                                name: "",
-                                slug: "",
-                                apiToken: "",
-                                accessControl: false,
-                                hasCompletedOnboardingFor: null,
-                                timezone: "",
-                                organization: {
-                                    __typename: "AuthOrganization",
-                                    id: "",
-                                    slug: "",
-                                    name: "",
-                                    memberCount: 1,
-                                },
-                            },
-                            creator: {
-                                __typename: "User",
-                                email: "",
-                                firstName: "",
-                                lastName: "",
-                            },
 
-                            questions: {
-                                __typename: "SurveyQuestionCountableConnection",
-                                edges: [],
-                            },
-                            channels: {
-                                __typename: "SurveyChannelCountableConnection",
-                                edges: [],
-                            },
-                        },
-                        surveyErrors: [],
-                        errors: [],
-                    },
-                },
-
-                update: (cache, { data }) => {
-                    if (!data?.surveyCreate?.survey) return;
-
-                    cache.modify({
-                        fields: {
-                            surveys(existingSurveys = []) {
-                                const newSurveyRef = cache.writeFragment({
-                                    data: data.surveyCreate?.survey,
-                                    fragment: SurveyFragmentFragmentDoc,
-                                    fragmentName: "SurveyFragment",
-                                });
-
-                                return {
-                                    __typename: "SurveyCountableConnection",
-                                    edges: [
-                                        ...existingSurveys.edges,
-                                        {
-                                            __typename: "SurveyCountableEdge",
-                                            node: newSurveyRef,
-                                        },
-                                    ],
-                                };
-                            },
-                        },
-                    });
+                onCompleted: () => {
+                    console.log("Completed");
+                    navigate(
+                        ROUTES.STUDIO.replace(":orgSlug", orgSlug!)
+                            .replace(":projectSlug", projectSlug!)
+                            .replace(":surveySlug", surveySlug),
+                    );
                 },
 
                 onError: () => {

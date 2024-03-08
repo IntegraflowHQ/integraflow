@@ -1,7 +1,8 @@
+import { PropertyDefinition } from "@/generated/graphql";
 import { useProject } from "@/modules/projects/hooks/useProject";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { tagOptions } from "@/utils/question";
+import { decodeText, encodeText, tagOptions } from "@/utils/question";
 import { useEffect, useState } from "react";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import MinusButton from "../Buttons/MinimizeButton";
@@ -19,21 +20,25 @@ export const CTAFields = () => {
         }
     }, [question?.description]);
 
+    const mentionOptions = !question
+        ? []
+        : tagOptions(parsedQuestions, question, personProperties as PropertyDefinition[]);
+
     return (
         <div className="space-x-8px">
             <EditorTextInput
                 placeholder=""
                 showMention={true}
-                tagOptions={tagOptions(parsedQuestions, question!, personProperties)}
+                mentionOptions={mentionOptions}
                 onChange={(e) => {
                     updateQuestion(
                         {
-                            label: e.target.value,
+                            label: encodeText(e.target.value),
                         },
                         true,
                     );
                 }}
-                defaultValue={question?.label}
+                defaultValue={decodeText(question?.label ?? "", mentionOptions)}
                 maxCharacterCount={225}
             />
 
@@ -44,12 +49,12 @@ export const CTAFields = () => {
                         label={"Description"}
                         placeholder=""
                         className="flex-1"
-                        tagOptions={tagOptions(parsedQuestions, question!, personProperties)}
-                        defaultValue={question?.description}
+                        mentionOptions={mentionOptions}
+                        defaultValue={decodeText(question?.description ?? "", mentionOptions)}
                         onChange={(e) => {
                             updateQuestion(
                                 {
-                                    description: e.target.value,
+                                    description: encodeText(e.target.value),
                                 },
                                 true,
                             );
@@ -57,14 +62,16 @@ export const CTAFields = () => {
                         maxCharacterCount={5000}
                     />
 
-                    <MinusButton
-                        onclick={() => {
-                            setShowDescription(false);
-                            updateQuestion({
-                                description: "",
-                            });
-                        }}
-                    />
+                    <div className="self-end">
+                        <MinusButton
+                            onclick={() => {
+                                setShowDescription(false);
+                                updateQuestion({
+                                    description: "",
+                                });
+                            }}
+                        />
+                    </div>
                 </div>
             ) : null}
 

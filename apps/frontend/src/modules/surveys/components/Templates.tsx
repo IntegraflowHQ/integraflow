@@ -1,5 +1,4 @@
-import { ROUTES } from "@/routes";
-import { Header } from "@/ui";
+import { GlobalSpinner, Header } from "@/ui";
 import { TemplateProps } from "@/utils/survey";
 import Birthday from "assets/images/surveys/Birthday.svg";
 import Boolean from "assets/images/surveys/Boolean.svg";
@@ -11,7 +10,7 @@ import Single from "assets/images/surveys/Single.svg";
 import Star from "assets/images/surveys/Star.svg";
 import Text from "assets/images/surveys/Text.svg";
 import Welcome from "assets/images/surveys/Welcome.svg";
-import { Link, useParams } from "react-router-dom";
+import { useSurvey } from "../hooks/useSurvey";
 import CreateSurveyButton from "./partials/CreateSurveyButton";
 import Template from "./partials/Template";
 
@@ -80,7 +79,12 @@ export const surveyTypes: TemplateProps[] = [
 ];
 
 export default function Templates() {
-    const { orgSlug, projectSlug } = useParams();
+    const { createSurvey, creatingSurvey } = useSurvey();
+
+    if (creatingSurvey) {
+        return <GlobalSpinner />;
+    }
+
     return (
         <div className="px-12 pb-[52px] pt-20">
             <div className="flex items-end justify-between pb-10">
@@ -90,9 +94,11 @@ export default function Templates() {
                     className="max-w-[386px]"
                 />
 
-                <Link to={ROUTES.STUDIO.replace(":projectSlug", projectSlug!).replace(":orgSlug", orgSlug!)}>
-                    <CreateSurveyButton />
-                </Link>
+                <CreateSurveyButton
+                    onClick={() => {
+                        createSurvey();
+                    }}
+                />
             </div>
             <div className="grid grid-cols-[repeat(auto-fill,minmax(351px,1fr))] gap-x-5 gap-y-[26px]">
                 {surveyTypes.map((surveyType) => (

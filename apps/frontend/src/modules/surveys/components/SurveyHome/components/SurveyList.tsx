@@ -16,8 +16,8 @@ import {
     Radio,
     Trash2,
 } from "lucide-react";
-import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import SurveyCreate from "../../SurveyCreate";
 import CreateSurveyButton from "../../partials/CreateSurveyButton";
 import { StatusBadge } from "./StatusBadge";
@@ -34,10 +34,32 @@ const headers = [
 export const SurveyList = () => {
     const navigate = useNavigate();
     const { orgSlug, projectSlug } = useParams();
-    const { updateSurvey, deleteSurvey, loading, getMoreSurveys, surveyList, surveysOnPage } = useSurvey();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const {
+        createSurvey,
+        creatingSurvey,
+        updateSurvey,
+        deleteSurvey,
+        loading,
+        getMoreSurveys,
+        surveyList,
+        surveysOnPage,
+    } = useSurvey();
 
     const [page, setPage] = React.useState<number>(1);
     const [selectedSurveyName, setSelectedSurveyName] = React.useState<string>("");
+
+    useEffect(() => {
+        if (!searchParams) {
+            return;
+        }
+
+        if (searchParams.get("create") === "1") {
+            createSurvey();
+            setSearchParams({});
+        }
+    }, []);
 
     const handleGetMoreSurveys = (direction: string) => {
         if (direction === "forward") {
@@ -80,14 +102,18 @@ export const SurveyList = () => {
             <div className="flex justify-between">
                 <p className="py-2 text-xl font-normal">Surveys</p>
 
-                <Dialog>
+                <Dialog defaultOpen={searchParams.get("create") === "1"}>
                     <DialogTrigger asChild>
                         <div>
                             <CreateSurveyButton />
                         </div>
                     </DialogTrigger>
                     <DialogContent title="Create new survey" description="Pick a method that suits you best">
-                        <SurveyCreate className="h-[357px] w-[762px] pt-8" />
+                        <SurveyCreate
+                            createFn={createSurvey}
+                            busy={creatingSurvey}
+                            className="h-[357px] w-[762px] pt-8"
+                        />
                     </DialogContent>
                 </Dialog>
             </div>
