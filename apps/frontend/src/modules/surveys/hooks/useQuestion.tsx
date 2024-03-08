@@ -41,6 +41,7 @@ export const useQuestion = () => {
             variables: {
                 input: {
                     ...input,
+                    label: "Enter your text",
                     orderNumber: questions.length + 1,
                     surveyId: surveyId,
                 },
@@ -53,8 +54,8 @@ export const useQuestion = () => {
                         __typename: "SurveyQuestion",
                         id: id,
                         createdAt: new Date().toISOString(),
+                        label: "Enter your text",
                         description: input.description ?? "",
-                        label: input.label ?? "",
                         maxPath: 0,
                         orderNumber: questions.length + 1,
                         reference: id,

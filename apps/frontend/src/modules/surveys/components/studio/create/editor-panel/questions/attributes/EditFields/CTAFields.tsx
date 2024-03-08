@@ -76,7 +76,7 @@ export const CTAFields = () => {
             ) : null}
 
             <TextButton
-                classname={`${showDescription ? "hidden" : "block"}`}
+                classname={`${showDescription ? "hidden" : "block"} mt-2`}
                 text="Add description"
                 onclick={() => setShowDescription(true)}
             />
