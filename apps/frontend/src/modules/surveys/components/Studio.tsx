@@ -76,7 +76,7 @@ export default function Studio() {
         toast.success("Survey published successfully");
     };
 
-    if (loading) return <GlobalSpinner />;
+    if (loading || !survey) return <GlobalSpinner />;
 
     return (
         <Tabs.Root className="h-full w-full" value={activeTab} onValueChange={setActiveTab}>
