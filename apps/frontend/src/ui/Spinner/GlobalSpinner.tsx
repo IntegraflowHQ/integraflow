@@ -1,4 +1,5 @@
 import Logo from "assets/images/logo.png";
+import { createPortal } from "react-dom";
 import { Spinner } from "./Spinner";
 
 type Props = {
@@ -6,9 +7,9 @@ type Props = {
 };
 
 export const GlobalSpinner = ({ message }: Props) => {
-    return (
+    return createPortal(
         <div
-            className="fixed inset-0 flex h-screen w-full flex-col bg-intg-black"
+            className="fixed inset-0 z-50 flex h-screen w-full flex-col bg-intg-black"
             style={{
                 backgroundImage: "radial-gradient(rgba(28, 15, 89, 0.30) 50%, rgba(5, 5, 5, 0.30))",
                 backgroundRepeat: "no-repeat",
@@ -24,6 +25,7 @@ export const GlobalSpinner = ({ message }: Props) => {
                 <Spinner className="-mt-48" />
                 <p className="text-intg-text-4">{message}</p>
             </div>
-        </div>
+        </div>,
+        document.body,
     );
 };

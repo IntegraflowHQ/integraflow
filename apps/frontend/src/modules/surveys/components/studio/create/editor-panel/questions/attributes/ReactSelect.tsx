@@ -1,3 +1,4 @@
+import { cn } from "@/utils";
 import { LogicOperator } from "@integraflow/web/src/types";
 import { useState } from "react";
 import Select, { CSSObjectWithLabel, MultiValue, MultiValueGenericProps, SingleValue } from "react-select";
@@ -154,7 +155,7 @@ export const ReactSelect = ({
     return (
         <>
             {!comboBox ? (
-                <div>
+                <div className={cn(label ? "space-y-2" : "", "text-intg-text-2")}>
                     {label && <p className="text-sm">{label}</p>}
                     <Select
                         value={value}
