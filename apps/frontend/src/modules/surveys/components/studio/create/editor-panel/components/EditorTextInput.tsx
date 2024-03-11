@@ -133,7 +133,7 @@ export const EditorTextInput = ({
                     }
                     .ql-mention-list-container {
                         background-color:#181325;
-                        border: 2px solid #392D72;
+                        border: 1px solid #392D72;
                         border-radius:8px;
                         overflow-y:auto;
                         overflow-x: hidden;
@@ -173,7 +173,7 @@ export const EditorTextInput = ({
                     }
                 `}
             </style>
-            <label htmlFor={label} className="text-sm font-normal  text-intg-text-2">
+            <label htmlFor={label} className="text-sm text-intg-text-2">
                 {label}
             </label>
 
