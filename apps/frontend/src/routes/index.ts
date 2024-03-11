@@ -5,4 +5,5 @@ export enum ROUTES {
     STUDIO = "/:orgSlug/projects/:projectSlug/survey/:surveySlug",
     GET_STARTED = "/:orgSlug/projects/:projectSlug/get-started",
     WORKSPACE_SETTINGS = "/:orgSlug/projects/:projectSlug/settings",
+    WORKSPACE_SETTINGS_PROFILE = "/:orgSlug/projects/:projectSlug/settings/profile",
 }

@@ -18,6 +18,7 @@ import { AppCore } from "./layout/AppCore";
 import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
 import { SurveyShell } from "./layout/SurveyShell";
+import { Profile } from "./modules/organization/settings/Profile";
 import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
 import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
 import { WorkspaceSettings } from "./pages/WorkspaceSettings";
@@ -63,6 +64,10 @@ const router = createBrowserRouter([
                     {
                         path: "settings",
                         element: <WorkspaceSettings />,
+                    },
+                    {
+                        path: "settings/profile",
+                        element: <Profile />,
                     },
                     {
                         path: "get-started",

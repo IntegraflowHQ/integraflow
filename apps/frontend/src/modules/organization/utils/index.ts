@@ -15,7 +15,7 @@ export const settingsCardInfo = [
         title: "Workspace",
         details:
             "If you want to permanently delete this workspace and all of it’s data, including all users responses.",
-        link: "workspace settings",
+        link: "Workspace settings",
     },
     {
         id: crypto.randomUUID,
@@ -23,7 +23,7 @@ export const settingsCardInfo = [
         title: "Project",
         details:
             "If you want to permanently delete this workspace and all of it’s data, including all users responses.",
-        link: "project settings",
+        link: "Project settings",
     },
     {
         id: crypto.randomUUID,
@@ -31,7 +31,7 @@ export const settingsCardInfo = [
         title: "Team",
         details:
             "If you want to permanently delete this workspace and all of it’s data, including all users responses.",
-        link: "team settings",
+        link: "Team settings",
     },
     {
         id: crypto.randomUUID,

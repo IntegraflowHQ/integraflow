@@ -1,15 +1,14 @@
+import { ROUTES } from "@/routes";
+import { useNavigate, useParams } from "react-router-dom";
 import { settingsCardInfo } from "../utils";
+import { SettingsScreen } from "./SettingsScreen";
 
 const SettingsHome = () => {
+    const navigate = useNavigate();
+    const { orgSlug, projectSlug } = useParams();
+
     return (
-        <div className="pb-[72px]">
-            <div className="pl-[72px] pt-[80px] text-intg-text">
-                <h3 className="text-xl font-semibold">Settings</h3>
-                <p>Manage your worksapce settings</p>
-            </div>
-            <div className="py-6">
-                <hr className="border border-intg-bg-4" />
-            </div>
+        <SettingsScreen title="Settings" label="Manage your workspace settings">
             <div className="grid grid-cols-1 gap-6 px-[72px] text-intg-text md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                 {settingsCardInfo.map((card, index) => {
                     return (
@@ -19,14 +18,25 @@ const SettingsHome = () => {
                                 <p className="text-lg font-medium text-white">{card.title}</p>
                                 <p className="text-sm">{card.details}</p>
                             </div>
-                            <button className="bg-gradient-button bg-clip-text text-sm text-transparent">
-                                <span>Link to profile</span>
+                            <button className="bg-gradient-button bg-clip-text text-sm text-transparent hover:bg-gradient-button-hover">
+                                <span
+                                    className="capitalize"
+                                    onClick={() =>
+                                        navigate(
+                                            `${ROUTES.WORKSPACE_SETTINGS_PROFILE}`
+                                                .replace(":orgSlug", orgSlug!)
+                                                .replace(":projectSlug", projectSlug!),
+                                        )
+                                    }
+                                >
+                                    {card.link}
+                                </span>
                             </button>
                         </div>
                     );
                 })}
             </div>
-        </div>
+        </SettingsScreen>
     );
 };
 
