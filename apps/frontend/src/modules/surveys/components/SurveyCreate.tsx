@@ -1,6 +1,6 @@
 import { ROUTES } from "@/routes";
 import { CreateSurvey } from "@/types";
-import { Header, Spinner } from "@/ui";
+import { GlobalSpinner, Header } from "@/ui";
 import { List, PlusCircle } from "@/ui/icons";
 import { cn } from "@/utils";
 import { useNavigate, useParams } from "react-router-dom";
@@ -19,7 +19,7 @@ export default function SurveyCreate({ createFn, className, busy = false, size =
     const surveyCreateOptions = [
         {
             id: CreateSurvey.START_FROM_SCRATCH,
-            icon: busy ? <Spinner /> : <PlusCircle color="#AFAAC7" size={size === "sm" ? "44" : "48"} />,
+            icon: <PlusCircle color="#AFAAC7" size={size === "sm" ? "44" : "48"} />,
             title: "Start form scratch",
             description: "Craft and design your unique survey",
             onClick: createFn,
@@ -34,6 +34,10 @@ export default function SurveyCreate({ createFn, className, busy = false, size =
             },
         },
     ];
+
+    if (busy) {
+        return <GlobalSpinner />;
+    }
 
     return (
         <div className={cn("flex", size === "sm" ? "gap-2" : "gap-4", className ?? "")}>
