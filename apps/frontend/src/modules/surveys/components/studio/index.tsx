@@ -7,11 +7,11 @@ import debounce from "lodash.debounce";
 import { XIcon } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import useStudioState from "../hooks/useStudioState";
-import { useSurvey } from "../hooks/useSurvey";
-import Analyze from "./studio/analyze";
-import Create from "./studio/create";
-import Distribute from "./studio/distribute";
+import useStudioState from "../../hooks/useStudioState";
+import { useSurvey } from "../../hooks/useSurvey";
+import Analyze from "./analyze";
+import Create from "./create";
+import Distribute from "./distribute";
 
 const tabs = [
     { label: "Create", screen: Create },
