@@ -20,6 +20,7 @@ import { AuthLayout } from "./layout/AuthLayout";
 import { SurveyShell } from "./layout/SurveyShell";
 import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
 import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
+import { WorkspaceSettings } from "./pages/WorkspaceSettings";
 
 const isDebugMode = import.meta.env.MODE === "development";
 
@@ -56,17 +57,21 @@ const router = createBrowserRouter([
                 element: <Workspace />,
             },
             {
-                path: "/:orgSlug",
+                path: "/:orgSlug/projects/:projectSlug",
                 element: <AppCore />,
                 children: [
                     {
-                        path: "projects/:projectSlug",
+                        path: "settings",
+                        element: <WorkspaceSettings />,
+                    },
+                    {
+                        path: "get-started",
+                        element: <Onboarding />,
+                    },
+                    {
+                        path: "",
                         element: <SurveyShell />,
                         children: [
-                            {
-                                path: "get-started",
-                                element: <Onboarding />,
-                            },
                             {
                                 path: "surveys",
                                 element: <Surveys />,
