@@ -13,7 +13,8 @@ type Props = {
     onOpenChange: (value: boolean) => void;
 };
 
-const EMAIL_REGEX = /^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}(?:, ?[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7})*$/;
+const EMAIL_REGEX =
+    /^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}(?:, ?[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7})*$/;
 
 export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
     const { workspace } = useWorkspace();
@@ -47,7 +48,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
 
         const promises = emailArray.map(async (email) => {
             return emailInvite({
-                email: email.trim()
+                email: email.trim(),
             });
         });
 
@@ -72,9 +73,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
 
         if (failedPromise.length === 0) {
             onOpenChange(!open);
-            toast.success(
-                "Success! Your email to join the workspace has been sent",
-            );
+            toast.success("Success! Your email to join the workspace has been sent");
         }
 
         if (flatErrorMessages.size > 0) {
@@ -114,7 +113,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                 {!toggleInviteType ? (
                     <form onSubmit={handleEmailInvite}>
                         <div className="flex w-full items-start gap-2 pt-3">
-                            <div className="w-[75%]">
+                            <div className="w-[70%]">
                                 <TextInput
                                     label="Email address"
                                     placeholder="example1@gmail.com, example2@gmail.com, "
@@ -127,7 +126,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                                     errorMessage={inputError}
                                 />
                             </div>
-                            <div className={`mt-7 w-[25%]`}>
+                            <div className={`mt-7 w-[30%]`}>
                                 <Button text="Send Invite" size="md" />
                             </div>
                         </div>
@@ -135,8 +134,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                 ) : (
                     <div onSubmit={handleLinkInvite} className="mt-3">
                         <p className="mb-4 text-sm text-intg-text">
-                            Invite link will provide a unique URL that allow
-                            anyone to join your organization
+                            Invite link will provide a unique URL that allow anyone to join your organization
                         </p>
 
                         <div className="flex w-full items-end gap-2">
@@ -146,18 +144,8 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                                     value={addEllipsis(inviteLink, 50)}
                                     disabled={true}
                                     rightIcon={
-                                        <button
-                                            disabled={loading}
-                                            onClick={handleInviteLinkRefresh}
-                                        >
-                                            <RefreshCcwIcon
-                                                size={20}
-                                                className={
-                                                    loading
-                                                        ? "spinner__circle"
-                                                        : ""
-                                                }
-                                            />
+                                        <button disabled={loading} onClick={handleInviteLinkRefresh}>
+                                            <RefreshCcwIcon size={20} className={loading ? "spinner__circle" : ""} />
                                         </button>
                                     }
                                 />
@@ -169,12 +157,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                                     icon={<CopyIcon />}
                                     textAlign="center"
                                     disabled={loading}
-                                    onClick={() =>
-                                        copyToClipboard(
-                                            inviteLink,
-                                            "Invite link copied to clipboard",
-                                        )
-                                    }
+                                    onClick={() => copyToClipboard(inviteLink, "Invite link copied to clipboard")}
                                 />
                             </div>
                         </div>
@@ -186,18 +169,8 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                 <div>
                     <Button
                         variant="custom"
-                        icon={
-                            toggleInviteType ? (
-                                <LucideMail size={20} />
-                            ) : (
-                                <Link size={20} />
-                            )
-                        }
-                        text={
-                            toggleInviteType
-                                ? "Invite with email"
-                                : "Invite with link"
-                        }
+                        icon={toggleInviteType ? <LucideMail size={20} /> : <Link size={20} />}
+                        text={toggleInviteType ? "Invite with email" : "Invite with link"}
                         className=" w-max bg-transparent text-intg-text hover:text-intg-bg-2"
                         size="md"
                         onClick={() => {

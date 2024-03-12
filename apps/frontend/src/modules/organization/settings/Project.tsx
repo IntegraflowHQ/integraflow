@@ -9,7 +9,7 @@ type ProfileData = {
     username: string;
 };
 
-export const Profile = () => {
+export const Project = () => {
     const {
         watch,
         setValue,
@@ -28,87 +28,37 @@ export const Profile = () => {
         console.log(formInfo);
     };
     return (
-        <SettingsScreen title="Profile" label="Manage your Integraflow Profile">
-            <form className="w-[593px]" onSubmit={handleSubmit(onSubmit)}>
+        <SettingsScreen title="Project" label="Manage your Integraflow Profile">
+            <div className="w-[593px]" onSubmit={handleSubmit(onSubmit)}>
                 <div className="my-6 rounded-md">
                     <div className="space-y-4">
-                        <div>
-                            <p className="text-sm text-intg-text-2">Profile picture</p>
+                        <div className="space-y-4 text-sm text-intg-text-2">
+                            <p>Profile picture</p>
                             <img src={Frame} alt="" />
+                            <p>Pick a logo for your workspace. Recommended size is 256x256px</p>
                         </div>
-
-                        <TextInput
-                            label={"Email"}
-                            className="font-semibold"
-                            {...register("email", {
-                                required: {
-                                    value: true,
-                                    message: "Workspace name is required",
-                                },
-                                minLength: {
-                                    value: 3,
-                                    message: "Workspace name must be at least 3 characters",
-                                },
-                                maxLength: {
-                                    value: 64,
-                                    message: "Workspace name must be at most 64 characters",
-                                },
-                            })}
-                            // error={!!errors.workspaceName?.message}
-                            // errorMessage={errors.workspaceName?.message}
-                        />
-                        <TextInput
-                            label={"Full Name"}
-                            {...register("fullName", {
-                                required: {
-                                    value: true,
-                                    message: "Workspace URL is required",
-                                },
-                                minLength: {
-                                    value: 3,
-                                    message: "Workspace URL must be at least 3 characters",
-                                },
-                                maxLength: {
-                                    value: 48,
-                                    message: "Workspace URL must be at most 20 characters",
-                                },
-                                pattern: {
-                                    value: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-                                    message: "Workspace URL must be in the correct format, eg: my-workspace",
-                                },
-                            })}
-                            // error={!!errors.workspaceUrl?.message || !!workspaceError}
-                            // errorMessage={errors.workspaceUrl?.message ? errors.workspaceUrl?.message : workspaceError}
-                        />
-                        <TextInput
-                            label={"Username - Nickname or first name, however you want yo be called in Integraflow"}
-                            defaultValue=""
-                            {...register("username", {
-                                required: {
-                                    value: true,
-                                    message: "Workspace URL is required",
-                                },
-                                minLength: {
-                                    value: 3,
-                                    message: "Workspace URL must be at least 3 characters",
-                                },
-                                maxLength: {
-                                    value: 48,
-                                    message: "Workspace URL must be at most 20 characters",
-                                },
-                                pattern: {
-                                    value: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-                                    message: "Workspace URL must be in the correct format, eg: my-workspace",
-                                },
-                            })}
-                            // error={!!errors.workspaceUrl?.message || !!workspaceError}
-                            // errorMessage={errors.workspaceUrl?.message ? errors.workspaceUrl?.message : workspaceError}
-                        />
                     </div>
                     <hr className="my-6 border-[1px] border-intg-bg-4" />
+                    <div className="space-y-6">
+                        <TextInput label={"Email"} className="font-semibold" />
+
+                        <Button text="Update" className="w-[187px]" size="md" />
+                    </div>
+
+                    <hr className="my-6 border-[1px] border-intg-bg-4" />
+
+                    <div className="space-y-6 text-sm text-intg-text-4">
+                        <div className="space-y-2">
+                            <h3 className="font-semibold">Delete Project</h3>
+                            <p className="text-sm">
+                                If you want to permanently delete this workspace and all of it’s data, including all
+                                users responses.
+                            </p>
+                        </div>
+                        <Button text="Delete this project" size="md" className="bg-[##CE3C55]" />
+                    </div>
                 </div>
-                <Button text="Update" className="w-[114px]" />
-            </form>
+            </div>
         </SettingsScreen>
     );
 };

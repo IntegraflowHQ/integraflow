@@ -1,5 +1,5 @@
 import SettingsHome from "@/modules/organization/settings";
 
-export function WorkspaceSettings() {
+export function Settings() {
     return <SettingsHome />;
 }

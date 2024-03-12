@@ -1,8 +1,7 @@
 import React from "react";
 import { cn } from "../../utils";
 
-export interface ButtonProps
-    extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     text?: string;
     textAlign?: "left" | "center";
     className?: string;
@@ -37,8 +36,8 @@ const Button = React.forwardRef(
                     variant === "primary"
                         ? "bg-gradient-button text-white transition-all duration-300 ease-in hover:bg-gradient-button-hover"
                         : variant === "secondary"
-                        ? "border border-intg-bg-2 bg-intg-bg-3 text-white transition-all duration-300 ease-in hover:bg-gradient-button-hover"
-                        : "",
+                          ? "border border-intg-bg-2 bg-intg-bg-3 text-white transition-all duration-300 ease-in hover:bg-gradient-button-hover"
+                          : "",
                     className ?? "",
                 )}
                 ref={forwardedRef}

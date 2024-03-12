@@ -105,7 +105,6 @@ export const Profile = () => {
                             // errorMessage={errors.workspaceUrl?.message ? errors.workspaceUrl?.message : workspaceError}
                         />
                     </div>
-                    <hr className="my-6 border-[1px] border-intg-bg-4" />
                 </div>
                 <Button text="Update" className="w-[114px]" />
             </form>

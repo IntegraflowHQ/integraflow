@@ -4,7 +4,7 @@ export const settingsCardInfo = [
     {
         id: crypto.randomUUID,
         icon: ThankYouIcon,
-        title: "Profile",
+        title: "profile",
         details:
             "If you want to permanently delete this workspace and all of it’s data, including all users responses.",
         link: "Profile settings",
@@ -12,7 +12,7 @@ export const settingsCardInfo = [
     {
         id: crypto.randomUUID,
         icon: ThankYouIcon,
-        title: "Workspace",
+        title: "workspace",
         details:
             "If you want to permanently delete this workspace and all of it’s data, including all users responses.",
         link: "Workspace settings",
@@ -20,25 +20,9 @@ export const settingsCardInfo = [
     {
         id: crypto.randomUUID,
         icon: ThankYouIcon,
-        title: "Project",
+        title: "project",
         details:
             "If you want to permanently delete this workspace and all of it’s data, including all users responses.",
         link: "Project settings",
-    },
-    {
-        id: crypto.randomUUID,
-        icon: ThankYouIcon,
-        title: "Team",
-        details:
-            "If you want to permanently delete this workspace and all of it’s data, including all users responses.",
-        link: "Team settings",
-    },
-    {
-        id: crypto.randomUUID,
-        icon: ThankYouIcon,
-        title: "Billing",
-        details:
-            "If you want to permanently delete this workspace and all of it’s data, including all users responses.",
-        link: "billing settings",
     },
 ];
