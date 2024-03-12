@@ -5,11 +5,16 @@ import { useUpdateEffect } from "@/hooks";
 
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { CachePersistor, LocalForageWrapper } from "apollo3-cache-persist";
-import * as localForage from "localforage";
+import localForage from "localforage";
 
 import { ApolloFactory } from "../services/apollo.factory";
 
 const isDebugMode = import.meta.env.MODE === "development";
+
+const storageInstance = localForage.createInstance({
+    name: "integraflow-db",
+    storeName: "integraflow-store",
+});
 
 export const useApolloFactory = () => {
     const [persisting, setPersisting] = useState(true);
@@ -23,7 +28,7 @@ export const useApolloFactory = () => {
             const cache = new InMemoryCache();
             const persistor = new CachePersistor({
                 cache,
-                storage: new LocalForageWrapper(localForage),
+                storage: new LocalForageWrapper(storageInstance),
                 debug: isDebugMode,
                 trigger: "write",
             });
@@ -36,13 +41,13 @@ export const useApolloFactory = () => {
     }, []);
 
     const apolloClient = useMemo(() => {
-        if (persisting) {
+        if (persisting || !cacheRef.current) {
             return null;
         }
 
         apolloRef.current = new ApolloFactory({
             uri: `${import.meta.env.VITE_SERVER_BASE_URL}/graphql`,
-            cache: cacheRef.current ?? new InMemoryCache(),
+            cache: cacheRef.current,
             defaultOptions: {
                 query: {
                     fetchPolicy: "cache-first",

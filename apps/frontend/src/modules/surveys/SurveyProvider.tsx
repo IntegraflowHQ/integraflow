@@ -106,6 +106,10 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     }, [surveyList?.surveys?.edges]);
 
     React.useEffect(() => {
+        if (!surveySlug) {
+            return;
+        }
+
         getSurvey({
             variables: {
                 slug: surveySlug,
