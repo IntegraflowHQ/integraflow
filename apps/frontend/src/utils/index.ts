@@ -1,6 +1,6 @@
 import { PROPERTY_FIELDS } from "@/constants";
-import { SurveyChannel, SurveyQuestion } from "@/generated/graphql";
-import { ParsedChannel, ParsedQuestion, QuestionOption } from "@/types";
+import { ProjectTheme, SurveyChannel, SurveyQuestion } from "@/generated/graphql";
+import { ParsedChannel, ParsedQuestion, ParsedTheme, QuestionOption } from "@/types";
 import { DeepOmit } from "@apollo/client/utilities";
 import { FilterOperator } from "@integraflow/web/src/types";
 import { toast } from "./toast";
@@ -108,3 +108,13 @@ export const getFilterLabel = (operator: FilterOperator) => {
 export const stripHtmlTags = (value: string): string => {
     return value.replace(/<[^>]*>/g, "");
 };
+
+export const parseTheme = (theme: ProjectTheme) => {
+    const newThemeData = { ...theme };
+    if (typeof newThemeData.colorScheme === "string") {
+        newThemeData.colorScheme = JSON.parse(theme.colorScheme);
+    }
+    return newThemeData as ParsedTheme;
+};
+
+export const themeKeys = ["background", "progress", "question", "answer", "button"] as const;

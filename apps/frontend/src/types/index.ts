@@ -1,5 +1,5 @@
 import { PROPERTY_FIELDS } from "@/constants";
-import { SurveyChannel, SurveyQuestionCountableEdge, User } from "@/generated/graphql";
+import { ProjectTheme, SurveyChannel, SurveyQuestionCountableEdge, User } from "@/generated/graphql";
 import { DeepOmit } from "@apollo/client/utilities";
 import {
     Audience,
@@ -180,4 +180,22 @@ export type MentionItem = {
 export type MentionOption = {
     title: string;
     items: MentionItem[];
+};
+
+export type ColorScheme = {
+    question: string;
+    answer: string;
+    progress: string;
+    button: string;
+    background: string;
+};
+
+export type ParsedTheme = Omit<ProjectTheme, "colorScheme"> & {
+    colorScheme: ColorScheme;
+};
+
+export type Theme = {
+    id: string | null;
+    name: string;
+    colorScheme: ColorScheme;
 };

@@ -14,6 +14,7 @@ import {
     SurveyStatusEnum,
     SurveyTypeEnum,
     SurveyUpdateInput,
+    SurveyUpdateMutation,
     useGetSurveyLazyQuery,
     useGetSurveyListQuery,
     useSurveyCreateMutation,
@@ -23,7 +24,7 @@ import {
 import { ROUTES } from "@/routes";
 import { ParsedQuestion } from "@/types";
 import { generateRandomString, parseQuestion } from "@/utils";
-import { ApolloError } from "@apollo/client";
+import { ApolloError, FetchResult } from "@apollo/client";
 import { DeepPartial, Reference } from "@apollo/client/utilities";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -45,7 +46,7 @@ export type SurveyContextValues = {
     parsedQuestions: ParsedQuestion[];
     surveyId: string;
     createSurvey: (template?: string) => Promise<void>;
-    updateSurvey: (survey: DeepPartial<Survey>, input: SurveyUpdateInput) => Promise<void>;
+    updateSurvey: (survey: DeepPartial<Survey>, input: SurveyUpdateInput) => Promise<FetchResult<SurveyUpdateMutation>>;
     survey: GetSurveyQuery["survey"];
     surveyList: SurveyList;
     deleteSurvey: (survey: Survey) => Promise<void | undefined>;
@@ -128,7 +129,6 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                 },
 
                 onCompleted: () => {
-                    console.log("Completed");
                     navigate(
                         ROUTES.STUDIO.replace(":orgSlug", orgSlug!)
                             .replace(":projectSlug", projectSlug!)
@@ -196,7 +196,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
 
     const updateSurvey = React.useCallback(
         async (survey: DeepPartial<Survey>, input: SurveyUpdateInput) => {
-            await updateSurveyMutation({
+            const mutation = await updateSurveyMutation({
                 variables: {
                     id: survey.id!,
                     input,
@@ -237,14 +237,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                                       },
                                   },
 
-                            theme: survey.theme
-                                ? (survey.theme as ProjectTheme)
-                                : ({
-                                      id: "",
-                                      name: "",
-                                      colorScheme: "{}",
-                                      reference: "",
-                                  } as ProjectTheme),
+                            theme: survey.theme?.colorScheme ? (survey.theme as ProjectTheme) : null,
                             creator: {
                                 __typename: "User",
                                 email: survey.creator?.email ?? "",
@@ -280,6 +273,8 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                     });
                 },
             });
+
+            return mutation;
         },
         [updateSurveyMutation],
     );

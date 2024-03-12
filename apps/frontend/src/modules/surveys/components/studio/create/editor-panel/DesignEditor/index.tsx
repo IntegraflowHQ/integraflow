@@ -1,211 +1,254 @@
 import { ProjectTheme } from "@/generated/graphql";
+import { PresetThemes } from "@/modules/projects/components/PresetThemes";
+import { ThemeCard } from "@/modules/projects/components/ThemeCard";
 import { useTheme } from "@/modules/projects/hooks/useTheme";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { useStudioStore } from "@/modules/surveys/states/studio";
-import { Button, ColorPicker } from "@/ui";
+import { Theme } from "@/types";
+import { Button, Info } from "@/ui";
+import { parseTheme } from "@/utils";
 import { toast } from "@/utils/toast";
-import * as Tabs from "@radix-ui/react-tabs";
-import { X } from "lucide-react";
-import React from "react";
-import { DesignEditorContent } from "./components/EditorContent";
+import { useState } from "react";
+import { ThemeEditor } from "./ThemeEditor";
 
-const THEMES_INFO = [
-    {
-        id: crypto.randomUUID(),
-        name: "question",
-        color: "#A0EFF2",
+const CREATE_THEME_DEFAULT_VALUE: Theme = {
+    id: null,
+    name: "",
+    colorScheme: {
+        question: "#A0EFF2",
+        answer: "#ECB22E",
+        progress: "#FF9551",
+        button: "#36C5F0",
+        background: "#E01E5A",
     },
-    { id: crypto.randomUUID(), name: "answer", color: "#ECB22E" },
-    { id: crypto.randomUUID(), name: "progress", color: "#FF9551" },
-    { id: crypto.randomUUID(), name: "button", color: "#36C5F0" },
-    { id: crypto.randomUUID(), name: "background", color: "#E01E5A" },
-];
+};
 
 export const UpdateDesignEditor = () => {
     const { updateSurvey, survey } = useSurvey();
+    const { themes, loading, createTheme, updateTheme, deleteTheme } = useTheme();
+    const [themeEditorValue, setThemeEditorValue] = useState<Theme | null>(null);
+    const { theme: surveyTheme, updateStudio } = useStudioStore((state) => state);
 
-    const editThemeState = useStudioStore((state) => state.editTheme);
-    const { createTheme, updateTheme, refetch, deleteTheme } = useTheme();
-
-    const [theme, setTheme] = React.useState<Partial<ProjectTheme>>();
-    const [newThemeOpenState, setOpenState] = React.useState<boolean>(false);
-
-    const handleCreateTheme = async () => {
-        if (theme?.name && theme?.colorScheme && survey) {
-            if (theme.id) {
-                updateTheme(theme);
-                setOpenState(!newThemeOpenState);
-            } else {
-                const response = await createTheme({
-                    name: theme.name,
-                    colorScheme: theme.colorScheme,
-                });
-
-                if (response) {
-                    updateSurvey(survey, {
-                        themeId: response.newThemeData?.id,
-                    });
-                } else {
-                    toast.error("Error creating the theme");
-                    return;
-                }
-                setOpenState(!newThemeOpenState);
-            }
-        } else {
-            toast.error("Error updating the survey with your selected theme");
+    const handleSelectedTheme = async (theme: Theme) => {
+        if (!survey || !theme.id) {
+            return;
         }
+
+        const prevTheme = survey.theme ? (JSON.parse(JSON.stringify(survey.theme)) as ProjectTheme) : undefined;
+
+        updateStudio({ theme });
+        const result = await updateSurvey(
+            {
+                ...survey,
+                theme: {
+                    ...survey.theme,
+                    id: theme.id,
+                    name: theme.name,
+                    colorScheme: JSON.stringify(theme.colorScheme),
+                },
+            },
+            { themeId: theme.id },
+        );
+
+        if (result.errors && result.errors.length > 0) {
+            updateStudio({ theme: parseTheme(prevTheme as ProjectTheme) });
+        }
+    };
+
+    const handleSubmit = async (theme: Theme) => {
+        if (!theme.name) {
+            return toast.error("Please enter a theme name.");
+        }
+        if (!survey) {
+            return;
+        }
+
+        updateStudio({ theme });
+
+        const prevTheme = survey.theme ? (JSON.parse(JSON.stringify(survey.theme)) as ProjectTheme) : undefined;
+
+        if (theme.id) {
+            updateTheme({
+                theme,
+                onSuccess: (newTheme) => {
+                    if (theme.id === surveyTheme?.id) {
+                        updateSurvey(
+                            {
+                                ...survey,
+                                theme: { ...survey.theme, ...newTheme },
+                            },
+                            { themeId: theme.id },
+                        );
+                    }
+                },
+                onError: () => {
+                    if (theme.id === surveyTheme?.id && prevTheme) {
+                        updateSurvey(
+                            {
+                                ...survey,
+                                theme: prevTheme,
+                            },
+                            { themeId: prevTheme.id },
+                        );
+                        updateStudio({ theme: prevTheme ? parseTheme(prevTheme as ProjectTheme) : null });
+                    }
+                    toast.error("Theme update failed.");
+                },
+            });
+        } else {
+            createTheme({
+                input: {
+                    id: crypto.randomUUID(),
+                    name: theme.name,
+                    colorScheme: JSON.stringify(theme.colorScheme),
+                },
+                onSuccess: (newTheme) => {
+                    updateSurvey(
+                        {
+                            ...survey,
+                            theme: newTheme,
+                        },
+                        {
+                            themeId: newTheme.id,
+                        },
+                    );
+                },
+                onError: () => {
+                    if (prevTheme) {
+                        updateSurvey(
+                            {
+                                ...survey,
+                                theme: prevTheme,
+                            },
+                            { themeId: prevTheme.id },
+                        );
+                        updateStudio({ theme: prevTheme ? parseTheme(prevTheme as ProjectTheme) : null });
+                    }
+                },
+            });
+        }
+        setThemeEditorValue(null);
     };
 
     const handleDeleteTheme = async () => {
-        if (theme?.id && survey) {
-            try {
-                await deleteTheme(theme.id);
-                await updateSurvey(survey, { themeId: undefined });
-                refetch();
-            } catch (error) {
-                toast.error(error as string);
-            }
-
-            setOpenState(!newThemeOpenState);
-        } else {
-            toast.error("Please fill all the fields");
-        }
-    };
-
-    const handleThemeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setTheme({
-            ...(theme ?? {}),
-            name: e.target.value,
-        });
-    };
-
-    const onOpen = (theme?: Partial<ProjectTheme>) => {
-        transformTheme(theme);
-        setOpenState(true);
-    };
-
-    const handleSelectedThemeOption = (themeInfo: (typeof THEMES_INFO)[0], color: string) => {
-        const colorScheme: { [key: string]: string } = {};
-
-        for (let i = 0; i < THEMES_INFO.length; i++) {
-            colorScheme[THEMES_INFO[i]?.name] = theme?.colorScheme?.[THEMES_INFO[i]?.name] ?? THEMES_INFO[i].color;
-
-            if (THEMES_INFO[i]?.name === themeInfo.name) {
-                colorScheme[THEMES_INFO[i]?.name] = color;
-            }
+        if (!themeEditorValue?.id || !survey) {
+            return;
         }
 
-        setTheme({
-            ...(theme ?? {}),
-            colorScheme,
+        const prevTheme = survey.theme ? JSON.parse(JSON.stringify(survey.theme)) : undefined;
+
+        updateStudio({ theme: null });
+        deleteTheme({
+            themeId: themeEditorValue.id,
+            onSuccess: () => {
+                if (surveyTheme?.id === themeEditorValue.id) {
+                    updateSurvey({ ...survey, theme: null }, { themeId: undefined });
+                }
+            },
+            onError: () => {
+                if (prevTheme) {
+                    updateSurvey(
+                        {
+                            ...survey,
+                            theme: prevTheme,
+                        },
+                        { themeId: prevTheme.id },
+                    );
+                    updateStudio({ theme: parseTheme(prevTheme as ProjectTheme) });
+                }
+            },
         });
+
+        setThemeEditorValue(null);
     };
 
-    const transformTheme = (theme?: Partial<ProjectTheme>) => {
-        const colorScheme: { [key: string]: string } = {};
-
-        for (let i = 0; i < THEMES_INFO.length; i++) {
-            colorScheme[THEMES_INFO[i]?.name] = theme?.colorScheme?.[THEMES_INFO[i]?.name] ?? THEMES_INFO[i].color;
-        }
-
-        setTheme({
-            ...(theme ?? {}),
-            name: theme?.name ?? "",
-            colorScheme,
-        });
-    };
-
-    const themeSettingsPanel = (
-        <>
-            <div className="delay-400 h-fit rounded-md bg-intg-bg-9 px-4 py-2 transition-all ease-in-out">
-                <Tabs.Root className="flex justify-between border-b border-intg-bg-14">
-                    <Tabs.List aria-label="create a new theme">
-                        <Tabs.Trigger value="theme-name" className="border-b border-[#6941c6]">
-                            <input
-                                type="text"
-                                value={theme?.name ?? ""}
-                                placeholder="Theme name"
-                                onChange={(e) => handleThemeName(e)}
-                                className="w-[130px] text-ellipsis bg-transparent px-3 py-2 text-sm font-normal capitalize text-intg-text-2 focus:outline-intg-bg-2"
-                            />
-                        </Tabs.Trigger>
-                    </Tabs.List>
-
-                    <div className="mt-2 flex gap-2">
-                        <div className="hover:cursor-pointer" onClick={() => setOpenState(!true)}>
-                            <X size={25} color="#AFAAC7" />
-                        </div>
-                    </div>
-                </Tabs.Root>
-
-                <>
-                    {THEMES_INFO.map((themeInfo) => {
-                        return (
-                            <div
-                                key={themeInfo.id}
-                                className="my-3 mb-3 flex w-full justify-between rounded-md bg-intg-bg-15 px-3 py-3"
-                            >
-                                <p className="py-1 text-sm font-normal capitalize text-intg-text-2">{themeInfo.name}</p>
-
-                                <ColorPicker
-                                    onChange={(color) => {
-                                        handleSelectedThemeOption(themeInfo, color);
-                                    }}
-                                >
-                                    {" "}
-                                    <div
-                                        className="h-8 w-8 cursor-pointer rounded-full"
-                                        style={{
-                                            background: theme?.colorScheme?.[themeInfo.name] ?? themeInfo.color,
-                                        }}
-                                    />
-                                </ColorPicker>
-                            </div>
-                        );
-                    })}
-                </>
-            </div>
-
-            <div className="mt-4 flex justify-end gap-2">
-                {editThemeState === true ? (
-                    <Button
-                        text="Delete theme"
-                        variant="secondary"
-                        onClick={handleDeleteTheme}
-                        className="w-max px-[12px] py-[12px] font-normal"
-                    />
-                ) : null}
-                <Button
-                    onClick={() => handleCreateTheme()}
-                    text={editThemeState === true ? "Update theme" : "Create theme"}
-                    className="w-max px-[12px] py-[12px] font-normal"
-                />
-            </div>
-        </>
-    );
+    if (themeEditorValue) {
+        return (
+            <ThemeEditor
+                defaultValue={themeEditorValue}
+                createMode={themeEditorValue.id ? false : true}
+                onCompleted={handleSubmit}
+                onDeleteClicked={handleDeleteTheme}
+                onClose={() => {
+                    setThemeEditorValue(null);
+                }}
+            />
+        );
+    }
 
     return (
-        <>
-            {!newThemeOpenState ? (
-                <div className="h-fit rounded-md bg-intg-bg-9 px-4 py-2 text-white">
-                    <Tabs.Root className="flex justify-between border-b border-intg-bg-14" defaultValue="theme">
-                        <Tabs.List aria-label="update your theme survey">
-                            <Tabs.Trigger
-                                value="theme"
-                                className={`border border-x-0 border-t-0 border-[#6941c6] px-3 py-2 text-sm font-normal capitalize`}
-                            >
-                                themes
-                            </Tabs.Trigger>
-                        </Tabs.List>
-                    </Tabs.Root>
-
-                    <div className="mt-4">
-                        <DesignEditorContent onOpen={onOpen} />
-                    </div>
+        <div className="h-fit rounded-md bg-intg-bg-9 px-4 py-2 text-white">
+            <div className="flex justify-between border-b border-intg-bg-14" defaultValue="theme">
+                <div
+                    className={`border border-x-0 border-t-0 border-[#6941c6] px-3 py-2 text-sm font-normal capitalize`}
+                >
+                    themes
                 </div>
-            ) : (
-                themeSettingsPanel
-            )}
-        </>
+            </div>
+
+            <div className="mt-4">
+                {surveyTheme && surveyTheme.name && surveyTheme.colorScheme ? (
+                    <div>
+                        <p className="py-4 text-sm font-normal uppercase">selected theme</p>
+                        <ThemeCard name={surveyTheme.name ?? ""} colorScheme={surveyTheme.colorScheme} />
+                    </div>
+                ) : (
+                    <Info message="You have not selected any theme for this survey." />
+                )}
+
+                <Button
+                    text="new theme"
+                    onClick={() => {
+                        setThemeEditorValue(CREATE_THEME_DEFAULT_VALUE);
+                    }}
+                    variant="secondary"
+                    className="mb-2 mt-4 text-sm font-normal first-letter:capitalize"
+                />
+
+                {!loading && themes.length === 0 && (
+                    <Info message="You don't have any theme. Click the button below to create one or choose from our presets" />
+                )}
+
+                {!loading && themes.length !== 0 && (
+                    <div
+                        className={`mt-1 py-2 ${
+                            themes.length !== 0 ? "-mt-4 h-fit" : ""
+                        } transition-all delay-100 duration-300 ease-in`}
+                    >
+                        <p className="text-sm font-normal capitalize">all themes</p>
+
+                        <div className={`flex flex-col gap-1.5 py-1 transition duration-300 ease-in`}>
+                            {themes?.map((t, index) => {
+                                return (
+                                    <div key={index}>
+                                        <ThemeCard
+                                            active={t.id === surveyTheme?.id}
+                                            name={t.name ?? ""}
+                                            colorScheme={t.colorScheme}
+                                            onClick={() => handleSelectedTheme(t)}
+                                            onEditClicked={() => {
+                                                setThemeEditorValue(t);
+                                            }}
+                                        />
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
+
+                {themes.length < 5 && (
+                    <div
+                        className={`-mt-3 ${
+                            themes.length !== 0 ? "h-[395px] translate-y-[20px]" : ""
+                        } transition-all delay-100 duration-300 ease-in`}
+                    >
+                        {themes.length !== 0 && <hr className="border-1 border-intg-bg-14" />}
+
+                        <PresetThemes onThemeSelect={handleSubmit} />
+                    </div>
+                )}
+            </div>
+        </div>
     );
 };

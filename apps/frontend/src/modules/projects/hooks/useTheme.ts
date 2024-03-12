@@ -1,82 +1,67 @@
 import {
-    Project,
     ProjectTheme,
-    ThemesQuery,
-    User,
+    ProjectThemeCreateInput,
     useProjectThemeCreateMutation,
     useProjectThemeDeleteMutation,
     useProjectThemeUpdateMutation,
     useThemesQuery,
 } from "@/generated/graphql";
-import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
+import { ParsedTheme, Theme } from "@/types";
+import { parseTheme } from "@/utils";
 import { Reference } from "@apollo/client";
+import { useMemo } from "react";
 import { PROJECT_THEME } from "../graphql/fragments/projectFragments";
-import { useProject } from "./useProject";
-
-export type ColorScheme = {
-    answer: string;
-    button: string;
-    progress: string;
-    question: string;
-    background: string;
-};
 
 export const useTheme = () => {
-    const { user } = useCurrentUser();
-    const { project } = useProject();
     const [createThemeMutation] = useProjectThemeCreateMutation();
     const [updateThemeMutation] = useProjectThemeUpdateMutation();
     const [deleteThemeMutation] = useProjectThemeDeleteMutation();
 
     const {
-        data: themes,
+        data: themesData,
         loading,
         error,
         refetch,
     } = useThemesQuery({
         variables: { first: 20 },
-        notifyOnNetworkStatusChange: true,
     });
 
-    const transformThemes = (themes: ThemesQuery) => {
-        const data = { ...(themes?.themes ?? {}) };
+    const themes = useMemo(() => {
+        return (
+            themesData?.themes?.edges.map((theme) => {
+                return parseTheme(theme.node as ProjectTheme);
+            }) || ([] as ParsedTheme[])
+        );
+    }, [themesData]);
 
-        return data?.edges?.map(({ node }) => {
-            let colorScheme = {};
-            if (node.colorScheme) {
-                try {
-                    colorScheme = JSON.parse(node.colorScheme) as ColorScheme;
-                } catch (error) {
-                    colorScheme = {};
-                }
-            }
-
-            node.colorScheme = colorScheme;
-
-            return node;
-        });
-    };
-
-    const createTheme = async (theme: Partial<ProjectTheme>) => {
-        const { data } = await createThemeMutation({
+    const createTheme = async ({
+        input,
+        onSuccess,
+        onError,
+    }: {
+        input: ProjectThemeCreateInput;
+        onSuccess?: (theme: ProjectTheme) => void;
+        onError?: () => void;
+    }) => {
+        await createThemeMutation({
             variables: {
-                input: {
-                    name: theme.name ?? "",
-                    colorScheme: JSON.stringify(theme.colorScheme ?? {}),
-                },
+                input,
             },
-            notifyOnNetworkStatusChange: true,
             optimisticResponse: {
                 __typename: "Mutation",
                 projectThemeCreate: {
                     __typename: "ProjectThemeCreate",
                     projectTheme: {
                         __typename: "ProjectTheme",
-                        id: theme?.id ?? "",
-                        name: theme.name ?? "",
-                        colorScheme: JSON.stringify(theme.colorScheme ?? {}),
+                        id: input?.id ?? "",
+                        name: input.name ?? "",
+                        reference: "",
+                        colorScheme: input.colorScheme,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString(),
                     },
                     projectErrors: [],
+                    errors: [],
                 },
             },
 
@@ -87,44 +72,45 @@ export const useTheme = () => {
                     fields: {
                         themes(existingThemeRefs) {
                             const newThemeRef = cache.writeFragment({
-                                data: {
-                                    ...(data?.projectThemeCreate?.projectTheme ?? {}),
-                                    settings: "{}",
-                                    project: null,
-                                    creator: null,
-                                    reference: null,
-                                    createdAt: new Date().toISOString(),
-                                    updatedAt: new Date().toISOString(),
-                                },
+                                data: data?.projectThemeCreate?.projectTheme,
                                 fragment: PROJECT_THEME,
                             });
                             return {
                                 ...existingThemeRefs,
                                 edges: [
-                                    ...existingThemeRefs.edges,
                                     {
                                         __typename: "ProjectTheme",
                                         node: newThemeRef,
                                     },
+                                    ...existingThemeRefs.edges,
                                 ],
                             };
                         },
                     },
                 });
             },
+
+            onCompleted: (data) => {
+                if (!data.projectThemeCreate?.projectTheme?.id) {
+                    return;
+                }
+
+                onSuccess?.(data.projectThemeCreate.projectTheme as ProjectTheme);
+            },
+
+            onError,
         });
-
-        if (error)
-            return {
-                error,
-            };
-
-        return {
-            newThemeData: data?.projectThemeCreate?.projectTheme,
-        };
     };
 
-    const updateTheme = async (theme: Partial<ProjectTheme>) => {
+    const updateTheme = async ({
+        theme,
+        onSuccess,
+        onError,
+    }: {
+        theme: Theme;
+        onSuccess?: (theme: ProjectTheme) => void;
+        onError?: () => void;
+    }) => {
         if (!theme.id) return;
 
         await updateThemeMutation({
@@ -146,9 +132,6 @@ export const useTheme = () => {
                         id: theme.id,
                         name: theme.name ?? "",
                         reference: "",
-                        settings: "",
-                        project: project as Project,
-                        creator: user as User,
                         createdAt: new Date().toISOString(),
                         updatedAt: new Date().toISOString(),
                         colorScheme: JSON.stringify(theme.colorScheme ?? {}),
@@ -173,10 +156,28 @@ export const useTheme = () => {
                     },
                 });
             },
+
+            onCompleted: (data) => {
+                if (!data.projectThemeUpdate?.projectTheme?.id) {
+                    return;
+                }
+
+                onSuccess?.(data.projectThemeUpdate.projectTheme as ProjectTheme);
+            },
+
+            onError,
         });
     };
 
-    const deleteTheme = async (themeId: string) => {
+    const deleteTheme = async ({
+        themeId,
+        onSuccess,
+        onError,
+    }: {
+        themeId: string;
+        onSuccess?: () => void;
+        onError?: () => void;
+    }) => {
         await deleteThemeMutation({
             variables: {
                 id: themeId,
@@ -187,20 +188,7 @@ export const useTheme = () => {
                 __typename: "Mutation",
                 projectThemeDelete: {
                     __typename: "ProjectThemeDelete",
-
-                    projectTheme: {
-                        // ...themes,
-                        id: themeId,
-                        reference: "",
-                        __typename: "ProjectTheme",
-                        name: "",
-                        colorScheme: "",
-                        settings: "",
-                        createdAt: new Date().toISOString(),
-                        creator: user as User,
-                        updatedAt: new Date().toISOString(),
-                        project: project as Project,
-                    },
+                    projectTheme: null,
                     errors: [],
                     projectErrors: [],
                 },
@@ -214,14 +202,20 @@ export const useTheme = () => {
                         themes(existingThemeRefs, { readField }) {
                             return {
                                 ...existingThemeRefs,
-                                edges: existingThemeRefs.edges.filter((themeRef: Reference) => {
-                                    return themeId !== readField("id", themeRef);
+                                edges: existingThemeRefs.edges.filter(({ node }: { node: Reference }) => {
+                                    return themeId !== readField("id", node);
                                 }),
                             };
                         },
                     },
                 });
             },
+
+            onCompleted: () => {
+                onSuccess?.();
+            },
+
+            onError,
         });
     };
 
@@ -232,6 +226,6 @@ export const useTheme = () => {
         createTheme,
         updateTheme,
         deleteTheme,
-        themes: transformThemes(JSON.parse(JSON.stringify(themes ?? {}))),
+        themes,
     };
 };

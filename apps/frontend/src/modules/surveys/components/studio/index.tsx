@@ -1,14 +1,16 @@
-import { SurveyStatusEnum } from "@/generated/graphql";
+import { ProjectTheme, SurveyStatusEnum } from "@/generated/graphql";
 import { ROUTES } from "@/routes";
 import { Button, GlobalSpinner } from "@/ui";
+import { parseTheme } from "@/utils";
 import { toast } from "@/utils/toast";
 import * as Tabs from "@radix-ui/react-tabs";
 import debounce from "lodash.debounce";
 import { XIcon } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useStudioState from "../../hooks/useStudioState";
 import { useSurvey } from "../../hooks/useSurvey";
+import { useStudioStore } from "../../states/studio";
 import Analyze from "./analyze";
 import Create from "./create";
 import Distribute from "./distribute";
@@ -29,9 +31,16 @@ export default function Studio() {
     const [surveyTitle, setSurveyTitle] = useState("");
     const { enableStudioMode, disableStudioMode } = useStudioState();
     const [activeTab, setActiveTab] = useState(tabs[0].label);
+    const { updateStudio } = useStudioStore((state) => state);
 
     const { orgSlug, projectSlug } = params;
     const surveyName = survey?.name;
+
+    useEffect(() => {
+        if (survey?.theme && survey?.theme.colorScheme && survey?.theme?.name) {
+            updateStudio({ theme: parseTheme(survey.theme as ProjectTheme) });
+        }
+    }, []);
 
     const updateSurveyTitle = React.useCallback(
         debounce((value: string) => {

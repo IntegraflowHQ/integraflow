@@ -5,9 +5,7 @@ export const GET_PROJECT_THEMES = gql`
         themes(first: $first) {
             edges {
                 node {
-                    id
-                    name
-                    colorScheme
+                    ...ProjectThemeFragment
                 }
             }
             totalCount

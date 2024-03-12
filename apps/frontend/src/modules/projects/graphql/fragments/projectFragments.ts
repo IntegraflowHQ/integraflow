@@ -57,13 +57,6 @@ export const PROJECT_THEME = gql`
         reference
         name
         colorScheme
-        settings
-        project {
-            ...ProjectFragment
-        }
-        creator {
-            ...UserFragment
-        }
         createdAt
         updatedAt
     }
