@@ -31,7 +31,10 @@ const defaultChannel: ParsedChannel = {
     link: "",
     type: SurveyChannelTypeEnum.WebSdk,
     createdAt: "",
-    settings: {},
+    settings: {
+        placement: "center",
+        backgroundOverlay: "light",
+    },
     triggers: {
         conditions: [],
         delay: 0,
