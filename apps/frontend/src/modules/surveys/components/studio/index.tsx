@@ -8,7 +8,6 @@ import debounce from "lodash.debounce";
 import { XIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import useStudioState from "../../hooks/useStudioState";
 import { useSurvey } from "../../hooks/useSurvey";
 import { useStudioStore } from "../../states/studio";
 import Analyze from "./analyze";
@@ -29,7 +28,7 @@ export default function Studio() {
     const navigate = useNavigate();
     const { loading, survey, updateSurvey } = useSurvey();
     const [surveyTitle, setSurveyTitle] = useState("");
-    const { enableStudioMode, disableStudioMode } = useStudioState();
+    const { enableStudioMode, disableStudioMode } = useStudioStore((state) => state);
     const [activeTab, setActiveTab] = useState(tabs[0].label);
     const { updateStudio } = useStudioStore((state) => state);
 

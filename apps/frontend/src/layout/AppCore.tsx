@@ -1,17 +1,16 @@
-import useStudioState from "@/modules/surveys/hooks/useStudioState";
+import { useStudioStore } from "@/modules/surveys/states/studio";
 import { Outlet } from "react-router-dom";
 import { Navbar } from ".";
 import { PrivateRoute } from "./PrivateRoute";
 
 export const AppCore = () => {
-    const { studioModeIsActive } = useStudioState();
+    const studioModeIsActive = useStudioStore((state) => state.studioModeIsActive);
     return (
         <PrivateRoute>
             <div
                 className="flex bg-intg-black"
                 style={{
-                    backgroundImage:
-                        "radial-gradient(rgba(28, 15, 89, 0.30) 50%, rgba(5, 5, 5, 0.30))",
+                    backgroundImage: "radial-gradient(rgba(28, 15, 89, 0.30) 50%, rgba(5, 5, 5, 0.30))",
                     backgroundRepeat: "no-repeat",
                     backgroundPosition: "center",
                     backgroundSize: "cover",
