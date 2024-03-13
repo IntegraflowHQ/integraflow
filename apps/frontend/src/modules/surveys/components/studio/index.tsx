@@ -1,4 +1,5 @@
 import { ProjectTheme, SurveyStatusEnum } from "@/generated/graphql";
+import { useOnboarding } from "@/modules/onboarding/hooks/useOnboarding";
 import { ROUTES } from "@/routes";
 import { Button, GlobalSpinner } from "@/ui";
 import { parseTheme } from "@/utils";
@@ -31,6 +32,8 @@ export default function Studio() {
     const { enableStudioMode, disableStudioMode } = useStudioStore((state) => state);
     const [activeTab, setActiveTab] = useState(tabs[0].label);
     const { updateStudio } = useStudioStore((state) => state);
+    const { steps: onboardingSteps, markAsCompleted } = useOnboarding();
+    const surveyPublishIndex = onboardingSteps.findIndex((s) => s.key === "publish");
 
     const { orgSlug, projectSlug } = params;
     const surveyName = survey?.name;
@@ -82,6 +85,12 @@ export default function Studio() {
             status: SurveyStatusEnum.Active,
         });
         toast.success("Survey published successfully");
+
+        if (surveyPublishIndex === -1) {
+            return;
+        }
+
+        markAsCompleted(surveyPublishIndex);
     };
 
     if (loading || !survey) return <GlobalSpinner />;
