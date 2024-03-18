@@ -17,7 +17,7 @@ const CREATE_THEME_DEFAULT_VALUE: Theme = {
     colorScheme: {
         question: "#A0EFF2",
         answer: "#ECB22E",
-        progress: "#FF9551",
+        progressBar: "#FF9551",
         button: "#36C5F0",
         background: "#E01E5A",
     },

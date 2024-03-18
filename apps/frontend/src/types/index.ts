@@ -185,7 +185,7 @@ export type MentionOption = {
 export type ColorScheme = {
     question: string;
     answer: string;
-    progress: string;
+    progressBar: string;
     button: string;
     background: string;
 };

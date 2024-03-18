@@ -117,4 +117,4 @@ export const parseTheme = (theme: ProjectTheme) => {
     return newThemeData as ParsedTheme;
 };
 
-export const themeKeys = ["background", "progress", "question", "answer", "button"] as const;
+export const themeKeys = ["background", "progressBar", "question", "answer", "button"] as const;

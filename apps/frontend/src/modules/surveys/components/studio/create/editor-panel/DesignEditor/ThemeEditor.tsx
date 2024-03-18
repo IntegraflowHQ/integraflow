@@ -49,7 +49,9 @@ export const ThemeEditor = ({ onCompleted, onDeleteClicked, onClose, defaultValu
                             key={key}
                             className="my-3 mb-3 flex w-full justify-between rounded-md bg-intg-bg-15 px-3 py-3"
                         >
-                            <p className="py-1 text-sm font-normal capitalize text-intg-text-2">{key}</p>
+                            <p className="py-1 text-sm font-normal capitalize text-intg-text-2">
+                                {key.replace(/[A-Z]/g, " $&")}
+                            </p>
 
                             <ColorPicker
                                 defaultColor=""

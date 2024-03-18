@@ -8,7 +8,7 @@ const PRESET_THEMES: Theme[] = [
         colorScheme: {
             question: "#ee9b0c",
             answer: "#ec0b0b",
-            progress: "#ff2a05",
+            progressBar: "#ff2a05",
             button: "#d0a689",
             background: "#db420a",
         },
@@ -20,7 +20,7 @@ const PRESET_THEMES: Theme[] = [
             answer: "#041b3f",
             background: "#0b1527",
             button: "#6799e5",
-            progress: "#071f41",
+            progressBar: "#071f41",
             question: "#010c1e",
         },
     },
@@ -30,7 +30,7 @@ const PRESET_THEMES: Theme[] = [
         colorScheme: {
             question: "#9CB4CC",
             answer: "#FF8FB1",
-            progress: "#D3CEDF",
+            progressBar: "#D3CEDF",
             button: "#F2D7D9",
             background: "#7FBCD2",
         },
@@ -41,7 +41,7 @@ const PRESET_THEMES: Theme[] = [
         colorScheme: {
             question: "#7bfda2",
             answer: "#78e510",
-            progress: "#d9e51a",
+            progressBar: "#d9e51a",
             button: "#dbbe11",
             background: "#ec7e0f",
         },

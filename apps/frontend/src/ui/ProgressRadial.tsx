@@ -8,11 +8,7 @@ export const ProgressRadial = ({ value }: { value: number }) => {
                 background: `radial-gradient(closest-side, #272138 69%, transparent 70% 100%), conic-gradient(#8590C8 ${value}%, #C2CAF2 0)`,
             }}
         >
-            <progress
-                value={value}
-                max="100"
-                className="hidden"
-            >{`${value}%`}</progress>
+            <progress value={value} max="100" className="sr-only">{`${value}%`}</progress>
         </div>
     );
 };
