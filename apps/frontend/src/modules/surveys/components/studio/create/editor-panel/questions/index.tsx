@@ -13,10 +13,10 @@ export default function UpdateQuestion() {
     const { question, switchQuestion, clear } = useQuestion();
 
     useEffect(() => {
-        if ((!question || !question.id) && parsedQuestions.length > 0) {
+        if ((!question || !question.reference) && parsedQuestions.length > 0) {
             switchQuestion(parsedQuestions[0]);
         }
-    }, [parsedQuestions, question]);
+    }, []);
 
     return (
         <div className="h-full w-full space-y-4 pt-2">
@@ -25,23 +25,25 @@ export default function UpdateQuestion() {
                     <Accordion.Root
                         type="single"
                         collapsible={true}
-                        value={question ? question.id : ""}
+                        value={question?.reference ?? ""}
                         onValueChange={(value) => {
                             if (value === "" || value === undefined) {
                                 clear();
                                 return;
                             }
 
-                            switchQuestion(parsedQuestions.find((question) => question.id === value) as ParsedQuestion);
+                            switchQuestion(
+                                parsedQuestions.find((question) => question.reference === value) as ParsedQuestion,
+                            );
                         }}
                         className="space-y-4"
                     >
                         {parsedQuestions?.map((question, index) => {
                             return (
-                                <Accordion.Item value={question.id} key={question.id}>
+                                <Accordion.Item value={question.reference ?? ""} key={question.reference}>
                                     <Accordion.Header>
                                         <Accordion.Trigger
-                                            value={question.id}
+                                            value={question.reference ?? ""}
                                             className="w-full items-center  justify-between gap-2 rounded-lg bg-intg-bg-9 p-4 text-intg-text-7 data-[state=close]:flex data-[state=open]:hidden"
                                         >
                                             <div className="flex items-center gap-4">
