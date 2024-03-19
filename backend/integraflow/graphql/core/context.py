@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 
 class IntegraflowContext(HttpRequest):
+    _cached_project: Optional[Project]
     _cached_user: Optional[User]
     decoded_auth_token: Optional[Dict[str, Any]]
     allow_replica: bool = True

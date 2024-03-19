@@ -45,10 +45,19 @@ def resolve_surveys(info):
     ).filter(project_id=project.pk)
 
 
+def resolve_active_surveys(info):
+    project = cast(Project, info.context.project)
+
+    return models.Survey.objects.using(
+        get_database_connection_name(info.context)
+    ).filter(project_id=project.pk, status=models.Survey.Status.ACTIVE)
+
+
 def resolve_survey(info, id=None, slug=None):
     project = cast(Project, info.context.project)
 
     lookup = None
+
 
     if id:
         _, survey_id = from_global_id_or_error(id)
@@ -70,8 +79,6 @@ def resolve_survey(info, id=None, slug=None):
 
 
 def resolve_survey_by_channel(info, id=None, link=None):
-    project = cast(Project, info.context.project)
-
     lookup = None
 
     if id:
@@ -92,7 +99,6 @@ def resolve_survey_by_channel(info, id=None, link=None):
         )
         .filter(
             lookup &
-            Q(survey__project_id=project.pk) &
             Q(survey__status=models.Survey.Status.ACTIVE) &
             Q(
                 Q(survey__start_date__isnull=True) |

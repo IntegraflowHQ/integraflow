@@ -3,6 +3,9 @@ import {
     MagicSignIn,
     Onboarding,
     Signup,
+    SurveyStudio,
+    SurveyTemplates,
+    Surveys,
     Workspace,
 } from "@/pages";
 import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
@@ -14,10 +17,12 @@ import "./index.css";
 import { AppCore } from "./layout/AppCore";
 import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
+import { SurveyShell } from "./layout/SurveyShell";
 import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
 import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
 
-const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
+const isDebugMode = import.meta.env.MODE === "development";
+
 if (isDebugMode) {
     loadDevMessages();
     loadErrorMessages();
@@ -55,8 +60,26 @@ const router = createBrowserRouter([
                 element: <AppCore />,
                 children: [
                     {
-                        path: "projects/:projectSlug/get-started",
-                        element: <Onboarding />,
+                        path: "projects/:projectSlug",
+                        element: <SurveyShell />,
+                        children: [
+                            {
+                                path: "get-started",
+                                element: <Onboarding />,
+                            },
+                            {
+                                path: "surveys",
+                                element: <Surveys />,
+                            },
+                            {
+                                path: "surveys/templates",
+                                element: <SurveyTemplates />,
+                            },
+                            {
+                                path: "survey/:surveySlug",
+                                element: <SurveyStudio />,
+                            },
+                        ],
                     },
                 ],
             },

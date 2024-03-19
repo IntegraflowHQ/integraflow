@@ -113,13 +113,17 @@ export const Navbar = () => {
                                             <DropdownMenuItem
                                                 key={item?.id}
                                                 onClick={() => {
-                                                    switchProject(item as Project);
+                                                    switchProject(
+                                                        item as Project,
+                                                    );
                                                 }}
                                             >
                                                 <NavItem
                                                     leftIcon={
                                                         <AcronynmBox
-                                                            text={item?.name ?? ""}
+                                                            text={
+                                                                item?.name ?? ""
+                                                            }
                                                         />
                                                     }
                                                     text={item?.name}

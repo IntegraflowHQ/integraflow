@@ -1,11 +1,6 @@
 import { create } from "zustand";
 
-export type OnboardingStep = {
-    key: string;
-    name: string;
-};
-
-export const steps: OnboardingStep[] = [
+export const steps = [
     {
         key: "integrate",
         name: "Integrate SDK",
@@ -26,13 +21,13 @@ export const steps: OnboardingStep[] = [
         key: "connect",
         name: "Connect your first integration",
     },
-];
+] as const;
 
 type EventSource = "web" | "mobile" | null;
 type MobilePlatform = "android" | "ios" | "rn" | "flutter" | null;
 
 export type OnboardingState = {
-    steps: OnboardingStep[];
+    steps: typeof steps;
     eventSource: EventSource;
     mobilePlatform: MobilePlatform;
     currentTab: string;
@@ -52,13 +47,10 @@ const initialState: OnboardingState = {
     currentTab: steps[0].name,
 };
 
-export const useOnboardingStore = create<OnboardingState & OnboardingActions>()(
-    (set) => ({
-        ...initialState,
-        clearEventSource: () =>
-            set({ eventSource: null, mobilePlatform: null }),
-        setEventSource: (eventSource) => set({ eventSource }),
-        setMobilePlatform: (mobilePlatform) => set({ mobilePlatform }),
-        switchTab: (tab) => set({ currentTab: tab }),
-    }),
-);
+export const useOnboardingStore = create<OnboardingState & OnboardingActions>()((set) => ({
+    ...initialState,
+    clearEventSource: () => set({ eventSource: null, mobilePlatform: null }),
+    setEventSource: (eventSource) => set({ eventSource }),
+    setMobilePlatform: (mobilePlatform) => set({ mobilePlatform }),
+    switchTab: (tab) => set({ currentTab: tab }),
+}));

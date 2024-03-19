@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useLogout } from "@/modules/auth/hooks/useLogout";
 import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
-import { Button } from "@/ui";
+import { AcronynmBox, Button, NavItem, NavLink } from "@/ui";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,9 +16,6 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/ui/Dropdown/DropdownMenu";
-import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
-import { NavItem } from "@/ui/NavItem/NavItem";
-import { NavLink } from "@/ui/NavItem/NavLink";
 import {
     CheckCircleIcon,
     CirclePlusIcon,
@@ -108,11 +105,7 @@ export const UserProfile = () => {
                             uppercase={true}
                             text={workspace?.name}
                             leftIcon={
-                                <AcronynmBox
-                                    text={
-                                        workspace?.name as string
-                                    }
-                                />
+                                <AcronynmBox text={workspace?.name as string} />
                             }
                             rightIcon={<CheckCircleIcon />}
                             classnames="px-3 py-2 my-3 uppercase"

@@ -9,6 +9,7 @@ export interface NavItemProps {
     ellipsisLength?: number;
     classnames?: string;
     uppercase?: boolean;
+    onclick?: () => void;
 }
 
 export const NavItem = ({
@@ -19,6 +20,7 @@ export const NavItem = ({
     ellipsisLength,
     classnames = "",
     uppercase = false,
+    onclick,
 }: NavItemProps) => {
     return (
         <div
@@ -26,6 +28,7 @@ export const NavItem = ({
                 "flex w-full cursor-pointer items-center gap-2 overflow-x-hidden rounded capitalize text-intg-text",
                 classnames,
             )}
+            onClick={onclick && onclick}
         >
             <span>{leftIcon}</span>
             <p

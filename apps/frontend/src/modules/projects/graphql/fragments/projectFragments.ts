@@ -27,6 +27,7 @@ export const PROJECT = gql`
         id
         name
         slug
+        apiToken
         accessControl
         hasCompletedOnboardingFor
         timezone
@@ -40,6 +41,31 @@ export const PROJECT_UPDATE = gql`
     fragment ProjectUpdateFragment on ProjectUpdate {
         project {
             ...ProjectFragment
+        }
+        projectErrors {
+            ...ProjectErrorFragment
+        }
+        errors {
+            ...ProjectErrorFragment
+        }
+    }
+`;
+
+export const PROJECT_THEME = gql`
+    fragment ProjectThemeFragment on ProjectTheme {
+        id
+        reference
+        name
+        colorScheme
+        createdAt
+        updatedAt
+    }
+`;
+
+export const PROJECT_THEME_UPDATE = gql`
+    fragment ProjectThemeUpdateFragment on ProjectThemeUpdate {
+        projectTheme {
+            ...ProjectThemeFragment
         }
         projectErrors {
             ...ProjectErrorFragment

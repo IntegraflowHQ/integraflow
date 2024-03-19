@@ -109,6 +109,9 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                                         })()
                                     ).flatMap(() => forward(operation));
                                 }
+                                case "InvalidSignatureError":
+                                    onUnauthenticatedError?.();
+                                    break;
                                 default:
                                     if (isDebugMode) {
                                         logDebug(
