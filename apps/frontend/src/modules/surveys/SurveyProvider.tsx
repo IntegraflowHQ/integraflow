@@ -68,8 +68,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     const [updateSurveyMutation, { error }] = useSurveyUpdateMutation({});
     const [deleteSurveyMutation] = useSurveyDeleteMutation();
 
-    const [getSurvey, { data: surveyQueryResponse, loading: loadingSurvey, refetch: refetchSurvey }] =
-        useGetSurveyLazyQuery();
+    const [getSurvey, { data: surveyQueryResponse, loading: loadingSurvey }] = useGetSurveyLazyQuery();
 
     const {
         refetch,
@@ -84,7 +83,6 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                 direction: OrderDirection.Desc,
             },
         },
-        skip: !projectSlug,
     });
 
     const surveyId = surveyQueryResponse?.survey?.id ?? "";
@@ -103,7 +101,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             totalCount: surveyList?.surveys?.totalCount,
             edges: surveyList?.surveys?.edges?.map((survey) => survey.node as Survey) || ([] as Survey[]),
         };
-    }, [surveyList?.surveys?.edges]);
+    }, [surveyList?.surveys?.edges, surveyList?.surveys?.pageInfo, surveyList?.surveys?.totalCount]);
 
     React.useEffect(() => {
         if (!surveySlug) {
@@ -115,7 +113,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                 slug: surveySlug,
             },
         });
-    }, [surveySlug, refetchSurvey]);
+    }, [surveySlug, getSurvey]);
 
     const createSurvey = React.useCallback(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -142,6 +140,35 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
 
                 onError: () => {
                     navigate(ROUTES.SURVEY_LIST.replace(":orgSlug", orgSlug!).replace(":projectSlug", projectSlug!));
+                },
+
+                update: (cache, { data }) => {
+                    if (!data?.surveyCreate?.survey) {
+                        return;
+                    }
+
+                    cache.modify({
+                        fields: {
+                            surveys(existingSurveysRefs = {}) {
+                                const newSurveyRef = cache.writeFragment({
+                                    data: data.surveyCreate?.survey,
+                                    fragment: SurveyFragmentFragmentDoc,
+                                    fragmentName: "SurveyFragment",
+                                });
+
+                                return {
+                                    ...existingSurveysRefs,
+                                    edges: [
+                                        {
+                                            __typename: "Survey",
+                                            node: newSurveyRef,
+                                        },
+                                        ...existingSurveysRefs.edges,
+                                    ],
+                                };
+                            },
+                        },
+                    });
                 },
             });
         },
@@ -301,7 +328,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                             type: SurveyTypeEnum.Survey,
                             reference: "",
                             name: "",
-                            slug: surveySlug ?? "",
+                            slug: survey.slug ?? "",
                             status: survey.status ?? "",
                             settings: "",
                             theme: null,

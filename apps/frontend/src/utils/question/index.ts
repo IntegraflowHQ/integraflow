@@ -246,7 +246,7 @@ export const rangeOptions = (question: ParsedQuestion) => {
 
 export function getAttrOpts(userAttributes: PropertyDefinition[]): MentionOption {
     return {
-        title: "User Attribute",
+        title: "Attribute",
         items: userAttributes.map((attr) => ({
             value: attr.name,
             id: "attribute" + " " + `attribute.${attr.name}`,
@@ -266,7 +266,7 @@ export function getRecallOptions(openQuestion: ParsedQuestion, questions: Parsed
             .map((q) => ({
                 value: addEllipsis(
                     `${questions.findIndex((o) => o.id == q.id) + 1}. ${!stripHtmlTags(q.label) ? "-" : stripHtmlTags(q.label)}`,
-                    20,
+                    25,
                 ),
                 id: q.id + " " + ANSWER_TAG_SUFFIX,
                 type: "recalledQuestion",
@@ -283,12 +283,12 @@ export const tagOptions = (
     const userAttrOpts = getAttrOpts(userAttributes);
     const recallOpts = getRecallOptions(openQuestion, questions);
 
-    if (userAttrOpts.items.length > 0) {
-        opts.push(userAttrOpts);
-    }
-
     if (recallOpts.items.length > 0) {
         opts.push(recallOpts);
+    }
+
+    if (userAttrOpts.items.length > 0) {
+        opts.push(userAttrOpts);
     }
     return opts;
 };
