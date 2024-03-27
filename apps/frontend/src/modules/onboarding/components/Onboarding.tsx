@@ -1,5 +1,5 @@
-import { useCallback } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
+import { useCallback } from "react";
 
 import { GlobalSpinner, Header } from "@/ui";
 import { CheckComplete, CheckPending } from "@/ui/icons";
@@ -18,15 +18,17 @@ export const TabContents = [
 ];
 
 export default function Onboarding() {
-    const { currentTab, switchTab, markAsCompleted, steps, loading, completedKeys } =
-        useOnboarding();
+    const { currentTab, switchTab, markAsCompleted, steps, loading, completedKeys } = useOnboarding();
 
-    const onCompleted = useCallback((index: number) => {
-        markAsCompleted(index);
-        if (index < steps.length - 1) {
-            switchTab(steps[index + 1].name);
-        }
-    }, [markAsCompleted, steps, switchTab]);
+    const onCompleted = useCallback(
+        (index: number) => {
+            markAsCompleted(index);
+            if (index < steps.length - 1) {
+                switchTab(steps[index + 1].name);
+            }
+        },
+        [markAsCompleted, steps, switchTab],
+    );
 
     if (loading) {
         return <GlobalSpinner />;
@@ -53,14 +55,8 @@ export default function Onboarding() {
                             value={step.name}
                             className="flex items-center gap-3 rounded-lg p-6 hover:bg-intg-bg-9 data-[state=active]:bg-intg-bg-9"
                         >
-                            {completedKeys.includes(step.key) ? (
-                                <CheckComplete />
-                            ) : (
-                                <CheckPending />
-                            )}
-                            <span className="min-w-max text-base text-intg-text">
-                                {step.name}
-                            </span>
+                            {completedKeys.includes(step.key) ? <CheckComplete /> : <CheckPending />}
+                            <span className="min-w-max text-base text-intg-text">{step.name}</span>
                         </Tabs.Trigger>
                     ))}
                 </Tabs.List>
@@ -70,10 +66,7 @@ export default function Onboarding() {
                     return (
                         <Tabs.Content key={step.name} value={step.name} asChild>
                             <div className="min-w-[660px]">
-                                <Content
-                                    onSkip={() => onCompleted(index)}
-                                    onComplete={() => onCompleted(index)}
-                                />
+                                <Content onSkip={() => onCompleted(index)} onComplete={() => onCompleted(index)} />
                             </div>
                         </Tabs.Content>
                     );

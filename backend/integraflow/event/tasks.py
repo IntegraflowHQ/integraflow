@@ -1,5 +1,5 @@
-from datetime import datetime
 import json
+from datetime import datetime
 from numbers import Number
 from typing import Any, Dict, Optional, Union
 
@@ -16,7 +16,7 @@ from integraflow.event.models import (
     EventProperty,
     Person,
     PropertyDefinition,
-    PropertyType
+    PropertyType,
 )
 from integraflow.project.models import Project
 
@@ -104,7 +104,6 @@ def is_valid_datetime(date):
         return True
     except ValueError:
         return False
-
 
 def handle_timestamp(data: dict, now: str, sent_at: Optional[str]) -> datetime:
     if data.get("timestamp"):

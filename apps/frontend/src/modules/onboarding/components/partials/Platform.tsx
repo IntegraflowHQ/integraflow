@@ -21,7 +21,7 @@ export default function Platform({
     return (
         <div
             className={cn(
-                "relative  flex-1 rounded-lg border border-[#261F36] bg-[#261F36] pt-4 hover:border-intg-bg-2",
+                "relative  flex-1 rounded-lg border border-intg-bg-14 bg-intg-bg-14 pt-4 hover:border-intg-bg-2",
                 tall ? "h-[278px]" : "h-[190px]",
                 comingSoon ? "bg-opacity-30" : "",
             )}

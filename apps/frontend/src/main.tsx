@@ -3,6 +3,9 @@ import {
     MagicSignIn,
     Onboarding,
     Signup,
+    SurveyStudio,
+    SurveyTemplates,
+    Surveys,
     Workspace,
 } from "@/pages";
 import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
@@ -14,10 +17,16 @@ import "./index.css";
 import { AppCore } from "./layout/AppCore";
 import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
+import { SurveyShell } from "./layout/SurveyShell";
+import { Profile } from "./modules/workspace/components/settings/Profile";
+import { Project } from "./modules/workspace/components/settings/Project";
+import { Workspace as WorkspaceSettings } from "./modules/workspace/components/settings/Workspace";
 import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
 import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
+import { Settings } from "./pages/Settings";
 
-const isDebugMode = import.meta.env.VITE_DEBUG_MODE ?? true;
+const isDebugMode = import.meta.env.MODE === "development";
+
 if (isDebugMode) {
     loadDevMessages();
     loadErrorMessages();
@@ -51,12 +60,46 @@ const router = createBrowserRouter([
                 element: <Workspace />,
             },
             {
-                path: "/:orgSlug",
+                path: "/:orgSlug/projects/:projectSlug",
                 element: <AppCore />,
                 children: [
                     {
-                        path: "projects/:projectSlug/get-started",
+                        path: "settings",
+                        element: <Settings />,
+                    },
+                    {
+                        path: "settings/profile",
+                        element: <Profile />,
+                    },
+                    {
+                        path: "settings/project",
+                        element: <Project />,
+                    },
+                    {
+                        path: "settings/workspace",
+                        element: <WorkspaceSettings />,
+                    },
+                    {
+                        path: "get-started",
                         element: <Onboarding />,
+                    },
+                    {
+                        path: "",
+                        element: <SurveyShell />,
+                        children: [
+                            {
+                                path: "surveys",
+                                element: <Surveys />,
+                            },
+                            {
+                                path: "surveys/templates",
+                                element: <SurveyTemplates />,
+                            },
+                            {
+                                path: "survey/:surveySlug",
+                                element: <SurveyStudio />,
+                            },
+                        ],
                     },
                 ],
             },

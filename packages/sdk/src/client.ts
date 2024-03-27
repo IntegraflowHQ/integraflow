@@ -19,19 +19,7 @@ function parseClientOptions({
     headers,
     ...opts
 }: IntegraflowClientOptions): IntegraflowClientParsedOptions {
-    if (!accessToken && !apiKey) {
-        throw new Error(
-            "No accessToken or apiKey provided to the IntegraflowClient - create one here: https://useintegraflow.com"
-        );
-    }
-
     const newHeader = {
-        /** Use bearer if oauth token exists, otherwise use the provided apiKey */
-        Authorization: accessToken
-            ? accessToken.startsWith("Bearer ")
-                ? accessToken
-                : `Bearer ${accessToken}`
-            : apiKey ?? "",
         /** Use configured headers */
         ...headers,
         /** Override any user agent with the sdk name and version */
@@ -39,6 +27,15 @@ function parseClientOptions({
             [process.env.npm_package_name ?? "@integraflow/sdk"]: process.env.npm_package_version ?? "unknown",
         }),
     };
+
+    /** Use bearer if oauth token exists, otherwise use the provided apiKey */
+    if (apiKey) {
+        newHeader["Authorization"] = apiKey;
+    }
+
+    if (accessToken) {
+        newHeader["Authorization"] = accessToken.startsWith("Bearer ") ? accessToken : `Bearer ${accessToken}`;
+    }
 
     if (projectId) {
         newHeader["Project"] = projectId

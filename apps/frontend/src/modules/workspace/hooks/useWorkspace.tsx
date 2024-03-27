@@ -14,21 +14,19 @@ import {
 import { useRedirect } from "@/modules/auth/hooks/useRedirect";
 import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
 import { convertToAuthOrganization } from "@/modules/users/states/user";
+import { useApolloClient } from "@apollo/client";
 
 export const useWorkspace = () => {
     const { orgSlug } = useParams();
     const { user, organizations, updateUser } = useCurrentUser();
     const redirect = useRedirect();
-    const [createOrganization, { loading }] =
-        useOrganizationCreateMutation();
+    const [createOrganization, { loading }] = useOrganizationCreateMutation();
+    const client = useApolloClient();
 
     const workspace = useMemo(() => {
         const slug = orgSlug ?? user?.organization?.slug;
 
-        return (
-            organizations.find((organization) => organization?.slug === slug) ??
-            null
-        );
+        return organizations.find((organization) => organization?.slug === slug) ?? null;
     }, [orgSlug, user, organizations]);
 
     const projects = useMemo(() => {
@@ -54,8 +52,11 @@ export const useWorkspace = () => {
                     ...updatedUser,
                 });
             }
+
+            client.clearStore();
+            client.cache.reset();
         },
-        [orgSlug, redirect, updateUser, user],
+        [orgSlug, redirect, updateUser, user, client],
     );
 
     const handleAddWorkspace = useCallback(
@@ -78,10 +79,7 @@ export const useWorkspace = () => {
 
             const project = organization.projects?.edges?.[0]?.node as Project;
             if (organization && project) {
-                handleSwitchWorkspace(
-                    convertToAuthOrganization(organization) as AuthOrganization,
-                    project,
-                );
+                handleSwitchWorkspace(convertToAuthOrganization(organization) as AuthOrganization, project);
             }
         },
         [handleSwitchWorkspace, updateUser, user.organizations],
@@ -114,10 +112,7 @@ export const useWorkspace = () => {
     );
 
     const handleCreateWorkspace = useCallback(
-        async (
-            input: OrganizationCreateInput,
-            survey?: OnboardingCustomerSurvey,
-        ) => {
+        async (input: OrganizationCreateInput, survey?: OnboardingCustomerSurvey) => {
             try {
                 const response = await createOrganization({
                     variables: {
@@ -132,13 +127,8 @@ export const useWorkspace = () => {
 
                 const { data } = response;
 
-                if (
-                    data &&
-                    data.organizationCreate &&
-                    data.organizationCreate.user
-                ) {
-                    const { organization, project } = data.organizationCreate
-                        .user as AuthUser;
+                if (data && data.organizationCreate && data.organizationCreate.user) {
+                    const { organization, project } = data.organizationCreate.user as AuthUser;
 
                     if (organization && project) {
                         handleAddWorkspace({

@@ -7,7 +7,6 @@ from django.utils import timezone
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
-
 from integraflow.core.jwt import create_access_token, create_refresh_token
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_AUTH
@@ -81,6 +80,7 @@ class GoogleUserAuth(BaseMutation):
             credentials = id_token.verify_oauth2_token(
                 tokens["id_token"],
                 requests.Request(),
+                clock_skew_in_seconds=10
             )
             return credentials  # type: ignore
         except Exception:
