@@ -1,6 +1,7 @@
 import { ROUTES } from "@/routes";
+import { ArrowLongLeft } from "@/ui/icons/ArrowLongLeft";
 import { useNavigate, useParams } from "react-router-dom";
-import { settingsCardInfo } from "../utils";
+import { settingsCardInfo } from "../../utils";
 import { SettingsScreen } from "./SettingsScreen";
 
 const SettingsHome = () => {
@@ -13,12 +14,17 @@ const SettingsHome = () => {
                 {settingsCardInfo.map((card, index) => {
                     return (
                         <div key={index} className="rounded-xl bg-intg-bg-9 p-6">
-                            <img src={card.icon} alt="icon" className="h-auto" />
+                            {typeof card.icon === "string" ? (
+                                <img src={card.icon} alt="icon" className="h-auto" />
+                            ) : (
+                                <card.icon />
+                            )}
+
                             <div className="my-4">
                                 <p className="text-lg font-medium capitalize text-white">{card.title}</p>
                                 <p className="text-sm">{card.details}</p>
                             </div>
-                            <button className="bg-gradient-button bg-clip-text text-sm text-transparent hover:bg-gradient-button-hover">
+                            <button className="flex items-center bg-gradient-button bg-clip-text text-sm text-transparent hover:bg-gradient-button-hover">
                                 <span
                                     className="capitalize"
                                     onClick={() =>
@@ -30,6 +36,9 @@ const SettingsHome = () => {
                                     }
                                 >
                                     {card.link}
+                                </span>
+                                <span>
+                                    <ArrowLongLeft />
                                 </span>
                             </button>
                         </div>

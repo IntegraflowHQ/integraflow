@@ -1,10 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-    content: [
-        "./src/**/*.{html,js,jsx,ts,tsx,mdx}",
-        "../../node_modules/@tremor/**/*.{js,ts,jsx,tsx}",
-    ],
+    content: ["./src/**/*.{html,js,jsx,ts,tsx,mdx}", "../../node_modules/@tremor/**/*.{js,ts,jsx,tsx}"],
     theme: {
         extend: {
             colors: {
@@ -29,6 +26,7 @@ const config: Config = {
                         "17": "#d9d9d9",
                         "18": "#38304f",
                         "19": "#352E48",
+                        "20": "#524B52",
                     },
                     text: {
                         "1": "#DBD4EB",
@@ -39,6 +37,8 @@ const config: Config = {
                         "6": "#B5A4DB",
                         "7": "#F1F1F1",
                         "8": "#7F76A9",
+                        "9": "#EED294",
+
                         DEFAULT: "#AFAAC7",
                     },
                     black: {
@@ -52,14 +52,11 @@ const config: Config = {
                 },
             },
             backgroundImage: {
-                "gradient-button":
-                    "linear-gradient(27deg, #53389E 8.33%, #6941C6 91.67%)",
-                "gradient-button-hover":
-                    "linear-gradient(27deg, #299532 8.33%, #7EE787 91.67%)",
+                "gradient-button": "linear-gradient(27deg, #53389E 8.33%, #6941C6 91.67%)",
+                "gradient-button-hover": "linear-gradient(27deg, #299532 8.33%, #7EE787 91.67%)",
             },
         },
     },
 };
 
 export default config;
-

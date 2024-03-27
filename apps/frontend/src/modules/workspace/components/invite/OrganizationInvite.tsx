@@ -136,12 +136,11 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                         <p className="mb-4 text-sm text-intg-text">
                             Invite link will provide a unique URL that allow anyone to join your organization
                         </p>
-
                         <div className="flex w-full items-end gap-2">
                             <div className="w-[75%]">
                                 <TextInput
                                     placeholder=""
-                                    value={addEllipsis(inviteLink, 50)}
+                                    value={addEllipsis(inviteLink, 40)}
                                     disabled={true}
                                     rightIcon={
                                         <button disabled={loading} onClick={handleInviteLinkRefresh}>

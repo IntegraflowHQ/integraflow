@@ -1,4 +1,4 @@
-import SettingsHome from "@/modules/organization/settings";
+import SettingsHome from "@/modules/workspace/components/settings";
 
 export function Settings() {
     return <SettingsHome />;
