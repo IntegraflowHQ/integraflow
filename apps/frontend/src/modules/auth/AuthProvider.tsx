@@ -1,25 +1,25 @@
 import { GraphQLError } from "graphql";
-import { createContext, useCallback, useMemo, useState } from "react";
+import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 
-import type { AuthUser, UserError } from "@/generated/graphql";
+import { AuthOrganization, Organization, Project, User, type AuthUser, type UserError } from "@/generated/graphql";
 import { toast } from "@/utils/toast";
 
-import {
-    emailAuthChallenge,
-    googleAuthLogin,
-    logout,
-    refreshToken as refreshTokenFn,
-    verifyAuthToken,
-} from "./services/auth.service";
+import { NotFound } from "@/components/NotFound";
+import { useIsMatchingLocation } from "@/hooks";
+import { ROUTES } from "@/routes";
+import { GlobalSpinner } from "@/ui";
+import { NormalizedCacheObject } from "@apollo/client";
+import { DeepPartial } from "@apollo/client/utilities";
+import { Navigate, useParams } from "react-router-dom";
+import { ApolloFactory } from "../apollo/services/apollo.factory";
+import { useRedirect } from "./hooks/useRedirect";
 import { useAuthStore, type AuthState } from "./states/auth";
+import { convertToAuthOrganization, useUserStore } from "./states/user";
 
 export type AuthStateChangeCallback = (state?: AuthState | null) => void;
 
 export interface AuthProviderProps {
-    /**
-     * Should trigger whenever the authentication state changes
-     */
-    onAuthStateChange?: (callback: AuthStateChangeCallback) => () => void;
+    apollo: ApolloFactory<NormalizedCacheObject>;
     children?: React.ReactNode;
 }
 
@@ -38,11 +38,18 @@ export type AuthContextValue = {
     currentProjectId: string | null;
     refreshToken: string | null;
     csrfToken: string | null;
+    user: DeepPartial<User>;
+    organizations: (DeepPartial<Organization> | undefined)[];
+    workspace: DeepPartial<Organization> | null;
+    projects: (DeepPartial<Project> | undefined)[];
+    project: DeepPartial<Project> | null;
     generateMagicLink: (email: string, inviteLink?: string) => Promise<boolean>;
     authenticateWithMagicLink: (email: string, token: string, inviteLink?: string) => Promise<AuthResponse | undefined>;
     authenticateWithGoogle: (code: string, inviteLink?: string) => Promise<AuthResponse | undefined>;
-    refresh: () => Promise<string | undefined>;
-    switchProject: (projectId: string) => void;
+    updateUser: (updatedUser: DeepPartial<User>, cacheOnly?: boolean) => Promise<void>;
+    refresh: (token: string) => void;
+    switchProject: (project: Project) => void;
+    switchWorkspace: (organization: AuthOrganization, project: Project) => void;
     logout: () => void;
     reset: () => void;
 };
@@ -60,11 +67,16 @@ const createAuthContext = () => {
 
 export const AuthContext = createAuthContext();
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export const AuthProvider = ({ children, apollo }: AuthProviderProps) => {
     const { token, refreshToken, csrfToken, currentProjectId, initialize, refresh, switchProject, reset } =
         useAuthStore();
+    const { updateUser: updateUserCache, reset: resetUser, hydrated, ...user } = useUserStore();
+    const redirect = useRedirect();
+    const { orgSlug, projectSlug } = useParams();
+    const locationMatch = useIsMatchingLocation();
 
     const [loading, setLoading] = useState(false);
+    const [ready, setReady] = useState(false);
 
     const handleError = (message: string) => {
         toast.error(message);
@@ -90,9 +102,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const handleGenerateMagicLink = useCallback(
         async (email: string, inviteLink?: string) => {
+            if (!apollo) {
+                return false;
+            }
+
             try {
                 setLoading(true);
-                const { errors, data } = await emailAuthChallenge(email, inviteLink);
+                const { errors, data } = await apollo.emailAuthChallenge(email, inviteLink);
                 if (errors) {
                     handleError(errors[0].message);
                     return false;
@@ -111,14 +127,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 setLoading(false);
             }
         },
-        [setLoading],
+        [apollo, setLoading],
     );
 
     const handleAuthenticateWithMagicLink = useCallback(
         async (email: string, code: string, inviteLink?: string) => {
+            if (!apollo) {
+                return;
+            }
+
             try {
                 setLoading(true);
-                const { errors, data } = await verifyAuthToken(email, code, inviteLink);
+                const { errors, data } = await apollo.verifyAuthToken(email, code, inviteLink);
                 if (errors) {
                     handleError(errors[0].message);
                     return;
@@ -138,14 +158,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 setLoading(false);
             }
         },
-        [setLoading, handleSuccess],
+        [apollo, setLoading, handleSuccess],
     );
 
     const handleAuthenticateWithGoogle = useCallback(
         async (code: string, inviteLink?: string) => {
+            if (!apollo) {
+                return;
+            }
+
             try {
                 setLoading(true);
-                const { errors, data } = await googleAuthLogin(code, inviteLink);
+                const { errors, data } = await apollo.googleAuthLogin(code, inviteLink);
                 if (errors) {
                     handleError(errors[0].message);
                     return;
@@ -166,27 +190,218 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 setLoading(false);
             }
         },
-        [setLoading, handleSuccess],
+        [apollo, setLoading, handleSuccess],
     );
 
-    const handleRefreshToken = useCallback(async () => {
-        if (!refreshToken) {
-            return;
+    const organizations = useMemo(() => {
+        if (!user || !user.organizations?.edges) {
+            return [];
         }
 
-        const token = await refreshTokenFn(refreshToken);
-        refresh(token);
-        return token;
-    }, [refreshToken, refresh]);
+        return user.organizations.edges.map((edge) => edge?.node);
+    }, [user, user.organizations?.edges]);
 
-    const handleLogout = useCallback(() => {
-        if (!token) {
-            return;
+    const workspace = useMemo(() => {
+        const slug = orgSlug ?? user?.organization?.slug;
+
+        return organizations.find((organization) => organization?.slug === slug) ?? null;
+    }, [orgSlug, user, organizations]);
+
+    const projects = useMemo(() => {
+        if (!workspace || !workspace.projects?.edges) {
+            return [];
         }
 
-        logout(token);
+        return workspace.projects.edges.map((edge) => edge?.node);
+    }, [workspace]);
+
+    const project = useMemo(() => {
+        if (!workspace) {
+            return null;
+        }
+
+        if (orgSlug && !projectSlug) {
+            return projects?.[0] ?? null;
+        }
+
+        const slug = projectSlug ?? user?.project?.slug;
+
+        return projects?.find((project) => project?.slug === slug) ?? null;
+    }, [user, orgSlug, projectSlug, projects, workspace]);
+
+    const handleUserUpdate = useCallback(
+        async (updatedUser: DeepPartial<User>, cacheOnly = false) => {
+            updateUserCache(updatedUser);
+
+            if (!cacheOnly) {
+                if (!apollo) {
+                    return;
+                }
+                await apollo.updateUser({
+                    input: {
+                        firstName: updatedUser.firstName,
+                        lastName: updatedUser.lastName,
+                        isOnboarded: updatedUser.isOnboarded,
+                    },
+                });
+            }
+        },
+        [apollo, updateUserCache],
+    );
+
+    const handleSwitchWorkspace = useCallback(
+        (organization: AuthOrganization, project: Project) => {
+            const updatedUser = {
+                organization,
+                project,
+            };
+
+            handleUserUpdate(updatedUser, true);
+
+            if (orgSlug !== organization.slug) {
+                redirect({
+                    ...(user ?? {}),
+                    ...updatedUser,
+                });
+            }
+
+            apollo.getClient().resetStore();
+            apollo.getClient().cache.reset();
+        },
+        [orgSlug, redirect, handleUserUpdate, user],
+    );
+
+    const handleSwitchProject = useCallback(
+        (project: Project) => {
+            const organization = project.organization ?? workspace;
+
+            const updatedUser = {
+                organization,
+                project,
+            };
+
+            handleUserUpdate(updatedUser, true);
+
+            if (currentProjectId !== project.id) {
+                switchProject(project.id);
+            }
+
+            if (orgSlug !== organization?.slug || projectSlug !== project.slug) {
+                redirect({
+                    ...(user ?? {}),
+                    ...updatedUser,
+                });
+            }
+
+            apollo.getClient().resetStore();
+            apollo.getClient().cache.reset();
+        },
+        [currentProjectId, orgSlug, projectSlug, user, workspace, redirect, switchProject, handleUserUpdate],
+    );
+
+    const handleLogout = useCallback(async () => {
+        apollo.logout();
         reset();
-    }, [token, reset]);
+        apollo.getClient().resetStore();
+        apollo.getClient().cache.reset();
+    }, [reset]);
+
+    useEffect(() => {
+        const newProject = project ?? projects?.[0];
+
+        if (
+            workspace &&
+            newProject &&
+            (workspace.id !== user?.organization?.id || newProject.id !== user?.project?.id)
+        ) {
+            handleUserUpdate(
+                {
+                    organization: convertToAuthOrganization(workspace),
+                    project: newProject,
+                },
+                true,
+            );
+
+            if (newProject.id && currentProjectId !== newProject.id) {
+                handleSwitchProject(newProject as Project);
+            }
+        }
+    }, [user, projects, workspace, project, currentProjectId, handleUserUpdate, handleSwitchProject]);
+
+    useEffect(() => {
+        if (!apollo) {
+            return;
+        }
+
+        if (!!refreshToken && !hydrated) {
+            apollo.getUser().then(({ viewer }) => {
+                if (viewer) {
+                    const organization = viewer.organizations?.edges.find(
+                        ({ node }) => node.id === user.organization?.id,
+                    )?.node;
+                    const project = organization?.projects?.edges.find(
+                        ({ node }) => node.id === user.project?.id,
+                    )?.node;
+                    updateUserCache({
+                        ...viewer,
+                        organization: convertToAuthOrganization(organization),
+                        project,
+                    });
+                }
+            });
+        }
+    }, [apollo, hydrated, refreshToken]);
+
+    const isCurrentOrg = useMemo(() => {
+        if (!orgSlug) return false;
+        return workspace?.slug?.toLowerCase() === orgSlug.toLowerCase();
+    }, [workspace?.slug, orgSlug]);
+
+    const isValidProject = useMemo(() => {
+        if (!projectSlug) {
+            return project?.organization?.slug?.toLowerCase() === workspace?.slug?.toLowerCase();
+        } else {
+            return (
+                project?.slug?.toLowerCase() === projectSlug.toLowerCase() &&
+                project?.organization?.slug?.toLowerCase() === workspace?.slug?.toLowerCase()
+            );
+        }
+    }, [projectSlug, orgSlug, project]);
+
+    const isValidSession = useMemo(() => {
+        if (!projectSlug && !orgSlug) return true;
+        return isCurrentOrg && isValidProject;
+    }, [projectSlug, orgSlug, isCurrentOrg, isValidProject]);
+
+    useEffect(() => {
+        if (apollo) {
+            apollo.updateAuthParams({
+                token,
+                refreshToken,
+                currentProjectId,
+            });
+        }
+    }, [currentProjectId, token, refreshToken, apollo]);
+
+    useEffect(() => {
+        if (apollo) {
+            apollo.updateActions({
+                onUnauthenticatedError: () => handleLogout(),
+                onTokenRefreshed: (token) => refresh(token),
+            });
+        }
+    }, [reset, refresh, apollo]);
+
+    useEffect(() => {
+        if (
+            user &&
+            !!refreshToken &&
+            (locationMatch(ROUTES.LOGIN) || locationMatch(ROUTES.SIGNUP) || locationMatch(ROUTES.MAGIC_SIGN_IN))
+        ) {
+            redirect(user);
+        }
+        setReady(true);
+    }, [locationMatch, user, refreshToken, redirect]);
 
     const value = useMemo<AuthContextValue>(
         () => ({
@@ -196,12 +411,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             refreshToken,
             csrfToken,
             currentProjectId,
+            user,
+            organizations,
+            workspace,
+            projects,
+            project,
             generateMagicLink: handleGenerateMagicLink,
             authenticateWithMagicLink: handleAuthenticateWithMagicLink,
             authenticateWithGoogle: handleAuthenticateWithGoogle,
-            refresh: handleRefreshToken,
-            switchProject,
+            refresh,
+            switchWorkspace: handleSwitchWorkspace,
+            switchProject: handleSwitchProject,
             logout: handleLogout,
+            updateUser: handleUserUpdate,
             reset,
         }),
         [
@@ -210,15 +432,46 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             refreshToken,
             csrfToken,
             currentProjectId,
+            user,
+            organizations,
+            workspace,
+            projects,
             handleGenerateMagicLink,
             handleAuthenticateWithMagicLink,
             handleAuthenticateWithGoogle,
-            handleRefreshToken,
-            switchProject,
+            handleSwitchProject,
+            handleSwitchWorkspace,
             handleLogout,
+            handleUserUpdate,
             reset,
+            refresh,
         ],
     );
+
+    if (loading || !ready) {
+        return <GlobalSpinner />;
+    }
+
+    if (orgSlug && !projectSlug && workspace?.slug && project?.slug) {
+        return (
+            <Navigate
+                to={ROUTES.SURVEY_LIST.replace(":orgSlug", workspace.slug).replace(":projectSlug", project.slug)}
+            />
+        );
+    }
+
+    if (
+        !refreshToken &&
+        !locationMatch(ROUTES.LOGIN) &&
+        !locationMatch(ROUTES.SIGNUP) &&
+        !locationMatch(ROUTES.MAGIC_SIGN_IN)
+    ) {
+        return <Navigate to="/" />;
+    }
+
+    if (!isValidSession) {
+        return <NotFound />;
+    }
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

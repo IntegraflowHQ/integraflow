@@ -6,13 +6,13 @@ import {
     useOrganizationInviteDetailsLazyQuery,
     useOrganizationInviteLinkCreateLazyQuery,
     useOrganizationInviteLinkResetMutation,
-    useOrganizationJoinMutation
+    useOrganizationJoinMutation,
 } from "@/generated/graphql";
 
-import { useWorkspace } from "./useWorkspace";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 
 export const useWorkspaceInvite = () => {
-    const { switchWorkspace } = useWorkspace();
+    const { switchWorkspace } = useAuth();
 
     const [getInviteLink, { loading: loadingInviteLink }] = useOrganizationInviteLinkCreateLazyQuery();
     const [getInviteDetails, { loading: inviteDetailsLoading }] = useOrganizationInviteDetailsLazyQuery();
@@ -36,18 +36,15 @@ export const useWorkspaceInvite = () => {
         [getInviteDetails],
     );
 
-    const handleGetInviteLink = useCallback(
-        async () => {
-            try {
-                const response = await getInviteLink();
+    const handleGetInviteLink = useCallback(async () => {
+        try {
+            const response = await getInviteLink();
 
-                return response.data?.organizationInviteLink;
-            } catch (error) {
-                console.error(error);
-            }
-        },
-        [getInviteLink],
-    );
+            return response.data?.organizationInviteLink;
+        } catch (error) {
+            console.error(error);
+        }
+    }, [getInviteLink]);
 
     const handleEmailInvite = useCallback(
         async (inviteInput: OrganizationInviteCreateInput) => {
@@ -83,15 +80,8 @@ export const useWorkspaceInvite = () => {
 
                 const { data } = response;
 
-                if (
-                    data &&
-                    data.organizationJoin?.user.organization &&
-                    data.organizationJoin.user.project
-                ) {
-                    switchWorkspace(
-                        data.organizationJoin.user.organization,
-                        data.organizationJoin.user.project,
-                    );
+                if (data && data.organizationJoin?.user.organization && data.organizationJoin.user.project) {
+                    switchWorkspace(data.organizationJoin.user.organization, data.organizationJoin.user.project);
                 }
 
                 return data?.organizationJoin;
@@ -102,17 +92,14 @@ export const useWorkspaceInvite = () => {
         [switchWorkspace, joinOrganization],
     );
 
-    const handleResetInviteLink = useCallback(
-        async () => {
-            try {
-                const response = await resetInviteLink();
-                return response?.data?.organizationInviteLinkReset;
-            } catch (error) {
-                console.error(error);
-            }
-        },
-        [resetInviteLink],
-    );
+    const handleResetInviteLink = useCallback(async () => {
+        try {
+            const response = await resetInviteLink();
+            return response?.data?.organizationInviteLinkReset;
+        } catch (error) {
+            console.error(error);
+        }
+    }, [resetInviteLink]);
 
     return {
         loading: joiningOrg || inviteDetailsLoading || loadingInviteLink || loadingLinkReset,

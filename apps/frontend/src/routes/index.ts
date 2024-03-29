@@ -1,4 +1,7 @@
 export enum ROUTES {
+    LOGIN = "",
+    MAGIC_SIGN_IN = "/auth/magic-sign-in/",
+    SIGNUP = "signup",
     CREATE_WORKSPACE = "/create-workspace",
     SURVEY_LIST = "/:orgSlug/projects/:projectSlug/surveys",
     SURVEY_TEMPLATES = "/:orgSlug/projects/:projectSlug/surveys/templates",

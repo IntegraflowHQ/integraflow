@@ -2213,6 +2213,8 @@ export type GoogleUserAuthFragmentFragment = { __typename?: 'GoogleUserAuth', to
 
 export type EmailTokenUserAuthFragmentFragment = { __typename?: 'EmailTokenUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> };
 
+export type UserFragmentFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null };
+
 export type EmailTokenUserAuthMutationVariables = Exact<{
   email: Scalars['String'];
   token: Scalars['String'];
@@ -2250,6 +2252,18 @@ export type TokenRefreshMutationVariables = Exact<{
 
 
 export type TokenRefreshMutation = { __typename?: 'Mutation', tokenRefresh?: { __typename?: 'RefreshToken', token?: string | null, errors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> } | null };
+
+export type UserUpdateMutationVariables = Exact<{
+  input: UserInput;
+}>;
+
+
+export type UserUpdateMutation = { __typename?: 'Mutation', userUpdate?: { __typename?: 'UserUpdate', user?: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean } | null } | null };
+
+export type ViewerQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ViewerQuery = { __typename?: 'Query', viewer?: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } | null };
 
 export type CompleteOnboardingStageMutationVariables = Exact<{
   input: ProjectUpdateInput;
@@ -2433,20 +2447,6 @@ export type GetSurveyListQueryVariables = Exact<{
 
 export type GetSurveyListQuery = { __typename?: 'Query', surveys?: { __typename?: 'SurveyCountableConnection', totalCount?: number | null, edges: Array<{ __typename?: 'SurveyCountableEdge', node: { __typename?: 'Survey', id: string, slug: string, name?: string | null, status: SurveyStatusEnum, createdAt: string, updatedAt: string, reference?: string | null, creator: { __typename?: 'User', firstName: string, lastName: string, email: string } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, endCursor?: string | null, startCursor?: string | null } } | null };
 
-export type UserFragmentFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null };
-
-export type UserUpdateMutationVariables = Exact<{
-  input: UserInput;
-}>;
-
-
-export type UserUpdateMutation = { __typename?: 'Mutation', userUpdate?: { __typename?: 'UserUpdate', user?: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean } | null } | null };
-
-export type ViewerQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ViewerQuery = { __typename?: 'Query', viewer?: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } | null };
-
 export type OrganizationCreateFragmentFragment = { __typename?: 'OrganizationCreate', organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
 
 export type OrganizationErrorFragmentFragment = { __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode };
@@ -2579,6 +2579,41 @@ export const EmailTokenUserAuthFragmentFragmentDoc = gql`
 }
     ${AuthUserFragmentFragmentDoc}
 ${UserErrorFragmentFragmentDoc}`;
+export const UserFragmentFragmentDoc = gql`
+    fragment UserFragment on User {
+  id
+  email
+  firstName
+  lastName
+  isStaff
+  isActive
+  isOnboarded
+  organization {
+    ...AuthOrganizationFragment
+  }
+  project {
+    ...ProjectFragment
+  }
+  organizations(first: 50) {
+    edges {
+      node {
+        id
+        slug
+        name
+        memberCount
+        projects(first: 100) {
+          edges {
+            node {
+              ...ProjectFragment
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    ${AuthOrganizationFragmentFragmentDoc}
+${ProjectFragmentFragmentDoc}`;
 export const ProjectErrorFragmentFragmentDoc = gql`
     fragment ProjectErrorFragment on ProjectError {
   field
@@ -2729,41 +2764,6 @@ export const SurveyErrorFragmentFragmentDoc = gql`
   code
 }
     `;
-export const UserFragmentFragmentDoc = gql`
-    fragment UserFragment on User {
-  id
-  email
-  firstName
-  lastName
-  isStaff
-  isActive
-  isOnboarded
-  organization {
-    ...AuthOrganizationFragment
-  }
-  project {
-    ...ProjectFragment
-  }
-  organizations(first: 50) {
-    edges {
-      node {
-        id
-        slug
-        name
-        memberCount
-        projects(first: 100) {
-          edges {
-            node {
-              ...ProjectFragment
-            }
-          }
-        }
-      }
-    }
-  }
-}
-    ${AuthOrganizationFragmentFragmentDoc}
-${ProjectFragmentFragmentDoc}`;
 export const OrganizationErrorFragmentFragmentDoc = gql`
     fragment OrganizationErrorFragment on OrganizationError {
   field
@@ -3054,6 +3054,83 @@ export function useTokenRefreshMutation(baseOptions?: Apollo.MutationHookOptions
 export type TokenRefreshMutationHookResult = ReturnType<typeof useTokenRefreshMutation>;
 export type TokenRefreshMutationResult = Apollo.MutationResult<TokenRefreshMutation>;
 export type TokenRefreshMutationOptions = Apollo.BaseMutationOptions<TokenRefreshMutation, TokenRefreshMutationVariables>;
+export const UserUpdateDocument = gql`
+    mutation userUpdate($input: UserInput!) {
+  userUpdate(input: $input) {
+    user {
+      ... on User {
+        id
+        email
+        firstName
+        lastName
+        isStaff
+        isActive
+        isOnboarded
+      }
+    }
+  }
+}
+    `;
+export type UserUpdateMutationFn = Apollo.MutationFunction<UserUpdateMutation, UserUpdateMutationVariables>;
+
+/**
+ * __useUserUpdateMutation__
+ *
+ * To run a mutation, you first call `useUserUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUserUpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [userUpdateMutation, { data, loading, error }] = useUserUpdateMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUserUpdateMutation(baseOptions?: Apollo.MutationHookOptions<UserUpdateMutation, UserUpdateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UserUpdateMutation, UserUpdateMutationVariables>(UserUpdateDocument, options);
+      }
+export type UserUpdateMutationHookResult = ReturnType<typeof useUserUpdateMutation>;
+export type UserUpdateMutationResult = Apollo.MutationResult<UserUpdateMutation>;
+export type UserUpdateMutationOptions = Apollo.BaseMutationOptions<UserUpdateMutation, UserUpdateMutationVariables>;
+export const ViewerDocument = gql`
+    query viewer {
+  viewer {
+    ...UserFragment
+  }
+}
+    ${UserFragmentFragmentDoc}`;
+
+/**
+ * __useViewerQuery__
+ *
+ * To run a query within a React component, call `useViewerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useViewerQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useViewerQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useViewerQuery(baseOptions?: Apollo.QueryHookOptions<ViewerQuery, ViewerQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ViewerQuery, ViewerQueryVariables>(ViewerDocument, options);
+      }
+export function useViewerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ViewerQuery, ViewerQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ViewerQuery, ViewerQueryVariables>(ViewerDocument, options);
+        }
+export type ViewerQueryHookResult = ReturnType<typeof useViewerQuery>;
+export type ViewerLazyQueryHookResult = ReturnType<typeof useViewerLazyQuery>;
+export type ViewerQueryResult = Apollo.QueryResult<ViewerQuery, ViewerQueryVariables>;
 export const CompleteOnboardingStageDocument = gql`
     mutation completeOnboardingStage($input: ProjectUpdateInput!) {
   projectUpdate(input: $input) {
@@ -3987,83 +4064,6 @@ export function useGetSurveyListLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetSurveyListQueryHookResult = ReturnType<typeof useGetSurveyListQuery>;
 export type GetSurveyListLazyQueryHookResult = ReturnType<typeof useGetSurveyListLazyQuery>;
 export type GetSurveyListQueryResult = Apollo.QueryResult<GetSurveyListQuery, GetSurveyListQueryVariables>;
-export const UserUpdateDocument = gql`
-    mutation userUpdate($input: UserInput!) {
-  userUpdate(input: $input) {
-    user {
-      ... on User {
-        id
-        email
-        firstName
-        lastName
-        isStaff
-        isActive
-        isOnboarded
-      }
-    }
-  }
-}
-    `;
-export type UserUpdateMutationFn = Apollo.MutationFunction<UserUpdateMutation, UserUpdateMutationVariables>;
-
-/**
- * __useUserUpdateMutation__
- *
- * To run a mutation, you first call `useUserUpdateMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUserUpdateMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [userUpdateMutation, { data, loading, error }] = useUserUpdateMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUserUpdateMutation(baseOptions?: Apollo.MutationHookOptions<UserUpdateMutation, UserUpdateMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UserUpdateMutation, UserUpdateMutationVariables>(UserUpdateDocument, options);
-      }
-export type UserUpdateMutationHookResult = ReturnType<typeof useUserUpdateMutation>;
-export type UserUpdateMutationResult = Apollo.MutationResult<UserUpdateMutation>;
-export type UserUpdateMutationOptions = Apollo.BaseMutationOptions<UserUpdateMutation, UserUpdateMutationVariables>;
-export const ViewerDocument = gql`
-    query viewer {
-  viewer {
-    ...UserFragment
-  }
-}
-    ${UserFragmentFragmentDoc}`;
-
-/**
- * __useViewerQuery__
- *
- * To run a query within a React component, call `useViewerQuery` and pass it any options that fit your needs.
- * When your component renders, `useViewerQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useViewerQuery({
- *   variables: {
- *   },
- * });
- */
-export function useViewerQuery(baseOptions?: Apollo.QueryHookOptions<ViewerQuery, ViewerQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ViewerQuery, ViewerQueryVariables>(ViewerDocument, options);
-      }
-export function useViewerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ViewerQuery, ViewerQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ViewerQuery, ViewerQueryVariables>(ViewerDocument, options);
-        }
-export type ViewerQueryHookResult = ReturnType<typeof useViewerQuery>;
-export type ViewerLazyQueryHookResult = ReturnType<typeof useViewerLazyQuery>;
-export type ViewerQueryResult = Apollo.QueryResult<ViewerQuery, ViewerQueryVariables>;
 export const OrganizationCreateDocument = gql`
     mutation organizationCreate($input: OrganizationCreateInput!, $survey: OnboardingCustomerSurvey) {
   organizationCreate(input: $input, survey: $survey) {

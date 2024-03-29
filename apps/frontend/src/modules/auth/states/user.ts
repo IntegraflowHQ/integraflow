@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import { createJSONStorage, persist, devtools } from "zustand/middleware";
 import { DeepPartial, mergeDeep } from "@apollo/client/utilities";
+import { create } from "zustand";
+import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
 import { AuthOrganization, Organization, User } from "@/generated/graphql";
 import { userCache } from "@/utils/cache";
@@ -14,22 +14,22 @@ export type UserActions = {
     reset: () => void;
 };
 
-export const convertToAuthOrganization = (organization?:  DeepPartial<Organization>): DeepPartial<AuthOrganization> => ({
+export const convertToAuthOrganization = (organization?: DeepPartial<Organization>): DeepPartial<AuthOrganization> => ({
     __typename: "AuthOrganization",
     id: organization?.id,
     slug: organization?.slug,
     name: organization?.name,
-    memberCount: organization?.memberCount
+    memberCount: organization?.memberCount,
 });
 
 const initialState: UserState = {
-    hydrated: false
+    hydrated: false,
 };
 
 export const useUserStore = create<UserState & UserActions>()(
     devtools(
         persist(
-            set => ({
+            (set) => ({
                 ...initialState,
                 updateUser: (user) => set({ ...user, hydrated: true }),
                 reset: () => set(initialState),
@@ -40,18 +40,23 @@ export const useUserStore = create<UserState & UserActions>()(
                 partialize: (state) => ({
                     id: state.id,
                     isOnboarded: state.isOnboarded,
-                    project: state.project ? {
-                        id: state.project.id,
-                        slug: state.project.slug,
-                        hasCompletedOnboardingFor: state.project.hasCompletedOnboardingFor
-                    } : undefined,
-                    organization: state.organization ? {
-                        id: state.organization.id,
-                        slug: state.organization.slug
-                    } : undefined
+                    project: state.project
+                        ? {
+                              id: state.project.id,
+                              slug: state.project.slug,
+                              hasCompletedOnboardingFor: state.project.hasCompletedOnboardingFor,
+                          }
+                        : undefined,
+                    organization: state.organization
+                        ? {
+                              id: state.organization.id,
+                              slug: state.organization.slug,
+                          }
+                        : undefined,
+                    organizations: state.organizations,
                 }),
                 merge: (persistedState, currentState) => mergeDeep(currentState, persistedState),
             },
-        )
+        ),
     ),
 );

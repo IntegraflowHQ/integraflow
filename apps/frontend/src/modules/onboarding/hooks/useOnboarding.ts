@@ -1,12 +1,12 @@
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { useRedirect } from "@/modules/auth/hooks/useRedirect";
 import { useProject } from "@/modules/projects/hooks/useProject";
-import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useOnboardingStore } from "../states/onboarding";
 
 export const useOnboarding = () => {
     const { project, updateProject } = useProject();
-    const { user, updateUser } = useCurrentUser();
+    const { user, updateUser } = useAuth();
     const redirect = useRedirect();
     const {
         steps,
@@ -16,7 +16,7 @@ export const useOnboarding = () => {
         clearEventSource,
         setEventSource,
         setMobilePlatform,
-        switchTab
+        switchTab,
     } = useOnboardingStore();
 
     const [loading, setLoading] = useState(false);
@@ -47,28 +47,31 @@ export const useOnboarding = () => {
     const onboardUser = useCallback(async () => {
         setLoading(true);
         await updateUser({
-            isOnboarded: true
+            isOnboarded: true,
         });
 
         setLoading(false);
 
         redirect({
             ...user,
-            isOnboarded: true
+            isOnboarded: true,
         });
     }, [updateUser, user, redirect]);
 
-    const markAsCompleted = useCallback(async (index: number) => {
-        const updatedKeys = [...completedKeys];
-        if (updatedKeys.includes(steps[index].key)) {
-            return;
-        }
-        updatedKeys.push(steps[index].key);
+    const markAsCompleted = useCallback(
+        async (index: number) => {
+            const updatedKeys = [...completedKeys];
+            if (updatedKeys.includes(steps[index].key)) {
+                return;
+            }
+            updatedKeys.push(steps[index].key);
 
-        await updateProject({
-            hasCompletedOnboardingFor: JSON.stringify(updatedKeys),
-        });
-    }, [completedKeys, steps, updateProject]);
+            await updateProject({
+                hasCompletedOnboardingFor: JSON.stringify(updatedKeys),
+            });
+        },
+        [completedKeys, steps, updateProject],
+    );
 
     useEffect(() => {
         if (user.isOnboarded) {
@@ -93,6 +96,6 @@ export const useOnboarding = () => {
         setEventSource,
         setMobilePlatform,
         switchTab,
-        markAsCompleted
+        markAsCompleted,
     };
 };
