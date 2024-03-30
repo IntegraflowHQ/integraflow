@@ -105,6 +105,7 @@ def is_valid_datetime(date):
     except ValueError:
         return False
 
+
 def handle_timestamp(data: dict, now: str, sent_at: Optional[str]) -> datetime:
     if data.get("timestamp"):
         if sent_at:

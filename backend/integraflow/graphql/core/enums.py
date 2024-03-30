@@ -43,6 +43,7 @@ class ReportingPeriod(graphene.Enum):
 class RoleLevel(graphene.Enum):
     MEMBER = 1
     ADMIN = 8
+    OWNER = 15
 
 
 def to_enum(enum_cls, *, type_name=None, **options) -> graphene.Enum:

@@ -672,8 +672,11 @@ class ModelMutation(BaseMutation):
         """
 
         if not input_cls:
-            input_cls = getattr(cls.Arguments, "input")
+            input_cls = getattr(cls.Arguments, "input", None)
         cleaned_input = {}
+
+        if not input_cls:
+            return cleaned_input
 
         for field_name, field_item in input_cls._meta.fields.items():
             if field_name in data:
@@ -768,7 +771,7 @@ class ModelMutation(BaseMutation):
         created based on the model associated with this mutation.
         """
         instance = cls.get_instance(info, **data)
-        data = data.get("input")
+        data = data.get("input", {})
         cleaned_input = cls.clean_input(info, instance, data)
         instance = cls.construct_instance(instance, cleaned_input)
 

@@ -10,8 +10,13 @@ from integraflow.permission.auth_filters import AuthorizationFilters
 from .mutations import (
     OrganizationCreate,
     OrganizationInviteCreate,
+    OrganizationInviteDelete,
     OrganizationInviteLinkReset,
-    OrganizationJoin
+    OrganizationInviteResend,
+    OrganizationJoin,
+    OrganizationLeave,
+    OrganizationMemberLeave,
+    OrganizationUpdate
 )
 from .resolvers import resolve_organization_invite_details
 from .types import (
@@ -65,6 +70,11 @@ class OrganizationQueries(graphene.ObjectType):
 
 class OrganizationMutations(graphene.ObjectType):
     organization_create = OrganizationCreate.Field()
-    organization_invite_create = OrganizationInviteCreate.Field()
+    organization_invite_create = OrganizationInviteCreate.Field(),
+    organization_invite_delete = OrganizationInviteDelete.Field()
     organization_invite_link_reset = OrganizationInviteLinkReset.Field()
-    organization_join = OrganizationJoin.Field()
+    organization_invite_resend = OrganizationInviteResend.Field()
+    organization_join = OrganizationJoin.Field(),
+    organization_leave = OrganizationLeave.Field(),
+    organization_member_leave = OrganizationMemberLeave.Field(),
+    organization_update = OrganizationUpdate.Field()

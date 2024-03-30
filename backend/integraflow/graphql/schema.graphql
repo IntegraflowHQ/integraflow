@@ -521,9 +521,6 @@ type Organization implements Node @doc(category: "Organizations") {
   Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
   """
   members(
-    """By which field should the pagination order by."""
-    orderBy: UserSortingInput
-
     """Return the elements in the list that come before the specified cursor."""
     before: String
 
@@ -539,7 +536,7 @@ type Organization implements Node @doc(category: "Organizations") {
     Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
     """
     last: Int
-  ): UserCountableConnection
+  ): OrganizationMemberCountableConnection
 
   """
   Projects associated with the organization.
@@ -547,9 +544,6 @@ type Organization implements Node @doc(category: "Organizations") {
   Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
   """
   projects(
-    """By which field should the pagination order by."""
-    orderBy: UserSortingInput
-
     """Return the elements in the list that come before the specified cursor."""
     before: String
 
@@ -566,55 +560,85 @@ type Organization implements Node @doc(category: "Organizations") {
     """
     last: Int
   ): ProjectCountableConnection
+
+  """
+  Invites associated with the organization.
+  
+  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+  """
+  invites(
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): OrganizationInviteCountableConnection
 }
 
-type UserCountableConnection @doc(category: "Users") {
+type OrganizationMemberCountableConnection @doc(category: "Organizations") {
   """Pagination data for this connection."""
   pageInfo: PageInfo!
-  edges: [UserCountableEdge!]!
+  edges: [OrganizationMemberCountableEdge!]!
 
   """A total count of items in the collection."""
   totalCount: Int
-  nodes: [User!]!
+  nodes: [OrganizationMember!]!
 }
 
-type UserCountableEdge @doc(category: "Users") {
+type OrganizationMemberCountableEdge @doc(category: "Organizations") {
   """The item at the end of the edge."""
-  node: User!
+  node: OrganizationMember!
 
   """A cursor for use in pagination."""
   cursor: String!
 }
 
-input UserSortingInput @doc(category: "Users") {
-  """Specifies the direction in which to sort users."""
-  direction: OrderDirection!
+"""Represents an organization member."""
+type OrganizationMember implements Node @doc(category: "Organizations") {
+  """The ID of the member."""
+  id: ID!
 
-  """Sort users by the selected field."""
-  field: UserSortField!
+  """The email address of the member."""
+  email: String!
+
+  """The given name of the member."""
+  firstName: String!
+
+  """The family name of the member."""
+  lastName: String!
+
+  """The member role"""
+  role: RoleLevel!
+
+  """The time at which the member was created."""
+  createdAt: DateTime!
+
+  """The last time at which the member was updated."""
+  updatedAt: DateTime!
 }
 
-enum OrderDirection {
-  """Specifies an ascending sort order."""
-  ASC
-
-  """Specifies a descending sort order."""
-  DESC
+enum RoleLevel {
+  MEMBER
+  ADMIN
+  OWNER
 }
 
-enum UserSortField @doc(category: "Users") {
-  """Sort users by first name."""
-  FIRST_NAME
-
-  """Sort users by last name."""
-  LAST_NAME
-
-  """Sort users by email."""
-  EMAIL
-
-  """Sort users by created at."""
-  CREATED_AT
-}
+"""
+The `DateTime` scalar type represents a DateTime
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar DateTime
 
 type ProjectCountableConnection @doc(category: "Projects") {
   """Pagination data for this connection."""
@@ -634,12 +658,76 @@ type ProjectCountableEdge @doc(category: "Projects") {
   cursor: String!
 }
 
+type OrganizationInviteCountableConnection @doc(category: "Organizations") {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+  edges: [OrganizationInviteCountableEdge!]!
+
+  """A total count of items in the collection."""
+  totalCount: Int
+  nodes: [OrganizationInvite!]!
+}
+
+type OrganizationInviteCountableEdge @doc(category: "Organizations") {
+  """The item at the end of the edge."""
+  node: OrganizationInvite!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+"""The organization invite that was created or updated."""
+type OrganizationInvite implements Node @doc(category: "Organizations") {
+  """The unique identifier of the invite."""
+  id: ID!
+
+  """The invitees email address."""
+  email: String!
+
+  """First name of the invite."""
+  firstName: String
+
+  """The user role that the invitee will receive upon accepting the invite."""
+  role: RoleLevel!
+
+  """The time at which the invite was created."""
+  createdAt: DateTime!
+
+  """The last time at which the invite was updated."""
+  updatedAt: DateTime!
+
+  """If the invite has expired."""
+  expired: Boolean!
+
+  """
+  The user who created the invitation.
+  
+  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+  """
+  inviter: User!
+
+  """
+  The current project of the user.
+  
+  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+  """
+  organization: Organization!
+}
+
 input ProjectSortingInput @doc(category: "Projects") {
   """Specifies the direction in which to sort projects."""
   direction: OrderDirection!
 
   """Sort projects by the selected field."""
   field: ProjectSortField!
+}
+
+enum OrderDirection {
+  """Specifies an ascending sort order."""
+  ASC
+
+  """Specifies a descending sort order."""
+  DESC
 }
 
 enum ProjectSortField @doc(category: "Projects") {
@@ -713,13 +801,6 @@ enum SurveyChannelTypeEnum {
   MOBILE_SDK
   WEB_SDK
 }
-
-"""
-The `DateTime` scalar type represents a DateTime
-value as specified by
-[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
-"""
-scalar DateTime
 
 """Represents a survey."""
 type Survey implements Node @doc(category: "Surveys") {
@@ -1227,11 +1308,6 @@ type OrganizationInviteDetails implements Node @doc(category: "Organizations") {
   organizationLogo: String
 }
 
-enum RoleLevel {
-  MEMBER
-  ADMIN
-}
-
 """The organization invite that was created or updated."""
 type OrganizationInviteLinkDetails implements Node @doc(category: "Organizations") {
   """The ID of the object."""
@@ -1720,14 +1796,14 @@ type Mutation {
   ): OrganizationCreate @doc(category: "Organizations")
 
   """
-  Creates a new organization invite. 
+  Deletes an organization invite. 
   
-  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+  Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
   """
-  organizationInviteCreate(
-    """The organization invite object to create."""
-    input: OrganizationInviteCreateInput!
-  ): OrganizationInviteCreate @doc(category: "Organizations")
+  organizationInviteDelete(
+    """The identifier of the invite to delete."""
+    id: ID!
+  ): OrganizationInviteDelete @doc(category: "Organizations")
 
   """
   Reset the current organization invite link.. 
@@ -1737,14 +1813,24 @@ type Mutation {
   organizationInviteLinkReset: OrganizationInviteLinkReset @doc(category: "Organizations")
 
   """
-  Joins an organization 
+  Resend an existing invite 
   
-  Requires one of the following permissions: AUTHENTICATED_USER.
+  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
   """
-  organizationJoin(
-    """Organization details for the new organization."""
-    input: OrganizationJoinInput!
-  ): OrganizationJoin @doc(category: "Organizations")
+  organizationInviteResend(
+    """ID of a invite to resend."""
+    id: ID!
+  ): OrganizationInviteResend @doc(category: "Organizations")
+
+  """
+  Updates an organization. 
+  
+  Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+  """
+  organizationUpdate(
+    """A partial object to update the organization with."""
+    input: OrganizationUpdateInput!
+  ): OrganizationUpdate @doc(category: "Organizations")
 
   """Captures event."""
   eventCapture(
@@ -2426,68 +2512,14 @@ input OnboardingCustomerSurvey @doc(category: "Organizations") {
 }
 
 """
-Creates a new organization invite. 
+Deletes an organization invite. 
 
-Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
 """
-type OrganizationInviteCreate @doc(category: "Organizations") {
+type OrganizationInviteDelete @doc(category: "Organizations") {
   organizationErrors: [OrganizationError!]!
   errors: [OrganizationError!]!
   organizationInvite: OrganizationInvite
-}
-
-"""The organization invite that was created or updated."""
-type OrganizationInvite implements Node @doc(category: "Organizations") {
-  """The unique identifier of the invite."""
-  id: ID!
-
-  """The invitees email address."""
-  email: String!
-
-  """First name of the invite."""
-  firstName: String
-
-  """The user role that the invitee will receive upon accepting the invite."""
-  role: RoleLevel!
-
-  """The time at which the invite was created."""
-  createdAt: DateTime!
-
-  """The last time at which the invite was updated."""
-  updatedAt: DateTime!
-
-  """If the invite has expired."""
-  expired: Boolean!
-
-  """
-  The user who created the invitation.
-  
-  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
-  """
-  inviter: User!
-
-  """
-  The current project of the user.
-  
-  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
-  """
-  organization: Organization!
-}
-
-input OrganizationInviteCreateInput @doc(category: "Organizations") {
-  """
-  The identifier in UUID v4 format. If none is provided, the backend will generate one.
-  """
-  id: UUID
-
-  """The email of the invitee."""
-  email: String!
-
-  """The message to send to the invitee."""
-  message: String
-
-  """What member role the invite should grant."""
-  role: RoleLevel = 1
 }
 
 """
@@ -2506,20 +2538,36 @@ type OrganizationInviteLinkReset @doc(category: "Organizations") {
 }
 
 """
-Joins an organization 
+Resend an existing invite 
 
-Requires one of the following permissions: AUTHENTICATED_USER.
+Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
 """
-type OrganizationJoin @doc(category: "Organizations") {
-  """A user that has access to the the resources of an organization."""
-  user: AuthUser!
+type OrganizationInviteResend @doc(category: "Organizations") {
   organizationErrors: [OrganizationError!]!
   errors: [OrganizationError!]!
+  organizationInvite: OrganizationInvite
 }
 
-input OrganizationJoinInput @doc(category: "Organizations") {
-  """An invite link for an organization."""
-  inviteLink: String!
+"""
+Updates an organization. 
+
+Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+"""
+type OrganizationUpdate @doc(category: "Organizations") {
+  organizationErrors: [OrganizationError!]!
+  errors: [OrganizationError!]!
+  organization: Organization
+}
+
+input OrganizationUpdateInput @doc(category: "Organizations") {
+  """The name of the organization."""
+  name: String
+
+  """The slug of the organization."""
+  slug: String
+
+  """The timezone of the organization, passed in by client."""
+  timezone: String
 }
 
 """Captures event."""
