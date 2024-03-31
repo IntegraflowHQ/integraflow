@@ -1,4 +1,5 @@
 import graphene
+
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.connection import (
     CountableConnection,
@@ -21,6 +22,8 @@ from integraflow.graphql.survey.enums import (
 )
 from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.survey import models
+
+from .utils import replace_pks_to_global_ids
 
 
 class BaseSurvey(ModelObjectType):
@@ -271,11 +274,27 @@ class BaseSurveyQuestion(ModelObjectType):
         interfaces = [graphene.relay.Node]
 
     @staticmethod
+    def resolve_label(root: models.SurveyQuestion, info: ResolveInfo):
+
+        return replace_pks_to_global_ids(
+            root.label or "",
+            "BaseSurveyQuestion"
+        )
+
+    @staticmethod
+    def resolve_description(root: models.SurveyQuestion, info: ResolveInfo):
+
+        return replace_pks_to_global_ids(
+            root.description or "",
+            "BaseSurveyQuestion"
+        )
+
+    @staticmethod
     def resolve_settings(root: models.SurveyQuestion, info: ResolveInfo):
         settings = root.settings
         if settings:
             to_global_ids_from_pks(
-                "SurveyQuestion",
+                "BaseSurveyQuestion",
                 settings.get("logic", []),
                 "destination"
             )
@@ -301,6 +320,34 @@ class SurveyQuestion(BaseSurveyQuestion):
         doc_category = DOC_CATEGORY_SURVEYS
         model = models.SurveyQuestion
         interfaces = [graphene.relay.Node]
+
+    @staticmethod
+    def resolve_label(root: models.SurveyQuestion, info: ResolveInfo):
+
+        return replace_pks_to_global_ids(
+            root.label or "",
+            "SurveyQuestion"
+        )
+
+    @staticmethod
+    def resolve_description(root: models.SurveyQuestion, info: ResolveInfo):
+
+        return replace_pks_to_global_ids(
+            root.description or "",
+            "SurveyQuestion"
+        )
+
+    @staticmethod
+    def resolve_settings(root: models.SurveyQuestion, info: ResolveInfo):
+        settings = root.settings
+        if settings:
+            to_global_ids_from_pks(
+                "SurveyQuestion",
+                settings.get("logic", []),
+                "destination"
+            )
+
+        return settings
 
     @staticmethod
     def resolve_reference(root: models.SurveyQuestion, info: ResolveInfo):

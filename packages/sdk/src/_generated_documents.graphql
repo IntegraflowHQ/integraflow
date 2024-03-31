@@ -56,22 +56,6 @@ fragment SurveyChannelCreate on SurveyChannelCreate {
     }
 }
 
-# Creates a new organization invite.
-#
-# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
-fragment OrganizationInviteCreate on OrganizationInviteCreate {
-    __typename
-    errors {
-        ...OrganizationError
-    }
-    organizationErrors {
-        ...OrganizationError
-    }
-    organizationInvite {
-        ...OrganizationInvite
-    }
-}
-
 # Creates a new project
 fragment ProjectCreate on ProjectCreate {
     __typename
@@ -247,6 +231,22 @@ fragment ProjectThemeDelete on ProjectThemeDelete {
     }
 }
 
+# Deletes an organization invite.
+#
+# Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+fragment OrganizationInviteDelete on OrganizationInviteDelete {
+    __typename
+    errors {
+        ...OrganizationError
+    }
+    organizationErrors {
+        ...OrganizationError
+    }
+    organizationInvite {
+        ...OrganizationInvite
+    }
+}
+
 # Finds or creates a new user account by email and sends an email with token.
 fragment EmailUserAuthChallenge on EmailUserAuthChallenge {
     __typename
@@ -282,23 +282,6 @@ fragment GoogleUserAuth on GoogleUserAuth {
     }
     userErrors {
         ...UserError
-    }
-}
-
-# Joins an organization
-#
-# Requires one of the following permissions: AUTHENTICATED_USER.
-fragment OrganizationJoin on OrganizationJoin {
-    __typename
-    # A user that has access to the the resources of an organization.
-    user {
-        ...AuthUser
-    }
-    errors {
-        ...OrganizationError
-    }
-    organizationErrors {
-        ...OrganizationError
     }
 }
 
@@ -707,6 +690,25 @@ fragment Event on Event {
     createdAt
 }
 
+# Represents an organization member.
+fragment OrganizationMember on OrganizationMember {
+    __typename
+    # The ID of the member.
+    id
+    # The email address of the member.
+    email
+    # The family name of the member.
+    lastName
+    # The given name of the member.
+    firstName
+    # The last time at which the member was updated.
+    updatedAt
+    # The member role
+    role
+    # The time at which the member was created.
+    createdAt
+}
+
 # Represents an organization.
 fragment AuthOrganization on AuthOrganization {
     __typename
@@ -825,6 +827,22 @@ fragment User on User {
     lastName
     # The given name of the user.
     firstName
+}
+
+# Resend an existing invite
+#
+# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+fragment OrganizationInviteResend on OrganizationInviteResend {
+    __typename
+    errors {
+        ...OrganizationError
+    }
+    organizationErrors {
+        ...OrganizationError
+    }
+    organizationInvite {
+        ...OrganizationInvite
+    }
 }
 
 # Reset the current organization invite link..
@@ -1044,6 +1062,22 @@ fragment ProjectThemeUpdate on ProjectThemeUpdate {
     }
 }
 
+# Updates an organization.
+#
+# Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+fragment OrganizationUpdate on OrganizationUpdate {
+    __typename
+    errors {
+        ...OrganizationError
+    }
+    organization {
+        ...Organization
+    }
+    organizationErrors {
+        ...OrganizationError
+    }
+}
+
 # _Service manifest as defined by Federation spec.
 fragment _Service on _Service {
     __typename
@@ -1112,6 +1146,32 @@ fragment OrganizationCountableConnection on OrganizationCountableConnection {
     }
     nodes {
         ...Organization
+    }
+}
+
+fragment OrganizationInviteCountableConnection on OrganizationInviteCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+    nodes {
+        ...OrganizationInvite
+    }
+}
+
+fragment OrganizationMemberCountableConnection on OrganizationMemberCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+    nodes {
+        ...OrganizationMember
     }
 }
 
@@ -1206,19 +1266,6 @@ fragment SurveyQuestionCountableConnection on SurveyQuestionCountableConnection 
     }
 }
 
-fragment UserCountableConnection on UserCountableConnection {
-    __typename
-    # A total count of items in the collection.
-    totalCount
-    # Pagination data for this connection.
-    pageInfo {
-        ...PageInfo
-    }
-    nodes {
-        ...User
-    }
-}
-
 # Authenticates a user account via email and authentication token.
 mutation emailTokenUserAuth(
     # The email which to login via the magic login code.
@@ -1288,15 +1335,15 @@ mutation createOrganization(
         ...OrganizationCreate
     }
 }
-# Creates a new organization invite.
+# Deletes an organization invite.
 #
-# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
-mutation createOrganizationInvite(
-    # The organization invite object to create.
-    $input: OrganizationInviteCreateInput!
+# Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+mutation deleteOrganizationInvite(
+    # The identifier of the invite to delete.
+    $id: ID!
 ) {
-    organizationInviteCreate(input: $input) {
-        ...OrganizationInviteCreate
+    organizationInviteDelete(id: $id) {
+        ...OrganizationInviteDelete
     }
 }
 # Reset the current organization invite link..
@@ -1307,15 +1354,26 @@ mutation resetOrganizationInviteLink {
         ...OrganizationInviteLinkReset
     }
 }
-# Joins an organization
+# Resend an existing invite
 #
-# Requires one of the following permissions: AUTHENTICATED_USER.
-mutation joinOrganization(
-    # Organization details for the new organization.
-    $input: OrganizationJoinInput!
+# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+mutation organizationInviteResend(
+    # ID of a invite to resend.
+    $id: ID!
 ) {
-    organizationJoin(input: $input) {
-        ...OrganizationJoin
+    organizationInviteResend(id: $id) {
+        ...OrganizationInviteResend
+    }
+}
+# Updates an organization.
+#
+# Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+mutation updateOrganization(
+    # A partial object to update the organization with.
+    $input: OrganizationUpdateInput!
+) {
+    organizationUpdate(input: $input) {
+        ...OrganizationUpdate
     }
 }
 # Creates a new project

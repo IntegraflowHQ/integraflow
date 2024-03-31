@@ -28,8 +28,13 @@ from graphql.error import GraphQLError
 from integraflow.core.exceptions import PermissionDenied
 from integraflow.core.utils.events import call_event
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_MAP
-from integraflow.graphql.core.validators import validate_one_of_args_is_in_mutation
-from integraflow.graphql.utils import get_nodes, resolve_global_ids_to_primary_keys
+from integraflow.graphql.core.validators import (
+    validate_one_of_args_is_in_mutation
+)
+from integraflow.graphql.utils import (
+    get_nodes,
+    resolve_global_ids_to_primary_keys
+)
 from integraflow.permission.enums import BasePermissionEnum
 from integraflow.permission.utils import (
     all_permissions_required,
@@ -43,7 +48,7 @@ from .types.common import NonNullList
 from .types.model import ModelObjectType
 from .utils import (
     WebhookEventInfo,
-    ext_ref_to_global_id_or_error,
+    ref_to_global_id_or_error,
     from_global_id_or_error,
     message_webhook_events,
     snake_to_camel_case,
@@ -783,20 +788,20 @@ class ModelMutation(BaseMutation):
         return cls.success_response(instance)
 
 
-class ModelWithExtRefMutation(ModelMutation):
+class ModelWithRefMutation(ModelMutation):
     class Meta:
         abstract = True
 
     @classmethod
     def get_object_id(cls, **data):
-        """Resolve object id by given id or external reference."""
-        object_id, ext_ref = data.get("id"), data.get("external_reference")
+        """Resolve object id by given id or reference."""
+        object_id, ref = data.get("id"), data.get("reference")
         validate_one_of_args_is_in_mutation(
-            "id", object_id, "external_reference", ext_ref
+            "id", object_id, "reference", ref
         )
 
-        if ext_ref and not object_id:
-            object_id = ext_ref_to_global_id_or_error(cls._meta.model, ext_ref)
+        if ref and not object_id:
+            object_id = ref_to_global_id_or_error(cls._meta.model, ref)
 
         return object_id
 
