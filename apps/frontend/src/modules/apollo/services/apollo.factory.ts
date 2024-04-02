@@ -14,41 +14,19 @@ import { RetryLink } from "@apollo/client/link/retry";
 
 import { logDebug } from "@/utils/log";
 
-import {
-    EmailTokenUserAuthDocument,
-    EmailTokenUserAuthMutation,
-    EmailTokenUserAuthMutationVariables,
-    EmailUserAuthChallengeDocument,
-    EmailUserAuthChallengeMutation,
-    EmailUserAuthChallengeMutationVariables,
-    GoogleUserAuthDocument,
-    GoogleUserAuthMutation,
-    GoogleUserAuthMutationVariables,
-    LogoutDocument,
-    LogoutMutation,
-    LogoutMutationVariables,
-    TokenRefreshDocument,
-    TokenRefreshMutation,
-    TokenRefreshMutationVariables,
-    UserUpdateDocument,
-    UserUpdateMutation,
-    UserUpdateMutationVariables,
-    ViewerDocument,
-    ViewerQuery,
-    ViewerQueryVariables,
-} from "@/generated/graphql";
+import { AUTH_EXEMPT } from "@/constants";
 import { ApolloManager, AuthParams } from "../types";
 import { loggerLink } from "../utils";
 
 const isDebug = import.meta.env.MODE === "development";
 const logger = loggerLink(() => "Integraflow");
-const AUTH_EXEMPT = "exempt-auth";
 
 interface Actions {
     onError?: (err: GraphQLErrors | undefined) => void;
     onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
     onUnauthenticatedError?: () => void;
     onTokenRefreshed?: (token: string) => void;
+    refreshToken?: () => Promise<string | undefined>;
 }
 
 export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
@@ -141,7 +119,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                                         }
 
                                         try {
-                                            const token = await this.refreshToken();
+                                            const token = await this.actions?.refreshToken?.();
                                             if (token) {
                                                 this.updateAuthParams({
                                                     ...this.authParams,
@@ -219,110 +197,5 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
 
     getClient() {
         return this.client;
-    }
-
-    emailAuthChallenge(email: string, inviteLink?: string) {
-        return this.client.mutate<EmailUserAuthChallengeMutation, EmailUserAuthChallengeMutationVariables>({
-            mutation: EmailUserAuthChallengeDocument,
-            variables: {
-                email,
-                inviteLink,
-            },
-            context: {
-                headers: {
-                    authorization: AUTH_EXEMPT,
-                },
-            },
-        });
-    }
-
-    verifyAuthToken = (email: string, token: string, inviteLink?: string) => {
-        return this.client.mutate<EmailTokenUserAuthMutation, EmailTokenUserAuthMutationVariables>({
-            mutation: EmailTokenUserAuthDocument,
-            variables: {
-                email,
-                token,
-                inviteLink,
-            },
-            context: {
-                headers: {
-                    authorization: AUTH_EXEMPT,
-                },
-            },
-        });
-    };
-
-    googleAuthLogin = (code: string, inviteLink?: string) => {
-        return this.client.mutate<GoogleUserAuthMutation, GoogleUserAuthMutationVariables>({
-            mutation: GoogleUserAuthDocument,
-            variables: {
-                code,
-                inviteLink,
-            },
-            context: {
-                headers: {
-                    authorization: AUTH_EXEMPT,
-                },
-            },
-        });
-    };
-
-    async logout() {
-        const { data, errors } = await this.client.mutate<LogoutMutation, LogoutMutationVariables>({
-            mutation: LogoutDocument,
-        });
-
-        if (errors || !data || data.logout?.userErrors?.length) {
-            throw new Error("Something went wrong during token revocation");
-        }
-
-        return true;
-    }
-
-    async refreshToken() {
-        if (!this.authParams?.refreshToken) {
-            return;
-        }
-
-        const { data, errors } = await this.client.mutate<TokenRefreshMutation, TokenRefreshMutationVariables>({
-            mutation: TokenRefreshDocument,
-            variables: { refreshToken: this.authParams.refreshToken },
-            context: {
-                headers: {
-                    authorization: AUTH_EXEMPT,
-                },
-            },
-        });
-
-        if (errors || !data || data.tokenRefresh?.errors?.length || !data.tokenRefresh?.token) {
-            throw new Error("Something went wrong during token renewal");
-        }
-
-        return data.tokenRefresh?.token;
-    }
-
-    async getUser() {
-        const { data, errors } = await this.client.query<ViewerQuery, ViewerQueryVariables>({
-            query: ViewerDocument,
-        });
-
-        if (errors || !data) {
-            throw new Error("Something went wrong while fetching user");
-        }
-
-        return data;
-    }
-
-    async updateUser(variables: UserUpdateMutationVariables) {
-        const { data, errors } = await this.client.mutate<UserUpdateMutation, UserUpdateMutationVariables>({
-            mutation: UserUpdateDocument,
-            variables,
-        });
-
-        if (errors || !data) {
-            throw new Error("Something went wrong during user update");
-        }
-
-        return data.userUpdate?.user;
     }
 }
