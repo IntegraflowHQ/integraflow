@@ -1,11 +1,7 @@
 import { useProject } from "@/modules/projects/hooks/useProject";
 import useChannels from "@/modules/surveys/hooks/useChannels";
-import useStudioState from "@/modules/surveys/hooks/useStudioState";
-import {
-    EventFilter,
-    TriggerConditionInput,
-    WebChannelAccordionProps,
-} from "@/types";
+import { useStudioStore } from "@/modules/surveys/states/studio";
+import { EventFilter, TriggerConditionInput, WebChannelAccordionProps } from "@/types";
 import { Info } from "@/ui/icons";
 import { FilterOperator, LogicOperator } from "@integraflow/web/src/types";
 import { useState } from "react";
@@ -15,13 +11,11 @@ import Filters from "./filters/Filters";
 import PropertySelect from "./filters/PropertySelect";
 
 export default function Audience({ channel }: WebChannelAccordionProps) {
-    const { addingAudienceProperty, updateStudio } = useStudioState();
+    const { addingAudienceProperty, updateStudio } = useStudioStore((state) => state);
     const { updateChannel } = useChannels();
     const { personProperties } = useProject();
     const [filterInput, setFilterInput] = useState<EventFilter | null>(null);
-    const [conditionInput, setConditionInput] = useState<
-        TriggerConditionInput | undefined
-    >();
+    const [conditionInput, setConditionInput] = useState<TriggerConditionInput | undefined>();
 
     const handleOperatorChange = (operator: LogicOperator) => {
         const conditions = {
@@ -35,11 +29,7 @@ export default function Audience({ channel }: WebChannelAccordionProps) {
 
     const handleAddFilter = (filter: EventFilter) => {
         if (!channel.id) return;
-        if (
-            !channel.conditions ||
-            !channel.conditions.filters ||
-            !channel.conditions.operator
-        ) {
+        if (!channel.conditions || !channel.conditions.filters || !channel.conditions.operator) {
             const conditions = {
                 operator: LogicOperator.AND,
                 filters: [{ ...filter, attribute: filter.property }],
@@ -50,10 +40,7 @@ export default function Audience({ channel }: WebChannelAccordionProps) {
         } else {
             const conditions = {
                 ...channel.conditions,
-                filters: [
-                    ...channel?.conditions?.filters,
-                    { ...filter, attribute: filter.property },
-                ],
+                filters: [...channel?.conditions?.filters, { ...filter, attribute: filter.property }],
             };
             updateChannel(channel, {
                 conditions: JSON.stringify(conditions),
@@ -77,9 +64,7 @@ export default function Audience({ channel }: WebChannelAccordionProps) {
         <div className="px-4 pb-6 text-intg-text">
             <div className="flex flex-col gap-[26px] rounded-lg bg-intg-bg-9 p-6">
                 <header className="inline-flex items-center gap-2">
-                    <h3 className="text-base font-medium text-white">
-                        Audience
-                    </h3>
+                    <h3 className="text-base font-medium text-white">Audience</h3>
                     <Info />
                 </header>
 
@@ -105,10 +90,7 @@ export default function Audience({ channel }: WebChannelAccordionProps) {
                             onInput={setFilterInput}
                         >
                             {filterInput ? (
-                                <FilterDetails
-                                    filter={filterInput}
-                                    onRemoveFilter={() => setFilterInput(null)}
-                                />
+                                <FilterDetails filter={filterInput} onRemoveFilter={() => setFilterInput(null)} />
                             ) : null}
                         </FilterOperators>
                     )}
@@ -133,9 +115,7 @@ export default function Audience({ channel }: WebChannelAccordionProps) {
                     >
                         <button
                             className="p-2 underline"
-                            onClick={() =>
-                                updateStudio({ addingAudienceProperty: true })
-                            }
+                            onClick={() => updateStudio({ addingAudienceProperty: true })}
                         >
                             add audience rule
                         </button>

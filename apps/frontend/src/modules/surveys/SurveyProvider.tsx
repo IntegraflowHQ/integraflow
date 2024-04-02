@@ -14,6 +14,7 @@ import {
     SurveyStatusEnum,
     SurveyTypeEnum,
     SurveyUpdateInput,
+    SurveyUpdateMutation,
     useGetSurveyLazyQuery,
     useGetSurveyListQuery,
     useSurveyCreateMutation,
@@ -23,7 +24,7 @@ import {
 import { ROUTES } from "@/routes";
 import { ParsedQuestion } from "@/types";
 import { generateRandomString, parseQuestion } from "@/utils";
-import { ApolloError } from "@apollo/client";
+import { ApolloError, FetchResult } from "@apollo/client";
 import { DeepPartial, Reference } from "@apollo/client/utilities";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -45,7 +46,7 @@ export type SurveyContextValues = {
     parsedQuestions: ParsedQuestion[];
     surveyId: string;
     createSurvey: (template?: string) => Promise<void>;
-    updateSurvey: (survey: DeepPartial<Survey>, input: SurveyUpdateInput) => Promise<void>;
+    updateSurvey: (survey: DeepPartial<Survey>, input: SurveyUpdateInput) => Promise<FetchResult<SurveyUpdateMutation>>;
     survey: GetSurveyQuery["survey"];
     surveyList: SurveyList;
     deleteSurvey: (survey: Survey) => Promise<void | undefined>;
@@ -67,8 +68,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     const [updateSurveyMutation, { error }] = useSurveyUpdateMutation({});
     const [deleteSurveyMutation] = useSurveyDeleteMutation();
 
-    const [getSurvey, { data: surveyQueryResponse, loading: loadingSurvey, refetch: refetchSurvey }] =
-        useGetSurveyLazyQuery();
+    const [getSurvey, { data: surveyQueryResponse, loading: loadingSurvey }] = useGetSurveyLazyQuery();
 
     const {
         refetch,
@@ -83,7 +83,6 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                 direction: OrderDirection.Desc,
             },
         },
-        skip: !projectSlug,
     });
 
     const surveyId = surveyQueryResponse?.survey?.id ?? "";
@@ -102,15 +101,19 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             totalCount: surveyList?.surveys?.totalCount,
             edges: surveyList?.surveys?.edges?.map((survey) => survey.node as Survey) || ([] as Survey[]),
         };
-    }, [surveyList?.surveys?.edges]);
+    }, [surveyList?.surveys?.edges, surveyList?.surveys?.pageInfo, surveyList?.surveys?.totalCount]);
 
     React.useEffect(() => {
+        if (!surveySlug) {
+            return;
+        }
+
         getSurvey({
             variables: {
                 slug: surveySlug,
             },
         });
-    }, [surveySlug, refetchSurvey]);
+    }, [surveySlug, getSurvey]);
 
     const createSurvey = React.useCallback(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -128,7 +131,6 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                 },
 
                 onCompleted: () => {
-                    console.log("Completed");
                     navigate(
                         ROUTES.STUDIO.replace(":orgSlug", orgSlug!)
                             .replace(":projectSlug", projectSlug!)
@@ -138,6 +140,35 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
 
                 onError: () => {
                     navigate(ROUTES.SURVEY_LIST.replace(":orgSlug", orgSlug!).replace(":projectSlug", projectSlug!));
+                },
+
+                update: (cache, { data }) => {
+                    if (!data?.surveyCreate?.survey) {
+                        return;
+                    }
+
+                    cache.modify({
+                        fields: {
+                            surveys(existingSurveysRefs = {}) {
+                                const newSurveyRef = cache.writeFragment({
+                                    data: data.surveyCreate?.survey,
+                                    fragment: SurveyFragmentFragmentDoc,
+                                    fragmentName: "SurveyFragment",
+                                });
+
+                                return {
+                                    ...existingSurveysRefs,
+                                    edges: [
+                                        {
+                                            __typename: "Survey",
+                                            node: newSurveyRef,
+                                        },
+                                        ...existingSurveysRefs.edges,
+                                    ],
+                                };
+                            },
+                        },
+                    });
                 },
             });
         },
@@ -196,7 +227,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
 
     const updateSurvey = React.useCallback(
         async (survey: DeepPartial<Survey>, input: SurveyUpdateInput) => {
-            await updateSurveyMutation({
+            const mutation = await updateSurveyMutation({
                 variables: {
                     id: survey.id!,
                     input,
@@ -237,14 +268,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                                       },
                                   },
 
-                            theme: survey.theme
-                                ? (survey.theme as ProjectTheme)
-                                : ({
-                                      id: "",
-                                      name: "",
-                                      colorScheme: "{}",
-                                      reference: "",
-                                  } as ProjectTheme),
+                            theme: survey.theme?.colorScheme ? (survey.theme as ProjectTheme) : null,
                             creator: {
                                 __typename: "User",
                                 email: survey.creator?.email ?? "",
@@ -280,6 +304,8 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                     });
                 },
             });
+
+            return mutation;
         },
         [updateSurveyMutation],
     );
@@ -302,7 +328,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                             type: SurveyTypeEnum.Survey,
                             reference: "",
                             name: "",
-                            slug: surveySlug ?? "",
+                            slug: survey.slug ?? "",
                             status: survey.status ?? "",
                             settings: "",
                             theme: null,

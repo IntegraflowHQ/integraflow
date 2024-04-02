@@ -6,6 +6,7 @@ import graphene
 from integraflow.core.utils import (
     MAX_SLUG_LENGTH,
 )
+from integraflow.event.tasks import create_property_definitions
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_PROJECTS
 from integraflow.graphql.core.mutations import ModelMutation
@@ -117,3 +118,7 @@ class ProjectCreate(ModelMutation):
             instance.organization  # Update cached property
         )
         user.save()
+
+        create_property_definitions.delay(
+            project_id=instance.pk
+        )

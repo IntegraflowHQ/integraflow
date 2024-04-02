@@ -11,6 +11,8 @@ from integraflow.survey.utils import calculate_max_paths
 from .survey_question_create import SurveyQuestionInput
 from ..types import SurveyQuestion
 
+from ..utils import replace_global_ids_to_pks
+
 
 class SurveyQuestionUpdateInput(SurveyQuestionInput):
     order_number = graphene.Int(
@@ -49,6 +51,17 @@ class SurveyQuestionUpdate(ModelMutation):
     @classmethod
     def clean_input(cls, info, instance, data, **kwargs):
         cleaned_input = super().clean_input(info, instance, data, **kwargs)
+
+        label = cleaned_input.get("label", None)
+        description = cleaned_input.get("description", None)
+
+        if label is not None:
+            cleaned_input["label"] = replace_global_ids_to_pks(label)
+
+        if description is not None:
+            cleaned_input["description"] = replace_global_ids_to_pks(
+                description
+            )
 
         settings = cleaned_input.get("settings")
         if settings:

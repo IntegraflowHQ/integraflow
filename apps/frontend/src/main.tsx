@@ -24,6 +24,7 @@ import { Workspace as WorkspaceSettings } from "./modules/workspace/components/s
 import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
 import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
 import { Settings } from "./pages/Settings";
+import { ROUTES } from "./routes";
 
 const isDebugMode = import.meta.env.MODE === "development";
 
@@ -42,21 +43,21 @@ const router = createBrowserRouter([
                 element: <AuthLayout />,
                 children: [
                     {
-                        path: "",
+                        path: ROUTES.LOGIN,
                         element: <LoginScreen />,
                     },
                     {
-                        path: "signup",
+                        path: ROUTES.SIGNUP,
                         element: <Signup />,
                     },
                 ],
             },
             {
-                path: "/auth/magic-sign-in/",
+                path: ROUTES.MAGIC_SIGN_IN,
                 element: <MagicSignIn />,
             },
             {
-                path: "/create-workspace",
+                path: ROUTES.CREATE_WORKSPACE,
                 element: <Workspace />,
             },
             {

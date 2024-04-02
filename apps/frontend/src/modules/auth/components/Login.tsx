@@ -3,7 +3,7 @@ import { useCallback, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, createSearchParams, useNavigate } from "react-router-dom";
 
-import { Button, GlobalSpinner, TextInput } from "@/ui";
+import { Button, TextInput } from "@/ui";
 import { Google } from "@/ui/icons";
 import { emailRegex } from "@/utils";
 import { toast } from "@/utils/toast";
@@ -27,7 +27,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
         },
     });
     const navigate = useNavigate();
-    const { loading, authenticateWithGoogle, generateMagicLink } = useAuth();
+    const { authenticateWithGoogle, generateMagicLink } = useAuth();
     const redirect = useRedirect();
 
     const queryString = window.location.search;
@@ -35,17 +35,18 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
     const inviteLink = urlParams.get("inviteLink") ?? undefined;
     const inviteEmail = urlParams.get("email");
 
-    const onSubmit: SubmitHandler<Inputs> = useCallback(async (data) => {
-        await generateMagicLink(data.email, inviteLink);
-        navigate({
-            pathname: `/auth/magic-sign-in/`,
-            search: createSearchParams(
-                !inviteLink ?
-                    { email: data.email  } :
-                    { email: data.email, inviteLink }
-            ).toString(),
-        });
-    }, [generateMagicLink, inviteLink, navigate]);
+    const onSubmit: SubmitHandler<Inputs> = useCallback(
+        async (data) => {
+            await generateMagicLink(data.email, inviteLink);
+            navigate({
+                pathname: `/auth/magic-sign-in/`,
+                search: createSearchParams(
+                    !inviteLink ? { email: data.email } : { email: data.email, inviteLink },
+                ).toString(),
+            });
+        },
+        [generateMagicLink, inviteLink, navigate],
+    );
 
     useEffect(() => {
         if (inviteLink) {
@@ -69,30 +70,19 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
         },
     });
 
-    if (loading) {
-        return <GlobalSpinner />;
-    }
-
     return (
         <>
             <div className="flex w-[478px] flex-col gap-6 self-center p-12">
                 <header className="flex flex-col gap-2 text-center">
                     <h1 className="text-[28px] font-medium leading-normal text-white">
-                        {variant === "signup"
-                            ? "Create your Integraflow account"
-                            : "Log in to Integraflow"}
+                        {variant === "signup" ? "Create your Integraflow account" : "Log in to Integraflow"}
                     </h1>
                     <p className="text-base text-intg-text">
-                        {variant === "signup"
-                            ? "Let's get your account set up"
-                            : "Welcome back 🥰"}
+                        {variant === "signup" ? "Let's get your account set up" : "Welcome back 🥰"}
                     </p>
                 </header>
 
-                <form
-                    onSubmit={handleSubmit(onSubmit)}
-                    className="flex flex-col gap-4"
-                >
+                <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
                     <TextInput
                         placeholder="Enter your email"
                         type="email"
@@ -113,11 +103,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
                 </form>
 
                 <div className="self-center text-base text-intg-text-6">
-                    <span>
-                        {variant === "signup"
-                            ? "Already have an account? "
-                            : "Don't have an account yet? "}
-                    </span>
+                    <span>{variant === "signup" ? "Already have an account? " : "Don't have an account yet? "}</span>
                     <Link
                         to={variant === "signup" ? "/" : "/signup"}
                         className="bg-gradient-button-hover bg-clip-text font-medium text-transparent"
@@ -140,8 +126,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
 
             {variant === "signup" ? (
                 <div className="max-w-xs self-center text-center text-base text-intg-text">
-                    By signing up, you agree to Integraflow Privacy and terms
-                    services
+                    By signing up, you agree to Integraflow Privacy and terms services
                 </div>
             ) : (
                 <div />

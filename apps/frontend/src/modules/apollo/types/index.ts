@@ -4,7 +4,6 @@ export type AuthParams = {
     token: string | null;
     refreshToken: string | null;
     currentProjectId?: string | null;
-    refresh: () => Promise<string | undefined>;
 };
 
 export interface ApolloManager<TCacheShape> {

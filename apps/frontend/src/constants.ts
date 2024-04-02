@@ -1,5 +1,7 @@
 import { FilterOperator } from "@integraflow/web/src/types";
 
+export const AUTH_EXEMPT = "exempt-auth";
+
 export const PROPERTY_FIELDS = {
     Numeric: [
         {

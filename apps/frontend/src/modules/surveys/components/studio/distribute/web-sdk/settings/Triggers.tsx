@@ -101,7 +101,7 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
             if (condition.event !== event) return condition;
             if (!condition.filters) return condition;
 
-            const filters = [...condition?.filters];
+            const filters = [...(condition?.filters ?? [])];
             filters.splice(index, 1);
 
             return {

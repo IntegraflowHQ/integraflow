@@ -131,15 +131,15 @@ class OrganizationInviteCreate(ModelMutation):
                 return cls.success_response(instance)
 
             raise ValidationError(
-                    {
-                        "email": ValidationError(
-                            (
-                                "A user with this email address has already "
-                                "been invited to the organization."
-                            ),
-                            code=OrganizationErrorCode.ALREADY_EXISTS.value,
-                        )
-                    }
-                )
+                {
+                    "email": ValidationError(
+                        (
+                            "A user with this email address has already "
+                            "been invited to the organization."
+                        ),
+                        code=OrganizationErrorCode.ALREADY_EXISTS.value,
+                    )
+                }
+            )
         except models.OrganizationInvite.DoesNotExist:
             return super().perform_mutation(_root, info, **data)

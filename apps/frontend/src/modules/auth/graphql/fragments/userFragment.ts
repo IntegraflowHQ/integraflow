@@ -29,15 +29,7 @@ export const USER = gql`
                                 email
                                 firstName
                                 lastName
-                                isStaff
-                                isActive
-                                isOnboarded
-                                organization {
-                                    ...AuthOrganizationFragment
-                                }
-                                project {
-                                    ...ProjectFragment
-                                }
+                                role
                             }
                         }
                     }
