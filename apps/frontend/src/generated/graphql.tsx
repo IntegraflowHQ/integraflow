@@ -456,17 +456,47 @@ export type Mutation = {
    */
   organizationInviteCreate?: Maybe<OrganizationInviteCreate>;
   /**
+   * Deletes an organization invite.
+   *
+   * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+   */
+  organizationInviteDelete?: Maybe<OrganizationInviteDelete>;
+  /**
    * Reset the current organization invite link..
    *
    * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
    */
   organizationInviteLinkReset?: Maybe<OrganizationInviteLinkReset>;
   /**
+   * Resend an existing invite
+   *
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+   */
+  organizationInviteResend?: Maybe<OrganizationInviteResend>;
+  /**
    * Joins an organization
    *
    * Requires one of the following permissions: AUTHENTICATED_USER.
    */
   organizationJoin?: Maybe<OrganizationJoin>;
+  /**
+   * Leaves an organization.
+   *
+   * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+   */
+  organizationLeave?: Maybe<OrganizationLeave>;
+  /**
+   * Deletes a member from an organization.
+   *
+   * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+   */
+  organizationMemberLeave?: Maybe<OrganizationMemberLeave>;
+  /**
+   * Updates an organization.
+   *
+   * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+   */
+  organizationUpdate?: Maybe<OrganizationUpdate>;
   /** Creates a new project */
   projectCreate?: Maybe<ProjectCreate>;
   /**
@@ -595,8 +625,33 @@ export type MutationOrganizationInviteCreateArgs = {
 };
 
 
+export type MutationOrganizationInviteDeleteArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationOrganizationInviteResendArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationOrganizationJoinArgs = {
   input: OrganizationJoinInput;
+};
+
+
+export type MutationOrganizationLeaveArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationOrganizationMemberLeaveArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationOrganizationUpdateArgs = {
+  input: OrganizationUpdateInput;
 };
 
 
@@ -721,6 +776,12 @@ export type Organization = Node & {
   /** The ID of the organization. */
   id: Scalars['ID'];
   /**
+   * Invites associated with the organization.
+   *
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+   */
+  invites?: Maybe<OrganizationInviteCountableConnection>;
+  /**
    * Member count
    *
    * Requires one of the following permissions: AUTHENTICATED_USER.
@@ -731,7 +792,7 @@ export type Organization = Node & {
    *
    * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
    */
-  members?: Maybe<UserCountableConnection>;
+  members?: Maybe<OrganizationMemberCountableConnection>;
   /**
    * Name of the organization.
    *
@@ -750,12 +811,20 @@ export type Organization = Node & {
 
 
 /** Represents an organization. */
+export type OrganizationInvitesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+/** Represents an organization. */
 export type OrganizationMembersArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<UserSortingInput>;
 };
 
 
@@ -765,7 +834,6 @@ export type OrganizationProjectsArgs = {
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<UserSortingInput>;
 };
 
 export type OrganizationCountableConnection = {
@@ -862,6 +930,24 @@ export type OrganizationInvite = Node & {
   updatedAt: Scalars['DateTime'];
 };
 
+export type OrganizationInviteCountableConnection = {
+  __typename?: 'OrganizationInviteCountableConnection';
+  edges: Array<OrganizationInviteCountableEdge>;
+  nodes: Array<OrganizationInvite>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type OrganizationInviteCountableEdge = {
+  __typename?: 'OrganizationInviteCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: OrganizationInvite;
+};
+
 /**
  * Creates a new organization invite.
  *
@@ -883,6 +969,18 @@ export type OrganizationInviteCreateInput = {
   message?: InputMaybe<Scalars['String']>;
   /** What member role the invite should grant. */
   role?: InputMaybe<RoleLevel>;
+};
+
+/**
+ * Deletes an organization invite.
+ *
+ * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+ */
+export type OrganizationInviteDelete = {
+  __typename?: 'OrganizationInviteDelete';
+  errors: Array<OrganizationError>;
+  organizationErrors: Array<OrganizationError>;
+  organizationInvite?: Maybe<OrganizationInvite>;
 };
 
 /** The organization invite that was created or updated. */
@@ -952,6 +1050,18 @@ export type OrganizationInviteLinkReset = {
 };
 
 /**
+ * Resend an existing invite
+ *
+ * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+ */
+export type OrganizationInviteResend = {
+  __typename?: 'OrganizationInviteResend';
+  errors: Array<OrganizationError>;
+  organizationErrors: Array<OrganizationError>;
+  organizationInvite?: Maybe<OrganizationInvite>;
+};
+
+/**
  * Joins an organization
  *
  * Requires one of the following permissions: AUTHENTICATED_USER.
@@ -967,6 +1077,88 @@ export type OrganizationJoin = {
 export type OrganizationJoinInput = {
   /** An invite link for an organization. */
   inviteLink: Scalars['String'];
+};
+
+/**
+ * Leaves an organization.
+ *
+ * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+ */
+export type OrganizationLeave = {
+  __typename?: 'OrganizationLeave';
+  errors: Array<OrganizationError>;
+  organization?: Maybe<Organization>;
+  organizationErrors: Array<OrganizationError>;
+};
+
+/** Represents an organization member. */
+export type OrganizationMember = Node & {
+  __typename?: 'OrganizationMember';
+  /** The time at which the member was created. */
+  createdAt: Scalars['DateTime'];
+  /** The email address of the member. */
+  email: Scalars['String'];
+  /** The given name of the member. */
+  firstName: Scalars['String'];
+  /** The ID of the member. */
+  id: Scalars['ID'];
+  /** The family name of the member. */
+  lastName: Scalars['String'];
+  /** The member role */
+  role: RoleLevel;
+  /** The last time at which the member was updated. */
+  updatedAt: Scalars['DateTime'];
+};
+
+export type OrganizationMemberCountableConnection = {
+  __typename?: 'OrganizationMemberCountableConnection';
+  edges: Array<OrganizationMemberCountableEdge>;
+  nodes: Array<OrganizationMember>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type OrganizationMemberCountableEdge = {
+  __typename?: 'OrganizationMemberCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: OrganizationMember;
+};
+
+/**
+ * Deletes a member from an organization.
+ *
+ * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+ */
+export type OrganizationMemberLeave = {
+  __typename?: 'OrganizationMemberLeave';
+  errors: Array<OrganizationError>;
+  organizationErrors: Array<OrganizationError>;
+  organizationMembership?: Maybe<OrganizationMember>;
+};
+
+/**
+ * Updates an organization.
+ *
+ * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+ */
+export type OrganizationUpdate = {
+  __typename?: 'OrganizationUpdate';
+  errors: Array<OrganizationError>;
+  organization?: Maybe<Organization>;
+  organizationErrors: Array<OrganizationError>;
+};
+
+export type OrganizationUpdateInput = {
+  /** The name of the organization. */
+  name?: InputMaybe<Scalars['String']>;
+  /** The slug of the organization. */
+  slug?: InputMaybe<Scalars['String']>;
+  /** The timezone of the organization, passed in by client. */
+  timezone?: InputMaybe<Scalars['String']>;
 };
 
 /** The Relay compliant `PageInfo` type, containing data necessary to paginate this connection. */
@@ -1502,7 +1694,8 @@ export type RefreshToken = {
 
 export enum RoleLevel {
   Admin = 'ADMIN',
-  Member = 'MEMBER'
+  Member = 'MEMBER',
+  Owner = 'OWNER'
 }
 
 /** Represents a survey. */
@@ -2107,24 +2300,6 @@ export type UserProjectsArgs = {
   orderBy?: InputMaybe<ProjectSortingInput>;
 };
 
-export type UserCountableConnection = {
-  __typename?: 'UserCountableConnection';
-  edges: Array<UserCountableEdge>;
-  nodes: Array<User>;
-  /** Pagination data for this connection. */
-  pageInfo: PageInfo;
-  /** A total count of items in the collection. */
-  totalCount?: Maybe<Scalars['Int']>;
-};
-
-export type UserCountableEdge = {
-  __typename?: 'UserCountableEdge';
-  /** A cursor for use in pagination. */
-  cursor: Scalars['String'];
-  /** The item at the end of the edge. */
-  node: User;
-};
-
 /** Represents errors in user mutations. */
 export type UserError = {
   __typename?: 'UserError';
@@ -2162,24 +2337,6 @@ export type UserInput = {
   isOnboarded?: InputMaybe<Scalars['Boolean']>;
   /** The family name of the user. */
   lastName?: InputMaybe<Scalars['String']>;
-};
-
-export enum UserSortField {
-  /** Sort users by created at. */
-  CreatedAt = 'CREATED_AT',
-  /** Sort users by email. */
-  Email = 'EMAIL',
-  /** Sort users by first name. */
-  FirstName = 'FIRST_NAME',
-  /** Sort users by last name. */
-  LastName = 'LAST_NAME'
-}
-
-export type UserSortingInput = {
-  /** Specifies the direction in which to sort users. */
-  direction: OrderDirection;
-  /** Sort users by the selected field. */
-  field: UserSortField;
 };
 
 /**

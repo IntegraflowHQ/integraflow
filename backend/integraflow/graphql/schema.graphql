@@ -1796,6 +1796,16 @@ type Mutation {
   ): OrganizationCreate @doc(category: "Organizations")
 
   """
+  Creates a new organization invite. 
+  
+  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+  """
+  organizationInviteCreate(
+    """The organization invite object to create."""
+    input: OrganizationInviteCreateInput!
+  ): OrganizationInviteCreate @doc(category: "Organizations")
+
+  """
   Deletes an organization invite. 
   
   Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
@@ -1821,6 +1831,36 @@ type Mutation {
     """ID of a invite to resend."""
     id: ID!
   ): OrganizationInviteResend @doc(category: "Organizations")
+
+  """
+  Joins an organization 
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  organizationJoin(
+    """Organization details for the new organization."""
+    input: OrganizationJoinInput!
+  ): OrganizationJoin @doc(category: "Organizations")
+
+  """
+  Leaves an organization. 
+  
+  Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+  """
+  organizationLeave(
+    """ID of the organization to leave."""
+    id: ID!
+  ): OrganizationLeave @doc(category: "Organizations")
+
+  """
+  Deletes a member from an organization. 
+  
+  Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+  """
+  organizationMemberLeave(
+    """ID of the member to leave an organization."""
+    id: ID!
+  ): OrganizationMemberLeave @doc(category: "Organizations")
 
   """
   Updates an organization. 
@@ -2512,6 +2552,33 @@ input OnboardingCustomerSurvey @doc(category: "Organizations") {
 }
 
 """
+Creates a new organization invite. 
+
+Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+"""
+type OrganizationInviteCreate @doc(category: "Organizations") {
+  organizationErrors: [OrganizationError!]!
+  errors: [OrganizationError!]!
+  organizationInvite: OrganizationInvite
+}
+
+input OrganizationInviteCreateInput @doc(category: "Organizations") {
+  """
+  The identifier in UUID v4 format. If none is provided, the backend will generate one.
+  """
+  id: UUID
+
+  """The email of the invitee."""
+  email: String!
+
+  """The message to send to the invitee."""
+  message: String
+
+  """What member role the invite should grant."""
+  role: RoleLevel = 1
+}
+
+"""
 Deletes an organization invite. 
 
 Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
@@ -2546,6 +2613,45 @@ type OrganizationInviteResend @doc(category: "Organizations") {
   organizationErrors: [OrganizationError!]!
   errors: [OrganizationError!]!
   organizationInvite: OrganizationInvite
+}
+
+"""
+Joins an organization 
+
+Requires one of the following permissions: AUTHENTICATED_USER.
+"""
+type OrganizationJoin @doc(category: "Organizations") {
+  """A user that has access to the the resources of an organization."""
+  user: AuthUser!
+  organizationErrors: [OrganizationError!]!
+  errors: [OrganizationError!]!
+}
+
+input OrganizationJoinInput @doc(category: "Organizations") {
+  """An invite link for an organization."""
+  inviteLink: String!
+}
+
+"""
+Leaves an organization. 
+
+Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+"""
+type OrganizationLeave @doc(category: "Organizations") {
+  organizationErrors: [OrganizationError!]!
+  errors: [OrganizationError!]!
+  organization: Organization
+}
+
+"""
+Deletes a member from an organization. 
+
+Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+"""
+type OrganizationMemberLeave @doc(category: "Organizations") {
+  organizationErrors: [OrganizationError!]!
+  errors: [OrganizationError!]!
+  organizationMembership: OrganizationMember
 }
 
 """
