@@ -116,3 +116,44 @@ export const REFRESH_ORGANIZATION_INVITE_LINK = gql`
         }
     }
 `;
+
+export const RESEND_ORGANIZATION_INVITE_LINK = gql`
+    fragment ResendOrganizationInviteLinkFragment on OrganizationInviteResend {
+        organizationInvite {
+            ...OrganizationInviteFragment
+        }
+        organizationErrors {
+            ...OrganizationErrorFragment
+        }
+        errors {
+            ...OrganizationErrorFragment
+        }
+    }
+`;
+
+export const RESEND_ORGANIZATION_INVITE_DELETE = gql`
+    fragment OrganizationInviteDeleteFragment on OrganizationInviteDelete {
+        organizationInvite {
+            ...OrganizationInviteFragment
+        }
+        organizationErrors {
+            ...OrganizationErrorFragment
+        }
+        errors {
+            ...OrganizationErrorFragment
+        }
+    }
+`;
+export const ORGANIZATION_LEAVE = gql`
+    fragment OrganizationLeaveFragment on OrganizationLeave {
+        organizationLeave {
+            ...OrganizationInviteFragment
+        }
+        organizationErrors {
+            ...OrganizationErrorFragment
+        }
+        errors {
+            ...OrganizationErrorFragment
+        }
+    }
+`;

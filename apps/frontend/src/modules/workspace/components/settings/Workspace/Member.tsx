@@ -1,22 +1,19 @@
-import { UserCountableEdge } from "@/generated/graphql";
 import { OrganizationInvite } from "@/modules/workspace/components/invite/OrganizationInvite";
-import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
 import { Button, TextInput } from "@/ui";
 import { PlusCircle, Search } from "@/ui/icons";
 import { addEllipsis, copyToClipboard } from "@/utils";
-import { CopyIcon, MoreHorizontal } from "lucide-react";
+import { CopyIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { InviteList } from "./components/InviteList";
+import { MemberList } from "./components/MemberList";
 
 export const Member = () => {
     const { getInviteLink } = useWorkspaceInvite();
-    const { workspace } = useWorkspace();
 
     const [inviteLink, setInviteLink] = useState("");
     const [openInviteModal, setOpenInviteModal] = useState(false);
     const [searchValue, setSearchValue] = useState("");
-    const [isSearchingMembers, setIsSearchingMembers] = useState(false);
-    const [filteredMembers, setFilteredMembers] = useState<UserCountableEdge[] | []>([]);
 
     const handleLinkInvite = async () => {
         const response = await getInviteLink();
@@ -27,21 +24,6 @@ export const Member = () => {
     useEffect(() => {
         handleLinkInvite();
     }, []);
-
-    useEffect(() => {
-        setIsSearchingMembers(Boolean(searchValue));
-
-        if (searchValue) {
-            const filtered = workspace?.members?.edges?.filter((member) =>
-                `${member?.node?.firstName} ${member?.node?.lastName}`
-                    .toLowerCase()
-                    .includes(searchValue.toLowerCase()),
-            );
-            setFilteredMembers(filtered as UserCountableEdge[]);
-        } else {
-            setFilteredMembers([]);
-        }
-    }, [searchValue, workspace?.members?.edges]);
 
     return (
         <div className="w-[810px] pt-10 text-intg-text-4">
@@ -105,48 +87,8 @@ export const Member = () => {
                         }}
                     />
                 </div>
-                <div>
-                    <div>
-                        <p>
-                            {isSearchingMembers
-                                ? `${filteredMembers.length} ${filteredMembers.length === 1 ? "member" : "members"}`
-                                : `${workspace?.memberCount} ${workspace?.memberCount === 1 ? "member" : "members"}`}
-                        </p>
-                        <div>
-                            {isSearchingMembers
-                                ? (filteredMembers as UserCountableEdge[]).map((member, index) => (
-                                      <div key={member.node.id}>
-                                          {index !== 0 && <hr className="border-[1px] border-intg-bg-4" />}
-                                          <div className="flex items-center justify-between px-2 py-3">
-                                              <div className="basis-[60%]">
-                                                  <p className="font-sm font-medium">
-                                                      {member.node.firstName} {member.node.lastName}
-                                                  </p>
-                                                  <p className="font-sm">{member.node.email}</p>
-                                              </div>
-                                              <div className="font-sm basis-[20%]">Owner</div>
-                                              <MoreHorizontal color="#AFAAC7" size={16} className="basis-[10%]" />
-                                          </div>
-                                      </div>
-                                  ))
-                                : workspace?.members?.edges?.map((member, index) => (
-                                      <div key={member?.node?.id}>
-                                          {index !== 0 && <hr className="border-[1px] border-intg-bg-4" />}
-                                          <div className="flex items-center justify-between px-2 py-3">
-                                              <div className="basis-[60%]">
-                                                  <p className="font-sm font-medium">
-                                                      {member?.node?.firstName} {member?.node?.lastName}
-                                                  </p>
-                                                  <p className="font-sm">{member?.node?.email}</p>
-                                              </div>
-                                              <div className="font-sm basis-[20%]">Owner</div>
-                                              <MoreHorizontal color="#AFAAC7" size={16} className="basis-[10%]" />
-                                          </div>
-                                      </div>
-                                  ))}
-                        </div>
-                    </div>
-                </div>
+                <MemberList searchValue={searchValue} setSearchValue={setSearchValue} />
+                <InviteList />
             </div>
         </div>
     );

@@ -1,4 +1,4 @@
-import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { Button, TextInput } from "@/ui";
 import { useForm } from "react-hook-form";
 import { SettingsScreen } from "./SettingsScreen";
@@ -9,7 +9,7 @@ type ProfileData = {
 };
 
 export const Profile = () => {
-    const { updateUser, user } = useCurrentUser();
+    const { updateUser, user } = useAuth();
     const {
         register,
         handleSubmit,

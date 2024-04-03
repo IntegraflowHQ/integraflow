@@ -22,6 +22,15 @@ export const USER = gql`
                     slug
                     name
                     memberCount
+                    invites(first: 100) {
+                        edges {
+                            node {
+                                id
+                                email
+                                role
+                            }
+                        }
+                    }
                     members(first: 100) {
                         edges {
                             node {

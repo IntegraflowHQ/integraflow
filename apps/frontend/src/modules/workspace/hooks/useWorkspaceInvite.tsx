@@ -3,9 +3,11 @@ import { useCallback } from "react";
 import {
     OrganizationInviteCreateInput,
     useOrganizationInviteCreateMutation,
+    useOrganizationInviteDeleteMutation,
     useOrganizationInviteDetailsLazyQuery,
     useOrganizationInviteLinkCreateLazyQuery,
     useOrganizationInviteLinkResetMutation,
+    useOrganizationInviteResendMutation,
     useOrganizationJoinMutation,
 } from "@/generated/graphql";
 
@@ -19,6 +21,8 @@ export const useWorkspaceInvite = () => {
 
     const [emailInvite] = useOrganizationInviteCreateMutation();
     const [resetInviteLink, { loading: loadingLinkReset }] = useOrganizationInviteLinkResetMutation();
+    const [resendInviteLink, {}] = useOrganizationInviteResendMutation();
+    const [revokeInviteLink] = useOrganizationInviteDeleteMutation();
     const [joinOrganization, { loading: joiningOrg }] = useOrganizationJoinMutation();
 
     const handleGetInviteDetails = useCallback(
@@ -101,6 +105,31 @@ export const useWorkspaceInvite = () => {
         }
     }, [resetInviteLink]);
 
+    const handleResendInviteLink = useCallback(async (inviteID: string) => {
+        try {
+            const response = await resendInviteLink({
+                variables: {
+                    id: inviteID,
+                },
+            });
+            return response?.data?.organizationInviteResend;
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+    const handleRevokeInviteLink = useCallback(async (inviteID: string) => {
+        try {
+            const response = await revokeInviteLink({
+                variables: {
+                    id: inviteID,
+                },
+            });
+            return response?.data?.organizationInviteDelete;
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
     return {
         loading: joiningOrg || inviteDetailsLoading || loadingInviteLink || loadingLinkReset,
         getInviteDetails: handleGetInviteDetails,
@@ -108,5 +137,7 @@ export const useWorkspaceInvite = () => {
         emailInvite: handleEmailInvite,
         joinWorkspace: handleJoinWorkspace,
         resetInviteLink: handleResetInviteLink,
+        resendInviteLink: handleResendInviteLink,
+        revokeInviteLink: handleRevokeInviteLink,
     };
 };
