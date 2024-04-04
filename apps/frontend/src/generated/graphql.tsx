@@ -2370,7 +2370,7 @@ export type GoogleUserAuthFragmentFragment = { __typename?: 'GoogleUserAuth', to
 
 export type EmailTokenUserAuthFragmentFragment = { __typename?: 'EmailTokenUserAuth', token?: string | null, refreshToken?: string | null, csrfToken?: string | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, userErrors: Array<{ __typename?: 'UserError', field?: string | null, message?: string | null, code: UserErrorCode }> };
 
-export type UserFragmentFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, invites?: { __typename?: 'OrganizationInviteCountableConnection', edges: Array<{ __typename?: 'OrganizationInviteCountableEdge', node: { __typename?: 'OrganizationInvite', id: string, email: string, role: RoleLevel } }> } | null, members?: { __typename?: 'OrganizationMemberCountableConnection', edges: Array<{ __typename?: 'OrganizationMemberCountableEdge', node: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } }> } | null, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null };
+export type UserFragmentFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, invites?: { __typename?: 'OrganizationInviteCountableConnection', edges: Array<{ __typename?: 'OrganizationInviteCountableEdge', node: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel } }> } | null, members?: { __typename?: 'OrganizationMemberCountableConnection', edges: Array<{ __typename?: 'OrganizationMemberCountableEdge', node: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } }> } | null, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null };
 
 export type EmailTokenUserAuthMutationVariables = Exact<{
   email: Scalars['String'];
@@ -2420,7 +2420,7 @@ export type UserUpdateMutation = { __typename?: 'Mutation', userUpdate?: { __typ
 export type ViewerQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ViewerQuery = { __typename?: 'Query', viewer?: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, invites?: { __typename?: 'OrganizationInviteCountableConnection', edges: Array<{ __typename?: 'OrganizationInviteCountableEdge', node: { __typename?: 'OrganizationInvite', id: string, email: string, role: RoleLevel } }> } | null, members?: { __typename?: 'OrganizationMemberCountableConnection', edges: Array<{ __typename?: 'OrganizationMemberCountableEdge', node: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } }> } | null, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } | null };
+export type ViewerQuery = { __typename?: 'Query', viewer?: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, invites?: { __typename?: 'OrganizationInviteCountableConnection', edges: Array<{ __typename?: 'OrganizationInviteCountableEdge', node: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel } }> } | null, members?: { __typename?: 'OrganizationMemberCountableConnection', edges: Array<{ __typename?: 'OrganizationMemberCountableEdge', node: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } }> } | null, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } | null };
 
 export type CompleteOnboardingStageMutationVariables = Exact<{
   input: ProjectUpdateInput;
@@ -2604,6 +2604,10 @@ export type GetSurveyListQueryVariables = Exact<{
 
 export type GetSurveyListQuery = { __typename?: 'Query', surveys?: { __typename?: 'SurveyCountableConnection', totalCount?: number | null, edges: Array<{ __typename?: 'SurveyCountableEdge', node: { __typename?: 'Survey', id: string, slug: string, name?: string | null, status: SurveyStatusEnum, createdAt: string, updatedAt: string, reference?: string | null, creator: { __typename?: 'User', firstName: string, lastName: string, email: string } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, endCursor?: string | null, startCursor?: string | null } } | null };
 
+export type OrganizationFragmentFragment = { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, invites?: { __typename?: 'OrganizationInviteCountableConnection', edges: Array<{ __typename?: 'OrganizationInviteCountableEdge', node: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel } }> } | null, members?: { __typename?: 'OrganizationMemberCountableConnection', edges: Array<{ __typename?: 'OrganizationMemberCountableEdge', node: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } }> } | null, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null };
+
+export type OrganizationMembershipFragmentFragment = { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel };
+
 export type OrganizationCreateFragmentFragment = { __typename?: 'OrganizationCreate', organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
 
 export type OrganizationErrorFragmentFragment = { __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode };
@@ -2626,12 +2630,9 @@ export type ResendOrganizationInviteLinkFragmentFragment = { __typename?: 'Organ
 
 export type OrganizationInviteDeleteFragmentFragment = { __typename?: 'OrganizationInviteDelete', organizationInvite?: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel, createdAt: string, updatedAt: string, expired: boolean, inviter: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean }, organization: { __typename?: 'Organization', id: string } } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
 
-export type OrganizationInviteDeleteMutationVariables = Exact<{
-  id: Scalars['ID'];
-}>;
+export type OrganizationLeaveFragmentFragment = { __typename?: 'OrganizationLeave', organization?: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, invites?: { __typename?: 'OrganizationInviteCountableConnection', edges: Array<{ __typename?: 'OrganizationInviteCountableEdge', node: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel } }> } | null, members?: { __typename?: 'OrganizationMemberCountableConnection', edges: Array<{ __typename?: 'OrganizationMemberCountableEdge', node: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } }> } | null, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
 
-
-export type OrganizationInviteDeleteMutation = { __typename?: 'Mutation', organizationInviteDelete?: { __typename?: 'OrganizationInviteDelete', organizationInvite?: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel, createdAt: string, updatedAt: string, expired: boolean, inviter: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean }, organization: { __typename?: 'Organization', id: string } } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
+export type OrganizationMemberLeaveFragmentFragment = { __typename?: 'OrganizationMemberLeave', organizationMembership?: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
 
 export type OrganizationCreateMutationVariables = Exact<{
   input: OrganizationCreateInput;
@@ -2641,19 +2642,26 @@ export type OrganizationCreateMutationVariables = Exact<{
 
 export type OrganizationCreateMutation = { __typename?: 'Mutation', organizationCreate?: { __typename?: 'OrganizationCreate', organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, user?: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
 
+export type OrganizationLeaveMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type OrganizationLeaveMutation = { __typename?: 'Mutation', organizationLeave?: { __typename?: 'OrganizationLeave', organization?: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, invites?: { __typename?: 'OrganizationInviteCountableConnection', edges: Array<{ __typename?: 'OrganizationInviteCountableEdge', node: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel } }> } | null, members?: { __typename?: 'OrganizationMemberCountableConnection', edges: Array<{ __typename?: 'OrganizationMemberCountableEdge', node: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } }> } | null, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
+
+export type OrganizationMemberLeaveMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type OrganizationMemberLeaveMutation = { __typename?: 'Mutation', organizationMemberLeave?: { __typename?: 'OrganizationMemberLeave', organizationMembership?: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
+
 export type OrganizationInviteCreateMutationVariables = Exact<{
   input: OrganizationInviteCreateInput;
 }>;
 
 
 export type OrganizationInviteCreateMutation = { __typename?: 'Mutation', organizationInviteCreate?: { __typename?: 'OrganizationInviteCreate', organizationInvite?: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel, createdAt: string, updatedAt: string, expired: boolean, inviter: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean }, organization: { __typename?: 'Organization', id: string } } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
-
-export type OrganizationInviteResendMutationVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type OrganizationInviteResendMutation = { __typename?: 'Mutation', organizationInviteResend?: { __typename?: 'OrganizationInviteResend', organizationInvite?: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel, createdAt: string, updatedAt: string, expired: boolean, inviter: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean }, organization: { __typename?: 'Organization', id: string } } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
 
 export type OrganizationJoinMutationVariables = Exact<{
   input: OrganizationJoinInput;
@@ -2662,10 +2670,24 @@ export type OrganizationJoinMutationVariables = Exact<{
 
 export type OrganizationJoinMutation = { __typename?: 'Mutation', organizationJoin?: { __typename?: 'OrganizationJoin', user: { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null }, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
 
+export type OrganizationInviteResendMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type OrganizationInviteResendMutation = { __typename?: 'Mutation', organizationInviteResend?: { __typename?: 'OrganizationInviteResend', organizationInvite?: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel, createdAt: string, updatedAt: string, expired: boolean, inviter: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean }, organization: { __typename?: 'Organization', id: string } } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
+
 export type OrganizationInviteLinkResetMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type OrganizationInviteLinkResetMutation = { __typename?: 'Mutation', organizationInviteLinkReset?: { __typename?: 'OrganizationInviteLinkReset', inviteLink?: string | null, success?: boolean | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
+
+export type OrganizationInviteDeleteMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type OrganizationInviteDeleteMutation = { __typename?: 'Mutation', organizationInviteDelete?: { __typename?: 'OrganizationInviteDelete', organizationInvite?: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel, createdAt: string, updatedAt: string, expired: boolean, inviter: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean }, organization: { __typename?: 'Organization', id: string } } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
 
 export type OrganizationInviteDetailsQueryVariables = Exact<{
   inviteLink: Scalars['String'];
@@ -2754,6 +2776,42 @@ export const EmailTokenUserAuthFragmentFragmentDoc = gql`
 }
     ${AuthUserFragmentFragmentDoc}
 ${UserErrorFragmentFragmentDoc}`;
+export const OrganizationFragmentFragmentDoc = gql`
+    fragment OrganizationFragment on Organization {
+  id
+  slug
+  name
+  memberCount
+  invites(first: 100) {
+    edges {
+      node {
+        id
+        email
+        firstName
+        role
+      }
+    }
+  }
+  members(first: 100) {
+    edges {
+      node {
+        id
+        email
+        firstName
+        lastName
+        role
+      }
+    }
+  }
+  projects(first: 100) {
+    edges {
+      node {
+        ...ProjectFragment
+      }
+    }
+  }
+}
+    ${ProjectFragmentFragmentDoc}`;
 export const UserFragmentFragmentDoc = gql`
     fragment UserFragment on User {
   id
@@ -2772,43 +2830,14 @@ export const UserFragmentFragmentDoc = gql`
   organizations(first: 50) {
     edges {
       node {
-        id
-        slug
-        name
-        memberCount
-        invites(first: 100) {
-          edges {
-            node {
-              id
-              email
-              role
-            }
-          }
-        }
-        members(first: 100) {
-          edges {
-            node {
-              id
-              email
-              firstName
-              lastName
-              role
-            }
-          }
-        }
-        projects(first: 100) {
-          edges {
-            node {
-              ...ProjectFragment
-            }
-          }
-        }
+        ...OrganizationFragment
       }
     }
   }
 }
     ${AuthOrganizationFragmentFragmentDoc}
-${ProjectFragmentFragmentDoc}`;
+${ProjectFragmentFragmentDoc}
+${OrganizationFragmentFragmentDoc}`;
 export const ProjectErrorFragmentFragmentDoc = gql`
     fragment ProjectErrorFragment on ProjectError {
   field
@@ -3098,6 +3127,43 @@ export const OrganizationInviteDeleteFragmentFragmentDoc = gql`
   }
 }
     ${OrganizationInviteFragmentFragmentDoc}
+${OrganizationErrorFragmentFragmentDoc}`;
+export const OrganizationLeaveFragmentFragmentDoc = gql`
+    fragment OrganizationLeaveFragment on OrganizationLeave {
+  organization {
+    ...OrganizationFragment
+  }
+  organizationErrors {
+    ...OrganizationErrorFragment
+  }
+  errors {
+    ...OrganizationErrorFragment
+  }
+}
+    ${OrganizationFragmentFragmentDoc}
+${OrganizationErrorFragmentFragmentDoc}`;
+export const OrganizationMembershipFragmentFragmentDoc = gql`
+    fragment OrganizationMembershipFragment on OrganizationMember {
+  id
+  email
+  firstName
+  lastName
+  role
+}
+    `;
+export const OrganizationMemberLeaveFragmentFragmentDoc = gql`
+    fragment OrganizationMemberLeaveFragment on OrganizationMemberLeave {
+  organizationMembership {
+    ...OrganizationMembershipFragment
+  }
+  organizationErrors {
+    ...OrganizationErrorFragment
+  }
+  errors {
+    ...OrganizationErrorFragment
+  }
+}
+    ${OrganizationMembershipFragmentFragmentDoc}
 ${OrganizationErrorFragmentFragmentDoc}`;
 export const EmailTokenUserAuthDocument = gql`
     mutation emailTokenUserAuth($email: String!, $token: String!, $inviteLink: String) {
@@ -4287,39 +4353,6 @@ export function useGetSurveyListLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetSurveyListQueryHookResult = ReturnType<typeof useGetSurveyListQuery>;
 export type GetSurveyListLazyQueryHookResult = ReturnType<typeof useGetSurveyListLazyQuery>;
 export type GetSurveyListQueryResult = Apollo.QueryResult<GetSurveyListQuery, GetSurveyListQueryVariables>;
-export const OrganizationInviteDeleteDocument = gql`
-    mutation OrganizationInviteDelete($id: ID!) {
-  organizationInviteDelete(id: $id) {
-    ...OrganizationInviteDeleteFragment
-  }
-}
-    ${OrganizationInviteDeleteFragmentFragmentDoc}`;
-export type OrganizationInviteDeleteMutationFn = Apollo.MutationFunction<OrganizationInviteDeleteMutation, OrganizationInviteDeleteMutationVariables>;
-
-/**
- * __useOrganizationInviteDeleteMutation__
- *
- * To run a mutation, you first call `useOrganizationInviteDeleteMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useOrganizationInviteDeleteMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [organizationInviteDeleteMutation, { data, loading, error }] = useOrganizationInviteDeleteMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useOrganizationInviteDeleteMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationInviteDeleteMutation, OrganizationInviteDeleteMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<OrganizationInviteDeleteMutation, OrganizationInviteDeleteMutationVariables>(OrganizationInviteDeleteDocument, options);
-      }
-export type OrganizationInviteDeleteMutationHookResult = ReturnType<typeof useOrganizationInviteDeleteMutation>;
-export type OrganizationInviteDeleteMutationResult = Apollo.MutationResult<OrganizationInviteDeleteMutation>;
-export type OrganizationInviteDeleteMutationOptions = Apollo.BaseMutationOptions<OrganizationInviteDeleteMutation, OrganizationInviteDeleteMutationVariables>;
 export const OrganizationCreateDocument = gql`
     mutation organizationCreate($input: OrganizationCreateInput!, $survey: OnboardingCustomerSurvey) {
   organizationCreate(input: $input, survey: $survey) {
@@ -4354,6 +4387,72 @@ export function useOrganizationCreateMutation(baseOptions?: Apollo.MutationHookO
 export type OrganizationCreateMutationHookResult = ReturnType<typeof useOrganizationCreateMutation>;
 export type OrganizationCreateMutationResult = Apollo.MutationResult<OrganizationCreateMutation>;
 export type OrganizationCreateMutationOptions = Apollo.BaseMutationOptions<OrganizationCreateMutation, OrganizationCreateMutationVariables>;
+export const OrganizationLeaveDocument = gql`
+    mutation OrganizationLeave($id: ID!) {
+  organizationLeave(id: $id) {
+    ...OrganizationLeaveFragment
+  }
+}
+    ${OrganizationLeaveFragmentFragmentDoc}`;
+export type OrganizationLeaveMutationFn = Apollo.MutationFunction<OrganizationLeaveMutation, OrganizationLeaveMutationVariables>;
+
+/**
+ * __useOrganizationLeaveMutation__
+ *
+ * To run a mutation, you first call `useOrganizationLeaveMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationLeaveMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [organizationLeaveMutation, { data, loading, error }] = useOrganizationLeaveMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useOrganizationLeaveMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationLeaveMutation, OrganizationLeaveMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OrganizationLeaveMutation, OrganizationLeaveMutationVariables>(OrganizationLeaveDocument, options);
+      }
+export type OrganizationLeaveMutationHookResult = ReturnType<typeof useOrganizationLeaveMutation>;
+export type OrganizationLeaveMutationResult = Apollo.MutationResult<OrganizationLeaveMutation>;
+export type OrganizationLeaveMutationOptions = Apollo.BaseMutationOptions<OrganizationLeaveMutation, OrganizationLeaveMutationVariables>;
+export const OrganizationMemberLeaveDocument = gql`
+    mutation OrganizationMemberLeave($id: ID!) {
+  organizationMemberLeave(id: $id) {
+    ...OrganizationMemberLeaveFragment
+  }
+}
+    ${OrganizationMemberLeaveFragmentFragmentDoc}`;
+export type OrganizationMemberLeaveMutationFn = Apollo.MutationFunction<OrganizationMemberLeaveMutation, OrganizationMemberLeaveMutationVariables>;
+
+/**
+ * __useOrganizationMemberLeaveMutation__
+ *
+ * To run a mutation, you first call `useOrganizationMemberLeaveMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationMemberLeaveMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [organizationMemberLeaveMutation, { data, loading, error }] = useOrganizationMemberLeaveMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useOrganizationMemberLeaveMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationMemberLeaveMutation, OrganizationMemberLeaveMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OrganizationMemberLeaveMutation, OrganizationMemberLeaveMutationVariables>(OrganizationMemberLeaveDocument, options);
+      }
+export type OrganizationMemberLeaveMutationHookResult = ReturnType<typeof useOrganizationMemberLeaveMutation>;
+export type OrganizationMemberLeaveMutationResult = Apollo.MutationResult<OrganizationMemberLeaveMutation>;
+export type OrganizationMemberLeaveMutationOptions = Apollo.BaseMutationOptions<OrganizationMemberLeaveMutation, OrganizationMemberLeaveMutationVariables>;
 export const OrganizationInviteCreateDocument = gql`
     mutation organizationInviteCreate($input: OrganizationInviteCreateInput!) {
   organizationInviteCreate(input: $input) {
@@ -4387,39 +4486,6 @@ export function useOrganizationInviteCreateMutation(baseOptions?: Apollo.Mutatio
 export type OrganizationInviteCreateMutationHookResult = ReturnType<typeof useOrganizationInviteCreateMutation>;
 export type OrganizationInviteCreateMutationResult = Apollo.MutationResult<OrganizationInviteCreateMutation>;
 export type OrganizationInviteCreateMutationOptions = Apollo.BaseMutationOptions<OrganizationInviteCreateMutation, OrganizationInviteCreateMutationVariables>;
-export const OrganizationInviteResendDocument = gql`
-    mutation OrganizationInviteResend($id: ID!) {
-  organizationInviteResend(id: $id) {
-    ...ResendOrganizationInviteLinkFragment
-  }
-}
-    ${ResendOrganizationInviteLinkFragmentFragmentDoc}`;
-export type OrganizationInviteResendMutationFn = Apollo.MutationFunction<OrganizationInviteResendMutation, OrganizationInviteResendMutationVariables>;
-
-/**
- * __useOrganizationInviteResendMutation__
- *
- * To run a mutation, you first call `useOrganizationInviteResendMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useOrganizationInviteResendMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [organizationInviteResendMutation, { data, loading, error }] = useOrganizationInviteResendMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useOrganizationInviteResendMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationInviteResendMutation, OrganizationInviteResendMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<OrganizationInviteResendMutation, OrganizationInviteResendMutationVariables>(OrganizationInviteResendDocument, options);
-      }
-export type OrganizationInviteResendMutationHookResult = ReturnType<typeof useOrganizationInviteResendMutation>;
-export type OrganizationInviteResendMutationResult = Apollo.MutationResult<OrganizationInviteResendMutation>;
-export type OrganizationInviteResendMutationOptions = Apollo.BaseMutationOptions<OrganizationInviteResendMutation, OrganizationInviteResendMutationVariables>;
 export const OrganizationJoinDocument = gql`
     mutation OrganizationJoin($input: OrganizationJoinInput!) {
   organizationJoin(input: $input) {
@@ -4453,6 +4519,39 @@ export function useOrganizationJoinMutation(baseOptions?: Apollo.MutationHookOpt
 export type OrganizationJoinMutationHookResult = ReturnType<typeof useOrganizationJoinMutation>;
 export type OrganizationJoinMutationResult = Apollo.MutationResult<OrganizationJoinMutation>;
 export type OrganizationJoinMutationOptions = Apollo.BaseMutationOptions<OrganizationJoinMutation, OrganizationJoinMutationVariables>;
+export const OrganizationInviteResendDocument = gql`
+    mutation OrganizationInviteResend($id: ID!) {
+  organizationInviteResend(id: $id) {
+    ...ResendOrganizationInviteLinkFragment
+  }
+}
+    ${ResendOrganizationInviteLinkFragmentFragmentDoc}`;
+export type OrganizationInviteResendMutationFn = Apollo.MutationFunction<OrganizationInviteResendMutation, OrganizationInviteResendMutationVariables>;
+
+/**
+ * __useOrganizationInviteResendMutation__
+ *
+ * To run a mutation, you first call `useOrganizationInviteResendMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationInviteResendMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [organizationInviteResendMutation, { data, loading, error }] = useOrganizationInviteResendMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useOrganizationInviteResendMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationInviteResendMutation, OrganizationInviteResendMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OrganizationInviteResendMutation, OrganizationInviteResendMutationVariables>(OrganizationInviteResendDocument, options);
+      }
+export type OrganizationInviteResendMutationHookResult = ReturnType<typeof useOrganizationInviteResendMutation>;
+export type OrganizationInviteResendMutationResult = Apollo.MutationResult<OrganizationInviteResendMutation>;
+export type OrganizationInviteResendMutationOptions = Apollo.BaseMutationOptions<OrganizationInviteResendMutation, OrganizationInviteResendMutationVariables>;
 export const OrganizationInviteLinkResetDocument = gql`
     mutation organizationInviteLinkReset {
   organizationInviteLinkReset {
@@ -4485,6 +4584,39 @@ export function useOrganizationInviteLinkResetMutation(baseOptions?: Apollo.Muta
 export type OrganizationInviteLinkResetMutationHookResult = ReturnType<typeof useOrganizationInviteLinkResetMutation>;
 export type OrganizationInviteLinkResetMutationResult = Apollo.MutationResult<OrganizationInviteLinkResetMutation>;
 export type OrganizationInviteLinkResetMutationOptions = Apollo.BaseMutationOptions<OrganizationInviteLinkResetMutation, OrganizationInviteLinkResetMutationVariables>;
+export const OrganizationInviteDeleteDocument = gql`
+    mutation OrganizationInviteDelete($id: ID!) {
+  organizationInviteDelete(id: $id) {
+    ...OrganizationInviteDeleteFragment
+  }
+}
+    ${OrganizationInviteDeleteFragmentFragmentDoc}`;
+export type OrganizationInviteDeleteMutationFn = Apollo.MutationFunction<OrganizationInviteDeleteMutation, OrganizationInviteDeleteMutationVariables>;
+
+/**
+ * __useOrganizationInviteDeleteMutation__
+ *
+ * To run a mutation, you first call `useOrganizationInviteDeleteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationInviteDeleteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [organizationInviteDeleteMutation, { data, loading, error }] = useOrganizationInviteDeleteMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useOrganizationInviteDeleteMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationInviteDeleteMutation, OrganizationInviteDeleteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OrganizationInviteDeleteMutation, OrganizationInviteDeleteMutationVariables>(OrganizationInviteDeleteDocument, options);
+      }
+export type OrganizationInviteDeleteMutationHookResult = ReturnType<typeof useOrganizationInviteDeleteMutation>;
+export type OrganizationInviteDeleteMutationResult = Apollo.MutationResult<OrganizationInviteDeleteMutation>;
+export type OrganizationInviteDeleteMutationOptions = Apollo.BaseMutationOptions<OrganizationInviteDeleteMutation, OrganizationInviteDeleteMutationVariables>;
 export const OrganizationInviteDetailsDocument = gql`
     query organizationInviteDetails($inviteLink: String!) {
   organizationInviteDetails(inviteLink: $inviteLink) {

@@ -87,7 +87,7 @@ export const Member = () => {
                         }}
                     />
                 </div>
-                <MemberList searchValue={searchValue} setSearchValue={setSearchValue} />
+                <MemberList searchValue={searchValue} />
                 <InviteList />
             </div>
         </div>

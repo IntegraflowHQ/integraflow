@@ -9,6 +9,8 @@ import {
     useOrganizationInviteLinkResetMutation,
     useOrganizationInviteResendMutation,
     useOrganizationJoinMutation,
+    useOrganizationLeaveMutation,
+    useOrganizationMemberLeaveMutation,
 } from "@/generated/graphql";
 
 import { useAuth } from "@/modules/auth/hooks/useAuth";
@@ -21,8 +23,10 @@ export const useWorkspaceInvite = () => {
 
     const [emailInvite] = useOrganizationInviteCreateMutation();
     const [resetInviteLink, { loading: loadingLinkReset }] = useOrganizationInviteLinkResetMutation();
-    const [resendInviteLink, {}] = useOrganizationInviteResendMutation();
+    const [resendInviteLink] = useOrganizationInviteResendMutation();
     const [revokeInviteLink] = useOrganizationInviteDeleteMutation();
+    const [removeOrganizationMember] = useOrganizationMemberLeaveMutation();
+    const [leaveOrganization] = useOrganizationLeaveMutation();
     const [joinOrganization, { loading: joiningOrg }] = useOrganizationJoinMutation();
 
     const handleGetInviteDetails = useCallback(
@@ -129,6 +133,30 @@ export const useWorkspaceInvite = () => {
             console.error(error);
         }
     }, []);
+    const handleMemberLeave = useCallback(async (organizationId: string) => {
+        try {
+            const response = await leaveOrganization({
+                variables: {
+                    id: organizationId,
+                },
+            });
+            return response?.data?.organizationLeave;
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+    const handleRemoveMember = useCallback(async (memberId: string) => {
+        try {
+            const response = await removeOrganizationMember({
+                variables: {
+                    id: memberId,
+                },
+            });
+            return response?.data?.organizationMemberLeave;
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
 
     return {
         loading: joiningOrg || inviteDetailsLoading || loadingInviteLink || loadingLinkReset,
@@ -139,5 +167,7 @@ export const useWorkspaceInvite = () => {
         resetInviteLink: handleResetInviteLink,
         resendInviteLink: handleResendInviteLink,
         revokeInviteLink: handleRevokeInviteLink,
+        removeOrganizationMember: handleRemoveMember,
+        leaveOrganization: handleMemberLeave,
     };
 };

@@ -1,12 +1,14 @@
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
 import { toast } from "@/utils/toast";
-import * as Popover from "@radix-ui/react-popover";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 
 export const InviteList = () => {
     const { workspace } = useWorkspace();
     const { resendInviteLink, revokeInviteLink } = useWorkspaceInvite();
+
+    console.log(workspace);
 
     const handleResendInviteLink = async (id: string) => {
         const response = await resendInviteLink(id);
@@ -24,7 +26,7 @@ export const InviteList = () => {
         const response = await revokeInviteLink(id);
         console.log(response);
         if (response?.organizationInvite) {
-            toast.success(`A new link has been sent to the ${response.organizationInvite.email}`);
+            toast.success(`The invite sent to ${response.organizationInvite.email} has been revoked `);
             return;
         }
         if (response?.organizationErrors.length) {
@@ -47,36 +49,36 @@ export const InviteList = () => {
                                 </p>
                                 <p className="font-sm">{invite?.node?.email}</p>
                             </div>
-                            <Popover.Root>
-                                <Popover.Trigger asChild>
+                            <DropdownMenu.Root>
+                                <DropdownMenu.Trigger asChild>
                                     <button className="w-fit rounded-md px-1 py-1 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 data-[state=a]:bg-intg-bg-1">
                                         <MoreHorizontal color="#AFAAC7" />
                                     </button>
-                                </Popover.Trigger>
+                                </DropdownMenu.Trigger>
 
-                                <Popover.Portal>
-                                    <Popover.Content
+                                <DropdownMenu.Portal>
+                                    <DropdownMenu.Content
                                         align="end"
                                         alignOffset={5}
                                         className="w-[140px] rounded-md border border-intg-bg-4 bg-intg-bg-8 px-3 py-4"
                                     >
-                                        <div
+                                        <DropdownMenu.Item
                                             onClick={() => {
                                                 handleResendInviteLink(invite?.node?.id as string);
                                             }}
                                             className="flex gap-[6px] rounded-md px-2 py-[7px] text-sm font-normal text-intg-text-4 hover:cursor-pointer hover:bg-intg-bg-1"
                                         >
                                             Resend Invite
-                                        </div>
-                                        <div
+                                        </DropdownMenu.Item>
+                                        <DropdownMenu.Item
                                             onClick={() => handleRevokeInviteLink(invite?.node?.id as string)}
                                             className="flex gap-[6px] rounded-md px-2 py-[7px] text-sm font-normal text-intg-text-4 hover:cursor-pointer hover:bg-intg-bg-1"
                                         >
                                             Revoke Invite
-                                        </div>
-                                    </Popover.Content>
-                                </Popover.Portal>
-                            </Popover.Root>
+                                        </DropdownMenu.Item>
+                                    </DropdownMenu.Content>
+                                </DropdownMenu.Portal>
+                            </DropdownMenu.Root>
                         </div>
                         {index !== 0 && <hr className="border-[1px] border-intg-bg-4" />}
                     </div>

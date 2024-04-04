@@ -1,5 +1,52 @@
 import { gql } from "@apollo/client";
 
+export const ORGANIZATION = gql`
+    fragment OrganizationFragment on Organization {
+        id
+        slug
+        name
+        memberCount
+        invites(first: 100) {
+            edges {
+                node {
+                    id
+                    email
+                    firstName
+                    role
+                }
+            }
+        }
+        members(first: 100) {
+            edges {
+                node {
+                    id
+                    email
+                    firstName
+                    lastName
+                    role
+                }
+            }
+        }
+        projects(first: 100) {
+            edges {
+                node {
+                    ...ProjectFragment
+                }
+            }
+        }
+    }
+`;
+
+export const ORGANIZATION_MEMBERSHIP = gql`
+    fragment OrganizationMembershipFragment on OrganizationMember {
+        id
+        email
+        firstName
+        lastName
+        role
+    }
+`;
+
 export const ORGANIZATION_CREATE = gql`
     fragment OrganizationCreateFragment on OrganizationCreate {
         organization {
@@ -146,8 +193,21 @@ export const RESEND_ORGANIZATION_INVITE_DELETE = gql`
 `;
 export const ORGANIZATION_LEAVE = gql`
     fragment OrganizationLeaveFragment on OrganizationLeave {
-        organizationLeave {
-            ...OrganizationInviteFragment
+        organization {
+            ...OrganizationFragment
+        }
+        organizationErrors {
+            ...OrganizationErrorFragment
+        }
+        errors {
+            ...OrganizationErrorFragment
+        }
+    }
+`;
+export const ORGANIZATION_MEMBER_LEAVE = gql`
+    fragment OrganizationMemberLeaveFragment on OrganizationMemberLeave {
+        organizationMembership {
+            ...OrganizationMembershipFragment
         }
         organizationErrors {
             ...OrganizationErrorFragment
