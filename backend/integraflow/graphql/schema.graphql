@@ -1863,6 +1863,19 @@ type Mutation {
   ): OrganizationMemberLeave @doc(category: "Organizations")
 
   """
+  Updates an organization member. 
+  
+  Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+  """
+  organizationMemberUpdate(
+    """ID of the member to update."""
+    id: ID!
+
+    """A partial object to update the organization member with."""
+    input: OrganizationMemberUpdateInput!
+  ): OrganizationMemberUpdate @doc(category: "Organizations")
+
+  """
   Updates an organization. 
   
   Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
@@ -2652,6 +2665,22 @@ type OrganizationMemberLeave @doc(category: "Organizations") {
   organizationErrors: [OrganizationError!]!
   errors: [OrganizationError!]!
   organizationMembership: OrganizationMember
+}
+
+"""
+Updates an organization member. 
+
+Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+"""
+type OrganizationMemberUpdate @doc(category: "Organizations") {
+  organizationErrors: [OrganizationError!]!
+  errors: [OrganizationError!]!
+  organizationMembership: OrganizationMember
+}
+
+input OrganizationMemberUpdateInput @doc(category: "Organizations") {
+  """What member role to grant."""
+  role: RoleLevel = 1
 }
 
 """
