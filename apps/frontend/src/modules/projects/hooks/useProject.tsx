@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useCallback, useMemo } from "react";
 
 import {
     EventDefinition,
@@ -12,89 +11,17 @@ import {
     useProjectUpdateMutation,
 } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
-import { useRedirect } from "@/modules/auth/hooks/useRedirect";
-import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
-import { convertToAuthOrganization } from "@/modules/users/states/user";
+import { convertToAuthOrganization } from "@/modules/auth/states/user";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
-import { useApolloClient } from "@apollo/client";
 import { EventProperties } from "@integraflow/web/src/types";
 
 export const useProject = () => {
-    const { currentProjectId, switchProject } = useAuth();
-    const { workspace, projects, updateWorkspace } = useWorkspace();
-    const { user, updateUser } = useCurrentUser();
-    const { orgSlug, projectSlug } = useParams();
-    const redirect = useRedirect();
-
+    const { workspace, project, updateUser, switchProject } = useAuth();
+    const { updateWorkspace } = useWorkspace();
     const [projectCreate] = useProjectCreateMutation();
     const [projectUpdate] = useProjectUpdateMutation();
     const { data: eventsData } = useProjectEventsDataQuery();
     const { data: audienceProperties } = useAudiencePropertiesQuery();
-    const client = useApolloClient();
-
-    const project = useMemo(() => {
-        if (!workspace) {
-            return null;
-        }
-
-        if (orgSlug && !projectSlug) {
-            return projects?.[0] ?? null;
-        }
-
-        const slug = projectSlug ?? user?.project?.slug;
-
-        return projects?.find((project) => project?.slug === slug) ?? null;
-    }, [user, orgSlug, projectSlug, projects, workspace]);
-
-    const handleSwitchProject = useCallback(
-        (project: Project) => {
-            const organization = project.organization ?? workspace;
-
-            const updatedUser = {
-                organization,
-                project,
-            };
-
-            updateUser(updatedUser, true);
-
-            if (currentProjectId !== project.id) {
-                switchProject(project.id);
-            }
-
-            if (orgSlug !== organization?.slug || projectSlug !== project.slug) {
-                redirect({
-                    ...(user ?? {}),
-                    ...updatedUser,
-                });
-            }
-
-            client.clearStore();
-            client.cache.reset();
-        },
-        [currentProjectId, orgSlug, projectSlug, redirect, switchProject, updateUser, user, workspace, client],
-    );
-
-    useEffect(() => {
-        const newProject = project ?? projects?.[0];
-
-        if (
-            workspace &&
-            newProject &&
-            (workspace.id !== user?.organization?.id || newProject.id !== user?.project?.id)
-        ) {
-            updateUser(
-                {
-                    organization: convertToAuthOrganization(workspace),
-                    project: newProject,
-                },
-                true,
-            );
-
-            if (newProject.id && currentProjectId !== newProject.id) {
-                handleSwitchProject(newProject as Project);
-            }
-        }
-    }, [user, projects, workspace, updateUser, project, currentProjectId, handleSwitchProject]);
 
     const handleAddProject = useCallback(
         (project: Project) => {
@@ -108,9 +35,9 @@ export const useProject = () => {
             };
             updateWorkspace(organization);
 
-            handleSwitchProject(project);
+            switchProject(project);
         },
-        [handleSwitchProject, updateWorkspace, workspace],
+        [switchProject, updateWorkspace, workspace],
     );
 
     const handleCreateProject = useCallback(
@@ -250,7 +177,6 @@ export const useProject = () => {
         getPropertyDefinition,
         addProject: handleAddProject,
         createProject: handleCreateProject,
-        switchProject: handleSwitchProject,
         updateProject: handleUpdateProject,
     };
 };

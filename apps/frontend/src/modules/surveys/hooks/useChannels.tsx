@@ -4,7 +4,7 @@ import {
     type ChannelContextValue,
 } from "../contexts/ChannelProvider";
 
-export default function () {
+export default function useChannels() {
     const context = useContext(ChannelContext);
     if (context === null) {
         throw new Error(

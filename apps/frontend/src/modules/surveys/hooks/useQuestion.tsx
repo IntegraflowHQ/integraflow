@@ -17,6 +17,8 @@ import { SURVEY_QUESTION } from "../graphql/fragments/surveyFragment";
 import { useQuestionStore } from "../states/question";
 import { useSurvey } from "./useSurvey";
 
+const TEMP_ID_PREFIX = "temp-";
+
 export const useQuestion = () => {
     const { surveySlug } = useParams();
     const { parsedQuestions: questions, surveyId, survey } = useSurvey();
@@ -24,6 +26,7 @@ export const useQuestion = () => {
     const {
         question: activeQuestion,
         switchQuestion,
+        updateId,
         updateQuestion: upsertQuestion,
         clear,
     } = useQuestionStore((state) => state);
@@ -34,6 +37,7 @@ export const useQuestion = () => {
 
     const createQuestion = async (input: Partial<SurveyQuestionCreateInput>) => {
         const id = crypto.randomUUID();
+        const tempId = `${TEMP_ID_PREFIX}${id}`;
         if (!surveyId) return;
         if (input.options) input.options = JSON.stringify([...input.options]);
         if (input.settings) input.settings = JSON.stringify({ ...input.settings });
@@ -44,6 +48,7 @@ export const useQuestion = () => {
                     label: "Enter your text",
                     orderNumber: questions.length + 1,
                     surveyId: surveyId,
+                    id,
                 },
             },
             optimisticResponse: {
@@ -52,7 +57,7 @@ export const useQuestion = () => {
                     __typename: "SurveyQuestionCreate",
                     surveyQuestion: {
                         __typename: "SurveyQuestion",
-                        id: id,
+                        id: tempId,
                         createdAt: new Date().toISOString(),
                         label: "Enter your text",
                         description: input.description ?? "",
@@ -71,10 +76,6 @@ export const useQuestion = () => {
             update: (cache, { data }) => {
                 if (!data?.surveyQuestionCreate?.surveyQuestion) {
                     return;
-                }
-
-                if (!activeQuestion || activeQuestion?.id !== data.surveyQuestionCreate.surveyQuestion.id) {
-                    switchQuestion(parseQuestion(data.surveyQuestionCreate?.surveyQuestion as SurveyQuestion));
                 }
 
                 cache.modify({
@@ -99,11 +100,21 @@ export const useQuestion = () => {
                         },
                     },
                 });
+
+                if (data.surveyQuestionCreate.surveyQuestion.id === tempId) {
+                    switchQuestion(parseQuestion(data.surveyQuestionCreate?.surveyQuestion as SurveyQuestion));
+                } else {
+                    updateId(tempId, data.surveyQuestionCreate.surveyQuestion.id);
+                }
             },
         });
     };
 
     const questionUpdate = async (input: Partial<SurveyQuestionUpdateInput>) => {
+        if (!activeQuestion || (activeQuestion && activeQuestion.id.startsWith(TEMP_ID_PREFIX))) {
+            return;
+        }
+
         if (input.options) input.options = JSON.stringify([...input.options]);
 
         if (input.settings) input.settings = JSON.stringify({ ...input.settings });

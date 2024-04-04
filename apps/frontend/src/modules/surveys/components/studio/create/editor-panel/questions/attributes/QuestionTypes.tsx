@@ -1,15 +1,15 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { surveyTypes } from "@/modules/surveys/components/Templates";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { Button } from "@/ui";
 import { cn } from "@/utils";
+import { getDefaultValues } from "@/utils/question/defaultOptions";
 import { questionTypes } from "@/utils/survey";
 import { CTAType } from "@integraflow/web/src/types";
 import { PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-import ScrollToBottom, { useScrollToBottom } from "react-scroll-to-bottom";
-import { getDefaultValues } from "../../../../../../../../utils/question/defaultOptions";
-import { surveyTypes } from "../../../../../Templates";
+import { useScrollToBottom } from "react-scroll-to-bottom";
 
 export const QuestionOptions = () => {
     const [currentView, setCurrentView] = useState<string>("Welcome message");
@@ -63,13 +63,13 @@ export const QuestionOptions = () => {
     };
 
     return (
-        <ScrollToBottom className="space-y-2">
+        <div className="space-y-2">
             <div className="flex gap-2">
                 <Button
                     className="flex items-center gap-2 px-[12px] py-[12px]"
                     onClick={() => {
                         setShowQuestionTypes(!showQuestionTypes);
-                        scrollToBottom();
+                        scrollToBottom({ behavior: "smooth" });
                     }}
                 >
                     <PlusCircle />
@@ -129,6 +129,6 @@ export const QuestionOptions = () => {
                     </div>
                 </div>
             )}
-        </ScrollToBottom>
+        </div>
     );
 };

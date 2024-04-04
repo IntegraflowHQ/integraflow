@@ -1,12 +1,12 @@
 import { useApolloClient } from "@apollo/client";
 import { useCallback } from "react";
 
-import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
+import { useUserStore } from "../states/user";
 import { useAuth } from "./useAuth";
 
 export const useLogout = () => {
     const { logout: clearAuth } = useAuth();
-    const { reset } = useCurrentUser();
+    const { reset } = useUserStore();
     const client = useApolloClient();
 
     const handleLogout = useCallback(async () => {
@@ -14,7 +14,6 @@ export const useLogout = () => {
         reset();
         await client.clearStore();
         await client.cache.reset();
-
     }, [clearAuth, client, reset]);
 
     return {

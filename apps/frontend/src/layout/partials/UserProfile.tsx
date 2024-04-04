@@ -1,8 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { useLogout } from "@/modules/auth/hooks/useLogout";
-import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { AcronynmBox, Button, NavItem, NavLink } from "@/ui";
 import {
@@ -26,6 +24,7 @@ import {
     SettingsIcon,
 } from "@/ui/icons";
 
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { ROUTES } from "@/routes";
 import Frame from "assets/images/Frame.png";
 
@@ -48,9 +47,8 @@ const profileNavItems = [
 ];
 
 export const UserProfile = () => {
-    const { user, organizations } = useCurrentUser();
+    const { user, organizations, logout } = useAuth();
     const { workspace } = useWorkspace();
-    const { logout } = useLogout();
     const navigate = useNavigate();
     const { orgSlug, projectSlug } = useParams();
 

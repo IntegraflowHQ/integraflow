@@ -1,10 +1,11 @@
+import { Theme } from "@/types";
 import { create } from "zustand";
 
 export type StudioState = {
     studioModeIsActive: boolean;
-    editTheme: boolean;
     currentEvent: string;
     addingAudienceProperty: boolean;
+    theme: Theme | null;
 };
 
 export type StudioActions = {
@@ -15,9 +16,9 @@ export type StudioActions = {
 
 const initialState: StudioState = {
     studioModeIsActive: false,
-    editTheme: false,
     currentEvent: "",
     addingAudienceProperty: false,
+    theme: null,
 };
 
 export const useStudioStore = create<StudioState & StudioActions>()((set) => ({

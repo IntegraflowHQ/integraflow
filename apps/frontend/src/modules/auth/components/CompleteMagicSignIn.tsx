@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { Button, GlobalSpinner, Screen, TextInput } from "@/ui";
+import { Button, Screen, TextInput } from "@/ui";
 import { cn } from "@/utils";
 import { toast } from "@/utils/toast";
 import CheckInbox from "assets/images/check-inbox.gif";
@@ -30,10 +30,10 @@ export default function CompleteMagicSignIn() {
     });
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const email = searchParams.get("email") ?? '';
+    const email = searchParams.get("email") ?? "";
     const tokenParam = searchParams.get("token");
     const [showCodeInput, setShowCodeInput] = useState(false);
-    const { authenticateWithMagicLink, generateMagicLink, loading } = useAuth();
+    const { authenticateWithMagicLink, generateMagicLink } = useAuth();
     const redirect = useRedirect();
     const code = watch("code");
 
@@ -41,12 +41,15 @@ export default function CompleteMagicSignIn() {
     const urlParams = new URLSearchParams(queryString);
     const inviteLink = urlParams.get("inviteLink") ?? undefined;
 
-    const handleAuthenticateWithMagicLink = useCallback(async (email: string, token: string, inviteLink?: string) => {
-        const response = await authenticateWithMagicLink(email, token, inviteLink);
-        if (response && response.user) {
-            redirect(response.user)
-        }
-    }, [authenticateWithMagicLink, redirect]);
+    const handleAuthenticateWithMagicLink = useCallback(
+        async (email: string, token: string, inviteLink?: string) => {
+            const response = await authenticateWithMagicLink(email, token, inviteLink);
+            if (response && response.user) {
+                redirect(response.user);
+            }
+        },
+        [authenticateWithMagicLink, redirect],
+    );
 
     useEffect(() => {
         if (!email || !EMAIL_REGEX.test(email)) {
@@ -71,45 +74,36 @@ export default function CompleteMagicSignIn() {
         };
     }, [code, setValue]);
 
-    const onSubmit: SubmitHandler<Inputs> = useCallback(async (data) => {
-        if (!EMAIL_REGEX.test(email as string)) {
-            return;
-        }
-        if (!email || !data.code) {
-            return;
-        }
+    const onSubmit: SubmitHandler<Inputs> = useCallback(
+        async (data) => {
+            if (!EMAIL_REGEX.test(email as string)) {
+                return;
+            }
+            if (!email || !data.code) {
+                return;
+            }
 
-        await handleAuthenticateWithMagicLink(email, data.code, inviteLink);
-    }, [handleAuthenticateWithMagicLink, email, inviteLink]);
+            await handleAuthenticateWithMagicLink(email, data.code, inviteLink);
+        },
+        [handleAuthenticateWithMagicLink, email, inviteLink],
+    );
 
     const onGenerateBtnClicked = useCallback(async () => {
         const generated = await generateMagicLink(email, inviteLink);
         if (generated) {
-            toast.success(
-                "We've sent you a new magic link, check your email.",
-            );
+            toast.success("We've sent you a new magic link, check your email.");
         }
-    }, [email, generateMagicLink, inviteLink])
-
-    if (loading) {
-        return <GlobalSpinner />;
-    }
+    }, [email, generateMagicLink, inviteLink]);
 
     return (
         <Screen>
             <section className="mx-auto flex w-[406px] flex-col items-center">
-                <img
-                    src={CheckInbox}
-                    className="h-56 w-80 object-cover object-top"
-                />
+                <img src={CheckInbox} className="h-56 w-80 object-cover object-top" />
                 <section className="flex flex-col items-center gap-8">
                     <header className="flex flex-col gap-4 text-center">
-                        <h1 className="text-5xl font-medium leading-[52px] text-white">
-                            Check your email
-                        </h1>
+                        <h1 className="text-5xl font-medium leading-[52px] text-white">Check your email</h1>
                         <p className="text-base text-intg-text">
-                            We&apos;ve sent a temporary login link please check
-                            your inbox at {email}
+                            We&apos;ve sent a temporary login link please check your inbox at {email}
                         </p>
                     </header>
 
@@ -125,18 +119,11 @@ export default function CompleteMagicSignIn() {
                             <section
                                 className={cn(
                                     "w-full overflow-hidden transition-all duration-300 ease-out",
-                                    !showCodeInput
-                                        ? "h-[1px]"
-                                        : "h-[130px] pt-3",
-                                    showCodeInput && !!errors.code?.message
-                                        ? "h-[154px]"
-                                        : "",
+                                    !showCodeInput ? "h-[1px]" : "h-[130px] pt-3",
+                                    showCodeInput && !!errors.code?.message ? "h-[154px]" : "",
                                 )}
                             >
-                                <form
-                                    className="flex flex-col gap-3"
-                                    onSubmit={handleSubmit(onSubmit)}
-                                >
+                                <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
                                     <TextInput
                                         type="text"
                                         placeholder="Enter code"
@@ -147,8 +134,7 @@ export default function CompleteMagicSignIn() {
                                             },
                                             minLength: {
                                                 value: 11,
-                                                message:
-                                                    "Code must be 11 characters long",
+                                                message: "Code must be 11 characters long",
                                             },
                                         })}
                                         error={!!errors.code?.message}
@@ -164,11 +150,7 @@ export default function CompleteMagicSignIn() {
                         </div>
 
                         <div className="w-full">
-                            <Button
-                                variant="secondary"
-                                text={"Resend magic link"}
-                                onClick={onGenerateBtnClicked}
-                            />
+                            <Button variant="secondary" text={"Resend magic link"} onClick={onGenerateBtnClicked} />
                         </div>
                     </div>
                 </section>

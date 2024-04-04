@@ -1,5 +1,5 @@
 import { PropertyDefinition } from "@/generated/graphql";
-import useStudioState from "@/modules/surveys/hooks/useStudioState";
+import { useStudioStore } from "@/modules/surveys/states/studio";
 import { EventFilter, TriggerCondition, TriggerConditionInput } from "@/types";
 import { PlusCircle, X } from "@/ui/icons";
 import { FilterOperator, LogicOperator } from "@integraflow/web/src/types";
@@ -25,11 +25,9 @@ export default function Event({
     onOperatorChange: (operator: LogicOperator) => void;
     onRemoveFilter: (index: number) => void;
 }) {
-    const { currentEvent, updateStudio } = useStudioState();
+    const { currentEvent, updateStudio } = useStudioStore((state) => state);
     const [filterInput, setFilterInput] = useState<EventFilter | null>(null);
-    const [conditionInput, setConditionInput] = useState<
-        TriggerConditionInput | undefined
-    >();
+    const [conditionInput, setConditionInput] = useState<TriggerConditionInput | undefined>();
 
     return (
         <div className="flex w-max max-w-full flex-wrap items-center gap-1 rounded-lg bg-intg-bg-15 py-[9px] pl-[6px] pr-6">
@@ -69,10 +67,7 @@ export default function Event({
                     onInput={setFilterInput}
                 >
                     {filterInput ? (
-                        <FilterDetails
-                            filter={filterInput}
-                            onRemoveFilter={() => setFilterInput(null)}
-                        />
+                        <FilterDetails filter={filterInput} onRemoveFilter={() => setFilterInput(null)} />
                     ) : null}
                 </FilterOperators>
             )}
@@ -95,12 +90,7 @@ export default function Event({
                     });
                 }}
             >
-                <button
-                    className="mx-1"
-                    onClick={() =>
-                        updateStudio({ currentEvent: condition.event })
-                    }
-                >
+                <button className="mx-1" onClick={() => updateStudio({ currentEvent: condition.event })}>
                     <PlusCircle color={"#AFAAC7"} />
                 </button>
             </PropertySelect>

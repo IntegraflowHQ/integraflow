@@ -1,4 +1,5 @@
 import { Survey, SurveyStatusEnum } from "@/generated/graphql";
+import { useOnboarding } from "@/modules/onboarding/hooks/useOnboarding";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ROUTES } from "@/routes";
 import { Dialog, DialogContent, DialogTrigger } from "@/ui";
@@ -49,6 +50,9 @@ export const SurveyList = () => {
 
     const [page, setPage] = React.useState<number>(1);
     const [selectedSurveyName, setSelectedSurveyName] = React.useState<string>("");
+
+    const { steps: onboardingSteps, markAsCompleted } = useOnboarding();
+    const surveyPublishIndex = onboardingSteps.findIndex((s) => s.key === "publish");
 
     useEffect(() => {
         if (!searchParams) {
@@ -187,11 +191,16 @@ export const SurveyList = () => {
                                                     </div>
                                                     {survey.status === SurveyStatusEnum.Draft && (
                                                         <div
-                                                            onClick={() =>
+                                                            onClick={() => {
                                                                 updateSurvey(survey, {
                                                                     status: SurveyStatusEnum.Active,
-                                                                })
-                                                            }
+                                                                });
+
+                                                                if (surveyPublishIndex === -1) {
+                                                                    return;
+                                                                }
+                                                                markAsCompleted(surveyPublishIndex);
+                                                            }}
                                                             className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
                                                         >
                                                             <Radio size="18" color="#AFAAC7" />

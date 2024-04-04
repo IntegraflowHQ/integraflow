@@ -138,15 +138,15 @@ export const EditorTextInput = ({
                         overflow-y:auto;
                         overflow-x: hidden;
                         position: absolute;
-                        max-height: 200px;
+                        max-height: 245px;
                         padding: 8px;
-                        width: 180px;
+                        width: 200px;
                         z-index:1000;
                         font-family: inherit;
                     }
                     .ql-mention-list-container-bottom{
                         background-color: #181325;
-                        width: 180px;
+                        width: 200px;
                         padding: 8px;
                     }
                     .ql-mention-list {
@@ -190,7 +190,7 @@ export const EditorTextInput = ({
                             handleFallbackChange();
                         }
                     }}
-                    className="mention-input border-0 bg-intg-bg-4 p-0.5 text-xs text-intg-text"
+                    className="mention-input border-0 bg-intg-bg-4 px-[10px] py-0 min-h-[30px] text-xs text-intg-text"
                     onBlur={() => {
                         setDisplayFallbackField(false);
                         setFallbackValue("");

@@ -3250,18 +3250,18 @@
                         "deprecationReason": null
                     },
                     {
-                        "name": "organizationInviteCreate",
-                        "description": "Creates a new organization invite. \n\nRequires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.",
+                        "name": "organizationInviteDelete",
+                        "description": "Deletes an organization invite. \n\nRequires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.",
                         "args": [
                             {
-                                "name": "input",
-                                "description": "The organization invite object to create.",
+                                "name": "id",
+                                "description": "The identifier of the invite to delete.",
                                 "type": {
                                     "kind": "NON_NULL",
                                     "name": null,
                                     "ofType": {
-                                        "kind": "INPUT_OBJECT",
-                                        "name": "OrganizationInviteCreateInput",
+                                        "kind": "SCALAR",
+                                        "name": "ID",
                                         "ofType": null
                                     }
                                 },
@@ -3272,7 +3272,7 @@
                         ],
                         "type": {
                             "kind": "OBJECT",
-                            "name": "OrganizationInviteCreate",
+                            "name": "OrganizationInviteDelete",
                             "ofType": null
                         },
                         "isDeprecated": false,
@@ -3291,18 +3291,18 @@
                         "deprecationReason": null
                     },
                     {
-                        "name": "organizationJoin",
-                        "description": "Joins an organization \n\nRequires one of the following permissions: AUTHENTICATED_USER.",
+                        "name": "organizationInviteResend",
+                        "description": "Resend an existing invite \n\nRequires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.",
                         "args": [
                             {
-                                "name": "input",
-                                "description": "Organization details for the new organization.",
+                                "name": "id",
+                                "description": "ID of a invite to resend.",
                                 "type": {
                                     "kind": "NON_NULL",
                                     "name": null,
                                     "ofType": {
-                                        "kind": "INPUT_OBJECT",
-                                        "name": "OrganizationJoinInput",
+                                        "kind": "SCALAR",
+                                        "name": "ID",
                                         "ofType": null
                                     }
                                 },
@@ -3313,7 +3313,36 @@
                         ],
                         "type": {
                             "kind": "OBJECT",
-                            "name": "OrganizationJoin",
+                            "name": "OrganizationInviteResend",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "organizationUpdate",
+                        "description": "Updates an organization. \n\nRequires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.",
+                        "args": [
+                            {
+                                "name": "input",
+                                "description": "A partial object to update the organization with.",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "INPUT_OBJECT",
+                                        "name": "OrganizationUpdateInput",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            }
+                        ],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "OrganizationUpdate",
                             "ofType": null
                         },
                         "isDeprecated": false,
@@ -3476,6 +3505,11 @@
                     {
                         "kind": "OBJECT",
                         "name": "OrganizationInviteLinkDetails",
+                        "ofType": null
+                    },
+                    {
+                        "kind": "OBJECT",
+                        "name": "OrganizationMember",
                         "ofType": null
                     },
                     {
@@ -3652,18 +3686,6 @@
                         "description": "Users associated with the organization.\n\nRequires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.",
                         "args": [
                             {
-                                "name": "orderBy",
-                                "description": "By which field should the pagination order by.",
-                                "type": {
-                                    "kind": "INPUT_OBJECT",
-                                    "name": "UserSortingInput",
-                                    "ofType": null
-                                },
-                                "defaultValue": null,
-                                "isDeprecated": false,
-                                "deprecationReason": null
-                            },
-                            {
                                 "name": "before",
                                 "description": "Return the elements in the list that come before the specified cursor.",
                                 "type": {
@@ -3714,7 +3736,7 @@
                         ],
                         "type": {
                             "kind": "OBJECT",
-                            "name": "UserCountableConnection",
+                            "name": "OrganizationMemberCountableConnection",
                             "ofType": null
                         },
                         "isDeprecated": false,
@@ -3724,18 +3746,6 @@
                         "name": "projects",
                         "description": "Projects associated with the organization.\n\nRequires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.",
                         "args": [
-                            {
-                                "name": "orderBy",
-                                "description": "By which field should the pagination order by.",
-                                "type": {
-                                    "kind": "INPUT_OBJECT",
-                                    "name": "UserSortingInput",
-                                    "ofType": null
-                                },
-                                "defaultValue": null,
-                                "isDeprecated": false,
-                                "deprecationReason": null
-                            },
                             {
                                 "name": "before",
                                 "description": "Return the elements in the list that come before the specified cursor.",
@@ -3788,6 +3798,67 @@
                         "type": {
                             "kind": "OBJECT",
                             "name": "ProjectCountableConnection",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "invites",
+                        "description": "Invites associated with the organization.\n\nRequires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.",
+                        "args": [
+                            {
+                                "name": "before",
+                                "description": "Return the elements in the list that come before the specified cursor.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "String",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "after",
+                                "description": "Return the elements in the list that come after the specified cursor.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "String",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "first",
+                                "description": "Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Int",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "last",
+                                "description": "Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Int",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            }
+                        ],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "OrganizationInviteCountableConnection",
                             "ofType": null
                         },
                         "isDeprecated": false,
@@ -4334,8 +4405,138 @@
             },
             {
                 "kind": "OBJECT",
-                "name": "OrganizationInviteCreate",
-                "description": "Creates a new organization invite. \n\nRequires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.",
+                "name": "OrganizationInviteCountableConnection",
+                "description": null,
+                "fields": [
+                    {
+                        "name": "pageInfo",
+                        "description": "Pagination data for this connection.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "PageInfo",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "edges",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "OrganizationInviteCountableEdge",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "totalCount",
+                        "description": "A total count of items in the collection.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Int",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "nodes",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "OrganizationInvite",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "OrganizationInviteCountableEdge",
+                "description": null,
+                "fields": [
+                    {
+                        "name": "node",
+                        "description": "The item at the end of the edge.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "OrganizationInvite",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "cursor",
+                        "description": "A cursor for use in pagination.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "OrganizationInviteDelete",
+                "description": "Deletes an organization invite. \n\nRequires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.",
                 "fields": [
                     {
                         "name": "organizationErrors",
@@ -4400,69 +4601,6 @@
                 ],
                 "inputFields": null,
                 "interfaces": [],
-                "enumValues": null,
-                "possibleTypes": null
-            },
-            {
-                "kind": "INPUT_OBJECT",
-                "name": "OrganizationInviteCreateInput",
-                "description": null,
-                "fields": null,
-                "inputFields": [
-                    {
-                        "name": "id",
-                        "description": "The identifier in UUID v4 format. If none is provided, the backend will generate one.",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "UUID",
-                            "ofType": null
-                        },
-                        "defaultValue": null,
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "email",
-                        "description": "The email of the invitee.",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "SCALAR",
-                                "name": "String",
-                                "ofType": null
-                            }
-                        },
-                        "defaultValue": null,
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "message",
-                        "description": "The message to send to the invitee.",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "String",
-                            "ofType": null
-                        },
-                        "defaultValue": null,
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "role",
-                        "description": "What member role the invite should grant.",
-                        "type": {
-                            "kind": "ENUM",
-                            "name": "RoleLevel",
-                            "ofType": null
-                        },
-                        "defaultValue": null,
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    }
-                ],
-                "interfaces": null,
                 "enumValues": null,
                 "possibleTypes": null
             },
@@ -4840,25 +4978,9 @@
             },
             {
                 "kind": "OBJECT",
-                "name": "OrganizationJoin",
-                "description": "Joins an organization \n\nRequires one of the following permissions: AUTHENTICATED_USER.",
+                "name": "OrganizationInviteResend",
+                "description": "Resend an existing invite \n\nRequires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.",
                 "fields": [
-                    {
-                        "name": "user",
-                        "description": "A user that has access to the the resources of an organization.",
-                        "args": [],
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "OBJECT",
-                                "name": "AuthUser",
-                                "ofType": null
-                            }
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
                     {
                         "name": "organizationErrors",
                         "description": null,
@@ -4906,6 +5028,348 @@
                         },
                         "isDeprecated": false,
                         "deprecationReason": null
+                    },
+                    {
+                        "name": "organizationInvite",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "OrganizationInvite",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "OrganizationMember",
+                "description": "Represents an organization member.",
+                "fields": [
+                    {
+                        "name": "id",
+                        "description": "The ID of the member.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "ID",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "email",
+                        "description": "The email address of the member.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "firstName",
+                        "description": "The given name of the member.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "lastName",
+                        "description": "The family name of the member.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "role",
+                        "description": "The member role",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "ENUM",
+                                "name": "RoleLevel",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "createdAt",
+                        "description": "The time at which the member was created.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "DateTime",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "updatedAt",
+                        "description": "The last time at which the member was updated.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "DateTime",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [
+                    {
+                        "kind": "INTERFACE",
+                        "name": "Node",
+                        "ofType": null
+                    }
+                ],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "OrganizationMemberCountableConnection",
+                "description": null,
+                "fields": [
+                    {
+                        "name": "pageInfo",
+                        "description": "Pagination data for this connection.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "PageInfo",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "edges",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "OrganizationMemberCountableEdge",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "totalCount",
+                        "description": "A total count of items in the collection.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Int",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "nodes",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "OrganizationMember",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "OrganizationMemberCountableEdge",
+                "description": null,
+                "fields": [
+                    {
+                        "name": "node",
+                        "description": "The item at the end of the edge.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "OrganizationMember",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "cursor",
+                        "description": "A cursor for use in pagination.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "OrganizationUpdate",
+                "description": "Updates an organization. \n\nRequires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.",
+                "fields": [
+                    {
+                        "name": "organizationErrors",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "OrganizationError",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "errors",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "OrganizationError",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "organization",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "Organization",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
                     }
                 ],
                 "inputFields": null,
@@ -4915,21 +5379,41 @@
             },
             {
                 "kind": "INPUT_OBJECT",
-                "name": "OrganizationJoinInput",
+                "name": "OrganizationUpdateInput",
                 "description": null,
                 "fields": null,
                 "inputFields": [
                     {
-                        "name": "inviteLink",
-                        "description": "An invite link for an organization.",
+                        "name": "name",
+                        "description": "The name of the organization.",
                         "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "SCALAR",
-                                "name": "String",
-                                "ofType": null
-                            }
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "slug",
+                        "description": "The slug of the organization.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "timezone",
+                        "description": "The timezone of the organization, passed in by client.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
                         },
                         "defaultValue": null,
                         "isDeprecated": false,
@@ -7850,6 +8334,12 @@
                     },
                     {
                         "name": "ADMIN",
+                        "description": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "OWNER",
                         "description": null,
                         "isDeprecated": false,
                         "deprecationReason": null
@@ -11249,136 +11739,6 @@
             },
             {
                 "kind": "OBJECT",
-                "name": "UserCountableConnection",
-                "description": null,
-                "fields": [
-                    {
-                        "name": "pageInfo",
-                        "description": "Pagination data for this connection.",
-                        "args": [],
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "OBJECT",
-                                "name": "PageInfo",
-                                "ofType": null
-                            }
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "edges",
-                        "description": null,
-                        "args": [],
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "LIST",
-                                "name": null,
-                                "ofType": {
-                                    "kind": "NON_NULL",
-                                    "name": null,
-                                    "ofType": {
-                                        "kind": "OBJECT",
-                                        "name": "UserCountableEdge",
-                                        "ofType": null
-                                    }
-                                }
-                            }
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "totalCount",
-                        "description": "A total count of items in the collection.",
-                        "args": [],
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Int",
-                            "ofType": null
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "nodes",
-                        "description": null,
-                        "args": [],
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "LIST",
-                                "name": null,
-                                "ofType": {
-                                    "kind": "NON_NULL",
-                                    "name": null,
-                                    "ofType": {
-                                        "kind": "OBJECT",
-                                        "name": "User",
-                                        "ofType": null
-                                    }
-                                }
-                            }
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    }
-                ],
-                "inputFields": null,
-                "interfaces": [],
-                "enumValues": null,
-                "possibleTypes": null
-            },
-            {
-                "kind": "OBJECT",
-                "name": "UserCountableEdge",
-                "description": null,
-                "fields": [
-                    {
-                        "name": "node",
-                        "description": "The item at the end of the edge.",
-                        "args": [],
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "OBJECT",
-                                "name": "User",
-                                "ofType": null
-                            }
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "cursor",
-                        "description": "A cursor for use in pagination.",
-                        "args": [],
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "SCALAR",
-                                "name": "String",
-                                "ofType": null
-                            }
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    }
-                ],
-                "inputFields": null,
-                "interfaces": [],
-                "enumValues": null,
-                "possibleTypes": null
-            },
-            {
-                "kind": "OBJECT",
                 "name": "UserError",
                 "description": "Represents errors in user mutations.",
                 "fields": [
@@ -11566,84 +11926,6 @@
                             "kind": "SCALAR",
                             "name": "String",
                             "ofType": null
-                        },
-                        "defaultValue": null,
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    }
-                ],
-                "interfaces": null,
-                "enumValues": null,
-                "possibleTypes": null
-            },
-            {
-                "kind": "ENUM",
-                "name": "UserSortField",
-                "description": null,
-                "fields": null,
-                "inputFields": null,
-                "interfaces": null,
-                "enumValues": [
-                    {
-                        "name": "FIRST_NAME",
-                        "description": "Sort users by first name.",
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "LAST_NAME",
-                        "description": "Sort users by last name.",
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "EMAIL",
-                        "description": "Sort users by email.",
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "CREATED_AT",
-                        "description": "Sort users by created at.",
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    }
-                ],
-                "possibleTypes": null
-            },
-            {
-                "kind": "INPUT_OBJECT",
-                "name": "UserSortingInput",
-                "description": null,
-                "fields": null,
-                "inputFields": [
-                    {
-                        "name": "direction",
-                        "description": "Specifies the direction in which to sort users.",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "ENUM",
-                                "name": "OrderDirection",
-                                "ofType": null
-                            }
-                        },
-                        "defaultValue": null,
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "field",
-                        "description": "Sort users by the selected field.",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "ENUM",
-                                "name": "UserSortField",
-                                "ofType": null
-                            }
                         },
                         "defaultValue": null,
                         "isDeprecated": false,

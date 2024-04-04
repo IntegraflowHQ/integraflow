@@ -7,6 +7,7 @@ export type QuestionState = {
 
 export type QuestionActions = {
     switchQuestion: (question: ParsedQuestion) => void;
+    updateId: (tempId: string, id: string) => void;
     updateQuestion: (data: Partial<ParsedQuestion>) => void;
     clear: () => void;
 };
@@ -19,6 +20,17 @@ export const useQuestionStore = create<QuestionState & QuestionActions>()((set, 
     ...initialState,
     switchQuestion: (question) => {
         set({ question });
+    },
+    updateId: (tempId, id) => {
+        const currentQuestion = get().question;
+        if (currentQuestion?.id === tempId) {
+            set({
+                question: {
+                    ...currentQuestion,
+                    id,
+                },
+            });
+        }
     },
     updateQuestion: (data) => {
         const currentQuestion = get().question;

@@ -3,7 +3,7 @@ import { useProject } from "@/modules/projects/hooks/useProject";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { decodeText, encodeText, tagOptions } from "@/utils/question";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import MinusButton from "../Buttons/MinimizeButton";
 import TextButton from "../Buttons/TextButton";
@@ -20,9 +20,13 @@ export const CTAFields = () => {
         }
     }, [question?.description]);
 
-    const mentionOptions = !question
-        ? []
-        : tagOptions(parsedQuestions, question, personProperties as PropertyDefinition[]);
+    const mentionOptions = useMemo(() => {
+        if (!question) {
+            return [];
+        }
+
+        return tagOptions(parsedQuestions, question, personProperties as PropertyDefinition[]);
+    }, [parsedQuestions, personProperties, question]);
 
     return (
         <div>

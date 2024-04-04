@@ -1,4 +1,4 @@
-import Studio from "@/modules/surveys/components/Studio";
+import Studio from "@/modules/surveys/components/studio";
 
 export function SurveyStudio() {
     return <Studio />;
