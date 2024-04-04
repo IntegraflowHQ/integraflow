@@ -1845,7 +1845,7 @@ type Mutation {
   """
   Leaves an organization. 
   
-  Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
   """
   organizationLeave(
     """ID of the organization to leave."""
@@ -2635,7 +2635,7 @@ input OrganizationJoinInput @doc(category: "Organizations") {
 """
 Leaves an organization. 
 
-Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
 """
 type OrganizationLeave @doc(category: "Organizations") {
   organizationErrors: [OrganizationError!]!

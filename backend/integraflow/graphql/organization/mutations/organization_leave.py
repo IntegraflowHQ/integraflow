@@ -24,7 +24,7 @@ class OrganizationLeave(ModelDeleteMutation):
         error_type_class = OrganizationError
         error_type_field = "organization_errors"
         doc_category = DOC_CATEGORY_ORGANIZATIONS
-        permissions = (AuthorizationFilters.ORGANIZATION_ADMIN_ACCESS,)
+        permissions = (AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS,)
         auto_verify_organization = True
 
     @classmethod
