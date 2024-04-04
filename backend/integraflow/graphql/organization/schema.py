@@ -15,6 +15,7 @@ from .mutations import (
     OrganizationJoin,
     OrganizationLeave,
     OrganizationMemberLeave,
+    OrganizationMemberUpdate,
     OrganizationUpdate,
 )
 from .resolvers import resolve_organization_invite_details
@@ -77,4 +78,5 @@ class OrganizationMutations(graphene.ObjectType):
     organization_join = OrganizationJoin.Field()
     organization_leave = OrganizationLeave.Field()
     organization_member_leave = OrganizationMemberLeave.Field()
+    organization_member_update = OrganizationMemberUpdate.Field()
     organization_update = OrganizationUpdate.Field()

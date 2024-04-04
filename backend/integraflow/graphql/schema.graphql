@@ -1845,7 +1845,7 @@ type Mutation {
   """
   Leaves an organization. 
   
-  Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
   """
   organizationLeave(
     """ID of the organization to leave."""
@@ -1861,6 +1861,19 @@ type Mutation {
     """ID of the member to leave an organization."""
     id: ID!
   ): OrganizationMemberLeave @doc(category: "Organizations")
+
+  """
+  Updates an organization member. 
+  
+  Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+  """
+  organizationMemberUpdate(
+    """ID of the member to update."""
+    id: ID!
+
+    """A partial object to update the organization member with."""
+    input: OrganizationMemberUpdateInput!
+  ): OrganizationMemberUpdate @doc(category: "Organizations")
 
   """
   Updates an organization. 
@@ -2635,7 +2648,7 @@ input OrganizationJoinInput @doc(category: "Organizations") {
 """
 Leaves an organization. 
 
-Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
 """
 type OrganizationLeave @doc(category: "Organizations") {
   organizationErrors: [OrganizationError!]!
@@ -2652,6 +2665,22 @@ type OrganizationMemberLeave @doc(category: "Organizations") {
   organizationErrors: [OrganizationError!]!
   errors: [OrganizationError!]!
   organizationMembership: OrganizationMember
+}
+
+"""
+Updates an organization member. 
+
+Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+"""
+type OrganizationMemberUpdate @doc(category: "Organizations") {
+  organizationErrors: [OrganizationError!]!
+  errors: [OrganizationError!]!
+  organizationMembership: OrganizationMember
+}
+
+input OrganizationMemberUpdateInput @doc(category: "Organizations") {
+  """What member role to grant."""
+  role: RoleLevel = 1
 }
 
 """
