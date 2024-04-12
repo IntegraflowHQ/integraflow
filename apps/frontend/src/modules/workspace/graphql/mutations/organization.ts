@@ -23,6 +23,13 @@ export const ORGANIZATION_MEMBER_LEAVE = gql`
         }
     }
 `;
+export const ORGANIZATION_MEMBER_UPDATE = gql`
+    mutation OrganizationMemberUpdate($id: ID!, $input: OrganizationMemberUpdateInput!) {
+        organizationMemberUpdate(id: $id, input: $input) {
+            ...OrganizationMemberUpdateFragment
+        }
+    }
+`;
 
 export const ORGANIZATION_INVITE_CREATE = gql`
     mutation organizationInviteCreate($input: OrganizationInviteCreateInput!) {

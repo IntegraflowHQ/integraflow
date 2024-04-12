@@ -96,7 +96,23 @@ export const AuthProvider = ({ children, apollo }: AuthProviderProps) => {
     const [verifyAuthToken, { loading: verifyingToken }] = useEmailTokenUserAuthMutation();
     const [googleAuthLogin, { loading: googleAuthLoading }] = useGoogleUserAuthMutation();
     const [updateUser, { loading: updatingUser }] = useUserUpdateMutation();
-    const [getUser] = useViewerLazyQuery();
+    const [getUser] = useViewerLazyQuery({
+        fetchPolicy: "cache-and-network",
+        onCompleted: (data) => {
+            if (data?.viewer) {
+                const organization = data.viewer.organizations?.edges.find(
+                    ({ node }) => node.id === user.organization?.id,
+                )?.node;
+                const project = organization?.projects?.edges.find(({ node }) => node.id === user.project?.id)?.node;
+
+                updateUserCache({
+                    ...data.viewer,
+                    organization: convertToAuthOrganization(organization),
+                    project,
+                });
+            }
+        },
+    });
     const [logout] = useLogoutMutation();
     const [refreshTokenMutation] = useTokenRefreshMutation();
 
@@ -352,21 +368,22 @@ export const AuthProvider = ({ children, apollo }: AuthProviderProps) => {
 
     useEffect(() => {
         const hydrate = async () => {
-            if (!!refreshToken && !hydrated) {
+            if (!!refreshToken) {
                 const { data } = await getUser();
-                if (data?.viewer) {
-                    const organization = data.viewer.organizations?.edges.find(
-                        ({ node }) => node.id === user.organization?.id,
-                    )?.node;
-                    const project = organization?.projects?.edges.find(
-                        ({ node }) => node.id === user.project?.id,
-                    )?.node;
-                    updateUserCache({
-                        ...data.viewer,
-                        organization: convertToAuthOrganization(organization),
-                        project,
-                    });
-                }
+                // if (data?.viewer) {
+                //     const organization = data.viewer.organizations?.edges.find(
+                //         ({ node }) => node.id === user.organization?.id,
+                //     )?.node;
+                //     const project = organization?.projects?.edges.find(
+                //         ({ node }) => node.id === user.project?.id,
+                //     )?.node;
+
+                //     updateUserCache({
+                //         ...data.viewer,
+                //         organization: convertToAuthOrganization(organization),
+                //         project,
+                //     });
+                // }
             }
         };
 

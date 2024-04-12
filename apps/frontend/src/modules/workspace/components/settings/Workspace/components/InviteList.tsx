@@ -8,8 +8,6 @@ export const InviteList = () => {
     const { workspace } = useWorkspace();
     const { resendInviteLink, revokeInviteLink } = useWorkspaceInvite();
 
-    console.log(workspace);
-
     const handleResendInviteLink = async (id: string) => {
         const response = await resendInviteLink(id);
         if (response?.organizationInvite) {
@@ -37,7 +35,9 @@ export const InviteList = () => {
 
     return (
         <div className="mt-6">
-            <h3 className="font-semibold">{workspace?.invites?.edges?.length} invites</h3>
+            {workspace?.invites?.totalCount && (
+                <h3 className="font-semibold">{workspace?.invites?.edges?.length} invites</h3>
+            )}
             {workspace?.invites?.edges?.map((invite, index) => {
                 return (
                     <div key={invite?.node?.id}>

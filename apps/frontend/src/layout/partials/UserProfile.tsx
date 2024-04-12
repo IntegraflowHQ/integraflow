@@ -136,7 +136,7 @@ export const UserProfile = () => {
                 <DropdownMenuItem className="flex items-center gap-2 px-3 py-2 ">
                     <SettingsIcon />
                     <p
-                        className="text-sm"
+                        className="cursor-pointer text-sm"
                         onClick={() => {
                             navigate(
                                 `${ROUTES.WORKSPACE_SETTINGS}`

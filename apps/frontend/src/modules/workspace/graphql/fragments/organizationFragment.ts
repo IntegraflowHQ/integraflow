@@ -217,3 +217,17 @@ export const ORGANIZATION_MEMBER_LEAVE = gql`
         }
     }
 `;
+
+export const ORGANIZATION_MEMBER_UPDATE = gql`
+    fragment OrganizationMemberUpdateFragment on OrganizationMemberUpdate {
+        organizationMembership {
+            ...OrganizationMembershipFragment
+        }
+        organizationErrors {
+            ...OrganizationErrorFragment
+        }
+        errors {
+            ...OrganizationErrorFragment
+        }
+    }
+`;

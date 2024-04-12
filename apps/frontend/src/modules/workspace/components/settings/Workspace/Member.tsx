@@ -42,14 +42,12 @@ export const Member = () => {
                     <div className="w-[25%]">
                         <Button
                             text="Copy"
-                            size="md"
                             className="text-sm"
                             icon={<CopyIcon size={16} />}
                             textAlign="center"
                             onClick={() => copyToClipboard(inviteLink, "Invite link copied to clipboard")}
                         />
                     </div>
-                    p
                 </div>
             </div>
             <hr className="my-6 border-[1px] border-intg-bg-4" />

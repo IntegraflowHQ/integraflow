@@ -482,7 +482,7 @@ export type Mutation = {
   /**
    * Leaves an organization.
    *
-   * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+   * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
    */
   organizationLeave?: Maybe<OrganizationLeave>;
   /**
@@ -491,6 +491,12 @@ export type Mutation = {
    * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
    */
   organizationMemberLeave?: Maybe<OrganizationMemberLeave>;
+  /**
+   * Updates an organization member.
+   *
+   * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+   */
+  organizationMemberUpdate?: Maybe<OrganizationMemberUpdate>;
   /**
    * Updates an organization.
    *
@@ -647,6 +653,12 @@ export type MutationOrganizationLeaveArgs = {
 
 export type MutationOrganizationMemberLeaveArgs = {
   id: Scalars['ID'];
+};
+
+
+export type MutationOrganizationMemberUpdateArgs = {
+  id: Scalars['ID'];
+  input: OrganizationMemberUpdateInput;
 };
 
 
@@ -1082,7 +1094,7 @@ export type OrganizationJoinInput = {
 /**
  * Leaves an organization.
  *
- * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+ * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
  */
 export type OrganizationLeave = {
   __typename?: 'OrganizationLeave';
@@ -1138,6 +1150,23 @@ export type OrganizationMemberLeave = {
   errors: Array<OrganizationError>;
   organizationErrors: Array<OrganizationError>;
   organizationMembership?: Maybe<OrganizationMember>;
+};
+
+/**
+ * Updates an organization member.
+ *
+ * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+ */
+export type OrganizationMemberUpdate = {
+  __typename?: 'OrganizationMemberUpdate';
+  errors: Array<OrganizationError>;
+  organizationErrors: Array<OrganizationError>;
+  organizationMembership?: Maybe<OrganizationMember>;
+};
+
+export type OrganizationMemberUpdateInput = {
+  /** What member role to grant. */
+  role?: InputMaybe<RoleLevel>;
 };
 
 /**
@@ -2634,6 +2663,8 @@ export type OrganizationLeaveFragmentFragment = { __typename?: 'OrganizationLeav
 
 export type OrganizationMemberLeaveFragmentFragment = { __typename?: 'OrganizationMemberLeave', organizationMembership?: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
 
+export type OrganizationMemberUpdateFragmentFragment = { __typename?: 'OrganizationMemberUpdate', organizationMembership?: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> };
+
 export type OrganizationCreateMutationVariables = Exact<{
   input: OrganizationCreateInput;
   survey?: InputMaybe<OnboardingCustomerSurvey>;
@@ -2655,6 +2686,14 @@ export type OrganizationMemberLeaveMutationVariables = Exact<{
 
 
 export type OrganizationMemberLeaveMutation = { __typename?: 'Mutation', organizationMemberLeave?: { __typename?: 'OrganizationMemberLeave', organizationMembership?: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
+
+export type OrganizationMemberUpdateMutationVariables = Exact<{
+  id: Scalars['ID'];
+  input: OrganizationMemberUpdateInput;
+}>;
+
+
+export type OrganizationMemberUpdateMutation = { __typename?: 'Mutation', organizationMemberUpdate?: { __typename?: 'OrganizationMemberUpdate', organizationMembership?: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } | null, organizationErrors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }>, errors: Array<{ __typename?: 'OrganizationError', field?: string | null, message?: string | null, code: OrganizationErrorCode }> } | null };
 
 export type OrganizationInviteCreateMutationVariables = Exact<{
   input: OrganizationInviteCreateInput;
@@ -3153,6 +3192,20 @@ export const OrganizationMembershipFragmentFragmentDoc = gql`
     `;
 export const OrganizationMemberLeaveFragmentFragmentDoc = gql`
     fragment OrganizationMemberLeaveFragment on OrganizationMemberLeave {
+  organizationMembership {
+    ...OrganizationMembershipFragment
+  }
+  organizationErrors {
+    ...OrganizationErrorFragment
+  }
+  errors {
+    ...OrganizationErrorFragment
+  }
+}
+    ${OrganizationMembershipFragmentFragmentDoc}
+${OrganizationErrorFragmentFragmentDoc}`;
+export const OrganizationMemberUpdateFragmentFragmentDoc = gql`
+    fragment OrganizationMemberUpdateFragment on OrganizationMemberUpdate {
   organizationMembership {
     ...OrganizationMembershipFragment
   }
@@ -4453,6 +4506,40 @@ export function useOrganizationMemberLeaveMutation(baseOptions?: Apollo.Mutation
 export type OrganizationMemberLeaveMutationHookResult = ReturnType<typeof useOrganizationMemberLeaveMutation>;
 export type OrganizationMemberLeaveMutationResult = Apollo.MutationResult<OrganizationMemberLeaveMutation>;
 export type OrganizationMemberLeaveMutationOptions = Apollo.BaseMutationOptions<OrganizationMemberLeaveMutation, OrganizationMemberLeaveMutationVariables>;
+export const OrganizationMemberUpdateDocument = gql`
+    mutation OrganizationMemberUpdate($id: ID!, $input: OrganizationMemberUpdateInput!) {
+  organizationMemberUpdate(id: $id, input: $input) {
+    ...OrganizationMemberUpdateFragment
+  }
+}
+    ${OrganizationMemberUpdateFragmentFragmentDoc}`;
+export type OrganizationMemberUpdateMutationFn = Apollo.MutationFunction<OrganizationMemberUpdateMutation, OrganizationMemberUpdateMutationVariables>;
+
+/**
+ * __useOrganizationMemberUpdateMutation__
+ *
+ * To run a mutation, you first call `useOrganizationMemberUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationMemberUpdateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [organizationMemberUpdateMutation, { data, loading, error }] = useOrganizationMemberUpdateMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useOrganizationMemberUpdateMutation(baseOptions?: Apollo.MutationHookOptions<OrganizationMemberUpdateMutation, OrganizationMemberUpdateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OrganizationMemberUpdateMutation, OrganizationMemberUpdateMutationVariables>(OrganizationMemberUpdateDocument, options);
+      }
+export type OrganizationMemberUpdateMutationHookResult = ReturnType<typeof useOrganizationMemberUpdateMutation>;
+export type OrganizationMemberUpdateMutationResult = Apollo.MutationResult<OrganizationMemberUpdateMutation>;
+export type OrganizationMemberUpdateMutationOptions = Apollo.BaseMutationOptions<OrganizationMemberUpdateMutation, OrganizationMemberUpdateMutationVariables>;
 export const OrganizationInviteCreateDocument = gql`
     mutation organizationInviteCreate($input: OrganizationInviteCreateInput!) {
   organizationInviteCreate(input: $input) {

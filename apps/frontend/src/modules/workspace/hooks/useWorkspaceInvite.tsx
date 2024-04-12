@@ -2,6 +2,7 @@ import { useCallback } from "react";
 
 import {
     OrganizationInviteCreateInput,
+    RoleLevel,
     useOrganizationInviteCreateMutation,
     useOrganizationInviteDeleteMutation,
     useOrganizationInviteDetailsLazyQuery,
@@ -11,12 +12,13 @@ import {
     useOrganizationJoinMutation,
     useOrganizationLeaveMutation,
     useOrganizationMemberLeaveMutation,
+    useOrganizationMemberUpdateMutation,
 } from "@/generated/graphql";
 
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 
 export const useWorkspaceInvite = () => {
-    const { switchWorkspace } = useAuth();
+    const { switchWorkspace, user } = useAuth();
 
     const [getInviteLink, { loading: loadingInviteLink }] = useOrganizationInviteLinkCreateLazyQuery();
     const [getInviteDetails, { loading: inviteDetailsLoading }] = useOrganizationInviteDetailsLazyQuery();
@@ -27,6 +29,7 @@ export const useWorkspaceInvite = () => {
     const [revokeInviteLink] = useOrganizationInviteDeleteMutation();
     const [removeOrganizationMember] = useOrganizationMemberLeaveMutation();
     const [leaveOrganization] = useOrganizationLeaveMutation();
+    const [updateMemberRole] = useOrganizationMemberUpdateMutation();
     const [joinOrganization, { loading: joiningOrg }] = useOrganizationJoinMutation();
 
     const handleGetInviteDetails = useCallback(
@@ -133,6 +136,7 @@ export const useWorkspaceInvite = () => {
             console.error(error);
         }
     }, []);
+
     const handleMemberLeave = useCallback(async (organizationId: string) => {
         try {
             const response = await leaveOrganization({
@@ -145,6 +149,23 @@ export const useWorkspaceInvite = () => {
             console.error(error);
         }
     }, []);
+
+    const handleUpdateMemberRole = useCallback(async (memberId: string, roleLevel: RoleLevel) => {
+        try {
+            const response = await updateMemberRole({
+                variables: {
+                    id: memberId,
+                    input: {
+                        role: roleLevel,
+                    },
+                },
+            });
+            return response?.data?.organizationMemberUpdate;
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
     const handleRemoveMember = useCallback(async (memberId: string) => {
         try {
             const response = await removeOrganizationMember({
@@ -169,5 +190,6 @@ export const useWorkspaceInvite = () => {
         revokeInviteLink: handleRevokeInviteLink,
         removeOrganizationMember: handleRemoveMember,
         leaveOrganization: handleMemberLeave,
+        updateMemberRole: handleUpdateMemberRole,
     };
 };
