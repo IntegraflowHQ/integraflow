@@ -35,7 +35,7 @@ class OrganizationLeave(ModelDeleteMutation):
     def delete(
         cls,
         _info: ResolveInfo,
-        instance: models.OrganizationMembership
+        instance: models.Organization
     ):
         if _info.context.user and _info.context.user.organization:
-            _info.context.user.leave(organization=instance.organization)
+            _info.context.user.leave(organization=instance)
