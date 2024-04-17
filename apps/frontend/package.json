@@ -28,7 +28,7 @@
         "apollo3-cache-persist": "^0.14.1",
         "date-fns": "^2.30.0",
         "graphql": "^15.4.0",
-        "html2canvas": "^1.4.1",
+        "html-to-image": "^1.11.11",
         "js-cookie": "^3.0.5",
         "jspdf": "^2.5.1",
         "localforage": "^1.10.0",

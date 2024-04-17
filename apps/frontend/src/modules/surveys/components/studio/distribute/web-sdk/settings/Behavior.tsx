@@ -161,11 +161,12 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
                     {watch("closeOnLimit") && <NumberInput label="Response limit" {...register("responseLimit")} />}
                     <div className="flex gap-1">
                         <DatePicker
+                            mode="single"
                             label="Start date"
-                            value={watch("startDate") ? new Date(watch("startDate") as string) : undefined}
-                            onChange={(e) => {
-                                if (e.target.value) {
-                                    setValue("startDate", e.target.value.toISOString());
+                            selected={watch("startDate") ? new Date(watch("startDate") as string) : undefined}
+                            onSelect={(value) => {
+                                if (value) {
+                                    setValue("startDate", value.toISOString());
                                 } else {
                                     setValue("startDate", "");
                                 }
@@ -174,11 +175,12 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
                             toDate={watch("endDate") ? subDays(new Date(watch("endDate") as string), 1) : undefined}
                         />
                         <DatePicker
+                            mode="single"
                             label="End date"
-                            value={watch("endDate") ? new Date(watch("endDate") as string) : undefined}
-                            onChange={(e) => {
-                                if (e.target.value) {
-                                    setValue("endDate", e.target.value.toISOString());
+                            selected={watch("endDate") ? new Date(watch("endDate") as string) : undefined}
+                            onSelect={(value) => {
+                                if (value) {
+                                    setValue("endDate", value.toISOString());
                                 } else {
                                     setValue("endDate", "");
                                 }

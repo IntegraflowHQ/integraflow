@@ -27,6 +27,8 @@ const config: Config = {
                         "18": "#38304f",
                         "19": "#352E48",
                         "20": "#524B52",
+                        "21": "#2E2743",
+                        "22": "#201A2C",
                     },
                     text: {
                         "1": "#DBD4EB",
@@ -38,7 +40,10 @@ const config: Config = {
                         "7": "#F1F1F1",
                         "8": "#7F76A9",
                         "9": "#EED294",
-
+                        "10": "#827BA3",
+                        "11": "#D8D4FF",
+                        "12": "#705F97",
+                        "13": "#847F98",
                         DEFAULT: "#AFAAC7",
                     },
                     black: {
@@ -49,9 +54,15 @@ const config: Config = {
                         text: "#CE3C55",
                         bg: "rgba(206, 60, 85, 0.20)",
                     },
+                    chart: {
+                        positive: "#8DF0B0",
+                        neutral: "#FFB17B",
+                        negative: "#EB5A6D",
+                    },
                 },
             },
             backgroundImage: {
+                "gradient-text": "linear-gradient(27deg, #B7A6E8 8.33%, #6941C6 91.67%)",
                 "gradient-button": "linear-gradient(27deg, #53389E 8.33%, #6941C6 91.67%)",
                 "gradient-button-hover": "linear-gradient(27deg, #299532 8.33%, #7EE787 91.67%)",
             },

@@ -82,8 +82,7 @@ export type WebChannelAccordionProps = {
     channel: ParsedChannel;
 };
 
-export type IntegraflowIconProps = {
-    color?: string;
+export type IntegraflowIconProps = React.SVGAttributes<SVGSVGElement> & {
     size?: number;
 };
 
