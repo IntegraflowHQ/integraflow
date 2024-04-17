@@ -1,5 +1,5 @@
 import { useProject } from "@/modules/projects/hooks/useProject";
-import { Button, Dialog, DialogContent, TextInput } from "@/ui";
+import { Button, TextInput } from "@/ui";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { SettingsScreen } from "./SettingsScreen";
@@ -64,7 +64,7 @@ export const Project = () => {
                             responses.
                         </p>
                     </div>
-                    <div className="w-[187px]">
+                    {/* <div className="w-[187px]">
                         <Button
                             text="Delete this project"
                             size="md"
@@ -111,7 +111,7 @@ export const Project = () => {
                                 </div>
                             </DialogContent>
                         </Dialog>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </SettingsScreen>

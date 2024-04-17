@@ -28,7 +28,7 @@ export const useWorkspaceInvite = () => {
     const [resendInviteLink] = useOrganizationInviteResendMutation();
     const [revokeInviteLink] = useOrganizationInviteDeleteMutation();
     const [removeOrganizationMember] = useOrganizationMemberLeaveMutation();
-    const [leaveOrganization] = useOrganizationLeaveMutation();
+    const [leaveOrganization, { loading: loadingLeaveOrganization }] = useOrganizationLeaveMutation();
     const [updateMemberRole] = useOrganizationMemberUpdateMutation();
     const [joinOrganization, { loading: joiningOrg }] = useOrganizationJoinMutation();
 
@@ -180,7 +180,8 @@ export const useWorkspaceInvite = () => {
     }, []);
 
     return {
-        loading: joiningOrg || inviteDetailsLoading || loadingInviteLink || loadingLinkReset,
+        loading:
+            joiningOrg || inviteDetailsLoading || loadingInviteLink || loadingLinkReset || loadingLeaveOrganization,
         getInviteDetails: handleGetInviteDetails,
         getInviteLink: handleGetInviteLink,
         emailInvite: handleEmailInvite,

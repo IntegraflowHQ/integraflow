@@ -1,12 +1,15 @@
 import { Link, LucideMail, RefreshCcwIcon } from "lucide-react";
 import { useState } from "react";
 
+import { User } from "@/generated/graphql";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
 import { Button, Dialog, DialogContent, TextInput } from "@/ui";
 import { CopyIcon } from "@/ui/icons";
 import { addEllipsis, copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
+import { DeepPartial } from "@apollo/client/utilities";
 
 type Props = {
     open: boolean;
@@ -19,6 +22,7 @@ const EMAIL_REGEX =
 export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
     const { workspace } = useWorkspace();
     const { loading, emailInvite, getInviteLink, resetInviteLink } = useWorkspaceInvite();
+    const { user, updateUser } = useAuth();
 
     const [toggleInviteType, setToggleInviteType] = useState(false);
     const [inviteEmail, setInviteEmail] = useState("");
@@ -53,11 +57,27 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
         });
 
         const responses = await Promise.all(promises);
+        const successfulPromises = responses.filter((response) => !(response instanceof Error));
+
+        const updatedUser = JSON.parse(JSON.stringify(user)) as DeepPartial<User>;
+        const currentOrganization = updatedUser.organizations?.edges?.find((org) => org?.node?.id === workspace?.id);
+
+        if (currentOrganization?.node?.invites) {
+            currentOrganization.node.invites.edges = [
+                ...(currentOrganization.node.invites.edges || []),
+                ...successfulPromises.map((res) => {
+                    return {
+                        node: res?.organizationInvite,
+                    };
+                }),
+            ];
+            updateUser(updatedUser);
+        }
+
         const failedPromise = responses.filter((response) => {
             if (response instanceof Error) {
                 return true;
             }
-
             return (response?.errors?.length ?? 0) > 0;
         });
 

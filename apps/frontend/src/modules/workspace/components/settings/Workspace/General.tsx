@@ -1,5 +1,5 @@
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
-import { Button, Dialog, DialogContent, TextInput } from "@/ui";
+import { Button, TextInput } from "@/ui";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -81,8 +81,8 @@ export const General = () => {
                 </div>
             </div>
 
-            <hr className="my-6 border-[1px] border-intg-bg-4" />
-
+            {/* <hr className="my-6 border-[1px] border-intg-bg-4" /> */}
+            {/*
             <div className="space-y-6 text-sm text-intg-text-4">
                 <div className="space-y-2">
                     <h3 className="font-semibold">Delete Workspace</h3>
@@ -143,7 +143,7 @@ export const General = () => {
                         </DialogContent>
                     </Dialog>
                 </div>
-            </div>
+            </div> */}
         </form>
     );
 };

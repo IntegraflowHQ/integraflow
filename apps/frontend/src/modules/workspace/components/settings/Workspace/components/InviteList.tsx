@@ -1,10 +1,14 @@
+import { User } from "@/generated/graphql";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
 import { toast } from "@/utils/toast";
+import { DeepPartial } from "@apollo/client/utilities";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 
 export const InviteList = () => {
+    const { user, updateUser } = useAuth();
     const { workspace } = useWorkspace();
     const { resendInviteLink, revokeInviteLink } = useWorkspaceInvite();
 
@@ -22,8 +26,20 @@ export const InviteList = () => {
 
     const handleRevokeInviteLink = async (id: string) => {
         const response = await revokeInviteLink(id);
-        console.log(response);
         if (response?.organizationInvite) {
+            const updatedUser = JSON.parse(JSON.stringify(user)) as DeepPartial<User>;
+            const currentOrganization = updatedUser.organizations?.edges?.find(
+                (org) => org?.node?.id === workspace?.id,
+            );
+
+            if (currentOrganization?.node?.invites) {
+                currentOrganization.node.invites.edges = currentOrganization?.node?.invites?.edges?.filter(
+                    (invite) => invite?.node?.id !== response.organizationInvite?.id,
+                );
+            }
+
+            updateUser(updatedUser);
+
             toast.success(`The invite sent to ${response.organizationInvite.email} has been revoked `);
             return;
         }
@@ -35,8 +51,11 @@ export const InviteList = () => {
 
     return (
         <div className="mt-6">
-            {workspace?.invites?.totalCount && (
-                <h3 className="font-semibold">{workspace?.invites?.edges?.length} invites</h3>
+            {(workspace?.invites?.edges?.length as number) > 0 && (
+                <h3 className="font-semibold">
+                    {workspace?.invites?.edges?.length}{" "}
+                    {workspace?.invites?.edges && workspace?.invites?.edges?.length > 1 ? "invites" : "invite"}
+                </h3>
             )}
             {workspace?.invites?.edges?.map((invite, index) => {
                 return (

@@ -3,13 +3,13 @@ import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite
 import { Button, TextInput } from "@/ui";
 import { PlusCircle, Search } from "@/ui/icons";
 import { addEllipsis, copyToClipboard } from "@/utils";
-import { CopyIcon } from "lucide-react";
+import { CopyIcon, RefreshCcwIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { InviteList } from "./components/InviteList";
 import { MemberList } from "./components/MemberList";
 
 export const Member = () => {
-    const { getInviteLink } = useWorkspaceInvite();
+    const { getInviteLink, resetInviteLink, loading } = useWorkspaceInvite();
 
     const [inviteLink, setInviteLink] = useState("");
     const [openInviteModal, setOpenInviteModal] = useState(false);
@@ -25,6 +25,13 @@ export const Member = () => {
         handleLinkInvite();
     }, []);
 
+    const handleInviteLinkRefresh = async () => {
+        const response = await resetInviteLink();
+        if (response?.inviteLink) {
+            setInviteLink(`${window.location.host}${response?.inviteLink}`);
+        }
+    };
+
     return (
         <div className="w-[810px] pt-10 text-intg-text-4">
             <div className="space-y-4">
@@ -37,7 +44,16 @@ export const Member = () => {
 
                 <div className="flex w-full items-end gap-2">
                     <div className="w-[75%]">
-                        <TextInput placeholder="" value={addEllipsis(inviteLink, 40)} disabled={true} />
+                        <TextInput
+                            placeholder=""
+                            value={addEllipsis(inviteLink, 60)}
+                            disabled={true}
+                            rightIcon={
+                                <button disabled={loading} onClick={handleInviteLinkRefresh}>
+                                    <RefreshCcwIcon size={20} className={loading ? "spinner__circle" : ""} />
+                                </button>
+                            }
+                        />
                     </div>
                     <div className="w-[25%]">
                         <Button

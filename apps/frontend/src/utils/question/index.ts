@@ -7,7 +7,11 @@ import { addEllipsis, stripHtmlTags } from "..";
 import { questionTypes } from "../survey";
 
 const ANSWER_TAG_SUFFIX = "answer";
-export const questionsWithoutSettingsTab = [SurveyQuestionTypeEnum.Csat, "CES", SurveyQuestionTypeEnum.Date];
+export const questionsWithoutSettingsTab = [
+    SurveyQuestionTypeEnum.Csat,
+    SurveyQuestionTypeEnum.Ces,
+    SurveyQuestionTypeEnum.Date,
+];
 export const emptyLabel = "<p><br></p>";
 
 const MultipleLogicConditions = [
@@ -155,7 +159,7 @@ export const conditionOptions = (type: SurveyQuestionTypeEnum) => {
         type === SurveyQuestionTypeEnum.Nps ||
         type === SurveyQuestionTypeEnum.SmileyScale ||
         type === SurveyQuestionTypeEnum.Csat ||
-        type === "CES"
+        type === SurveyQuestionTypeEnum.Ces
     ) {
         return RangeLogicConditions;
     }
