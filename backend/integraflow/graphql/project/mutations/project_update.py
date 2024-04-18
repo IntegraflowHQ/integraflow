@@ -41,6 +41,7 @@ class ProjectUpdate(ModelMutation):
         error_type_class = ProjectError
         error_type_field = "project_errors"
         doc_category = DOC_CATEGORY_PROJECTS
+        auto_verify_organization = True
 
     @classmethod
     def get_type_for_model(cls):

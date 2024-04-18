@@ -283,6 +283,758 @@
                 "possibleTypes": null
             },
             {
+                "kind": "OBJECT",
+                "name": "BaseProject",
+                "description": "Represents a project.",
+                "fields": [
+                    {
+                        "name": "id",
+                        "description": "The ID of the project.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "ID",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "name",
+                        "description": "Name of the project.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "apiToken",
+                        "description": "API token for project.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [
+                    {
+                        "kind": "INTERFACE",
+                        "name": "Node",
+                        "ofType": null
+                    }
+                ],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "BaseProjectTheme",
+                "description": "Represents a theme.",
+                "fields": [
+                    {
+                        "name": "id",
+                        "description": "The ID of the theme.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "ID",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "name",
+                        "description": "Name of the theme.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "colorScheme",
+                        "description": "The settings of the theme.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "settings",
+                        "description": "The settings of the theme.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [
+                    {
+                        "kind": "INTERFACE",
+                        "name": "Node",
+                        "ofType": null
+                    }
+                ],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "BaseSurvey",
+                "description": "Represents a survey from used by our sdk.",
+                "fields": [
+                    {
+                        "name": "id",
+                        "description": "The ID of the survey.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "ID",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "slug",
+                        "description": "Slug of the survey.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "name",
+                        "description": "Name of the survey.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "status",
+                        "description": "The status of the survey",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "ENUM",
+                                "name": "SurveyStatusEnum",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "settings",
+                        "description": "The settings of the survey.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "theme",
+                        "description": "The theme of the survey.",
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "BaseProjectTheme",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "questions",
+                        "description": "The questions in the the survey",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "BaseSurveyQuestion",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "channels",
+                        "description": "The distribution channels supported by the survey",
+                        "args": [
+                            {
+                                "name": "channelType",
+                                "description": "The type of the distribution channel",
+                                "type": {
+                                    "kind": "ENUM",
+                                    "name": "SurveyChannelTypeEnum",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            }
+                        ],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "BaseSurveyChannel",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "project",
+                        "description": "The project the survey belongs to",
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "BaseProject",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "createdAt",
+                        "description": "The time at which the survey was created.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "DateTime",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "startDate",
+                        "description": "The date at which the survey was started.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "DateTime",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "endDate",
+                        "description": "The date at which the survey was ended.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "DateTime",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [
+                    {
+                        "kind": "INTERFACE",
+                        "name": "Node",
+                        "ofType": null
+                    }
+                ],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "BaseSurveyChannel",
+                "description": "Represents a survey channel.",
+                "fields": [
+                    {
+                        "name": "id",
+                        "description": "The ID of the channel.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "ID",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "type",
+                        "description": "The type of the survey channel",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "ENUM",
+                                "name": "SurveyChannelTypeEnum",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "link",
+                        "description": "Unique link to the channel.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "triggers",
+                        "description": "The options of the question.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "conditions",
+                        "description": "The settings of the question.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "settings",
+                        "description": "The settings of the question.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "createdAt",
+                        "description": "The time at which the channel was created.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "DateTime",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [
+                    {
+                        "kind": "INTERFACE",
+                        "name": "Node",
+                        "ofType": null
+                    }
+                ],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "BaseSurveyCountableConnection",
+                "description": null,
+                "fields": [
+                    {
+                        "name": "pageInfo",
+                        "description": "Pagination data for this connection.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "PageInfo",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "edges",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "BaseSurveyCountableEdge",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "totalCount",
+                        "description": "A total count of items in the collection.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Int",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "nodes",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "BaseSurvey",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "BaseSurveyCountableEdge",
+                "description": null,
+                "fields": [
+                    {
+                        "name": "node",
+                        "description": "The item at the end of the edge.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "BaseSurvey",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "cursor",
+                        "description": "A cursor for use in pagination.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "BaseSurveyQuestion",
+                "description": "Represents a question.",
+                "fields": [
+                    {
+                        "name": "id",
+                        "description": "The ID of the question.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "ID",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "label",
+                        "description": "Label of the question.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "description",
+                        "description": "Description of the question.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "type",
+                        "description": "The type of the question",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "ENUM",
+                                "name": "SurveyQuestionTypeEnum",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "options",
+                        "description": "The options of the question.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "settings",
+                        "description": "The settings of the question.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "orderNumber",
+                        "description": "The position of the question.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Int",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "maxPath",
+                        "description": "The position of the question.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Int",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "createdAt",
+                        "description": "The time at which the question was created.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "DateTime",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [
+                    {
+                        "kind": "INTERFACE",
+                        "name": "Node",
+                        "ofType": null
+                    }
+                ],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
                 "kind": "SCALAR",
                 "name": "Date",
                 "description": "The `Date` scalar type represents a Date\nvalue as specified by\n[iso8601](https://en.wikipedia.org/wiki/ISO_8601).",
@@ -2177,6 +2929,80 @@
                         "deprecationReason": null
                     },
                     {
+                        "name": "surveyResponseCreate",
+                        "description": "Creates a response to survey.",
+                        "args": [
+                            {
+                                "name": "input",
+                                "description": "The details for the response to create.",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "INPUT_OBJECT",
+                                        "name": "SurveyResponseCreateInput",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            }
+                        ],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "SurveyResponseCreate",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "surveyResponseUpdate",
+                        "description": "Updates a response.",
+                        "args": [
+                            {
+                                "name": "id",
+                                "description": "The ID of the response.",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "ID",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "input",
+                                "description": "The partial response object to update",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "INPUT_OBJECT",
+                                        "name": "SurveyResponseUpdateInput",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            }
+                        ],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "SurveyResponseUpdate",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
                         "name": "surveyUpdate",
                         "description": "Updates a survey \n\nRequires one of the following permissions: PROJECT_MEMBER_ACCESS.",
                         "args": [
@@ -2424,18 +3250,18 @@
                         "deprecationReason": null
                     },
                     {
-                        "name": "organizationInviteCreate",
-                        "description": "Creates a new organization invite. \n\nRequires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.",
+                        "name": "organizationInviteDelete",
+                        "description": "Deletes an organization invite. \n\nRequires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.",
                         "args": [
                             {
-                                "name": "input",
-                                "description": "The organization invite object to create.",
+                                "name": "id",
+                                "description": "The identifier of the invite to delete.",
                                 "type": {
                                     "kind": "NON_NULL",
                                     "name": null,
                                     "ofType": {
-                                        "kind": "INPUT_OBJECT",
-                                        "name": "OrganizationInviteCreateInput",
+                                        "kind": "SCALAR",
+                                        "name": "ID",
                                         "ofType": null
                                     }
                                 },
@@ -2446,7 +3272,7 @@
                         ],
                         "type": {
                             "kind": "OBJECT",
-                            "name": "OrganizationInviteCreate",
+                            "name": "OrganizationInviteDelete",
                             "ofType": null
                         },
                         "isDeprecated": false,
@@ -2465,18 +3291,18 @@
                         "deprecationReason": null
                     },
                     {
-                        "name": "organizationJoin",
-                        "description": "Joins an organization \n\nRequires one of the following permissions: AUTHENTICATED_USER.",
+                        "name": "organizationInviteResend",
+                        "description": "Resend an existing invite \n\nRequires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.",
                         "args": [
                             {
-                                "name": "input",
-                                "description": "Organization details for the new organization.",
+                                "name": "id",
+                                "description": "ID of a invite to resend.",
                                 "type": {
                                     "kind": "NON_NULL",
                                     "name": null,
                                     "ofType": {
-                                        "kind": "INPUT_OBJECT",
-                                        "name": "OrganizationJoinInput",
+                                        "kind": "SCALAR",
+                                        "name": "ID",
                                         "ofType": null
                                     }
                                 },
@@ -2487,7 +3313,36 @@
                         ],
                         "type": {
                             "kind": "OBJECT",
-                            "name": "OrganizationJoin",
+                            "name": "OrganizationInviteResend",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "organizationUpdate",
+                        "description": "Updates an organization. \n\nRequires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.",
+                        "args": [
+                            {
+                                "name": "input",
+                                "description": "A partial object to update the organization with.",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "INPUT_OBJECT",
+                                        "name": "OrganizationUpdateInput",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            }
+                        ],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "OrganizationUpdate",
                             "ofType": null
                         },
                         "isDeprecated": false,
@@ -2594,6 +3449,31 @@
                     },
                     {
                         "kind": "OBJECT",
+                        "name": "BaseProject",
+                        "ofType": null
+                    },
+                    {
+                        "kind": "OBJECT",
+                        "name": "BaseProjectTheme",
+                        "ofType": null
+                    },
+                    {
+                        "kind": "OBJECT",
+                        "name": "BaseSurvey",
+                        "ofType": null
+                    },
+                    {
+                        "kind": "OBJECT",
+                        "name": "BaseSurveyChannel",
+                        "ofType": null
+                    },
+                    {
+                        "kind": "OBJECT",
+                        "name": "BaseSurveyQuestion",
+                        "ofType": null
+                    },
+                    {
+                        "kind": "OBJECT",
                         "name": "Event",
                         "ofType": null
                     },
@@ -2625,6 +3505,11 @@
                     {
                         "kind": "OBJECT",
                         "name": "OrganizationInviteLinkDetails",
+                        "ofType": null
+                    },
+                    {
+                        "kind": "OBJECT",
+                        "name": "OrganizationMember",
                         "ofType": null
                     },
                     {
@@ -2801,18 +3686,6 @@
                         "description": "Users associated with the organization.\n\nRequires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.",
                         "args": [
                             {
-                                "name": "orderBy",
-                                "description": "By which field should the pagination order by.",
-                                "type": {
-                                    "kind": "INPUT_OBJECT",
-                                    "name": "UserSortingInput",
-                                    "ofType": null
-                                },
-                                "defaultValue": null,
-                                "isDeprecated": false,
-                                "deprecationReason": null
-                            },
-                            {
                                 "name": "before",
                                 "description": "Return the elements in the list that come before the specified cursor.",
                                 "type": {
@@ -2863,7 +3736,7 @@
                         ],
                         "type": {
                             "kind": "OBJECT",
-                            "name": "UserCountableConnection",
+                            "name": "OrganizationMemberCountableConnection",
                             "ofType": null
                         },
                         "isDeprecated": false,
@@ -2873,18 +3746,6 @@
                         "name": "projects",
                         "description": "Projects associated with the organization.\n\nRequires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.",
                         "args": [
-                            {
-                                "name": "orderBy",
-                                "description": "By which field should the pagination order by.",
-                                "type": {
-                                    "kind": "INPUT_OBJECT",
-                                    "name": "UserSortingInput",
-                                    "ofType": null
-                                },
-                                "defaultValue": null,
-                                "isDeprecated": false,
-                                "deprecationReason": null
-                            },
                             {
                                 "name": "before",
                                 "description": "Return the elements in the list that come before the specified cursor.",
@@ -2937,6 +3798,67 @@
                         "type": {
                             "kind": "OBJECT",
                             "name": "ProjectCountableConnection",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "invites",
+                        "description": "Invites associated with the organization.\n\nRequires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.",
+                        "args": [
+                            {
+                                "name": "before",
+                                "description": "Return the elements in the list that come before the specified cursor.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "String",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "after",
+                                "description": "Return the elements in the list that come after the specified cursor.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "String",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "first",
+                                "description": "Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Int",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "last",
+                                "description": "Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Int",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            }
+                        ],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "OrganizationInviteCountableConnection",
                             "ofType": null
                         },
                         "isDeprecated": false,
@@ -3483,8 +4405,138 @@
             },
             {
                 "kind": "OBJECT",
-                "name": "OrganizationInviteCreate",
-                "description": "Creates a new organization invite. \n\nRequires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.",
+                "name": "OrganizationInviteCountableConnection",
+                "description": null,
+                "fields": [
+                    {
+                        "name": "pageInfo",
+                        "description": "Pagination data for this connection.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "PageInfo",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "edges",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "OrganizationInviteCountableEdge",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "totalCount",
+                        "description": "A total count of items in the collection.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Int",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "nodes",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "OrganizationInvite",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "OrganizationInviteCountableEdge",
+                "description": null,
+                "fields": [
+                    {
+                        "name": "node",
+                        "description": "The item at the end of the edge.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "OrganizationInvite",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "cursor",
+                        "description": "A cursor for use in pagination.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "OrganizationInviteDelete",
+                "description": "Deletes an organization invite. \n\nRequires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.",
                 "fields": [
                     {
                         "name": "organizationErrors",
@@ -3549,69 +4601,6 @@
                 ],
                 "inputFields": null,
                 "interfaces": [],
-                "enumValues": null,
-                "possibleTypes": null
-            },
-            {
-                "kind": "INPUT_OBJECT",
-                "name": "OrganizationInviteCreateInput",
-                "description": null,
-                "fields": null,
-                "inputFields": [
-                    {
-                        "name": "id",
-                        "description": "The identifier in UUID v4 format. If none is provided, the backend will generate one.",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "UUID",
-                            "ofType": null
-                        },
-                        "defaultValue": null,
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "email",
-                        "description": "The email of the invitee.",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "SCALAR",
-                                "name": "String",
-                                "ofType": null
-                            }
-                        },
-                        "defaultValue": null,
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "message",
-                        "description": "The message to send to the invitee.",
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "String",
-                            "ofType": null
-                        },
-                        "defaultValue": null,
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "role",
-                        "description": "What member role the invite should grant.",
-                        "type": {
-                            "kind": "ENUM",
-                            "name": "RoleLevel",
-                            "ofType": null
-                        },
-                        "defaultValue": null,
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    }
-                ],
-                "interfaces": null,
                 "enumValues": null,
                 "possibleTypes": null
             },
@@ -3989,25 +4978,9 @@
             },
             {
                 "kind": "OBJECT",
-                "name": "OrganizationJoin",
-                "description": "Joins an organization \n\nRequires one of the following permissions: AUTHENTICATED_USER.",
+                "name": "OrganizationInviteResend",
+                "description": "Resend an existing invite \n\nRequires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.",
                 "fields": [
-                    {
-                        "name": "user",
-                        "description": "A user that has access to the the resources of an organization.",
-                        "args": [],
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "OBJECT",
-                                "name": "AuthUser",
-                                "ofType": null
-                            }
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
                     {
                         "name": "organizationErrors",
                         "description": null,
@@ -4055,6 +5028,348 @@
                         },
                         "isDeprecated": false,
                         "deprecationReason": null
+                    },
+                    {
+                        "name": "organizationInvite",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "OrganizationInvite",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "OrganizationMember",
+                "description": "Represents an organization member.",
+                "fields": [
+                    {
+                        "name": "id",
+                        "description": "The ID of the member.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "ID",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "email",
+                        "description": "The email address of the member.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "firstName",
+                        "description": "The given name of the member.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "lastName",
+                        "description": "The family name of the member.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "role",
+                        "description": "The member role",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "ENUM",
+                                "name": "RoleLevel",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "createdAt",
+                        "description": "The time at which the member was created.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "DateTime",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "updatedAt",
+                        "description": "The last time at which the member was updated.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "DateTime",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [
+                    {
+                        "kind": "INTERFACE",
+                        "name": "Node",
+                        "ofType": null
+                    }
+                ],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "OrganizationMemberCountableConnection",
+                "description": null,
+                "fields": [
+                    {
+                        "name": "pageInfo",
+                        "description": "Pagination data for this connection.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "PageInfo",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "edges",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "OrganizationMemberCountableEdge",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "totalCount",
+                        "description": "A total count of items in the collection.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Int",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "nodes",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "OrganizationMember",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "OrganizationMemberCountableEdge",
+                "description": null,
+                "fields": [
+                    {
+                        "name": "node",
+                        "description": "The item at the end of the edge.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "OrganizationMember",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "cursor",
+                        "description": "A cursor for use in pagination.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "OrganizationUpdate",
+                "description": "Updates an organization. \n\nRequires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.",
+                "fields": [
+                    {
+                        "name": "organizationErrors",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "OrganizationError",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "errors",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "OrganizationError",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "organization",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "Organization",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
                     }
                 ],
                 "inputFields": null,
@@ -4064,21 +5379,41 @@
             },
             {
                 "kind": "INPUT_OBJECT",
-                "name": "OrganizationJoinInput",
+                "name": "OrganizationUpdateInput",
                 "description": null,
                 "fields": null,
                 "inputFields": [
                     {
-                        "name": "inviteLink",
-                        "description": "An invite link for an organization.",
+                        "name": "name",
+                        "description": "The name of the organization.",
                         "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "SCALAR",
-                                "name": "String",
-                                "ofType": null
-                            }
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "slug",
+                        "description": "The slug of the organization.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "timezone",
+                        "description": "The timezone of the organization, passed in by client.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
                         },
                         "defaultValue": null,
                         "isDeprecated": false,
@@ -4435,6 +5770,22 @@
                     {
                         "name": "name",
                         "description": "Name of the project.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "apiToken",
+                        "description": "API token for project.",
                         "args": [],
                         "type": {
                             "kind": "NON_NULL",
@@ -4994,18 +6345,6 @@
                         "deprecationReason": null
                     },
                     {
-                        "name": "reference",
-                        "description": "For internal purpose.",
-                        "args": [],
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "ID",
-                            "ofType": null
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
                         "name": "name",
                         "description": "Name of the theme.",
                         "args": [],
@@ -5040,6 +6379,18 @@
                         "type": {
                             "kind": "SCALAR",
                             "name": "JSONString",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "reference",
+                        "description": "For internal purpose.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "ID",
                             "ofType": null
                         },
                         "isDeprecated": false,
@@ -6256,8 +7607,93 @@
                         "deprecationReason": null
                     },
                     {
+                        "name": "activeSurveys",
+                        "description": "List of the project's surveys.\n\nRequires one of the following permissions: AUTHENTICATED_API.",
+                        "args": [
+                            {
+                                "name": "filter",
+                                "description": "Filtering options for surveys.",
+                                "type": {
+                                    "kind": "INPUT_OBJECT",
+                                    "name": "SurveyFilterInput",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "sortBy",
+                                "description": "Sort surveys.",
+                                "type": {
+                                    "kind": "INPUT_OBJECT",
+                                    "name": "SurveySortingInput",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "before",
+                                "description": "Return the elements in the list that come before the specified cursor.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "String",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "after",
+                                "description": "Return the elements in the list that come after the specified cursor.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "String",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "first",
+                                "description": "Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Int",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "last",
+                                "description": "Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Int",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            }
+                        ],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "BaseSurveyCountableConnection",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
                         "name": "survey",
-                        "description": "Look up a survey by ID or slug.\n\nRequires one of the following permissions: PROJECT_MEMBER_ACCESS.",
+                        "description": "Look up a survey by ID or slug.\n\nRequires one of the following permissions: PROJECT_MEMBER_ACCESS, AUTHENTICATED_API.",
                         "args": [
                             {
                                 "name": "id",
@@ -6287,6 +7723,43 @@
                         "type": {
                             "kind": "OBJECT",
                             "name": "Survey",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "surveyByChannel",
+                        "description": "Look up a survey by channel ID or link.",
+                        "args": [
+                            {
+                                "name": "id",
+                                "description": "The ID of the channel.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "ID",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "link",
+                                "description": "Unique link of the channel.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "String",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            }
+                        ],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "BaseSurvey",
                             "ofType": null
                         },
                         "isDeprecated": false,
@@ -6864,6 +8337,12 @@
                         "description": null,
                         "isDeprecated": false,
                         "deprecationReason": null
+                    },
+                    {
+                        "name": "OWNER",
+                        "description": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
                     }
                 ],
                 "possibleTypes": null
@@ -7209,18 +8688,6 @@
                         "deprecationReason": null
                     },
                     {
-                        "name": "reference",
-                        "description": "For internal purpose.",
-                        "args": [],
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "ID",
-                            "ofType": null
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
                         "name": "type",
                         "description": "The type of the survey channel",
                         "args": [],
@@ -7230,6 +8697,22 @@
                             "ofType": {
                                 "kind": "ENUM",
                                 "name": "SurveyChannelTypeEnum",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "link",
+                        "description": "Unique link to the channel.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
                                 "ofType": null
                             }
                         },
@@ -7284,6 +8767,18 @@
                                 "name": "DateTime",
                                 "ofType": null
                             }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "reference",
+                        "description": "For internal purpose.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "ID",
+                            "ofType": null
                         },
                         "isDeprecated": false,
                         "deprecationReason": null
@@ -7448,6 +8943,18 @@
                 "description": "Creates a new distibution channel \n\nRequires one of the following permissions: PROJECT_MEMBER_ACCESS.",
                 "fields": [
                     {
+                        "name": "surveyChannel",
+                        "description": "The checkout with the added gift card or voucher.",
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "SurveyChannel",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
                         "name": "surveyErrors",
                         "description": null,
                         "args": [],
@@ -7491,18 +8998,6 @@
                                     }
                                 }
                             }
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "surveyChannel",
-                        "description": null,
-                        "args": [],
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "SurveyChannel",
-                            "ofType": null
                         },
                         "isDeprecated": false,
                         "deprecationReason": null
@@ -8450,18 +9945,6 @@
                         "deprecationReason": null
                     },
                     {
-                        "name": "reference",
-                        "description": "For internal purpose.",
-                        "args": [],
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "ID",
-                            "ofType": null
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
                         "name": "label",
                         "description": "Label of the question.",
                         "args": [],
@@ -8566,18 +10049,6 @@
                         "deprecationReason": null
                     },
                     {
-                        "name": "survey",
-                        "description": "The project the survey belongs to\n\nRequires one of the following permissions: PROJECT_MEMBER_ACCESS.",
-                        "args": [],
-                        "type": {
-                            "kind": "OBJECT",
-                            "name": "Survey",
-                            "ofType": null
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
                         "name": "createdAt",
                         "description": "The time at which the question was created.",
                         "args": [],
@@ -8589,6 +10060,30 @@
                                 "name": "DateTime",
                                 "ofType": null
                             }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "reference",
+                        "description": "For internal purpose.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "ID",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "survey",
+                        "description": "The project the survey belongs to\n\nRequires one of the following permissions: PROJECT_MEMBER_ACCESS.",
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "Survey",
+                            "ofType": null
                         },
                         "isDeprecated": false,
                         "deprecationReason": null
@@ -9031,6 +10526,12 @@
                         "deprecationReason": null
                     },
                     {
+                        "name": "CES",
+                        "description": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
                         "name": "SMILEY_SCALE",
                         "description": null,
                         "isDeprecated": false,
@@ -9236,6 +10737,378 @@
                         "type": {
                             "kind": "SCALAR",
                             "name": "Int",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "interfaces": null,
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "SurveyResponseCreate",
+                "description": "Creates a response to survey.",
+                "fields": [
+                    {
+                        "name": "responseId",
+                        "description": "The ID of the response.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "ID",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "status",
+                        "description": "Whether the operation was successful.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Boolean",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "surveyErrors",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "SurveyError",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "errors",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "SurveyError",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "INPUT_OBJECT",
+                "name": "SurveyResponseCreateInput",
+                "description": null,
+                "fields": null,
+                "inputFields": [
+                    {
+                        "name": "response",
+                        "description": "The partial response for the survey.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "startedAt",
+                        "description": "The time the survey started.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "DateTime",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "completed",
+                        "description": "Whether the response is completed.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Boolean",
+                            "ofType": null
+                        },
+                        "defaultValue": "false",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "completedAt",
+                        "description": "The time the survey completed.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "DateTime",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "userId",
+                        "description": "The user distinct ID.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "ID",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "metadata",
+                        "description": "The response metadata.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "attributes",
+                        "description": "The user attributes.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "id",
+                        "description": "The ID of the response.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "UUID",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "surveyId",
+                        "description": "The survey ID the response belongs to.",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "ID",
+                                "ofType": null
+                            }
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "interfaces": null,
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "SurveyResponseUpdate",
+                "description": "Updates a response.",
+                "fields": [
+                    {
+                        "name": "status",
+                        "description": "Whether the operation was successful.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Boolean",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "surveyErrors",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "SurveyError",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "errors",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "SurveyError",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "INPUT_OBJECT",
+                "name": "SurveyResponseUpdateInput",
+                "description": null,
+                "fields": null,
+                "inputFields": [
+                    {
+                        "name": "response",
+                        "description": "The partial response for the survey.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "startedAt",
+                        "description": "The time the survey started.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "DateTime",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "completed",
+                        "description": "Whether the response is completed.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "Boolean",
+                            "ofType": null
+                        },
+                        "defaultValue": "false",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "completedAt",
+                        "description": "The time the survey completed.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "DateTime",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "userId",
+                        "description": "The user distinct ID.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "ID",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "metadata",
+                        "description": "The response metadata.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
+                            "ofType": null
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "attributes",
+                        "description": "The user attributes.",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
                             "ofType": null
                         },
                         "defaultValue": null,
@@ -9866,136 +11739,6 @@
             },
             {
                 "kind": "OBJECT",
-                "name": "UserCountableConnection",
-                "description": null,
-                "fields": [
-                    {
-                        "name": "pageInfo",
-                        "description": "Pagination data for this connection.",
-                        "args": [],
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "OBJECT",
-                                "name": "PageInfo",
-                                "ofType": null
-                            }
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "edges",
-                        "description": null,
-                        "args": [],
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "LIST",
-                                "name": null,
-                                "ofType": {
-                                    "kind": "NON_NULL",
-                                    "name": null,
-                                    "ofType": {
-                                        "kind": "OBJECT",
-                                        "name": "UserCountableEdge",
-                                        "ofType": null
-                                    }
-                                }
-                            }
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "totalCount",
-                        "description": "A total count of items in the collection.",
-                        "args": [],
-                        "type": {
-                            "kind": "SCALAR",
-                            "name": "Int",
-                            "ofType": null
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "nodes",
-                        "description": null,
-                        "args": [],
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "LIST",
-                                "name": null,
-                                "ofType": {
-                                    "kind": "NON_NULL",
-                                    "name": null,
-                                    "ofType": {
-                                        "kind": "OBJECT",
-                                        "name": "User",
-                                        "ofType": null
-                                    }
-                                }
-                            }
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    }
-                ],
-                "inputFields": null,
-                "interfaces": [],
-                "enumValues": null,
-                "possibleTypes": null
-            },
-            {
-                "kind": "OBJECT",
-                "name": "UserCountableEdge",
-                "description": null,
-                "fields": [
-                    {
-                        "name": "node",
-                        "description": "The item at the end of the edge.",
-                        "args": [],
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "OBJECT",
-                                "name": "User",
-                                "ofType": null
-                            }
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "cursor",
-                        "description": "A cursor for use in pagination.",
-                        "args": [],
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "SCALAR",
-                                "name": "String",
-                                "ofType": null
-                            }
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    }
-                ],
-                "inputFields": null,
-                "interfaces": [],
-                "enumValues": null,
-                "possibleTypes": null
-            },
-            {
-                "kind": "OBJECT",
                 "name": "UserError",
                 "description": "Represents errors in user mutations.",
                 "fields": [
@@ -10183,84 +11926,6 @@
                             "kind": "SCALAR",
                             "name": "String",
                             "ofType": null
-                        },
-                        "defaultValue": null,
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    }
-                ],
-                "interfaces": null,
-                "enumValues": null,
-                "possibleTypes": null
-            },
-            {
-                "kind": "ENUM",
-                "name": "UserSortField",
-                "description": null,
-                "fields": null,
-                "inputFields": null,
-                "interfaces": null,
-                "enumValues": [
-                    {
-                        "name": "FIRST_NAME",
-                        "description": "Sort users by first name.",
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "LAST_NAME",
-                        "description": "Sort users by last name.",
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "EMAIL",
-                        "description": "Sort users by email.",
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "CREATED_AT",
-                        "description": "Sort users by created at.",
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    }
-                ],
-                "possibleTypes": null
-            },
-            {
-                "kind": "INPUT_OBJECT",
-                "name": "UserSortingInput",
-                "description": null,
-                "fields": null,
-                "inputFields": [
-                    {
-                        "name": "direction",
-                        "description": "Specifies the direction in which to sort users.",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "ENUM",
-                                "name": "OrderDirection",
-                                "ofType": null
-                            }
-                        },
-                        "defaultValue": null,
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
-                        "name": "field",
-                        "description": "Sort users by the selected field.",
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "ENUM",
-                                "name": "UserSortField",
-                                "ofType": null
-                            }
                         },
                         "defaultValue": null,
                         "isDeprecated": false,
@@ -11309,13 +12974,7 @@
                 "name": "doc",
                 "description": "Groups fields and operations into named groups.",
                 "isRepeatable": false,
-                "locations": [
-                    "ENUM",
-                    "FIELD",
-                    "FIELD_DEFINITION",
-                    "INPUT_OBJECT",
-                    "OBJECT"
-                ],
+                "locations": ["ENUM", "FIELD", "FIELD_DEFINITION", "INPUT_OBJECT", "OBJECT"],
                 "args": [
                     {
                         "name": "category",
@@ -11387,12 +13046,7 @@
                 "name": "deprecated",
                 "description": "Marks an element of a GraphQL schema as no longer supported.",
                 "isRepeatable": false,
-                "locations": [
-                    "FIELD_DEFINITION",
-                    "ARGUMENT_DEFINITION",
-                    "INPUT_FIELD_DEFINITION",
-                    "ENUM_VALUE"
-                ],
+                "locations": ["FIELD_DEFINITION", "ARGUMENT_DEFINITION", "INPUT_FIELD_DEFINITION", "ENUM_VALUE"],
                 "args": [
                     {
                         "name": "reason",

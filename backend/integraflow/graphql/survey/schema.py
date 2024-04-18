@@ -2,13 +2,10 @@ import graphene
 
 from integraflow.graphql.core.connection import (
     create_connection_slice,
-    filter_connection_queryset
+    filter_connection_queryset,
 )
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_SURVEYS
-from integraflow.graphql.core.fields import (
-    FilterConnectionField,
-    PermissionsField
-)
+from integraflow.graphql.core.fields import FilterConnectionField, PermissionsField
 from integraflow.permission.auth_filters import AuthorizationFilters
 
 from .filters import SurveyFilterInput
@@ -23,22 +20,24 @@ from .mutations import (
     SurveyQuestionUpdate,
     SurveyResponseCreate,
     SurveyResponseUpdate,
-    SurveyUpdate
+    SurveyUpdate,
 )
 from .resolvers import (
+    resolve_active_surveys,
     resolve_channels,
     resolve_questions,
     resolve_survey,
     resolve_survey_by_channel,
-    resolve_surveys
+    resolve_surveys,
 )
 from .sorters import SurveySortingInput
 from .types import (
     BaseSurvey,
+    BaseSurveyCountableConnection,
     Survey,
     SurveyChannelCountableConnection,
     SurveyCountableConnection,
-    SurveyQuestionCountableConnection
+    SurveyQuestionCountableConnection,
 )
 
 
@@ -73,6 +72,14 @@ class SurveyQueries(graphene.ObjectType):
         permissions=[AuthorizationFilters.PROJECT_MEMBER_ACCESS],
         doc_category=DOC_CATEGORY_SURVEYS,
     )
+    active_surveys = FilterConnectionField(
+        BaseSurveyCountableConnection,
+        filter=SurveyFilterInput(description="Filtering options for surveys."),
+        sort_by=SurveySortingInput(description="Sort surveys."),
+        description="List of the project's surveys.",
+        permissions=[AuthorizationFilters.AUTHENTICATED_API],
+        doc_category=DOC_CATEGORY_SURVEYS,
+    )
     survey = PermissionsField(
         Survey,
         id=graphene.Argument(
@@ -86,7 +93,10 @@ class SurveyQueries(graphene.ObjectType):
             required=False
         ),
         description="Look up a survey by ID or slug.",
-        permissions=[AuthorizationFilters.PROJECT_MEMBER_ACCESS],
+        permissions=[
+            AuthorizationFilters.PROJECT_MEMBER_ACCESS,
+            AuthorizationFilters.AUTHENTICATED_API
+        ],
         doc_category=DOC_CATEGORY_SURVEYS,
     )
     survey_by_channel = PermissionsField(
@@ -102,7 +112,6 @@ class SurveyQueries(graphene.ObjectType):
             required=False
         ),
         description="Look up a survey by channel ID or link.",
-        permissions=[AuthorizationFilters.AUTHENTICATED_API],
         doc_category=DOC_CATEGORY_SURVEYS,
     )
 
@@ -129,6 +138,17 @@ class SurveyQueries(graphene.ObjectType):
     @staticmethod
     def resolve_surveys(_root, info, **kwargs):
         qs = resolve_surveys(info)
+        qs = filter_connection_queryset(qs, kwargs)
+        return create_connection_slice(
+            qs,
+            info,
+            kwargs,
+            SurveyQuestionCountableConnection
+        )
+
+    @staticmethod
+    def resolve_active_surveys(_root, info, **kwargs):
+        qs = resolve_active_surveys(info)
         qs = filter_connection_queryset(qs, kwargs)
         return create_connection_slice(
             qs,

@@ -1,60 +1,63 @@
 {
-  "name": "integraflow",
-  "version": "1.0.0",
-  "description": "",
-  "private": true,
-  "main": "frontend/src/index.tsx",
-  "directories": {
-    "doc": "docs"
-  },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "scripts": {
-    "semantic-release": "turbo run semantic-release",
-    "build": "turbo run build",
-    "build:sdk": "turbo run build:sdk",
-    "build:types": "npx tsc --project tsconfig.check.json",
-    "dev": "NODE_ENV=development yarn build",
-    "docs": "npx md-magic --path './packages/**/README.md' --config ./docs/markdown-magic.config.js",
-    "generate:clean": "turbo run generate:clean",
-    "generate:doc": "turbo run build:codegen-doc && turbo run generate:doc",
-    "generate:sdk": "turbo run build:codegen-sdk && turbo run generate:sdk",
-    "generate:test": "turbo run build:codegen-test && turbo run generate:test",
-    "generate": "run-s generate:clean generate:doc generate:sdk",
-    "mock": "npx graphql-faker packages/sdk/src/schema.graphql",
-    "schema": "yarn update:schema",
-    "test:e2e": "E2E=true yarn test _generated.test",
-    "test:update": "yarn test -u",
-    "test:watch": "yarn test --watch",
-    "test": "npx jest -w 1",
-    "update:schema": "turbo run generate:schema"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/IntegraflowHQ/integraflow.git"
-  },
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/IntegraflowHQ/integraflow/issues"
-  },
-  "homepage": "https://github.com/IntegraflowHQ/integraflow#readme",
-  "dependencies": {
-    "@graphql-codegen/cli": "^1.19.1",
-    "@rollup/plugin-typescript": "^8.1.1",
-    "graphql": "^15.4.0",
-    "graphql-faker": "2.0.0-rc.25",
-    "jest": "^26.6.3",
-    "npm-run-all": "^4.1.5",
-    "ts-jest": "^26.4.4",
-    "tslib": "^2.1.0",
-    "turbo": "^1.10.15",
-    "typescript": "~4.7.4",
-    "yarn": "^1.22.19"
-  },
-  "devDependencies": {
-    "semantic-release": "^21.1.2"
-  }
+    "name": "integraflow",
+    "version": "1.0.0",
+    "description": "",
+    "private": true,
+    "main": "frontend/src/index.tsx",
+    "directories": {
+        "doc": "docs"
+    },
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "scripts": {
+        "semantic-release": "turbo run semantic-release",
+        "build": "turbo run build",
+        "build:sdk": "turbo run build:sdk",
+        "build:types": "tsc --project tsconfig.check.json",
+        "build:dashboard": "turbo run build:dashboard",
+        "build:survey": "turbo run build:survey",
+        "start:survey": "turbo run start:survey",
+        "dev": "NODE_ENV=development yarn build",
+        "docs": "md-magic --path './packages/**/README.md' --config ./docs/markdown-magic.config.js",
+        "generate:clean": "turbo run generate:clean",
+        "generate:doc": "turbo run build:codegen-doc && turbo run generate:doc",
+        "generate:sdk": "turbo run build:codegen-sdk && turbo run generate:sdk",
+        "generate:test": "turbo run build:codegen-test && turbo run generate:test",
+        "generate": "run-s generate:doc generate:sdk",
+        "mock": "graphql-faker packages/sdk/src/schema.graphql",
+        "schema": "yarn update:schema",
+        "test:e2e": "E2E=true yarn test _generated.test",
+        "test:update": "yarn test -u",
+        "test:watch": "yarn test --watch",
+        "test": "jest -w 1",
+        "update:schema": "turbo run generate:schema"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/IntegraflowHQ/integraflow.git"
+    },
+    "author": "",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/IntegraflowHQ/integraflow/issues"
+    },
+    "homepage": "https://github.com/IntegraflowHQ/integraflow#readme",
+    "dependencies": {
+        "@graphql-codegen/cli": "^1.19.1",
+        "@rollup/plugin-typescript": "^8.1.1",
+        "graphql": "^15.4.0",
+        "graphql-faker": "2.0.0-rc.25",
+        "jest": "^26.6.3",
+        "npm-run-all": "^4.1.5",
+        "ts-jest": "^26.4.4",
+        "tslib": "^2.1.0",
+        "turbo": "^1.10.15",
+        "typescript": "~4.7.4",
+        "yarn": "^1.22.19"
+    },
+    "devDependencies": {
+        "semantic-release": "^21.1.2"
+    }
 }

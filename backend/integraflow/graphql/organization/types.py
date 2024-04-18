@@ -8,8 +8,7 @@ from integraflow.graphql.core.connection import (
 )
 from integraflow.graphql.core.doc_category import (
     DOC_CATEGORY_ORGANIZATIONS,
-    DOC_CATEGORY_PROJECTS,
-    DOC_CATEGORY_USERS
+    DOC_CATEGORY_PROJECTS
 )
 from integraflow.graphql.core.enums import RoleLevel
 from integraflow.graphql.core.fields import (
@@ -19,13 +18,13 @@ from integraflow.graphql.core.fields import (
 from integraflow.graphql.core.types.base import BaseObjectType
 from integraflow.graphql.core.types.model import ModelObjectType
 from integraflow.graphql.project.types import ProjectCountableConnection
-from integraflow.graphql.user.sorters import UserSortingInput
 from integraflow.organization import models
 from integraflow.permission.auth_filters import AuthorizationFilters
 
 from integraflow.graphql.project.dataloaders import (
-    ProjectByOrganizationIdLoader
+    ProjectsByOrganizationIdLoader
 )
+from .dataloaders import MembersByOrganizationIdLoader
 
 
 class AuthOrganization(ModelObjectType):
@@ -64,25 +63,96 @@ class AuthOrganization(ModelObjectType):
         return root.members.count()
 
 
+class OrganizationMember(ModelObjectType):
+    id = graphene.GlobalID(required=True, description="The ID of the member.")
+    email = graphene.String(
+        required=True,
+        description="The email address of the member."
+    )
+    first_name = graphene.String(
+        required=True, description="The given name of the member."
+    )
+    last_name = graphene.String(
+        required=True, description="The family name of the member."
+    )
+    role = graphene.Field(
+        RoleLevel,
+        description=(
+            "The member role"
+        ),
+        required=True
+    )
+    created_at = graphene.DateTime(
+        required=True,
+        description="The time at which the member was created."
+    )
+    updated_at = graphene.DateTime(
+        required=True,
+        description="The last time at which the member was updated."
+    )
+
+    class Meta:
+        description = "Represents an organization member."
+        model = models.OrganizationMembership
+        interfaces = [graphene.relay.Node]
+        doc_category = DOC_CATEGORY_ORGANIZATIONS
+
+    @staticmethod
+    def resolve_email(
+        root: models.OrganizationMembership,
+        info: ResolveInfo
+    ):
+        return root.user.email
+
+    @staticmethod
+    def resolve_first_name(
+        root: models.OrganizationMembership,
+        info: ResolveInfo
+    ):
+        return root.user.first_name
+
+    @staticmethod
+    def resolve_last_name(
+        root: models.OrganizationMembership,
+        info: ResolveInfo
+    ):
+        return root.user.last_name
+
+    @staticmethod
+    def resolve_role(
+        root: models.OrganizationMembership,
+        info: ResolveInfo
+    ):
+        return root.level
+
+    @staticmethod
+    def resolve_created_at(
+        root: models.OrganizationMembership,
+        info: ResolveInfo
+    ):
+        return root.joined_at
+
+
 class Organization(AuthOrganization):
     members = FilterConnectionField(
-        'integraflow.graphql.user.types.UserCountableConnection',
-        order_by=UserSortingInput(
-            description="By which field should the pagination order by."
-        ),
+        'integraflow.graphql.organization.types.OrganizationMemberCountableConnection',
         description="Users associated with the organization.",
         permissions=[AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS],
-        doc_category=DOC_CATEGORY_USERS,
+        doc_category=DOC_CATEGORY_ORGANIZATIONS,
     )
 
     projects = FilterConnectionField(
         ProjectCountableConnection,
-        order_by=UserSortingInput(
-            description="By which field should the pagination order by."
-        ),
         description="Projects associated with the organization.",
         permissions=[AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS],
         doc_category=DOC_CATEGORY_PROJECTS,
+    )
+
+    invites = FilterConnectionField(
+        'integraflow.graphql.organization.types.OrganizationInviteCountableConnection',
+        description="Invites associated with the organization.",
+        permissions=[AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS],
+        doc_category=DOC_CATEGORY_ORGANIZATIONS,
     )
 
     class Meta:
@@ -97,15 +167,18 @@ class Organization(AuthOrganization):
         info: ResolveInfo,
         **kwargs
     ):
-        from integraflow.graphql.user.types import UserCountableConnection
+        def _resolve_members(members):
+            qs = filter_connection_queryset(members, kwargs)
+            return create_connection_slice(
+                qs,
+                info,
+                kwargs,
+                OrganizationMemberCountableConnection
+            )
 
-        qs = filter_connection_queryset(_root.members, kwargs)
-        return create_connection_slice(
-            qs,
-            info,
-            kwargs,
-            UserCountableConnection
-        )
+        return MembersByOrganizationIdLoader(info.context).load(
+            _root.id
+        ).then(_resolve_members)
 
     @staticmethod
     def resolve_projects(
@@ -122,9 +195,23 @@ class Organization(AuthOrganization):
                 ProjectCountableConnection
             )
 
-        return ProjectByOrganizationIdLoader(info.context).load(
+        return ProjectsByOrganizationIdLoader(info.context).load(
             _root.id
         ).then(_resolve_projects)
+
+    @staticmethod
+    def resolve_invites(
+        _root: models.Organization,
+        info: ResolveInfo,
+        **kwargs
+    ):
+        qs = filter_connection_queryset(_root.invites, kwargs)
+        return create_connection_slice(
+            qs,
+            info,
+            kwargs,
+            OrganizationInviteCountableConnection
+        )
 
 
 class BaseOrganizationInvite(ModelObjectType):
@@ -338,3 +425,15 @@ class OrganizationCountableConnection(CountableConnection):
     class Meta:
         doc_category = DOC_CATEGORY_ORGANIZATIONS
         node = Organization
+
+
+class OrganizationMemberCountableConnection(CountableConnection):
+    class Meta:
+        doc_category = DOC_CATEGORY_ORGANIZATIONS
+        node = OrganizationMember
+
+
+class OrganizationInviteCountableConnection(CountableConnection):
+    class Meta:
+        doc_category = DOC_CATEGORY_ORGANIZATIONS
+        node = OrganizationInvite

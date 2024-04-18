@@ -1,89 +1,27 @@
-import { useCallback, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useCallback, useMemo } from "react";
 
 import {
+    EventDefinition,
     Project,
     ProjectUpdateInput,
+    PropertyDefinition,
+    useAudiencePropertiesQuery,
     useProjectCreateMutation,
+    useProjectEventsDataQuery,
     useProjectUpdateMutation,
 } from "@/generated/graphql";
-import { useRedirect } from "@/modules/auth/hooks/useRedirect";
-import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
-import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
-import { convertToAuthOrganization } from "@/modules/users/states/user";
+import { convertToAuthOrganization } from "@/modules/auth/states/user";
+import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
+import { EventProperties } from "@integraflow/web/src/types";
 
 export const useProject = () => {
-    const { currentProjectId, switchProject } = useAuth();
-    const { workspace, projects, updateWorkspace } = useWorkspace();
-    const { user, updateUser } = useCurrentUser();
-    const { orgSlug, projectSlug } = useParams();
-    const redirect = useRedirect();
-
+    const { workspace, project, updateUser, switchProject } = useAuth();
+    const { updateWorkspace } = useWorkspace();
     const [projectCreate] = useProjectCreateMutation();
     const [projectUpdate] = useProjectUpdateMutation();
-
-    const project = useMemo(() => {
-        if (!workspace) {
-            return null;
-        }
-
-        if (orgSlug && !projectSlug) {
-            return projects?.[0] ?? null;
-        }
-
-        const slug = projectSlug ?? user?.project?.slug;
-
-        return projects?.find((project) => project?.slug === slug) ?? null;
-    }, [user, orgSlug, projectSlug, projects, workspace]);
-
-    useEffect(() => {
-        const newProject = project ?? projects?.[0];
-
-        if (
-            workspace &&
-            newProject &&
-            (workspace.id !== user?.organization?.id ||
-                newProject.id !== user?.project?.id)
-        ) {
-            updateUser({
-                organization: convertToAuthOrganization(workspace),
-                project: newProject
-            }, true);
-
-            if (newProject.id && currentProjectId !== newProject.id) {
-                switchProject(newProject.id);
-            }
-        }
-    }, [user, projects, workspace, updateUser, project, currentProjectId, switchProject]);
-
-    const handleSwitchProject = useCallback(
-        (project: Project) => {
-            const organization = project.organization ?? workspace;
-
-            const updatedUser = {
-                organization,
-                project,
-            };
-
-            updateUser(updatedUser, true);
-
-            if (currentProjectId !== project.id) {
-                switchProject(project.id);
-            }
-
-            if (
-                orgSlug !== organization?.slug ||
-                projectSlug !== project.slug
-            ) {
-                redirect({
-                    ...(user ?? {}),
-                    ...updatedUser
-                });
-            }
-        },
-        [currentProjectId, orgSlug, projectSlug, redirect, switchProject, updateUser, user, workspace],
-    );
+    const { data: eventsData } = useProjectEventsDataQuery();
+    const { data: audienceProperties } = useAudiencePropertiesQuery();
 
     const handleAddProject = useCallback(
         (project: Project) => {
@@ -92,17 +30,14 @@ export const useProject = () => {
                 projects: {
                     ...workspace?.projects,
                     totalCount: (workspace?.projects?.totalCount ?? 0) + 1,
-                    edges: [
-                        { node: project },
-                        ...(workspace?.projects?.edges ?? []),
-                    ],
+                    edges: [{ node: project }, ...(workspace?.projects?.edges ?? [])],
                 },
             };
             updateWorkspace(organization);
 
-            handleSwitchProject(project);
+            switchProject(project);
         },
-        [handleSwitchProject, updateWorkspace, workspace],
+        [switchProject, updateWorkspace, workspace],
     );
 
     const handleCreateProject = useCallback(
@@ -148,28 +83,29 @@ export const useProject = () => {
                 ...workspace,
                 projects: {
                     ...workspace?.projects,
-                    edges: (workspace?.projects?.edges ?? []).map(
-                        (edge) => {
-                            if (edge?.node?.id === updatedProject?.id) {
-                                return {
-                                    ...edge,
-                                    node: {
-                                        ...edge?.node,
-                                        ...updatedProject
-                                    },
-                                };
-                            }
+                    edges: (workspace?.projects?.edges ?? []).map((edge) => {
+                        if (edge?.node?.id === updatedProject?.id) {
+                            return {
+                                ...edge,
+                                node: {
+                                    ...edge?.node,
+                                    ...updatedProject,
+                                },
+                            };
+                        }
 
-                            return edge;
-                        },
-                    ),
+                        return edge;
+                    }),
                 },
             };
             updateWorkspace(organization);
-            updateUser({
-                project: updatedProject,
-                organization: convertToAuthOrganization(organization)
-            }, true);
+            updateUser(
+                {
+                    project: updatedProject,
+                    organization: convertToAuthOrganization(organization),
+                },
+                true,
+            );
 
             if (cacheOnly) {
                 return;
@@ -194,11 +130,53 @@ export const useProject = () => {
         [project, projectUpdate, updateUser, updateWorkspace, workspace],
     );
 
+    const eventDefinitions = useMemo(() => {
+        return eventsData?.eventDefinitions?.edges.map(({ node }) => node) || ([] as EventDefinition[]);
+    }, [eventsData?.eventDefinitions]);
+
+    const eventProperties = useMemo(() => {
+        return eventsData?.eventProperties?.edges.map(({ node }) => node) || ([] as EventProperties[]);
+    }, [eventsData?.eventProperties]);
+
+    const propertyDefinitions = useMemo(() => {
+        return eventsData?.propertyDefinitions?.edges.map(({ node }) => node) || ([] as PropertyDefinition[]);
+    }, [eventsData?.propertyDefinitions]);
+
+    const getPropertyDefinition = useCallback(
+        (property: string) => {
+            return propertyDefinitions.find((p) => p.name === property);
+        },
+        [propertyDefinitions],
+    );
+
+    const getProperties = useCallback(
+        (event: string) => {
+            const properties = eventProperties.filter((p) => p.event === event);
+            return properties
+                .map((p) => {
+                    const definition = p.property ? getPropertyDefinition(p.property as string) : undefined;
+
+                    return definition;
+                })
+                .filter((p) => p !== undefined) as PropertyDefinition[];
+        },
+        [eventProperties, getPropertyDefinition],
+    );
+
+    const personProperties = useMemo(() => {
+        return audienceProperties?.propertyDefinitions?.edges.map((edge) => edge.node) || ([] as PropertyDefinition[]);
+    }, [audienceProperties]);
+
     return {
         project,
+        eventDefinitions,
+        eventProperties,
+        propertyDefinitions,
+        personProperties,
+        getProperties,
+        getPropertyDefinition,
         addProject: handleAddProject,
         createProject: handleCreateProject,
-        switchProject: handleSwitchProject,
         updateProject: handleUpdateProject,
     };
 };

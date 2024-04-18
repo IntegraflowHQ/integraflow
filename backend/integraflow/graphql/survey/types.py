@@ -3,13 +3,13 @@ import graphene
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.connection import (
     CountableConnection,
-    create_connection_slice
+    create_connection_slice,
 )
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_SURVEYS
 from integraflow.graphql.core.fields import (
     FilterConnectionField,
     JSONString,
-    PermissionsField
+    PermissionsField,
 )
 from integraflow.graphql.core.types.common import NonNullList
 from integraflow.graphql.core.types.model import ModelObjectType
@@ -18,10 +18,12 @@ from integraflow.graphql.survey.enums import (
     SurveyChannelTypeEnum,
     SurveyQuestionTypeEnum,
     SurveyStatusEnum,
-    SurveyTypeEnum
+    SurveyTypeEnum,
 )
 from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.survey import models
+
+from .utils import replace_pks_to_global_ids
 
 
 class BaseSurvey(ModelObjectType):
@@ -45,7 +47,7 @@ class BaseSurvey(ModelObjectType):
     settings = JSONString(
         description="The settings of the survey."
     )
-    theme = PermissionsField(
+    theme = graphene.Field(
         "integraflow.graphql.project.types.BaseProjectTheme",
         description="The theme of the survey.",
     )
@@ -64,7 +66,7 @@ class BaseSurvey(ModelObjectType):
             required=False,
         ),
     )
-    project = PermissionsField(
+    project = graphene.Field(
         "integraflow.graphql.project.types.BaseProject",
         description="The project the survey belongs to",
     )
@@ -272,11 +274,27 @@ class BaseSurveyQuestion(ModelObjectType):
         interfaces = [graphene.relay.Node]
 
     @staticmethod
+    def resolve_label(root: models.SurveyQuestion, info: ResolveInfo):
+
+        return replace_pks_to_global_ids(
+            root.label or "",
+            "BaseSurveyQuestion"
+        )
+
+    @staticmethod
+    def resolve_description(root: models.SurveyQuestion, info: ResolveInfo):
+
+        return replace_pks_to_global_ids(
+            root.description or "",
+            "BaseSurveyQuestion"
+        )
+
+    @staticmethod
     def resolve_settings(root: models.SurveyQuestion, info: ResolveInfo):
         settings = root.settings
         if settings:
             to_global_ids_from_pks(
-                "SurveyQuestion",
+                "BaseSurveyQuestion",
                 settings.get("logic", []),
                 "destination"
             )
@@ -304,6 +322,34 @@ class SurveyQuestion(BaseSurveyQuestion):
         interfaces = [graphene.relay.Node]
 
     @staticmethod
+    def resolve_label(root: models.SurveyQuestion, info: ResolveInfo):
+
+        return replace_pks_to_global_ids(
+            root.label or "",
+            "SurveyQuestion"
+        )
+
+    @staticmethod
+    def resolve_description(root: models.SurveyQuestion, info: ResolveInfo):
+
+        return replace_pks_to_global_ids(
+            root.description or "",
+            "SurveyQuestion"
+        )
+
+    @staticmethod
+    def resolve_settings(root: models.SurveyQuestion, info: ResolveInfo):
+        settings = root.settings
+        if settings:
+            to_global_ids_from_pks(
+                "SurveyQuestion",
+                settings.get("logic", []),
+                "destination"
+            )
+
+        return settings
+
+    @staticmethod
     def resolve_reference(root: models.SurveyQuestion, info: ResolveInfo):
         return root.pk
 
@@ -321,6 +367,10 @@ class BaseSurveyChannel(ModelObjectType):
         SurveyChannelTypeEnum,
         required=True,
         description="The type of the survey channel",
+    )
+    link = graphene.String(
+        required=True,
+        description="Unique link to the channel.",
     )
     triggers = JSONString(
         description="The options of the question."

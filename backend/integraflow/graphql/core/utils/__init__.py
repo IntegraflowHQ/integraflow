@@ -113,10 +113,10 @@ def raise_validation_error(field=None, message=None, code=None):
     raise ValidationError({field: ValidationError(message, code=code)})
 
 
-def ext_ref_to_global_id_or_error(model, external_reference):
-    """Convert external reference to global id."""
+def ref_to_global_id_or_error(model, reference):
+    """Convert reference to global id."""
     internal_id = (
-        model.objects.filter(external_reference=external_reference)
+        model.objects.filter(pk=reference)
         .values_list("id", flat=True)
         .first()
     )
@@ -124,8 +124,8 @@ def ext_ref_to_global_id_or_error(model, external_reference):
         return graphene.Node.to_global_id(model.__name__, internal_id)
     else:
         raise_validation_error(
-            field="externalReference",
-            message=f"Couldn't resolve to a node: {external_reference}",
+            field="reference",
+            message=f"Couldn't resolve to a node: {reference}",
             code="not_found",
         )
 

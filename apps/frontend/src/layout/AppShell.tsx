@@ -1,16 +1,23 @@
 import { Toaster } from "react-hot-toast";
 import { Outlet } from "react-router-dom";
 
-import { ApolloProvider } from "@/modules/apollo/components/ApolloProvider";
+import { useApolloFactory } from "@/modules/apollo/hooks/useApolloFactory";
 import { AuthProvider } from "@/modules/auth/AuthProvider";
+import { GlobalSpinner } from "@/ui";
+import { ApolloProvider } from "@apollo/client";
 
 export default function AppShell() {
+    const apolloClient = useApolloFactory();
+
+    if (!apolloClient) {
+        return <GlobalSpinner />;
+    }
     return (
-        <AuthProvider>
-            <ApolloProvider>
+        <ApolloProvider client={apolloClient.getClient()}>
+            <AuthProvider apollo={apolloClient}>
                 <Outlet />
                 <Toaster position="bottom-right" />
-            </ApolloProvider>
-        </AuthProvider>
+            </AuthProvider>
+        </ApolloProvider>
     );
 }

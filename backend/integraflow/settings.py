@@ -12,7 +12,6 @@ import dj_email_url
 import django_cache_url
 import django_stubs_ext
 import jaeger_client.config
-from kombu import Exchange, Queue
 import sentry_sdk
 import sentry_sdk.utils
 from corsheaders.defaults import default_headers
@@ -23,6 +22,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.management.utils import get_random_secret_key
 from django.core.validators import URLValidator
 from graphql.execution import executor
+from kombu import Exchange, Queue
 from pytimeparse import parse
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration

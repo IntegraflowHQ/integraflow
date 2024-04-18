@@ -1,5 +1,5 @@
-from datetime import datetime
 import json
+from datetime import datetime
 from numbers import Number
 from typing import Any, Dict, Optional, Union
 
@@ -10,13 +10,14 @@ from django.db import IntegrityError
 from django.utils import timezone
 from sentry_sdk import capture_exception
 
+from integraflow.celeryconf import app
 from integraflow.event.models import (
     Event,
     EventDefinition,
     EventProperty,
     Person,
     PropertyDefinition,
-    PropertyType
+    PropertyType,
 )
 from integraflow.project.models import Project
 
@@ -331,3 +332,32 @@ def process_event(
         timestamp=handle_timestamp(data, now, sent_at),
         person=person
     )
+
+
+@app.task(ignore_result=True)
+def create_property_definitions(
+    project_id: str
+) -> None:
+
+    property_names = {
+        "user_id": PropertyType.String,
+        "first_name": PropertyType.String,
+        "last_name": PropertyType.String,
+        "email": PropertyType.String,
+        "organization": PropertyType.String,
+        "subscription_status": PropertyType.String,
+    }
+    properties_to_create = []
+
+    for key, value in property_names.items():
+        properties_to_create.append(
+            PropertyDefinition(
+                project_id=project_id,
+                name=key,
+                type=PropertyDefinition.Type.PERSON,
+                property_type=value,
+                is_numerical=value == PropertyType.Numeric
+            )
+        )
+
+    PropertyDefinition.objects.bulk_create(properties_to_create)

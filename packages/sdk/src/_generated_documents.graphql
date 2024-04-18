@@ -44,30 +44,15 @@ fragment EventCapture on EventCapture {
 # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
 fragment SurveyChannelCreate on SurveyChannelCreate {
     __typename
-    errors {
-        ...SurveyError
-    }
+    # The checkout with the added gift card or voucher.
     surveyChannel {
         ...SurveyChannel
     }
-    surveyErrors {
+    errors {
         ...SurveyError
     }
-}
-
-# Creates a new organization invite.
-#
-# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
-fragment OrganizationInviteCreate on OrganizationInviteCreate {
-    __typename
-    errors {
-        ...OrganizationError
-    }
-    organizationErrors {
-        ...OrganizationError
-    }
-    organizationInvite {
-        ...OrganizationInvite
+    surveyErrors {
+        ...SurveyError
     }
 }
 
@@ -130,6 +115,21 @@ fragment ProjectThemeCreate on ProjectThemeCreate {
     }
     projectTheme {
         ...ProjectTheme
+    }
+}
+
+# Creates a response to survey.
+fragment SurveyResponseCreate on SurveyResponseCreate {
+    __typename
+    # The ID of the response.
+    responseId
+    # Whether the operation was successful.
+    status
+    errors {
+        ...SurveyError
+    }
+    surveyErrors {
+        ...SurveyError
     }
 }
 
@@ -231,6 +231,22 @@ fragment ProjectThemeDelete on ProjectThemeDelete {
     }
 }
 
+# Deletes an organization invite.
+#
+# Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+fragment OrganizationInviteDelete on OrganizationInviteDelete {
+    __typename
+    errors {
+        ...OrganizationError
+    }
+    organizationErrors {
+        ...OrganizationError
+    }
+    organizationInvite {
+        ...OrganizationInvite
+    }
+}
+
 # Finds or creates a new user account by email and sends an email with token.
 fragment EmailUserAuthChallenge on EmailUserAuthChallenge {
     __typename
@@ -266,23 +282,6 @@ fragment GoogleUserAuth on GoogleUserAuth {
     }
     userErrors {
         ...UserError
-    }
-}
-
-# Joins an organization
-#
-# Requires one of the following permissions: AUTHENTICATED_USER.
-fragment OrganizationJoin on OrganizationJoin {
-    __typename
-    # A user that has access to the the resources of an organization.
-    user {
-        ...AuthUser
-    }
-    errors {
-        ...OrganizationError
-    }
-    organizationErrors {
-        ...OrganizationError
     }
 }
 
@@ -325,8 +324,21 @@ fragment Person on Person {
 }
 
 # Represents a project.
+fragment BaseProject on BaseProject {
+    __typename
+    # API token for project.
+    apiToken
+    # Name of the project.
+    name
+    # The ID of the project.
+    id
+}
+
+# Represents a project.
 fragment Project on Project {
     __typename
+    # API token for project.
+    apiToken
     # Name of the project.
     name
     # Organization the project belongs to.
@@ -367,6 +379,29 @@ fragment PropertyDefinition on PropertyDefinition {
 }
 
 # Represents a question.
+fragment BaseSurveyQuestion on BaseSurveyQuestion {
+    __typename
+    # Description of the question.
+    description
+    # Label of the question.
+    label
+    # The ID of the question.
+    id
+    # The options of the question.
+    options
+    # The position of the question.
+    maxPath
+    # The position of the question.
+    orderNumber
+    # The settings of the question.
+    settings
+    # The time at which the question was created.
+    createdAt
+    # The type of the question
+    type
+}
+
+# Represents a question.
 fragment SurveyQuestion on SurveyQuestion {
     __typename
     # Description of the question.
@@ -398,6 +433,25 @@ fragment SurveyQuestion on SurveyQuestion {
 }
 
 # Represents a survey channel.
+fragment BaseSurveyChannel on BaseSurveyChannel {
+    __typename
+    # The ID of the channel.
+    id
+    # The options of the question.
+    triggers
+    # The settings of the question.
+    conditions
+    # The settings of the question.
+    settings
+    # The time at which the channel was created.
+    createdAt
+    # The type of the survey channel
+    type
+    # Unique link to the channel.
+    link
+}
+
+# Represents a survey channel.
 fragment SurveyChannel on SurveyChannel {
     __typename
     # For internal purpose.
@@ -420,6 +474,45 @@ fragment SurveyChannel on SurveyChannel {
     createdAt
     # The type of the survey channel
     type
+    # Unique link to the channel.
+    link
+}
+
+# Represents a survey from used by our sdk.
+fragment BaseSurvey on BaseSurvey {
+    __typename
+    # Name of the survey.
+    name
+    # Slug of the survey.
+    slug
+    # The ID of the survey.
+    id
+    # The date at which the survey was ended.
+    endDate
+    # The date at which the survey was started.
+    startDate
+    # The distribution channels supported by the survey
+    channels {
+        ...BaseSurveyChannel
+    }
+    # The project the survey belongs to
+    project {
+        ...BaseProject
+    }
+    # The questions in the the survey
+    questions {
+        ...BaseSurveyQuestion
+    }
+    # The settings of the survey.
+    settings
+    # The status of the survey
+    status
+    # The theme of the survey.
+    theme {
+        ...BaseProjectTheme
+    }
+    # The time at which the survey was created.
+    createdAt
 }
 
 # Represents a survey.
@@ -461,6 +554,19 @@ fragment Survey on Survey {
     creator {
         ...User
     }
+}
+
+# Represents a theme.
+fragment BaseProjectTheme on BaseProjectTheme {
+    __typename
+    # Name of the theme.
+    name
+    # The ID of the theme.
+    id
+    # The settings of the theme.
+    colorScheme
+    # The settings of the theme.
+    settings
 }
 
 # Represents a theme.
@@ -584,6 +690,25 @@ fragment Event on Event {
     createdAt
 }
 
+# Represents an organization member.
+fragment OrganizationMember on OrganizationMember {
+    __typename
+    # The ID of the member.
+    id
+    # The email address of the member.
+    email
+    # The family name of the member.
+    lastName
+    # The given name of the member.
+    firstName
+    # The last time at which the member was updated.
+    updatedAt
+    # The member role
+    role
+    # The time at which the member was created.
+    createdAt
+}
+
 # Represents an organization.
 fragment AuthOrganization on AuthOrganization {
     __typename
@@ -702,6 +827,22 @@ fragment User on User {
     lastName
     # The given name of the user.
     firstName
+}
+
+# Resend an existing invite
+#
+# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+fragment OrganizationInviteResend on OrganizationInviteResend {
+    __typename
+    errors {
+        ...OrganizationError
+    }
+    organizationErrors {
+        ...OrganizationError
+    }
+    organizationInvite {
+        ...OrganizationInvite
+    }
 }
 
 # Reset the current organization invite link..
@@ -860,6 +1001,19 @@ fragment SurveyQuestionUpdate on SurveyQuestionUpdate {
     }
 }
 
+# Updates a response.
+fragment SurveyResponseUpdate on SurveyResponseUpdate {
+    __typename
+    # Whether the operation was successful.
+    status
+    errors {
+        ...SurveyError
+    }
+    surveyErrors {
+        ...SurveyError
+    }
+}
+
 # Updates a survey
 #
 # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -908,10 +1062,39 @@ fragment ProjectThemeUpdate on ProjectThemeUpdate {
     }
 }
 
+# Updates an organization.
+#
+# Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+fragment OrganizationUpdate on OrganizationUpdate {
+    __typename
+    errors {
+        ...OrganizationError
+    }
+    organization {
+        ...Organization
+    }
+    organizationErrors {
+        ...OrganizationError
+    }
+}
+
 # _Service manifest as defined by Federation spec.
 fragment _Service on _Service {
     __typename
     sdl
+}
+
+fragment BaseSurveyCountableConnection on BaseSurveyCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+    nodes {
+        ...BaseSurvey
+    }
 }
 
 fragment EventCountableConnection on EventCountableConnection {
@@ -963,6 +1146,32 @@ fragment OrganizationCountableConnection on OrganizationCountableConnection {
     }
     nodes {
         ...Organization
+    }
+}
+
+fragment OrganizationInviteCountableConnection on OrganizationInviteCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+    nodes {
+        ...OrganizationInvite
+    }
+}
+
+fragment OrganizationMemberCountableConnection on OrganizationMemberCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+    nodes {
+        ...OrganizationMember
     }
 }
 
@@ -1057,19 +1266,6 @@ fragment SurveyQuestionCountableConnection on SurveyQuestionCountableConnection 
     }
 }
 
-fragment UserCountableConnection on UserCountableConnection {
-    __typename
-    # A total count of items in the collection.
-    totalCount
-    # Pagination data for this connection.
-    pageInfo {
-        ...PageInfo
-    }
-    nodes {
-        ...User
-    }
-}
-
 # Authenticates a user account via email and authentication token.
 mutation emailTokenUserAuth(
     # The email which to login via the magic login code.
@@ -1139,15 +1335,15 @@ mutation createOrganization(
         ...OrganizationCreate
     }
 }
-# Creates a new organization invite.
+# Deletes an organization invite.
 #
-# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
-mutation createOrganizationInvite(
-    # The organization invite object to create.
-    $input: OrganizationInviteCreateInput!
+# Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+mutation deleteOrganizationInvite(
+    # The identifier of the invite to delete.
+    $id: ID!
 ) {
-    organizationInviteCreate(input: $input) {
-        ...OrganizationInviteCreate
+    organizationInviteDelete(id: $id) {
+        ...OrganizationInviteDelete
     }
 }
 # Reset the current organization invite link..
@@ -1158,15 +1354,26 @@ mutation resetOrganizationInviteLink {
         ...OrganizationInviteLinkReset
     }
 }
-# Joins an organization
+# Resend an existing invite
 #
-# Requires one of the following permissions: AUTHENTICATED_USER.
-mutation joinOrganization(
-    # Organization details for the new organization.
-    $input: OrganizationJoinInput!
+# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+mutation organizationInviteResend(
+    # ID of a invite to resend.
+    $id: ID!
 ) {
-    organizationJoin(input: $input) {
-        ...OrganizationJoin
+    organizationInviteResend(id: $id) {
+        ...OrganizationInviteResend
+    }
+}
+# Updates an organization.
+#
+# Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+mutation updateOrganization(
+    # A partial object to update the organization with.
+    $input: OrganizationUpdateInput!
+) {
+    organizationUpdate(input: $input) {
+        ...OrganizationUpdate
     }
 }
 # Creates a new project
@@ -1314,6 +1521,26 @@ mutation updateSurveyQuestion(
         ...SurveyQuestionUpdate
     }
 }
+# Creates a response to survey.
+mutation createSurveyResponse(
+    # The details for the response to create.
+    $input: SurveyResponseCreateInput!
+) {
+    surveyResponseCreate(input: $input) {
+        ...SurveyResponseCreate
+    }
+}
+# Updates a response.
+mutation updateSurveyResponse(
+    # The ID of the response.
+    $id: ID!
+    # The partial response object to update
+    $input: SurveyResponseUpdateInput!
+) {
+    surveyResponseUpdate(id: $id, input: $input) {
+        ...SurveyResponseUpdate
+    }
+}
 # Updates a survey
 #
 # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -1356,6 +1583,27 @@ query _service {
         ..._Service
     }
 }
+# List of the project's surveys.
+#
+# Requires one of the following permissions: AUTHENTICATED_API.
+query activeSurveys(
+    # Return the elements in the list that come after the specified cursor.
+    $after: String
+    # Return the elements in the list that come before the specified cursor.
+    $before: String
+    # Filtering options for surveys.
+    $filter: SurveyFilterInput
+    # Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $first: Int
+    # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $last: Int
+    # Sort surveys.
+    $sortBy: SurveySortingInput
+) {
+    activeSurveys(after: $after, before: $before, filter: $filter, first: $first, last: $last, sortBy: $sortBy) {
+        ...BaseSurveyCountableConnection
+    }
+}
 # List of channels for a specific survey.
 #
 # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -1371,13 +1619,7 @@ query channels(
     # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
     $last: Int
 ) {
-    channels(
-        after: $after
-        before: $before
-        first: $first
-        id: $id
-        last: $last
-    ) {
+    channels(after: $after, before: $before, first: $first, id: $id, last: $last) {
         ...SurveyChannelCountableConnection
     }
 }
@@ -1394,12 +1636,7 @@ query eventDefinitions(
     # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
     $last: Int
 ) {
-    eventDefinitions(
-        after: $after
-        before: $before
-        first: $first
-        last: $last
-    ) {
+    eventDefinitions(after: $after, before: $before, first: $first, last: $last) {
         ...EventDefinitionCountableConnection
     }
 }
@@ -1418,13 +1655,7 @@ query eventProperties(
     # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
     $last: Int
 ) {
-    eventProperties(
-        after: $after
-        before: $before
-        event: $event
-        first: $first
-        last: $last
-    ) {
+    eventProperties(after: $after, before: $before, event: $event, first: $first, last: $last) {
         ...EventPropertyCountableConnection
     }
 }
@@ -1485,13 +1716,7 @@ query propertyDefinitions(
     # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
     $last: Int
 ) {
-    propertyDefinitions(
-        after: $after
-        before: $before
-        definitionType: $definitionType
-        first: $first
-        last: $last
-    ) {
+    propertyDefinitions(after: $after, before: $before, definitionType: $definitionType, first: $first, last: $last) {
         ...PropertyDefinitionCountableConnection
     }
 }
@@ -1510,19 +1735,13 @@ query questions(
     # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
     $last: Int
 ) {
-    questions(
-        after: $after
-        before: $before
-        first: $first
-        id: $id
-        last: $last
-    ) {
+    questions(after: $after, before: $before, first: $first, id: $id, last: $last) {
         ...SurveyQuestionCountableConnection
     }
 }
 # Look up a survey by ID or slug.
 #
-# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS, AUTHENTICATED_API.
 query survey(
     # The ID of the survey.
     $id: ID
@@ -1658,6 +1877,43 @@ query survey_theme_project_organization(
         }
     }
 }
+# Look up a survey by channel ID or link.
+query surveyByChannel(
+    # The ID of the channel.
+    $id: ID
+    # Unique link of the channel.
+    $link: String
+) {
+    surveyByChannel(id: $id, link: $link) {
+        ...BaseSurvey
+    }
+}
+# The project the survey belongs to
+query surveyByChannel_project(
+    # The ID of the channel.
+    $id: ID
+    # Unique link of the channel.
+    $link: String
+) {
+    surveyByChannel(id: $id, link: $link) {
+        project {
+            ...BaseProject
+        }
+    }
+}
+# The theme of the survey.
+query surveyByChannel_theme(
+    # The ID of the channel.
+    $id: ID
+    # Unique link of the channel.
+    $link: String
+) {
+    surveyByChannel(id: $id, link: $link) {
+        theme {
+            ...BaseProjectTheme
+        }
+    }
+}
 # List of the project's surveys.
 #
 # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -1675,14 +1931,7 @@ query surveys(
     # Sort surveys.
     $sortBy: SurveySortingInput
 ) {
-    surveys(
-        after: $after
-        before: $before
-        filter: $filter
-        first: $first
-        last: $last
-        sortBy: $sortBy
-    ) {
+    surveys(after: $after, before: $before, filter: $filter, first: $first, last: $last, sortBy: $sortBy) {
         ...SurveyCountableConnection
     }
 }
@@ -1735,12 +1984,7 @@ query viewer_organizations(
     $last: Int
 ) {
     viewer {
-        organizations(
-            after: $after
-            before: $before
-            first: $first
-            last: $last
-        ) {
+        organizations(after: $after, before: $before, first: $first, last: $last) {
             ...OrganizationCountableConnection
         }
     }
@@ -1781,13 +2025,7 @@ query viewer_projects(
     $orderBy: ProjectSortingInput
 ) {
     viewer {
-        projects(
-            after: $after
-            before: $before
-            first: $first
-            last: $last
-            orderBy: $orderBy
-        ) {
+        projects(after: $after, before: $before, first: $first, last: $last, orderBy: $orderBy) {
             ...ProjectCountableConnection
         }
     }

@@ -1,6 +1,5 @@
 import { DeepPartial } from "@apollo/client/utilities";
-import { useCallback, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useCallback } from "react";
 
 import {
     AuthOrganization,
@@ -11,52 +10,12 @@ import {
     Project,
     useOrganizationCreateMutation,
 } from "@/generated/graphql";
-import { useRedirect } from "@/modules/auth/hooks/useRedirect";
-import { useCurrentUser } from "@/modules/users/hooks/useCurrentUser";
-import { convertToAuthOrganization } from "@/modules/users/states/user";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { convertToAuthOrganization } from "@/modules/auth/states/user";
 
 export const useWorkspace = () => {
-    const { orgSlug } = useParams();
-    const { user, organizations, updateUser } = useCurrentUser();
-    const redirect = useRedirect();
-    const [createOrganization, { loading }] =
-        useOrganizationCreateMutation();
-
-    const workspace = useMemo(() => {
-        const slug = orgSlug ?? user?.organization?.slug;
-
-        return (
-            organizations.find((organization) => organization?.slug === slug) ??
-            null
-        );
-    }, [orgSlug, user, organizations]);
-
-    const projects = useMemo(() => {
-        if (!workspace || !workspace.projects?.edges) {
-            return [];
-        }
-
-        return workspace.projects.edges.map((edge) => edge?.node);
-    }, [workspace]);
-
-    const handleSwitchWorkspace = useCallback(
-        (organization: AuthOrganization, project: Project) => {
-            const updatedUser = {
-                organization,
-                project,
-            };
-
-            updateUser(updatedUser, true);
-
-            if (orgSlug !== organization.slug) {
-                redirect({
-                    ...(user ?? {}),
-                    ...updatedUser,
-                });
-            }
-        },
-        [orgSlug, redirect, updateUser, user],
-    );
+    const { user, workspace, projects, updateUser, switchWorkspace } = useAuth();
+    const [createOrganization, { loading }] = useOrganizationCreateMutation();
 
     const handleAddWorkspace = useCallback(
         (organization: DeepPartial<Organization>) => {
@@ -78,13 +37,10 @@ export const useWorkspace = () => {
 
             const project = organization.projects?.edges?.[0]?.node as Project;
             if (organization && project) {
-                handleSwitchWorkspace(
-                    convertToAuthOrganization(organization) as AuthOrganization,
-                    project,
-                );
+                switchWorkspace(convertToAuthOrganization(organization) as AuthOrganization, project);
             }
         },
-        [handleSwitchWorkspace, updateUser, user.organizations],
+        [switchWorkspace, updateUser, user.organizations],
     );
 
     const handleUpdateWorkspace = useCallback(
@@ -114,10 +70,7 @@ export const useWorkspace = () => {
     );
 
     const handleCreateWorkspace = useCallback(
-        async (
-            input: OrganizationCreateInput,
-            survey?: OnboardingCustomerSurvey,
-        ) => {
+        async (input: OrganizationCreateInput, survey?: OnboardingCustomerSurvey) => {
             try {
                 const response = await createOrganization({
                     variables: {
@@ -132,13 +85,8 @@ export const useWorkspace = () => {
 
                 const { data } = response;
 
-                if (
-                    data &&
-                    data.organizationCreate &&
-                    data.organizationCreate.user
-                ) {
-                    const { organization, project } = data.organizationCreate
-                        .user as AuthUser;
+                if (data && data.organizationCreate && data.organizationCreate.user) {
+                    const { organization, project } = data.organizationCreate.user as AuthUser;
 
                     if (organization && project) {
                         handleAddWorkspace({
@@ -168,6 +116,5 @@ export const useWorkspace = () => {
         createWorkspace: handleCreateWorkspace,
         addWorkspace: handleAddWorkspace,
         updateWorkspace: handleUpdateWorkspace,
-        switchWorkspace: handleSwitchWorkspace,
     };
 };

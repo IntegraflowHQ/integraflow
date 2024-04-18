@@ -1,8 +1,8 @@
 import { DeepPartial } from "@apollo/client/utilities";
 import { useNavigate } from "react-router-dom";
 
-import { ROUTES } from "@/routes";
 import { AuthUser, User } from "@/generated/graphql";
+import { ROUTES } from "@/routes";
 
 export const useRedirect = () => {
     const navigate = useNavigate();
@@ -19,7 +19,7 @@ export const useRedirect = () => {
                 ROUTES.SURVEY_LIST.replace(
                     ":orgSlug",
                     user.organization.slug,
-                ).replace(":projectSlug", user.project.slug),
+                ).replace(":projectSlug", user?.project?.slug),
             );
         } else if (
             user.organization.slug &&
@@ -36,4 +36,4 @@ export const useRedirect = () => {
     };
 
     return handleRedirect;
-}
+};

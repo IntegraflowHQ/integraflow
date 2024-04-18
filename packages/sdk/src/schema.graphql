@@ -86,6 +86,205 @@ type AuthUser implements Node @doc(category: "Users") {
 }
 
 """
+Represents a project.
+"""
+type BaseProject implements Node @doc(category: "Projects") {
+    """
+    API token for project.
+    """
+    apiToken: String!
+    """
+    The ID of the project.
+    """
+    id: ID!
+    """
+    Name of the project.
+    """
+    name: String!
+}
+
+"""
+Represents a theme.
+"""
+type BaseProjectTheme implements Node @doc(category: "Projects") {
+    """
+    The settings of the theme.
+    """
+    colorScheme: JSONString
+    """
+    The ID of the theme.
+    """
+    id: ID!
+    """
+    Name of the theme.
+    """
+    name: String!
+    """
+    The settings of the theme.
+    """
+    settings: JSONString
+}
+
+"""
+Represents a survey from used by our sdk.
+"""
+type BaseSurvey implements Node @doc(category: "Surveys") {
+    """
+    The distribution channels supported by the survey
+    """
+    channels(
+        """
+        The type of the distribution channel
+        """
+        channelType: SurveyChannelTypeEnum
+    ): [BaseSurveyChannel!]!
+    """
+    The time at which the survey was created.
+    """
+    createdAt: DateTime!
+    """
+    The date at which the survey was ended.
+    """
+    endDate: DateTime
+    """
+    The ID of the survey.
+    """
+    id: ID!
+    """
+    Name of the survey.
+    """
+    name: String
+    """
+    The project the survey belongs to
+    """
+    project: BaseProject
+    """
+    The questions in the the survey
+    """
+    questions: [BaseSurveyQuestion!]!
+    """
+    The settings of the survey.
+    """
+    settings: JSONString
+    """
+    Slug of the survey.
+    """
+    slug: String!
+    """
+    The date at which the survey was started.
+    """
+    startDate: DateTime
+    """
+    The status of the survey
+    """
+    status: SurveyStatusEnum!
+    """
+    The theme of the survey.
+    """
+    theme: BaseProjectTheme
+}
+
+"""
+Represents a survey channel.
+"""
+type BaseSurveyChannel implements Node @doc(category: "Surveys") {
+    """
+    The settings of the question.
+    """
+    conditions: JSONString
+    """
+    The time at which the channel was created.
+    """
+    createdAt: DateTime!
+    """
+    The ID of the channel.
+    """
+    id: ID!
+    """
+    Unique link to the channel.
+    """
+    link: String!
+    """
+    The settings of the question.
+    """
+    settings: JSONString
+    """
+    The options of the question.
+    """
+    triggers: JSONString
+    """
+    The type of the survey channel
+    """
+    type: SurveyChannelTypeEnum!
+}
+
+type BaseSurveyCountableConnection @doc(category: "Surveys") {
+    edges: [BaseSurveyCountableEdge!]!
+    nodes: [BaseSurvey!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
+
+type BaseSurveyCountableEdge @doc(category: "Surveys") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: BaseSurvey!
+}
+
+"""
+Represents a question.
+"""
+type BaseSurveyQuestion implements Node @doc(category: "Surveys") {
+    """
+    The time at which the question was created.
+    """
+    createdAt: DateTime!
+    """
+    Description of the question.
+    """
+    description: String!
+    """
+    The ID of the question.
+    """
+    id: ID!
+    """
+    Label of the question.
+    """
+    label: String!
+    """
+    The position of the question.
+    """
+    maxPath: Int!
+    """
+    The options of the question.
+    """
+    options: JSONString
+    """
+    The position of the question.
+    """
+    orderNumber: Int!
+    """
+    The settings of the question.
+    """
+    settings: JSONString
+    """
+    The type of the question
+    """
+    type: SurveyQuestionTypeEnum!
+}
+
+"""
 The `Date` scalar type represents a Date
 value as specified by
 [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
@@ -512,34 +711,44 @@ type Mutation {
         survey: OnboardingCustomerSurvey
     ): OrganizationCreate @doc(category: "Organizations")
     """
-    Creates a new organization invite.
+    Deletes an organization invite.
 
-    Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
     """
-    organizationInviteCreate(
+    organizationInviteDelete(
         """
-        The organization invite object to create.
+        The identifier of the invite to delete.
         """
-        input: OrganizationInviteCreateInput!
-    ): OrganizationInviteCreate @doc(category: "Organizations")
+        id: ID!
+    ): OrganizationInviteDelete @doc(category: "Organizations")
     """
     Reset the current organization invite link..
 
     Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
     """
-    organizationInviteLinkReset: OrganizationInviteLinkReset
-        @doc(category: "Organizations")
+    organizationInviteLinkReset: OrganizationInviteLinkReset @doc(category: "Organizations")
     """
-    Joins an organization
+    Resend an existing invite
 
-    Requires one of the following permissions: AUTHENTICATED_USER.
+    Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
     """
-    organizationJoin(
+    organizationInviteResend(
         """
-        Organization details for the new organization.
+        ID of a invite to resend.
         """
-        input: OrganizationJoinInput!
-    ): OrganizationJoin @doc(category: "Organizations")
+        id: ID!
+    ): OrganizationInviteResend @doc(category: "Organizations")
+    """
+    Updates an organization.
+
+    Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+    """
+    organizationUpdate(
+        """
+        A partial object to update the organization with.
+        """
+        input: OrganizationUpdateInput!
+    ): OrganizationUpdate @doc(category: "Organizations")
     """
     Creates a new project
     """
@@ -692,6 +901,28 @@ type Mutation {
         input: SurveyQuestionUpdateInput!
     ): SurveyQuestionUpdate @doc(category: "Surveys")
     """
+    Creates a response to survey.
+    """
+    surveyResponseCreate(
+        """
+        The details for the response to create.
+        """
+        input: SurveyResponseCreateInput!
+    ): SurveyResponseCreate @doc(category: "Surveys")
+    """
+    Updates a response.
+    """
+    surveyResponseUpdate(
+        """
+        The ID of the response.
+        """
+        id: ID!
+        """
+        The partial response object to update
+        """
+        input: SurveyResponseUpdateInput!
+    ): SurveyResponseUpdate @doc(category: "Surveys")
+    """
     Updates a survey
 
     Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -773,6 +1004,29 @@ type Organization implements Node @doc(category: "Organizations") {
     """
     id: ID!
     """
+    Invites associated with the organization.
+
+    Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    """
+    invites(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+    ): OrganizationInviteCountableConnection
+    """
     Member count
 
     Requires one of the following permissions: AUTHENTICATED_USER.
@@ -800,11 +1054,7 @@ type Organization implements Node @doc(category: "Organizations") {
         Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
         """
         last: Int
-        """
-        By which field should the pagination order by.
-        """
-        orderBy: UserSortingInput
-    ): UserCountableConnection
+    ): OrganizationMemberCountableConnection
     """
     Name of the organization.
 
@@ -833,10 +1083,6 @@ type Organization implements Node @doc(category: "Organizations") {
         Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
         """
         last: Int
-        """
-        By which field should the pagination order by.
-        """
-        orderBy: UserSortingInput
     ): ProjectCountableConnection
     """
     Slug of the organization.
@@ -977,34 +1223,39 @@ type OrganizationInvite implements Node @doc(category: "Organizations") {
     updatedAt: DateTime!
 }
 
-"""
-Creates a new organization invite.
+type OrganizationInviteCountableConnection @doc(category: "Organizations") {
+    edges: [OrganizationInviteCountableEdge!]!
+    nodes: [OrganizationInvite!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
 
-Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+type OrganizationInviteCountableEdge @doc(category: "Organizations") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: OrganizationInvite!
+}
+
 """
-type OrganizationInviteCreate @doc(category: "Organizations") {
+Deletes an organization invite.
+
+Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+"""
+type OrganizationInviteDelete @doc(category: "Organizations") {
     errors: [OrganizationError!]!
     organizationErrors: [OrganizationError!]!
     organizationInvite: OrganizationInvite
-}
-
-input OrganizationInviteCreateInput @doc(category: "Organizations") {
-    """
-    The email of the invitee.
-    """
-    email: String!
-    """
-    The identifier in UUID v4 format. If none is provided, the backend will generate one.
-    """
-    id: UUID
-    """
-    The message to send to the invitee.
-    """
-    message: String
-    """
-    What member role the invite should grant.
-    """
-    role: RoleLevel
 }
 
 """
@@ -1072,8 +1323,7 @@ type OrganizationInviteLink @doc(category: "Organizations") {
 """
 The organization invite that was created or updated.
 """
-type OrganizationInviteLinkDetails implements Node
-    @doc(category: "Organizations") {
+type OrganizationInviteLinkDetails implements Node @doc(category: "Organizations") {
     """
     The ID of the object.
     """
@@ -1111,24 +1361,98 @@ type OrganizationInviteLinkReset @doc(category: "Organizations") {
 }
 
 """
-Joins an organization
+Resend an existing invite
 
-Requires one of the following permissions: AUTHENTICATED_USER.
+Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
 """
-type OrganizationJoin @doc(category: "Organizations") {
+type OrganizationInviteResend @doc(category: "Organizations") {
     errors: [OrganizationError!]!
     organizationErrors: [OrganizationError!]!
-    """
-    A user that has access to the the resources of an organization.
-    """
-    user: AuthUser!
+    organizationInvite: OrganizationInvite
 }
 
-input OrganizationJoinInput @doc(category: "Organizations") {
+"""
+Represents an organization member.
+"""
+type OrganizationMember implements Node @doc(category: "Organizations") {
     """
-    An invite link for an organization.
+    The time at which the member was created.
     """
-    inviteLink: String!
+    createdAt: DateTime!
+    """
+    The email address of the member.
+    """
+    email: String!
+    """
+    The given name of the member.
+    """
+    firstName: String!
+    """
+    The ID of the member.
+    """
+    id: ID!
+    """
+    The family name of the member.
+    """
+    lastName: String!
+    """
+    The member role
+    """
+    role: RoleLevel!
+    """
+    The last time at which the member was updated.
+    """
+    updatedAt: DateTime!
+}
+
+type OrganizationMemberCountableConnection @doc(category: "Organizations") {
+    edges: [OrganizationMemberCountableEdge!]!
+    nodes: [OrganizationMember!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
+
+type OrganizationMemberCountableEdge @doc(category: "Organizations") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: OrganizationMember!
+}
+
+"""
+Updates an organization.
+
+Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+"""
+type OrganizationUpdate @doc(category: "Organizations") {
+    errors: [OrganizationError!]!
+    organization: Organization
+    organizationErrors: [OrganizationError!]!
+}
+
+input OrganizationUpdateInput @doc(category: "Organizations") {
+    """
+    The name of the organization.
+    """
+    name: String
+    """
+    The slug of the organization.
+    """
+    slug: String
+    """
+    The timezone of the organization, passed in by client.
+    """
+    timezone: String
 }
 
 """
@@ -1221,6 +1545,10 @@ type Project implements Node @doc(category: "Projects") {
     Whether the project is private or not.
     """
     accessControl: Boolean
+    """
+    API token for project.
+    """
+    apiToken: String!
     """
     The data required for the onboarding process
     """
@@ -1590,6 +1918,37 @@ type Query {
     _entities(representations: [_Any]): [_Entity]
     _service: _Service
     """
+    List of the project's surveys.
+
+    Requires one of the following permissions: AUTHENTICATED_API.
+    """
+    activeSurveys(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Filtering options for surveys.
+        """
+        filter: SurveyFilterInput
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+        """
+        Sort surveys.
+        """
+        sortBy: SurveySortingInput
+    ): BaseSurveyCountableConnection @doc(category: "Surveys")
+    """
     List of channels for a specific survey.
 
     Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -1703,8 +2062,7 @@ type Query {
 
     Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
     """
-    organizationInviteLink: OrganizationInviteLink
-        @doc(category: "Organizations")
+    organizationInviteLink: OrganizationInviteLink @doc(category: "Organizations")
     """
     List of persons.
 
@@ -1785,7 +2143,7 @@ type Query {
     """
     Look up a survey by ID or slug.
 
-    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS, AUTHENTICATED_API.
     """
     survey(
         """
@@ -1797,6 +2155,19 @@ type Query {
         """
         slug: String
     ): Survey @doc(category: "Surveys")
+    """
+    Look up a survey by channel ID or link.
+    """
+    surveyByChannel(
+        """
+        The ID of the channel.
+        """
+        id: ID
+        """
+        Unique link of the channel.
+        """
+        link: String
+    ): BaseSurvey @doc(category: "Surveys")
     """
     List of the project's surveys.
 
@@ -1874,6 +2245,7 @@ type RefreshToken @doc(category: "Authentication") {
 enum RoleLevel {
     ADMIN
     MEMBER
+    OWNER
 }
 
 """
@@ -1999,6 +2371,10 @@ type SurveyChannel implements Node @doc(category: "Surveys") {
     """
     id: ID!
     """
+    Unique link to the channel.
+    """
+    link: String!
+    """
     For internal purpose.
     """
     reference: ID
@@ -2053,6 +2429,9 @@ Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
 """
 type SurveyChannelCreate @doc(category: "Surveys") {
     errors: [SurveyError!]!
+    """
+    The checkout with the added gift card or voucher.
+    """
     surveyChannel: SurveyChannel
     surveyErrors: [SurveyError!]!
 }
@@ -2393,6 +2772,7 @@ type SurveyQuestionDelete @doc(category: "Surveys") {
 
 enum SurveyQuestionTypeEnum {
     BOOLEAN
+    CES
     CSAT
     CTA
     CUSTOM
@@ -2445,6 +2825,104 @@ input SurveyQuestionUpdateInput @doc(category: "Surveys") {
     The type of the question
     """
     type: SurveyQuestionTypeEnum
+}
+
+"""
+Creates a response to survey.
+"""
+type SurveyResponseCreate @doc(category: "Surveys") {
+    errors: [SurveyError!]!
+    """
+    The ID of the response.
+    """
+    responseId: ID
+    """
+    Whether the operation was successful.
+    """
+    status: Boolean
+    surveyErrors: [SurveyError!]!
+}
+
+input SurveyResponseCreateInput @doc(category: "Surveys") {
+    """
+    The user attributes.
+    """
+    attributes: JSONString
+    """
+    Whether the response is completed.
+    """
+    completed: Boolean = false
+    """
+    The time the survey completed.
+    """
+    completedAt: DateTime
+    """
+    The ID of the response.
+    """
+    id: UUID
+    """
+    The response metadata.
+    """
+    metadata: JSONString
+    """
+    The partial response for the survey.
+    """
+    response: JSONString
+    """
+    The time the survey started.
+    """
+    startedAt: DateTime
+    """
+    The survey ID the response belongs to.
+    """
+    surveyId: ID!
+    """
+    The user distinct ID.
+    """
+    userId: ID
+}
+
+"""
+Updates a response.
+"""
+type SurveyResponseUpdate @doc(category: "Surveys") {
+    errors: [SurveyError!]!
+    """
+    Whether the operation was successful.
+    """
+    status: Boolean
+    surveyErrors: [SurveyError!]!
+}
+
+input SurveyResponseUpdateInput @doc(category: "Surveys") {
+    """
+    The user attributes.
+    """
+    attributes: JSONString
+    """
+    Whether the response is completed.
+    """
+    completed: Boolean = false
+    """
+    The time the survey completed.
+    """
+    completedAt: DateTime
+    """
+    The response metadata.
+    """
+    metadata: JSONString
+    """
+    The partial response for the survey.
+    """
+    response: JSONString
+    """
+    The time the survey started.
+    """
+    startedAt: DateTime
+    """
+    The user distinct ID.
+    """
+    userId: ID
 }
 
 enum SurveySortField @doc(category: "Surveys") {
@@ -2633,30 +3111,6 @@ type User implements Node @doc(category: "Users") {
     ): ProjectCountableConnection
 }
 
-type UserCountableConnection @doc(category: "Users") {
-    edges: [UserCountableEdge!]!
-    nodes: [User!]!
-    """
-    Pagination data for this connection.
-    """
-    pageInfo: PageInfo!
-    """
-    A total count of items in the collection.
-    """
-    totalCount: Int
-}
-
-type UserCountableEdge @doc(category: "Users") {
-    """
-    A cursor for use in pagination.
-    """
-    cursor: String!
-    """
-    The item at the end of the edge.
-    """
-    node: User!
-}
-
 """
 Represents errors in user mutations.
 """
@@ -2711,36 +3165,6 @@ input UserInput @doc(category: "Authentication") {
     The family name of the user.
     """
     lastName: String
-}
-
-enum UserSortField @doc(category: "Users") {
-    """
-    Sort users by created at.
-    """
-    CREATED_AT
-    """
-    Sort users by email.
-    """
-    EMAIL
-    """
-    Sort users by first name.
-    """
-    FIRST_NAME
-    """
-    Sort users by last name.
-    """
-    LAST_NAME
-}
-
-input UserSortingInput @doc(category: "Users") {
-    """
-    Specifies the direction in which to sort users.
-    """
-    direction: OrderDirection!
-    """
-    Sort users by the selected field.
-    """
-    field: UserSortField!
 }
 
 """
