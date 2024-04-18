@@ -5,7 +5,7 @@ import { User } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
-import { Button, Dialog, DialogContent, TextInput } from "@/ui";
+import { Button, Dialog, DialogContent, GlobalSpinner, TextInput } from "@/ui";
 import { CopyIcon } from "@/ui/icons";
 import { addEllipsis, copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
@@ -21,7 +21,7 @@ const EMAIL_REGEX =
 
 export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
     const { workspace } = useWorkspace();
-    const { loading, emailInvite, getInviteLink, resetInviteLink } = useWorkspaceInvite();
+    const { loading, emailInvite, loadingEmailInvite, getInviteLink, resetInviteLink } = useWorkspaceInvite();
     const { user, updateUser } = useAuth();
 
     const [toggleInviteType, setToggleInviteType] = useState(false);
@@ -122,6 +122,10 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
             setInviteLink(`${window.location.host}${response?.inviteLink}`);
         }
     };
+
+    if (loadingEmailInvite) {
+        return <GlobalSpinner />;
+    }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>

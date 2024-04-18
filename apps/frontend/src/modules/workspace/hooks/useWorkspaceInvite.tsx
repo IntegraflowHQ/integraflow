@@ -18,12 +18,12 @@ import {
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 
 export const useWorkspaceInvite = () => {
-    const { switchWorkspace, user } = useAuth();
+    const { switchWorkspace } = useAuth();
 
     const [getInviteLink, { loading: loadingInviteLink }] = useOrganizationInviteLinkCreateLazyQuery();
     const [getInviteDetails, { loading: inviteDetailsLoading }] = useOrganizationInviteDetailsLazyQuery();
 
-    const [emailInvite] = useOrganizationInviteCreateMutation();
+    const [emailInvite, { loading: loadingEmailInvite }] = useOrganizationInviteCreateMutation();
     const [resetInviteLink, { loading: loadingLinkReset }] = useOrganizationInviteLinkResetMutation();
     const [resendInviteLink] = useOrganizationInviteResendMutation();
     const [revokeInviteLink] = useOrganizationInviteDeleteMutation();
@@ -180,6 +180,7 @@ export const useWorkspaceInvite = () => {
     }, []);
 
     return {
+        loadingEmailInvite,
         loading:
             joiningOrg || inviteDetailsLoading || loadingInviteLink || loadingLinkReset || loadingLeaveOrganization,
         getInviteDetails: handleGetInviteDetails,
