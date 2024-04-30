@@ -1,0 +1,42 @@
+name: Build and Deploy Backend to ELB
+
+on:
+  push:
+    branches: [ main*, ENG-* ]
+
+env:
+  EB_S3_BUCKET_NAME: "integraflow-cicd-bucket"
+  EB_APPLICATION_NAME: "Integraflow Backend Staging"
+  EB_ENVIRONMENT_NAME: "IntegraflowBackendStaging-env"
+  DEPLOY_PACKAGE_NAME: "integraflow-backend-${{ github.sha }}.zip"
+  AWS_REGION_NAME: "us-east-1"
+  VERSION_NAME: ${{ github.sha }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION_NAME }}
+
+      - name: Create archive package for the backend deployment
+        run: zip -r ${{ env.DEPLOY_PACKAGE_NAME }} ./backend/ -x *.git*
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ env.EB_APPLICATION_NAME }}
+          environment_name: ${{ env.EB_ENVIRONMENT_NAME }}
+          version_label: ${{ env.VERSION_NAME }}
+          region: ${{ env.AWS_REGION_NAME }}
+          deployment_package: {{ env.DEPLOY_PACKAGE_NAME }}
+          existing_bucket_name: ${{ env.EB_S3_BUCKET_NAME }}
