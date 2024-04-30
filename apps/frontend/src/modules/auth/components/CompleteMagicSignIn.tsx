@@ -7,14 +7,12 @@ import { cn } from "@/utils";
 import { toast } from "@/utils/toast";
 import CheckInbox from "assets/images/check-inbox.gif";
 
+import { EMAIL_REGEX } from "@/constants";
 import { useAuth } from "../hooks/useAuth";
-import { useRedirect } from "../hooks/useRedirect";
 
 type Inputs = {
     code: string;
 };
-
-const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export default function CompleteMagicSignIn() {
     const {
@@ -31,35 +29,19 @@ export default function CompleteMagicSignIn() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const email = searchParams.get("email") ?? "";
-    const tokenParam = searchParams.get("token");
     const [showCodeInput, setShowCodeInput] = useState(false);
     const { authenticateWithMagicLink, generateMagicLink } = useAuth();
-    const redirect = useRedirect();
     const code = watch("code");
 
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const inviteLink = urlParams.get("inviteLink") ?? undefined;
 
-    const handleAuthenticateWithMagicLink = useCallback(
-        async (email: string, token: string, inviteLink?: string) => {
-            const response = await authenticateWithMagicLink(email, token, inviteLink);
-            if (response && response.user) {
-                redirect(response.user);
-            }
-        },
-        [authenticateWithMagicLink, redirect],
-    );
-
     useEffect(() => {
         if (!email || !EMAIL_REGEX.test(email)) {
             navigate("/");
         }
-
-        if (email && tokenParam) {
-            handleAuthenticateWithMagicLink(email, tokenParam, inviteLink);
-        }
-    }, [handleAuthenticateWithMagicLink, email, inviteLink, navigate, tokenParam]);
+    }, []);
 
     useEffect(() => {
         const addDash = () => {
@@ -83,9 +65,9 @@ export default function CompleteMagicSignIn() {
                 return;
             }
 
-            await handleAuthenticateWithMagicLink(email, data.code, inviteLink);
+            await authenticateWithMagicLink(email, data.code, inviteLink);
         },
-        [handleAuthenticateWithMagicLink, email, inviteLink],
+        [authenticateWithMagicLink, email, inviteLink],
     );
 
     const onGenerateBtnClicked = useCallback(async () => {
