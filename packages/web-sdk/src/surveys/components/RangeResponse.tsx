@@ -38,7 +38,7 @@ function RangeResponse({
   const answerColor = theme?.answer ?? '#050505';
   const maxCount =
     question.type === AnswerType.NPS
-      ? 10
+      ? 11
       : question.options?.length ??
         (question.settings as RangeSettings).count ??
         0;
@@ -64,15 +64,16 @@ function RangeResponse({
 
     if (question.type === AnswerType.NPS || question.type === AnswerType.NUMERICAL_SCALE) {
       const getLabel = () => {
+        const label = question.type === AnswerType.NPS ? index : index + 1;
+
         if (isMobile && index === 0)
-          return `${index + 1} - ${(question.settings as RangeSettings)
-            ?.leftText ?? 'Not likely'}`;
+          return `${label} - ${(question.settings as RangeSettings)?.leftText ?? 'Not likely'}`;
         if (isMobile && index === maxCount - 1)
-          return `${index + 1} - ${(question.settings as RangeSettings)
+          return `${label} - ${(question.settings as RangeSettings)
             ?.rightText ?? 'Very likely'}`;
-        return `${index + 1}`;
+        return `${label}`;
       };
-    
+
       return (
         <Button
           key={index}

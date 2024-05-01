@@ -10,7 +10,7 @@ import { Option, ReactSelect } from "../ReactSelect";
 
 const scaleStyleOptions = [
     {
-        label: "shapes",
+        label: "Shapes",
         value: SurveyQuestionTypeEnum.Rating,
     },
     {
@@ -23,7 +23,7 @@ const scaleStyleOptions = [
     },
     {
         label: "CES",
-        value: "CES",
+        value: SurveyQuestionTypeEnum.Ces,
     },
 ];
 
@@ -42,7 +42,7 @@ export const RatingFields = () => {
             SurveyQuestionTypeEnum.Rating,
             SurveyQuestionTypeEnum.Csat,
             SurveyQuestionTypeEnum.NumericalScale,
-            "CES",
+            SurveyQuestionTypeEnum.Ces,
         ].includes(question?.type)
     ) {
         return null;
@@ -112,7 +112,7 @@ export const RatingFields = () => {
                     ) : null}
                 </div>
 
-                {scaleStyle === SurveyQuestionTypeEnum.Csat || scaleStyle === "CES" ? (
+                {scaleStyle === SurveyQuestionTypeEnum.Csat || scaleStyle === SurveyQuestionTypeEnum.Ces ? (
                     <div>
                         <p>Scale labels:</p>
                         {question?.options?.map((option: QuestionOption, index: number) => {

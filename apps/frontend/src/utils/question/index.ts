@@ -1,13 +1,13 @@
 import { PropertyDefinition, SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { LogicConditionEnum, MentionOption, ParsedQuestion, QuestionOption } from "@/types";
-import { CTAType, LogicOperator } from "@integraflow/web";
+import { CTAType, LogicOperator, LogicConditionEnum, MentionOption, ParsedQuestion, QuestionOption } from "@/types";
+import {  } from "@integraflow/web";
 import RatingIcon from "assets/icons/studio/rating.png";
 import ThankYouIcon from "assets/icons/studio/thankyou.png";
 import { addEllipsis, stripHtmlTags } from "..";
 import { questionTypes } from "../survey";
 
 const ANSWER_TAG_SUFFIX = "answer";
-export const questionsWithoutSettingsTab = [SurveyQuestionTypeEnum.Csat, "CES", SurveyQuestionTypeEnum.Date];
+export const questionsWithoutSettingsTab = [SurveyQuestionTypeEnum.Csat, SurveyQuestionTypeEnum.Ces, SurveyQuestionTypeEnum.Date];
 export const emptyLabel = "<p><br></p>";
 
 const MultipleLogicConditions = [
@@ -155,7 +155,7 @@ export const conditionOptions = (type: SurveyQuestionTypeEnum) => {
         type === SurveyQuestionTypeEnum.Nps ||
         type === SurveyQuestionTypeEnum.SmileyScale ||
         type === SurveyQuestionTypeEnum.Csat ||
-        type === "CES"
+        type === SurveyQuestionTypeEnum.Ces
     ) {
         return RangeLogicConditions;
     }
@@ -215,8 +215,8 @@ export const destinationOptions = (questions: ParsedQuestion[], openQuestion: Pa
             value: q.id,
             label:
                 stripHtmlTags(q.label) && stripHtmlTags(q.label) !== emptyLabel
-                    ? `${q.orderNumber}- ${addEllipsis(stripHtmlTags(q.label), 40)} `
-                    : `${q.orderNumber}- Empty Question`,
+                    ? `${q.orderNumber} - ${addEllipsis(stripHtmlTags(q.label), 40)} `
+                    : `${q.orderNumber} - Empty Question`,
         })),
         {
             value: "-1",
