@@ -368,22 +368,21 @@ export const AuthProvider = ({ children, apollo }: AuthProviderProps) => {
 
     useEffect(() => {
         const hydrate = async () => {
-            if (!!refreshToken) {
+            if (!!refreshToken && !hydrated) {
                 const { data } = await getUser();
-                // if (data?.viewer) {
-                //     const organization = data.viewer.organizations?.edges.find(
-                //         ({ node }) => node.id === user.organization?.id,
-                //     )?.node;
-                //     const project = organization?.projects?.edges.find(
-                //         ({ node }) => node.id === user.project?.id,
-                //     )?.node;
-
-                //     updateUserCache({
-                //         ...data.viewer,
-                //         organization: convertToAuthOrganization(organization),
-                //         project,
-                //     });
-                // }
+                if (data?.viewer) {
+                    const organization = data.viewer.organizations?.edges.find(
+                        ({ node }) => node.id === user.organization?.id,
+                    )?.node;
+                    const project = organization?.projects?.edges.find(
+                        ({ node }) => node.id === user.project?.id,
+                    )?.node;
+                    updateUserCache({
+                        ...data.viewer,
+                        organization: convertToAuthOrganization(organization),
+                        project,
+                    });
+                }
             }
         };
 
