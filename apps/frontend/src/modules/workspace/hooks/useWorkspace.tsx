@@ -7,8 +7,10 @@ import {
     OnboardingCustomerSurvey,
     Organization,
     OrganizationCreateInput,
+    OrganizationUpdateInput,
     Project,
     useOrganizationCreateMutation,
+    useOrganizationUpdateMutation,
 } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { convertToAuthOrganization } from "@/modules/auth/states/user";
@@ -16,6 +18,7 @@ import { convertToAuthOrganization } from "@/modules/auth/states/user";
 export const useWorkspace = () => {
     const { user, workspace, projects, updateUser, switchWorkspace } = useAuth();
     const [createOrganization, { loading }] = useOrganizationCreateMutation();
+    const [updateOrganization] = useOrganizationUpdateMutation();
 
     const handleAddWorkspace = useCallback(
         (organization: DeepPartial<Organization>) => {
@@ -44,27 +47,21 @@ export const useWorkspace = () => {
     );
 
     const handleUpdateWorkspace = useCallback(
-        (organization: DeepPartial<Organization>) => {
-            const organizations = {
-                ...user.organizations,
-                edges: (user.organizations?.edges ?? []).map((edge) => {
-                    if (edge?.node?.id === organization.id) {
-                        return {
-                            ...edge,
-                            node: organization,
-                        };
-                    }
-
-                    return edge;
-                }),
-            };
-            updateUser(
-                {
-                    organization: convertToAuthOrganization(organization),
-                    organizations,
-                },
-                true,
-            );
+        async (organizationInput: OrganizationUpdateInput) => {
+            try {
+                const response = await updateOrganization({
+                    variables: {
+                        input: {
+                            name: organizationInput.name,
+                            slug: organizationInput.slug,
+                            timezone: organizationInput.timezone,
+                        },
+                    },
+                });
+                return response?.data?.organizationUpdate;
+            } catch (error) {
+                console.error(error);
+            }
         },
         [updateUser, user],
     );

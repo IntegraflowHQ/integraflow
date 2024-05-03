@@ -30,8 +30,6 @@ export const Profile = () => {
         }
     };
 
-    console.log(`${user.firstName} ${user.lastName}`);
-
     return (
         <SettingsScreen title="Profile" label="Manage your Integraflow Profile">
             <form className="w-[593px]" onSubmit={handleSubmit(onSubmit)}>

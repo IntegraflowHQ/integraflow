@@ -39,7 +39,6 @@ export const MemberList = ({ searchValue }: Props) => {
 
     const handleLeaveOrganization = async (organizationId: string) => {
         const response = await leaveOrganization(organizationId);
-        console.log(organizationId, response);
 
         if (response) {
             const remainingOrganizations = organizations.filter((org) => org?.id !== response.organization?.id);
@@ -67,7 +66,7 @@ export const MemberList = ({ searchValue }: Props) => {
                 );
             }
 
-            updateUser(updatedUser);
+            updateUser(updatedUser, true);
             toast.success(`You have removed ${response.organizationMembership.email} from your organization`);
             return;
         }
@@ -97,7 +96,7 @@ export const MemberList = ({ searchValue }: Props) => {
             if (member?.node?.role) {
                 member.node.role = response.organizationMembership.role;
             }
-            updateUser(updatedUser);
+            updateUser(updatedUser, true);
 
             toast.success(`You have made ${response.organizationMembership.email} ${newRole}`);
         }

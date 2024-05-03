@@ -1,6 +1,9 @@
+import { User } from "@/generated/graphql";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { Button, TextInput } from "@/ui";
-import { useState } from "react";
+import { toast } from "@/utils/toast";
+import { DeepPartial } from "@apollo/client/utilities";
 import { useForm } from "react-hook-form";
 
 type WorkspaceData = {
@@ -9,8 +12,8 @@ type WorkspaceData = {
 };
 
 export const General = () => {
-    const [openDeleteModal, setOpenDeleteModal] = useState(false);
-    const { workspace } = useWorkspace();
+    const { workspace, updateWorkspace } = useWorkspace();
+    const { user, switchWorkspace, organizations, updateUser } = useAuth();
 
     const {
         register,
@@ -24,7 +27,33 @@ export const General = () => {
     });
 
     const onSubmit = async (formInfo: WorkspaceData) => {
-        console.log(formInfo);
+        if (!formInfo) {
+            toast.error("Field cannot be empty");
+            return;
+        }
+
+        const response = await updateWorkspace({
+            name: formInfo.workspaceName,
+            slug: formInfo.workspaceUrl,
+        });
+
+        if (response?.organization) {
+            const updatedUser = JSON.parse(JSON.stringify(user)) as DeepPartial<User>;
+            const currentOrganization = updatedUser.organizations?.edges?.find(
+                (org) => org?.node?.id === workspace?.id,
+            );
+            if (currentOrganization) {
+                currentOrganization.node = {
+                    ...currentOrganization.node,
+                    name: formInfo.workspaceName,
+                    slug: formInfo.workspaceUrl,
+                };
+            }
+
+            updateUser(updatedUser, true);
+            toast.success(`Your organization name has been updated`);
+            return;
+        }
     };
     return (
         <form className="w-[593px] pt-10" onSubmit={handleSubmit(onSubmit)}>
@@ -77,11 +106,10 @@ export const General = () => {
                     errorMessage={errors.workspaceUrl?.message}
                 />
                 <div className="w-[114px]">
-                    <Button text="Update" className="w-[114px]" size="md" />
+                    <Button text="Update" type="submit" className="w-[114px]" size="md" />
                 </div>
             </div>
 
-            {/* <hr className="my-6 border-[1px] border-intg-bg-4" /> */}
             {/*
             <div className="space-y-6 text-sm text-intg-text-4">
                 <div className="space-y-2">

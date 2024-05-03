@@ -96,7 +96,6 @@ export const Member = () => {
                     <OrganizationInvite
                         open={openInviteModal}
                         onOpenChange={(value) => {
-                            console.log(value);
                             setOpenInviteModal(value);
                         }}
                     />
