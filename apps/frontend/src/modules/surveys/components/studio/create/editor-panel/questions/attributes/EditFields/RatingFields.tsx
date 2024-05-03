@@ -2,7 +2,7 @@ import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { QuestionOption } from "@/types";
 import { generateNumericalOptions } from "@/utils/question";
-import { createRangeOptions } from "@/utils/question/defaultOptions";
+import { createOptions, createRangeOptions } from "@/utils/question/defaultOptions";
 import { useState } from "react";
 import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
@@ -62,9 +62,8 @@ export const RatingFields = () => {
 
                                 updateQuestion({
                                     type: (value as SingleValue<Option>)?.value as SurveyQuestionTypeEnum,
-                                    options: createRangeOptions(
+                                    options: createOptions(
                                         (value as SingleValue<Option>)?.value as SurveyQuestionTypeEnum,
-                                        5,
                                     ),
                                 });
                             }}

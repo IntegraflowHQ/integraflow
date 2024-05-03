@@ -1,5 +1,5 @@
 import { ChevronDown } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { AcronynmBox, Button, NavItem, NavLink } from "@/ui";
@@ -25,6 +25,7 @@ import {
 } from "@/ui/icons";
 
 import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { ROUTES } from "@/routes";
 import Frame from "assets/images/Frame.png";
 
 const profileNavItems = [
@@ -49,6 +50,7 @@ export const UserProfile = () => {
     const { user, organizations, logout } = useAuth();
     const { workspace } = useWorkspace();
     const navigate = useNavigate();
+    const { orgSlug, projectSlug } = useParams();
 
     return (
         <DropdownMenu>
@@ -133,7 +135,18 @@ export const UserProfile = () => {
                 </DropdownMenuSub>
                 <DropdownMenuItem className="flex items-center gap-2 px-3 py-2 ">
                     <SettingsIcon />
-                    <p className="text-sm">Workspace Settings</p>
+                    <p
+                        className="cursor-pointer text-sm"
+                        onClick={() => {
+                            navigate(
+                                `${ROUTES.WORKSPACE_SETTINGS}`
+                                    .replace(":orgSlug", orgSlug!)
+                                    .replace(":projectSlug", projectSlug!),
+                            );
+                        }}
+                    >
+                        Workspace Settings
+                    </p>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
                 {profileNavItems.map((item) => {

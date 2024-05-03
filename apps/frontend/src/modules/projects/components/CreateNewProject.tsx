@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogContent, TextInput } from "@/ui";
+import { Button, Dialog, DialogContent, GlobalSpinner, TextInput } from "@/ui";
 import { toast } from "@/utils/toast";
 import React, { useState } from "react";
 import { useProject } from "../hooks/useProject";
@@ -9,12 +9,10 @@ type Props = {
 };
 
 export const CreateNewProject = ({ open, onOpenChange }: Props) => {
-    const { createProject } = useProject();
+    const { createProject, loading } = useProject();
 
     const [projectName, setProjectName] = useState<string>("");
-    const [projectNameError, setProjectNameError] = useState<
-        string | undefined
-    >("");
+    const [projectNameError, setProjectNameError] = useState<string | undefined>("");
 
     const handleCreateProject = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -45,6 +43,10 @@ export const CreateNewProject = ({ open, onOpenChange }: Props) => {
         }
     };
 
+    if (loading) {
+        return <GlobalSpinner />;
+    }
+
     return (
         <Dialog
             open={open}
@@ -53,7 +55,7 @@ export const CreateNewProject = ({ open, onOpenChange }: Props) => {
                 open === false ? setProjectName("") : null;
             }}
         >
-            <DialogContent title="Create new survey">
+            <DialogContent title="Create new project">
                 <div className="mt-6 w-[34rem]">
                     <form onSubmit={handleCreateProject}>
                         <TextInput
@@ -71,11 +73,7 @@ export const CreateNewProject = ({ open, onOpenChange }: Props) => {
                             <hr className="border-intg-bg-4" />
                         </div>
                         <div className="w-full">
-                            <Button
-                                text="Create Project"
-                                className="w-full px-8 py-4"
-                                type="submit"
-                            />
+                            <Button text="Create Project" className="w-full px-8 py-4" type="submit" />
                         </div>
                     </form>
                 </div>

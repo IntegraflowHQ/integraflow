@@ -18,17 +18,7 @@ export const USER = gql`
         organizations(first: 50) {
             edges {
                 node {
-                    id
-                    slug
-                    name
-                    memberCount
-                    projects(first: 100) {
-                        edges {
-                            node {
-                                ...ProjectFragment
-                            }
-                        }
-                    }
+                    ...OrganizationFragment
                 }
             }
         }
