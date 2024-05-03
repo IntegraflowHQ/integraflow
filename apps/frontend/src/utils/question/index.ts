@@ -1,6 +1,6 @@
 import { PropertyDefinition, SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { LogicConditionEnum, MentionOption, ParsedQuestion, QuestionOption } from "@/types";
-import { CTAType, LogicOperator } from "@integraflow/web";
+import { CTAType, LogicConditionEnum, LogicOperator, MentionOption, ParsedQuestion, QuestionOption } from "@/types";
+import {} from "@integraflow/web";
 import RatingIcon from "assets/icons/studio/rating.png";
 import ThankYouIcon from "assets/icons/studio/thankyou.png";
 import { addEllipsis, stripHtmlTags } from "..";
@@ -12,6 +12,7 @@ export const questionsWithoutSettingsTab = [
     SurveyQuestionTypeEnum.Ces,
     SurveyQuestionTypeEnum.Date,
 ];
+
 export const emptyLabel = "<p><br></p>";
 
 const MultipleLogicConditions = [
@@ -219,8 +220,8 @@ export const destinationOptions = (questions: ParsedQuestion[], openQuestion: Pa
             value: q.id,
             label:
                 stripHtmlTags(q.label) && stripHtmlTags(q.label) !== emptyLabel
-                    ? `${q.orderNumber}- ${addEllipsis(stripHtmlTags(q.label), 40)} `
-                    : `${q.orderNumber}- Empty Question`,
+                    ? `${q.orderNumber} - ${addEllipsis(stripHtmlTags(q.label), 40)} `
+                    : `${q.orderNumber} - Empty Question`,
         })),
         {
             value: "-1",

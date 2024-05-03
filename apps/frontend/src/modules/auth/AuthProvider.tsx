@@ -19,13 +19,13 @@ import {
 import { toast } from "@/utils/toast";
 
 import { NotFound } from "@/components/NotFound";
-import { AUTH_EXEMPT } from "@/constants";
+import { AUTH_EXEMPT, EMAIL_REGEX } from "@/constants";
 import { useIsMatchingLocation } from "@/hooks";
 import { ROUTES } from "@/routes";
 import { GlobalSpinner } from "@/ui";
 import { NormalizedCacheObject } from "@apollo/client";
 import { DeepPartial } from "@apollo/client/utilities";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useLocation, useParams, useSearchParams } from "react-router-dom";
 import { ApolloFactory } from "../apollo/services/apollo.factory";
 import { useRedirect } from "./hooks/useRedirect";
 import { useAuthStore, type AuthState } from "./states/auth";
@@ -88,6 +88,12 @@ export const AuthProvider = ({ children, apollo }: AuthProviderProps) => {
     const { updateUser: updateUserCache, reset: resetUser, hydrated, ...user } = useUserStore();
     const redirect = useRedirect();
     const { orgSlug, projectSlug } = useParams();
+    const location = useLocation();
+    const [searchParams] = useSearchParams();
+    const emailParam = searchParams.get("email");
+    const tokenParam = searchParams.get("token");
+    const inviteLink = searchParams.get("inviteLink") ?? undefined;
+
     const locationMatch = useIsMatchingLocation();
 
     const [ready, setReady] = useState(false);
@@ -440,6 +446,12 @@ export const AuthProvider = ({ children, apollo }: AuthProviderProps) => {
         }
         setReady(true);
     }, [locationMatch, user, refreshToken, redirect]);
+
+    useEffect(() => {
+        if (location.pathname === ROUTES.MAGIC_SIGN_IN && emailParam && EMAIL_REGEX.test(emailParam) && tokenParam) {
+            handleAuthenticateWithMagicLink(emailParam, tokenParam, inviteLink);
+        }
+    }, []);
 
     const value = useMemo<AuthContextValue>(
         () => ({
