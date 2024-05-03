@@ -1,6 +1,5 @@
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { Button, TextInput } from "@/ui";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 type WorkspaceData = {
@@ -9,7 +8,6 @@ type WorkspaceData = {
 };
 
 export const General = () => {
-    const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const { workspace } = useWorkspace();
 
     const {
