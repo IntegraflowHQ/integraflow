@@ -209,7 +209,7 @@ export const AuthProvider = ({ children, apollo }: AuthProviderProps) => {
                     return handleSuccess(data.googleUserAuth as AuthResponse);
                 }
             } catch (error) {
-                handleError("Unexpected error occurred while generating magic link.");
+                handleError("Unexpected error occurred during google login.");
                 return;
             }
         },
