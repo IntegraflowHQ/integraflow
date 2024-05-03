@@ -90,42 +90,42 @@ export default function CompleteMagicSignIn() {
                     </header>
 
                     <div className="w-full px-3">
-                        <div className="flex w-full flex-col ">
+                        {!showCodeInput ? (
                             <Button
                                 text={"Enter code manually"}
                                 onClick={() => {
                                     setShowCodeInput(true);
                                 }}
                             />
+                        ) : null}
 
-                            <section
-                                className={cn(
-                                    "w-full overflow-hidden transition-all duration-300 ease-out",
-                                    !showCodeInput ? "h-[1px]" : "h-[130px] pt-3",
-                                    showCodeInput && !!errors.code?.message ? "h-[154px]" : "",
-                                )}
-                            >
-                                <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
-                                    <TextInput
-                                        type="text"
-                                        placeholder="Enter code"
-                                        {...register("code", {
-                                            required: {
-                                                value: true,
-                                                message: "Enter your code",
-                                            },
-                                            minLength: {
-                                                value: 11,
-                                                message: "Code must be 11 characters long",
-                                            },
-                                        })}
-                                        error={!!errors.code?.message}
-                                        errorMessage={errors.code?.message}
-                                    />
-                                    <Button text={"Continue"} />
-                                </form>
-                            </section>
-                        </div>
+                        <section
+                            className={cn(
+                                "w-full overflow-hidden transition-all duration-300 ease-out",
+                                !showCodeInput ? "h-[1px]" : "h-[120px] pt-0.5",
+                                showCodeInput && !!errors.code?.message ? "h-[154px]" : "",
+                            )}
+                        >
+                            <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
+                                <TextInput
+                                    type="text"
+                                    placeholder="Enter code"
+                                    {...register("code", {
+                                        required: {
+                                            value: true,
+                                            message: "Enter your code",
+                                        },
+                                        minLength: {
+                                            value: 11,
+                                            message: "Code must be 11 characters long",
+                                        },
+                                    })}
+                                    error={!!errors.code?.message}
+                                    errorMessage={errors.code?.message}
+                                />
+                                <Button text={"Continue"} />
+                            </form>
+                        </section>
 
                         <div className="w-full py-8">
                             <hr className="border border-intg-bg-4" />
