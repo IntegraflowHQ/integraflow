@@ -9,11 +9,13 @@ import {
     OrganizationCreateInput,
     OrganizationUpdateInput,
     Project,
+    User,
     useOrganizationCreateMutation,
     useOrganizationUpdateMutation,
 } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { convertToAuthOrganization } from "@/modules/auth/states/user";
+import { toast } from "@/utils/toast";
 
 export const useWorkspace = () => {
     const { user, workspace, projects, updateUser, switchWorkspace } = useAuth();
@@ -58,10 +60,50 @@ export const useWorkspace = () => {
                         },
                     },
                 });
-                return response?.data?.organizationUpdate;
+                if (response?.data?.organizationUpdate) {
+                    const updatedUser = JSON.parse(JSON.stringify(user)) as DeepPartial<User>;
+                    const currentOrganization = updatedUser.organizations?.edges?.find(
+                        (org) => org?.node?.id === workspace?.id,
+                    );
+                    if (currentOrganization) {
+                        currentOrganization.node = {
+                            ...currentOrganization.node,
+                            name: organizationInput.name || "",
+                            slug: organizationInput.slug || "",
+                        };
+                    }
+                    updateUser(updatedUser, true);
+                    toast.success(`Your organization name has been updated`);
+                    return;
+                }
             } catch (error) {
                 console.error(error);
             }
+        },
+        [updateUser, user],
+    );
+
+    const handleWorkspaceCache = useCallback(
+        (organization: DeepPartial<Organization>, cacheOnly = true) => {
+            const organizations = {
+                ...user.organizations,
+                edges: (user.organizations?.edges ?? []).map((edge) => {
+                    if (edge?.node?.id === organization.id) {
+                        return {
+                            ...edge,
+                            node: organization,
+                        };
+                    }
+                    return edge;
+                }),
+            };
+            updateUser(
+                {
+                    organization: convertToAuthOrganization(organization),
+                    organizations,
+                },
+                cacheOnly,
+            );
         },
         [updateUser, user],
     );
@@ -113,5 +155,6 @@ export const useWorkspace = () => {
         createWorkspace: handleCreateWorkspace,
         addWorkspace: handleAddWorkspace,
         updateWorkspace: handleUpdateWorkspace,
+        switchWorkspaceCache: handleWorkspaceCache,
     };
 };

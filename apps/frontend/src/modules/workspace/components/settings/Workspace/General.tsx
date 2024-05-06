@@ -1,9 +1,6 @@
-import { User } from "@/generated/graphql";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { Button, TextInput } from "@/ui";
 import { toast } from "@/utils/toast";
-import { DeepPartial } from "@apollo/client/utilities";
 import { useForm } from "react-hook-form";
 
 type WorkspaceData = {
@@ -13,7 +10,6 @@ type WorkspaceData = {
 
 export const General = () => {
     const { workspace, updateWorkspace } = useWorkspace();
-    const { user, switchWorkspace, organizations, updateUser } = useAuth();
 
     const {
         register,
@@ -32,28 +28,11 @@ export const General = () => {
             return;
         }
 
-        const response = await updateWorkspace({
+        await updateWorkspace({
             name: formInfo.workspaceName,
             slug: formInfo.workspaceUrl,
         });
-
-        if (response?.organization) {
-            const updatedUser = JSON.parse(JSON.stringify(user)) as DeepPartial<User>;
-            const currentOrganization = updatedUser.organizations?.edges?.find(
-                (org) => org?.node?.id === workspace?.id,
-            );
-            if (currentOrganization) {
-                currentOrganization.node = {
-                    ...currentOrganization.node,
-                    name: formInfo.workspaceName,
-                    slug: formInfo.workspaceUrl,
-                };
-            }
-
-            updateUser(updatedUser, true);
-            toast.success(`Your organization name has been updated`);
-            return;
-        }
+        toast.success(`Your organization name has been updated`);
     };
     return (
         <form className="w-[593px] pt-10" onSubmit={handleSubmit(onSubmit)}>

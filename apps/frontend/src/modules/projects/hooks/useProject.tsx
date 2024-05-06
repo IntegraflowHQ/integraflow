@@ -17,7 +17,7 @@ import { EventProperties } from "@integraflow/web/src/types";
 
 export const useProject = () => {
     const { workspace, project, updateUser, switchProject } = useAuth();
-    const { updateWorkspace } = useWorkspace();
+    const { switchWorkspaceCache } = useWorkspace();
     const [projectCreate, { loading: loadingCreateProject }] = useProjectCreateMutation();
     const [projectUpdate] = useProjectUpdateMutation();
     const { data: eventsData } = useProjectEventsDataQuery();
@@ -33,11 +33,11 @@ export const useProject = () => {
                     edges: [{ node: project }, ...(workspace?.projects?.edges ?? [])],
                 },
             };
-            updateWorkspace(organization);
+            switchWorkspaceCache(organization);
 
             switchProject(project);
         },
-        [switchProject, updateWorkspace, workspace],
+        [switchProject, switchWorkspaceCache, workspace],
     );
 
     const handleCreateProject = useCallback(
@@ -98,7 +98,7 @@ export const useProject = () => {
                     }),
                 },
             };
-            updateWorkspace(organization);
+            switchWorkspaceCache(organization);
             updateUser(
                 {
                     project: updatedProject,
@@ -127,7 +127,7 @@ export const useProject = () => {
                 console.error(error);
             }
         },
-        [project, projectUpdate, updateUser, updateWorkspace, workspace],
+        [project, projectUpdate, updateUser, switchWorkspaceCache, workspace],
     );
 
     const eventDefinitions = useMemo(() => {
