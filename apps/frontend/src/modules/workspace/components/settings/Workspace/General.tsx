@@ -28,10 +28,13 @@ export const General = () => {
             return;
         }
 
-        await updateWorkspace({
-            name: formInfo.workspaceName,
-            slug: formInfo.workspaceUrl,
-        });
+        await updateWorkspace(
+            {
+                name: formInfo.workspaceName,
+                slug: formInfo.workspaceUrl,
+            },
+            false,
+        );
         toast.success(`Your organization name has been updated`);
     };
     return (

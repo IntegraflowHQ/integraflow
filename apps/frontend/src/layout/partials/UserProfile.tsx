@@ -112,11 +112,7 @@ export const UserProfile = () => {
                                     className="px-3 py-2"
                                     key={item?.name}
                                     onClick={() => {
-                                        navigate(
-                                            `${ROUTES.SURVEY_LIST}`
-                                                .replace(":orgSlug", orgSlug!)
-                                                .replace(":projectSlug", projectSlug!),
-                                        );
+                                        navigate(`/${item?.slug}`);
                                     }}
                                 >
                                     <NavItem text={item?.name} leftIcon={<AcronynmBox text={item?.name ?? ""} />} />
