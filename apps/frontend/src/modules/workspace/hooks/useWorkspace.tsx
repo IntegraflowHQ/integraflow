@@ -49,14 +49,36 @@ export const useWorkspace = () => {
     );
 
     const handleUpdateWorkspace = useCallback(
-        async (organizationInput: OrganizationUpdateInput) => {
+        async (organization: OrganizationUpdateInput | DeepPartial<Organization>, cacheOnly = true) => {
+            if (cacheOnly) {
+                const organizations = {
+                    ...user.organizations,
+                    edges: (user.organizations?.edges ?? []).map((edge) => {
+                        if (edge?.node?.id === (organization as DeepPartial<Organization>).id) {
+                            return {
+                                ...edge,
+                                node: organization as DeepPartial<Organization>,
+                            };
+                        }
+                        return edge;
+                    }),
+                };
+                updateUser(
+                    {
+                        organization: convertToAuthOrganization(organization as DeepPartial<Organization>),
+                        organizations,
+                    },
+                    cacheOnly,
+                );
+                return;
+            }
+
             try {
                 const response = await updateOrganization({
                     variables: {
                         input: {
-                            name: organizationInput.name,
-                            slug: organizationInput.slug,
-                            timezone: organizationInput.timezone,
+                            name: organization.name,
+                            slug: organization.slug,
                         },
                     },
                 });
@@ -68,8 +90,8 @@ export const useWorkspace = () => {
                     if (currentOrganization) {
                         currentOrganization.node = {
                             ...currentOrganization.node,
-                            name: organizationInput.name || "",
-                            slug: organizationInput.slug || "",
+                            name: organization.name || workspace?.name,
+                            slug: organization.slug || workspace?.slug,
                         };
                     }
                     updateUser(updatedUser, true);
@@ -79,31 +101,6 @@ export const useWorkspace = () => {
             } catch (error) {
                 console.error(error);
             }
-        },
-        [updateUser, user],
-    );
-
-    const handleWorkspaceCache = useCallback(
-        (organization: DeepPartial<Organization>, cacheOnly = true) => {
-            const organizations = {
-                ...user.organizations,
-                edges: (user.organizations?.edges ?? []).map((edge) => {
-                    if (edge?.node?.id === organization.id) {
-                        return {
-                            ...edge,
-                            node: organization,
-                        };
-                    }
-                    return edge;
-                }),
-            };
-            updateUser(
-                {
-                    organization: convertToAuthOrganization(organization),
-                    organizations,
-                },
-                cacheOnly,
-            );
         },
         [updateUser, user],
     );
@@ -155,6 +152,5 @@ export const useWorkspace = () => {
         createWorkspace: handleCreateWorkspace,
         addWorkspace: handleAddWorkspace,
         updateWorkspace: handleUpdateWorkspace,
-        switchWorkspaceCache: handleWorkspaceCache,
     };
 };
