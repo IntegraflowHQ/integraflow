@@ -51,7 +51,6 @@ export const OptionsList = () => {
                                     defaultValue={option.label}
                                     onChange={(e) => {
                                         const newOptions = [...question.options];
-                                        console.log(newOptions);
                                         newOptions[index].label = e.target.value;
 
                                         updateQuestion(
