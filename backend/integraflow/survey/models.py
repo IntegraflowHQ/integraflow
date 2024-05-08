@@ -1,5 +1,6 @@
 from functools import partial
 from typing import Any
+from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 from django.utils.crypto import get_random_string
 
@@ -58,6 +59,7 @@ class Survey(UUIDModel):
         default=Status.DRAFT
     )
     settings: models.JSONField = models.JSONField(blank=True, null=True)
+    analytics_metadata: models.JSONField = models.JSONField(default=dict)
     theme: models.ForeignKey = models.ForeignKey(
         "project.ProjectTheme",
         on_delete=models.SET_NULL,
@@ -185,6 +187,222 @@ class SurveyChannel(UUIDModel):
     objects: SurveyChannelManager = SurveyChannelManager()
 
 
+class SurveyResponseQueryset(models.QuerySet["SurveyResponse"]):
+    def count_responses(self, filters: models.Q):
+        return self.filter(filters).count()
+
+    def completion_rate(self, filters: models.Q):
+        total_responses = self.count_responses(filters)
+        if total_responses == 0:
+            return 0
+
+        completed_responses = self.count_responses(
+            filters & models.Q(completed_at__isnull=False)
+        )
+
+        return (completed_responses / total_responses) * 100
+
+    def average(self, field: str, filters: models.Q):
+        return self.filter(filters).aggregate(
+            average=models.Avg(field)
+        )["average"]
+
+    def calculate_nps_scores(self, filters: models.Q):
+        completed_responses = self.filter(filters)
+
+        # Define conditions for Promoters (scores 9-10), Passives
+        # (scores 7-8), and Detractors (scores 0-6)
+        promoter_condition = models.Case(
+            models.When(analytics_metadata__nps_score__gte=9, then=1),
+            default=0,
+            output_field=models.IntegerField()
+        )
+
+        passive_condition = models.Case(
+            models.When(
+                analytics_metadata__nps_score__gte=7,
+                analytics_metadata__nps_score__lte=8,
+                then=1
+            ),
+            default=0,
+            output_field=models.IntegerField()
+        )
+
+        detractor_condition = models.Case(
+            models.When(
+                analytics_metadata__nps_score__gte=0,
+                analytics_metadata__nps_score__lte=6,
+                then=1
+            ),
+            default=0,
+            output_field=models.IntegerField()
+        )
+
+        # Annotate responses with Promoter, Passive, and Detractor counts
+        nps_scores = completed_responses.annotate(
+            promoter=promoter_condition,
+            passive=passive_condition,
+            detractor=detractor_condition
+        ).aggregate(
+            promoters=models.Count('promoter'),
+            passives=models.Count('passive'),
+            detractors=models.Count('detractor')
+        )
+
+        promoters = nps_scores.get("promoters", 0)
+        passives = nps_scores.get("passives", 0)
+        detractors = nps_scores.get("detractors", 0)
+
+        total_responses = promoters + passives + detractors
+        if total_responses == 0:
+            return {
+                "promoters": 0,
+                "passives": 0,
+                "detractors": 0,
+                "score": 0
+            }
+
+        # Calculate NPS score
+        return {
+            "promoters": promoters,
+            "passives": passives,
+            "detractors": detractors,
+            "score": ((promoters - detractors) / total_responses) * 100
+        }
+
+    def calculate_csat_scores(self, filters: models.Q):
+        completed_responses = self.filter(filters)
+
+        # Define conditions for Positive (scores 4-5), Neutral (score 3),
+        # and Negative (scores 1-2)
+        positive_condition = models.Case(
+            models.When(analytics_metadata__csat_score__gte=4, then=1),
+            default=0,
+            output_field=models.IntegerField()
+        )
+
+        neutral_condition = models.Case(
+            models.When(analytics_metadata__csat_score=3, then=1),
+            default=0,
+            output_field=models.IntegerField()
+        )
+
+        negative_condition = models.Case(
+            models.When(
+                analytics_metadata__csat_score__gte=1,
+                analytics_metadata__csat_score__lte=2,
+                then=1
+            ),
+            default=0,
+            output_field=models.IntegerField()
+        )
+
+        # Annotate responses with Satisfied and Unsatisfied counts
+        csat_scores = completed_responses.annotate(
+            positive=positive_condition,
+            neutral=neutral_condition,
+            negative=negative_condition
+        ).aggregate(
+            positive=models.Count('positive'),
+            neutral=models.Count('neutral'),
+            negative=models.Count('negative')
+        )
+
+        positive = csat_scores.get("positive", 0)
+        neutral = csat_scores.get("neutral", 0)
+        negative = csat_scores.get("negative", 0)
+
+        total_responses = positive + neutral + negative
+        if total_responses == 0:
+            return {
+                "positive": 0,
+                "neutral": 0,
+                "negative": 0,
+                "score": 0
+            }
+
+        # Calculate CSAT score
+        return {
+            "positive": positive,
+            "neutral": neutral,
+            "negative": negative,
+            "score": (positive / total_responses) * 100
+        }
+
+    def calculate_ces_scores(self, filters: models.Q):
+        # Filter SurveyResponse instances for the specified survey with
+        # completed_at not null
+        completed_responses = self.filter(filters)
+
+        # Define conditions for Low efforts (scores 5-7), Medium efforts
+        # (scores 4), and High efforts (scores 1-3)
+        low_effort_condition = models.Case(
+            models.When(analytics_metadata__ces_score__gte=5, then=1),
+            default=0,
+            output_field=models.IntegerField()
+        )
+
+        medium_effort_condition = models.Case(
+            models.When(analytics_metadata__ces_score=4, then=1),
+            default=0,
+            output_field=models.IntegerField()
+        )
+
+        high_effort_condition = models.Case(
+            models.When(
+                analytics_metadata__ces_score__gte=1,
+                analytics_metadata__ces_score__lte=3,
+                then=1
+            ),
+            default=0,
+            output_field=models.IntegerField()
+        )
+
+        # Annotate responses with Low effort, Medium effort, and High effort
+        # counts
+        ces_scores = completed_responses.annotate(
+            low_effort=low_effort_condition,
+            medium_effort=medium_effort_condition,
+            high_effort=high_effort_condition
+        ).aggregate(
+            low_efforts=models.Count('low_effort'),
+            medium_efforts=models.Count('medium_effort'),
+            high_efforts=models.Count('high_effort'),
+            low_effort_sum=models.Sum('low_effort'),
+            medium_effort_sum=models.Sum('medium_effort'),
+            high_effort_sum=models.Sum('high_effort'),
+        )
+
+        low_efforts = ces_scores.get("low_efforts", 0)
+        medium_efforts = ces_scores.get("medium_efforts", 0)
+        high_efforts = ces_scores.get("high_efforts", 0)
+        low_effort_sum = ces_scores.get("low_effort_sum", 0)
+        medium_effort_sum = ces_scores.get("medium_effort_sum", 0)
+        high_effort_sum = ces_scores.get("high_effort_sum", 0)
+
+        total_responses = low_efforts + medium_efforts + high_efforts
+        if total_responses == 0:
+            return {
+                "low": 0,
+                "medium": 0,
+                "high": 0,
+                "score": 0
+            }
+
+        # Calculate CES score
+        return {
+            "low": low_efforts,
+            "medium": medium_efforts,
+            "high": high_efforts,
+            "score": (
+                low_effort_sum + medium_effort_sum + high_effort_sum
+            ) / total_responses
+        }
+
+
+SurveyResponseManager = models.Manager.from_queryset(SurveyResponseQueryset)
+
+
 class SurveyResponse(UUIDModel):
     class Status(models.TextChoices):
         IN_PROGRESS = "in_progress" "in progress"
@@ -195,12 +413,26 @@ class SurveyResponse(UUIDModel):
         verbose_name = "SurveyResponse"
         verbose_name_plural = "SurveyResponses"
         db_table = "survey_responses"
+        indexes = [
+            GinIndex(fields=["response"], name="%(class)s_p_meta_idx"),
+            GinIndex(fields=["analytics_metadata"], name="%(class)s_meta_idx"),
+        ]
+
+    objects = SurveyResponseManager()
 
     survey: models.ForeignKey = models.ForeignKey(
         Survey,
         on_delete=models.CASCADE,
         related_name="survey_responses",
         related_query_name="survey_response",
+    )
+    channel: models.ForeignKey = models.ForeignKey(
+        SurveyChannel,
+        on_delete=models.SET_NULL,
+        related_name="survey_channels",
+        related_query_name="survey_channel",
+        null=True,
+        blank=True
     )
     response: models.JSONField = models.JSONField(default=dict)
     status: models.CharField = models.CharField(
@@ -214,7 +446,13 @@ class SurveyResponse(UUIDModel):
         blank=True,
         null=True
     )
+    event_id: models.UUIDField = models.UUIDField(
+        db_index=True,
+        blank=True,
+        null=True
+    )
     metadata: models.JSONField = models.JSONField(default=dict)
+    analytics_metadata: models.JSONField = models.JSONField(default=dict)
     user_attributes: models.JSONField = models.JSONField(default=dict)
     is_processed: models.BooleanField = models.BooleanField(default=False)
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
@@ -223,9 +461,9 @@ class SurveyResponse(UUIDModel):
         blank=True,
         null=True
     )
-    time_taken: models.DateTimeField = models.DateTimeField(
+    time_spent: models.FloatField = models.FloatField(
         blank=True,
-        null=True
+        null=True,
     )
 
 

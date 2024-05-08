@@ -125,6 +125,8 @@ class Organization(UUIDModel):
     )
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
+    usage_metadata: models.JSONField = models.JSONField(default=dict)
+
     objects: OrganizationManager = OrganizationManager()
 
     def __str__(self):

@@ -43,3 +43,18 @@ class SurveyChannelTypeEnum(graphene.Enum):
     CUSTOM = "custom"
     MOBILE_SDK = "mobile_sdk"
     WEB_SDK = "web_sdk"
+
+
+class SurveyResponseStatusEnum(graphene.Enum):
+    IN_PROGRESS = "in_progress" "in progress"
+    COMPLETED = "completed" "completed"
+    ARCHIVED = "archived" "archived"
+
+
+class SurveyResponseMetricEnum(graphene.Enum):
+    TOTAL_RESPONSES = "total_responses"
+    COMPLETION_RATE = "completion_rate"
+    AVERAGE_TIME = "average_time",
+    NPS = "nps",
+    CSAT = "csat",
+    CES = "ces",

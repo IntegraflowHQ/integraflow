@@ -723,7 +723,7 @@ CACHES["default"]["TIMEOUT"] = parse(os.environ.get("CACHE_TIMEOUT", "7 days"))
 JWT_EXPIRE = True
 JWT_TTL_ACCESS = timedelta(
     seconds=parse(
-        os.environ.get("JWT_TTL_ACCESS", "5 minutes")
+        os.environ.get("JWT_TTL_ACCESS", "1 day")
     )  # type: ignore
 )
 JWT_TTL_APP_ACCESS = timedelta(
@@ -777,4 +777,21 @@ CONFIRMATION_EMAIL_LOCK_TIME = parse(
 # requests with OAUTH token.
 OAUTH_UPDATE_LAST_LOGIN_THRESHOLD = parse(
     os.environ.get("OAUTH_UPDATE_LAST_LOGIN_THRESHOLD", "15 minutes")
+)
+
+EVENT_PROPERTY_USAGE_INTERVAL_SECONDS = os.environ.get(
+    "ASYNC_EVENT_PROPERTY_USAGE_INTERVAL_SECONDS",
+    3600
+)
+EVENTS_USAGE_FREE_TIER_LIMIT = os.environ.get(
+    "EVENTS_USAGE_FREE_TIER_LIMIT",
+    10000
+)
+RESPONSES_USAGE_FREE_TIER_LIMIT = os.environ.get(
+    "RESPONSES_USAGE_FREE_TIER_LIMIT",
+    500
+)
+PERSONS_USAGE_FREE_TIER_LIMIT = os.environ.get(
+    "PERSONS_USAGE_FREE_TIER_LIMIT",
+    1000
 )

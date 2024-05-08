@@ -1,6 +1,8 @@
+import datetime
 import secrets
 import socket
 import string
+import pytz
 from random import choice
 from typing import (
     TYPE_CHECKING,
@@ -8,6 +10,7 @@ from typing import (
     Callable,
     Iterable,
     Optional,
+    Tuple,
     TypeVar,
     Union
 )
@@ -19,6 +22,7 @@ from django.db import IntegrityError, transaction
 from django.db.backends.ddl_references import Statement
 from django.db.models import Model
 from django.db.models.constraints import BaseConstraint
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.encoding import iri_to_uri
 from django.utils.text import slugify
@@ -308,6 +312,28 @@ def is_minus_one(id):
     if id == -1 or id == "-1":
         return True
     return False
+
+
+def get_previous_day(
+    at: Optional[datetime.datetime] = None
+) -> Tuple[datetime.datetime, datetime.datetime]:
+    """
+    Returns a pair of datetimes, representing the start and end of the
+    preceding day. `at` is the datetime to use as a reference point.
+    """
+
+    if not at:
+        at = timezone.now()
+
+    period_end: datetime.datetime = datetime.datetime.combine(
+        at - datetime.timedelta(days=1), datetime.time.max, tzinfo=pytz.UTC,
+    )  # very end of the previous day
+
+    period_start: datetime.datetime = datetime.datetime.combine(
+        period_end, datetime.time.min, tzinfo=pytz.UTC,
+    )  # very start of the previous day
+
+    return (period_start, period_end)
 
 
 class UniqueConstraintByExpression(BaseConstraint):

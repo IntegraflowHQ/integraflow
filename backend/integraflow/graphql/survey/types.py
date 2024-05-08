@@ -11,6 +11,7 @@ from integraflow.graphql.core.fields import (
     JSONString,
     PermissionsField,
 )
+from integraflow.graphql.core.types.base import BaseObjectType
 from integraflow.graphql.core.types.common import NonNullList
 from integraflow.graphql.core.types.model import ModelObjectType
 from integraflow.graphql.core.utils import to_global_ids_from_pks
@@ -19,6 +20,7 @@ from integraflow.graphql.survey.enums import (
     SurveyQuestionTypeEnum,
     SurveyStatusEnum,
     SurveyTypeEnum,
+    SurveyResponseStatusEnum
 )
 from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.survey import models
@@ -188,6 +190,10 @@ class Survey(ModelObjectType):
         required=True,
         description="The last time at which the survey was updated."
     )
+    stats = JSONString(
+        required=False,
+        description="The statistics of the survey."
+    )
 
     class Meta:
         description = "Represents a survey."
@@ -228,6 +234,54 @@ class Survey(ModelObjectType):
             kwargs,
             SurveyChannelCountableConnection
         )
+
+    @staticmethod
+    def resolve_stats(root: models.Survey, info: ResolveInfo, **kwargs):
+        response_count = root.analytics_metadata.get("response_count", 0)
+        time_spent = root.analytics_metadata.get("time_spent", 0)
+        completed_response_count = root.analytics_metadata.get(
+            "completed_response_count", 0
+        )
+
+        stats = {
+            "response_count": response_count,
+            "avg_time_spent": (
+                time_spent / completed_response_count
+            ) if completed_response_count > 0 else 0,
+            "completion_rate": (
+                (completed_response_count / response_count) * 100
+            ) if response_count > 0 else 0,
+        }
+
+        nps = root.analytics_metadata.get("nps", None)
+        if nps is not None:
+            promoters = nps.get("promoters", 0)
+            detractors = nps.get("detractors", 0)
+            passives = nps.get("passives", 0)
+            total = promoters + detractors + passives
+
+            if total > 0:
+                promoters = (promoters / total) * 100
+                detractors = (detractors / total) * 100
+                stats["nps_score"] = promoters - detractors
+
+        csat = root.analytics_metadata.get("csat", None)
+        if csat is not None:
+            positive = csat.get("positive", 0)
+            count = csat.get("count", 0)
+
+            if count > 0:
+                stats["csat_score"] = (positive / count) * 100
+
+        ces = root.analytics_metadata.get("ces", None)
+        if ces is not None:
+            score = ces.get("score", 0)
+            count = ces.get("count", 0)
+
+            if count > 0:
+                stats["ces_score"] = score / count
+
+        return stats
 
 
 class BaseSurveyQuestion(ModelObjectType):
@@ -421,6 +475,106 @@ class SurveyChannel(BaseSurveyChannel):
         return root.survey
 
 
+class SurveyResponse(ModelObjectType):
+    id = graphene.GlobalID(
+        required=True,
+        description="The ID of the response."
+    )
+    survey = PermissionsField(
+        Survey,
+        description="The survey the response belongs to",
+        permissions=[
+            AuthorizationFilters.PROJECT_MEMBER_ACCESS,
+        ],
+    )
+    title = graphene.String(
+        required=True,
+        description="The title of the response."
+    )
+    user_attributes = JSONString(
+        description="The user attributes."
+    )
+    response = JSONString(
+        description="The response.",
+        required=True,
+    )
+    status = graphene.Field(
+        SurveyResponseStatusEnum,
+        required=True,
+        description="The status of the survey response",
+    )
+    completed_at = graphene.DateTime(
+        required=False,
+        description="The time the survey completed."
+    )
+    created_at = graphene.DateTime(
+        required=True,
+        description="The time at which the response was created."
+    )
+    updated_at = graphene.DateTime(
+        required=True,
+        description="The last time at which the response was updated."
+    )
+    time_spent = graphene.Float(
+        required=False,
+        description="The time spent to complete the survey."
+    )
+    stats = JSONString(
+        required=False,
+        description="The statistics of the response."
+    )
+
+    class Meta:
+        description = "Represents a survey response."
+        doc_category = DOC_CATEGORY_SURVEYS
+        model = models.SurveyResponse
+        interfaces = [graphene.relay.Node]
+
+    @staticmethod
+    def resolve_survey(root: models.SurveyResponse, info: ResolveInfo):
+        return root.survey
+
+    @staticmethod
+    def resolve_title(root: models.SurveyResponse, info: ResolveInfo):
+        return root.analytics_metadata.get("title", "Untitled Response")
+
+    @staticmethod
+    def resolve_stats(root: models.SurveyResponse, info: ResolveInfo):
+        stats = {}
+
+        nps_score = root.analytics_metadata.get("nps_score", None)
+        if nps_score is not None:
+            stats["nps_score"] = nps_score
+
+        ces_score = root.analytics_metadata.get("ces_score", None)
+        if ces_score is not None:
+            stats["ces_score"] = ces_score
+
+        csat_score = root.analytics_metadata.get("csat_score", None)
+        if csat_score is not None:
+            stats["csat_score"] = csat_score
+
+        return root.analytics_metadata
+
+
+class SurveyResponseMetric(BaseObjectType):
+    current = graphene.JSONString(
+        required=False,
+        description="The current value."
+    )
+
+    previous = graphene.JSONString(
+        required=False,
+        description="The previous value."
+    )
+
+    class Meta:
+        description = (
+            "Represents a survey response metric (e.g. total responses, nps)."
+        )
+        doc_category = DOC_CATEGORY_SURVEYS
+
+
 class BaseSurveyCountableConnection(CountableConnection):
     class Meta:
         doc_category = DOC_CATEGORY_SURVEYS
@@ -443,3 +597,9 @@ class SurveyChannelCountableConnection(CountableConnection):
     class Meta:
         doc_category = DOC_CATEGORY_SURVEYS
         node = SurveyChannel
+
+
+class SurveyResponseCountableConnection(CountableConnection):
+    class Meta:
+        doc_category = DOC_CATEGORY_SURVEYS
+        node = SurveyResponse
