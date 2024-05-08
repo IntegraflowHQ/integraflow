@@ -43,7 +43,7 @@ export const MemberList = ({ searchValue }: Props) => {
         if (response) {
             const remainingOrganizations = organizations.filter((org) => org?.id !== response.organization?.id);
 
-            if (remainingOrganizations && remainingOrganizations?.length > 0) {
+            if (remainingOrganizations && remainingOrganizations[0]?.projects?.edges) {
                 switchWorkspace(
                     convertToAuthOrganization(remainingOrganizations[0]),
                     remainingOrganizations[0].projects?.edges[0]?.node,
@@ -129,8 +129,6 @@ export const MemberList = ({ searchValue }: Props) => {
             </p>
             <div>
                 {filteredMembers?.map((member, index) => {
-                    console.log(member?.node?.role);
-                    console.log(member?.node?.role !== RoleLevel.Owner);
                     return (
                         <div key={member?.node?.id}>
                             {index !== 0 && <hr className="border-[1px] border-intg-bg-4" />}
