@@ -31,7 +31,8 @@ export const Wrapper: preact.FunctionComponent<ContainerProps> = ({
         showProgressBar = true,
         close: showClose = true,
         showBranding = true,
-        backgroundOverlay = "none"
+        backgroundOverlay = "none",
+        backgroundImage
     } = settings;
 
     const showTopBar = showProgressBar || !fullScreen;
@@ -77,7 +78,11 @@ export const Wrapper: preact.FunctionComponent<ContainerProps> = ({
                     style={{
                         backgroundColor: theme?.background ?? "#FFF",
                         maxWidth: !fullScreen && !isMobile && maxWidth ? maxWidth : "100%",
-                        minWidth: !fullScreen && !isMobile ? minWidth : undefined
+                        minWidth: !fullScreen && !isMobile ? minWidth : undefined,
+                        backgroundImage: fullScreen && backgroundImage ? `url(${backgroundImage})` : "",
+                        backgroundSize: "cover",
+                        backgroundRepeat: "no-repeat",
+                        backgroundPosition: "top center"
                     }}
                 >
                     <div
@@ -116,7 +121,10 @@ export const Wrapper: preact.FunctionComponent<ContainerProps> = ({
                                 fontSize: "12px",
                                 fontWeight: 400,
                                 lineHeight: 1.5,
-                                color: calculateTextColor(theme?.background ?? "#FFFFFF")
+                                color:
+                                    fullScreen && backgroundImage
+                                        ? "#000000"
+                                        : calculateTextColor(theme?.background ?? "#FFFFFF")
                             }}
                         >
                             Powered by{" "}

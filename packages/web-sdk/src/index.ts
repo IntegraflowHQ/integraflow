@@ -30,6 +30,9 @@ export default class Integraflow {
             this.initialized = true;
         } else {
             this.client.context.surveys = config.surveys ?? [];
+            if (config.syncPolicy === "off") {
+                this.client.context.fullScreen = config.fullScreen ?? this.client.context.fullScreen;
+            }
         }
 
         return this.client;

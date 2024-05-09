@@ -301,6 +301,7 @@ export interface SurveySettings {
     submitText?: string;
     showBranding?: boolean;
     backgroundOverlay?: BackgroundOverLayType;
+    backgroundImage?: string;
 }
 
 export interface Theme {
