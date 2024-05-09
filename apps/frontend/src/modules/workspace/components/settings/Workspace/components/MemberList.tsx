@@ -43,7 +43,7 @@ export const MemberList = ({ searchValue }: Props) => {
         if (response) {
             const remainingOrganizations = organizations.filter((org) => org?.id !== response.organization?.id);
 
-            if (remainingOrganizations && remainingOrganizations?.length > 0) {
+            if (remainingOrganizations && remainingOrganizations[0]?.projects?.edges) {
                 switchWorkspace(
                     convertToAuthOrganization(remainingOrganizations[0]),
                     remainingOrganizations[0].projects?.edges[0]?.node,
@@ -102,17 +102,17 @@ export const MemberList = ({ searchValue }: Props) => {
         }
     };
 
-    const isOwner = useMemo(() => {
+    const userIsOwner = useMemo(() => {
         const owner = workspace?.members?.edges?.find((mem) => mem?.node?.role === RoleLevel.Owner);
         return user.email === owner?.node?.email;
     }, [workspace, user.email]);
 
-    const isAdmin = useMemo(() => {
+    const userIsAdmin = useMemo(() => {
         const admin = workspace?.members?.edges?.find((mem) => mem?.node?.email === user.email);
         return admin?.node?.role === RoleLevel.Admin;
     }, [workspace, user.email]);
 
-    const isMember = useMemo(() => {
+    const userIsMember = useMemo(() => {
         const member = workspace?.members?.edges?.find((mem) => mem?.node?.email === user.email);
         return member?.node?.role === RoleLevel.Member;
     }, []);
@@ -146,7 +146,7 @@ export const MemberList = ({ searchValue }: Props) => {
                                     ) : null}
                                 </div>
                                 {member.node.role === RoleLevel.Owner ||
-                                (isMember && member?.node?.email !== user.email) ? (
+                                (userIsMember && member?.node?.email !== user.email) ? (
                                     <div></div>
                                 ) : (
                                     <DropdownMenu.Root>
@@ -162,19 +162,17 @@ export const MemberList = ({ searchValue }: Props) => {
                                                 alignOffset={5}
                                                 className="w-[140px] rounded-md border border-intg-bg-4 bg-intg-bg-8 px-3 py-4"
                                             >
-                                                {(isOwner || (isAdmin && member?.node?.email !== user.email)) &&
-                                                    member?.node?.role !== RoleLevel.Owner && (
-                                                        <DropdownMenu.Item
-                                                            onClick={() =>
-                                                                handleRemoveMember(member?.node?.id as string)
-                                                            }
-                                                            className="flex gap-[6px] rounded-md px-2 py-[7px] text-sm font-normal text-intg-text-4 hover:cursor-pointer hover:bg-intg-bg-1"
-                                                        >
-                                                            Remove user
-                                                        </DropdownMenu.Item>
-                                                    )}
-                                                {(isAdmin && member?.node?.role !== RoleLevel.Admin) ||
-                                                (isOwner && member?.node?.role !== RoleLevel.Owner) ? (
+                                                {(userIsOwner ||
+                                                    (userIsAdmin && member?.node?.email !== user.email)) && (
+                                                    <DropdownMenu.Item
+                                                        onClick={() => handleRemoveMember(member?.node?.id as string)}
+                                                        className="flex gap-[6px] rounded-md px-2 py-[7px] text-sm font-normal text-intg-text-4 hover:cursor-pointer hover:bg-intg-bg-1"
+                                                    >
+                                                        Remove user
+                                                    </DropdownMenu.Item>
+                                                )}
+                                                {(userIsAdmin && member?.node?.role !== RoleLevel.Admin) ||
+                                                userIsOwner ? (
                                                     <DropdownMenu.Item
                                                         onClick={() =>
                                                             handleUpdateMemberRole(member?.node?.id, member?.node?.role)
@@ -188,7 +186,7 @@ export const MemberList = ({ searchValue }: Props) => {
                                                               : null}
                                                     </DropdownMenu.Item>
                                                 ) : null}
-                                                {!isOwner && member?.node?.email === user.email && (
+                                                {!userIsOwner && member?.node?.email === user.email && (
                                                     <DropdownMenu.Item
                                                         onClick={() => handleLeaveOrganization(workspace?.id as string)}
                                                         className="flex gap-[6px] rounded-md px-2 py-[7px] text-sm font-normal text-intg-text-4 hover:cursor-pointer hover:bg-intg-bg-1"

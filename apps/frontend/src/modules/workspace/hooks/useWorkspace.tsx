@@ -7,7 +7,6 @@ import {
     OnboardingCustomerSurvey,
     Organization,
     OrganizationCreateInput,
-    OrganizationUpdateInput,
     Project,
     useOrganizationCreateMutation,
     useOrganizationUpdateMutation,
@@ -46,19 +45,45 @@ export const useWorkspace = () => {
         [switchWorkspace, updateUser, user.organizations],
     );
 
+    const updateUserCache = (organization: DeepPartial<Organization>) => {
+        const organizations = {
+            ...user.organizations,
+            edges: (user.organizations?.edges ?? []).map((edge) => {
+                if (edge?.node?.id === (organization as DeepPartial<Organization>).id) {
+                    return {
+                        ...edge,
+                        node: organization as DeepPartial<Organization>,
+                    };
+                }
+                return edge;
+            }),
+        };
+        updateUser({
+            organization: convertToAuthOrganization(organization as DeepPartial<Organization>),
+            organizations,
+        }),
+            true;
+    };
+
     const handleUpdateWorkspace = useCallback(
-        async (organizationInput: OrganizationUpdateInput) => {
+        async (organization: DeepPartial<Organization>, cacheOnly = true) => {
+            if (cacheOnly) {
+                updateUserCache(organization);
+                return;
+            }
+
             try {
                 const response = await updateOrganization({
                     variables: {
                         input: {
-                            name: organizationInput.name,
-                            slug: organizationInput.slug,
-                            timezone: organizationInput.timezone,
+                            name: organization.name,
+                            slug: organization.slug,
                         },
                     },
                 });
-                return response?.data?.organizationUpdate;
+                if (response.data?.organizationUpdate?.organization) {
+                    updateUserCache(response.data?.organizationUpdate?.organization);
+                }
             } catch (error) {
                 console.error(error);
             }

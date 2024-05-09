@@ -93,7 +93,6 @@ export const useProject = () => {
                                 },
                             };
                         }
-
                         return edge;
                     }),
                 },

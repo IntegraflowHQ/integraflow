@@ -52,9 +52,8 @@ export const createRangeOptions = (type: SurveyQuestionTypeEnum, length: number)
             label = `${index}`;
         }
 
-
         options.push({
-            id: generateUniqueId(),
+            id: i,
             orderNumber: i,
             label,
         });
