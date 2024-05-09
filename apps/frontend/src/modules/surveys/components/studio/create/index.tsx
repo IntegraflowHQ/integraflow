@@ -1,3 +1,4 @@
+import { useStudioStore } from "@/modules/surveys/states/studio.ts";
 import { PreviewMode, ViewPortType } from "@/types/index.ts";
 import { HelpCircle, SettingsIcon } from "@/ui/icons";
 import { cn } from "@/utils/index.ts";
@@ -5,7 +6,7 @@ import * as Tabs from "@radix-ui/react-tabs";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { LucideIcon, Monitor, Pen, Smartphone } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { UpdateDesignEditor } from "./editor-panel/DesignEditor/index.tsx";
 import { UpdateSettingsEditor } from "./editor-panel/SettingsEditor/index.tsx";
@@ -50,8 +51,7 @@ const viewPortOptions: { icon: LucideIcon; value: ViewPortType }[] = [
 ];
 
 export default function Create() {
-    const [previewMode, setPreviewMode] = useState(channelOptions[0].value);
-    const [viewport, setViewPort] = useState(viewPortOptions[1].value);
+    const { previewMode, previewViewport, updateStudio } = useStudioStore();
 
     return (
         <Tabs.Root className="flex h-screen pt-[84px]" defaultValue={tabs[0].label}>
@@ -110,7 +110,7 @@ export default function Create() {
                 <div
                     className={cn(
                         "relative min-w-[580px] flex-1 rounded-xl bg-intg-bg-9",
-                        viewport === "mobile" ? "flex items-center justify-center pt-14" : "",
+                        previewViewport === "mobile" ? "flex items-center justify-center pt-14" : "",
                     )}
                 >
                     <ToggleGroup.Root
@@ -119,7 +119,7 @@ export default function Create() {
                         value={previewMode}
                         onValueChange={(value) => {
                             if (value) {
-                                setPreviewMode(value as PreviewMode);
+                                updateStudio({ previewMode: value as PreviewMode });
                             }
                         }}
                         aria-label="Survey channel"
@@ -130,7 +130,7 @@ export default function Create() {
                                 aria-label={opt.label}
                                 className={cn(
                                     "border-b border-transparent p-2 text-sm capitalize  data-[state=on]:border-[#6941C6] ",
-                                    viewport === "mobile"
+                                    previewViewport === "mobile"
                                         ? "text-intg-text data-[state=on]:text-white"
                                         : "text-intg-bg-14 data-[state=on]:text-[#6941C6]",
                                 )}
@@ -142,21 +142,21 @@ export default function Create() {
 
                     <div
                         className={cn(
-                            viewport === "mobile"
+                            previewViewport === "mobile"
                                 ? "h-full max-h-[730px] w-full max-w-[360px] rounded-3xl bg-[#E5EAF2] px-[18px] py-[15px]"
                                 : "h-full w-full",
                         )}
                     >
-                        <Preview mode={previewMode} viewPort={viewport} />
+                        <Preview mode={previewMode} viewPort={previewViewport} />
                     </div>
 
                     <ToggleGroup.Root
                         className="absolute bottom-5 left-1/2 flex -translate-x-1/2 rounded-[4px] bg-intg-bg-14 p-0.5"
                         type="single"
-                        defaultValue={viewport}
+                        value={previewViewport}
                         onValueChange={(value) => {
                             if (value) {
-                                setViewPort(value as ViewPortType);
+                                updateStudio({ previewViewport: value as ViewPortType });
                             }
                         }}
                         aria-label="Survey channel"
