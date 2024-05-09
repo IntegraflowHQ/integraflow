@@ -1,13 +1,18 @@
 import { PropertyDefinition, SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { CTAType, LogicOperator, LogicConditionEnum, MentionOption, ParsedQuestion, QuestionOption } from "@/types";
-import {  } from "@integraflow/web";
+import { CTAType, LogicConditionEnum, LogicOperator, MentionOption, ParsedQuestion, QuestionOption } from "@/types";
+import {} from "@integraflow/web";
 import RatingIcon from "assets/icons/studio/rating.png";
 import ThankYouIcon from "assets/icons/studio/thankyou.png";
 import { addEllipsis, stripHtmlTags } from "..";
 import { questionTypes } from "../survey";
 
 const ANSWER_TAG_SUFFIX = "answer";
-export const questionsWithoutSettingsTab = [SurveyQuestionTypeEnum.Csat, SurveyQuestionTypeEnum.Ces, SurveyQuestionTypeEnum.Date];
+export const questionsWithoutSettingsTab = [
+    SurveyQuestionTypeEnum.Csat,
+    SurveyQuestionTypeEnum.Ces,
+    SurveyQuestionTypeEnum.Date,
+];
+
 export const emptyLabel = "<p><br></p>";
 
 const MultipleLogicConditions = [

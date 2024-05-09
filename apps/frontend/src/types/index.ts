@@ -36,7 +36,7 @@ export enum FormFieldType {
     INDUSTRY = "industry",
     CONFIRMATION = "confirmation",
     SECURITY_INFO = "security_info",
-    COMMENT = "comment"
+    COMMENT = "comment",
 }
 
 export enum FilterOperator {
@@ -52,7 +52,7 @@ export enum FilterOperator {
     GREATER_THAN = "greater_than",
     LESS_THAN = "less_than",
     IS_TRUE = "is_true",
-    IS_FALSE = "is_false"
+    IS_FALSE = "is_false",
 }
 
 export type FilterValue = number | boolean | string | string[];
@@ -81,14 +81,14 @@ export interface Trigger {
 
 export enum LogicOperator {
     OR = "or",
-    AND = "and"
+    AND = "and",
 }
 
 export enum CTAType {
     LINK = "link",
     NEXT = "next",
     CLOSE = "close",
-    HIDDEN = "hidden"
+    HIDDEN = "hidden",
 }
 
 export type SurveySettings = {
@@ -157,7 +157,7 @@ export type IntegraflowIconProps = {
 };
 
 export type QuestionOption = {
-    id: string;
+    id: number | string;
     orderNumber: number;
     label: string;
     comment?: boolean;

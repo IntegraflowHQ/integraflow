@@ -127,6 +127,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                     input: {
                         id: surveyId,
                         slug: surveySlug,
+                        name: "Untitled Survey",
                     },
                 },
 

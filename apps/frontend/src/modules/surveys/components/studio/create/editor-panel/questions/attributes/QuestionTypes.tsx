@@ -21,11 +21,9 @@ export const QuestionOptions = () => {
 
     useEffect(() => {
         const welcomeMessage = parsedQuestions.find((question) => question.settings?.type === CTAType.NEXT);
-        const thankYouMessage = parsedQuestions.find((question) => {
-            if (question.settings?.type) {
-                [CTAType.CLOSE, CTAType.LINK, CTAType.HIDDEN].includes(question.settings?.type as CTAType);
-            }
-        });
+        const thankYouMessage = parsedQuestions.find((question) =>
+            [CTAType.CLOSE, CTAType.LINK, CTAType.HIDDEN].includes(question.settings?.type as CTAType),
+        );
         setWelcomeMessageExists(!!welcomeMessage);
         setThankYouMessageExists(!!thankYouMessage);
     }, [parsedQuestions]);

@@ -18,8 +18,14 @@ import { AppCore } from "./layout/AppCore";
 import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
 import { SurveyShell } from "./layout/SurveyShell";
+import { Profile } from "./modules/workspace/components/settings/Profile";
+import { Project } from "./modules/workspace/components/settings/Project";
+import { Workspace as WorkspaceSettings } from "./modules/workspace/components/settings/Workspace";
+import { Audience } from "./pages/Audience";
 import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
+import { Events } from "./pages/Events";
 import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
+import { Settings } from "./pages/Settings";
 import { ROUTES } from "./routes";
 
 const isDebugMode = import.meta.env.MODE === "development";
@@ -57,17 +63,41 @@ const router = createBrowserRouter([
                 element: <Workspace />,
             },
             {
-                path: "/:orgSlug",
+                path: "/:orgSlug/projects/:projectSlug",
                 element: <AppCore />,
                 children: [
                     {
-                        path: "projects/:projectSlug",
+                        path: "settings",
+                        element: <Settings />,
+                    },
+                    {
+                        path: "settings/profile",
+                        element: <Profile />,
+                    },
+                    {
+                        path: "settings/project",
+                        element: <Project />,
+                    },
+                    {
+                        path: "settings/workspace",
+                        element: <WorkspaceSettings />,
+                    },
+                    {
+                        path: "get-started",
+                        element: <Onboarding />,
+                    },
+                    {
+                        path: "audience",
+                        element: <Audience />,
+                    },
+                    {
+                        path: "events",
+                        element: <Events />,
+                    },
+                    {
+                        path: "",
                         element: <SurveyShell />,
                         children: [
-                            {
-                                path: "get-started",
-                                element: <Onboarding />,
-                            },
                             {
                                 path: "surveys",
                                 element: <Surveys />,

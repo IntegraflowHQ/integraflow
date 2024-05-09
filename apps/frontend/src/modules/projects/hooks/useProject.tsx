@@ -18,7 +18,7 @@ import { EventProperties } from "@integraflow/web/src/types";
 export const useProject = () => {
     const { workspace, project, updateUser, switchProject } = useAuth();
     const { updateWorkspace } = useWorkspace();
-    const [projectCreate] = useProjectCreateMutation();
+    const [projectCreate, { loading: loadingCreateProject }] = useProjectCreateMutation();
     const [projectUpdate] = useProjectUpdateMutation();
     const { data: eventsData } = useProjectEventsDataQuery();
     const { data: audienceProperties } = useAudiencePropertiesQuery();
@@ -93,7 +93,6 @@ export const useProject = () => {
                                 },
                             };
                         }
-
                         return edge;
                     }),
                 },
@@ -168,6 +167,7 @@ export const useProject = () => {
     }, [audienceProperties]);
 
     return {
+        loading: loadingCreateProject,
         project,
         eventDefinitions,
         eventProperties,
