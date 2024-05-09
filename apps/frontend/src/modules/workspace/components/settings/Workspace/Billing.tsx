@@ -23,12 +23,12 @@ export const Billing = () => {
                         </div> */}
                     </div>
                     <div className="space-y-6">
-                        {planDetails.map((plan) => {
+                        {planDetails.map(({ icon: Icon, ...plan }) => {
                             return (
-                                <div className="space-y-6 rounded-lg bg-intg-bg-9 p-4">
+                                <div className="space-y-6 rounded-lg bg-intg-bg-9 p-4" key={plan.title}>
                                     <div className="space-y-2 text-sm">
-                                        <div className="flex items-center">
-                                            <img src={plan.icon} alt="icon" />
+                                        <div className="flex items-center gap-2">
+                                            <Icon size={16} />
                                             <p className="font-semibold">{plan.title}</p>
                                         </div>
                                         <p className="text-sm">{plan.description}</p>

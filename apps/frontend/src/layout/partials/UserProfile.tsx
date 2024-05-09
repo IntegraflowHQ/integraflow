@@ -24,7 +24,9 @@ import {
     SettingsIcon,
 } from "@/ui/icons";
 
+import { AuthOrganization, Project } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { convertToAuthOrganization } from "@/modules/auth/states/user";
 import { ROUTES } from "@/routes";
 import Frame from "assets/images/Frame.png";
 
@@ -47,7 +49,7 @@ const profileNavItems = [
 ];
 
 export const UserProfile = () => {
-    const { user, organizations, logout } = useAuth();
+    const { user, organizations, logout, switchWorkspace } = useAuth();
     const { workspace } = useWorkspace();
     const navigate = useNavigate();
     const { orgSlug, projectSlug } = useParams();
@@ -110,12 +112,21 @@ export const UserProfile = () => {
                             return (
                                 <DropdownMenuItem
                                     className="px-3 py-2"
-                                    key={item?.name}
+                                    key={item?.id}
                                     onClick={() => {
-                                        navigate(`/${item?.slug}`);
+                                        switchWorkspace(
+                                            convertToAuthOrganization(item) as AuthOrganization,
+                                            item?.projects?.edges![0]?.node as Project,
+                                        );
                                     }}
                                 >
-                                    <NavItem text={item?.name} leftIcon={<AcronynmBox text={item?.name ?? ""} />} />
+                                    <button className="flex w-full cursor-pointer items-center gap-2 overflow-x-hidden rounded capitalize text-intg-text ">
+                                        <span>
+                                            <AcronynmBox text={item?.name ?? ""} />
+                                        </span>
+                                        <span>{item?.name}</span>
+                                    </button>
+                                    {/* <NavItem text={item?.name} leftIcon={<AcronynmBox text={item?.name ?? ""} />} /> */}
                                 </DropdownMenuItem>
                             );
                         })}
@@ -151,7 +162,7 @@ export const UserProfile = () => {
                 <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
                 {profileNavItems.map((item) => {
                     return (
-                        <DropdownMenuItem key={item.title}>
+                        <DropdownMenuItem key={item.id}>
                             <NavLink
                                 text={item.title}
                                 leftIcon={item.icon}

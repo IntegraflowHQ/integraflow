@@ -1,4 +1,4 @@
-import { OrganizationInvite } from "@/modules/workspace/components/invite/OrganizationInvite";
+import { WorkspaceInvite } from "@/modules/workspace/components/invite/WorkspaceInvite";
 import { Header } from "@/ui";
 import React, { useState } from "react";
 
@@ -27,23 +27,14 @@ const backgroundTextStyles: React.CSSProperties = {
     cursor: "pointer",
 };
 
-export default function Container({
-    title,
-    description,
-    children,
-    onSkip,
-    onBack,
-}: OnboardingScreenProps) {
+export default function Container({ title, description, children, onSkip, onBack }: OnboardingScreenProps) {
     const [isAddingTeamMember, setIsAddingTeamMember] = useState(false);
     return (
         <div className="max-w-[660px] rounded-xl bg-intg-bg-9 p-12">
             {onSkip || onBack ? (
                 <div className="grid grid-cols-2 pb-4">
                     {onBack && (
-                        <button
-                            className="flex items-center gap-2 justify-self-start text-white"
-                            onClick={onBack}
-                        >
+                        <button className="flex items-center gap-2 justify-self-start text-white" onClick={onBack}>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="20"
@@ -63,22 +54,14 @@ export default function Container({
                     )}
 
                     {onSkip && (
-                        <button
-                            className="col-start-2 justify-self-end"
-                            onClick={onSkip}
-                            style={backgroundTextStyles}
-                        >
+                        <button className="col-start-2 justify-self-end" onClick={onSkip} style={backgroundTextStyles}>
                             Skip
                         </button>
                     )}
                 </div>
             ) : null}
 
-            <Header
-                title={title}
-                description={description}
-                className="max-w-[479px]"
-            />
+            <Header title={title} description={description} className="max-w-[479px]" />
 
             <div className="w-full pb-12">{children}</div>
 
@@ -90,10 +73,7 @@ export default function Container({
             >
                 Invite a team member to help with this step
             </p>
-            <OrganizationInvite
-                open={isAddingTeamMember}
-                onOpenChange={(value) => setIsAddingTeamMember(value)}
-            />
+            <WorkspaceInvite open={isAddingTeamMember} onOpenChange={(value) => setIsAddingTeamMember(value)} />
         </div>
     );
 }

@@ -1,7 +1,7 @@
 import { Link, LucideMail, RefreshCcwIcon } from "lucide-react";
 import { useState } from "react";
 
-import { User } from "@/generated/graphql";
+import { OrganizationInvite, OrganizationInviteCreate, User } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
@@ -10,6 +10,7 @@ import { CopyIcon } from "@/ui/icons";
 import { addEllipsis, copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
 import { DeepPartial } from "@apollo/client/utilities";
+import { GraphQLError } from "graphql";
 
 type Props = {
     open: boolean;
@@ -19,7 +20,7 @@ type Props = {
 const EMAIL_REGEX =
     /^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}(?:, ?[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7})*$/;
 
-export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
+export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
     const { workspace } = useWorkspace();
     const { loading, emailInvite, loadingEmailInvite, getInviteLink, resetInviteLink } = useWorkspaceInvite();
     const { user, updateUser } = useAuth();
@@ -57,7 +58,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
         });
 
         const responses = await Promise.all(promises);
-        const successfulPromises = responses.filter((response) => !(response instanceof Error));
+        const successfulPromises = responses.filter((response) => !(response instanceof GraphQLError));
 
         const updatedUser = JSON.parse(JSON.stringify(user)) as DeepPartial<User>;
         const currentOrganization = updatedUser.organizations?.edges?.find((org) => org?.node?.id === workspace?.id);
@@ -67,7 +68,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                 ...(currentOrganization.node.invites.edges || []),
                 ...successfulPromises.map((res) => {
                     return {
-                        node: res?.organizationInvite,
+                        node: (res as OrganizationInviteCreate).organizationInvite as OrganizationInvite,
                     };
                 }),
             ];
