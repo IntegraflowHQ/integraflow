@@ -134,6 +134,7 @@ export default function Create() {
                                         ? "text-intg-text data-[state=on]:text-white"
                                         : "text-intg-bg-14 data-[state=on]:text-[#6941C6]",
                                 )}
+                                key={opt.value}
                             >
                                 {opt.label}
                             </ToggleGroup.Item>
@@ -166,6 +167,7 @@ export default function Create() {
                                 value={value}
                                 aria-label={value}
                                 className="rounded-sm p-2 px-2 py-1 text-intg-text data-[state=on]:bg-[#41365E] data-[state=on]:text-white"
+                                key={value}
                             >
                                 <Icon size={20} />
                             </ToggleGroup.Item>
