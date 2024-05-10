@@ -120,13 +120,7 @@ export const UserProfile = () => {
                                         );
                                     }}
                                 >
-                                    <button className="flex w-full cursor-pointer items-center gap-2 overflow-x-hidden rounded capitalize text-intg-text ">
-                                        <span>
-                                            <AcronynmBox text={item?.name ?? ""} />
-                                        </span>
-                                        <span>{item?.name}</span>
-                                    </button>
-                                    {/* <NavItem text={item?.name} leftIcon={<AcronynmBox text={item?.name ?? ""} />} /> */}
+                                    <NavItem text={item?.name} leftIcon={<AcronynmBox text={item?.name ?? ""} />} />
                                 </DropdownMenuItem>
                             );
                         })}
