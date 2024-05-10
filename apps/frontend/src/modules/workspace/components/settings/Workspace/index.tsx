@@ -31,7 +31,7 @@ export const Workspace = () => {
                         <Tabs.Trigger
                             key={tab.label}
                             value={tab.label}
-                            className={`border-b border-transparent p-1 pl-[] text-sm text-intg-text transition-all ease-in  data-[state=active]:border-[#53389E] data-[state=active]:text-white`}
+                            className={`border-b border-transparent p-1 text-sm text-intg-text transition-all ease-in  data-[state=active]:border-[#53389E] data-[state=active]:text-white`}
                         >
                             {tab.label}
                         </Tabs.Trigger>
