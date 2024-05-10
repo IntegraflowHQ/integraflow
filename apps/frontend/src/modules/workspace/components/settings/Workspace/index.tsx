@@ -26,12 +26,12 @@ export const Workspace = () => {
     return (
         <SettingsScreen label="" title="Workspace" showHeaderLine={false}>
             <Tabs.Root className="mt-4 h-full w-full" value={activeTab} onValueChange={setActiveTab}>
-                <Tabs.List className="flex gap-[15px] pl-[72px]">
+                <Tabs.List className="flex gap-4 pl-[72px]">
                     {tabs.map((tab) => (
                         <Tabs.Trigger
                             key={tab.label}
                             value={tab.label}
-                            className={`rounded-md pl-[]  text-sm text-intg-text transition-all ease-in  data-[state=active]:text-white`}
+                            className={`border-b border-transparent p-1 text-sm text-intg-text transition-all ease-in  data-[state=active]:border-[#53389E] data-[state=active]:text-white`}
                         >
                             {tab.label}
                         </Tabs.Trigger>
