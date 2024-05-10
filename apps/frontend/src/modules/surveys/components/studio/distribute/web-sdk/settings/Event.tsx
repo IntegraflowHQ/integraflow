@@ -1,8 +1,7 @@
 import { PropertyDefinition } from "@/generated/graphql";
 import { useStudioStore } from "@/modules/surveys/states/studio";
-import { EventFilter, TriggerCondition, TriggerConditionInput } from "@/types";
+import { EventFilter, TriggerCondition, TriggerConditionInput, FilterOperator, LogicOperator } from "@/types";
 import { PlusCircle, X } from "@/ui/icons";
-import { FilterOperator, LogicOperator } from "@integraflow/web/src/types";
 import { Ampersand, Zap } from "lucide-react";
 import { useState } from "react";
 import FilterDetails from "./filters/FilterDetails";

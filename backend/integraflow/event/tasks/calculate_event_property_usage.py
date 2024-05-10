@@ -1,3 +1,5 @@
+import logging
+
 from datetime import timedelta
 from typing import List, Tuple
 
@@ -9,9 +11,19 @@ from integraflow.event.models import Event, EventDefinition
 from integraflow.project.models import Project
 
 
+logger = logging.getLogger(__name__)
+
+
 def calculate_event_property_usage() -> None:
     for project in Project.objects.all():
-        calculate_event_property_usage_for_team(project_id=project.pk)
+        try:
+            calculate_event_property_usage_for_team(project_id=project.pk)
+        except Exception:
+            logger.error(
+                f"""Failed to calculate event property usage for project
+                    {project.pk}""",
+                exc_info=True,
+            )
 
 
 @shared_task(ignore_result=True, max_retries=1)
@@ -22,7 +34,7 @@ def calculate_event_property_usage_for_team(project_id: str) -> None:
     for event in EventDefinition.objects.filter(project_id=project_id):
         volume = _extract_count(events_volume, event.name)
         EventDefinition.objects.filter(
-            name=event, project_id=project_id
+            name=event.name, project_id=project_id
         ).update(volume_30_day=volume)
 
 

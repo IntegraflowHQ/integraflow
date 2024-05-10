@@ -1,6 +1,8 @@
+import logging
 import os
 import re
 
+from datetime import timedelta
 from django.conf import settings
 from django.utils import timezone
 
@@ -9,6 +11,7 @@ from integraflow.core.tracing import traced_atomic_transaction
 from integraflow.survey.models import Survey, SurveyQuestion, SurveyResponse
 
 
+logger = logging.getLogger(__name__)
 FILE = os.path.dirname(__file__)
 STOPWORDS = set(
     map(
@@ -66,6 +69,22 @@ def calculate_csat(score, csat):
     return csat
 
 
+def compute_metrics_for_response() -> None:
+    timestamp = timezone.now() - timedelta(minutes=10)
+
+    for response in SurveyResponse.objects.filter(
+        is_processed=False,
+        created_at__lte=timestamp
+    ):
+        try:
+            process_response(response_id=response.pk)
+        except Exception:
+            logger.error(
+                f"Failed to process response {response.pk}.",
+                exc_info=True
+            )
+
+
 @app.task(
     autoretry_for=(Exception,),
     max_retries=3,
@@ -84,8 +103,6 @@ def process_response(response_id: str) -> None:
         response = survey_response.response
 
         question_ids = response.keys()
-        if not question_ids:
-            return
 
         questions = list(
             SurveyQuestion.objects.filter(
@@ -114,13 +131,17 @@ def process_response(response_id: str) -> None:
         csat_count = 1
 
         for question in questions:
-            answer = response[question.id][0].answer
+            question_id = str(question.id)
+            answer = response[question_id][0].get("answer", None)
+            if answer is None:
+                continue
 
             if question.type == SurveyQuestion.Type.NPS:
+                score = int(answer) - 1
                 if "nps_score" in analytics_data:
-                    nps_score = analytics_data["nps_score"] + int(answer)
+                    nps_score = analytics_data["nps_score"] + score
                 else:
-                    nps_score = int(answer)
+                    nps_score = score
 
                 analytics_data["nps_score"] = nps_score / nps_count
                 nps_count += 1

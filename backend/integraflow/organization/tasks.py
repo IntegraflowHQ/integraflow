@@ -1,3 +1,5 @@
+import logging
+
 from datetime import datetime
 from typing import Dict, List, TypedDict
 
@@ -10,6 +12,7 @@ from integraflow.project.models import Project
 from integraflow.survey.models import SurveyResponse
 
 
+logger = logging.getLogger(__name__)
 Count = TypedDict("Count", {"count": int, "limit": int})
 
 OrgUsage = TypedDict(
@@ -46,7 +49,10 @@ def compute_daily_usage_for_organizations(*, dry_run: bool = False):
                 if not dry_run:
                     update_org_usage(org_id, usage)
             except Exception:
-                pass
+                logger.error(
+                    f"Failed to compute usage for org {org_id}",
+                    exc_info=True
+                )
 
 
 def get_org_usage(
@@ -89,7 +95,7 @@ def get_org_usage(
         created_at__lte=period_end,
     ).count()
 
-    return default_usage
+    return usage
 
 
 def update_org_usage(org_id: str, usage: OrgUsage):

@@ -1,6 +1,6 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { CTAType } from "@integraflow/web/src/types";
+import { CTAType } from "@/types";
 import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import { Option, ReactSelect } from "../ReactSelect";

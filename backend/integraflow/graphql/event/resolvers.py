@@ -61,7 +61,7 @@ def resolve_properties_with_definition(info, event: str):
         FROM property_definitions
         WHERE property_definitions.project_id = %(project_id)s
         AND property_definitions.type = %(type)s
-        ORDER BY is_event_property DESC, NULLS LAST, name ASC
+        ORDER BY is_event_property DESC, name ASC
         """,
         params=params
     )

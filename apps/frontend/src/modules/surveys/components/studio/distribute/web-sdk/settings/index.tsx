@@ -1,7 +1,6 @@
 import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import useChannels from "@/modules/surveys/hooks/useChannels";
-import { ParsedChannel } from "@/types";
-import { LogicOperator } from "@integraflow/web/src/types";
+import { ParsedChannel, LogicOperator } from "@/types";
 import * as Accordion from "@radix-ui/react-accordion";
 import { ChevronRight } from "lucide-react";
 import Audience from "./Audience";

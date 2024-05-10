@@ -1,7 +1,7 @@
 import { Link, LucideMail, RefreshCcwIcon } from "lucide-react";
 import { useState } from "react";
 
-import { User } from "@/generated/graphql";
+import { OrganizationInvite as IOrganizationInvite, OrganizationInviteCreateMutation, User } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
@@ -67,7 +67,7 @@ export const OrganizationInvite = ({ open, onOpenChange }: Props) => {
                 ...(currentOrganization.node.invites.edges || []),
                 ...successfulPromises.map((res) => {
                     return {
-                        node: res?.organizationInvite,
+                        node: (res as OrganizationInviteCreateMutation['organizationInviteCreate'])!.organizationInvite as IOrganizationInvite,
                     };
                 }),
             ];

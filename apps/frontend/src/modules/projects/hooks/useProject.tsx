@@ -13,7 +13,7 @@ import {
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { convertToAuthOrganization } from "@/modules/auth/states/user";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
-import { EventProperties } from "@integraflow/web/src/types";
+import { EventProperties } from "@/types";
 
 export const useProject = () => {
     const { workspace, project, updateUser, switchProject } = useAuth();

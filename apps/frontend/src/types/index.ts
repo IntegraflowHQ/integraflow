@@ -91,6 +91,25 @@ export enum CTAType {
     HIDDEN = "hidden",
 }
 
+export type Jsonish =
+    | string
+    | number
+    | boolean
+    | null
+    | { [key: string]: Jsonish }
+    | { toJSON: () => any }
+    | Jsonish[]
+    | undefined;
+
+export interface EventProperties {
+    [key: string]: Jsonish;
+}
+
+export interface FormField extends QuestionOption {
+    type: FormFieldType;
+    required: boolean;
+}
+
 export type SurveySettings = {
     close?: boolean;
     showProgressBar?: boolean;

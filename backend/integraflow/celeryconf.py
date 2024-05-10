@@ -29,6 +29,10 @@ app.autodiscover_tasks()
 
 app.conf.beat_scheduler = 'django_celery_beat.schedulers.DatabaseScheduler'
 
+# Make sure Redis doesn't add too many connections
+# https://stackoverflow.com/questions/47106592/redis-connections-not-being-released-after-celery-task-is-complete
+app.conf.broker_pool_limit = 0
+
 
 @app.on_after_configure.connect  # type: ignore
 def setup_periodic_tasks(sender: Celery, **kwargs):
@@ -39,6 +43,13 @@ def setup_periodic_tasks(sender: Celery, **kwargs):
         calculate_event_property_usage.s(),
         name="calculate event property usage",
     )
+
+    sender.add_periodic_task(
+        settings.RESPONSE_METRICS_COMPUTE_INTERVAL_SECONDS,
+        compute_metrics_for_response.s(),
+        name="compute metrics for response",
+    )
+
     sender.add_periodic_task(
         crontab(hour=0, minute=0),  # type: ignore
         calculate_billing_daily_usage.s(),
@@ -62,3 +73,12 @@ def calculate_billing_daily_usage():
     )
 
     compute_daily_usage_for_organizations()
+
+
+@app.task(ignore_result=True)
+def compute_metrics_for_response():
+    from integraflow.survey.tasks import (
+        compute_metrics_for_response
+    )
+
+    compute_metrics_for_response()
