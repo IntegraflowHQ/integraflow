@@ -61,7 +61,11 @@ class Survey(UUIDModel):
         default=Status.DRAFT
     )
     settings: models.JSONField = models.JSONField(blank=True, null=True)
-    analytics_metadata: models.JSONField = models.JSONField(default=dict)
+    analytics_metadata: models.JSONField = models.JSONField(
+        default=dict,
+        null=True,
+        blank=True
+    )
     theme: models.ForeignKey = models.ForeignKey(
         "project.ProjectTheme",
         on_delete=models.SET_NULL,
@@ -451,7 +455,11 @@ class SurveyResponse(UUIDModel):
         null=True
     )
     metadata: models.JSONField = models.JSONField(default=dict)
-    analytics_metadata: models.JSONField = models.JSONField(default=dict)
+    analytics_metadata: models.JSONField = models.JSONField(
+        default=dict,
+        null=True,
+        blank=True
+    )
     user_attributes: models.JSONField = models.JSONField(default=dict)
     is_processed: models.BooleanField = models.BooleanField(default=False)
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
