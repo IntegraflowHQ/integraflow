@@ -181,14 +181,14 @@ def resolve_response_count(
     if date:
         current["value"] = (
             surveyResponseManager.count_responses(  # type: ignore
-                query & Q(created_at__range=(date.gte, date.lte))
+                query & Q(created_at__date__range=(date.gte, date.lte))
             )
         )
 
     if prev_date:
         previous["value"] = (
             surveyResponseManager.count_responses(  # type: ignore
-                query & Q(created_at__range=(prev_date.gte, prev_date.lte))
+                query & Q(created_at__date__range=(prev_date.gte, prev_date.lte))
             )
         )
 
@@ -221,14 +221,14 @@ def resolve_completion_rate(
     if date:
         current["value"] = (
             surveyResponseManager.completion_rate(  # type: ignore
-                query & Q(created_at__range=(date.gte, date.lte))
+                query & Q(created_at__date__range=(date.gte, date.lte))
             )
         )
 
     if prev_date:
         previous["value"] = (
             surveyResponseManager.completion_rate(  # type: ignore
-                query & Q(created_at__range=(prev_date.gte, prev_date.lte))
+                query & Q(created_at__date__range=(prev_date.gte, prev_date.lte))
             )
         )
 
@@ -265,14 +265,14 @@ def resolve_avg_completion_time(
     if date:
         current["value"] = surveyResponseManager.average(  # type: ignore
             field="time_spent",
-            query=(query & Q(created_at__range=(date.gte, date.lte)))
+            filters=(query & Q(created_at__date__range=(date.gte, date.lte)))
         )
 
     if prev_date:
         previous["value"] = surveyResponseManager.average(  # type: ignore
             field="time_spent",
-            query=(
-                query & Q(created_at__range=(prev_date.gte, prev_date.lte))
+            filters=(
+                query & Q(created_at__date__range=(prev_date.gte, prev_date.lte))
             )
         )
 
@@ -304,12 +304,12 @@ def resolve_nps_scores(
 
     if date:
         current = surveyResponseManager.calculate_nps_scores(  # type: ignore
-            query & Q(created_at__range=(date.gte, date.lte))
+            query & Q(created_at__date__range=(date.gte, date.lte))
         )
 
     if prev_date:
         previous = surveyResponseManager.calculate_nps_scores(  # type: ignore
-            query & Q(created_at__range=(prev_date.gte, prev_date.lte))
+            query & Q(created_at__date__range=(prev_date.gte, prev_date.lte))
         )
 
     return current, previous
@@ -340,12 +340,12 @@ def resolve_ces_scores(
 
     if date:
         current = surveyResponseManager.calculate_ces_scores(  # type: ignore
-            query & Q(created_at__range=(date.gte, date.lte))
+            query & Q(created_at__date__range=(date.gte, date.lte))
         )
 
     if prev_date:
         previous = surveyResponseManager.calculate_ces_scores(  # type: ignore
-            query & Q(created_at__range=(prev_date.gte, prev_date.lte))
+            query & Q(created_at__date__range=(prev_date.gte, prev_date.lte))
         )
 
     return current, previous
@@ -376,12 +376,12 @@ def resolve_csat_scores(
 
     if date:
         current = surveyResponseManager.calculate_csat_scores(  # type: ignore
-            query & Q(created_at__range=(date.gte, date.lte))
+            query & Q(created_at__date__range=(date.gte, date.lte))
         )
 
     if prev_date:
         previous = surveyResponseManager.calculate_csat_scores(  # type: ignore
-            query & Q(created_at__range=(prev_date.gte, prev_date.lte))
+            query & Q(created_at__date__range=(prev_date.gte, prev_date.lte))
         )
 
     return current, previous

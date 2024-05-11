@@ -2,6 +2,8 @@ from functools import partial
 from typing import Any
 from django.contrib.postgres.indexes import GinIndex
 from django.db import models
+from django.db.models.fields.json import KeyTextTransform
+from django.db.models.functions import Cast
 from django.utils.crypto import get_random_string
 
 from integraflow.core.models import UUIDModel
@@ -244,9 +246,9 @@ class SurveyResponseQueryset(models.QuerySet["SurveyResponse"]):
             passive=passive_condition,
             detractor=detractor_condition
         ).aggregate(
-            promoters=models.Count('promoter'),
-            passives=models.Count('passive'),
-            detractors=models.Count('detractor')
+            promoters=models.Sum('promoter'),
+            passives=models.Sum('passive'),
+            detractors=models.Sum('detractor')
         )
 
         promoters = nps_scores.get("promoters", 0)
@@ -303,14 +305,14 @@ class SurveyResponseQueryset(models.QuerySet["SurveyResponse"]):
             neutral=neutral_condition,
             negative=negative_condition
         ).aggregate(
-            positive=models.Count('positive'),
-            neutral=models.Count('neutral'),
-            negative=models.Count('negative')
+            total_positive=models.Sum('positive'),
+            total_neutral=models.Sum('neutral'),
+            total_negative=models.Sum('negative')
         )
 
-        positive = csat_scores.get("positive", 0)
-        neutral = csat_scores.get("neutral", 0)
-        negative = csat_scores.get("negative", 0)
+        positive = csat_scores.get("total_positive", 0)
+        neutral = csat_scores.get("total_neutral", 0)
+        negative = csat_scores.get("total_negative", 0)
 
         total_responses = positive + neutral + negative
         if total_responses == 0:
@@ -363,22 +365,21 @@ class SurveyResponseQueryset(models.QuerySet["SurveyResponse"]):
         ces_scores = completed_responses.annotate(
             low_effort=low_effort_condition,
             medium_effort=medium_effort_condition,
-            high_effort=high_effort_condition
+            high_effort=high_effort_condition,
+            ces_score=KeyTextTransform('ces_score', 'analytics_metadata')
         ).aggregate(
-            low_efforts=models.Count('low_effort'),
-            medium_efforts=models.Count('medium_effort'),
-            high_efforts=models.Count('high_effort'),
-            low_effort_sum=models.Sum('low_effort'),
-            medium_effort_sum=models.Sum('medium_effort'),
-            high_effort_sum=models.Sum('high_effort'),
+            low_efforts=models.Sum('low_effort'),
+            medium_efforts=models.Sum('medium_effort'),
+            high_efforts=models.Sum('high_effort'),
+            total_ces_score=models.Sum(
+                Cast('ces_score', output_field=models.FloatField())
+            )
         )
 
         low_efforts = ces_scores.get("low_efforts", 0)
         medium_efforts = ces_scores.get("medium_efforts", 0)
         high_efforts = ces_scores.get("high_efforts", 0)
-        low_effort_sum = ces_scores.get("low_effort_sum", 0)
-        medium_effort_sum = ces_scores.get("medium_effort_sum", 0)
-        high_effort_sum = ces_scores.get("high_effort_sum", 0)
+        total_ces_score = ces_scores.get("total_ces_score", 0)
 
         total_responses = low_efforts + medium_efforts + high_efforts
         if total_responses == 0:
@@ -394,9 +395,7 @@ class SurveyResponseQueryset(models.QuerySet["SurveyResponse"]):
             "low": low_efforts,
             "medium": medium_efforts,
             "high": high_efforts,
-            "score": (
-                low_effort_sum + medium_effort_sum + high_effort_sum
-            ) / total_responses
+            "score": total_ces_score / total_responses
         }
 
 

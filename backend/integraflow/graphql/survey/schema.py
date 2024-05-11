@@ -168,7 +168,7 @@ class SurveyQueries(graphene.ObjectType):
         description="Response insight for a survey.",
         permissions=[AuthorizationFilters.PROJECT_MEMBER_ACCESS],
         doc_category=DOC_CATEGORY_SURVEYS,
-    ),
+    )
 
     @staticmethod
     def resolve_channels(_root, info, **kwargs):
@@ -232,7 +232,7 @@ class SurveyQueries(graphene.ObjectType):
         )
 
     @staticmethod
-    def resolve_response_snapshot(
+    def resolve_response_metric(
         _root,
         info, *,
         id: str,

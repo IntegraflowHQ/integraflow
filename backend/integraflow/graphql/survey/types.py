@@ -558,12 +558,12 @@ class SurveyResponse(ModelObjectType):
 
 
 class SurveyResponseMetric(BaseObjectType):
-    current = graphene.JSONString(
+    current = JSONString(
         required=False,
         description="The current value."
     )
 
-    previous = graphene.JSONString(
+    previous = JSONString(
         required=False,
         description="The previous value."
     )

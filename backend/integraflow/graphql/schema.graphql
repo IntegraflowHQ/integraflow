@@ -179,6 +179,25 @@ type Query {
   ): SurveyResponseCountableConnection @doc(category: "Surveys")
 
   """
+  Response insight for a survey.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  responseMetric(
+    """The ID of the survey."""
+    id: ID!
+
+    """The metric to calculate."""
+    metric: SurveyResponseMetricEnum!
+
+    """Date range for filtering responses."""
+    date: DateRangeInput
+
+    """Date range for filtering responses."""
+    previousDate: DateRangeInput
+  ): SurveyResponseMetric @doc(category: "Surveys")
+
+  """
   List of the project's themes.
   
   Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -1369,6 +1388,24 @@ input SurveyResponseFilterInput @doc(category: "Surveys") {
 
   """Filter by ids."""
   ids: [ID!]
+}
+
+"""Represents a survey response metric (e.g. total responses, nps)."""
+type SurveyResponseMetric @doc(category: "Surveys") {
+  """The current value."""
+  current: JSONString
+
+  """The previous value."""
+  previous: JSONString
+}
+
+enum SurveyResponseMetricEnum {
+  TOTAL_RESPONSES
+  COMPLETION_RATE
+  AVERAGE_TIME
+  NPS
+  CSAT
+  CES
 }
 
 type ProjectThemeCountableConnection @doc(category: "Projects") {

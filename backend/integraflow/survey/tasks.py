@@ -133,11 +133,15 @@ def process_response(response_id: str) -> None:
         for question in questions:
             question_id = str(question.id)
             answer = response[question_id][0].get("answer", None)
-            if answer is None:
+            answer_id = response[question_id][0].get("answerId", None)
+            if answer is None and answer_id is None:
                 continue
 
-            if question.type == SurveyQuestion.Type.NPS:
-                score = int(answer) - 1
+            if (
+                answer_id is not None and
+                question.type == SurveyQuestion.Type.NPS
+            ):
+                score = int(answer_id) - 1
                 if "nps_score" in analytics_data:
                     nps_score = analytics_data["nps_score"] + score
                 else:
@@ -147,36 +151,42 @@ def process_response(response_id: str) -> None:
                 nps_count += 1
                 continue
 
-            if question.type == SurveyQuestion.Type.CES:
+            if (
+                answer_id is not None and
+                question.type == SurveyQuestion.Type.CES
+            ):
                 if "ces_score" in analytics_data:
-                    ces_score = analytics_data["ces_score"] + int(answer)
+                    ces_score = analytics_data["ces_score"] + int(answer_id)
                 else:
-                    ces_score = int(answer)
+                    ces_score = int(answer_id)
 
                 analytics_data["ces_score"] = ces_score / ces_count
                 ces_count += 1
                 continue
 
             if (
-                question.type == SurveyQuestion.Type.CSAT or
-                (
-                    (
+                answer_id is not None and (
+                    question.type == SurveyQuestion.Type.CSAT or
+                    ((
                         question.type == SurveyQuestion.Type.SMILEY_SCALE or
                         question.type == SurveyQuestion.Type.RATING or
                         question.type == SurveyQuestion.Type.NUMERICAL_SCALE
-                    ) and len(question.options) == 5
+                    ) and len(question.options) == 5)
                 )
             ):
                 if "csat_score" in analytics_data:
-                    csat_score = analytics_data["csat_score"] + int(answer)
+                    csat_score = analytics_data["csat_score"] + int(answer_id)
                 else:
-                    csat_score = int(answer)
+                    csat_score = int(answer_id)
 
                 analytics_data["csat_score"] = csat_score / csat_count
                 csat_count += 1
                 continue
 
-            if question.type == SurveyQuestion.Type.TEXT:
+            if (
+                answer is not None and
+                question.type == SurveyQuestion.Type.TEXT
+            ):
                 response_title = analytics_data.get("response_title", None)
                 if response_title is None:
                     analytics_data["title"] = answer
