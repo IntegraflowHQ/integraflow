@@ -6,12 +6,18 @@ const DASHBOARD_ORIGIN = process.env.NEXT_PUBLIC_DASHBOARD_ORIGIN || "*";
 export default function Preview() {
     const [survey, setSurvey] = useState<any>();
     const [startFrom, setStartFrom] = useState();
+    const [mode, setMode] = useState<"sdk" | "link">();
+    const [viewPort, setViewPort] = useState<"desktop" | "mobile">();
 
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
             if (event.data && event.data.type === "survey") {
-                setSurvey(parsedSurveys(event.data.survey)[0]);
                 setStartFrom(event.data.startFrom);
+                setMode(event.data.mode);
+                setViewPort(event.data.viewPort);
+                setSurvey(
+                    parsedSurveys(event.data.survey, event.data.mode, `${window.origin}/images/preview-bg.svg`)[0],
+                );
             }
         };
 
@@ -39,6 +45,7 @@ export default function Preview() {
             const intg = Integraflow.init({
                 surveys: [survey],
                 syncPolicy: "off",
+                fullScreen: mode === "link",
                 onSurveyClosed: () => {
                     const timeoutId = setTimeout(() => {
                         intg.showSurvey(survey.id, startFrom);
@@ -65,6 +72,7 @@ export default function Preview() {
                 const intg = Integraflow.init({
                     surveys: [survey],
                     syncPolicy: "off",
+                    fullScreen: mode === "link",
                 });
 
                 intg.closeSurvey(survey?.id);
@@ -72,12 +80,16 @@ export default function Preview() {
 
             closeSurvey();
         };
-    }, [survey, startFrom]);
+    }, [survey, startFrom, mode]);
 
     return (
         <style>{`
         body {
-            background-color: #181325;
+            height: 100vh;
+            ${mode === "sdk" && viewPort === "desktop" ? `background-image: url(/images/desktop-view.png); background-size: cover;` : ""}
+            ${mode === "sdk" && viewPort === "mobile" ? `background-image: url(/images/mobile-view.svg); background-color: white; background-size: contain` : ""}
+            background-repeat: no-repeat;
+            ${mode === "link" ? "background-position: top center; background-image: url(/images/preview-bg.svg); background-size: cover;" : ""}
         }
     `}</style>
     );

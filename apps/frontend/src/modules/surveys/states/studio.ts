@@ -1,4 +1,4 @@
-import { Theme } from "@/types";
+import { PreviewMode, Theme, ViewPortType } from "@/types";
 import { create } from "zustand";
 
 export type StudioState = {
@@ -6,6 +6,8 @@ export type StudioState = {
     currentEvent: string;
     addingAudienceProperty: boolean;
     theme: Theme | null;
+    previewMode: PreviewMode;
+    previewViewport: ViewPortType;
 };
 
 export type StudioActions = {
@@ -19,6 +21,8 @@ const initialState: StudioState = {
     currentEvent: "",
     addingAudienceProperty: false,
     theme: null,
+    previewMode: "sdk",
+    previewViewport: "desktop",
 };
 
 export const useStudioStore = create<StudioState & StudioActions>()((set) => ({

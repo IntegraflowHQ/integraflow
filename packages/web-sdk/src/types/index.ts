@@ -100,6 +100,8 @@ export enum CTAType {
 
 export type PlacementType = "bottomLeft" | "bottomRight" | "topLeft" | "topRight" | "center";
 
+export type BackgroundOverLayType = "light" | "dark" | "none";
+
 export type ID = string | number;
 
 export interface SurveyAnswer {
@@ -298,6 +300,8 @@ export interface SurveySettings {
     close?: boolean;
     submitText?: string;
     showBranding?: boolean;
+    backgroundOverlay?: BackgroundOverLayType;
+    backgroundImage?: string;
 }
 
 export interface Theme {

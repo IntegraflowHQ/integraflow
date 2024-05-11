@@ -14,6 +14,8 @@ export enum CreateSurvey {
 }
 
 export type BackgroundOverLayType = "none" | "dark" | "light";
+export type ViewPortType = "mobile" | "desktop";
+export type PreviewMode = "link" | "sdk";
 
 export enum FormFieldType {
     FIRST_NAME = "first_name",
