@@ -1,4 +1,4 @@
-import { FilterOperator } from "@integraflow/web/src/types";
+import { FilterOperator } from "@/types";
 
 export const AUTH_EXEMPT = "exempt-auth";
 export const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

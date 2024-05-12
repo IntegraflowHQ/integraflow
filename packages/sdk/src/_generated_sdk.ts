@@ -580,6 +580,7 @@ export class EventDefinition extends Request {
         this.id = data.id;
         this.lastSeenAt = parseDate(data.lastSeenAt) ?? undefined;
         this.name = data.name;
+        this.volume = data.volume;
         this.project = new Project(request, data.project);
     }
 
@@ -591,6 +592,8 @@ export class EventDefinition extends Request {
     public lastSeenAt?: Date;
     /** The name of the event definition */
     public name: string;
+    /** The volume of events in the last 30 rolling days */
+    public volume: number;
     /**
      * The project the event definition belongs to
      *
@@ -692,6 +695,30 @@ export class EventPropertyCountableConnection extends Connection<EventProperty> 
             new PageInfo(request, data.pageInfo)
         );
     }
+}
+/**
+ * Represents an event property with definition.
+ *
+ * @param request - function to call the graphql client
+ * @param data - I.EventPropertyWithDefinitionFragment response data
+ */
+export class EventPropertyWithDefinition extends Request {
+    public constructor(request: IntegraflowRequest, data: I.EventPropertyWithDefinitionFragment) {
+        super(request);
+        this.event = data.event;
+        this.isNumerical = data.isNumerical;
+        this.property = data.property;
+        this.propertyType = data.propertyType;
+    }
+
+    /** The name of the event */
+    public event: string;
+    /** Whether property accepts a numerical value */
+    public isNumerical: boolean;
+    /** The property of the event */
+    public property: string;
+    /** The property type */
+    public propertyType: I.PropertyTypeEnum;
 }
 /**
  * Finds or creates a new user account from google auth credentials.
@@ -796,6 +823,14 @@ export class Organization extends Request {
      */
     public create(input: I.OrganizationCreateInput, variables?: Omit<I.CreateOrganizationMutationVariables, "input">) {
         return new CreateOrganizationMutation(this._request).fetch(input, variables);
+    }
+    /**
+     * Joins an organization
+     *
+     * Requires one of the following permissions: AUTHENTICATED_USER.
+     */
+    public join(input: I.OrganizationJoinInput) {
+        return new JoinOrganizationMutation(this._request).fetch(input);
     }
     /**
      * Updates an organization.
@@ -922,6 +957,14 @@ export class OrganizationInvite extends Request {
     public role: I.RoleLevel;
 
     /**
+     * Creates a new organization invite.
+     *
+     * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+     */
+    public create(input: I.OrganizationInviteCreateInput) {
+        return new CreateOrganizationInviteMutation(this._request).fetch(input);
+    }
+    /**
      * Deletes an organization invite.
      *
      * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
@@ -952,6 +995,28 @@ export class OrganizationInviteCountableConnection extends Connection<Organizati
             new PageInfo(request, data.pageInfo)
         );
     }
+}
+/**
+ * Creates a new organization invite.
+ *
+ * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+ *
+ * @param request - function to call the graphql client
+ * @param data - I.OrganizationInviteCreateFragment response data
+ */
+export class OrganizationInviteCreate extends Request {
+    public constructor(request: IntegraflowRequest, data: I.OrganizationInviteCreateFragment) {
+        super(request);
+        this.organizationInvite = data.organizationInvite
+            ? new OrganizationInvite(request, data.organizationInvite)
+            : undefined;
+        this.errors = data.errors.map(node => new OrganizationError(request, node));
+        this.organizationErrors = data.organizationErrors.map(node => new OrganizationError(request, node));
+    }
+
+    public errors: OrganizationError[];
+    public organizationErrors: OrganizationError[];
+    public organizationInvite?: OrganizationInvite;
 }
 /**
  * Deletes an organization invite.
@@ -1119,6 +1184,47 @@ export class OrganizationInviteResend extends Request {
     public organizationInvite?: OrganizationInvite;
 }
 /**
+ * Joins an organization
+ *
+ * Requires one of the following permissions: AUTHENTICATED_USER.
+ *
+ * @param request - function to call the graphql client
+ * @param data - I.OrganizationJoinFragment response data
+ */
+export class OrganizationJoin extends Request {
+    public constructor(request: IntegraflowRequest, data: I.OrganizationJoinFragment) {
+        super(request);
+        this.user = new AuthUser(request, data.user);
+        this.errors = data.errors.map(node => new OrganizationError(request, node));
+        this.organizationErrors = data.organizationErrors.map(node => new OrganizationError(request, node));
+    }
+
+    public errors: OrganizationError[];
+    public organizationErrors: OrganizationError[];
+    /** A user that has access to the the resources of an organization. */
+    public user: AuthUser;
+}
+/**
+ * Leaves an organization.
+ *
+ * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+ *
+ * @param request - function to call the graphql client
+ * @param data - I.OrganizationLeaveFragment response data
+ */
+export class OrganizationLeave extends Request {
+    public constructor(request: IntegraflowRequest, data: I.OrganizationLeaveFragment) {
+        super(request);
+        this.organization = data.organization ? new Organization(request, data.organization) : undefined;
+        this.errors = data.errors.map(node => new OrganizationError(request, node));
+        this.organizationErrors = data.organizationErrors.map(node => new OrganizationError(request, node));
+    }
+
+    public errors: OrganizationError[];
+    public organizationErrors: OrganizationError[];
+    public organization?: Organization;
+}
+/**
  * Represents an organization member.
  *
  * @param request - function to call the graphql client
@@ -1150,6 +1256,15 @@ export class OrganizationMember extends Request {
     public updatedAt: Date;
     /** The member role */
     public role: I.RoleLevel;
+
+    /**
+     * Updates an organization member.
+     *
+     * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+     */
+    public update(input: I.OrganizationMemberUpdateInput) {
+        return this.id ? new UpdateOrganizationMemberMutation(this._request).fetch(this.id, input) : undefined;
+    }
 }
 /**
  * OrganizationMemberCountableConnection model
@@ -1173,6 +1288,50 @@ export class OrganizationMemberCountableConnection extends Connection<Organizati
             new PageInfo(request, data.pageInfo)
         );
     }
+}
+/**
+ * Deletes a member from an organization.
+ *
+ * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+ *
+ * @param request - function to call the graphql client
+ * @param data - I.OrganizationMemberLeaveFragment response data
+ */
+export class OrganizationMemberLeave extends Request {
+    public constructor(request: IntegraflowRequest, data: I.OrganizationMemberLeaveFragment) {
+        super(request);
+        this.organizationMembership = data.organizationMembership
+            ? new OrganizationMember(request, data.organizationMembership)
+            : undefined;
+        this.errors = data.errors.map(node => new OrganizationError(request, node));
+        this.organizationErrors = data.organizationErrors.map(node => new OrganizationError(request, node));
+    }
+
+    public errors: OrganizationError[];
+    public organizationErrors: OrganizationError[];
+    public organizationMembership?: OrganizationMember;
+}
+/**
+ * Updates an organization member.
+ *
+ * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+ *
+ * @param request - function to call the graphql client
+ * @param data - I.OrganizationMemberUpdateFragment response data
+ */
+export class OrganizationMemberUpdate extends Request {
+    public constructor(request: IntegraflowRequest, data: I.OrganizationMemberUpdateFragment) {
+        super(request);
+        this.organizationMembership = data.organizationMembership
+            ? new OrganizationMember(request, data.organizationMembership)
+            : undefined;
+        this.errors = data.errors.map(node => new OrganizationError(request, node));
+        this.organizationErrors = data.organizationErrors.map(node => new OrganizationError(request, node));
+    }
+
+    public errors: OrganizationError[];
+    public organizationErrors: OrganizationError[];
+    public organizationMembership?: OrganizationMember;
 }
 /**
  * Updates an organization.
@@ -1649,6 +1808,7 @@ export class Survey extends Request {
         this.reference = data.reference ?? undefined;
         this.settings = data.settings ?? undefined;
         this.slug = data.slug;
+        this.stats = data.stats ?? undefined;
         this.updatedAt = parseDate(data.updatedAt) ?? new Date();
         this.creator = new User(request, data.creator);
         this.project = data.project ? new Project(request, data.project) : undefined;
@@ -1669,6 +1829,8 @@ export class Survey extends Request {
     public settings?: I.Scalars["JSONString"];
     /** Slug of the survey. */
     public slug: string;
+    /** The statistics of the survey. */
+    public stats?: I.Scalars["JSONString"];
     /** The last time at which the survey was updated. */
     public updatedAt: Date;
     /**
@@ -2129,6 +2291,87 @@ export class SurveyQuestionUpdate extends Request {
     public surveyQuestion?: SurveyQuestion;
 }
 /**
+ * Represents a survey response.
+ *
+ * @param request - function to call the graphql client
+ * @param data - I.SurveyResponseFragment response data
+ */
+export class SurveyResponse extends Request {
+    public constructor(request: IntegraflowRequest, data: I.SurveyResponseFragment) {
+        super(request);
+        this.completedAt = parseDate(data.completedAt) ?? undefined;
+        this.createdAt = parseDate(data.createdAt) ?? new Date();
+        this.id = data.id;
+        this.response = data.response;
+        this.stats = data.stats ?? undefined;
+        this.timeSpent = data.timeSpent ?? undefined;
+        this.title = data.title;
+        this.updatedAt = parseDate(data.updatedAt) ?? new Date();
+        this.userAttributes = data.userAttributes ?? undefined;
+        this.survey = data.survey ? new Survey(request, data.survey) : undefined;
+        this.status = data.status;
+    }
+
+    /** The time the survey completed. */
+    public completedAt?: Date;
+    /** The time at which the response was created. */
+    public createdAt: Date;
+    /** The ID of the response. */
+    public id: string;
+    /** The response. */
+    public response: I.Scalars["JSONString"];
+    /** The statistics of the response. */
+    public stats?: I.Scalars["JSONString"];
+    /** The time spent to complete the survey. */
+    public timeSpent?: number;
+    /** The title of the response. */
+    public title: string;
+    /** The last time at which the response was updated. */
+    public updatedAt: Date;
+    /** The user attributes. */
+    public userAttributes?: I.Scalars["JSONString"];
+    /**
+     * The survey the response belongs to
+     *
+     * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+     */
+    public survey?: Survey;
+    /** The status of the survey response */
+    public status: I.SurveyResponseStatusEnum;
+
+    /** Creates a response to survey. */
+    public create(input: I.SurveyResponseCreateInput) {
+        return new CreateSurveyResponseMutation(this._request).fetch(input);
+    }
+    /** Updates a response. */
+    public update(input: I.SurveyResponseUpdateInput) {
+        return this.id ? new UpdateSurveyResponseMutation(this._request).fetch(this.id, input) : undefined;
+    }
+}
+/**
+ * SurveyResponseCountableConnection model
+ *
+ * @param request - function to call the graphql client
+ * @param fetch - function to trigger a refetch of this SurveyResponseCountableConnection model
+ * @param data - SurveyResponseCountableConnection response data
+ */
+export class SurveyResponseCountableConnection extends Connection<SurveyResponse> {
+    public constructor(
+        request: IntegraflowRequest,
+        fetch: (
+            connection?: IntegraflowConnectionVariables
+        ) => IntegraflowFetch<IntegraflowConnection<SurveyResponse> | undefined>,
+        data: I.SurveyResponseCountableConnectionFragment
+    ) {
+        super(
+            request,
+            fetch,
+            data.nodes.map(node => new SurveyResponse(request, node)),
+            new PageInfo(request, data.pageInfo)
+        );
+    }
+}
+/**
  * Creates a response to survey.
  *
  * @param request - function to call the graphql client
@@ -2490,6 +2733,35 @@ export class CreateOrganizationMutation extends Request {
 }
 
 /**
+ * A fetchable CreateOrganizationInvite Mutation
+ *
+ * @param request - function to call the graphql client
+ */
+export class CreateOrganizationInviteMutation extends Request {
+    public constructor(request: IntegraflowRequest) {
+        super(request);
+    }
+
+    /**
+     * Call the CreateOrganizationInvite mutation and return a OrganizationInviteCreate
+     *
+     * @param input - required input to pass to createOrganizationInvite
+     * @returns parsed response from CreateOrganizationInviteMutation
+     */
+    public async fetch(input: I.OrganizationInviteCreateInput): IntegraflowFetch<OrganizationInviteCreate | undefined> {
+        const response = await this._request<
+            I.CreateOrganizationInviteMutation,
+            I.CreateOrganizationInviteMutationVariables
+        >(I.CreateOrganizationInviteDocument, {
+            input
+        });
+        const data = response.organizationInviteCreate;
+
+        return data ? new OrganizationInviteCreate(this._request, data) : undefined;
+    }
+}
+
+/**
  * A fetchable DeleteOrganizationInvite Mutation
  *
  * @param request - function to call the graphql client
@@ -2570,6 +2842,127 @@ export class OrganizationInviteResendMutation extends Request {
         const data = response.organizationInviteResend;
 
         return data ? new OrganizationInviteResend(this._request, data) : undefined;
+    }
+}
+
+/**
+ * A fetchable JoinOrganization Mutation
+ *
+ * @param request - function to call the graphql client
+ */
+export class JoinOrganizationMutation extends Request {
+    public constructor(request: IntegraflowRequest) {
+        super(request);
+    }
+
+    /**
+     * Call the JoinOrganization mutation and return a OrganizationJoin
+     *
+     * @param input - required input to pass to joinOrganization
+     * @returns parsed response from JoinOrganizationMutation
+     */
+    public async fetch(input: I.OrganizationJoinInput): IntegraflowFetch<OrganizationJoin | undefined> {
+        const response = await this._request<I.JoinOrganizationMutation, I.JoinOrganizationMutationVariables>(
+            I.JoinOrganizationDocument,
+            {
+                input
+            }
+        );
+        const data = response.organizationJoin;
+
+        return data ? new OrganizationJoin(this._request, data) : undefined;
+    }
+}
+
+/**
+ * A fetchable OrganizationLeave Mutation
+ *
+ * @param request - function to call the graphql client
+ */
+export class OrganizationLeaveMutation extends Request {
+    public constructor(request: IntegraflowRequest) {
+        super(request);
+    }
+
+    /**
+     * Call the OrganizationLeave mutation and return a OrganizationLeave
+     *
+     * @param id - required id to pass to organizationLeave
+     * @returns parsed response from OrganizationLeaveMutation
+     */
+    public async fetch(id: string): IntegraflowFetch<OrganizationLeave | undefined> {
+        const response = await this._request<I.OrganizationLeaveMutation, I.OrganizationLeaveMutationVariables>(
+            I.OrganizationLeaveDocument,
+            {
+                id
+            }
+        );
+        const data = response.organizationLeave;
+
+        return data ? new OrganizationLeave(this._request, data) : undefined;
+    }
+}
+
+/**
+ * A fetchable OrganizationMemberLeave Mutation
+ *
+ * @param request - function to call the graphql client
+ */
+export class OrganizationMemberLeaveMutation extends Request {
+    public constructor(request: IntegraflowRequest) {
+        super(request);
+    }
+
+    /**
+     * Call the OrganizationMemberLeave mutation and return a OrganizationMemberLeave
+     *
+     * @param id - required id to pass to organizationMemberLeave
+     * @returns parsed response from OrganizationMemberLeaveMutation
+     */
+    public async fetch(id: string): IntegraflowFetch<OrganizationMemberLeave | undefined> {
+        const response = await this._request<
+            I.OrganizationMemberLeaveMutation,
+            I.OrganizationMemberLeaveMutationVariables
+        >(I.OrganizationMemberLeaveDocument, {
+            id
+        });
+        const data = response.organizationMemberLeave;
+
+        return data ? new OrganizationMemberLeave(this._request, data) : undefined;
+    }
+}
+
+/**
+ * A fetchable UpdateOrganizationMember Mutation
+ *
+ * @param request - function to call the graphql client
+ */
+export class UpdateOrganizationMemberMutation extends Request {
+    public constructor(request: IntegraflowRequest) {
+        super(request);
+    }
+
+    /**
+     * Call the UpdateOrganizationMember mutation and return a OrganizationMemberUpdate
+     *
+     * @param id - required id to pass to updateOrganizationMember
+     * @param input - required input to pass to updateOrganizationMember
+     * @returns parsed response from UpdateOrganizationMemberMutation
+     */
+    public async fetch(
+        id: string,
+        input: I.OrganizationMemberUpdateInput
+    ): IntegraflowFetch<OrganizationMemberUpdate | undefined> {
+        const response = await this._request<
+            I.UpdateOrganizationMemberMutation,
+            I.UpdateOrganizationMemberMutationVariables
+        >(I.UpdateOrganizationMemberDocument, {
+            id,
+            input
+        });
+        const data = response.organizationMemberUpdate;
+
+        return data ? new OrganizationMemberUpdate(this._request, data) : undefined;
     }
 }
 
@@ -3413,6 +3806,37 @@ export class PersonsQuery extends Request {
 }
 
 /**
+ * A fetchable PropertiesWithDefinitions Query
+ *
+ * @param request - function to call the graphql client
+ */
+export class PropertiesWithDefinitionsQuery extends Request {
+    public constructor(request: IntegraflowRequest) {
+        super(request);
+    }
+
+    /**
+     * Call the PropertiesWithDefinitions query and return a EventPropertyWithDefinition list
+     *
+     * @param variables - variables to pass into the PropertiesWithDefinitionsQuery
+     * @returns parsed response from PropertiesWithDefinitionsQuery
+     */
+    public async fetch(
+        variables?: I.PropertiesWithDefinitionsQueryVariables
+    ): IntegraflowFetch<EventPropertyWithDefinition[] | undefined> {
+        const response = await this._request<
+            I.PropertiesWithDefinitionsQuery,
+            I.PropertiesWithDefinitionsQueryVariables
+        >(I.PropertiesWithDefinitionsDocument, variables);
+        const data = response.propertiesWithDefinitions;
+
+        return data.map(node => {
+            return node ? new EventPropertyWithDefinition(this._request, node) : undefined;
+        });
+    }
+}
+
+/**
  * A fetchable PropertyDefinitions Query
  *
  * @param request - function to call the graphql client
@@ -3486,6 +3910,48 @@ export class QuestionsQuery extends Request {
                 connection =>
                     this.fetch(
                         id,
+                        defaultConnection({
+                            ...variables,
+                            ...connection
+                        })
+                    ),
+                data
+            );
+        } else {
+            return undefined;
+        }
+    }
+}
+
+/**
+ * A fetchable Responses Query
+ *
+ * @param request - function to call the graphql client
+ */
+export class ResponsesQuery extends Request {
+    public constructor(request: IntegraflowRequest) {
+        super(request);
+    }
+
+    /**
+     * Call the Responses query and return a SurveyResponseCountableConnection
+     *
+     * @param variables - variables to pass into the ResponsesQuery
+     * @returns parsed response from ResponsesQuery
+     */
+    public async fetch(
+        variables?: I.ResponsesQueryVariables
+    ): IntegraflowFetch<SurveyResponseCountableConnection | undefined> {
+        const response = await this._request<I.ResponsesQuery, I.ResponsesQueryVariables>(
+            I.ResponsesDocument,
+            variables
+        );
+        const data = response.responses;
+        if (data) {
+            return new SurveyResponseCountableConnection(
+                this._request,
+                connection =>
+                    this.fetch(
                         defaultConnection({
                             ...variables,
                             ...connection
@@ -4235,6 +4701,19 @@ export class IntegraflowSdk extends Request {
         return new CreateOrganizationMutation(this._request).fetch(input, variables);
     }
     /**
+     * Creates a new organization invite.
+     *
+     * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+     *
+     * @param input - required input to pass to createOrganizationInvite
+     * @returns OrganizationInviteCreate
+     */
+    public createOrganizationInvite(
+        input: I.OrganizationInviteCreateInput
+    ): IntegraflowFetch<OrganizationInviteCreate | undefined> {
+        return new CreateOrganizationInviteMutation(this._request).fetch(input);
+    }
+    /**
      * Deletes an organization invite.
      *
      * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
@@ -4265,6 +4744,54 @@ export class IntegraflowSdk extends Request {
      */
     public organizationInviteResend(id: string): IntegraflowFetch<OrganizationInviteResend | undefined> {
         return new OrganizationInviteResendMutation(this._request).fetch(id);
+    }
+    /**
+     * Joins an organization
+     *
+     * Requires one of the following permissions: AUTHENTICATED_USER.
+     *
+     * @param input - required input to pass to joinOrganization
+     * @returns OrganizationJoin
+     */
+    public joinOrganization(input: I.OrganizationJoinInput): IntegraflowFetch<OrganizationJoin | undefined> {
+        return new JoinOrganizationMutation(this._request).fetch(input);
+    }
+    /**
+     * Leaves an organization.
+     *
+     * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+     *
+     * @param id - required id to pass to organizationLeave
+     * @returns OrganizationLeave
+     */
+    public organizationLeave(id: string): IntegraflowFetch<OrganizationLeave | undefined> {
+        return new OrganizationLeaveMutation(this._request).fetch(id);
+    }
+    /**
+     * Deletes a member from an organization.
+     *
+     * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+     *
+     * @param id - required id to pass to organizationMemberLeave
+     * @returns OrganizationMemberLeave
+     */
+    public organizationMemberLeave(id: string): IntegraflowFetch<OrganizationMemberLeave | undefined> {
+        return new OrganizationMemberLeaveMutation(this._request).fetch(id);
+    }
+    /**
+     * Updates an organization member.
+     *
+     * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+     *
+     * @param id - required id to pass to updateOrganizationMember
+     * @param input - required input to pass to updateOrganizationMember
+     * @returns OrganizationMemberUpdate
+     */
+    public updateOrganizationMember(
+        id: string,
+        input: I.OrganizationMemberUpdateInput
+    ): IntegraflowFetch<OrganizationMemberUpdate | undefined> {
+        return new UpdateOrganizationMemberMutation(this._request).fetch(id, input);
     }
     /**
      * Updates an organization.
@@ -4573,6 +5100,19 @@ export class IntegraflowSdk extends Request {
         return new PersonsQuery(this._request).fetch(variables);
     }
     /**
+     * List of event's properties.
+     *
+     * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+     *
+     * @param variables - variables to pass into the PropertiesWithDefinitionsQuery
+     * @returns EventPropertyWithDefinition[]
+     */
+    public propertiesWithDefinitions(
+        variables?: I.PropertiesWithDefinitionsQueryVariables
+    ): IntegraflowFetch<EventPropertyWithDefinition[] | undefined> {
+        return new PropertiesWithDefinitionsQuery(this._request).fetch(variables);
+    }
+    /**
      * List of the property definitions.
      *
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -4599,6 +5139,19 @@ export class IntegraflowSdk extends Request {
         variables?: Omit<I.QuestionsQueryVariables, "id">
     ): IntegraflowFetch<SurveyQuestionCountableConnection | undefined> {
         return new QuestionsQuery(this._request).fetch(id, variables);
+    }
+    /**
+     * List of the survey's responses.
+     *
+     * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+     *
+     * @param variables - variables to pass into the ResponsesQuery
+     * @returns SurveyResponseCountableConnection
+     */
+    public responses(
+        variables?: I.ResponsesQueryVariables
+    ): IntegraflowFetch<SurveyResponseCountableConnection | undefined> {
+        return new ResponsesQuery(this._request).fetch(variables);
     }
     /**
      * Look up a survey by ID or slug.

@@ -1,5 +1,5 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { FormFieldType } from "@integraflow/web/src/types";
+import { FormFieldType } from "@/types";
 import BirthdayIcon from "assets/icons/studio/birthday.png";
 import BooleanIcon from "assets/icons/studio/boolean.png";
 import ContactIcon from "assets/icons/studio/contact.png";

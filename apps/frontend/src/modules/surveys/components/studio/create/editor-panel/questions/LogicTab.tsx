@@ -1,8 +1,7 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { QuestionLogic, QuestionSettings } from "@/types";
+import { QuestionLogic, QuestionSettings, LogicOperator } from "@/types";
 import { cn, generateUniqueId } from "@/utils";
-import { LogicOperator } from "@integraflow/web/src/types";
 import { useEffect, useState } from "react";
 import { TabHeader } from "./TabHeader";
 import { DefaultLogicBox } from "./attributes/LogicFields/DefaultLogicBox";

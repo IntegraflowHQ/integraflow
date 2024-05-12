@@ -202,7 +202,8 @@ export class SyncManager {
                 id: responseId,
                 surveyId,
                 userId: typeof state.user?.id === "number" ? String(state.user?.id) : state.user?.id,
-                attributes: JSON.stringify(state.user ?? {})
+                attributes: JSON.stringify(state.user ?? {}),
+                startedAt: new Date(),
             }
         });
     }

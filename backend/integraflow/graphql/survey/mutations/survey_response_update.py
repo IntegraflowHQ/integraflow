@@ -177,8 +177,4 @@ class SurveyResponseUpdate(BaseMutation):
         response.completed_at = timezone.now()
         response.save()
 
-        if response.status == models.SurveyResponse.Status.COMPLETED:
-            # Trigger a celery task to calculate survey metrics
-            pass
-
         return cls(status=True)

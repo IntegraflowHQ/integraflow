@@ -1,7 +1,7 @@
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { Button, Dialog, DialogContent, DialogTrigger } from "@/ui";
 import { generateUniqueId } from "@/utils";
-import { FormField, QuestionOption } from "@integraflow/web/src/types";
+import { FormField, QuestionOption } from "@/types";
 import type { DialogProps } from "@radix-ui/react-dialog";
 import { useEffect, useState } from "react";
 import TextButton from "./Buttons/TextButton";

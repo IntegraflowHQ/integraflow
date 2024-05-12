@@ -1,6 +1,5 @@
 import { SurveyQuestionCreateInput, SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { QuestionOption, QuestionSettings } from "@/types";
-import { FormFieldType } from "@integraflow/web/src/types";
+import { FormFieldType, QuestionOption, QuestionSettings } from "@/types";
 import { generateUniqueId } from "..";
 
 const CSATOptions = ["Very unsatisfied", "Unsatisfied", "Neutral", "Satisfied", "Very satisfied"];

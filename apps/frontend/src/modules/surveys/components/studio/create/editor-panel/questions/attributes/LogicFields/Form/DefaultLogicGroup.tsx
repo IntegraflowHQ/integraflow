@@ -1,8 +1,7 @@
 import MinusIcon from "@/assets/icons/studio/MinusIcon";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { FormLogicGroup, QuestionLogic } from "@/types";
+import { FormLogicGroup, QuestionLogic, LogicOperator } from "@/types";
 import { changeableOperator, conditionOptions, logicValuesOptions } from "@/utils/question";
-import { LogicOperator } from "@integraflow/web/src/types";
 import { MultiValue, SingleValue } from "react-select";
 import { Option, ReactSelect } from "../../ReactSelect";
 
@@ -69,7 +68,7 @@ export const LogicGroup = ({ group, formLogicValues, setFormLogicValues, setIsCr
                     <div>If</div>
                     <div className="w-[330px]">
                         <ReactSelect
-                            shouldLogicalOperatorChange={changeableOperator(question?.type!)}
+                            shouldLogicalOperatorChange={changeableOperator(question!.type!)}
                             onOperatorChange={(value) => {
                                 handleUpdateCondition(value);
                             }}
@@ -92,7 +91,7 @@ export const LogicGroup = ({ group, formLogicValues, setFormLogicValues, setIsCr
                         <p></p>
                         <div className="w-[330px]">
                             <ReactSelect
-                                options={conditionOptions(question?.type!)}
+                                options={conditionOptions(question!.type)}
                                 onchange={(value) => {
                                     handleUpdateCondition(value);
                                 }}

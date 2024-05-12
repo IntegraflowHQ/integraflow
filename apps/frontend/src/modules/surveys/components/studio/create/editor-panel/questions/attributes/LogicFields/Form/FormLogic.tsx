@@ -1,9 +1,8 @@
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { QuestionLogic } from "@/types";
+import { LogicOperator, QuestionLogic } from "@/types";
 import { cn, generateUniqueId } from "@/utils";
 import { destinationOptions } from "@/utils/question";
-import { LogicOperator } from "@integraflow/web/src/types";
 import { PlusIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { MultiValue, SingleValue } from "react-select";

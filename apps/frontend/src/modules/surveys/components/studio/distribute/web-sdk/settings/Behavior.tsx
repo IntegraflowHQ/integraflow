@@ -1,13 +1,12 @@
 import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import { Preview } from "@/modules/surveys/components/studio/create/preview-panel";
 import useChannels from "@/modules/surveys/hooks/useChannels";
-import { BackgroundOverLayType, ChannelSettings, WebChannelAccordionProps } from "@/types";
+import { BackgroundOverLayType, ChannelSettings, WebChannelAccordionProps, PlacementType } from "@/types";
 import { DatePicker, NumberInput, Switch } from "@/ui";
 import { BottomLeft, BottomRight, Center, TopLeft, TopRight } from "@/ui/icons";
 import { cn } from "@/utils";
 import { logDebug } from "@/utils/log";
 import { toast } from "@/utils/toast";
-import { PlacementType } from "@integraflow/web/src/types";
 import { addDays, subDays } from "date-fns";
 import { Ban, Moon, Sun } from "lucide-react";
 import { useEffect } from "react";

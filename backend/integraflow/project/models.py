@@ -2,8 +2,9 @@ import pytz
 from typing import TYPE_CHECKING, Any, Optional, cast
 
 from django.core.validators import MinLengthValidator
-from django.db import IntegrityError, models
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.db import IntegrityError, models
+from django.dispatch.dispatcher import receiver
 
 from integraflow.core.models import LowercaseSlugField, UUIDModel
 from integraflow.core.utils import (
@@ -123,6 +124,21 @@ class Project(UUIDModel):
     __repr__ = sane_repr("name", "api_token")  # type: ignore
 
 
+@receiver(models.signals.post_save, sender=Project)
+def populate_initial_attributes(
+    sender,
+    instance: Project,
+    created: bool,
+    **kwargs
+):
+    from integraflow.event.tasks import create_property_definitions
+
+    if created:
+        create_property_definitions.delay(
+            project_id=instance.pk
+        )
+
+
 class ProjectMembershipManager(models.Manager):
     def create_membership(self, **kwargs):
         from integraflow.organization.models import OrganizationMembership
@@ -142,7 +158,7 @@ class ProjectMembershipManager(models.Manager):
         try:
             parent_membership: OrganizationMembership = (
                 OrganizationMembership.objects.get(
-                    organization_id=project.organization_id,
+                    organization_id=project.organization_id,  # type: ignore
                     user__pk=user.pk,
                     user__is_active=True,
                 )

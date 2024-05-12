@@ -6,7 +6,7 @@ import { Button } from "@/ui";
 import { cn } from "@/utils";
 import { getDefaultValues } from "@/utils/question/defaultOptions";
 import { questionTypes } from "@/utils/survey";
-import { CTAType } from "@integraflow/web/src/types";
+import { CTAType } from "@/types";
 import { PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useScrollToBottom } from "react-scroll-to-bottom";

@@ -485,6 +485,10 @@ type EventDefinition implements Node @doc(category: "Events") {
     Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
     """
     project: Project!
+    """
+    The volume of events in the last 30 rolling days
+    """
+    volume: Int!
 }
 
 type EventDefinitionCountableConnection @doc(category: "Events") {
@@ -538,6 +542,11 @@ enum EventErrorCode {
     INVALID
 }
 
+input EventFilterInput @doc(category: "Events") {
+    event: String
+    events: [String!]
+}
+
 """
 Represents an event property.
 """
@@ -584,6 +593,28 @@ type EventPropertyCountableEdge @doc(category: "Events") {
     The item at the end of the edge.
     """
     node: EventProperty!
+}
+
+"""
+Represents an event property with definition.
+"""
+type EventPropertyWithDefinition @doc(category: "Events") {
+    """
+    The name of the event
+    """
+    event: String!
+    """
+    Whether property accepts a numerical value
+    """
+    isNumerical: Boolean!
+    """
+    The property of the event
+    """
+    property: String!
+    """
+    The property type
+    """
+    propertyType: PropertyTypeEnum!
 }
 
 """
@@ -711,6 +742,17 @@ type Mutation {
         survey: OnboardingCustomerSurvey
     ): OrganizationCreate @doc(category: "Organizations")
     """
+    Creates a new organization invite.
+
+    Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    """
+    organizationInviteCreate(
+        """
+        The organization invite object to create.
+        """
+        input: OrganizationInviteCreateInput!
+    ): OrganizationInviteCreate @doc(category: "Organizations")
+    """
     Deletes an organization invite.
 
     Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
@@ -738,6 +780,54 @@ type Mutation {
         """
         id: ID!
     ): OrganizationInviteResend @doc(category: "Organizations")
+    """
+    Joins an organization
+
+    Requires one of the following permissions: AUTHENTICATED_USER.
+    """
+    organizationJoin(
+        """
+        Organization details for the new organization.
+        """
+        input: OrganizationJoinInput!
+    ): OrganizationJoin @doc(category: "Organizations")
+    """
+    Leaves an organization.
+
+    Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    """
+    organizationLeave(
+        """
+        ID of the organization to leave.
+        """
+        id: ID!
+    ): OrganizationLeave @doc(category: "Organizations")
+    """
+    Deletes a member from an organization.
+
+    Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+    """
+    organizationMemberLeave(
+        """
+        ID of the member to leave an organization.
+        """
+        id: ID!
+    ): OrganizationMemberLeave @doc(category: "Organizations")
+    """
+    Updates an organization member.
+
+    Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+    """
+    organizationMemberUpdate(
+        """
+        ID of the member to update.
+        """
+        id: ID!
+        """
+        A partial object to update the organization member with.
+        """
+        input: OrganizationMemberUpdateInput!
+    ): OrganizationMemberUpdate @doc(category: "Organizations")
     """
     Updates an organization.
 
@@ -1248,6 +1338,36 @@ type OrganizationInviteCountableEdge @doc(category: "Organizations") {
 }
 
 """
+Creates a new organization invite.
+
+Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+"""
+type OrganizationInviteCreate @doc(category: "Organizations") {
+    errors: [OrganizationError!]!
+    organizationErrors: [OrganizationError!]!
+    organizationInvite: OrganizationInvite
+}
+
+input OrganizationInviteCreateInput @doc(category: "Organizations") {
+    """
+    The email of the invitee.
+    """
+    email: String!
+    """
+    The identifier in UUID v4 format. If none is provided, the backend will generate one.
+    """
+    id: UUID
+    """
+    The message to send to the invitee.
+    """
+    message: String
+    """
+    What member role the invite should grant.
+    """
+    role: RoleLevel
+}
+
+"""
 Deletes an organization invite.
 
 Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
@@ -1372,6 +1492,38 @@ type OrganizationInviteResend @doc(category: "Organizations") {
 }
 
 """
+Joins an organization
+
+Requires one of the following permissions: AUTHENTICATED_USER.
+"""
+type OrganizationJoin @doc(category: "Organizations") {
+    errors: [OrganizationError!]!
+    organizationErrors: [OrganizationError!]!
+    """
+    A user that has access to the the resources of an organization.
+    """
+    user: AuthUser!
+}
+
+input OrganizationJoinInput @doc(category: "Organizations") {
+    """
+    An invite link for an organization.
+    """
+    inviteLink: String!
+}
+
+"""
+Leaves an organization.
+
+Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+"""
+type OrganizationLeave @doc(category: "Organizations") {
+    errors: [OrganizationError!]!
+    organization: Organization
+    organizationErrors: [OrganizationError!]!
+}
+
+"""
 Represents an organization member.
 """
 type OrganizationMember implements Node @doc(category: "Organizations") {
@@ -1427,6 +1579,35 @@ type OrganizationMemberCountableEdge @doc(category: "Organizations") {
     The item at the end of the edge.
     """
     node: OrganizationMember!
+}
+
+"""
+Deletes a member from an organization.
+
+Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+"""
+type OrganizationMemberLeave @doc(category: "Organizations") {
+    errors: [OrganizationError!]!
+    organizationErrors: [OrganizationError!]!
+    organizationMembership: OrganizationMember
+}
+
+"""
+Updates an organization member.
+
+Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+"""
+type OrganizationMemberUpdate @doc(category: "Organizations") {
+    errors: [OrganizationError!]!
+    organizationErrors: [OrganizationError!]!
+    organizationMembership: OrganizationMember
+}
+
+input OrganizationMemberUpdateInput @doc(category: "Organizations") {
+    """
+    What member role to grant.
+    """
+    role: RoleLevel
 }
 
 """
@@ -2040,6 +2221,10 @@ type Query {
         """
         before: String
         """
+        Filter events by the provided values.
+        """
+        filters: EventFilterInput
+        """
         Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
         """
         first: Int
@@ -2086,6 +2271,17 @@ type Query {
         """
         last: Int
     ): PersonCountableConnection @doc(category: "Events")
+    """
+    List of event's properties.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    propertiesWithDefinitions(
+        """
+        Filter properties by event. If not provided, all properties for the project will be returned.
+        """
+        event: String
+    ): [EventPropertyWithDefinition!] @doc(category: "Events")
     """
     List of the property definitions.
 
@@ -2140,6 +2336,37 @@ type Query {
         """
         last: Int
     ): SurveyQuestionCountableConnection @doc(category: "Surveys")
+    """
+    List of the survey's responses.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    responses(
+        """
+        Return the elements in the list that come after the specified cursor.
+        """
+        after: String
+        """
+        Return the elements in the list that come before the specified cursor.
+        """
+        before: String
+        """
+        Filtering options for responses.
+        """
+        filter: SurveyResponseFilterInput
+        """
+        Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        first: Int
+        """
+        The ID of the survey.
+        """
+        id: ID
+        """
+        Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+        """
+        last: Int
+    ): SurveyResponseCountableConnection @doc(category: "Surveys")
     """
     Look up a survey by ID or slug.
 
@@ -2334,6 +2561,10 @@ type Survey implements Node @doc(category: "Surveys") {
     Slug of the survey.
     """
     slug: String!
+    """
+    The statistics of the survey.
+    """
+    stats: JSONString
     """
     The status of the survey
     """
@@ -2828,6 +3059,82 @@ input SurveyQuestionUpdateInput @doc(category: "Surveys") {
 }
 
 """
+Represents a survey response.
+"""
+type SurveyResponse implements Node @doc(category: "Surveys") {
+    """
+    The time the survey completed.
+    """
+    completedAt: DateTime
+    """
+    The time at which the response was created.
+    """
+    createdAt: DateTime!
+    """
+    The ID of the response.
+    """
+    id: ID!
+    """
+    The response.
+    """
+    response: JSONString!
+    """
+    The statistics of the response.
+    """
+    stats: JSONString
+    """
+    The status of the survey response
+    """
+    status: SurveyResponseStatusEnum!
+    """
+    The survey the response belongs to
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    survey: Survey
+    """
+    The time spent to complete the survey.
+    """
+    timeSpent: Float
+    """
+    The title of the response.
+    """
+    title: String!
+    """
+    The last time at which the response was updated.
+    """
+    updatedAt: DateTime!
+    """
+    The user attributes.
+    """
+    userAttributes: JSONString
+}
+
+type SurveyResponseCountableConnection @doc(category: "Surveys") {
+    edges: [SurveyResponseCountableEdge!]!
+    nodes: [SurveyResponse!]!
+    """
+    Pagination data for this connection.
+    """
+    pageInfo: PageInfo!
+    """
+    A total count of items in the collection.
+    """
+    totalCount: Int
+}
+
+type SurveyResponseCountableEdge @doc(category: "Surveys") {
+    """
+    A cursor for use in pagination.
+    """
+    cursor: String!
+    """
+    The item at the end of the edge.
+    """
+    node: SurveyResponse!
+}
+
+"""
 Creates a response to survey.
 """
 type SurveyResponseCreate @doc(category: "Surveys") {
@@ -2880,6 +3187,21 @@ input SurveyResponseCreateInput @doc(category: "Surveys") {
     The user distinct ID.
     """
     userId: ID
+}
+
+input SurveyResponseFilterInput @doc(category: "Surveys") {
+    createdAt: DateRangeInput
+    """
+    Filter by ids.
+    """
+    ids: [ID!]
+    status: SurveyResponseStatusEnum
+}
+
+enum SurveyResponseStatusEnum {
+    ARCHIVED
+    COMPLETED
+    IN_PROGRESS
 }
 
 """

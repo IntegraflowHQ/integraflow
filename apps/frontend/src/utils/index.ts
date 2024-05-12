@@ -1,8 +1,7 @@
 import { PROPERTY_FIELDS } from "@/constants";
 import { ProjectTheme, SurveyChannel, SurveyQuestion } from "@/generated/graphql";
-import { ParsedChannel, ParsedQuestion, ParsedTheme, QuestionOption } from "@/types";
+import { FilterOperator, ParsedChannel, ParsedQuestion, ParsedTheme, QuestionOption } from "@/types";
 import { DeepOmit } from "@apollo/client/utilities";
-import { FilterOperator } from "@integraflow/web/src/types";
 import { toast } from "./toast";
 
 export function cn(...classes: string[]) {

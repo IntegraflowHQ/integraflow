@@ -1,10 +1,9 @@
 import MinusIcon from "@/assets/icons/studio/MinusIcon";
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { FormLogicGroup, QuestionLogic } from "@/types";
+import { FormLogicGroup, LogicOperator, QuestionLogic } from "@/types";
 import { generateUniqueId } from "@/utils";
 import { changeableOperator, conditionOptions, logicValuesOptions } from "@/utils/question";
-import { LogicOperator } from "@integraflow/web/src/types";
 import { useCallback, useState } from "react";
 import { MultiValue, SingleValue } from "react-select";
 import { LogicOperatorBtn } from "../../LogicOperator";

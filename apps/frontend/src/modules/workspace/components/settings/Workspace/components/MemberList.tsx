@@ -43,7 +43,7 @@ export const MemberList = ({ searchValue }: Props) => {
         if (response) {
             const remainingOrganizations = organizations.filter((org) => org?.id !== response.organization?.id);
 
-            if (remainingOrganizations && remainingOrganizations[0]?.projects?.edges) {
+            if (remainingOrganizations && remainingOrganizations[0]?.projects?.edges?.length) {
                 switchWorkspace(
                     convertToAuthOrganization(remainingOrganizations[0]) as AuthOrganization,
                     remainingOrganizations[0].projects?.edges[0]?.node as Project,
