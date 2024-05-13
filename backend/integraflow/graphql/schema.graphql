@@ -150,6 +150,54 @@ type Query {
   ): BaseSurvey @doc(category: "Surveys")
 
   """
+  List of the survey's responses.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  responses(
+    """The ID of the survey."""
+    id: ID
+
+    """Filtering options for responses."""
+    filter: SurveyResponseFilterInput
+
+    """Return the elements in the list that come before the specified cursor."""
+    before: String
+
+    """Return the elements in the list that come after the specified cursor."""
+    after: String
+
+    """
+    Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    first: Int
+
+    """
+    Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    """
+    last: Int
+  ): SurveyResponseCountableConnection @doc(category: "Surveys")
+
+  """
+  Response insight for a survey.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  responseMetric(
+    """The ID of the survey."""
+    id: ID!
+
+    """The metric to calculate."""
+    metric: SurveyResponseMetricEnum!
+
+    """Date range for filtering responses."""
+    date: DateRangeInput
+
+    """Date range for filtering responses."""
+    previousDate: DateRangeInput
+  ): SurveyResponseMetric @doc(category: "Surveys")
+
+  """
   List of the project's themes.
   
   Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -191,6 +239,9 @@ type Query {
   Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
   """
   events(
+    """Filter events by the provided values."""
+    filters: EventFilterInput
+
     """Return the elements in the list that come before the specified cursor."""
     before: String
 
@@ -258,6 +309,18 @@ type Query {
     """
     last: Int
   ): EventPropertyCountableConnection @doc(category: "Events")
+
+  """
+  List of event's properties.
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  propertiesWithDefinitions(
+    """
+    Filter properties by event. If not provided, all properties for the project will be returned.
+    """
+    event: String
+  ): [EventPropertyWithDefinition!] @doc(category: "Events")
 
   """
   List of persons.
@@ -897,6 +960,9 @@ type Survey implements Node @doc(category: "Surveys") {
 
   """The last time at which the survey was updated."""
   updatedAt: DateTime!
+
+  """The statistics of the survey."""
+  stats: JSONString
 }
 
 enum SurveyTypeEnum {
@@ -1252,6 +1318,96 @@ type BaseProject implements Node @doc(category: "Projects") {
   apiToken: String!
 }
 
+type SurveyResponseCountableConnection @doc(category: "Surveys") {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+  edges: [SurveyResponseCountableEdge!]!
+
+  """A total count of items in the collection."""
+  totalCount: Int
+  nodes: [SurveyResponse!]!
+}
+
+type SurveyResponseCountableEdge @doc(category: "Surveys") {
+  """The item at the end of the edge."""
+  node: SurveyResponse!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+"""Represents a survey response."""
+type SurveyResponse implements Node @doc(category: "Surveys") {
+  """The ID of the response."""
+  id: ID!
+
+  """
+  The survey the response belongs to
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  survey: Survey
+
+  """The title of the response."""
+  title: String!
+
+  """The user attributes."""
+  userAttributes: JSONString
+
+  """The response."""
+  response: JSONString!
+
+  """The status of the survey response"""
+  status: SurveyResponseStatusEnum!
+
+  """The time the survey completed."""
+  completedAt: DateTime
+
+  """The time at which the response was created."""
+  createdAt: DateTime!
+
+  """The last time at which the response was updated."""
+  updatedAt: DateTime!
+
+  """The time spent to complete the survey."""
+  timeSpent: Float
+
+  """The statistics of the response."""
+  stats: JSONString
+}
+
+enum SurveyResponseStatusEnum {
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+input SurveyResponseFilterInput @doc(category: "Surveys") {
+  status: SurveyResponseStatusEnum
+  createdAt: DateRangeInput
+
+  """Filter by ids."""
+  ids: [ID!]
+}
+
+"""Represents a survey response metric (e.g. total responses, nps)."""
+type SurveyResponseMetric @doc(category: "Surveys") {
+  """The current value."""
+  current: JSONString
+
+  """The previous value."""
+  previous: JSONString
+}
+
+enum SurveyResponseMetricEnum {
+  TOTAL_RESPONSES
+  COMPLETION_RATE
+  AVERAGE_TIME
+  NPS
+  CSAT
+  CES
+}
+
 type ProjectThemeCountableConnection @doc(category: "Projects") {
   """Pagination data for this connection."""
   pageInfo: PageInfo!
@@ -1379,6 +1535,11 @@ type Event implements Node @doc(category: "Events") {
   createdAt: DateTime
 }
 
+input EventFilterInput @doc(category: "Events") {
+  event: String
+  events: [String!]
+}
+
 type EventDefinitionCountableConnection @doc(category: "Events") {
   """Pagination data for this connection."""
   pageInfo: PageInfo!
@@ -1411,6 +1572,9 @@ type EventDefinition implements Node @doc(category: "Events") {
 
   """The name of the event definition"""
   name: String!
+
+  """The volume of events in the last 30 rolling days"""
+  volume: Int!
 
   """The time the event was created"""
   createdAt: DateTime
@@ -1454,6 +1618,28 @@ type EventProperty implements Node @doc(category: "Events") {
 
   """The property of the event"""
   property: String!
+}
+
+"""Represents an event property with definition."""
+type EventPropertyWithDefinition @doc(category: "Events") {
+  """The name of the event"""
+  event: String!
+
+  """The property of the event"""
+  property: String!
+
+  """Whether property accepts a numerical value"""
+  isNumerical: Boolean!
+
+  """The property type"""
+  propertyType: PropertyTypeEnum!
+}
+
+enum PropertyTypeEnum {
+  Datetime
+  String
+  Numeric
+  Boolean
 }
 
 type PersonCountableConnection @doc(category: "Events") {
@@ -1551,13 +1737,6 @@ enum PropertyDefinitionTypeEnum {
   EVENT
   PERSON
   GROUP
-}
-
-enum PropertyTypeEnum {
-  Datetime
-  String
-  Numeric
-  Boolean
 }
 
 type Mutation {

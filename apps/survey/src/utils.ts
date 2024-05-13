@@ -1,7 +1,7 @@
 import { BaseSurvey, IntegraflowDocument } from "@integraflow/sdk";
 import { Audience, Question, QuestionOption, Survey, SurveySettings, Theme, Trigger } from "@integraflow/web";
 
-export const parsedSurveys = (survey?: BaseSurvey): Survey[] => {
+export const parsedSurveys = (survey?: BaseSurvey, mode?: "sdk" | "link", backgroundImage?: string): Survey[] => {
     if (!survey) {
         return [] as Survey[];
     }
@@ -41,6 +41,8 @@ export const parsedSurveys = (survey?: BaseSurvey): Survey[] => {
         close: settings.close,
         submitText: settings.submitText,
         showBranding: settings.showBranding,
+        backgroundOverlay: mode === "sdk" ? channelSettings.backgroundOverlay : "none",
+        backgroundImage: mode === "link" ? backgroundImage ?? "" : "",
     };
 
     const audience: Audience = JSON.parse(channel.conditions ?? "{}");

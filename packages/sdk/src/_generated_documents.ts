@@ -320,6 +320,8 @@ export type EventDefinition = Node & {
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
      */
     project: Project;
+    /** The volume of events in the last 30 rolling days */
+    volume: Scalars["Int"];
 };
 
 export type EventDefinitionCountableConnection = {
@@ -358,6 +360,11 @@ export enum EventErrorCode {
     Invalid = "INVALID"
 }
 
+export type EventFilterInput = {
+    event?: Maybe<Scalars["String"]>;
+    events?: Maybe<Array<Scalars["String"]>>;
+};
+
 /** Represents an event property. */
 export type EventProperty = Node & {
     __typename?: "EventProperty";
@@ -391,6 +398,19 @@ export type EventPropertyCountableEdge = {
     cursor: Scalars["String"];
     /** The item at the end of the edge. */
     node: EventProperty;
+};
+
+/** Represents an event property with definition. */
+export type EventPropertyWithDefinition = {
+    __typename?: "EventPropertyWithDefinition";
+    /** The name of the event */
+    event: Scalars["String"];
+    /** Whether property accepts a numerical value */
+    isNumerical: Scalars["Boolean"];
+    /** The property of the event */
+    property: Scalars["String"];
+    /** The property type */
+    propertyType: PropertyTypeEnum;
 };
 
 /** Finds or creates a new user account from google auth credentials. */
@@ -446,6 +466,12 @@ export type Mutation = {
      */
     organizationCreate?: Maybe<OrganizationCreate>;
     /**
+     * Creates a new organization invite.
+     *
+     * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+     */
+    organizationInviteCreate?: Maybe<OrganizationInviteCreate>;
+    /**
      * Deletes an organization invite.
      *
      * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
@@ -463,6 +489,30 @@ export type Mutation = {
      * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
      */
     organizationInviteResend?: Maybe<OrganizationInviteResend>;
+    /**
+     * Joins an organization
+     *
+     * Requires one of the following permissions: AUTHENTICATED_USER.
+     */
+    organizationJoin?: Maybe<OrganizationJoin>;
+    /**
+     * Leaves an organization.
+     *
+     * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+     */
+    organizationLeave?: Maybe<OrganizationLeave>;
+    /**
+     * Deletes a member from an organization.
+     *
+     * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+     */
+    organizationMemberLeave?: Maybe<OrganizationMemberLeave>;
+    /**
+     * Updates an organization member.
+     *
+     * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+     */
+    organizationMemberUpdate?: Maybe<OrganizationMemberUpdate>;
     /**
      * Updates an organization.
      *
@@ -586,12 +636,33 @@ export type MutationOrganizationCreateArgs = {
     survey?: Maybe<OnboardingCustomerSurvey>;
 };
 
+export type MutationOrganizationInviteCreateArgs = {
+    input: OrganizationInviteCreateInput;
+};
+
 export type MutationOrganizationInviteDeleteArgs = {
     id: Scalars["ID"];
 };
 
 export type MutationOrganizationInviteResendArgs = {
     id: Scalars["ID"];
+};
+
+export type MutationOrganizationJoinArgs = {
+    input: OrganizationJoinInput;
+};
+
+export type MutationOrganizationLeaveArgs = {
+    id: Scalars["ID"];
+};
+
+export type MutationOrganizationMemberLeaveArgs = {
+    id: Scalars["ID"];
+};
+
+export type MutationOrganizationMemberUpdateArgs = {
+    id: Scalars["ID"];
+    input: OrganizationMemberUpdateInput;
 };
 
 export type MutationOrganizationUpdateArgs = {
@@ -872,6 +943,29 @@ export type OrganizationInviteCountableEdge = {
 };
 
 /**
+ * Creates a new organization invite.
+ *
+ * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+ */
+export type OrganizationInviteCreate = {
+    __typename?: "OrganizationInviteCreate";
+    errors: Array<OrganizationError>;
+    organizationErrors: Array<OrganizationError>;
+    organizationInvite?: Maybe<OrganizationInvite>;
+};
+
+export type OrganizationInviteCreateInput = {
+    /** The email of the invitee. */
+    email: Scalars["String"];
+    /** The identifier in UUID v4 format. If none is provided, the backend will generate one. */
+    id?: Maybe<Scalars["UUID"]>;
+    /** The message to send to the invitee. */
+    message?: Maybe<Scalars["String"]>;
+    /** What member role the invite should grant. */
+    role?: Maybe<RoleLevel>;
+};
+
+/**
  * Deletes an organization invite.
  *
  * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
@@ -961,6 +1055,36 @@ export type OrganizationInviteResend = {
     organizationInvite?: Maybe<OrganizationInvite>;
 };
 
+/**
+ * Joins an organization
+ *
+ * Requires one of the following permissions: AUTHENTICATED_USER.
+ */
+export type OrganizationJoin = {
+    __typename?: "OrganizationJoin";
+    errors: Array<OrganizationError>;
+    organizationErrors: Array<OrganizationError>;
+    /** A user that has access to the the resources of an organization. */
+    user: AuthUser;
+};
+
+export type OrganizationJoinInput = {
+    /** An invite link for an organization. */
+    inviteLink: Scalars["String"];
+};
+
+/**
+ * Leaves an organization.
+ *
+ * Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+ */
+export type OrganizationLeave = {
+    __typename?: "OrganizationLeave";
+    errors: Array<OrganizationError>;
+    organization?: Maybe<Organization>;
+    organizationErrors: Array<OrganizationError>;
+};
+
 /** Represents an organization member. */
 export type OrganizationMember = Node & {
     __typename?: "OrganizationMember";
@@ -996,6 +1120,35 @@ export type OrganizationMemberCountableEdge = {
     cursor: Scalars["String"];
     /** The item at the end of the edge. */
     node: OrganizationMember;
+};
+
+/**
+ * Deletes a member from an organization.
+ *
+ * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+ */
+export type OrganizationMemberLeave = {
+    __typename?: "OrganizationMemberLeave";
+    errors: Array<OrganizationError>;
+    organizationErrors: Array<OrganizationError>;
+    organizationMembership?: Maybe<OrganizationMember>;
+};
+
+/**
+ * Updates an organization member.
+ *
+ * Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+ */
+export type OrganizationMemberUpdate = {
+    __typename?: "OrganizationMemberUpdate";
+    errors: Array<OrganizationError>;
+    organizationErrors: Array<OrganizationError>;
+    organizationMembership?: Maybe<OrganizationMember>;
+};
+
+export type OrganizationMemberUpdateInput = {
+    /** What member role to grant. */
+    role?: Maybe<RoleLevel>;
 };
 
 /**
@@ -1392,6 +1545,12 @@ export type Query = {
      */
     persons?: Maybe<PersonCountableConnection>;
     /**
+     * List of event's properties.
+     *
+     * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+     */
+    propertiesWithDefinitions?: Maybe<Array<EventPropertyWithDefinition>>;
+    /**
      * List of the property definitions.
      *
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -1403,6 +1562,12 @@ export type Query = {
      * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
      */
     questions?: Maybe<SurveyQuestionCountableConnection>;
+    /**
+     * List of the survey's responses.
+     *
+     * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+     */
+    responses?: Maybe<SurveyResponseCountableConnection>;
     /**
      * Look up a survey by ID or slug.
      *
@@ -1470,6 +1635,7 @@ export type QueryEventPropertiesArgs = {
 export type QueryEventsArgs = {
     after?: Maybe<Scalars["String"]>;
     before?: Maybe<Scalars["String"]>;
+    filters?: Maybe<EventFilterInput>;
     first?: Maybe<Scalars["Int"]>;
     last?: Maybe<Scalars["Int"]>;
 };
@@ -1485,6 +1651,10 @@ export type QueryPersonsArgs = {
     last?: Maybe<Scalars["Int"]>;
 };
 
+export type QueryPropertiesWithDefinitionsArgs = {
+    event?: Maybe<Scalars["String"]>;
+};
+
 export type QueryPropertyDefinitionsArgs = {
     after?: Maybe<Scalars["String"]>;
     before?: Maybe<Scalars["String"]>;
@@ -1498,6 +1668,15 @@ export type QueryQuestionsArgs = {
     before?: Maybe<Scalars["String"]>;
     first?: Maybe<Scalars["Int"]>;
     id: Scalars["ID"];
+    last?: Maybe<Scalars["Int"]>;
+};
+
+export type QueryResponsesArgs = {
+    after?: Maybe<Scalars["String"]>;
+    before?: Maybe<Scalars["String"]>;
+    filter?: Maybe<SurveyResponseFilterInput>;
+    first?: Maybe<Scalars["Int"]>;
+    id?: Maybe<Scalars["ID"]>;
     last?: Maybe<Scalars["Int"]>;
 };
 
@@ -1581,6 +1760,8 @@ export type Survey = Node & {
     settings?: Maybe<Scalars["JSONString"]>;
     /** Slug of the survey. */
     slug: Scalars["String"];
+    /** The statistics of the survey. */
+    stats?: Maybe<Scalars["JSONString"]>;
     /** The status of the survey */
     status: SurveyStatusEnum;
     /**
@@ -1959,6 +2140,55 @@ export type SurveyQuestionUpdateInput = {
     type?: Maybe<SurveyQuestionTypeEnum>;
 };
 
+/** Represents a survey response. */
+export type SurveyResponse = Node & {
+    __typename?: "SurveyResponse";
+    /** The time the survey completed. */
+    completedAt?: Maybe<Scalars["DateTime"]>;
+    /** The time at which the response was created. */
+    createdAt: Scalars["DateTime"];
+    /** The ID of the response. */
+    id: Scalars["ID"];
+    /** The response. */
+    response: Scalars["JSONString"];
+    /** The statistics of the response. */
+    stats?: Maybe<Scalars["JSONString"]>;
+    /** The status of the survey response */
+    status: SurveyResponseStatusEnum;
+    /**
+     * The survey the response belongs to
+     *
+     * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+     */
+    survey?: Maybe<Survey>;
+    /** The time spent to complete the survey. */
+    timeSpent?: Maybe<Scalars["Float"]>;
+    /** The title of the response. */
+    title: Scalars["String"];
+    /** The last time at which the response was updated. */
+    updatedAt: Scalars["DateTime"];
+    /** The user attributes. */
+    userAttributes?: Maybe<Scalars["JSONString"]>;
+};
+
+export type SurveyResponseCountableConnection = {
+    __typename?: "SurveyResponseCountableConnection";
+    edges: Array<SurveyResponseCountableEdge>;
+    nodes: Array<SurveyResponse>;
+    /** Pagination data for this connection. */
+    pageInfo: PageInfo;
+    /** A total count of items in the collection. */
+    totalCount?: Maybe<Scalars["Int"]>;
+};
+
+export type SurveyResponseCountableEdge = {
+    __typename?: "SurveyResponseCountableEdge";
+    /** A cursor for use in pagination. */
+    cursor: Scalars["String"];
+    /** The item at the end of the edge. */
+    node: SurveyResponse;
+};
+
 /** Creates a response to survey. */
 export type SurveyResponseCreate = {
     __typename?: "SurveyResponseCreate";
@@ -1990,6 +2220,19 @@ export type SurveyResponseCreateInput = {
     /** The user distinct ID. */
     userId?: Maybe<Scalars["ID"]>;
 };
+
+export type SurveyResponseFilterInput = {
+    createdAt?: Maybe<DateRangeInput>;
+    /** Filter by ids. */
+    ids?: Maybe<Array<Scalars["ID"]>>;
+    status?: Maybe<SurveyResponseStatusEnum>;
+};
+
+export enum SurveyResponseStatusEnum {
+    Archived = "ARCHIVED",
+    Completed = "COMPLETED",
+    InProgress = "IN_PROGRESS"
+}
 
 /** Updates a response. */
 export type SurveyResponseUpdate = {
@@ -2250,6 +2493,8 @@ type Node_SurveyChannel_Fragment = { __typename: "SurveyChannel" } & Pick<Survey
 
 type Node_SurveyQuestion_Fragment = { __typename: "SurveyQuestion" } & Pick<SurveyQuestion, "id">;
 
+type Node_SurveyResponse_Fragment = { __typename: "SurveyResponse" } & Pick<SurveyResponse, "id">;
+
 type Node_User_Fragment = { __typename: "User" } & Pick<User, "id">;
 
 export type NodeFragment =
@@ -2275,6 +2520,7 @@ export type NodeFragment =
     | Node_Survey_Fragment
     | Node_SurveyChannel_Fragment
     | Node_SurveyQuestion_Fragment
+    | Node_SurveyResponse_Fragment
     | Node_User_Fragment;
 
 export type EmailTokenUserAuthFragment = { __typename: "EmailTokenUserAuth" } & Pick<
@@ -2295,6 +2541,12 @@ export type SurveyChannelCreateFragment = { __typename: "SurveyChannelCreate" } 
     surveyChannel?: Maybe<{ __typename?: "SurveyChannel" } & SurveyChannelFragment>;
     errors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
     surveyErrors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
+};
+
+export type OrganizationInviteCreateFragment = { __typename: "OrganizationInviteCreate" } & {
+    errors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
+    organizationErrors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
+    organizationInvite?: Maybe<{ __typename?: "OrganizationInvite" } & OrganizationInviteFragment>;
 };
 
 export type ProjectCreateFragment = { __typename: "ProjectCreate" } & {
@@ -2347,6 +2599,12 @@ export type SurveyChannelDeleteFragment = { __typename: "SurveyChannelDelete" } 
     surveyErrors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
 };
 
+export type OrganizationMemberLeaveFragment = { __typename: "OrganizationMemberLeave" } & {
+    errors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
+    organizationErrors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
+    organizationMembership?: Maybe<{ __typename?: "OrganizationMember" } & OrganizationMemberFragment>;
+};
+
 export type SurveyQuestionDeleteFragment = { __typename: "SurveyQuestionDelete" } & {
     errors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
     surveyErrors: Array<{ __typename?: "SurveyError" } & SurveyErrorFragment>;
@@ -2387,6 +2645,18 @@ export type GoogleUserAuthFragment = { __typename: "GoogleUserAuth" } & Pick<
         errors: Array<{ __typename?: "UserError" } & UserErrorFragment>;
         userErrors: Array<{ __typename?: "UserError" } & UserErrorFragment>;
     };
+
+export type OrganizationJoinFragment = { __typename: "OrganizationJoin" } & {
+    user: { __typename?: "AuthUser" } & AuthUserFragment;
+    errors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
+    organizationErrors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
+};
+
+export type OrganizationLeaveFragment = { __typename: "OrganizationLeave" } & {
+    errors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
+    organization?: Maybe<{ __typename?: "Organization" } & OrganizationFragment>;
+    organizationErrors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
+};
 
 export type RefreshTokenFragment = { __typename: "RefreshToken" } & Pick<RefreshToken, "token"> & {
         errors: Array<{ __typename?: "UserError" } & UserErrorFragment>;
@@ -2449,9 +2719,23 @@ export type BaseSurveyFragment = { __typename: "BaseSurvey" } & Pick<
         theme?: Maybe<{ __typename?: "BaseProjectTheme" } & BaseProjectThemeFragment>;
     };
 
+export type SurveyResponseFragment = { __typename: "SurveyResponse" } & Pick<
+    SurveyResponse,
+    | "id"
+    | "updatedAt"
+    | "response"
+    | "stats"
+    | "status"
+    | "createdAt"
+    | "timeSpent"
+    | "completedAt"
+    | "title"
+    | "userAttributes"
+> & { survey?: Maybe<{ __typename?: "Survey" } & SurveyFragment> };
+
 export type SurveyFragment = { __typename: "Survey" } & Pick<
     Survey,
-    "reference" | "name" | "slug" | "id" | "updatedAt" | "settings" | "status" | "createdAt" | "type"
+    "reference" | "name" | "slug" | "id" | "updatedAt" | "settings" | "stats" | "status" | "createdAt" | "type"
 > & {
         project?: Maybe<{ __typename?: "Project" } & ProjectFragment>;
         theme?: Maybe<{ __typename?: "ProjectTheme" } & ProjectThemeFragment>;
@@ -2478,8 +2762,13 @@ export type AuthUserFragment = { __typename: "AuthUser" } & Pick<
 
 export type EventDefinitionFragment = { __typename: "EventDefinition" } & Pick<
     EventDefinition,
-    "id" | "name" | "createdAt" | "lastSeenAt"
+    "id" | "name" | "createdAt" | "lastSeenAt" | "volume"
 > & { project: { __typename?: "Project" } & ProjectFragment };
+
+export type EventPropertyWithDefinitionFragment = { __typename: "EventPropertyWithDefinition" } & Pick<
+    EventPropertyWithDefinition,
+    "event" | "property" | "propertyType" | "isNumerical"
+>;
 
 export type EventPropertyFragment = { __typename: "EventProperty" } & Pick<
     EventProperty,
@@ -2623,6 +2912,12 @@ export type ProjectThemeUpdateFragment = { __typename: "ProjectThemeUpdate" } & 
     projectTheme?: Maybe<{ __typename?: "ProjectTheme" } & ProjectThemeFragment>;
 };
 
+export type OrganizationMemberUpdateFragment = { __typename: "OrganizationMemberUpdate" } & {
+    errors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
+    organizationErrors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
+    organizationMembership?: Maybe<{ __typename?: "OrganizationMember" } & OrganizationMemberFragment>;
+};
+
 export type OrganizationUpdateFragment = { __typename: "OrganizationUpdate" } & {
     errors: Array<{ __typename?: "OrganizationError" } & OrganizationErrorFragment>;
     organization?: Maybe<{ __typename?: "Organization" } & OrganizationFragment>;
@@ -2740,6 +3035,14 @@ export type SurveyQuestionCountableConnectionFragment = { __typename: "SurveyQue
         nodes: Array<{ __typename?: "SurveyQuestion" } & SurveyQuestionFragment>;
     };
 
+export type SurveyResponseCountableConnectionFragment = { __typename: "SurveyResponseCountableConnection" } & Pick<
+    SurveyResponseCountableConnection,
+    "totalCount"
+> & {
+        pageInfo: { __typename?: "PageInfo" } & PageInfoFragment;
+        nodes: Array<{ __typename?: "SurveyResponse" } & SurveyResponseFragment>;
+    };
+
 export type EmailTokenUserAuthMutationVariables = Exact<{
     email: Scalars["String"];
     inviteLink?: Maybe<Scalars["String"]>;
@@ -2793,6 +3096,14 @@ export type CreateOrganizationMutation = { __typename?: "Mutation" } & {
     organizationCreate?: Maybe<{ __typename?: "OrganizationCreate" } & OrganizationCreateFragment>;
 };
 
+export type CreateOrganizationInviteMutationVariables = Exact<{
+    input: OrganizationInviteCreateInput;
+}>;
+
+export type CreateOrganizationInviteMutation = { __typename?: "Mutation" } & {
+    organizationInviteCreate?: Maybe<{ __typename?: "OrganizationInviteCreate" } & OrganizationInviteCreateFragment>;
+};
+
 export type DeleteOrganizationInviteMutationVariables = Exact<{
     id: Scalars["ID"];
 }>;
@@ -2815,6 +3126,39 @@ export type OrganizationInviteResendMutationVariables = Exact<{
 
 export type OrganizationInviteResendMutation = { __typename?: "Mutation" } & {
     organizationInviteResend?: Maybe<{ __typename?: "OrganizationInviteResend" } & OrganizationInviteResendFragment>;
+};
+
+export type JoinOrganizationMutationVariables = Exact<{
+    input: OrganizationJoinInput;
+}>;
+
+export type JoinOrganizationMutation = { __typename?: "Mutation" } & {
+    organizationJoin?: Maybe<{ __typename?: "OrganizationJoin" } & OrganizationJoinFragment>;
+};
+
+export type OrganizationLeaveMutationVariables = Exact<{
+    id: Scalars["ID"];
+}>;
+
+export type OrganizationLeaveMutation = { __typename?: "Mutation" } & {
+    organizationLeave?: Maybe<{ __typename?: "OrganizationLeave" } & OrganizationLeaveFragment>;
+};
+
+export type OrganizationMemberLeaveMutationVariables = Exact<{
+    id: Scalars["ID"];
+}>;
+
+export type OrganizationMemberLeaveMutation = { __typename?: "Mutation" } & {
+    organizationMemberLeave?: Maybe<{ __typename?: "OrganizationMemberLeave" } & OrganizationMemberLeaveFragment>;
+};
+
+export type UpdateOrganizationMemberMutationVariables = Exact<{
+    id: Scalars["ID"];
+    input: OrganizationMemberUpdateInput;
+}>;
+
+export type UpdateOrganizationMemberMutation = { __typename?: "Mutation" } & {
+    organizationMemberUpdate?: Maybe<{ __typename?: "OrganizationMemberUpdate" } & OrganizationMemberUpdateFragment>;
 };
 
 export type UpdateOrganizationMutationVariables = Exact<{
@@ -3036,6 +3380,7 @@ export type EventPropertiesQuery = { __typename?: "Query" } & {
 export type EventsQueryVariables = Exact<{
     after?: Maybe<Scalars["String"]>;
     before?: Maybe<Scalars["String"]>;
+    filters?: Maybe<EventFilterInput>;
     first?: Maybe<Scalars["Int"]>;
     last?: Maybe<Scalars["Int"]>;
 }>;
@@ -3059,6 +3404,16 @@ export type PersonsQueryVariables = Exact<{
 
 export type PersonsQuery = { __typename?: "Query" } & {
     persons?: Maybe<{ __typename?: "PersonCountableConnection" } & PersonCountableConnectionFragment>;
+};
+
+export type PropertiesWithDefinitionsQueryVariables = Exact<{
+    event?: Maybe<Scalars["String"]>;
+}>;
+
+export type PropertiesWithDefinitionsQuery = { __typename?: "Query" } & {
+    propertiesWithDefinitions?: Maybe<
+        Array<{ __typename?: "EventPropertyWithDefinition" } & EventPropertyWithDefinitionFragment>
+    >;
 };
 
 export type PropertyDefinitionsQueryVariables = Exact<{
@@ -3085,6 +3440,19 @@ export type QuestionsQueryVariables = Exact<{
 
 export type QuestionsQuery = { __typename?: "Query" } & {
     questions?: Maybe<{ __typename?: "SurveyQuestionCountableConnection" } & SurveyQuestionCountableConnectionFragment>;
+};
+
+export type ResponsesQueryVariables = Exact<{
+    after?: Maybe<Scalars["String"]>;
+    before?: Maybe<Scalars["String"]>;
+    filter?: Maybe<SurveyResponseFilterInput>;
+    first?: Maybe<Scalars["Int"]>;
+    id?: Maybe<Scalars["ID"]>;
+    last?: Maybe<Scalars["Int"]>;
+}>;
+
+export type ResponsesQuery = { __typename?: "Query" } & {
+    responses?: Maybe<{ __typename?: "SurveyResponseCountableConnection" } & SurveyResponseCountableConnectionFragment>;
 };
 
 export type SurveyQueryVariables = Exact<{
@@ -3645,6 +4013,7 @@ export const SurveyFragmentDoc = ({
                         }
                     },
                     { kind: "Field", name: { kind: "Name", value: "settings" } },
+                    { kind: "Field", name: { kind: "Name", value: "stats" } },
                     { kind: "Field", name: { kind: "Name", value: "status" } },
                     {
                         kind: "Field",
@@ -3760,6 +4129,126 @@ export const SurveyChannelCreateFragmentDoc = ({
         }
     ]
 } as unknown) as DocumentNode<SurveyChannelCreateFragment, unknown>;
+export const OrganizationErrorFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "OrganizationError" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationError" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "field" } },
+                    { kind: "Field", name: { kind: "Name", value: "code" } },
+                    { kind: "Field", name: { kind: "Name", value: "message" } }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<OrganizationErrorFragment, unknown>;
+export const OrganizationFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "Organization" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "Organization" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "memberCount" } },
+                    { kind: "Field", name: { kind: "Name", value: "name" } },
+                    { kind: "Field", name: { kind: "Name", value: "slug" } },
+                    { kind: "Field", name: { kind: "Name", value: "id" } }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<OrganizationFragment, unknown>;
+export const OrganizationInviteFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "OrganizationInvite" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationInvite" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "firstName" } },
+                    { kind: "Field", name: { kind: "Name", value: "expired" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "organization" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Organization" } }]
+                        }
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "email" } },
+                    { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
+                    { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "role" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "inviter" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "User" } }]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<OrganizationInviteFragment, unknown>;
+export const OrganizationInviteCreateFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "OrganizationInviteCreate" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationInviteCreate" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "errors" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "organizationErrors" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "organizationInvite" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationInvite" } }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<OrganizationInviteCreateFragment, unknown>;
 export const ProjectErrorFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -4007,25 +4496,6 @@ export const SurveyResponseCreateFragmentDoc = ({
         }
     ]
 } as unknown) as DocumentNode<SurveyResponseCreateFragment, unknown>;
-export const OrganizationErrorFragmentDoc = ({
-    kind: "Document",
-    definitions: [
-        {
-            kind: "FragmentDefinition",
-            name: { kind: "Name", value: "OrganizationError" },
-            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationError" } },
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
-                    { kind: "Field", name: { kind: "Name", value: "field" } },
-                    { kind: "Field", name: { kind: "Name", value: "code" } },
-                    { kind: "Field", name: { kind: "Name", value: "message" } }
-                ]
-            }
-        }
-    ]
-} as unknown) as DocumentNode<OrganizationErrorFragment, unknown>;
 export const OrganizationCreateFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -4146,6 +4616,71 @@ export const SurveyChannelDeleteFragmentDoc = ({
         }
     ]
 } as unknown) as DocumentNode<SurveyChannelDeleteFragment, unknown>;
+export const OrganizationMemberFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "OrganizationMember" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationMember" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "email" } },
+                    { kind: "Field", name: { kind: "Name", value: "lastName" } },
+                    { kind: "Field", name: { kind: "Name", value: "firstName" } },
+                    { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
+                    { kind: "Field", name: { kind: "Name", value: "role" } },
+                    { kind: "Field", name: { kind: "Name", value: "createdAt" } }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<OrganizationMemberFragment, unknown>;
+export const OrganizationMemberLeaveFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "OrganizationMemberLeave" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationMemberLeave" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "errors" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "organizationErrors" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "organizationMembership" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationMember" } }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<OrganizationMemberLeaveFragment, unknown>;
 export const SurveyQuestionDeleteFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -4266,65 +4801,6 @@ export const ProjectThemeDeleteFragmentDoc = ({
         }
     ]
 } as unknown) as DocumentNode<ProjectThemeDeleteFragment, unknown>;
-export const OrganizationFragmentDoc = ({
-    kind: "Document",
-    definitions: [
-        {
-            kind: "FragmentDefinition",
-            name: { kind: "Name", value: "Organization" },
-            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "Organization" } },
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
-                    { kind: "Field", name: { kind: "Name", value: "memberCount" } },
-                    { kind: "Field", name: { kind: "Name", value: "name" } },
-                    { kind: "Field", name: { kind: "Name", value: "slug" } },
-                    { kind: "Field", name: { kind: "Name", value: "id" } }
-                ]
-            }
-        }
-    ]
-} as unknown) as DocumentNode<OrganizationFragment, unknown>;
-export const OrganizationInviteFragmentDoc = ({
-    kind: "Document",
-    definitions: [
-        {
-            kind: "FragmentDefinition",
-            name: { kind: "Name", value: "OrganizationInvite" },
-            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationInvite" } },
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
-                    { kind: "Field", name: { kind: "Name", value: "firstName" } },
-                    { kind: "Field", name: { kind: "Name", value: "expired" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "organization" },
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Organization" } }]
-                        }
-                    },
-                    { kind: "Field", name: { kind: "Name", value: "email" } },
-                    { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
-                    { kind: "Field", name: { kind: "Name", value: "createdAt" } },
-                    { kind: "Field", name: { kind: "Name", value: "id" } },
-                    { kind: "Field", name: { kind: "Name", value: "role" } },
-                    {
-                        kind: "Field",
-                        name: { kind: "Name", value: "inviter" },
-                        selectionSet: {
-                            kind: "SelectionSet",
-                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "User" } }]
-                        }
-                    }
-                ]
-            }
-        }
-    ]
-} as unknown) as DocumentNode<OrganizationInviteFragment, unknown>;
 export const OrganizationInviteDeleteFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -4445,6 +4921,86 @@ export const GoogleUserAuthFragmentDoc = ({
         }
     ]
 } as unknown) as DocumentNode<GoogleUserAuthFragment, unknown>;
+export const OrganizationJoinFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "OrganizationJoin" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationJoin" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "user" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "AuthUser" } }]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "errors" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "organizationErrors" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<OrganizationJoinFragment, unknown>;
+export const OrganizationLeaveFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "OrganizationLeave" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationLeave" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "errors" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "organization" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Organization" } }]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "organizationErrors" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<OrganizationLeaveFragment, unknown>;
 export const RefreshTokenFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -4478,6 +5034,26 @@ export const RefreshTokenFragmentDoc = ({
         }
     ]
 } as unknown) as DocumentNode<RefreshTokenFragment, unknown>;
+export const EventPropertyWithDefinitionFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "EventPropertyWithDefinition" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "EventPropertyWithDefinition" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "event" } },
+                    { kind: "Field", name: { kind: "Name", value: "property" } },
+                    { kind: "Field", name: { kind: "Name", value: "propertyType" } },
+                    { kind: "Field", name: { kind: "Name", value: "isNumerical" } }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<EventPropertyWithDefinitionFragment, unknown>;
 export const OrganizationInviteResendFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -4891,6 +5467,48 @@ export const ProjectThemeUpdateFragmentDoc = ({
         }
     ]
 } as unknown) as DocumentNode<ProjectThemeUpdateFragment, unknown>;
+export const OrganizationMemberUpdateFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "OrganizationMemberUpdate" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationMemberUpdate" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "errors" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "organizationErrors" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationError" } }]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "organizationMembership" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationMember" } }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<OrganizationMemberUpdateFragment, unknown>;
 export const OrganizationUpdateFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -5231,7 +5849,8 @@ export const EventDefinitionFragmentDoc = ({
                         }
                     },
                     { kind: "Field", name: { kind: "Name", value: "createdAt" } },
-                    { kind: "Field", name: { kind: "Name", value: "lastSeenAt" } }
+                    { kind: "Field", name: { kind: "Name", value: "lastSeenAt" } },
+                    { kind: "Field", name: { kind: "Name", value: "volume" } }
                 ]
             }
         }
@@ -5401,29 +6020,6 @@ export const OrganizationInviteCountableConnectionFragmentDoc = ({
         }
     ]
 } as unknown) as DocumentNode<OrganizationInviteCountableConnectionFragment, unknown>;
-export const OrganizationMemberFragmentDoc = ({
-    kind: "Document",
-    definitions: [
-        {
-            kind: "FragmentDefinition",
-            name: { kind: "Name", value: "OrganizationMember" },
-            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "OrganizationMember" } },
-            selectionSet: {
-                kind: "SelectionSet",
-                selections: [
-                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
-                    { kind: "Field", name: { kind: "Name", value: "id" } },
-                    { kind: "Field", name: { kind: "Name", value: "email" } },
-                    { kind: "Field", name: { kind: "Name", value: "lastName" } },
-                    { kind: "Field", name: { kind: "Name", value: "firstName" } },
-                    { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
-                    { kind: "Field", name: { kind: "Name", value: "role" } },
-                    { kind: "Field", name: { kind: "Name", value: "createdAt" } }
-                ]
-            }
-        }
-    ]
-} as unknown) as DocumentNode<OrganizationMemberFragment, unknown>;
 export const OrganizationMemberCountableConnectionFragmentDoc = ({
     kind: "Document",
     definitions: [
@@ -5757,6 +6353,73 @@ export const SurveyQuestionCountableConnectionFragmentDoc = ({
         }
     ]
 } as unknown) as DocumentNode<SurveyQuestionCountableConnectionFragment, unknown>;
+export const SurveyResponseFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "SurveyResponse" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyResponse" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "id" } },
+                    { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
+                    { kind: "Field", name: { kind: "Name", value: "response" } },
+                    { kind: "Field", name: { kind: "Name", value: "stats" } },
+                    { kind: "Field", name: { kind: "Name", value: "status" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "survey" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "Survey" } }]
+                        }
+                    },
+                    { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                    { kind: "Field", name: { kind: "Name", value: "timeSpent" } },
+                    { kind: "Field", name: { kind: "Name", value: "completedAt" } },
+                    { kind: "Field", name: { kind: "Name", value: "title" } },
+                    { kind: "Field", name: { kind: "Name", value: "userAttributes" } }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<SurveyResponseFragment, unknown>;
+export const SurveyResponseCountableConnectionFragmentDoc = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "FragmentDefinition",
+            name: { kind: "Name", value: "SurveyResponseCountableConnection" },
+            typeCondition: { kind: "NamedType", name: { kind: "Name", value: "SurveyResponseCountableConnection" } },
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    { kind: "Field", name: { kind: "Name", value: "__typename" } },
+                    { kind: "Field", name: { kind: "Name", value: "totalCount" } },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "pageInfo" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "PageInfo" } }]
+                        }
+                    },
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "nodes" },
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "SurveyResponse" } }]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+} as unknown) as DocumentNode<SurveyResponseCountableConnectionFragment, unknown>;
 export const EmailTokenUserAuthDocument = ({
     kind: "Document",
     definitions: [
@@ -6071,6 +6734,55 @@ export const CreateOrganizationDocument = ({
         ...OrganizationErrorFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<CreateOrganizationMutation, CreateOrganizationMutationVariables>;
+export const CreateOrganizationInviteDocument = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "createOrganizationInvite" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "OrganizationInviteCreateInput" } }
+                    }
+                }
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "organizationInviteCreate" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "input" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
+                            }
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationInviteCreate" } }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        ...OrganizationInviteCreateFragmentDoc.definitions,
+        ...OrganizationErrorFragmentDoc.definitions,
+        ...OrganizationInviteFragmentDoc.definitions,
+        ...OrganizationFragmentDoc.definitions,
+        ...UserFragmentDoc.definitions,
+        ...AuthOrganizationFragmentDoc.definitions,
+        ...ProjectFragmentDoc.definitions
+    ]
+} as unknown) as DocumentNode<CreateOrganizationInviteMutation, CreateOrganizationInviteMutationVariables>;
 export const DeleteOrganizationInviteDocument = ({
     kind: "Document",
     definitions: [
@@ -6190,6 +6902,188 @@ export const OrganizationInviteResendDocument = ({
         ...ProjectFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<OrganizationInviteResendMutation, OrganizationInviteResendMutationVariables>;
+export const JoinOrganizationDocument = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "joinOrganization" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "OrganizationJoinInput" } }
+                    }
+                }
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "organizationJoin" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "input" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
+                            }
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationJoin" } }]
+                        }
+                    }
+                ]
+            }
+        },
+        ...OrganizationJoinFragmentDoc.definitions,
+        ...AuthUserFragmentDoc.definitions,
+        ...AuthOrganizationFragmentDoc.definitions,
+        ...ProjectFragmentDoc.definitions,
+        ...OrganizationErrorFragmentDoc.definitions
+    ]
+} as unknown) as DocumentNode<JoinOrganizationMutation, JoinOrganizationMutationVariables>;
+export const OrganizationLeaveDocument = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "organizationLeave" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "ID" } } }
+                }
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "organizationLeave" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
+                            }
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [{ kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationLeave" } }]
+                        }
+                    }
+                ]
+            }
+        },
+        ...OrganizationLeaveFragmentDoc.definitions,
+        ...OrganizationErrorFragmentDoc.definitions,
+        ...OrganizationFragmentDoc.definitions
+    ]
+} as unknown) as DocumentNode<OrganizationLeaveMutation, OrganizationLeaveMutationVariables>;
+export const OrganizationMemberLeaveDocument = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "organizationMemberLeave" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "ID" } } }
+                }
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "organizationMemberLeave" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
+                            }
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationMemberLeave" } }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        ...OrganizationMemberLeaveFragmentDoc.definitions,
+        ...OrganizationErrorFragmentDoc.definitions,
+        ...OrganizationMemberFragmentDoc.definitions
+    ]
+} as unknown) as DocumentNode<OrganizationMemberLeaveMutation, OrganizationMemberLeaveMutationVariables>;
+export const UpdateOrganizationMemberDocument = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "mutation",
+            name: { kind: "Name", value: "updateOrganizationMember" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NonNullType", type: { kind: "NamedType", name: { kind: "Name", value: "ID" } } }
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "input" } },
+                    type: {
+                        kind: "NonNullType",
+                        type: { kind: "NamedType", name: { kind: "Name", value: "OrganizationMemberUpdateInput" } }
+                    }
+                }
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "organizationMemberUpdate" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "input" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "input" } }
+                            }
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "OrganizationMemberUpdate" } }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        ...OrganizationMemberUpdateFragmentDoc.definitions,
+        ...OrganizationErrorFragmentDoc.definitions,
+        ...OrganizationMemberFragmentDoc.definitions
+    ]
+} as unknown) as DocumentNode<UpdateOrganizationMemberMutation, UpdateOrganizationMemberMutationVariables>;
 export const UpdateOrganizationDocument = ({
     kind: "Document",
     definitions: [
@@ -7525,6 +8419,11 @@ export const EventsDocument = ({
                 },
                 {
                     kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "filters" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "EventFilterInput" } }
+                },
+                {
+                    kind: "VariableDefinition",
                     variable: { kind: "Variable", name: { kind: "Name", value: "first" } },
                     type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
                 },
@@ -7550,6 +8449,11 @@ export const EventsDocument = ({
                                 kind: "Argument",
                                 name: { kind: "Name", value: "before" },
                                 value: { kind: "Variable", name: { kind: "Name", value: "before" } }
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "filters" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "filters" } }
                             },
                             {
                                 kind: "Argument",
@@ -7679,6 +8583,46 @@ export const PersonsDocument = ({
         ...AuthOrganizationFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<PersonsQuery, PersonsQueryVariables>;
+export const PropertiesWithDefinitionsDocument = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "propertiesWithDefinitions" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "event" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
+                }
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "propertiesWithDefinitions" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "event" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "event" } }
+                            }
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                { kind: "FragmentSpread", name: { kind: "Name", value: "EventPropertyWithDefinition" } }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        ...EventPropertyWithDefinitionFragmentDoc.definitions
+    ]
+} as unknown) as DocumentNode<PropertiesWithDefinitionsQuery, PropertiesWithDefinitionsQueryVariables>;
 export const PropertyDefinitionsDocument = ({
     kind: "Document",
     definitions: [
@@ -7856,6 +8800,106 @@ export const QuestionsDocument = ({
         ...UserFragmentDoc.definitions
     ]
 } as unknown) as DocumentNode<QuestionsQuery, QuestionsQueryVariables>;
+export const ResponsesDocument = ({
+    kind: "Document",
+    definitions: [
+        {
+            kind: "OperationDefinition",
+            operation: "query",
+            name: { kind: "Name", value: "responses" },
+            variableDefinitions: [
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "after" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "before" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "String" } }
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "filter" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "SurveyResponseFilterInput" } }
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "first" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "ID" } }
+                },
+                {
+                    kind: "VariableDefinition",
+                    variable: { kind: "Variable", name: { kind: "Name", value: "last" } },
+                    type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
+                }
+            ],
+            selectionSet: {
+                kind: "SelectionSet",
+                selections: [
+                    {
+                        kind: "Field",
+                        name: { kind: "Name", value: "responses" },
+                        arguments: [
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "after" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "after" } }
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "before" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "before" } }
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "filter" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "filter" } }
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "first" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "first" } }
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "id" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "id" } }
+                            },
+                            {
+                                kind: "Argument",
+                                name: { kind: "Name", value: "last" },
+                                value: { kind: "Variable", name: { kind: "Name", value: "last" } }
+                            }
+                        ],
+                        selectionSet: {
+                            kind: "SelectionSet",
+                            selections: [
+                                {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "SurveyResponseCountableConnection" }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        ...SurveyResponseCountableConnectionFragmentDoc.definitions,
+        ...PageInfoFragmentDoc.definitions,
+        ...SurveyResponseFragmentDoc.definitions,
+        ...SurveyFragmentDoc.definitions,
+        ...ProjectFragmentDoc.definitions,
+        ...AuthOrganizationFragmentDoc.definitions,
+        ...ProjectThemeFragmentDoc.definitions,
+        ...UserFragmentDoc.definitions
+    ]
+} as unknown) as DocumentNode<ResponsesQuery, ResponsesQueryVariables>;
 export const SurveyDocument = ({
     kind: "Document",
     definitions: [

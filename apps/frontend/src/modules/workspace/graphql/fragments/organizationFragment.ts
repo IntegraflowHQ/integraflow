@@ -63,6 +63,19 @@ export const ORGANIZATION_CREATE = gql`
         }
     }
 `;
+export const ORGANIZATION_UPDATE = gql`
+    fragment OrganizationUpdateFragment on OrganizationUpdate {
+        organization {
+            ...OrganizationFragment
+        }
+        organizationErrors {
+            ...OrganizationErrorFragment
+        }
+        errors {
+            ...OrganizationErrorFragment
+        }
+    }
+`;
 
 export const ORGANIZATION_ERROR = gql`
     fragment OrganizationErrorFragment on OrganizationError {

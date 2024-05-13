@@ -4,7 +4,7 @@ import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { useOnboarding } from "@/modules/onboarding/hooks/useOnboarding";
 import { CreateNewProject } from "@/modules/projects/components/CreateNewProject";
 import { useProject } from "@/modules/projects/hooks/useProject";
-import { OrganizationInvite } from "@/modules/workspace/components/invite/OrganizationInvite";
+import { WorkspaceInvite } from "@/modules/workspace/components/invite/WorkspaceInvite";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { ROUTES } from "@/routes";
 import { Button, ProgressRadial } from "@/ui";
@@ -194,33 +194,31 @@ export const Navbar = () => {
                         {navItems.map((item) => {
                             if (item.disable) {
                                 return (
-                                    <>
-                                        <Tooltip.Provider>
-                                            <Tooltip.Root key={item.id} delayDuration={200}>
-                                                <Tooltip.Trigger className="h-9 w-full  rounded ease-in-out">
-                                                    <div className="flex w-full cursor-not-allowed items-center gap-2 overflow-x-hidden rounded bg-intg-bg-9 px-3 py-2 capitalize text-gray-500">
-                                                        {item.icon}
-                                                        {item.title}
-                                                    </div>
-                                                </Tooltip.Trigger>
+                                    <Tooltip.Provider key={item.id}>
+                                        <Tooltip.Root key={item.id} delayDuration={200}>
+                                            <Tooltip.Trigger className="h-9 w-full  rounded ease-in-out">
+                                                <div className="flex w-full cursor-not-allowed items-center gap-2 overflow-x-hidden rounded bg-intg-bg-9 px-3 py-2 capitalize text-gray-500">
+                                                    {item.icon}
+                                                    {item.title}
+                                                </div>
+                                            </Tooltip.Trigger>
 
-                                                <Tooltip.Portal>
-                                                    <Tooltip.Content
-                                                        side="right"
-                                                        align="center"
-                                                        className="rounded border border-intg-bg-10 bg-intg-bg-9 px-2 py-3 text-xs leading-[18px] text-intg-text"
-                                                    >
-                                                        coming soon
-                                                        <Tooltip.Arrow
-                                                            width={18}
-                                                            height={16}
-                                                            className="-mt-[1px] fill-[#181325] stroke-intg-bg-10"
-                                                        />
-                                                    </Tooltip.Content>
-                                                </Tooltip.Portal>
-                                            </Tooltip.Root>
-                                        </Tooltip.Provider>
-                                    </>
+                                            <Tooltip.Portal>
+                                                <Tooltip.Content
+                                                    side="right"
+                                                    align="center"
+                                                    className="rounded border border-intg-bg-10 bg-intg-bg-9 px-2 py-3 text-xs leading-[18px] text-intg-text"
+                                                >
+                                                    coming soon
+                                                    <Tooltip.Arrow
+                                                        width={18}
+                                                        height={16}
+                                                        className="-mt-[1px] fill-[#181325] stroke-intg-bg-10"
+                                                    />
+                                                </Tooltip.Content>
+                                            </Tooltip.Portal>
+                                        </Tooltip.Root>
+                                    </Tooltip.Provider>
                                 );
                             } else {
                                 return (
@@ -252,7 +250,7 @@ export const Navbar = () => {
                             <span>Invite team</span>
                         </li>
 
-                        <OrganizationInvite
+                        <WorkspaceInvite
                             open={openOrganizationInviteModal}
                             onOpenChange={(value: boolean) => setOpenOrganizationInviteModal(value)}
                         />
@@ -266,6 +264,7 @@ export const Navbar = () => {
                     <JoinDiscord />
                 </div>
             </div>
+
             <div>
                 <div className="pb-3">
                     <hr className="border-intg-bg-4" />

@@ -213,10 +213,6 @@ class SurveyResponseCreate(BaseMutation):
                 defaults=cleaned_input
             )
 
-        if response.status == models.SurveyResponse.Status.COMPLETED:
-            # Trigger a celery task to calculate survey metrics
-            pass
-
         return cls(
             status=True,
             response_id=response.pk

@@ -1,4 +1,4 @@
-import { OrganizationInvite } from "@/modules/workspace/components/invite/OrganizationInvite";
+import { WorkspaceInvite } from "@/modules/workspace/components/invite/WorkspaceInvite";
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
 import { Button, TextInput } from "@/ui";
 import { PlusCircle, Search } from "@/ui/icons";
@@ -93,10 +93,9 @@ export const Member = () => {
                             <span>Invite team member</span>
                         </Button>
                     </div>
-                    <OrganizationInvite
+                    <WorkspaceInvite
                         open={openInviteModal}
                         onOpenChange={(value) => {
-                            console.log(value);
                             setOpenInviteModal(value);
                         }}
                     />

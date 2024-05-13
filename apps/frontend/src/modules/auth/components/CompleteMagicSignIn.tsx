@@ -7,14 +7,12 @@ import { cn } from "@/utils";
 import { toast } from "@/utils/toast";
 import CheckInbox from "assets/images/check-inbox.gif";
 
+import { EMAIL_REGEX } from "@/constants";
 import { useAuth } from "../hooks/useAuth";
-import { useRedirect } from "../hooks/useRedirect";
 
 type Inputs = {
     code: string;
 };
-
-const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export default function CompleteMagicSignIn() {
     const {
@@ -31,35 +29,19 @@ export default function CompleteMagicSignIn() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const email = searchParams.get("email") ?? "";
-    const tokenParam = searchParams.get("token");
     const [showCodeInput, setShowCodeInput] = useState(false);
     const { authenticateWithMagicLink, generateMagicLink } = useAuth();
-    const redirect = useRedirect();
     const code = watch("code");
 
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const inviteLink = urlParams.get("inviteLink") ?? undefined;
 
-    const handleAuthenticateWithMagicLink = useCallback(
-        async (email: string, token: string, inviteLink?: string) => {
-            const response = await authenticateWithMagicLink(email, token, inviteLink);
-            if (response && response.user) {
-                redirect(response.user);
-            }
-        },
-        [authenticateWithMagicLink, redirect],
-    );
-
     useEffect(() => {
         if (!email || !EMAIL_REGEX.test(email)) {
             navigate("/");
         }
-
-        if (email && tokenParam) {
-            handleAuthenticateWithMagicLink(email, tokenParam, inviteLink);
-        }
-    }, [handleAuthenticateWithMagicLink, email, inviteLink, navigate, tokenParam]);
+    }, []);
 
     useEffect(() => {
         const addDash = () => {
@@ -83,9 +65,9 @@ export default function CompleteMagicSignIn() {
                 return;
             }
 
-            await handleAuthenticateWithMagicLink(email, data.code, inviteLink);
+            await authenticateWithMagicLink(email, data.code, inviteLink);
         },
-        [handleAuthenticateWithMagicLink, email, inviteLink],
+        [authenticateWithMagicLink, email, inviteLink],
     );
 
     const onGenerateBtnClicked = useCallback(async () => {
@@ -108,42 +90,42 @@ export default function CompleteMagicSignIn() {
                     </header>
 
                     <div className="w-full px-3">
-                        <div className="flex w-full flex-col ">
+                        {!showCodeInput ? (
                             <Button
                                 text={"Enter code manually"}
                                 onClick={() => {
                                     setShowCodeInput(true);
                                 }}
                             />
+                        ) : null}
 
-                            <section
-                                className={cn(
-                                    "w-full overflow-hidden transition-all duration-300 ease-out",
-                                    !showCodeInput ? "h-[1px]" : "h-[130px] pt-3",
-                                    showCodeInput && !!errors.code?.message ? "h-[154px]" : "",
-                                )}
-                            >
-                                <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
-                                    <TextInput
-                                        type="text"
-                                        placeholder="Enter code"
-                                        {...register("code", {
-                                            required: {
-                                                value: true,
-                                                message: "Enter your code",
-                                            },
-                                            minLength: {
-                                                value: 11,
-                                                message: "Code must be 11 characters long",
-                                            },
-                                        })}
-                                        error={!!errors.code?.message}
-                                        errorMessage={errors.code?.message}
-                                    />
-                                    <Button text={"Continue"} />
-                                </form>
-                            </section>
-                        </div>
+                        <section
+                            className={cn(
+                                "w-full overflow-hidden transition-all duration-300 ease-out",
+                                !showCodeInput ? "h-[1px]" : "h-[120px] pt-0.5",
+                                showCodeInput && !!errors.code?.message ? "h-[154px]" : "",
+                            )}
+                        >
+                            <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
+                                <TextInput
+                                    type="text"
+                                    placeholder="Enter code"
+                                    {...register("code", {
+                                        required: {
+                                            value: true,
+                                            message: "Enter your code",
+                                        },
+                                        minLength: {
+                                            value: 11,
+                                            message: "Code must be 11 characters long",
+                                        },
+                                    })}
+                                    error={!!errors.code?.message}
+                                    errorMessage={errors.code?.message}
+                                />
+                                <Button text={"Continue"} />
+                            </form>
+                        </section>
 
                         <div className="w-full py-8">
                             <hr className="border border-intg-bg-4" />

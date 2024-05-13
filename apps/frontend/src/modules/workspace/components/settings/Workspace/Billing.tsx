@@ -1,10 +1,5 @@
-import { Button } from "@/ui";
-import { useState } from "react";
 import { planDetails } from "../../../utils";
-import { BillingModal } from "./components/BillingModal";
 export const Billing = () => {
-    const [openBillingModal, setOpenBillingModal] = useState(false);
-
     return (
         <div className="w-[675px] pt-10 text-intg-text-4">
             <div className="w-[515px]">
@@ -20,21 +15,20 @@ export const Billing = () => {
                 <h3 className="font-semibold">Current plan</h3>
                 <div className="space-y-6">
                     <div className="flex justify-between">
-                        <p className="justify-end self-end text-sm">
-                            You are currently on a free plan with ( Number of users)
-                        </p>
-                        <div className="">
+                        <p className="justify-end self-end text-sm">You are currently on a free plan with ()</p>
+                        {/* billing plans */}
+                        {/* <div>
                             <Button text="View plans & upgrade" size="md" onClick={() => setOpenBillingModal(true)} />
                             <BillingModal open={openBillingModal} setOpenBillingModal={setOpenBillingModal} />
-                        </div>
+                        </div> */}
                     </div>
                     <div className="space-y-6">
-                        {planDetails.map((plan) => {
+                        {planDetails.map(({ icon: Icon, ...plan }) => {
                             return (
-                                <div className="space-y-6 rounded-lg bg-intg-bg-9 p-4">
+                                <div className="space-y-6 rounded-lg bg-intg-bg-9 p-4" key={plan.title}>
                                     <div className="space-y-2 text-sm">
-                                        <div className="flex items-center">
-                                            <img src={plan.icon} alt="icon" />
+                                        <div className="flex items-center gap-2">
+                                            <Icon size={16} />
                                             <p className="font-semibold">{plan.title}</p>
                                         </div>
                                         <p className="text-sm">{plan.description}</p>

@@ -135,7 +135,7 @@ export default function Survey({
             settings={survey.settings}
             theme={survey.theme}
             maxWidth={
-                ["rating", "nps", "smiley_scale", "numerical_scale"].includes(activeQuestion.type) ? "520px" : "304px"
+                ["rating", "nps", "smiley_scale", "numerical_scale"].includes(activeQuestion.type) ? "550px" : "304px"
             }
             minWidth="304px"
             fullScreen={fullScreen}

@@ -7,6 +7,13 @@ export const ORGANIZATION_CREATE = gql`
         }
     }
 `;
+export const ORGANIZATION_UPDATE = gql`
+    mutation organizationUpdate($input: OrganizationUpdateInput!) {
+        organizationUpdate(input: $input) {
+            ...OrganizationUpdateFragment
+        }
+    }
+`;
 
 export const ORGANIZATION_LEAVE = gql`
     mutation OrganizationLeave($id: ID!) {

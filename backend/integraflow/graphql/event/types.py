@@ -5,6 +5,7 @@ from integraflow.graphql.core.connection import CountableConnection
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_EVENTS
 from integraflow.graphql.core.fields import JSONString, PermissionsField
 from integraflow.graphql.core.scalars import UUID
+from integraflow.graphql.core.types.base import BaseObjectType
 from integraflow.graphql.core.types.common import NonNullList
 from integraflow.graphql.core.types.model import ModelObjectType
 from integraflow.graphql.event.enums import (
@@ -76,6 +77,10 @@ class EventDefinition(ModelObjectType):
         description="The name of the event definition",
         required=True
     )
+    volume = graphene.Int(
+        description="The volume of events in the last 30 rolling days",
+        required=True
+    )
     created_at = graphene.DateTime(
         description="The time the event was created",
         required=False
@@ -94,6 +99,10 @@ class EventDefinition(ModelObjectType):
     @staticmethod
     def resolve_project(root: models.EventDefinition, info):
         return root.project
+
+    @staticmethod
+    def resolve_volume(root: models.EventDefinition, info):
+        return root.volume_30_day
 
 
 class EventProperty(ModelObjectType):
@@ -127,6 +136,30 @@ class EventProperty(ModelObjectType):
     @staticmethod
     def resolve_project(root: models.EventProperty, info):
         return root.project
+
+
+class EventPropertyWithDefinition(BaseObjectType):
+    event = graphene.String(
+        description="The name of the event",
+        required=True
+    )
+    property = graphene.String(
+        description="The property of the event",
+        required=True
+    )
+    is_numerical = graphene.Boolean(
+        description="Whether property accepts a numerical value",
+        required=True
+    )
+    property_type = graphene.Field(
+        PropertyTypeEnum,
+        required=True,
+        description="The property type",
+    )
+
+    class Meta:
+        description = "Represents an event property with definition."
+        doc_category = DOC_CATEGORY_EVENTS
 
 
 class Person(ModelObjectType):

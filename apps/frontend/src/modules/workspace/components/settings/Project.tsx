@@ -1,6 +1,5 @@
 import { useProject } from "@/modules/projects/hooks/useProject";
 import { Button, TextInput } from "@/ui";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { SettingsScreen } from "./SettingsScreen";
 
@@ -11,7 +10,6 @@ type ProjectData = {
 export const Project = () => {
     const { updateProject, project } = useProject();
 
-    const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const {
         register,
         handleSubmit,
@@ -23,7 +21,6 @@ export const Project = () => {
     });
 
     const onSubmit = async (formInfo: ProjectData) => {
-        console.log(formInfo);
         if (formInfo.name) {
             updateProject({
                 name: formInfo.name,
