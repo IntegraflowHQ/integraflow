@@ -4,7 +4,7 @@ import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { useOnboarding } from "@/modules/onboarding/hooks/useOnboarding";
 import { CreateNewProject } from "@/modules/projects/components/CreateNewProject";
 import { useProject } from "@/modules/projects/hooks/useProject";
-import { OrganizationInvite } from "@/modules/workspace/components/invite/OrganizationInvite";
+import { WorkspaceInvite } from "@/modules/workspace/components/invite/WorkspaceInvite";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { ROUTES } from "@/routes";
 import { Button, ProgressRadial } from "@/ui";
@@ -30,9 +30,11 @@ import {
     SettingsIcon,
     SpeakerIcon,
 } from "@/ui/icons";
+import { cn } from "@/utils";
+import * as Tooltip from "@radix-ui/react-tooltip";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export const Navbar = () => {
     const { user, switchProject } = useAuth();
@@ -42,15 +44,22 @@ export const Navbar = () => {
     const [openOrganizationInviteModal, setOpenOrganizationInviteModal] = useState(false);
     const { completionRate: onboardingCompletionRate } = useOnboarding();
 
+    const location = useLocation();
+
+    const isActive = (path: string) => {
+        return location.pathname === path;
+    };
+
     const navItems = [
         {
             id: 1,
             title: "Home",
             icon: <HomeIcon />,
-            href: ROUTES.SURVEY_LIST.replace(":orgSlug", workspace?.slug as string).replace(
+            href: ROUTES.HOME.replace(":orgSlug", workspace?.slug as string).replace(
                 ":projectSlug",
                 project?.slug as string,
             ),
+            disable: true,
         },
         {
             id: 2,
@@ -60,24 +69,27 @@ export const Navbar = () => {
                 ":projectSlug",
                 project?.slug as string,
             ),
+            disable: false,
         },
         {
             id: 3,
             title: "Events",
             icon: <CursorIcon />,
-            href: ROUTES.SURVEY_LIST.replace(":orgSlug", workspace?.slug as string).replace(
+            href: ROUTES.EVENTS.replace(":orgSlug", workspace?.slug as string).replace(
                 ":projectSlug",
                 project?.slug as string,
             ),
+            disable: false,
         },
         {
             id: 4,
             title: "Audience",
             icon: <PeopleIcon />,
-            href: ROUTES.SURVEY_LIST.replace(":orgSlug", workspace?.slug as string).replace(
+            href: ROUTES.AUDIENCE.replace(":orgSlug", workspace?.slug as string).replace(
                 ":projectSlug",
                 project?.slug as string,
             ),
+            disable: true,
         },
     ];
 
@@ -180,16 +192,48 @@ export const Navbar = () => {
                     <hr className="border-intg-bg-4" />
                     <ul className="space-y-2 py-4 text-sm text-intg-text-4">
                         {navItems.map((item) => {
-                            return (
-                                <NavLink
-                                    to={item.href}
-                                    className={({ isActive }) => (isActive ? "bg-intg-bg-8" : "")}
-                                    key={item.id}
-                                    leftIcon={item.icon}
-                                    text={item.title}
-                                    classnames="px-3 py-2"
-                                />
-                            );
+                            if (item.disable) {
+                                return (
+                                    <Tooltip.Provider key={item.id}>
+                                        <Tooltip.Root key={item.id} delayDuration={200}>
+                                            <Tooltip.Trigger className="h-9 w-full  rounded ease-in-out">
+                                                <div className="flex w-full cursor-not-allowed items-center gap-2 overflow-x-hidden rounded bg-intg-bg-9 px-3 py-2 capitalize text-gray-500">
+                                                    {item.icon}
+                                                    {item.title}
+                                                </div>
+                                            </Tooltip.Trigger>
+
+                                            <Tooltip.Portal>
+                                                <Tooltip.Content
+                                                    side="right"
+                                                    align="center"
+                                                    className="rounded border border-intg-bg-10 bg-intg-bg-9 px-2 py-3 text-xs leading-[18px] text-intg-text"
+                                                >
+                                                    coming soon
+                                                    <Tooltip.Arrow
+                                                        width={18}
+                                                        height={16}
+                                                        className="-mt-[1px] fill-[#181325] stroke-intg-bg-10"
+                                                    />
+                                                </Tooltip.Content>
+                                            </Tooltip.Portal>
+                                        </Tooltip.Root>
+                                    </Tooltip.Provider>
+                                );
+                            } else {
+                                return (
+                                    <NavLink
+                                        to={item.href}
+                                        key={item.id}
+                                        leftIcon={item.icon}
+                                        text={item.title}
+                                        classnames={cn(
+                                            isActive(item.href) ? "bg-intg-bg-5" : "",
+                                            "cursor-not-allowed px-3 py-2 hover:bg-intg-bg-8",
+                                        )}
+                                    />
+                                );
+                            }
                         })}
                     </ul>
                     <hr className="border-intg-bg-4" />
@@ -206,7 +250,7 @@ export const Navbar = () => {
                             <span>Invite team</span>
                         </li>
 
-                        <OrganizationInvite
+                        <WorkspaceInvite
                             open={openOrganizationInviteModal}
                             onOpenChange={(value: boolean) => setOpenOrganizationInviteModal(value)}
                         />
@@ -220,6 +264,7 @@ export const Navbar = () => {
                     <JoinDiscord />
                 </div>
             </div>
+
             <div>
                 <div className="pb-3">
                     <hr className="border-intg-bg-4" />

@@ -1,5 +1,5 @@
 import { cn } from "@/utils";
-import { LogicOperator } from "@integraflow/web/src/types";
+import { LogicOperator } from "@/types";
 import { useState } from "react";
 import Select, { CSSObjectWithLabel, MultiValue, MultiValueGenericProps, SingleValue } from "react-select";
 import CreatableSelect from "react-select/creatable";
@@ -20,8 +20,8 @@ type Props = {
 };
 
 export interface Option {
-    label: any;
-    value: any;
+    label: string;
+    value: string;
     id?: string;
     index?: number;
 }
@@ -63,7 +63,7 @@ export const ReactSelect = ({
     };
 
     const styles = {
-        control: (provided: any) => ({
+        control: (provided: CSSObjectWithLabel) => ({
             ...provided,
             borderRadius: "8px",
             border: "1px solid transparent",
@@ -98,7 +98,7 @@ export const ReactSelect = ({
             boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
             backgroundColor: "#181325",
         }),
-        option: (provided: CSSObjectWithLabel, state: any) => ({
+        option: (provided: CSSObjectWithLabel, state: { isSelected: boolean; }) => ({
             ...provided,
             ":hover": {
                 backgroundColor: "#272138",

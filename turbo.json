@@ -5,9 +5,12 @@
             "dependsOn": ["@integraflow/web#build"]
         },
         "@integraflow/web#build": {
-            "dependsOn": ["@integraflow/sdk#build:sdk"]
+            "dependsOn": ["@integraflow/sdk#build:sdk"],
+            "cache": false
         },
-        "@integraflow/sdk#build:sdk": {},
+        "@integraflow/sdk#build:sdk": {
+            "cache": false
+        },
         "@integraflow/sdk#generate:doc": {
             "cache": false
         },

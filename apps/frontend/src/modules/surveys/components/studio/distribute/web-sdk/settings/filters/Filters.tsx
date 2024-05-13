@@ -1,6 +1,5 @@
-import { AudienceFilter, EventFilter } from "@/types";
+import { AudienceFilter, EventFilter, LogicOperator } from "@/types";
 import { SelectInput } from "@/ui";
-import { LogicOperator } from "@integraflow/web/src/types";
 import { Fragment } from "react";
 import FilterDetails from "./FilterDetails";
 

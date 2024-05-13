@@ -21,7 +21,7 @@ from integraflow.event.models import (
 )
 from integraflow.project.models import Project
 
-from .utils import get_or_create_person, get_person
+from ..utils import get_or_create_person, get_person
 
 
 def _alias(
@@ -191,6 +191,7 @@ def store_names_and_properties(
 
         if not is_created:
             definition.last_seen_at = timezone.now()
+            definition.save()
 
         event_properties = EventProperty.objects.only("property").filter(
             project_id=project.id,

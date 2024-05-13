@@ -1,6 +1,5 @@
-import { PlusCircle } from "@/ui/icons";
-import ThankYouIcon from "assets/icons/studio/thankyou.png";
-import { PeopleIcon } from "./../../../ui/icons/PeopleIcon";
+import { CursorIcon, PeopleIcon, PlusCircle } from "@/ui/icons";
+import { BarChart } from "lucide-react";
 
 export const settingsCardInfo = [
     {
@@ -31,7 +30,7 @@ export const settingsCardInfo = [
 
 export const planDetails = [
     {
-        icon: ThankYouIcon,
+        icon: BarChart,
         title: "Survey responses Usage ",
         description:
             "Build in-app popups with freeform text responses, multiple choice, NPS, ratings, and emoji reactions. Or use the API for complete control.",
@@ -40,7 +39,7 @@ export const planDetails = [
         tag: "Free trial reached",
     },
     {
-        icon: ThankYouIcon,
+        icon: CursorIcon,
         title: "Event Usage",
         description: "Send surveys to your audience ",
         current: 250,
@@ -48,7 +47,7 @@ export const planDetails = [
         tag: "Free trial reached",
     },
     {
-        icon: ThankYouIcon,
+        icon: PeopleIcon,
         title: "Audience  Usage",
         description: "Send surveys to your audience",
         current: 250,

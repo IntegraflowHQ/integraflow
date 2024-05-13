@@ -1,19 +1,12 @@
 import { PROPERTY_FIELDS } from "@/constants";
 import { ProjectTheme, SurveyChannel, SurveyQuestionCountableEdge, User } from "@/generated/graphql";
 import { DeepOmit } from "@apollo/client/utilities";
-import {
-    Audience,
-    CTAType,
-    FilterOperator,
-    FilterValue,
-    FormFieldType,
-    ID,
-    LogicOperator,
-    PlacementType,
-    Trigger,
-} from "@integraflow/web";
 
 export type CachedViewer = DeepOmit<User, "__typename">;
+
+export type ID = string | number;
+
+export type PlacementType = "bottomLeft" | "bottomRight" | "topLeft" | "topRight" | "center";
 
 export enum CreateSurvey {
     START_FROM_SCRATCH = "start from scratch",
@@ -21,6 +14,103 @@ export enum CreateSurvey {
 }
 
 export type BackgroundOverLayType = "none" | "dark" | "light";
+export type ViewPortType = "mobile" | "desktop";
+export type PreviewMode = "link" | "sdk";
+
+export enum FormFieldType {
+    FIRST_NAME = "first_name",
+    LAST_NAME = "last_name",
+    EMAIL = "email",
+    ORGANIZATION = "organization",
+    DEPARTMENT = "department",
+    JOB_TITLE = "job_title",
+    PHONE = "phone",
+    WEBSITE = "website",
+    COUNTRY = "country",
+    ADDRESS_ONE = "address_one",
+    ADDRESS_TWO = "address_two",
+    CITY = "city",
+    STATE = "state",
+    ZIP = "zip",
+    FAX = "fax",
+    ANNUAL_REVENUE = "annual_revenue",
+    EMPLOYEES = "employees",
+    INDUSTRY = "industry",
+    CONFIRMATION = "confirmation",
+    SECURITY_INFO = "security_info",
+    COMMENT = "comment",
+}
+
+export enum FilterOperator {
+    IN = "in",
+    IS = "is",
+    IS_NOT = "is_not",
+    STARTS_WITH = "starts_with",
+    ENDS_WITH = "ends_with",
+    CONTAINS = "contains",
+    DOES_NOT_CONTAIN = "not_contain",
+    IS_UNKNOWN = "is_unknown",
+    HAS_ANY_VALUE = "any_value",
+    GREATER_THAN = "greater_than",
+    LESS_THAN = "less_than",
+    IS_TRUE = "is_true",
+    IS_FALSE = "is_false",
+}
+
+export type FilterValue = number | boolean | string | string[];
+
+export interface Audience {
+    operator: LogicOperator;
+    filters: {
+        attribute: string;
+        operator: FilterOperator;
+        value: FilterValue;
+    }[];
+}
+
+export interface Trigger {
+    delay?: number;
+    conditions?: {
+        event: string;
+        operator: LogicOperator;
+        filters?: {
+            property: string;
+            operator: FilterOperator;
+            value: FilterValue;
+        }[];
+    }[];
+}
+
+export enum LogicOperator {
+    OR = "or",
+    AND = "and",
+}
+
+export enum CTAType {
+    LINK = "link",
+    NEXT = "next",
+    CLOSE = "close",
+    HIDDEN = "hidden",
+}
+
+export type Jsonish =
+    | string
+    | number
+    | boolean
+    | null
+    | { [key: string]: Jsonish }
+    | { toJSON: () => any }
+    | Jsonish[]
+    | undefined;
+
+export interface EventProperties {
+    [key: string]: Jsonish;
+}
+
+export interface FormField extends QuestionOption {
+    type: FormFieldType;
+    required: boolean;
+}
 
 export type SurveySettings = {
     close?: boolean;
@@ -87,7 +177,7 @@ export type IntegraflowIconProps = React.SVGAttributes<SVGSVGElement> & {
 };
 
 export type QuestionOption = {
-    id: string;
+    id: number | string;
     orderNumber: number;
     label: string;
     comment?: boolean;

@@ -1,7 +1,7 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { cn, generateUniqueId, getHighestOrderNumber } from "@/utils";
-import { FormFieldType } from "@integraflow/web/src/types";
+import { FormFieldType } from "@/types";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import { AddMultipleQuestions } from "../AddMultipleQuestions";
 import { CommentButton } from "../Buttons/CommentButton";

@@ -1,4 +1,4 @@
-import { LogicOperator } from "@integraflow/web/src/types";
+import { LogicOperator } from "@/types";
 
 type Props = {
     value: LogicOperator;

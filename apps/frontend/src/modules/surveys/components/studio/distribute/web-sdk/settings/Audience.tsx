@@ -1,9 +1,8 @@
 import { useProject } from "@/modules/projects/hooks/useProject";
 import useChannels from "@/modules/surveys/hooks/useChannels";
 import { useStudioStore } from "@/modules/surveys/states/studio";
-import { EventFilter, TriggerConditionInput, WebChannelAccordionProps } from "@/types";
+import { EventFilter, TriggerConditionInput, WebChannelAccordionProps, FilterOperator, LogicOperator } from "@/types";
 import { Info } from "@/ui/icons";
-import { FilterOperator, LogicOperator } from "@integraflow/web/src/types";
 import { useState } from "react";
 import FilterDetails from "./filters/FilterDetails";
 import FilterOperators from "./filters/FilterOperators";

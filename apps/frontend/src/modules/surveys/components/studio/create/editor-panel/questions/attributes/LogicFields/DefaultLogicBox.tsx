@@ -1,7 +1,7 @@
 import MinusIcon from "@/assets/icons/studio/MinusIcon";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { LogicConditionEnum, ParsedQuestion, QuestionLogic } from "@/types";
+import { LogicConditionEnum, ParsedQuestion, QuestionLogic, LogicOperator } from "@/types";
 import {
     changeableOperator,
     conditionOptions,
@@ -9,7 +9,6 @@ import {
     getLogicOperator,
     logicValuesOptions,
 } from "@/utils/question";
-import { LogicOperator } from "@integraflow/web/src/types";
 import React, { useEffect, useState } from "react";
 import { MultiValue, SingleValue } from "react-select";
 import MinMaxSelector from "../MinMaxSelector";

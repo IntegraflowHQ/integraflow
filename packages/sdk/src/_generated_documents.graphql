@@ -56,6 +56,22 @@ fragment SurveyChannelCreate on SurveyChannelCreate {
     }
 }
 
+# Creates a new organization invite.
+#
+# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+fragment OrganizationInviteCreate on OrganizationInviteCreate {
+    __typename
+    errors {
+        ...OrganizationError
+    }
+    organizationErrors {
+        ...OrganizationError
+    }
+    organizationInvite {
+        ...OrganizationInvite
+    }
+}
+
 # Creates a new project
 fragment ProjectCreate on ProjectCreate {
     __typename
@@ -183,6 +199,22 @@ fragment SurveyChannelDelete on SurveyChannelDelete {
     }
 }
 
+# Deletes a member from an organization.
+#
+# Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+fragment OrganizationMemberLeave on OrganizationMemberLeave {
+    __typename
+    errors {
+        ...OrganizationError
+    }
+    organizationErrors {
+        ...OrganizationError
+    }
+    organizationMembership {
+        ...OrganizationMember
+    }
+}
+
 # Deletes a question.
 #
 # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -282,6 +314,39 @@ fragment GoogleUserAuth on GoogleUserAuth {
     }
     userErrors {
         ...UserError
+    }
+}
+
+# Joins an organization
+#
+# Requires one of the following permissions: AUTHENTICATED_USER.
+fragment OrganizationJoin on OrganizationJoin {
+    __typename
+    # A user that has access to the the resources of an organization.
+    user {
+        ...AuthUser
+    }
+    errors {
+        ...OrganizationError
+    }
+    organizationErrors {
+        ...OrganizationError
+    }
+}
+
+# Leaves an organization.
+#
+# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+fragment OrganizationLeave on OrganizationLeave {
+    __typename
+    errors {
+        ...OrganizationError
+    }
+    organization {
+        ...Organization
+    }
+    organizationErrors {
+        ...OrganizationError
     }
 }
 
@@ -515,6 +580,37 @@ fragment BaseSurvey on BaseSurvey {
     createdAt
 }
 
+# Represents a survey response.
+fragment SurveyResponse on SurveyResponse {
+    __typename
+    # The ID of the response.
+    id
+    # The last time at which the response was updated.
+    updatedAt
+    # The response.
+    response
+    # The statistics of the response.
+    stats
+    # The status of the survey response
+    status
+    # The survey the response belongs to
+    #
+    # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    survey {
+        ...Survey
+    }
+    # The time at which the response was created.
+    createdAt
+    # The time spent to complete the survey.
+    timeSpent
+    # The time the survey completed.
+    completedAt
+    # The title of the response.
+    title
+    # The user attributes.
+    userAttributes
+}
+
 # Represents a survey.
 fragment Survey on Survey {
     __typename
@@ -536,6 +632,8 @@ fragment Survey on Survey {
     }
     # The settings of the survey.
     settings
+    # The statistics of the survey.
+    stats
     # The status of the survey
     status
     # The theme of the survey.
@@ -648,6 +746,21 @@ fragment EventDefinition on EventDefinition {
     createdAt
     # The time the event was last seen
     lastSeenAt
+    # The volume of events in the last 30 rolling days
+    volume
+}
+
+# Represents an event property with definition.
+fragment EventPropertyWithDefinition on EventPropertyWithDefinition {
+    __typename
+    # The name of the event
+    event
+    # The property of the event
+    property
+    # The property type
+    propertyType
+    # Whether property accepts a numerical value
+    isNumerical
 }
 
 # Represents an event property.
@@ -1062,6 +1175,22 @@ fragment ProjectThemeUpdate on ProjectThemeUpdate {
     }
 }
 
+# Updates an organization member.
+#
+# Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+fragment OrganizationMemberUpdate on OrganizationMemberUpdate {
+    __typename
+    errors {
+        ...OrganizationError
+    }
+    organizationErrors {
+        ...OrganizationError
+    }
+    organizationMembership {
+        ...OrganizationMember
+    }
+}
+
 # Updates an organization.
 #
 # Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
@@ -1266,6 +1395,19 @@ fragment SurveyQuestionCountableConnection on SurveyQuestionCountableConnection 
     }
 }
 
+fragment SurveyResponseCountableConnection on SurveyResponseCountableConnection {
+    __typename
+    # A total count of items in the collection.
+    totalCount
+    # Pagination data for this connection.
+    pageInfo {
+        ...PageInfo
+    }
+    nodes {
+        ...SurveyResponse
+    }
+}
+
 # Authenticates a user account via email and authentication token.
 mutation emailTokenUserAuth(
     # The email which to login via the magic login code.
@@ -1335,6 +1477,17 @@ mutation createOrganization(
         ...OrganizationCreate
     }
 }
+# Creates a new organization invite.
+#
+# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+mutation createOrganizationInvite(
+    # The organization invite object to create.
+    $input: OrganizationInviteCreateInput!
+) {
+    organizationInviteCreate(input: $input) {
+        ...OrganizationInviteCreate
+    }
+}
 # Deletes an organization invite.
 #
 # Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
@@ -1363,6 +1516,52 @@ mutation organizationInviteResend(
 ) {
     organizationInviteResend(id: $id) {
         ...OrganizationInviteResend
+    }
+}
+# Joins an organization
+#
+# Requires one of the following permissions: AUTHENTICATED_USER.
+mutation joinOrganization(
+    # Organization details for the new organization.
+    $input: OrganizationJoinInput!
+) {
+    organizationJoin(input: $input) {
+        ...OrganizationJoin
+    }
+}
+# Leaves an organization.
+#
+# Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+mutation organizationLeave(
+    # ID of the organization to leave.
+    $id: ID!
+) {
+    organizationLeave(id: $id) {
+        ...OrganizationLeave
+    }
+}
+# Deletes a member from an organization.
+#
+# Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+mutation organizationMemberLeave(
+    # ID of the member to leave an organization.
+    $id: ID!
+) {
+    organizationMemberLeave(id: $id) {
+        ...OrganizationMemberLeave
+    }
+}
+# Updates an organization member.
+#
+# Requires one of the following permissions: ORGANIZATION_ADMIN_ACCESS.
+mutation updateOrganizationMember(
+    # ID of the member to update.
+    $id: ID!
+    # A partial object to update the organization member with.
+    $input: OrganizationMemberUpdateInput!
+) {
+    organizationMemberUpdate(id: $id, input: $input) {
+        ...OrganizationMemberUpdate
     }
 }
 # Updates an organization.
@@ -1667,12 +1866,14 @@ query events(
     $after: String
     # Return the elements in the list that come before the specified cursor.
     $before: String
+    # Filter events by the provided values.
+    $filters: EventFilterInput
     # Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
     $first: Int
     # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
     $last: Int
 ) {
-    events(after: $after, before: $before, first: $first, last: $last) {
+    events(after: $after, before: $before, filters: $filters, first: $first, last: $last) {
         ...EventCountableConnection
     }
 }
@@ -1699,6 +1900,17 @@ query persons(
 ) {
     persons(after: $after, before: $before, first: $first, last: $last) {
         ...PersonCountableConnection
+    }
+}
+# List of event's properties.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query propertiesWithDefinitions(
+    # Filter properties by event. If not provided, all properties for the project will be returned.
+    $event: String
+) {
+    propertiesWithDefinitions(event: $event) {
+        ...EventPropertyWithDefinition
     }
 }
 # List of the property definitions.
@@ -1737,6 +1949,27 @@ query questions(
 ) {
     questions(after: $after, before: $before, first: $first, id: $id, last: $last) {
         ...SurveyQuestionCountableConnection
+    }
+}
+# List of the survey's responses.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query responses(
+    # Return the elements in the list that come after the specified cursor.
+    $after: String
+    # Return the elements in the list that come before the specified cursor.
+    $before: String
+    # Filtering options for responses.
+    $filter: SurveyResponseFilterInput
+    # Retrieve the first n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $first: Int
+    # The ID of the survey.
+    $id: ID
+    # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
+    $last: Int
+) {
+    responses(after: $after, before: $before, filter: $filter, first: $first, id: $id, last: $last) {
+        ...SurveyResponseCountableConnection
     }
 }
 # Look up a survey by ID or slug.

@@ -12,9 +12,9 @@ from integraflow.graphql.core.types.common import (
 )
 from integraflow.graphql.core.types.filter_input import FilterInputObjectType
 from integraflow.graphql.utils.filters import filter_range_field
-from integraflow.survey.models import Survey
+from integraflow.survey.models import Survey, SurveyResponse
 
-from .enums import SurveyStatusEnum, SurveyTypeEnum
+from .enums import SurveyStatusEnum, SurveyTypeEnum, SurveyResponseStatusEnum
 
 
 def filter_survey_search(qs, _, value):
@@ -63,6 +63,16 @@ def filter_updated_at(qs, _, value):
     return filter_range_field(qs, "updated_at", value)
 
 
+def filter_response_status(qs, _, value):
+    if value in [
+        SurveyResponse.Status.IN_PROGRESS,
+        SurveyResponse.Status.COMPLETED,
+        SurveyResponse.Status.ARCHIVED,
+    ]:
+        qs = qs.filter(type=value)
+    return qs
+
+
 class SurveyFilter(django_filters.FilterSet):
     ids = GlobalIDMultipleChoiceFilter(
         field_name="id",
@@ -104,7 +114,34 @@ class SurveyFilter(django_filters.FilterSet):
         ]
 
 
+class SurveyResponseFilter(django_filters.FilterSet):
+    ids = GlobalIDMultipleChoiceFilter(
+        field_name="id",
+        help_text="Filter by ids."
+    )
+    status = EnumFilter(
+        input_class=SurveyResponseStatusEnum,
+        method=filter_status
+    )
+    created_at = ObjectTypeFilter(
+        input_class=DateRangeInput, method=filter_created_at
+    )
+
+    class Meta:
+        model = Survey
+        fields = [
+            "status",
+            "created_at",
+        ]
+
+
 class SurveyFilterInput(FilterInputObjectType):
     class Meta:
         doc_category = DOC_CATEGORY_SURVEYS
         filterset_class = SurveyFilter
+
+
+class SurveyResponseFilterInput(FilterInputObjectType):
+    class Meta:
+        doc_category = DOC_CATEGORY_SURVEYS
+        filterset_class = SurveyResponseFilter

@@ -2,7 +2,7 @@ import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { QuestionOption } from "@/types";
 import { generateNumericalOptions } from "@/utils/question";
-import { createRangeOptions } from "@/utils/question/defaultOptions";
+import { createOptions, createRangeOptions } from "@/utils/question/defaultOptions";
 import { useState } from "react";
 import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
@@ -10,7 +10,7 @@ import { Option, ReactSelect } from "../ReactSelect";
 
 const scaleStyleOptions = [
     {
-        label: "shapes",
+        label: "Shapes",
         value: SurveyQuestionTypeEnum.Rating,
     },
     {
@@ -23,7 +23,7 @@ const scaleStyleOptions = [
     },
     {
         label: "CES",
-        value: "CES",
+        value: SurveyQuestionTypeEnum.Ces,
     },
 ];
 
@@ -42,7 +42,7 @@ export const RatingFields = () => {
             SurveyQuestionTypeEnum.Rating,
             SurveyQuestionTypeEnum.Csat,
             SurveyQuestionTypeEnum.NumericalScale,
-            "CES",
+            SurveyQuestionTypeEnum.Ces,
         ].includes(question?.type)
     ) {
         return null;
@@ -62,9 +62,8 @@ export const RatingFields = () => {
 
                                 updateQuestion({
                                     type: (value as SingleValue<Option>)?.value as SurveyQuestionTypeEnum,
-                                    options: createRangeOptions(
+                                    options: createOptions(
                                         (value as SingleValue<Option>)?.value as SurveyQuestionTypeEnum,
-                                        5,
                                     ),
                                 });
                             }}
@@ -112,7 +111,7 @@ export const RatingFields = () => {
                     ) : null}
                 </div>
 
-                {scaleStyle === SurveyQuestionTypeEnum.Csat || scaleStyle === "CES" ? (
+                {scaleStyle === SurveyQuestionTypeEnum.Csat || scaleStyle === SurveyQuestionTypeEnum.Ces ? (
                     <div>
                         <p>Scale labels:</p>
                         {question?.options?.map((option: QuestionOption, index: number) => {

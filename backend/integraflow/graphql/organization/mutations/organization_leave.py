@@ -24,8 +24,7 @@ class OrganizationLeave(ModelDeleteMutation):
         error_type_class = OrganizationError
         error_type_field = "organization_errors"
         doc_category = DOC_CATEGORY_ORGANIZATIONS
-        permissions = (AuthorizationFilters.ORGANIZATION_ADMIN_ACCESS,)
-        auto_verify_organization = True
+        permissions = (AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS,)
 
     @classmethod
     def get_type_for_model(cls):
@@ -35,7 +34,7 @@ class OrganizationLeave(ModelDeleteMutation):
     def delete(
         cls,
         _info: ResolveInfo,
-        instance: models.OrganizationMembership
+        instance: models.Organization
     ):
-        if _info.context.user and _info.context.user.organization:
-            _info.context.user.leave(organization=instance.organization)
+        if _info.context.user:
+            _info.context.user.leave(organization=instance)

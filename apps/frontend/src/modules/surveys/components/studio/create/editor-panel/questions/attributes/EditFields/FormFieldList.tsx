@@ -2,7 +2,7 @@ import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { generateUniqueId, getHighestOrderNumber } from "@/utils";
 import { formOptions } from "@/utils/survey";
-import { FormField } from "@integraflow/web/src/types";
+import { FormField } from "@/types";
 import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import MinusButton from "../Buttons/MinimizeButton";

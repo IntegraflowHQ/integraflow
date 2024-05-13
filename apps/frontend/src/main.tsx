@@ -21,7 +21,9 @@ import { SurveyShell } from "./layout/SurveyShell";
 import { Profile } from "./modules/workspace/components/settings/Profile";
 import { Project } from "./modules/workspace/components/settings/Project";
 import { Workspace as WorkspaceSettings } from "./modules/workspace/components/settings/Workspace";
+import { Audience } from "./pages/Audience";
 import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
+import { Events } from "./pages/Events";
 import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
 import { Settings } from "./pages/Settings";
 import { ROUTES } from "./routes";
@@ -83,6 +85,14 @@ const router = createBrowserRouter([
                     {
                         path: "get-started",
                         element: <Onboarding />,
+                    },
+                    {
+                        path: "audience",
+                        element: <Audience />,
+                    },
+                    {
+                        path: "events",
+                        element: <Events />,
                     },
                     {
                         path: "",

@@ -1,6 +1,6 @@
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
-import { Button, Dialog, DialogContent, TextInput } from "@/ui";
-import { useState } from "react";
+import { Button, TextInput } from "@/ui";
+import { toast } from "@/utils/toast";
 import { useForm } from "react-hook-form";
 
 type WorkspaceData = {
@@ -9,8 +9,7 @@ type WorkspaceData = {
 };
 
 export const General = () => {
-    const [openDeleteModal, setOpenDeleteModal] = useState(false);
-    const { workspace } = useWorkspace();
+    const { workspace, updateWorkspace } = useWorkspace();
 
     const {
         register,
@@ -24,7 +23,19 @@ export const General = () => {
     });
 
     const onSubmit = async (formInfo: WorkspaceData) => {
-        console.log(formInfo);
+        if (!formInfo) {
+            toast.error("Field cannot be empty");
+            return;
+        }
+
+        await updateWorkspace(
+            {
+                name: formInfo.workspaceName,
+                slug: formInfo.workspaceUrl,
+            },
+            false,
+        );
+        toast.success(`Your organization name has been updated`);
     };
     return (
         <form className="w-[593px] pt-10" onSubmit={handleSubmit(onSubmit)}>
@@ -77,12 +88,11 @@ export const General = () => {
                     errorMessage={errors.workspaceUrl?.message}
                 />
                 <div className="w-[114px]">
-                    <Button text="Update" className="w-[114px]" size="md" />
+                    <Button text="Update" type="submit" className="w-[114px]" size="md" />
                 </div>
             </div>
 
-            <hr className="my-6 border-[1px] border-intg-bg-4" />
-
+            {/*
             <div className="space-y-6 text-sm text-intg-text-4">
                 <div className="space-y-2">
                     <h3 className="font-semibold">Delete Workspace</h3>
@@ -143,7 +153,7 @@ export const General = () => {
                         </DialogContent>
                     </Dialog>
                 </div>
-            </div>
+            </div> */}
         </form>
     );
 };

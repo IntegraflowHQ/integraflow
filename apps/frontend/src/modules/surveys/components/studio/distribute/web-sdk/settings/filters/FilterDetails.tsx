@@ -1,8 +1,7 @@
 import { useProject } from "@/modules/projects/hooks/useProject";
-import { EventFilter } from "@/types";
+import { EventFilter, FilterValue } from "@/types";
 import { X } from "@/ui/icons";
 import { getFilterLabel } from "@/utils";
-import { FilterValue } from "@integraflow/web/src/types";
 import { format } from "date-fns";
 
 type Props = {

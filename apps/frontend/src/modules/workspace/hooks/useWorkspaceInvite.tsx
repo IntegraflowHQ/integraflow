@@ -2,11 +2,17 @@ import { useCallback } from "react";
 
 import {
     OrganizationInviteCreateInput,
+    RoleLevel,
     useOrganizationInviteCreateMutation,
+    useOrganizationInviteDeleteMutation,
     useOrganizationInviteDetailsLazyQuery,
     useOrganizationInviteLinkCreateLazyQuery,
     useOrganizationInviteLinkResetMutation,
+    useOrganizationInviteResendMutation,
     useOrganizationJoinMutation,
+    useOrganizationLeaveMutation,
+    useOrganizationMemberLeaveMutation,
+    useOrganizationMemberUpdateMutation,
 } from "@/generated/graphql";
 
 import { useAuth } from "@/modules/auth/hooks/useAuth";
@@ -17,8 +23,13 @@ export const useWorkspaceInvite = () => {
     const [getInviteLink, { loading: loadingInviteLink }] = useOrganizationInviteLinkCreateLazyQuery();
     const [getInviteDetails, { loading: inviteDetailsLoading }] = useOrganizationInviteDetailsLazyQuery();
 
-    const [emailInvite] = useOrganizationInviteCreateMutation();
+    const [emailInvite, { loading: loadingEmailInvite }] = useOrganizationInviteCreateMutation();
     const [resetInviteLink, { loading: loadingLinkReset }] = useOrganizationInviteLinkResetMutation();
+    const [resendInviteLink] = useOrganizationInviteResendMutation();
+    const [revokeInviteLink] = useOrganizationInviteDeleteMutation();
+    const [removeOrganizationMember] = useOrganizationMemberLeaveMutation();
+    const [leaveOrganization, { loading: loadingLeaveOrganization }] = useOrganizationLeaveMutation();
+    const [updateMemberRole] = useOrganizationMemberUpdateMutation();
     const [joinOrganization, { loading: joiningOrg }] = useOrganizationJoinMutation();
 
     const handleGetInviteDetails = useCallback(
@@ -101,12 +112,86 @@ export const useWorkspaceInvite = () => {
         }
     }, [resetInviteLink]);
 
+    const handleResendInviteLink = useCallback(async (inviteID: string) => {
+        try {
+            const response = await resendInviteLink({
+                variables: {
+                    id: inviteID,
+                },
+            });
+            return response?.data?.organizationInviteResend;
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+    const handleRevokeInviteLink = useCallback(async (inviteID: string) => {
+        try {
+            const response = await revokeInviteLink({
+                variables: {
+                    id: inviteID,
+                },
+            });
+            return response?.data?.organizationInviteDelete;
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
+    const handleMemberLeave = useCallback(async (organizationId: string) => {
+        try {
+            const response = await leaveOrganization({
+                variables: {
+                    id: organizationId,
+                },
+            });
+            return response?.data?.organizationLeave;
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
+    const handleUpdateMemberRole = useCallback(async (memberId: string, roleLevel: RoleLevel) => {
+        try {
+            const response = await updateMemberRole({
+                variables: {
+                    id: memberId,
+                    input: {
+                        role: roleLevel,
+                    },
+                },
+            });
+            return response?.data?.organizationMemberUpdate;
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
+    const handleRemoveMember = useCallback(async (memberId: string) => {
+        try {
+            const response = await removeOrganizationMember({
+                variables: {
+                    id: memberId,
+                },
+            });
+            return response?.data?.organizationMemberLeave;
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
     return {
-        loading: joiningOrg || inviteDetailsLoading || loadingInviteLink || loadingLinkReset,
+        loadingEmailInvite,
+        loading:
+            joiningOrg || inviteDetailsLoading || loadingInviteLink || loadingLinkReset || loadingLeaveOrganization,
         getInviteDetails: handleGetInviteDetails,
         getInviteLink: handleGetInviteLink,
         emailInvite: handleEmailInvite,
         joinWorkspace: handleJoinWorkspace,
         resetInviteLink: handleResetInviteLink,
+        resendInviteLink: handleResendInviteLink,
+        revokeInviteLink: handleRevokeInviteLink,
+        removeOrganizationMember: handleRemoveMember,
+        leaveOrganization: handleMemberLeave,
+        updateMemberRole: handleUpdateMemberRole,
     };
 };

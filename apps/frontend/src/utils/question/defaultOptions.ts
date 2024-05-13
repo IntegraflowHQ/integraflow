@@ -1,6 +1,5 @@
 import { SurveyQuestionCreateInput, SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { QuestionOption, QuestionSettings } from "@/types";
-import { FormFieldType } from "@integraflow/web/src/types";
+import { FormFieldType, QuestionOption, QuestionSettings } from "@/types";
 import { generateUniqueId } from "..";
 
 const CSATOptions = ["Very unsatisfied", "Unsatisfied", "Neutral", "Satisfied", "Very satisfied"];
@@ -37,15 +36,25 @@ export const createFormFields = (): QuestionOption[] => {
 export const createRangeOptions = (type: SurveyQuestionTypeEnum, length: number): QuestionOption[] => {
     const options = [];
     for (let i = 1; i <= length; i++) {
+        let label = `${i}`;
+
+        const index = i - 1;
+        if (type === SurveyQuestionTypeEnum.Csat) {
+            label = CSATOptions[index];
+        }
+
+        if (type === SurveyQuestionTypeEnum.Ces) {
+            label = CESOptions[index];
+        }
+
+        if (type === SurveyQuestionTypeEnum.Nps) {
+            label = `${index}`;
+        }
+
         options.push({
-            id: generateUniqueId(),
+            id: i,
             orderNumber: i,
-            label:
-                type === SurveyQuestionTypeEnum.Csat
-                    ? CSATOptions[i - 1]
-                    : type === SurveyQuestionTypeEnum.Ces
-                      ? CESOptions[i - 1]
-                      : `${i}`,
+            label,
         });
     }
     return options;
@@ -64,7 +73,7 @@ export const createOptions = (type: SurveyQuestionTypeEnum): QuestionOption[] | 
         type === SurveyQuestionTypeEnum.NumericalScale ||
         type === SurveyQuestionTypeEnum.SmileyScale
     ) {
-        const length = type === SurveyQuestionTypeEnum.Nps ? 10 : type === SurveyQuestionTypeEnum.Ces ? 7 : 5;
+        const length = type === SurveyQuestionTypeEnum.Nps ? 11 : type === SurveyQuestionTypeEnum.Ces ? 7 : 5;
         return createRangeOptions(type, length);
     }
 

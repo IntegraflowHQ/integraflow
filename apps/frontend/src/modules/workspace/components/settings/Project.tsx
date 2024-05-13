@@ -1,6 +1,5 @@
 import { useProject } from "@/modules/projects/hooks/useProject";
-import { Button, Dialog, DialogContent, TextInput } from "@/ui";
-import { useState } from "react";
+import { Button, TextInput } from "@/ui";
 import { useForm } from "react-hook-form";
 import { SettingsScreen } from "./SettingsScreen";
 
@@ -11,7 +10,6 @@ type ProjectData = {
 export const Project = () => {
     const { updateProject, project } = useProject();
 
-    const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const {
         register,
         handleSubmit,
@@ -23,7 +21,6 @@ export const Project = () => {
     });
 
     const onSubmit = async (formInfo: ProjectData) => {
-        console.log(formInfo);
         if (formInfo.name) {
             updateProject({
                 name: formInfo.name,
@@ -64,7 +61,7 @@ export const Project = () => {
                             responses.
                         </p>
                     </div>
-                    <div className="w-[187px]">
+                    {/* <div className="w-[187px]">
                         <Button
                             text="Delete this project"
                             size="md"
@@ -111,7 +108,7 @@ export const Project = () => {
                                 </div>
                             </DialogContent>
                         </Dialog>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </SettingsScreen>

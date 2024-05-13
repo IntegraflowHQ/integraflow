@@ -77,6 +77,9 @@ class EventDefinition(UUIDModel):
         auto_now_add=True,
         blank=True
     )
+    volume_30_day: models.IntegerField = models.IntegerField(
+        default=0, null=True,
+    )  # Volume of events in the last 30 rolling days (computed asynchronously)
 
     class Meta:
         verbose_name = "EventDefinition"

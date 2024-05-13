@@ -1,16 +1,12 @@
-import sample from "@/assets/images/surveys/studio/sample.svg";
-import webviewDark from "@/assets/images/surveys/studio/webview-dark.svg";
-import webviewLight from "@/assets/images/surveys/studio/webview-light.svg";
-import webview from "@/assets/images/surveys/studio/webview.svg";
 import { SurveyChannelTypeEnum } from "@/generated/graphql";
+import { Preview } from "@/modules/surveys/components/studio/create/preview-panel";
 import useChannels from "@/modules/surveys/hooks/useChannels";
-import { ChannelSettings, WebChannelAccordionProps } from "@/types";
+import { BackgroundOverLayType, ChannelSettings, WebChannelAccordionProps, PlacementType } from "@/types";
 import { DatePicker, NumberInput, Switch } from "@/ui";
 import { BottomLeft, BottomRight, Center, TopLeft, TopRight } from "@/ui/icons";
 import { cn } from "@/utils";
 import { logDebug } from "@/utils/log";
 import { toast } from "@/utils/toast";
-import { PlacementType } from "@integraflow/web/src/types";
 import { addDays, subDays } from "date-fns";
 import { Ban, Moon, Sun } from "lucide-react";
 import { useEffect } from "react";
@@ -18,7 +14,7 @@ import { useForm } from "react-hook-form";
 
 type Background = {
     label: string;
-    value: "dark" | "light" | "none";
+    value: BackgroundOverLayType;
     icon: React.ReactNode;
 };
 
@@ -195,33 +191,7 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
             </div>
 
             {/* webview */}
-            <div
-                className="relative min-h-[650px] flex-1 text-intg-text"
-                style={{
-                    backgroundImage: `url(${
-                        watch("backgroundOverlay") === "dark"
-                            ? webviewDark
-                            : watch("backgroundOverlay") === "none"
-                              ? webview
-                              : webviewLight
-                    })`,
-                    backgroundSize: "cover",
-                    backgroundRepeat: "no-repeat",
-                }}
-            >
-                <img
-                    src={sample}
-                    alt="sample"
-                    className={cn(
-                        "absolute",
-                        watch("placement") === "bottomRight" ? "bottom-0 right-0" : "",
-                        watch("placement") === "bottomLeft" ? "bottom-0 left-0" : "",
-                        watch("placement") === "center" ? "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" : "",
-                        watch("placement") === "topRight" ? "right-0 top-0" : "",
-                        watch("placement") === "topLeft" ? "left-0 top-0" : "",
-                    )}
-                />
-            </div>
+            <Preview className="min-h-[650px] flex-1" mode="sdk" viewPort="desktop" />
         </div>
     );
 }

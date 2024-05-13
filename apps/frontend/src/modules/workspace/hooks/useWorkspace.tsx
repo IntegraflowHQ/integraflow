@@ -9,6 +9,7 @@ import {
     OrganizationCreateInput,
     Project,
     useOrganizationCreateMutation,
+    useOrganizationUpdateMutation,
 } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { convertToAuthOrganization } from "@/modules/auth/states/user";
@@ -16,6 +17,7 @@ import { convertToAuthOrganization } from "@/modules/auth/states/user";
 export const useWorkspace = () => {
     const { user, workspace, projects, updateUser, switchWorkspace } = useAuth();
     const [createOrganization, { loading }] = useOrganizationCreateMutation();
+    const [updateOrganization] = useOrganizationUpdateMutation();
 
     const handleAddWorkspace = useCallback(
         (organization: DeepPartial<Organization>) => {
@@ -43,28 +45,48 @@ export const useWorkspace = () => {
         [switchWorkspace, updateUser, user.organizations],
     );
 
-    const handleUpdateWorkspace = useCallback(
-        (organization: DeepPartial<Organization>) => {
-            const organizations = {
-                ...user.organizations,
-                edges: (user.organizations?.edges ?? []).map((edge) => {
-                    if (edge?.node?.id === organization.id) {
-                        return {
-                            ...edge,
-                            node: organization,
-                        };
-                    }
+    const updateUserCache = (organization: DeepPartial<Organization>) => {
+        const organizations = {
+            ...user.organizations,
+            edges: (user.organizations?.edges ?? []).map((edge) => {
+                if (edge?.node?.id === (organization as DeepPartial<Organization>).id) {
+                    return {
+                        ...edge,
+                        node: organization as DeepPartial<Organization>,
+                    };
+                }
+                return edge;
+            }),
+        };
+        updateUser({
+            organization: convertToAuthOrganization(organization as DeepPartial<Organization>),
+            organizations,
+        }),
+            true;
+    };
 
-                    return edge;
-                }),
-            };
-            updateUser(
-                {
-                    organization: convertToAuthOrganization(organization),
-                    organizations,
-                },
-                true,
-            );
+    const handleUpdateWorkspace = useCallback(
+        async (organization: DeepPartial<Organization>, cacheOnly = true) => {
+            if (cacheOnly) {
+                updateUserCache(organization);
+                return;
+            }
+
+            try {
+                const response = await updateOrganization({
+                    variables: {
+                        input: {
+                            name: organization.name,
+                            slug: organization.slug,
+                        },
+                    },
+                });
+                if (response.data?.organizationUpdate?.organization) {
+                    updateUserCache(response.data?.organizationUpdate?.organization);
+                }
+            } catch (error) {
+                console.error(error);
+            }
         },
         [updateUser, user],
     );
