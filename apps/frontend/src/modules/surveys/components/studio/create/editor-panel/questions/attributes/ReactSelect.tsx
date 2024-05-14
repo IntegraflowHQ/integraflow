@@ -1,5 +1,5 @@
-import { cn } from "@/utils";
 import { LogicOperator } from "@/types";
+import { cn } from "@/utils";
 import { useState } from "react";
 import Select, { CSSObjectWithLabel, MultiValue, MultiValueGenericProps, SingleValue } from "react-select";
 import CreatableSelect from "react-select/creatable";
@@ -20,8 +20,8 @@ type Props = {
 };
 
 export interface Option {
-    label: string;
-    value: string;
+    label: any;
+    value: any;
     id?: string;
     index?: number;
 }
@@ -98,7 +98,7 @@ export const ReactSelect = ({
             boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
             backgroundColor: "#181325",
         }),
-        option: (provided: CSSObjectWithLabel, state: { isSelected: boolean; }) => ({
+        option: (provided: CSSObjectWithLabel, state: { isSelected: boolean }) => ({
             ...provided,
             ":hover": {
                 backgroundColor: "#272138",
