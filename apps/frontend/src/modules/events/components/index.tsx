@@ -1,7 +1,7 @@
 import { Header, TextInput } from "@/ui";
 import { Search } from "@/ui/icons";
 import { useState } from "react";
-import { EventsTab } from "./EventsTab";
+import { Events } from "./Events";
 
 export const EventsIndex = () => {
     const [searchValue, setSearchValue] = useState("");
@@ -22,7 +22,7 @@ export const EventsIndex = () => {
                         />
                     </div>
                 </div>
-                <EventsTab />
+                <Events />
             </div>
         </section>
     );

@@ -2451,6 +2451,11 @@ export type ViewerQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ViewerQuery = { __typename?: 'Query', viewer?: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, invites?: { __typename?: 'OrganizationInviteCountableConnection', edges: Array<{ __typename?: 'OrganizationInviteCountableEdge', node: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel } }> } | null, members?: { __typename?: 'OrganizationMemberCountableConnection', edges: Array<{ __typename?: 'OrganizationMemberCountableEdge', node: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } }> } | null, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } | null };
 
+export type EventsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventCountableConnection', edges: Array<{ __typename?: 'EventCountableEdge', node: { __typename?: 'Event', id: string, event: string, distinctId: string, properties?: any | null, timestamp?: string | null, createdAt?: string | null, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
+
 export type CompleteOnboardingStageMutationVariables = Exact<{
   input: ProjectUpdateInput;
 }>;
@@ -3496,6 +3501,52 @@ export function useViewerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Vie
 export type ViewerQueryHookResult = ReturnType<typeof useViewerQuery>;
 export type ViewerLazyQueryHookResult = ReturnType<typeof useViewerLazyQuery>;
 export type ViewerQueryResult = Apollo.QueryResult<ViewerQuery, ViewerQueryVariables>;
+export const EventsDocument = gql`
+    query events {
+  events(first: 100) {
+    edges {
+      node {
+        id
+        project {
+          ...ProjectFragment
+        }
+        event
+        distinctId
+        properties
+        timestamp
+        createdAt
+      }
+    }
+  }
+}
+    ${ProjectFragmentFragmentDoc}`;
+
+/**
+ * __useEventsQuery__
+ *
+ * To run a query within a React component, call `useEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEventsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useEventsQuery(baseOptions?: Apollo.QueryHookOptions<EventsQuery, EventsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EventsQuery, EventsQueryVariables>(EventsDocument, options);
+      }
+export function useEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventsQuery, EventsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EventsQuery, EventsQueryVariables>(EventsDocument, options);
+        }
+export type EventsQueryHookResult = ReturnType<typeof useEventsQuery>;
+export type EventsLazyQueryHookResult = ReturnType<typeof useEventsLazyQuery>;
+export type EventsQueryResult = Apollo.QueryResult<EventsQuery, EventsQueryVariables>;
 export const CompleteOnboardingStageDocument = gql`
     mutation completeOnboardingStage($input: ProjectUpdateInput!) {
   projectUpdate(input: $input) {
