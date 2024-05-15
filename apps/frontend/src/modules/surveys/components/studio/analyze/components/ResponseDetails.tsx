@@ -1,42 +1,33 @@
-import { SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { ParsedQuestion } from "@/types";
+import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ArrowLeft } from "@/ui/icons";
+import { stripHtmlTags } from "@/utils";
 import { getQuestionIcon } from "@/utils/question";
 import { ChannelInfo } from "./ChannelInfo";
-
-const questions = [
-    {
-        label: "How easy or difficult to use is [product name]?",
-        answer: "5",
-        type: SurveyQuestionTypeEnum.Rating,
-    },
-    {
-        label: "How would you rate [product name]'s usefulness to you?",
-        answer: "5",
-        type: SurveyQuestionTypeEnum.Rating,
-    },
-    {
-        label: "What can we do to make it more useful?",
-        answer: "make it better",
-        type: SurveyQuestionTypeEnum.Text,
-    },
-    {
-        label: "How would you rate the credibility of [product name]?",
-        answer: "5",
-        type: SurveyQuestionTypeEnum.Rating,
-    },
-    {
-        label: "Can you share more thoughts?",
-        answer: "make it better ",
-        type: SurveyQuestionTypeEnum.Text,
-    },
-];
 
 type Props = React.HtmlHTMLAttributes<HTMLDivElement> & {
     onBackPress: () => void;
 };
 
 export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
+    const { parsedQuestions } = useSurvey();
+    const { activeResponse } = useAnalyze();
+
+    const getAnswer = (q: SurveyQuestion) => {
+        if (!q.reference) {
+            return;
+        }
+        if (q.type === SurveyQuestionTypeEnum.Cta && activeResponse?.response[q.reference][0].ctaSuccess) {
+            return "clicked";
+        }
+        if (q.type === SurveyQuestionTypeEnum.Cta && !activeResponse?.response[q.reference][0].ctaSuccess) {
+            return "not clicked";
+        }
+
+        return activeResponse?.response[q.reference][0].answer;
+    };
+
     return (
         <div className="flex gap-[23px]" {...props}>
             <div className="w-full rounded-lg bg-intg-bg-15 px-[25px] py-5">
@@ -46,20 +37,22 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
                 </button>
 
                 <div className="flex flex-col gap-6">
-                    {questions.map((q, index) => (
-                        <div className="flex w-full flex-col gap-2" key={index}>
+                    {parsedQuestions.map((q, index) => (
+                        <div className="flex w-full flex-col gap-2" key={q.id}>
                             <div className="flex items-center gap-2">
-                                <img src={getQuestionIcon(q as unknown as ParsedQuestion)} alt="icon" />
+                                <img src={getQuestionIcon(q)} alt="icon" />
 
-                                <strong className="text-intg-text-12 text-base font-bold leading-5 -tracking-[0.41px]">
+                                <strong className="text-base font-bold leading-5 -tracking-[0.41px] text-intg-text-12">
                                     {index < 10 ? `0${index + 1}` : `${index + 1}`}
                                 </strong>
 
-                                <h3 className="text-sm -tracking-[0.41px] text-intg-text-2">{q.label}</h3>
+                                <h3 className="text-sm -tracking-[0.41px] text-intg-text-2">
+                                    {stripHtmlTags(q.label)}
+                                </h3>
                             </div>
 
                             <div className="w-full rounded-lg bg-intg-bg-21 px-4 py-3.5">
-                                <span className="text-sm font-medium text-intg-text-3">Answer: {q.answer}</span>
+                                <span className="text-sm font-medium text-intg-text-3">Answer: {getAnswer(q)}</span>
                             </div>
                         </div>
                     ))}

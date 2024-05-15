@@ -7,10 +7,9 @@ import { Response } from "../components/Response";
 import { ResponseDetails } from "../components/ResponseDetails";
 
 export const Responses = () => {
-    const noContent = false;
     const { responses, activeResponse, setActiveResponse } = useAnalyze();
 
-    if (noContent) {
+    if (responses.length === 0) {
         return (
             <div className={"flex h-full w-full min-w-[660px] flex-col gap-6 rounded-xl bg-intg-bg-9 px-6 py-9"}>
                 <div className="flex h-full w-full flex-1 flex-col items-center justify-center gap-6">
@@ -47,8 +46,8 @@ export const Responses = () => {
                         {responses.map((response) => (
                             <Response
                                 title={response.title}
-                                date={response.date}
-                                responder={response.responder}
+                                date={new Date(response.completedAt ?? response.createdAt ?? "")}
+                                responder={response.userAttributes.name ?? response.userAttributes.id}
                                 key={response.id}
                                 onClick={() => {
                                     setActiveResponse(response);

@@ -1,5 +1,5 @@
 import { PROPERTY_FIELDS } from "@/constants";
-import { ProjectTheme, SurveyChannel, SurveyQuestionCountableEdge, User } from "@/generated/graphql";
+import { ProjectTheme, SurveyChannel, SurveyQuestionCountableEdge, SurveyResponse, User } from "@/generated/graphql";
 import { DeepOmit } from "@apollo/client/utilities";
 
 export type CachedViewer = DeepOmit<User, "__typename">;
@@ -105,6 +105,15 @@ export type Jsonish =
 
 export interface EventProperties {
     [key: string]: Jsonish;
+}
+
+export interface SurveyAnswer {
+    finished?: boolean;
+    ctaSuccess?: boolean;
+    fieldType?: FormFieldType;
+    completionRate?: number;
+    answer?: string;
+    answerId?: ID;
 }
 
 export interface FormField extends QuestionOption {
@@ -287,4 +296,12 @@ export type Theme = {
     id: string | null;
     name: string;
     colorScheme: ColorScheme;
+};
+
+export type UserAttributes = Record<string, string>;
+export type Response = Record<string, SurveyAnswer[]>;
+
+export type ParsedResponse = Omit<SurveyResponse, "userAttributes" | "response"> & {
+    userAttributes: UserAttributes;
+    response: Response;
 };

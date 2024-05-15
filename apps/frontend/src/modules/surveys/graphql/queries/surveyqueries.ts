@@ -33,3 +33,27 @@ export const GET_SURVEY_LIST = gql`
         }
     }
 `;
+
+export const SURVEY_RESPONSES = gql`
+    query responses(
+        $id: ID
+        $filter: SurveyResponseFilterInput
+        $before: String
+        $after: String
+        $first: Int
+        $last: Int
+    ) {
+        responses(id: $id, filter: $filter, before: $before, after: $after, first: $first, last: $last) {
+            pageInfo {
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
+            }
+            totalCount
+            nodes {
+                ...SurveyResponseFragment
+            }
+        }
+    }
+`;

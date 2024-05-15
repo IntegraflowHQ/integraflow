@@ -1,23 +1,30 @@
-import { ReactNode, createContext, useState } from "react";
-
-type Response = {
-    id: string;
-    title: string;
-    date: Date;
-    responder: string;
-};
+import { SurveyResponseStatusEnum, useResponsesQuery } from "@/generated/graphql";
+import { ParsedResponse } from "@/types";
+import { getISOdateString, parseResponse } from "@/utils";
+import { addDays } from "date-fns";
+import { ReactNode, createContext, useMemo, useState } from "react";
+import { useSurvey } from "../hooks/useSurvey";
 
 const useAnalyzeFactory = () => {
-    const [activeResponse, setActiveResponse] = useState<Response | null>(null);
+    const [activeResponse, setActiveResponse] = useState<ParsedResponse | null>(null);
+    const { surveyId } = useSurvey();
 
-    const responses: Response[] = Array.from({ length: 10 }).map(() => {
-        return {
-            id: crypto.randomUUID(),
-            title: "untitled response",
-            date: new Date(1712246076255),
-            responder: "Afeez Lawal",
-        };
+    const { data: responseQuery } = useResponsesQuery({
+        variables: {
+            id: surveyId,
+            first: 100,
+            filter: {
+                status: SurveyResponseStatusEnum.Completed,
+                createdAt: {
+                    lte: getISOdateString(addDays(Date.now(), 1)),
+                },
+            },
+        },
     });
+
+    const responses = useMemo(() => {
+        return responseQuery?.responses?.nodes?.map((r) => parseResponse(r)) ?? ([] as ParsedResponse[]);
+    }, [responseQuery?.responses?.nodes]);
 
     return {
         responses,

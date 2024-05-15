@@ -1,6 +1,15 @@
 import { PROPERTY_FIELDS } from "@/constants";
-import { ProjectTheme, SurveyChannel, SurveyQuestion } from "@/generated/graphql";
-import { FilterOperator, ParsedChannel, ParsedQuestion, ParsedTheme, QuestionOption } from "@/types";
+import { ProjectTheme, SurveyChannel, SurveyQuestion, SurveyResponse } from "@/generated/graphql";
+import {
+    FilterOperator,
+    ParsedChannel,
+    ParsedQuestion,
+    ParsedResponse,
+    ParsedTheme,
+    QuestionOption,
+    Response,
+    UserAttributes,
+} from "@/types";
 import { DeepOmit } from "@apollo/client/utilities";
 import { toast } from "./toast";
 
@@ -117,3 +126,18 @@ export const parseTheme = (theme: ProjectTheme) => {
 };
 
 export const themeKeys = ["background", "progressBar", "question", "answer", "button"] as const;
+
+export const parseResponse = (response: SurveyResponse) => {
+    return {
+        ...response,
+        response: JSON.parse(response.response ?? "{}") as Response,
+        userAttributes: JSON.parse(response.userAttributes ?? "{}") as UserAttributes,
+    } as ParsedResponse;
+};
+
+export const getISOdateString = (date?: Date): string => {
+    if (!date) {
+        return new Date().toISOString().split("T")[0];
+    }
+    return date.toISOString().split("T")[0];
+};
