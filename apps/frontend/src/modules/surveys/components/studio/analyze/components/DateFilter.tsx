@@ -1,19 +1,42 @@
 import { DatePicker } from "@/ui";
-import { cn } from "@/utils";
+import { cn, getISOdateString } from "@/utils";
+import { addDays, subDays } from "date-fns";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 
 const filterKeys = ["today", "last 7 days", "30 days", "1 year"] as const;
 
 type Props = {
-    onValueChange?: (
-        data: { type: "string"; value?: (typeof filterKeys)[number] } | { type: "range"; value?: DateRange },
-    ) => void;
+    onValueChange?: (data: Value) => void;
+};
+
+type Value = {
+    from: string;
+    to: string;
 };
 
 export const DateFilter = ({ onValueChange }: Props) => {
     const [selected, setSelected] = useState<(typeof filterKeys)[number] | undefined>(filterKeys[0]);
     const [dateRange, setDateRange] = useState<DateRange>();
+
+    const handleSelect = (key: string) => {
+        switch (key) {
+            case "today":
+                onValueChange?.({ from: getISOdateString(), to: getISOdateString(addDays(Date.now(), 1)) });
+                break;
+            case "last 7 days":
+                onValueChange?.({ from: getISOdateString(subDays(Date.now(), 7)), to: getISOdateString() });
+                break;
+            case "30 days":
+                onValueChange?.({ from: getISOdateString(subDays(Date.now(), 30)), to: getISOdateString() });
+                break;
+            case "1 year":
+                onValueChange?.({ from: getISOdateString(subDays(Date.now(), 365)), to: getISOdateString() });
+                break;
+            default:
+                break;
+        }
+    };
 
     return (
         <div className="inline-flex gap-1 rounded-[4px] bg-intg-bg-15 p-1">
@@ -27,7 +50,7 @@ export const DateFilter = ({ onValueChange }: Props) => {
                         key={key}
                         onClick={() => {
                             setSelected(key);
-                            onValueChange?.({ type: "string", value: key });
+                            handleSelect(key);
 
                             if (dateRange) {
                                 setDateRange(undefined);
@@ -46,8 +69,8 @@ export const DateFilter = ({ onValueChange }: Props) => {
                     setDateRange(value);
                     if (value?.from && value.to) {
                         onValueChange?.({
-                            type: "range",
-                            value,
+                            from: getISOdateString(value.from),
+                            to: getISOdateString(value.to),
                         });
                     }
                 }}
