@@ -324,6 +324,8 @@ export type EventDefinition = Node & {
    * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
    */
   project: Project;
+  /** The volume of events in the last 30 rolling days */
+  volume: Scalars['Int'];
 };
 
 export type EventDefinitionCountableConnection = {
@@ -362,6 +364,11 @@ export enum EventErrorCode {
   Invalid = 'INVALID'
 }
 
+export type EventFilterInput = {
+  event?: InputMaybe<Scalars['String']>;
+  events?: InputMaybe<Array<Scalars['String']>>;
+};
+
 /** Represents an event property. */
 export type EventProperty = Node & {
   __typename?: 'EventProperty';
@@ -395,6 +402,19 @@ export type EventPropertyCountableEdge = {
   cursor: Scalars['String'];
   /** The item at the end of the edge. */
   node: EventProperty;
+};
+
+/** Represents an event property with definition. */
+export type EventPropertyWithDefinition = {
+  __typename?: 'EventPropertyWithDefinition';
+  /** The name of the event */
+  event: Scalars['String'];
+  /** Whether property accepts a numerical value */
+  isNumerical: Scalars['Boolean'];
+  /** The property of the event */
+  property: Scalars['String'];
+  /** The property type */
+  propertyType: PropertyTypeEnum;
 };
 
 /** Finds or creates a new user account from google auth credentials. */
@@ -1563,6 +1583,12 @@ export type Query = {
    */
   persons?: Maybe<PersonCountableConnection>;
   /**
+   * List of event's properties.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  propertiesWithDefinitions?: Maybe<Array<EventPropertyWithDefinition>>;
+  /**
    * List of the property definitions.
    *
    * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -1574,6 +1600,18 @@ export type Query = {
    * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
    */
   questions?: Maybe<SurveyQuestionCountableConnection>;
+  /**
+   * Response insight for a survey.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  responseMetric?: Maybe<SurveyResponseMetric>;
+  /**
+   * List of the survey's responses.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  responses?: Maybe<SurveyResponseCountableConnection>;
   /**
    * Look up a survey by ID or slug.
    *
@@ -1647,6 +1685,7 @@ export type QueryEventPropertiesArgs = {
 export type QueryEventsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<EventFilterInput>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
 };
@@ -1665,6 +1704,11 @@ export type QueryPersonsArgs = {
 };
 
 
+export type QueryPropertiesWithDefinitionsArgs = {
+  event?: InputMaybe<Scalars['String']>;
+};
+
+
 export type QueryPropertyDefinitionsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -1679,6 +1723,24 @@ export type QueryQuestionsArgs = {
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   id: Scalars['ID'];
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryResponseMetricArgs = {
+  date?: InputMaybe<DateRangeInput>;
+  id: Scalars['ID'];
+  metric: SurveyResponseMetricEnum;
+  previousDate?: InputMaybe<DateRangeInput>;
+};
+
+
+export type QueryResponsesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<SurveyResponseFilterInput>;
+  first?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['ID']>;
   last?: InputMaybe<Scalars['Int']>;
 };
 
@@ -1766,6 +1828,8 @@ export type Survey = Node & {
   settings?: Maybe<Scalars['JSONString']>;
   /** Slug of the survey. */
   slug: Scalars['String'];
+  /** The statistics of the survey. */
+  stats?: Maybe<Scalars['JSONString']>;
   /** The status of the survey */
   status: SurveyStatusEnum;
   /**
@@ -2146,6 +2210,55 @@ export type SurveyQuestionUpdateInput = {
   type?: InputMaybe<SurveyQuestionTypeEnum>;
 };
 
+/** Represents a survey response. */
+export type SurveyResponse = Node & {
+  __typename?: 'SurveyResponse';
+  /** The time the survey completed. */
+  completedAt?: Maybe<Scalars['DateTime']>;
+  /** The time at which the response was created. */
+  createdAt: Scalars['DateTime'];
+  /** The ID of the response. */
+  id: Scalars['ID'];
+  /** The response. */
+  response: Scalars['JSONString'];
+  /** The statistics of the response. */
+  stats?: Maybe<Scalars['JSONString']>;
+  /** The status of the survey response */
+  status: SurveyResponseStatusEnum;
+  /**
+   * The survey the response belongs to
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  survey?: Maybe<Survey>;
+  /** The time spent to complete the survey. */
+  timeSpent?: Maybe<Scalars['Float']>;
+  /** The title of the response. */
+  title: Scalars['String'];
+  /** The last time at which the response was updated. */
+  updatedAt: Scalars['DateTime'];
+  /** The user attributes. */
+  userAttributes?: Maybe<Scalars['JSONString']>;
+};
+
+export type SurveyResponseCountableConnection = {
+  __typename?: 'SurveyResponseCountableConnection';
+  edges: Array<SurveyResponseCountableEdge>;
+  nodes: Array<SurveyResponse>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+export type SurveyResponseCountableEdge = {
+  __typename?: 'SurveyResponseCountableEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node: SurveyResponse;
+};
+
 /** Creates a response to survey. */
 export type SurveyResponseCreate = {
   __typename?: 'SurveyResponseCreate';
@@ -2177,6 +2290,37 @@ export type SurveyResponseCreateInput = {
   /** The user distinct ID. */
   userId?: InputMaybe<Scalars['ID']>;
 };
+
+export type SurveyResponseFilterInput = {
+  createdAt?: InputMaybe<DateRangeInput>;
+  /** Filter by ids. */
+  ids?: InputMaybe<Array<Scalars['ID']>>;
+  status?: InputMaybe<SurveyResponseStatusEnum>;
+};
+
+/** Represents a survey response metric (e.g. total responses, nps). */
+export type SurveyResponseMetric = {
+  __typename?: 'SurveyResponseMetric';
+  /** The current value. */
+  current?: Maybe<Scalars['JSONString']>;
+  /** The previous value. */
+  previous?: Maybe<Scalars['JSONString']>;
+};
+
+export enum SurveyResponseMetricEnum {
+  AverageTime = 'AVERAGE_TIME',
+  Ces = 'CES',
+  CompletionRate = 'COMPLETION_RATE',
+  Csat = 'CSAT',
+  Nps = 'NPS',
+  TotalResponses = 'TOTAL_RESPONSES'
+}
+
+export enum SurveyResponseStatusEnum {
+  Archived = 'ARCHIVED',
+  Completed = 'COMPLETED',
+  InProgress = 'IN_PROGRESS'
+}
 
 /** Updates a response. */
 export type SurveyResponseUpdate = {
@@ -2451,10 +2595,27 @@ export type ViewerQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ViewerQuery = { __typename?: 'Query', viewer?: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, invites?: { __typename?: 'OrganizationInviteCountableConnection', edges: Array<{ __typename?: 'OrganizationInviteCountableEdge', node: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel } }> } | null, members?: { __typename?: 'OrganizationMemberCountableConnection', edges: Array<{ __typename?: 'OrganizationMemberCountableEdge', node: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } }> } | null, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } | null };
 
+export type EventDefinitionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type EventDefinitionsQuery = { __typename?: 'Query', eventDefinitions?: { __typename?: 'EventDefinitionCountableConnection', edges: Array<{ __typename?: 'EventDefinitionCountableEdge', node: { __typename?: 'EventDefinition', id: string, name: string, createdAt?: string | null, lastSeenAt?: string | null, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
+
 export type EventsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventCountableConnection', edges: Array<{ __typename?: 'EventCountableEdge', node: { __typename?: 'Event', id: string, event: string, distinctId: string, properties?: any | null, timestamp?: string | null, createdAt?: string | null, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
+
+export type PropertyDefinitionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PropertyDefinitionsQuery = { __typename?: 'Query', propertyDefinitions?: { __typename?: 'PropertyDefinitionCountableConnection', edges: Array<{ __typename?: 'PropertyDefinitionCountableEdge', node: { __typename?: 'PropertyDefinition', id: string, name: string, isNumerical: boolean, type: PropertyDefinitionTypeEnum, propertyType: PropertyTypeEnum, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
+
+export type PropertiesWithDefinitionsQueryVariables = Exact<{
+  event: Scalars['String'];
+}>;
+
+
+export type PropertiesWithDefinitionsQuery = { __typename?: 'Query', propertiesWithDefinitions?: Array<{ __typename?: 'EventPropertyWithDefinition', event: string, property: string, isNumerical: boolean, propertyType: PropertyTypeEnum }> | null };
 
 export type CompleteOnboardingStageMutationVariables = Exact<{
   input: ProjectUpdateInput;
@@ -3501,6 +3662,50 @@ export function useViewerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Vie
 export type ViewerQueryHookResult = ReturnType<typeof useViewerQuery>;
 export type ViewerLazyQueryHookResult = ReturnType<typeof useViewerLazyQuery>;
 export type ViewerQueryResult = Apollo.QueryResult<ViewerQuery, ViewerQueryVariables>;
+export const EventDefinitionsDocument = gql`
+    query EventDefinitions {
+  eventDefinitions(first: 100) {
+    edges {
+      node {
+        id
+        project {
+          ...ProjectFragment
+        }
+        name
+        createdAt
+        lastSeenAt
+      }
+    }
+  }
+}
+    ${ProjectFragmentFragmentDoc}`;
+
+/**
+ * __useEventDefinitionsQuery__
+ *
+ * To run a query within a React component, call `useEventDefinitionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEventDefinitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEventDefinitionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useEventDefinitionsQuery(baseOptions?: Apollo.QueryHookOptions<EventDefinitionsQuery, EventDefinitionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EventDefinitionsQuery, EventDefinitionsQueryVariables>(EventDefinitionsDocument, options);
+      }
+export function useEventDefinitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventDefinitionsQuery, EventDefinitionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EventDefinitionsQuery, EventDefinitionsQueryVariables>(EventDefinitionsDocument, options);
+        }
+export type EventDefinitionsQueryHookResult = ReturnType<typeof useEventDefinitionsQuery>;
+export type EventDefinitionsLazyQueryHookResult = ReturnType<typeof useEventDefinitionsLazyQuery>;
+export type EventDefinitionsQueryResult = Apollo.QueryResult<EventDefinitionsQuery, EventDefinitionsQueryVariables>;
 export const EventsDocument = gql`
     query events {
   events(first: 100) {
@@ -3547,6 +3752,89 @@ export function useEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Eve
 export type EventsQueryHookResult = ReturnType<typeof useEventsQuery>;
 export type EventsLazyQueryHookResult = ReturnType<typeof useEventsLazyQuery>;
 export type EventsQueryResult = Apollo.QueryResult<EventsQuery, EventsQueryVariables>;
+export const PropertyDefinitionsDocument = gql`
+    query propertyDefinitions {
+  propertyDefinitions(first: 100) {
+    edges {
+      node {
+        id
+        project {
+          ...ProjectFragment
+        }
+        name
+        isNumerical
+        type
+        propertyType
+      }
+    }
+  }
+}
+    ${ProjectFragmentFragmentDoc}`;
+
+/**
+ * __usePropertyDefinitionsQuery__
+ *
+ * To run a query within a React component, call `usePropertyDefinitionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePropertyDefinitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePropertyDefinitionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePropertyDefinitionsQuery(baseOptions?: Apollo.QueryHookOptions<PropertyDefinitionsQuery, PropertyDefinitionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PropertyDefinitionsQuery, PropertyDefinitionsQueryVariables>(PropertyDefinitionsDocument, options);
+      }
+export function usePropertyDefinitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PropertyDefinitionsQuery, PropertyDefinitionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PropertyDefinitionsQuery, PropertyDefinitionsQueryVariables>(PropertyDefinitionsDocument, options);
+        }
+export type PropertyDefinitionsQueryHookResult = ReturnType<typeof usePropertyDefinitionsQuery>;
+export type PropertyDefinitionsLazyQueryHookResult = ReturnType<typeof usePropertyDefinitionsLazyQuery>;
+export type PropertyDefinitionsQueryResult = Apollo.QueryResult<PropertyDefinitionsQuery, PropertyDefinitionsQueryVariables>;
+export const PropertiesWithDefinitionsDocument = gql`
+    query propertiesWithDefinitions($event: String!) {
+  propertiesWithDefinitions(event: $event) {
+    event
+    property
+    isNumerical
+    propertyType
+  }
+}
+    `;
+
+/**
+ * __usePropertiesWithDefinitionsQuery__
+ *
+ * To run a query within a React component, call `usePropertiesWithDefinitionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePropertiesWithDefinitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePropertiesWithDefinitionsQuery({
+ *   variables: {
+ *      event: // value for 'event'
+ *   },
+ * });
+ */
+export function usePropertiesWithDefinitionsQuery(baseOptions: Apollo.QueryHookOptions<PropertiesWithDefinitionsQuery, PropertiesWithDefinitionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PropertiesWithDefinitionsQuery, PropertiesWithDefinitionsQueryVariables>(PropertiesWithDefinitionsDocument, options);
+      }
+export function usePropertiesWithDefinitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PropertiesWithDefinitionsQuery, PropertiesWithDefinitionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PropertiesWithDefinitionsQuery, PropertiesWithDefinitionsQueryVariables>(PropertiesWithDefinitionsDocument, options);
+        }
+export type PropertiesWithDefinitionsQueryHookResult = ReturnType<typeof usePropertiesWithDefinitionsQuery>;
+export type PropertiesWithDefinitionsLazyQueryHookResult = ReturnType<typeof usePropertiesWithDefinitionsLazyQuery>;
+export type PropertiesWithDefinitionsQueryResult = Apollo.QueryResult<PropertiesWithDefinitionsQuery, PropertiesWithDefinitionsQueryVariables>;
 export const CompleteOnboardingStageDocument = gql`
     mutation completeOnboardingStage($input: ProjectUpdateInput!) {
   projectUpdate(input: $input) {
