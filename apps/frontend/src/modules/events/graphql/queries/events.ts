@@ -19,8 +19,8 @@ export const EVENT_DEFINITIONS = gql`
 `;
 
 export const EVENTS = gql`
-    query events {
-        events(first: 100) {
+    query events($first: Int, $filters: EventFilterInput) {
+        events(first: $first, filters: $filters) {
             edges {
                 node {
                     id
@@ -37,6 +37,7 @@ export const EVENTS = gql`
         }
     }
 `;
+
 export const PROPERTY_DEFINITIONS = gql`
     query propertyDefinitions {
         propertyDefinitions(first: 100) {
@@ -57,7 +58,7 @@ export const PROPERTY_DEFINITIONS = gql`
 `;
 
 export const PROPERTIES_WITH_DEFINITIONS = gql`
-    query propertiesWithDefinitions($event: String!) {
+    query propertiesWithDefinitions($event: String) {
         propertiesWithDefinitions(event: $event) {
             event
             property

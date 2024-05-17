@@ -1,11 +1,12 @@
 import {
     EventDefinitionCountableEdge,
+    EventPropertyWithDefinition,
+    EventsQuery,
     useEventDefinitionsQuery,
-    useEventsQuery,
+    useEventsLazyQuery,
     usePropertiesWithDefinitionsLazyQuery,
 } from "@/generated/graphql";
-import { useProject } from "@/modules/projects/hooks/useProject";
-import { Dialog, DialogContent, DialogTrigger, Header, TextInput } from "@/ui";
+import { Dialog, DialogContent, DialogTrigger, Header, Spinner, TextInput } from "@/ui";
 import { QuestionIcon, Search } from "@/ui/icons";
 import PeopleIconLg from "@/ui/icons/PeopleIconLg";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
@@ -14,25 +15,40 @@ import { useState } from "react";
 
 export const EventsIndex = () => {
     const [searchValue, setSearchValue] = useState("");
-
     const [selectedEvent, setSelectedEvent] = useState<EventDefinitionCountableEdge | null>(null);
+    const [propertiesWithDefinitions, setPropertiesWithDefinitions] = useState<EventPropertyWithDefinition[] | null>();
+    const [events, setEvents] = useState<EventsQuery | null>(null);
 
     const { data } = useEventDefinitionsQuery();
-    const { data: events } = useEventsQuery();
-    const { eventDefinitions } = useProject();
 
-    const [getPropertiesWithDefinitions] = usePropertiesWithDefinitionsLazyQuery();
+    const [getEvents] = useEventsLazyQuery();
+    const [getPropertiesWithDefinitions, { loading }] = usePropertiesWithDefinitionsLazyQuery();
 
     const filteredEvents = data?.eventDefinitions?.edges.filter((event) =>
         event.node.name.toLowerCase().includes(searchValue.toLowerCase()),
     );
+    const parsedEventsProperties =
+        events?.events?.edges[0].node.properties && JSON.parse(events?.events?.edges[0].node.properties);
 
-    const handlePropertiesWithEventDefinitions = async (event) => {
-        const response = await getPropertiesWithDefinitions({
+    const handleEventDetails = async (event: EventDefinitionCountableEdge) => {
+        const propertiesWithDefinitionsResponse = await getPropertiesWithDefinitions({
             variables: { event: event.node.name },
         });
-        console.log(response.data);
+        const eventsResponse = await getEvents({
+            variables: {
+                first: 1,
+                filters: {
+                    event: event.node.name,
+                },
+            },
+        });
+
+        setPropertiesWithDefinitions(
+            propertiesWithDefinitionsResponse.data?.propertiesWithDefinitions as EventPropertyWithDefinition[],
+        );
+        setEvents(eventsResponse.data as EventsQuery);
     };
+    console.log(events);
 
     return (
         <section className="px-[72px] pb-20 pt-20">
@@ -72,7 +88,7 @@ export const EventsIndex = () => {
                                             className="cursor-pointer border-l border-r border-intg-bg-4 text-center font-light transition-all duration-300 ease-in"
                                             onClick={() => {
                                                 setSelectedEvent(event as EventDefinitionCountableEdge);
-                                                handlePropertiesWithEventDefinitions(event);
+                                                handleEventDetails(event as EventDefinitionCountableEdge);
                                             }}
                                         >
                                             <TableCell>{event.node.name}</TableCell>
@@ -106,36 +122,59 @@ export const EventsIndex = () => {
                     >
                         <DialogTrigger />
                         <DialogContent className="p-6">
-                            <div className="mt-4 flex w-96 flex-col gap-[21px] rounded bg-intg-bg-15 p-3.5">
-                                <Header title="User details" variant="3" className="[&>*]:text-intg-text-11" />
+                            {loading ? (
+                                <Spinner />
+                            ) : (
+                                <Table className="scrollbar-hide mt-4 table-auto rounded-t-lg">
+                                    <TableHead className="bg-intg-bg-9 font-light hover:cursor-pointer">
+                                        <TableHeaderCell className="w-1/2">Property Name</TableHeaderCell>
+                                        <TableHeaderCell className="text-md flex items-center space-x-1 font-normal">
+                                            Type
+                                        </TableHeaderCell>
+                                        <TableHeaderCell className="text-md font-normal">Example</TableHeaderCell>
+                                    </TableHead>
+                                    <TableBody className="border-b border-t border-intg-bg-4">
+                                        {propertiesWithDefinitions?.map((item) => {
+                                            return (
+                                                <TableRow className="border border-intg-bg-4">
+                                                    <TableCell>{item.event}</TableCell>
+                                                    <TableCell>{item.propertyType}</TableCell>
+                                                    <TableCell>{events?.events?.edges[0].node.event}</TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                    </TableBody>
+                                </Table>
 
-                                <div className="grid grid-cols-[max-content,1fr] gap-x-3.5 gap-y-2 -tracking-[0.41px]">
-                                    <strong className="bg-intg-bg-22 text-intg-text-13 w-max rounded px-1.5 py-1 text-xs font-normal capitalize leading-[18px]">
-                                        Name
-                                    </strong>
+                                // <div className="mt-4 flex w-96 flex-col gap-[21px] rounded bg-intg-bg-15 p-3.5">
+                                //     <Header title="Event details" variant="3" className="[&>*]:text-intg-text-11" />
 
-                                    <span className="self-center text-sm font-normal text-intg-text-2">
-                                        {selectedEvent?.node.name}
-                                    </span>
-                                    <strong className="bg-intg-bg-22 text-intg-text-13 w-max rounded px-1.5 py-1 text-xs font-normal capitalize leading-[18px]">
-                                        Email
-                                    </strong>
+                                //     <div className="grid grid-cols-[max-content,1fr] gap-x-3.5 gap-y-2 -tracking-[0.41px]">
+                                //         <strong className="bg-intg-bg-22 text-intg-text-13 w-max rounded px-1.5 py-1 text-xs font-normal capitalize leading-[18px]">
+                                //             Name
+                                //         </strong>
 
-                                    <span className="self-center text-sm font-normal text-intg-text-2">
-                                        fols@gmail.com
-                                    </span>
-                                    <strong className="bg-intg-bg-22 text-intg-text-13 w-max rounded px-1.5 py-1 text-xs font-normal capitalize leading-[18px]">
-                                        Email
-                                    </strong>
+                                //         <span className="self-center text-sm font-normal text-intg-text-2">
+                                //             {selectedEvent?.node.name}
+                                //         </span>
 
-                                    <span className="self-center text-sm font-normal text-intg-text-2">
-                                        fols@gmail.com
-                                    </span>
-                                </div>
-                            </div>
+                                //         {events?.events?.edges[0].node.properties &&
+                                //             Object.entries(parsedEventsProperties as Properties).map(([key, value]) => (
+                                //                 <>
+                                //                     <strong className="bg-intg-bg-22 text-intg-text-13 w-max rounded px-1.5 py-1 text-xs font-normal capitalize leading-[18px]">
+                                //                         {key}:
+                                //                     </strong>
+                                //                     <span className="self-center text-sm font-normal text-intg-text-2">
+                                //                         {value.toString()}
+                                //                     </span>
+                                //                 </>
+                                //             ))}
+                                //     </div>
+                                // </div>
+                            )}
                         </DialogContent>
                     </Dialog>
-                </div>{" "}
+                </div>
             </div>
         </section>
     );

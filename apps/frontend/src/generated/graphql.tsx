@@ -2600,7 +2600,10 @@ export type EventDefinitionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type EventDefinitionsQuery = { __typename?: 'Query', eventDefinitions?: { __typename?: 'EventDefinitionCountableConnection', edges: Array<{ __typename?: 'EventDefinitionCountableEdge', node: { __typename?: 'EventDefinition', id: string, name: string, createdAt?: string | null, lastSeenAt?: string | null, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
 
-export type EventsQueryVariables = Exact<{ [key: string]: never; }>;
+export type EventsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  filters?: InputMaybe<EventFilterInput>;
+}>;
 
 
 export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventCountableConnection', edges: Array<{ __typename?: 'EventCountableEdge', node: { __typename?: 'Event', id: string, event: string, distinctId: string, properties?: any | null, timestamp?: string | null, createdAt?: string | null, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
@@ -2611,7 +2614,7 @@ export type PropertyDefinitionsQueryVariables = Exact<{ [key: string]: never; }>
 export type PropertyDefinitionsQuery = { __typename?: 'Query', propertyDefinitions?: { __typename?: 'PropertyDefinitionCountableConnection', edges: Array<{ __typename?: 'PropertyDefinitionCountableEdge', node: { __typename?: 'PropertyDefinition', id: string, name: string, isNumerical: boolean, type: PropertyDefinitionTypeEnum, propertyType: PropertyTypeEnum, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
 
 export type PropertiesWithDefinitionsQueryVariables = Exact<{
-  event: Scalars['String'];
+  event?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -3707,8 +3710,8 @@ export type EventDefinitionsQueryHookResult = ReturnType<typeof useEventDefiniti
 export type EventDefinitionsLazyQueryHookResult = ReturnType<typeof useEventDefinitionsLazyQuery>;
 export type EventDefinitionsQueryResult = Apollo.QueryResult<EventDefinitionsQuery, EventDefinitionsQueryVariables>;
 export const EventsDocument = gql`
-    query events {
-  events(first: 100) {
+    query events($first: Int, $filters: EventFilterInput) {
+  events(first: $first, filters: $filters) {
     edges {
       node {
         id
@@ -3738,6 +3741,8 @@ export const EventsDocument = gql`
  * @example
  * const { data, loading, error } = useEventsQuery({
  *   variables: {
+ *      first: // value for 'first'
+ *      filters: // value for 'filters'
  *   },
  * });
  */
@@ -3798,7 +3803,7 @@ export type PropertyDefinitionsQueryHookResult = ReturnType<typeof usePropertyDe
 export type PropertyDefinitionsLazyQueryHookResult = ReturnType<typeof usePropertyDefinitionsLazyQuery>;
 export type PropertyDefinitionsQueryResult = Apollo.QueryResult<PropertyDefinitionsQuery, PropertyDefinitionsQueryVariables>;
 export const PropertiesWithDefinitionsDocument = gql`
-    query propertiesWithDefinitions($event: String!) {
+    query propertiesWithDefinitions($event: String) {
   propertiesWithDefinitions(event: $event) {
     event
     property
@@ -3824,7 +3829,7 @@ export const PropertiesWithDefinitionsDocument = gql`
  *   },
  * });
  */
-export function usePropertiesWithDefinitionsQuery(baseOptions: Apollo.QueryHookOptions<PropertiesWithDefinitionsQuery, PropertiesWithDefinitionsQueryVariables>) {
+export function usePropertiesWithDefinitionsQuery(baseOptions?: Apollo.QueryHookOptions<PropertiesWithDefinitionsQuery, PropertiesWithDefinitionsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<PropertiesWithDefinitionsQuery, PropertiesWithDefinitionsQueryVariables>(PropertiesWithDefinitionsDocument, options);
       }

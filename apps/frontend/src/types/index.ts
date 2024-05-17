@@ -289,3 +289,5 @@ export type Theme = {
     name: string;
     colorScheme: ColorScheme;
 };
+
+export type Properties = Record<string, string>;
