@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import slugify from "slugify";
 import Logo from "../assets/images/logo.png";
-import { Button, SelectInput, TextInput } from "../ui";
+import { Button, GlobalSpinner, SelectInput, TextInput } from "../ui";
 
 enum WorkspaceSize {
     Select = "Select your company size",
@@ -39,7 +39,7 @@ const WorkspaceRoles = [
 ];
 
 const CreateWorkspace = () => {
-    const { createWorkspace } = useWorkspace();
+    const { createWorkspace, loading } = useWorkspace();
     const {
         watch,
         setValue,
@@ -97,6 +97,10 @@ const CreateWorkspace = () => {
             }
         }
     };
+
+    if (loading) {
+        return <GlobalSpinner />;
+    }
 
     return (
         <main className="h-screen w-screen bg-intg-black">
