@@ -305,3 +305,24 @@ export type ParsedResponse = Omit<SurveyResponse, "userAttributes" | "response">
     userAttributes: UserAttributes;
     response: Response;
 };
+
+export type NPSMetric = {
+    promoters: number;
+    passives: number;
+    detractors: number;
+    score: number;
+};
+
+export type CESMetric = {
+    low: number;
+    medium: number;
+    high: number;
+    score: number;
+};
+
+export type CSATMetric = {
+    positive: number;
+    neutral: number;
+    negative: number;
+    score: number;
+};

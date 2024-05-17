@@ -57,3 +57,17 @@ export const SURVEY_RESPONSES = gql`
         }
     }
 `;
+
+export const RESPONSE_METRIC = gql`
+    query responseMetric(
+        $id: ID!
+        $date: DateRangeInput
+        $previousDate: DateRangeInput
+        $metric: SurveyResponseMetricEnum!
+    ) {
+        responseMetric(id: $id, date: $date, previousDate: $previousDate, metric: $metric) {
+            current
+            previous
+        }
+    }
+`;

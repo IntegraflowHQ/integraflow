@@ -1,9 +1,7 @@
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { Button, Header } from "@/ui";
-import { PresentationChartLine } from "@/ui/icons";
-import CES from "assets/images/surveys/studio/ces-chart.svg";
-import CSAT from "assets/images/surveys/studio/csat-chart.svg";
-import NPS from "assets/images/surveys/studio/nps-chart.svg";
+import { Info, PresentationChartLine } from "@/ui/icons";
+import { DonutChart } from "@tremor/react";
 import ResponseTrends from "assets/images/surveys/studio/response-trends.svg";
 import { BadgeCheck, BarChart, Clock3 } from "lucide-react";
 import { DateFilter } from "../components/DateFilter";
@@ -11,10 +9,8 @@ import { ExportBtn } from "../components/ExportBtn";
 import { Response } from "../components/Response";
 import { Summary } from "../components/Summary";
 
-const charts = [NPS, CES, CSAT];
-
 export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) => {
-    const { responses, setActiveResponse } = useAnalyze();
+    const { responses, npsMetric, cesMetric, csatMetric, setActiveResponse } = useAnalyze();
 
     if (responses.length === 0) {
         return (
@@ -78,23 +74,147 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
 
                 <div className="flex gap-[14px] py-4">
                     <section className="flex flex-col gap-[14px]">
-                        {charts.map((chart, i) => (
-                            <section key={i} className="relative">
-                                <img src={chart} className="w-full opacity-30" />
+                        <div className="h-[280px] max-w-[419px] rounded-lg bg-intg-bg-15 p-4">
+                            <header className="flex items-center gap-2 pb-4">
+                                <h2 className="text-base font-medium text-intg-text">Net Promoter Score</h2>
+                                <Info />
+                            </header>
 
-                                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-lg">
-                                    <span className="text-lg text-white">Coming Soon</span>
-                                    <Button
-                                        variant="secondary"
-                                        text="Notify me"
-                                        className="w-max px-8 py-[8px]"
-                                        onClick={() => {
-                                            //TODO: implement notify me
-                                        }}
+                            <div className="flex gap-[30px]">
+                                <div className="relative flex-1">
+                                    <DonutChart
+                                        data={
+                                            npsMetric.detractors && npsMetric.passives && npsMetric.promoters
+                                                ? [
+                                                      { name: "promoters", value: npsMetric.promoters },
+                                                      { name: "passives", value: npsMetric.passives },
+                                                      { name: "detractors", value: npsMetric.detractors },
+                                                  ]
+                                                : [{ name: "placeholder", value: 1 }]
+                                        }
+                                        showLabel={false}
+                                        showTooltip={false}
+                                        colors={["#EB5A6D", "#FFB17B", "#8DF0B0"]}
+                                        className="h-[186px] w-[186px]"
                                     />
+                                    <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center">
+                                        <strong className="text-3xl font-medium text-white">{npsMetric.score}</strong>
+                                        <span className="text-xs text-intg-text">Avg score</span>
+                                    </div>
                                 </div>
-                            </section>
-                        ))}
+
+                                <div className="flex flex-1 flex-col gap-6 self-center text-sm text-intg-text">
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-3 w-3 rounded-sm bg-[#8DF0B0]"></div>
+                                        <span>Promoters - ({npsMetric.promoters})</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-3 w-3 rounded-sm bg-[#FFB17B]"></div>
+                                        <span>Passives - ({npsMetric.passives})</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-3 w-3 rounded-sm bg-[#EB5A6D]"></div>
+                                        <span>Detractors - ({npsMetric.detractors})</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="h-[280px] max-w-[419px] rounded-lg bg-intg-bg-15 p-4">
+                            <header className="flex items-center gap-2 pb-4">
+                                <h2 className="text-base font-medium text-intg-text">Customer Effort Score (CES)</h2>
+                                <Info />
+                            </header>
+
+                            <div className="flex gap-[30px]">
+                                <div className="relative flex-1">
+                                    <DonutChart
+                                        data={
+                                            cesMetric.high && cesMetric.medium && cesMetric.low
+                                                ? [
+                                                      { name: "low", value: cesMetric.low },
+                                                      { name: "medium", value: cesMetric.medium },
+                                                      { name: "high", value: cesMetric.high },
+                                                  ]
+                                                : [{ name: "placeholder", value: 1 }]
+                                        }
+                                        colors={["#EB5A6D", "#FFB17B", "#8DF0B0"]}
+                                        showTooltip={false}
+                                        showLabel={false}
+                                        className="h-[186px] w-[186px]"
+                                    />
+
+                                    <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center">
+                                        <strong className="text-3xl font-medium text-white">{cesMetric.score}</strong>
+                                        <span className="text-xs text-intg-text">Avg score</span>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-1 flex-col gap-6 self-center text-sm text-intg-text">
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-3 w-3 rounded-sm bg-[#8DF0B0]"></div>
+                                        <span>Low Effort ({cesMetric.low})</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-3 w-3 rounded-sm bg-[#FFB17B]"></div>
+                                        <span>Med Effort ({cesMetric.medium})</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-3 w-3 rounded-sm bg-[#EB5A6D]"></div>
+                                        <span>High Effort ({cesMetric.high})</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="h-[280px] max-w-[419px] rounded-lg bg-intg-bg-15 p-4">
+                            <header className="flex items-center gap-2 pb-4">
+                                <h2 className="text-base font-medium text-intg-text">
+                                    Customer Satisfaction Score (CSAT)
+                                </h2>
+                                <Info />
+                            </header>
+
+                            <div className="flex gap-[30px]">
+                                <div className="relative flex-1">
+                                    <DonutChart
+                                        data={
+                                            csatMetric.negative && csatMetric.neutral && csatMetric.positive
+                                                ? [
+                                                      { name: "positive", value: csatMetric.positive },
+                                                      { name: "neutral", value: csatMetric.negative },
+                                                      { name: "negative", value: csatMetric.neutral },
+                                                  ]
+                                                : [{ name: "placeholder", value: 1 }]
+                                        }
+                                        colors={["#5D45DB", "#A698EB", "#D3CCF5"]}
+                                        showTooltip={false}
+                                        showLabel={false}
+                                        className="h-[186px] w-[186px]"
+                                    />
+
+                                    <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center">
+                                        <strong className="text-3xl font-medium text-white">{csatMetric.score}</strong>
+                                        <span className="text-xs text-intg-text">Avg score</span>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-1 flex-col gap-6 self-center text-sm text-intg-text">
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-3 w-3 rounded-sm bg-[#5D45DB]"></div>
+                                        <span>Positive ({csatMetric.positive})</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-3 w-3 rounded-sm bg-[#A698EB]"></div>
+                                        <span>Neutral ({csatMetric.neutral})</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-3 w-3 rounded-sm bg-[#D3CCF5]"></div>
+                                        <span>Negative ({csatMetric.negative})</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </section>
 
                     <section className="flex-1 rounded-lg bg-intg-bg-15 px-4 pt-6">

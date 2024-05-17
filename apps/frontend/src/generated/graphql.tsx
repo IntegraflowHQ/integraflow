@@ -2791,6 +2791,16 @@ export type ResponsesQueryVariables = Exact<{
 
 export type ResponsesQuery = { __typename?: 'Query', responses?: { __typename?: 'SurveyResponseCountableConnection', totalCount?: number | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }, nodes: Array<{ __typename?: 'SurveyResponse', id: string, title: string, userAttributes?: any | null, response: any, status: SurveyResponseStatusEnum, completedAt?: string | null, createdAt: string, updatedAt: string, timeSpent?: number | null, stats?: any | null }> } | null };
 
+export type ResponseMetricQueryVariables = Exact<{
+  id: Scalars['ID'];
+  date?: InputMaybe<DateRangeInput>;
+  previousDate?: InputMaybe<DateRangeInput>;
+  metric: SurveyResponseMetricEnum;
+}>;
+
+
+export type ResponseMetricQuery = { __typename?: 'Query', responseMetric?: { __typename?: 'SurveyResponseMetric', current?: any | null, previous?: any | null } | null };
+
 export type OrganizationFragmentFragment = { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, invites?: { __typename?: 'OrganizationInviteCountableConnection', edges: Array<{ __typename?: 'OrganizationInviteCountableEdge', node: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel } }> } | null, members?: { __typename?: 'OrganizationMemberCountableConnection', edges: Array<{ __typename?: 'OrganizationMemberCountableEdge', node: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } }> } | null, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null };
 
 export type OrganizationMembershipFragmentFragment = { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel };
@@ -4657,6 +4667,50 @@ export function useResponsesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type ResponsesQueryHookResult = ReturnType<typeof useResponsesQuery>;
 export type ResponsesLazyQueryHookResult = ReturnType<typeof useResponsesLazyQuery>;
 export type ResponsesQueryResult = Apollo.QueryResult<ResponsesQuery, ResponsesQueryVariables>;
+export const ResponseMetricDocument = gql`
+    query responseMetric($id: ID!, $date: DateRangeInput, $previousDate: DateRangeInput, $metric: SurveyResponseMetricEnum!) {
+  responseMetric(
+    id: $id
+    date: $date
+    previousDate: $previousDate
+    metric: $metric
+  ) {
+    current
+    previous
+  }
+}
+    `;
+
+/**
+ * __useResponseMetricQuery__
+ *
+ * To run a query within a React component, call `useResponseMetricQuery` and pass it any options that fit your needs.
+ * When your component renders, `useResponseMetricQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useResponseMetricQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      date: // value for 'date'
+ *      previousDate: // value for 'previousDate'
+ *      metric: // value for 'metric'
+ *   },
+ * });
+ */
+export function useResponseMetricQuery(baseOptions: Apollo.QueryHookOptions<ResponseMetricQuery, ResponseMetricQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ResponseMetricQuery, ResponseMetricQueryVariables>(ResponseMetricDocument, options);
+      }
+export function useResponseMetricLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ResponseMetricQuery, ResponseMetricQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ResponseMetricQuery, ResponseMetricQueryVariables>(ResponseMetricDocument, options);
+        }
+export type ResponseMetricQueryHookResult = ReturnType<typeof useResponseMetricQuery>;
+export type ResponseMetricLazyQueryHookResult = ReturnType<typeof useResponseMetricLazyQuery>;
+export type ResponseMetricQueryResult = Apollo.QueryResult<ResponseMetricQuery, ResponseMetricQueryVariables>;
 export const OrganizationCreateDocument = gql`
     mutation organizationCreate($input: OrganizationCreateInput!, $survey: OnboardingCustomerSurvey) {
   organizationCreate(input: $input, survey: $survey) {
