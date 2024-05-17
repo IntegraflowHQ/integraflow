@@ -145,32 +145,6 @@ export const EventsIndex = () => {
                                         })}
                                     </TableBody>
                                 </Table>
-
-                                // <div className="mt-4 flex w-96 flex-col gap-[21px] rounded bg-intg-bg-15 p-3.5">
-                                //     <Header title="Event details" variant="3" className="[&>*]:text-intg-text-11" />
-
-                                //     <div className="grid grid-cols-[max-content,1fr] gap-x-3.5 gap-y-2 -tracking-[0.41px]">
-                                //         <strong className="bg-intg-bg-22 text-intg-text-13 w-max rounded px-1.5 py-1 text-xs font-normal capitalize leading-[18px]">
-                                //             Name
-                                //         </strong>
-
-                                //         <span className="self-center text-sm font-normal text-intg-text-2">
-                                //             {selectedEvent?.node.name}
-                                //         </span>
-
-                                //         {events?.events?.edges[0].node.properties &&
-                                //             Object.entries(parsedEventsProperties as Properties).map(([key, value]) => (
-                                //                 <>
-                                //                     <strong className="bg-intg-bg-22 text-intg-text-13 w-max rounded px-1.5 py-1 text-xs font-normal capitalize leading-[18px]">
-                                //                         {key}:
-                                //                     </strong>
-                                //                     <span className="self-center text-sm font-normal text-intg-text-2">
-                                //                         {value.toString()}
-                                //                     </span>
-                                //                 </>
-                                //             ))}
-                                //     </div>
-                                // </div>
                             )}
                         </DialogContent>
                     </Dialog>
