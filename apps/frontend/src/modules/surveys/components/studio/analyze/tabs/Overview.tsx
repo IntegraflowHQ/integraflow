@@ -10,7 +10,24 @@ import { Response } from "../components/Response";
 import { Summary } from "../components/Summary";
 
 export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) => {
-    const { responses, npsMetric, cesMetric, csatMetric, setActiveResponse } = useAnalyze();
+    const {
+        responses,
+        npsMetric,
+        cesMetric,
+        csatMetric,
+        totalResponses,
+        completionRate,
+        averageTime,
+        timeFrame,
+        setActiveResponse,
+        setTimeFrame,
+        calculatePercentageDifference,
+    } = useAnalyze();
+
+    const completionRatePercentageDifference = calculatePercentageDifference(completionRate);
+    const totalResponsesPercentageDifference = calculatePercentageDifference(totalResponses);
+    const averageTimePercentageDifference = calculatePercentageDifference(averageTime);
+    const trendName = `Compared to last ${timeFrame.timePeriod !== "custom" ? timeFrame.timePeriod : "week"}`;
 
     if (responses.length === 0) {
         return (
@@ -41,7 +58,13 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                 />
 
                 <div className="flex items-center justify-between pb-[14px]">
-                    <DateFilter />
+                    <DateFilter
+                        defaultValue={timeFrame}
+                        onValueChange={(value) => {
+                            console.error("date: ", value);
+                            setTimeFrame(value);
+                        }}
+                    />
                     <ExportBtn />
                 </div>
 
@@ -49,26 +72,44 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                     <Summary
                         icon={<BarChart strokeWidth={4} className="text-intg-text" />}
                         title="Total Responses"
-                        value="0"
-                        trend="+10%"
-                        trendName="Repeat - 0"
-                        trendVariant="positive"
+                        value={totalResponses?.current?.value?.toString() ?? "0"}
+                        trend={`${totalResponsesPercentageDifference >= 0 ? "+" : ""}${totalResponsesPercentageDifference}%`}
+                        trendName={trendName}
+                        trendVariant={
+                            totalResponsesPercentageDifference > 0
+                                ? "positive"
+                                : totalResponsesPercentageDifference < 0
+                                  ? "negative"
+                                  : "neutral"
+                        }
                     />
                     <Summary
                         icon={<BadgeCheck className="fill-intg-text text-intg-bg-8" />}
                         title="Completion rate"
-                        value="100%"
-                        trend="+10%"
-                        trendName="Compared to last week"
-                        trendVariant="neutral"
+                        value={`${completionRate?.current.value?.toString() ?? "100"}%`}
+                        trend={`${completionRatePercentageDifference >= 0 ? "+" : ""}${completionRatePercentageDifference}%`}
+                        trendName={trendName}
+                        trendVariant={
+                            completionRatePercentageDifference > 0
+                                ? "positive"
+                                : completionRatePercentageDifference < 0
+                                  ? "negative"
+                                  : "neutral"
+                        }
                     />
                     <Summary
                         icon={<Clock3 className="fill-intg-text text-intg-bg-8" />}
                         title="Avg rate"
                         value="01m 52s%"
-                        trend="-10%"
-                        trendName="Compared to last week"
-                        trendVariant="negative"
+                        trend={`${averageTimePercentageDifference >= 0 ? "+" : ""}${averageTimePercentageDifference}%`}
+                        trendName={trendName}
+                        trendVariant={
+                            averageTimePercentageDifference > 0
+                                ? "positive"
+                                : averageTimePercentageDifference < 0
+                                  ? "negative"
+                                  : "neutral"
+                        }
                     />
                 </div>
 

@@ -16,8 +16,13 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
 
     const getAnswer = (q: SurveyQuestion) => {
         if (!q.reference) {
-            return;
+            return "";
         }
+
+        if (!activeResponse?.response[q.reference] || activeResponse.response[q.reference].length < 1) {
+            return "";
+        }
+
         if (q.type === SurveyQuestionTypeEnum.Cta && activeResponse?.response[q.reference][0].ctaSuccess) {
             return "clicked";
         }

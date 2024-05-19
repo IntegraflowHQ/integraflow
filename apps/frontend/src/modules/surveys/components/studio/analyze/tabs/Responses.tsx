@@ -7,7 +7,7 @@ import { Response } from "../components/Response";
 import { ResponseDetails } from "../components/ResponseDetails";
 
 export const Responses = () => {
-    const { responses, activeResponse, setActiveResponse } = useAnalyze();
+    const { responses, activeResponse, timeFrame, setTimeFrame, setActiveResponse } = useAnalyze();
 
     if (responses.length === 0) {
         return (
@@ -37,7 +37,7 @@ export const Responses = () => {
                 />
 
                 <div className="flex items-center justify-between pb-[14px]">
-                    <DateFilter />
+                    <DateFilter defaultValue={timeFrame} onValueChange={setTimeFrame} />
                     <ExportBtn />
                 </div>
 
