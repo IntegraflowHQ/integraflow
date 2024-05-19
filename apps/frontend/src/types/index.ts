@@ -326,3 +326,19 @@ export type CSATMetric = {
     negative: number;
     score: number;
 };
+
+export type Summary = {
+    value: number | null;
+};
+
+export type DateFilterValue = {
+    timePeriod: "today" | "last 7 days" | "30 days" | "1 year" | "custom";
+    current: {
+        gte: string;
+        lte: string;
+    };
+    previous?: {
+        gte: string;
+        lte: string;
+    };
+};

@@ -11,6 +11,7 @@ import {
     UserAttributes,
 } from "@/types";
 import { DeepOmit } from "@apollo/client/utilities";
+import { formatISO } from "date-fns";
 import { toast } from "./toast";
 
 export function cn(...classes: string[]) {
@@ -137,7 +138,7 @@ export const parseResponse = (response: SurveyResponse) => {
 
 export const getISOdateString = (date?: Date): string => {
     if (!date) {
-        return new Date().toISOString().split("T")[0];
+        return formatISO(Date.now(), { representation: "date" });
     }
-    return date.toISOString().split("T")[0];
+    return formatISO(date, { representation: "date" });
 };
