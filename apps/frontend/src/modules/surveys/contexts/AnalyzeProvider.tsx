@@ -58,7 +58,6 @@ const useAnalyzeFactory = () => {
             id: surveyId,
             metric: SurveyResponseMetricEnum.Nps,
             date: timeFrame.current,
-            previousDate: timeFrame.previous,
         },
     });
 
@@ -68,7 +67,6 @@ const useAnalyzeFactory = () => {
             id: surveyId,
             metric: SurveyResponseMetricEnum.Csat,
             date: timeFrame.current,
-            previousDate: timeFrame.previous,
         },
     });
 
@@ -78,7 +76,6 @@ const useAnalyzeFactory = () => {
             id: surveyId,
             metric: SurveyResponseMetricEnum.Ces,
             date: timeFrame.current,
-            previousDate: timeFrame.previous,
         },
     });
 
