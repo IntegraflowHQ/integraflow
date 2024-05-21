@@ -36,10 +36,12 @@ export const Responses = () => {
                     className="max-w-[375px] pb-8"
                 />
 
-                <div className="flex items-center justify-between pb-[14px]">
-                    <DateFilter defaultValue={timeFrame} onValueChange={setTimeFrame} />
-                    <ExportBtn />
-                </div>
+                {!activeResponse ? (
+                    <div className="flex items-center justify-between pb-[14px]">
+                        <DateFilter defaultValue={timeFrame} onValueChange={setTimeFrame} />
+                        <ExportBtn />
+                    </div>
+                ) : null}
 
                 {!activeResponse ? (
                     <div className="flex flex-col gap-2 rounded-lg bg-intg-bg-15 p-4">
