@@ -1,40 +1,52 @@
+import { EventDefinitionCountableEdge, useEventsLazyQuery } from "@/generated/graphql";
+import { Properties } from "@/types";
+import { Dialog, DialogContent, DialogTrigger, Header, Spinner } from "@/ui";
+import { QuestionIcon } from "@/ui/icons";
+import { CursorIconLg } from "@/ui/icons/CursorIconLg";
+import { cn } from "@/utils";
 import {
-    EventDefinitionCountableEdge,
-    EventPropertyWithDefinition,
-    EventsQuery,
-    useEventDefinitionsQuery,
-    useEventsLazyQuery,
-    usePropertiesWithDefinitionsLazyQuery,
-} from "@/generated/graphql";
-import { Dialog, DialogContent, DialogTrigger, Header, Spinner, TextInput } from "@/ui";
-import { QuestionIcon, Search } from "@/ui/icons";
-import PeopleIconLg from "@/ui/icons/PeopleIconLg";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
+    Icon,
+    Table,
+    TableBody,
+    TableCell,
+    TableFoot,
+    TableFooterCell,
+    TableHead,
+    TableHeaderCell,
+    TableRow,
+} from "@tremor/react";
 import { format } from "date-fns";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { useEvents } from "../hooks/useEvents";
 
 export const EventsIndex = () => {
-    const [searchValue, setSearchValue] = useState("");
     const [selectedEvent, setSelectedEvent] = useState<EventDefinitionCountableEdge | null>(null);
-    const [propertiesWithDefinitions, setPropertiesWithDefinitions] = useState<EventPropertyWithDefinition[] | null>();
-    const [events, setEvents] = useState<EventsQuery | null>(null);
 
-    const { data } = useEventDefinitionsQuery();
+    const {
+        events,
+        eventDefinitions,
+        getPropertiesWithDefinitions,
+        isFetchingMore,
+        propertiesWithDefinitions,
+        propertiesLoading,
+        eventDefinitionsOnPage,
+        getMoreEventDefinitions,
+    } = useEvents();
 
-    const [getEvents] = useEventsLazyQuery();
-    const [getPropertiesWithDefinitions, { loading }] = usePropertiesWithDefinitionsLazyQuery();
+    const [page, setPage] = useState<number>(1);
+    const eventsDefinitionsStartIndex = (page - 1) * eventDefinitionsOnPage + 1;
+    const eventsDefinitionsEndIndex = Math.min(page * eventDefinitionsOnPage, eventDefinitions?.totalCount ?? 0);
 
-    const filteredEvents = data?.eventDefinitions?.edges.filter((event) =>
-        event.node.name.toLowerCase().includes(searchValue.toLowerCase()),
-    );
-    const parsedEventsProperties =
-        events?.events?.edges[0].node.properties && JSON.parse(events?.events?.edges[0].node.properties);
+    const [getEvents, { data: singleEvent, loading: eventLoading }] = useEventsLazyQuery();
+
+    const event =
+        singleEvent?.events?.edges[0].node.properties &&
+        (JSON.parse(singleEvent?.events?.edges[0].node.properties) as Properties);
 
     const handleEventDetails = async (event: EventDefinitionCountableEdge) => {
-        const propertiesWithDefinitionsResponse = await getPropertiesWithDefinitions({
-            variables: { event: event.node.name },
-        });
-        const eventsResponse = await getEvents({
+        getPropertiesWithDefinitions(event.node.name);
+        await getEvents({
             variables: {
                 first: 1,
                 filters: {
@@ -42,33 +54,31 @@ export const EventsIndex = () => {
                 },
             },
         });
-
-        setPropertiesWithDefinitions(
-            propertiesWithDefinitionsResponse.data?.propertiesWithDefinitions as EventPropertyWithDefinition[],
-        );
-        setEvents(eventsResponse.data as EventsQuery);
     };
-    console.log(events);
+
+    const handleGetMoreEventsDefinitions = (direction: string) => {
+        if (direction === "forward") {
+            setPage((prevPage) => prevPage + 1);
+        } else {
+            setPage((prevPage) => prevPage - 1);
+        }
+
+        getMoreEventDefinitions(direction);
+    };
 
     return (
         <section className="px-[72px] pb-20 pt-20">
             <Header title="Events" description="The events that you have sent" />
             <div className="mt-4 h-full w-full space-y-12">
-                <div className="flex justify-between">
-                    <h3 className="font-semibold text-intg-text"></h3>
+                <h3 className="font-semibold text-intg-text"></h3>
 
-                    <div className="basis-[30%]">
-                        <TextInput
-                            placeholder="Search by name or email"
-                            value={searchValue}
-                            onChange={(e) => setSearchValue(e.target.value)}
-                            icon={Search}
-                            className="w-full"
-                        />
-                    </div>
-                </div>
                 <div className="text-intg-text">
-                    <Table className="scrollbar-hide table-auto rounded-t-lg">
+                    <Table
+                        className={cn(
+                            eventDefinitions?.edges.length ? "border" : "",
+                            "scrollbar-hide table-auto rounded-t-lg border-intg-bg-4",
+                        )}
+                    >
                         <TableHead className="bg-intg-bg-9 font-light hover:cursor-pointer">
                             <TableHeaderCell className="w-1/2">Event Name</TableHeaderCell>
                             <TableHeaderCell className="text-md flex items-center space-x-1 font-normal">
@@ -79,38 +89,77 @@ export const EventsIndex = () => {
                             </TableHeaderCell>
                             <TableHeaderCell className="text-md font-normal">Last Seen</TableHeaderCell>
                         </TableHead>
-                        <TableBody className="border-intg-bg-4">
-                            {filteredEvents?.length ? (
-                                filteredEvents.map((event) => {
-                                    return (
-                                        <TableRow
-                                            key={event.node.id}
-                                            className="cursor-pointer border-l border-r border-intg-bg-4 text-center font-light transition-all duration-300 ease-in"
-                                            onClick={() => {
-                                                setSelectedEvent(event as EventDefinitionCountableEdge);
-                                                handleEventDetails(event as EventDefinitionCountableEdge);
-                                            }}
-                                        >
-                                            <TableCell>{event.node.name}</TableCell>
-                                            <TableCell>
-                                                {format(new Date(event.node.createdAt ?? ""), "MMM dd, yyyy")}
-                                            </TableCell>
-                                            <TableCell>
-                                                {format(new Date(event.node.lastSeenAt ?? ""), "MMM dd, yyyy")}
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })
-                            ) : (
-                                <div className="ml-48 mt-40 flex w-full">
-                                    <div className=" m-auto flex flex-col">
-                                        <PeopleIconLg />
-                                        <p className="text-2xl font-semibold">No events yet</p>
-                                        <p className="text-sm">We couldn't find any events</p>
-                                    </div>
-                                </div>
-                            )}
+                        <TableBody>
+                            {(eventDefinitions?.edges || []).map((event) => {
+                                return (
+                                    <TableRow
+                                        key={event.node.id}
+                                        className="cursor-pointer  border-intg-bg-4 text-center font-light transition-all duration-300 ease-in"
+                                        onClick={() => {
+                                            setSelectedEvent(event as EventDefinitionCountableEdge);
+                                            handleEventDetails(event as EventDefinitionCountableEdge);
+                                        }}
+                                    >
+                                        <TableCell>{event.node.name}</TableCell>
+                                        <TableCell>
+                                            {format(new Date(event.node.createdAt ?? ""), "MMM dd, yyyy")}
+                                        </TableCell>
+                                        <TableCell>
+                                            {format(new Date(event.node.lastSeenAt ?? ""), "MMM dd, yyyy")}
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })}
                         </TableBody>
+
+                        {!eventDefinitions?.edges.length ? null : (
+                            <TableFoot className="table-footer-group h-[50px] border-t border-intg-bg-4">
+                                <TableFooterCell className="table-cell px-4 py-4">
+                                    <div className="flex gap-10">
+                                        <button
+                                            disabled={!eventDefinitions?.pageInfo?.hasPreviousPage || isFetchingMore}
+                                            onClick={() => handleGetMoreEventsDefinitions("backward")}
+                                            className={`${
+                                                !eventDefinitions?.pageInfo?.hasPreviousPage
+                                                    ? "cursor-not-allowed opacity-50"
+                                                    : ""
+                                            } hover:bg-intg-bg-8} rounded-md border border-intg-bg-4 transition-all duration-300 ease-in`}
+                                        >
+                                            <Icon
+                                                size="md"
+                                                icon={ChevronLeft}
+                                                className="font-normal text-intg-text-4 hover:cursor-pointer"
+                                            />
+                                        </button>
+
+                                        <button
+                                            disabled={!eventDefinitions?.pageInfo?.hasNextPage || isFetchingMore}
+                                            onClick={() => handleGetMoreEventsDefinitions("forward")}
+                                            className={`${
+                                                !eventDefinitions?.pageInfo?.hasNextPage || isFetchingMore
+                                                    ? "cursor-not-allowed opacity-50"
+                                                    : ""
+                                            } rounded-md border border-intg-bg-4  transition-all duration-300 ease-in hover:bg-intg-bg-8`}
+                                        >
+                                            <Icon
+                                                size="md"
+                                                icon={ChevronRight}
+                                                className="font-normal text-intg-text-4 hover:cursor-pointer"
+                                            />
+                                        </button>
+                                    </div>
+                                </TableFooterCell>
+                                <TableFooterCell className="table-cell whitespace-nowrap px-4 py-4 text-sm font-normal text-intg-text-4">
+                                    <div className="flex gap-10">
+                                        <span>Rows per page: {eventDefinitionsOnPage}</span>
+                                        <span>
+                                            {eventsDefinitionsStartIndex} - {eventsDefinitionsEndIndex} of{" "}
+                                            {eventDefinitions?.totalCount} Surveys
+                                        </span>
+                                    </div>
+                                </TableFooterCell>
+                            </TableFoot>
+                        )}
                     </Table>
                     <Dialog
                         open={selectedEvent !== null}
@@ -121,9 +170,11 @@ export const EventsIndex = () => {
                         }}
                     >
                         <DialogTrigger />
-                        <DialogContent className="p-6">
-                            {loading ? (
-                                <Spinner />
+                        <DialogContent className={cn(eventLoading || propertiesLoading ? "min-w-96" : "", "p-6")}>
+                            {eventLoading || propertiesLoading ? (
+                                <div className="flex justify-center">
+                                    <Spinner />
+                                </div>
                             ) : (
                                 <Table className="scrollbar-hide mt-4 table-auto rounded-t-lg">
                                     <TableHead className="bg-intg-bg-9 font-light hover:cursor-pointer">
@@ -135,11 +186,13 @@ export const EventsIndex = () => {
                                     </TableHead>
                                     <TableBody className="border-b border-t border-intg-bg-4">
                                         {propertiesWithDefinitions?.map((item) => {
+                                            const propertyValue = event ? event[item.property] : "N/A";
+
                                             return (
                                                 <TableRow className="border border-intg-bg-4">
-                                                    <TableCell>{item.event}</TableCell>
+                                                    <TableCell>{item.property}</TableCell>
                                                     <TableCell>{item.propertyType}</TableCell>
-                                                    <TableCell>{events?.events?.edges[0].node.event}</TableCell>
+                                                    <TableCell>{propertyValue ?? "N/A"}</TableCell>
                                                 </TableRow>
                                             );
                                         })}
@@ -149,6 +202,17 @@ export const EventsIndex = () => {
                         </DialogContent>
                     </Dialog>
                 </div>
+                {!events?.edges.length ? (
+                    <div className="mt-40 flex h-full w-full text-intg-text">
+                        <div className=" m-auto flex-col text-center">
+                            <div className=" flex justify-center">
+                                <CursorIconLg />
+                            </div>
+                            <p className="text-2xl font-semibold">No events yet</p>
+                            <p className="text-sm">We couldn't find any events</p>
+                        </div>
+                    </div>
+                ) : null}
             </div>
         </section>
     );
