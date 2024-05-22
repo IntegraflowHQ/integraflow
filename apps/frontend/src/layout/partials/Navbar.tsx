@@ -89,7 +89,7 @@ export const Navbar = () => {
                 ":projectSlug",
                 project?.slug as string,
             ),
-            disable: true,
+            disable: false,
         },
     ];
 

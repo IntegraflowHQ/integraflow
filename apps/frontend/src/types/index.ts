@@ -290,4 +290,4 @@ export type Theme = {
     colorScheme: ColorScheme;
 };
 
-export type Properties = Record<string, string>;
+export type Properties = Record<string, string | boolean>;
