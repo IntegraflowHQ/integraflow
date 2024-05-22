@@ -5,6 +5,7 @@ import { Context, RootFrame, RootFrameContainer, SdkEvent, TagManager, Targeting
 import { ID, Survey, SurveyAnswer } from "../types";
 import { deferSurveyActivation } from "../utils";
 
+import { getState } from "../core/storage";
 import App from "./App";
 import { SurveyLogic } from "./logic";
 
@@ -205,13 +206,22 @@ export class SurveyManager {
         this.renderSurvey();
     }
 
-    showSurvey(surveyId: ID, startFrom?: ID) {
+    async showSurvey(surveyId: ID, startFrom?: ID) {
         const survey = this.context.surveys?.find(survey => survey.id === surveyId);
 
         if (survey) {
             const idx = this.activeSurveys.findIndex(survey => survey.id === surveyId);
             if (idx >= 0) {
                 this.activeSurveys.splice(idx, 1);
+            }
+
+            const state = await getState(this.context);
+
+            const lastPresentationTime = state.lastPresentationTimes?.get(survey.id);
+
+            if (lastPresentationTime && !survey.settings.recurring) {
+                this.context.listeners.onSurveyCompleted?.(survey.id);
+                return;
             }
 
             this.activeSurveys.unshift(survey);
