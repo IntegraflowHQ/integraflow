@@ -6,6 +6,7 @@ import ResponseTrends from "assets/images/surveys/studio/response-trends.svg";
 import { BadgeCheck, BarChart, Clock3 } from "lucide-react";
 import { DateFilter } from "../components/DateFilter";
 import { ExportBtn } from "../components/ExportBtn";
+import { Legend } from "../components/Legend";
 import { Response } from "../components/Response";
 import { Summary } from "../components/Summary";
 
@@ -27,7 +28,19 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
     const completionRatePercentageDifference = calculatePercentageDifference(completionRate);
     const totalResponsesPercentageDifference = calculatePercentageDifference(totalResponses);
     const averageTimePercentageDifference = calculatePercentageDifference(averageTime);
-    const trendName = `Compared to last ${timeFrame.timePeriod !== "custom" ? timeFrame.timePeriod : "week"}`;
+
+    let trendName = "";
+    if (timeFrame.timePeriod === "custom") {
+        trendName = "Compared to last week";
+    } else if (timeFrame.timePeriod === "today") {
+        trendName = "Compared to last day";
+    } else if (timeFrame.timePeriod === "last 7 days") {
+        trendName = "Compared to last week";
+    } else if (timeFrame.timePeriod === "30 days") {
+        trendName = "Compared to last month";
+    } else if (timeFrame.timePeriod === "1 year") {
+        trendName = "Compared to last year";
+    }
 
     if (responses.length === 0) {
         return (
@@ -58,13 +71,7 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                 />
 
                 <div className="flex items-center justify-between pb-[14px]">
-                    <DateFilter
-                        defaultValue={timeFrame}
-                        onValueChange={(value) => {
-                            console.error("date: ", value);
-                            setTimeFrame(value);
-                        }}
-                    />
+                    <DateFilter defaultValue={timeFrame} onValueChange={setTimeFrame} />
                     <ExportBtn />
                 </div>
 
@@ -73,7 +80,7 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                         icon={<BarChart strokeWidth={4} className="text-intg-text" />}
                         title="Total Responses"
                         value={totalResponses?.current?.value?.toString() ?? "0"}
-                        trend={`${totalResponsesPercentageDifference >= 0 ? "+" : ""}${totalResponsesPercentageDifference}%`}
+                        trend={`${totalResponsesPercentageDifference >= 0 ? "+" : ""}${totalResponsesPercentageDifference.toFixed(2)}%`}
                         trendName={trendName}
                         trendVariant={
                             totalResponsesPercentageDifference > 0
@@ -86,8 +93,8 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                     <Summary
                         icon={<BadgeCheck className="fill-intg-text text-intg-bg-8" />}
                         title="Completion rate"
-                        value={`${completionRate?.current.value?.toString() ?? "100"}%`}
-                        trend={`${completionRatePercentageDifference >= 0 ? "+" : ""}${completionRatePercentageDifference}%`}
+                        value={`${completionRate?.current.value?.toFixed(2) ?? "100"}%`}
+                        trend={`${completionRatePercentageDifference >= 0 ? "+" : ""}${completionRatePercentageDifference.toFixed(2)}%`}
                         trendName={trendName}
                         trendVariant={
                             completionRatePercentageDifference > 0
@@ -101,7 +108,7 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                         icon={<Clock3 className="fill-intg-text text-intg-bg-8" />}
                         title="Avg rate"
                         value="01m 52s%"
-                        trend={`${averageTimePercentageDifference >= 0 ? "+" : ""}${averageTimePercentageDifference}%`}
+                        trend={`${averageTimePercentageDifference >= 0 ? "+" : ""}${averageTimePercentageDifference.toFixed(2)}%`}
                         trendName={trendName}
                         trendVariant={
                             averageTimePercentageDifference > 0
@@ -125,7 +132,7 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                                 <div className="relative flex-1">
                                     <DonutChart
                                         data={
-                                            npsMetric.detractors && npsMetric.passives && npsMetric.promoters
+                                            npsMetric.detractors + npsMetric.passives + npsMetric.promoters > 0
                                                 ? [
                                                       { name: "promoters", value: npsMetric.promoters },
                                                       { name: "passives", value: npsMetric.passives },
@@ -139,25 +146,20 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                                         className="h-[186px] w-[186px]"
                                     />
                                     <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center">
-                                        <strong className="text-3xl font-medium text-white">{npsMetric.score}</strong>
+                                        <strong className="text-3xl font-medium text-white">
+                                            {npsMetric.score.toFixed(2)}
+                                        </strong>
                                         <span className="text-xs text-intg-text">Avg score</span>
                                     </div>
                                 </div>
 
-                                <div className="flex flex-1 flex-col gap-6 self-center text-sm text-intg-text">
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-3 w-3 rounded-sm bg-[#8DF0B0]"></div>
-                                        <span>Promoters - ({npsMetric.promoters})</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-3 w-3 rounded-sm bg-[#FFB17B]"></div>
-                                        <span>Passives - ({npsMetric.passives})</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-3 w-3 rounded-sm bg-[#EB5A6D]"></div>
-                                        <span>Detractors - ({npsMetric.detractors})</span>
-                                    </div>
-                                </div>
+                                <Legend
+                                    data={[
+                                        { name: "Promoters", value: npsMetric.promoters, color: "#8DF0B0" },
+                                        { name: "Passives", value: npsMetric.passives, color: "#FFB17B" },
+                                        { name: "Detractors", value: npsMetric.detractors, color: "#EB5A6D" },
+                                    ]}
+                                />
                             </div>
                         </div>
 
@@ -171,7 +173,7 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                                 <div className="relative flex-1">
                                     <DonutChart
                                         data={
-                                            cesMetric.high && cesMetric.medium && cesMetric.low
+                                            cesMetric.high + cesMetric.medium + cesMetric.low > 0
                                                 ? [
                                                       { name: "low", value: cesMetric.low },
                                                       { name: "medium", value: cesMetric.medium },
@@ -186,25 +188,20 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                                     />
 
                                     <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center">
-                                        <strong className="text-3xl font-medium text-white">{cesMetric.score}</strong>
+                                        <strong className="text-3xl font-medium text-white">
+                                            {cesMetric.score.toFixed(2)}
+                                        </strong>
                                         <span className="text-xs text-intg-text">Avg score</span>
                                     </div>
                                 </div>
 
-                                <div className="flex flex-1 flex-col gap-6 self-center text-sm text-intg-text">
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-3 w-3 rounded-sm bg-[#8DF0B0]"></div>
-                                        <span>Low Effort ({cesMetric.low})</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-3 w-3 rounded-sm bg-[#FFB17B]"></div>
-                                        <span>Med Effort ({cesMetric.medium})</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-3 w-3 rounded-sm bg-[#EB5A6D]"></div>
-                                        <span>High Effort ({cesMetric.high})</span>
-                                    </div>
-                                </div>
+                                <Legend
+                                    data={[
+                                        { name: "Low Effort", value: cesMetric.low, color: "#EB5A6D" },
+                                        { name: "Med Effort", value: cesMetric.medium, color: "#FFB17B" },
+                                        { name: "High Effort", value: cesMetric.high, color: "#8DF0B0" },
+                                    ]}
+                                />
                             </div>
                         </div>
 
@@ -220,7 +217,7 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                                 <div className="relative flex-1">
                                     <DonutChart
                                         data={
-                                            csatMetric.negative && csatMetric.neutral && csatMetric.positive
+                                            csatMetric.negative + csatMetric.neutral + csatMetric.positive > 0
                                                 ? [
                                                       { name: "positive", value: csatMetric.positive },
                                                       { name: "neutral", value: csatMetric.negative },
@@ -235,25 +232,20 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                                     />
 
                                     <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center">
-                                        <strong className="text-3xl font-medium text-white">{csatMetric.score}</strong>
+                                        <strong className="text-3xl font-medium text-white">
+                                            {csatMetric.score.toFixed(2)}
+                                        </strong>
                                         <span className="text-xs text-intg-text">Avg score</span>
                                     </div>
                                 </div>
 
-                                <div className="flex flex-1 flex-col gap-6 self-center text-sm text-intg-text">
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-3 w-3 rounded-sm bg-[#5D45DB]"></div>
-                                        <span>Positive ({csatMetric.positive})</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-3 w-3 rounded-sm bg-[#A698EB]"></div>
-                                        <span>Neutral ({csatMetric.neutral})</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="h-3 w-3 rounded-sm bg-[#D3CCF5]"></div>
-                                        <span>Negative ({csatMetric.negative})</span>
-                                    </div>
-                                </div>
+                                <Legend
+                                    data={[
+                                        { name: "Positive", value: csatMetric.positive, color: "#5D45DB" },
+                                        { name: "Neutral", value: csatMetric.neutral, color: "#A698EB" },
+                                        { name: "Negative", value: csatMetric.negative, color: "#D3CCF5" },
+                                    ]}
+                                />
                             </div>
                         </div>
                     </section>
