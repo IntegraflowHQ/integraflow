@@ -2603,7 +2603,7 @@ export type EventDefinitionsQueryVariables = Exact<{
 }>;
 
 
-export type EventDefinitionsQuery = { __typename?: 'Query', eventDefinitions?: { __typename?: 'EventDefinitionCountableConnection', totalCount?: number | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }, edges: Array<{ __typename?: 'EventDefinitionCountableEdge', node: { __typename?: 'EventDefinition', id: string, name: string, createdAt?: string | null, lastSeenAt?: string | null, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
+export type EventDefinitionsQuery = { __typename?: 'Query', eventDefinitions?: { __typename?: 'EventDefinitionCountableConnection', totalCount?: number | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }, edges: Array<{ __typename?: 'EventDefinitionCountableEdge', node: { __typename?: 'EventDefinition', id: string, name: string, volume: number, createdAt?: string | null, lastSeenAt?: string | null, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
 
 export type EventsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -3687,6 +3687,7 @@ export const EventDefinitionsDocument = gql`
           ...ProjectFragment
         }
         name
+        volume
         createdAt
         lastSeenAt
       }

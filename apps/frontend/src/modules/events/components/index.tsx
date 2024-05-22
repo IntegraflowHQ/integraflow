@@ -101,9 +101,7 @@ export const EventsIndex = () => {
                                         }}
                                     >
                                         <TableCell>{event.node.name}</TableCell>
-                                        <TableCell>
-                                            {format(new Date(event.node.createdAt ?? ""), "MMM dd, yyyy")}
-                                        </TableCell>
+                                        <TableCell>{event.node.volume}</TableCell>
                                         <TableCell>
                                             {format(new Date(event.node.lastSeenAt ?? ""), "MMM dd, yyyy")}
                                         </TableCell>

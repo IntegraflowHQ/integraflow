@@ -17,6 +17,7 @@ export const EVENT_DEFINITIONS = gql`
                         ...ProjectFragment
                     }
                     name
+                    volume
                     createdAt
                     lastSeenAt
                 }
