@@ -15,7 +15,7 @@ export default function EditLink({ link, settings, close }: Props) {
     const { register, handleSubmit, watch, setValue } = useForm<ChannelSettings>({
         defaultValues: {
             name: settings?.name ?? "",
-            singleUse: settings?.singleUse ?? false,
+            recurring: settings?.recurring ?? false,
             startDate: settings?.startDate,
             endDate: settings?.endDate,
         },
@@ -36,9 +36,9 @@ export default function EditLink({ link, settings, close }: Props) {
                     name="singleUse"
                     label="Allow multiple response from the same device"
                     onChange={(event) => {
-                        setValue("singleUse", event.target.value);
+                        setValue("recurring", event.target.value);
                     }}
-                    value={watch("singleUse")}
+                    value={watch("recurring")}
                 />
                 <DatePicker
                     mode="single"

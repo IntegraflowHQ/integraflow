@@ -138,20 +138,12 @@ export type ChannelSettings = {
     placement?: PlacementType;
     closeOnLimit?: boolean;
     responseLimit?: number;
-    singleUse?: boolean;
 };
 
 export type ParsedChannel = Omit<SurveyChannel, "settings" | "triggers" | "conditions"> & {
     settings: ChannelSettings;
     triggers: Trigger;
     conditions: Audience;
-};
-
-export type LinkSettings = {
-    name: string | null;
-    singleUse: boolean;
-    startDate: string | null;
-    endDate: string | null;
 };
 
 export type EventFilter = {

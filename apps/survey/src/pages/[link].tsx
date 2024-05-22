@@ -56,7 +56,7 @@ export const getServerSideProps: GetServerSideProps<{ surveys: any[]; appKey: st
     const { link } = context.params as { link: string };
     const client = new IntegraflowClient({ apiUrl });
     const survey = await client.surveyByChannel({ link });
-    const surveys = parsedSurveys(survey, "link", "/images/preview-bg.svg");
+    const surveys = parsedSurveys(survey, { mode: "link", backgroundImage: "/images/preview-bg.svg", link });
 
     return {
         props: {
