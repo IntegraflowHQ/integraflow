@@ -24,7 +24,7 @@ export const Legend = ({ className, data, ...props }: Props) => {
                     <div className={`bg-[${d.color}] rounded-s" h-3 w-3`}></div>
                     <p>
                         {d.name} - <span className="text-white">({d.value})</span>{" "}
-                        <span>({((d.value / total) * 100).toFixed()}%)</span>
+                        <span>({total ? ((d.value / total) * 100).toFixed() : 0}%)</span>
                     </p>
                 </div>
             ))}
