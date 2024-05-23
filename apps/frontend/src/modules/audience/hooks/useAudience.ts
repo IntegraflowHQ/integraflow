@@ -1,20 +1,32 @@
-import { PageInfo, useGetPersonsQuery } from "@/generated/graphql";
+import { PageInfo, useGetPersonsQuery, usePropertyDefinitionsQuery } from "@/generated/graphql";
 import { NetworkStatus } from "@apollo/client";
 import { useCallback } from "react";
 
 export const useAudience = () => {
+    let itemsOnPage = 5;
+
     const {
         data: personResponse,
+        loading: loadingPersons,
         fetchMore,
         networkStatus,
     } = useGetPersonsQuery({
         variables: {
-            first: 10,
+            first: itemsOnPage,
         },
         notifyOnNetworkStatusChange: true,
     });
 
-    let surveysOnPage = 10;
+    const {
+        data: propertyDefinitionsResponse,
+        loading: loadingPropertyDefinitions,
+        fetchMore: fectMorePropertyDefinitions,
+        networkStatus: propertyDefinitionsNetworkStatus,
+    } = usePropertyDefinitionsQuery({
+        variables: {
+            first: itemsOnPage,
+        },
+    });
 
     const getMorePersons = useCallback(
         async (direction: string) => {
@@ -22,13 +34,13 @@ export const useAudience = () => {
 
             if (direction === "forward") {
                 paginationVariables = {
-                    first: surveysOnPage,
+                    first: itemsOnPage,
                     after: personResponse?.persons?.pageInfo?.endCursor,
                 };
             } else if (direction === "backward") {
                 paginationVariables = {
                     first: undefined,
-                    last: surveysOnPage,
+                    last: itemsOnPage,
                     before: personResponse?.persons?.pageInfo?.startCursor,
                 };
             }
@@ -63,13 +75,61 @@ export const useAudience = () => {
         [fetchMore, personResponse?.persons],
     );
 
+    const getMorePropertyDefinitions = useCallback(
+        async (direction: string) => {
+            let paginationVariables = {};
+
+            if (direction === "forward") {
+                paginationVariables = {
+                    first: itemsOnPage,
+                    after: propertyDefinitionsResponse?.propertyDefinitions?.pageInfo?.endCursor,
+                };
+            } else if (direction === "backward") {
+                paginationVariables = {
+                    first: undefined,
+                    last: itemsOnPage,
+                    before: propertyDefinitionsResponse?.propertyDefinitions?.pageInfo?.startCursor,
+                };
+            }
+
+            fectMorePropertyDefinitions({
+                variables: paginationVariables,
+                updateQuery: (prevResult, { fetchMoreResult }) => {
+                    if (!fetchMoreResult) return prevResult;
+
+                    const newEdges = fetchMoreResult.propertyDefinitions?.edges;
+                    const pageInfo = fetchMoreResult.propertyDefinitions?.pageInfo;
+
+                    return newEdges?.length
+                        ? {
+                              propertyDefinitions: {
+                                  pageInfo: pageInfo as PageInfo,
+                                  edges: newEdges,
+                                  __typename: prevResult.propertyDefinitions?.__typename,
+                                  totalCount: prevResult.propertyDefinitions?.totalCount,
+                              },
+                          }
+                        : prevResult;
+                },
+            });
+        },
+        [fetchMore, propertyDefinitionsResponse?.propertyDefinitions],
+    );
+
     const isFetchingMore = networkStatus === NetworkStatus.fetchMore;
+    const isfetchingMorePropertyDefinitions = propertyDefinitionsNetworkStatus === NetworkStatus.fetchMore;
 
     return {
+        propertyDefinitions: propertyDefinitionsResponse?.propertyDefinitions,
+        loadingPersons,
+        loadingPropertyDefinitions,
         persons: personResponse?.persons,
-        isFetchingMore,
-        surveysOnPage,
+        isFetchingMore: isFetchingMore || isfetchingMorePropertyDefinitions,
+        isfetchingMorePropertyDefinitions,
+        itemsOnPage,
+        fectMorePropertyDefinitions,
         fetchMore,
         getMorePersons,
+        getMorePropertyDefinitions,
     };
 };

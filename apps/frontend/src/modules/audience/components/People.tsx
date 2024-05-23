@@ -3,7 +3,17 @@ import { Properties } from "@/types";
 import { Dialog, DialogContent, Spinner } from "@/ui";
 import PeopleIconLg from "@/ui/icons/PeopleIconLg";
 import { cn } from "@/utils";
-import { Icon, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
+import {
+    Icon,
+    Table,
+    TableBody,
+    TableCell,
+    TableFoot,
+    TableFooterCell,
+    TableHead,
+    TableHeaderCell,
+    TableRow,
+} from "@tremor/react";
 import { format } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Fragment, useState } from "react";
@@ -12,10 +22,11 @@ import { useAudience } from "../hooks/useAudience";
 export const People = () => {
     const [page, setPage] = useState<number>(1);
 
-    const { persons, isFetchingMore, getMorePersons, surveysOnPage } = useAudience();
+    const { persons, isFetchingMore, getMorePersons, loadingPersons, itemsOnPage } = useAudience();
+    console.log(persons);
 
-    const personsStartIndex = (page - 1) * surveysOnPage + 1;
-    const personsEndIndex = Math.min(page * surveysOnPage, persons?.totalCount ?? 0);
+    const personsStartIndex = (page - 1) * itemsOnPage + 1;
+    const personsEndIndex = Math.min(page * itemsOnPage, persons?.totalCount ?? 0);
 
     const [selectedPerson, setSelectedPerson] = useState<PersonCountableEdge | null>(null);
 
@@ -116,58 +127,56 @@ export const People = () => {
                 ) : null}
 
                 {persons?.edges.length ? (
-                    <tfoot className="table-footer-group h-[50px] border-t border-intg-bg-4">
-                        <tr className="">
-                            <td className="table-cell px-4 py-4">
-                                <div className="flex gap-10">
-                                    <button
-                                        disabled={!persons?.pageInfo?.hasPreviousPage || isFetchingMore}
-                                        onClick={() => handleGetMorePersons("backward")}
-                                        className={`${
-                                            !persons?.pageInfo?.hasPreviousPage || isFetchingMore
-                                                ? "cursor-not-allowed opacity-50"
-                                                : ""
-                                        } hover:bg-intg-bg-8} rounded-md border border-intg-bg-4 transition-all duration-300 ease-in`}
-                                    >
-                                        <Icon
-                                            size="md"
-                                            icon={ChevronLeft}
-                                            className="font-normal text-intg-text-4 hover:cursor-pointer"
-                                        />
-                                    </button>
+                    <TableFoot className="table-footer-group h-[50px] border-t border-intg-bg-4">
+                        <TableFooterCell className="table-cell px-4 py-4">
+                            <div className="flex gap-10">
+                                <button
+                                    disabled={!persons?.pageInfo?.hasPreviousPage || isFetchingMore}
+                                    onClick={() => handleGetMorePersons("backward")}
+                                    className={`${
+                                        !persons?.pageInfo?.hasPreviousPage || isFetchingMore
+                                            ? "cursor-not-allowed opacity-50"
+                                            : ""
+                                    } hover:bg-intg-bg-8} rounded-md border border-intg-bg-4 transition-all duration-300 ease-in`}
+                                >
+                                    <Icon
+                                        size="md"
+                                        icon={ChevronLeft}
+                                        className="font-normal text-intg-text-4 hover:cursor-pointer"
+                                    />
+                                </button>
 
-                                    <button
-                                        disabled={!persons?.pageInfo?.hasNextPage || isFetchingMore}
-                                        onClick={() => handleGetMorePersons("forward")}
-                                        className={`${
-                                            !persons?.pageInfo?.hasNextPage || isFetchingMore
-                                                ? "cursor-not-allowed opacity-50"
-                                                : ""
-                                        } rounded-md border border-intg-bg-4  transition-all duration-300 ease-in hover:bg-intg-bg-8`}
-                                    >
-                                        <Icon
-                                            size="md"
-                                            icon={ChevronRight}
-                                            className="font-normal text-intg-text-4 hover:cursor-pointer"
-                                        />
-                                    </button>
-                                </div>
-                            </td>
+                                <button
+                                    disabled={!persons?.pageInfo?.hasNextPage || isFetchingMore}
+                                    onClick={() => handleGetMorePersons("forward")}
+                                    className={`${
+                                        !persons?.pageInfo?.hasNextPage || isFetchingMore
+                                            ? "cursor-not-allowed opacity-50"
+                                            : ""
+                                    } rounded-md border border-intg-bg-4  transition-all duration-300 ease-in hover:bg-intg-bg-8`}
+                                >
+                                    <Icon
+                                        size="md"
+                                        icon={ChevronRight}
+                                        className="font-normal text-intg-text-4 hover:cursor-pointer"
+                                    />
+                                </button>
+                            </div>
+                        </TableFooterCell>
 
-                            <td className="table-cell whitespace-nowrap px-4 py-4 text-sm font-normal text-intg-text-4">
-                                <div className="flex gap-10">
-                                    <span>Rows per page: {surveysOnPage}</span>
-                                    <span>
-                                        {personsStartIndex} - {personsEndIndex} of {persons?.totalCount} Surveys
-                                    </span>
-                                </div>
-                            </td>
-                        </tr>
-                    </tfoot>
+                        <TableFooterCell className="table-cell whitespace-nowrap px-4 py-4 text-sm font-normal text-intg-text-4">
+                            <div className="flex gap-10">
+                                <span>Rows per page: {itemsOnPage}</span>
+                                <span>
+                                    {personsStartIndex} - {personsEndIndex} of {persons?.totalCount} Surveys
+                                </span>
+                            </div>
+                        </TableFooterCell>
+                    </TableFoot>
                 ) : null}
             </Table>
 
-            {!persons?.edges.length ? (
+            {!loadingPersons && !persons?.edges.length ? (
                 <div className="mt-40 flex h-full w-full text-intg-text">
                     <div className=" m-auto flex-col text-center">
                         <div className=" flex justify-center">
@@ -175,6 +184,13 @@ export const People = () => {
                         </div>
                         <p className="text-2xl font-semibold">No events yet</p>
                         <p className="text-sm">We couldn't find any events</p>
+                    </div>
+                </div>
+            ) : null}
+            {loadingPersons && !isFetchingMore ? (
+                <div className="mt-40 flex h-full w-full text-intg-text">
+                    <div className=" m-auto flex-col text-center">
+                        <Spinner />
                     </div>
                 </div>
             ) : null}

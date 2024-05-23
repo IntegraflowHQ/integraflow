@@ -39,8 +39,14 @@ export const EVENTS = gql`
 `;
 
 export const PROPERTY_DEFINITIONS = gql`
-    query propertyDefinitions {
-        propertyDefinitions(first: 100) {
+    query propertyDefinitions($first: Int, $last: Int, $after: String, $before: String) {
+        propertyDefinitions(first: $first, last: $last, after: $after, before: $before) {
+            pageInfo {
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
+            }
             edges {
                 node {
                     id
@@ -53,6 +59,7 @@ export const PROPERTY_DEFINITIONS = gql`
                     propertyType
                 }
             }
+            totalCount
         }
     }
 `;
