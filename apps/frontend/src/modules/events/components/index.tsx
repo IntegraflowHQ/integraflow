@@ -48,7 +48,6 @@ export const EventsIndex = () => {
         );
         setEvents(eventsResponse.data as EventsQuery);
     };
-    console.log(events);
 
     return (
         <section className="px-[72px] pb-20 pt-20">

@@ -49,15 +49,9 @@ export const useAudience = () => {
                 variables: paginationVariables,
                 updateQuery: (prevResult, { fetchMoreResult }) => {
                     if (!fetchMoreResult) return prevResult;
-                    console.log("first");
-                    console.log({ prevResult });
-                    console.log({ fetchMoreResult });
 
                     const newEdges = fetchMoreResult.persons?.edges;
                     const pageInfo = fetchMoreResult.persons?.pageInfo;
-
-                    console.log({ newEdges });
-                    console.log({ pageInfo });
 
                     return newEdges?.length
                         ? {

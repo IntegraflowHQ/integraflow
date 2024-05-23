@@ -23,7 +23,6 @@ export const People = () => {
     const [page, setPage] = useState<number>(1);
 
     const { persons, isFetchingMore, getMorePersons, loadingPersons, itemsOnPage } = useAudience();
-    console.log(persons);
 
     const personsStartIndex = (page - 1) * itemsOnPage + 1;
     const personsEndIndex = Math.min(page * itemsOnPage, persons?.totalCount ?? 0);
