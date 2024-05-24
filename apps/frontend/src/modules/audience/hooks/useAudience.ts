@@ -3,7 +3,7 @@ import { NetworkStatus } from "@apollo/client";
 import { useCallback } from "react";
 
 export const useAudience = () => {
-    let itemsOnPage = 5;
+    let itemsOnPage = 10;
 
     const {
         data: personResponse,
@@ -28,22 +28,26 @@ export const useAudience = () => {
         },
     });
 
+    const handlePagination = (direction: string, pageInfo: PageInfo) => {
+        let paginationVariables = {};
+        if (direction === "forward") {
+            paginationVariables = {
+                first: itemsOnPage,
+                after: pageInfo.endCursor,
+            };
+        } else if (direction === "backward") {
+            paginationVariables = {
+                first: undefined,
+                last: itemsOnPage,
+                before: pageInfo.startCursor,
+            };
+        }
+        return paginationVariables;
+    };
+
     const getMorePersons = useCallback(
         async (direction: string) => {
-            let paginationVariables = {};
-
-            if (direction === "forward") {
-                paginationVariables = {
-                    first: itemsOnPage,
-                    after: personResponse?.persons?.pageInfo?.endCursor,
-                };
-            } else if (direction === "backward") {
-                paginationVariables = {
-                    first: undefined,
-                    last: itemsOnPage,
-                    before: personResponse?.persons?.pageInfo?.startCursor,
-                };
-            }
+            let paginationVariables = handlePagination(direction, personResponse?.persons?.pageInfo as PageInfo);
 
             fetchMore({
                 variables: paginationVariables,
@@ -71,20 +75,10 @@ export const useAudience = () => {
 
     const getMorePropertyDefinitions = useCallback(
         async (direction: string) => {
-            let paginationVariables = {};
-
-            if (direction === "forward") {
-                paginationVariables = {
-                    first: itemsOnPage,
-                    after: propertyDefinitionsResponse?.propertyDefinitions?.pageInfo?.endCursor,
-                };
-            } else if (direction === "backward") {
-                paginationVariables = {
-                    first: undefined,
-                    last: itemsOnPage,
-                    before: propertyDefinitionsResponse?.propertyDefinitions?.pageInfo?.startCursor,
-                };
-            }
+            let paginationVariables = handlePagination(
+                direction,
+                propertyDefinitionsResponse?.propertyDefinitions?.pageInfo as PageInfo,
+            );
 
             fectMorePropertyDefinitions({
                 variables: paginationVariables,
