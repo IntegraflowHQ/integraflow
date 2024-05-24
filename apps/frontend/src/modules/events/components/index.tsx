@@ -175,7 +175,7 @@ export const EventsIndex = () => {
                                     <Spinner />
                                 </div>
                             ) : (
-                                <Table className="scrollbar-hide mt-4 table-auto rounded-t-lg">
+                                <Table className="scrollbar-hide mt-4 table-auto rounded-t-lg border border-intg-bg-4">
                                     <TableHead className="bg-intg-bg-9 font-light hover:cursor-pointer">
                                         <TableHeaderCell className="w-1/2">Property Name</TableHeaderCell>
                                         <TableHeaderCell className="text-md flex items-center space-x-1 font-normal">
@@ -183,12 +183,12 @@ export const EventsIndex = () => {
                                         </TableHeaderCell>
                                         <TableHeaderCell className="text-md font-normal">Example</TableHeaderCell>
                                     </TableHead>
-                                    <TableBody className="border-b border-t border-intg-bg-4">
+                                    <TableBody className="border-t border-intg-bg-4">
                                         {propertiesWithDefinitions?.map((item) => {
                                             const propertyValue = event ? event[item.property] : "N/A";
 
                                             return (
-                                                <TableRow className="border border-intg-bg-4">
+                                                <TableRow className="border-intg-bg-4">
                                                     <TableCell>{item.property}</TableCell>
                                                     <TableCell>{item.propertyType}</TableCell>
                                                     <TableCell>{propertyValue ?? "N/A"}</TableCell>
