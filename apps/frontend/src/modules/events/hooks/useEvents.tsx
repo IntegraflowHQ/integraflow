@@ -13,6 +13,7 @@ export const useEvents = () => {
     const { data: eventsResponse } = useEventsQuery({ variables: { first: 1 } });
     const {
         data: eventDefinitionsResponse,
+        loading: loadingEventDefinitions,
         fetchMore,
         networkStatus,
     } = useEventDefinitionsQuery({
@@ -22,7 +23,7 @@ export const useEvents = () => {
         notifyOnNetworkStatusChange: true,
     });
 
-    const [fetchPropertiesWithDefinitions, { data: propertiesWithDefinitionsResponse, loading: propertiesLoading }] =
+    const [fetchPropertiesWithDefinitions, { data: propertiesWithDefinitionsResponse, loading: loadingProperties }] =
         usePropertiesWithDefinitionsLazyQuery();
 
     const getPropertiesWithDefinitions = useCallback(
@@ -76,11 +77,13 @@ export const useEvents = () => {
     const isFetchingMore = networkStatus === NetworkStatus.fetchMore;
 
     return {
+        loadingProperties,
+        loadingEventDefinitions,
         eventDefinitionsOnPage,
         eventDefinitions: eventDefinitionsResponse?.eventDefinitions,
         events: eventsResponse?.events,
         getPropertiesWithDefinitions,
-        propertiesLoading,
+
         isFetchingMore,
         propertiesWithDefinitions: propertiesWithDefinitionsResponse?.propertiesWithDefinitions,
         getMoreEventDefinitions,

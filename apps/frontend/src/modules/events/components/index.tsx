@@ -29,7 +29,8 @@ export const EventsIndex = () => {
         getPropertiesWithDefinitions,
         isFetchingMore,
         propertiesWithDefinitions,
-        propertiesLoading,
+        loadingProperties,
+        loadingEventDefinitions,
         eventDefinitionsOnPage,
         getMoreEventDefinitions,
     } = useEvents();
@@ -151,8 +152,8 @@ export const EventsIndex = () => {
                                     <div className="flex gap-10">
                                         <span>Rows per page: {eventDefinitionsOnPage}</span>
                                         <span>
-                                            {eventsDefinitionsStartIndex} - {eventsDefinitionsEndIndex} of{" "}
-                                            {eventDefinitions?.totalCount} Surveys
+                                            {eventsDefinitionsStartIndex} - {eventsDefinitionsEndIndex} of
+                                            {eventDefinitions?.totalCount} events
                                         </span>
                                     </div>
                                 </TableFooterCell>
@@ -168,8 +169,8 @@ export const EventsIndex = () => {
                         }}
                     >
                         <DialogTrigger />
-                        <DialogContent className={cn(eventLoading || propertiesLoading ? "min-w-96" : "", "p-6")}>
-                            {eventLoading || propertiesLoading ? (
+                        <DialogContent className={cn(eventLoading || loadingProperties ? "min-w-96" : "", "p-6")}>
+                            {eventLoading || loadingProperties ? (
                                 <div className="flex justify-center">
                                     <Spinner />
                                 </div>
@@ -200,7 +201,7 @@ export const EventsIndex = () => {
                         </DialogContent>
                     </Dialog>
                 </div>
-                {!events?.edges.length ? (
+                {!events?.edges.length && !loadingEventDefinitions ? (
                     <div className="mt-40 flex h-full w-full text-intg-text">
                         <div className=" m-auto flex-col text-center">
                             <div className=" flex justify-center">
@@ -208,6 +209,14 @@ export const EventsIndex = () => {
                             </div>
                             <p className="text-2xl font-semibold">No events yet</p>
                             <p className="text-sm">We couldn't find any events</p>
+                        </div>
+                    </div>
+                ) : null}
+
+                {loadingEventDefinitions && !isFetchingMore ? (
+                    <div className="mt-40 flex h-full w-full text-intg-text">
+                        <div className=" m-auto flex-col text-center">
+                            <Spinner />
                         </div>
                     </div>
                 ) : null}
