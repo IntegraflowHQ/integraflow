@@ -20,7 +20,7 @@ export const useAudience = () => {
     const {
         data: propertyDefinitionsResponse,
         loading: loadingPropertyDefinitions,
-        fetchMore: fectMorePropertyDefinitions,
+        fetchMore: fetchMorePropertyDefinitions,
         networkStatus: propertyDefinitionsNetworkStatus,
     } = usePropertyDefinitionsQuery({
         variables: {
@@ -80,7 +80,7 @@ export const useAudience = () => {
                 propertyDefinitionsResponse?.propertyDefinitions?.pageInfo as PageInfo,
             );
 
-            fectMorePropertyDefinitions({
+            fetchMorePropertyDefinitions({
                 variables: paginationVariables,
                 updateQuery: (prevResult, { fetchMoreResult }) => {
                     if (!fetchMoreResult) return prevResult;
@@ -108,15 +108,12 @@ export const useAudience = () => {
     const isfetchingMorePropertyDefinitions = propertyDefinitionsNetworkStatus === NetworkStatus.fetchMore;
 
     return {
-        propertyDefinitions: propertyDefinitionsResponse?.propertyDefinitions,
+        itemsOnPage,
         loadingPersons,
         loadingPropertyDefinitions,
-        persons: personResponse?.persons,
         isFetchingMore: isFetchingMore || isfetchingMorePropertyDefinitions,
-        isfetchingMorePropertyDefinitions,
-        itemsOnPage,
-        fectMorePropertyDefinitions,
-        fetchMore,
+        propertyDefinitions: propertyDefinitionsResponse?.propertyDefinitions,
+        persons: personResponse?.persons,
         getMorePersons,
         getMorePropertyDefinitions,
     };
