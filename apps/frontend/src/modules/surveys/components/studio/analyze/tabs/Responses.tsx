@@ -1,8 +1,6 @@
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
-import { Header } from "@/ui";
+import { Header, Pagination } from "@/ui";
 import { ChartBar } from "@/ui/icons";
-import { cn } from "@/utils";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DateFilter } from "../components/DateFilter";
 import { ExportBtn } from "../components/ExportBtn";
 import { Response } from "../components/Response";
@@ -88,39 +86,15 @@ export const Responses = () => {
                         )}
 
                         {responses.length > 0 ? (
-                            <div className="flex items-center justify-between text-intg-text-4">
-                                <p>{responseQuery?.responses?.totalCount ?? 0} responses</p>
-
-                                <div className="flex gap-4">
-                                    <button
-                                        disabled={!responseQuery?.responses?.pageInfo.hasPreviousPage}
-                                        onClick={() => fetchMoreResponses("backward")}
-                                        className={cn(
-                                            !responseQuery?.responses?.pageInfo.hasPreviousPage
-                                                ? "cursor-not-allowed opacity-50"
-                                                : "",
-                                            "flex items-center gap-1 rounded-md border border-intg-bg-4 font-normal transition hover:bg-intg-bg-8",
-                                        )}
-                                    >
-                                        <ChevronLeft />
-                                        <span className="py-1 pr-2">Prev page</span>
-                                    </button>
-
-                                    <button
-                                        disabled={!responseQuery?.responses?.pageInfo.hasNextPage}
-                                        onClick={() => fetchMoreResponses("forward")}
-                                        className={cn(
-                                            !responseQuery?.responses?.pageInfo.hasNextPage
-                                                ? "cursor-not-allowed opacity-50"
-                                                : "",
-                                            "flex items-center gap-1 rounded-md border border-intg-bg-4 font-normal transition hover:bg-intg-bg-8",
-                                        )}
-                                    >
-                                        <span className="py-1 pl-2">Next page</span>
-                                        <ChevronRight />
-                                    </button>
-                                </div>
-                            </div>
+                            <Pagination
+                                hasNextPage={responseQuery?.responses?.pageInfo.hasNextPage ?? false}
+                                hasPrevPage={responseQuery?.responses?.pageInfo.hasPreviousPage ?? false}
+                                nextPageFn={() => fetchMoreResponses("forward")}
+                                prevPageFn={() => fetchMoreResponses("backward")}
+                                itemName="Responses"
+                                totalCount={responseQuery?.responses?.totalCount ?? 0}
+                                className="pl-2"
+                            />
                         ) : null}
                     </div>
                 ) : (
