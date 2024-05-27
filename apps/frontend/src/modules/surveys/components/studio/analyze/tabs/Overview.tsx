@@ -3,7 +3,9 @@ import { Button, Header } from "@/ui";
 import { Info, PresentationChartLine } from "@/ui/icons";
 import { DonutChart } from "@tremor/react";
 import ResponseTrends from "assets/images/surveys/studio/response-trends.svg";
+import { intervalToDuration } from "date-fns";
 import { BadgeCheck, BarChart, Clock3 } from "lucide-react";
+import { useMemo } from "react";
 import { DateFilter } from "../components/DateFilter";
 import { ExportBtn } from "../components/ExportBtn";
 import { Legend } from "../components/Legend";
@@ -28,6 +30,19 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
     const completionRatePercentageDifference = calculatePercentageDifference(completionRate);
     const totalResponsesPercentageDifference = calculatePercentageDifference(totalResponses);
     const averageTimePercentageDifference = calculatePercentageDifference(averageTime);
+
+    const averageTimeText = useMemo(() => {
+        const result = intervalToDuration({ start: 0, end: (averageTime?.current.value ?? 0) * 1000 });
+        if (result.hours) {
+            return `${result.hours}h ${result.minutes}m ${result.seconds}s`;
+        }
+
+        if (result.minutes) {
+            return `${result.minutes}m ${result.seconds}s`;
+        }
+
+        return `${result.seconds}s`;
+    }, [averageTime]);
 
     let trendName = "";
     if (timeFrame.timePeriod === "custom") {
@@ -107,7 +122,7 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                     <Summary
                         icon={<Clock3 className="fill-intg-text text-intg-bg-8" />}
                         title="Avg rate"
-                        value="01m 52s%"
+                        value={averageTimeText}
                         trend={`${averageTimePercentageDifference >= 0 ? "+" : ""}${averageTimePercentageDifference.toFixed(2)}%`}
                         trendName={trendName}
                         trendVariant={
