@@ -1,12 +1,11 @@
 import { EventDefinitionCountableEdge, useEventsLazyQuery } from "@/generated/graphql";
 import { Properties } from "@/types";
-import { Dialog, DialogContent, DialogTrigger, Header, Spinner } from "@/ui";
+import { Dialog, DialogContent, DialogTrigger, Header, Pagination, Spinner } from "@/ui";
 import { QuestionIcon } from "@/ui/icons";
 import { CursorIconLg } from "@/ui/icons/CursorIconLg";
 import { cn } from "@/utils";
-import { Icon, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 import { format } from "date-fns";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { useEvents } from "../hooks/useEvents";
 
@@ -67,7 +66,7 @@ export const EventsIndex = () => {
                     <Table
                         className={cn(
                             eventDefinitions?.edges.length ? "border" : "",
-                            "scrollbar-hide table-auto rounded-t-lg border-intg-bg-4",
+                            "scrollbar-hide bg-red table-auto rounded-t-lg border-intg-bg-4",
                         )}
                     >
                         <TableHead className="bg-intg-bg-9 font-light hover:cursor-pointer">
@@ -101,96 +100,61 @@ export const EventsIndex = () => {
                             })}
                         </TableBody>
                     </Table>
-                    <Dialog
-                        open={selectedEvent !== null}
-                        onOpenChange={(open) => {
-                            if (!open) {
-                                setSelectedEvent(null);
-                            }
-                        }}
-                    >
-                        <DialogTrigger />
-                        <DialogContent className={cn(eventLoading || loadingProperties ? "min-w-96" : "", "p-6")}>
-                            {eventLoading || loadingProperties ? (
-                                <div className="flex justify-center">
-                                    <Spinner />
-                                </div>
-                            ) : (
-                                <Table className="scrollbar-hide mt-4 table-auto rounded-t-lg border border-intg-bg-4">
-                                    <TableHead className="bg-intg-bg-9 font-light hover:cursor-pointer">
-                                        <TableHeaderCell className="w-1/2">Property Name</TableHeaderCell>
-                                        <TableHeaderCell className="text-md flex items-center space-x-1 font-normal">
-                                            Type
-                                        </TableHeaderCell>
-                                        <TableHeaderCell className="text-md font-normal">Example</TableHeaderCell>
-                                    </TableHead>
-                                    <TableBody className="border-t border-intg-bg-4">
-                                        {propertiesWithDefinitions?.map((item) => {
-                                            const propertyValue = event ? event[item.property] : "N/A";
-
-                                            return (
-                                                <TableRow className="border-intg-bg-4">
-                                                    <TableCell>{item.property}</TableCell>
-                                                    <TableCell>{item.propertyType}</TableCell>
-                                                    <TableCell>{propertyValue ?? "N/A"}</TableCell>
-                                                </TableRow>
-                                            );
-                                        })}
-                                    </TableBody>
-                                </Table>
-                            )}
-                        </DialogContent>
-                    </Dialog>
+                    {!eventDefinitions?.edges.length ? null : (
+                        <Pagination
+                            hasNextPage={eventDefinitions.pageInfo.hasNextPage}
+                            hasPrevPage={eventDefinitions.pageInfo.hasPreviousPage}
+                            itemName="events"
+                            nextPageFn={() => handleGetMoreEventsDefinitions("forward")}
+                            prevPageFn={() => handleGetMoreEventsDefinitions("backward")}
+                            totalCount={eventDefinitions?.totalCount as number}
+                            key={"events"}
+                            className="border border-t-0 border-intg-bg-4 p-4"
+                        />
+                    )}
                 </div>
 
-                {!eventDefinitions?.edges.length ? null : (
-                    <div className="h-[50px] border border-intg-bg-4">
-                        <div className="px-4 py-4">
-                            <div className="flex gap-10">
-                                <button
-                                    disabled={!eventDefinitions?.pageInfo?.hasPreviousPage || isFetchingMore}
-                                    onClick={() => handleGetMoreEventsDefinitions("backward")}
-                                    className={`${
-                                        !eventDefinitions?.pageInfo?.hasPreviousPage
-                                            ? "cursor-not-allowed opacity-50"
-                                            : ""
-                                    } hover:bg-intg-bg-8} rounded-md border border-intg-bg-4 transition-all duration-300 ease-in`}
-                                >
-                                    <Icon
-                                        size="md"
-                                        icon={ChevronLeft}
-                                        className="font-normal text-intg-text-4 hover:cursor-pointer"
-                                    />
-                                </button>
+                <Dialog
+                    open={selectedEvent !== null}
+                    onOpenChange={(open) => {
+                        if (!open) {
+                            setSelectedEvent(null);
+                        }
+                    }}
+                >
+                    <DialogTrigger />
+                    <DialogContent className={cn(eventLoading || loadingProperties ? "min-w-96" : "", "p-6")}>
+                        {eventLoading || loadingProperties ? (
+                            <div className="flex justify-center">
+                                <Spinner />
+                            </div>
+                        ) : (
+                            <Table className="scrollbar-hide mt-4 table-auto rounded-t-lg border border-intg-bg-4">
+                                <TableHead className="bg-intg-bg-9 font-light hover:cursor-pointer">
+                                    <TableHeaderCell className="w-1/2">Property Name</TableHeaderCell>
+                                    <TableHeaderCell className="text-md flex items-center space-x-1 font-normal">
+                                        Type
+                                    </TableHeaderCell>
+                                    <TableHeaderCell className="text-md font-normal">Example</TableHeaderCell>
+                                </TableHead>
+                                <TableBody className="border-t border-intg-bg-4">
+                                    {propertiesWithDefinitions?.map((item) => {
+                                        const propertyValue = event ? event[item.property] : "N/A";
 
-                                <button
-                                    disabled={!eventDefinitions?.pageInfo?.hasNextPage || isFetchingMore}
-                                    onClick={() => handleGetMoreEventsDefinitions("forward")}
-                                    className={`${
-                                        !eventDefinitions?.pageInfo?.hasNextPage || isFetchingMore
-                                            ? "cursor-not-allowed opacity-50"
-                                            : ""
-                                    } rounded-md border border-intg-bg-4  transition-all duration-300 ease-in hover:bg-intg-bg-8`}
-                                >
-                                    <Icon
-                                        size="md"
-                                        icon={ChevronRight}
-                                        className="font-normal text-intg-text-4 hover:cursor-pointer"
-                                    />
-                                </button>
-                            </div>
-                        </div>
-                        <div className="table-cell whitespace-nowrap px-4 py-4 text-sm font-normal text-intg-text-4">
-                            <div className="flex gap-10">
-                                <span>Rows per page: {eventDefinitionsOnPage}</span>
-                                <span>
-                                    {eventsDefinitionsStartIndex} - {eventsDefinitionsEndIndex} of
-                                    {eventDefinitions?.totalCount} events
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                                        return (
+                                            <TableRow className="border-intg-bg-4">
+                                                <TableCell>{item.property}</TableCell>
+                                                <TableCell>{item.propertyType}</TableCell>
+                                                <TableCell>{propertyValue ?? "N/A"}</TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                </TableBody>
+                            </Table>
+                        )}
+                    </DialogContent>
+                </Dialog>
+
                 {!events?.edges.length && !loadingEventDefinitions ? (
                     <div className="mt-40 flex h-full w-full text-intg-text">
                         <div className=" m-auto flex-col text-center">
