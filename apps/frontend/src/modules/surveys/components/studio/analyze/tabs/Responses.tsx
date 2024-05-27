@@ -59,7 +59,14 @@ export const Responses = () => {
                                 <Response
                                     title={response.title}
                                     date={new Date(response.createdAt ?? Date.now())}
-                                    responder={response.userAttributes.name ?? response.userAttributes.id}
+                                    responder={
+                                        response.userAttributes.name ??
+                                        response.userAttributes.firstName ??
+                                        response.userAttributes.lastName ??
+                                        response.userAttributes.email ??
+                                        response.userAttributes.userId ??
+                                        response.userAttributes.id
+                                    }
                                     key={response.id}
                                     onClick={() => {
                                         setActiveResponse(response);
