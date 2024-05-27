@@ -335,7 +335,7 @@ def process_event(
     )
 
 
-@app.task(ignore_result=True)
+@app.task(ignore_result=True, max_retries=5)
 def create_property_definitions(
     project_id: str
 ) -> None:

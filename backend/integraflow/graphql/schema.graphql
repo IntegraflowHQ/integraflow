@@ -161,6 +161,9 @@ type Query {
     """Filtering options for responses."""
     filter: SurveyResponseFilterInput
 
+    """Sort responses."""
+    sortBy: SurveyResponseSortingInput
+
     """Return the elements in the list that come before the specified cursor."""
     before: String
 
@@ -443,7 +446,7 @@ type User implements Node @doc(category: "Users") {
   """
   projects(
     """By which field should the pagination order by."""
-    orderBy: ProjectSortingInput
+    sortBy: ProjectSortingInput
 
     """Return the elements in the list that come before the specified cursor."""
     before: String
@@ -1388,6 +1391,31 @@ input SurveyResponseFilterInput @doc(category: "Surveys") {
 
   """Filter by ids."""
   ids: [ID!]
+}
+
+input SurveyResponseSortingInput @doc(category: "Surveys") {
+  """Specifies the direction in which to sort responses."""
+  direction: OrderDirection!
+
+  """Sort responses by the selected field."""
+  field: SurveyResponseSortField!
+}
+
+enum SurveyResponseSortField @doc(category: "Surveys") {
+  """Sort responses by status."""
+  STATUS
+
+  """Sort responses by created at."""
+  CREATED_AT
+
+  """Sort responses by last modified at."""
+  LAST_MODIFIED_AT
+
+  """Sort responses by completed at."""
+  COMPLETED_AT
+
+  """Sort responses by time spent."""
+  TIME_SPENT
 }
 
 """Represents a survey response metric (e.g. total responses, nps)."""
@@ -2484,6 +2512,12 @@ input SurveyResponseCreateInput @doc(category: "Surveys") {
   """The user distinct ID."""
   userId: ID
 
+  """The event ID."""
+  event: UUID
+
+  """The channel of the response."""
+  channel: JSONString
+
   """The response metadata."""
   metadata: JSONString
 
@@ -2520,6 +2554,12 @@ input SurveyResponseUpdateInput @doc(category: "Surveys") {
 
   """The user distinct ID."""
   userId: ID
+
+  """The event ID."""
+  event: UUID
+
+  """The channel of the response."""
+  channel: JSONString
 
   """The response metadata."""
   metadata: JSONString
