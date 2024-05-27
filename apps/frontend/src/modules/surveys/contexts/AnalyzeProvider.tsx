@@ -201,8 +201,12 @@ const useAnalyzeFactory = () => {
         const currentValue = data.current.value ?? 0;
         const previousValue = data.previous.value ?? 0;
 
-        if (previousValue === 0) {
-            return currentValue;
+        if (previousValue === 0 && currentValue) {
+            return 100;
+        }
+
+        if (!previousValue && !currentValue) {
+            return 0;
         }
 
         const percentageDifference = ((currentValue - previousValue) / previousValue) * 100;
