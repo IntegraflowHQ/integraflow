@@ -290,7 +290,7 @@ export const SurveyList = () => {
                 <Pagination
                     hasNextPage={surveyList?.pageInfo?.hasNextPage ?? false}
                     hasPrevPage={surveyList?.pageInfo?.hasPreviousPage ?? false}
-                    nexPageFn={() => handleGetMoreSurveys("forward")}
+                    nextPageFn={() => handleGetMoreSurveys("forward")}
                     prevPageFn={() => handleGetMoreSurveys("backward")}
                     totalCount={surveyList?.totalCount ?? 0}
                     itemName="Surveys"

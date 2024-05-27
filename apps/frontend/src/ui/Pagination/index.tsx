@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 type Props = {
     hasNextPage: boolean;
     hasPrevPage: boolean;
-    nexPageFn: () => void;
+    nextPageFn: () => void;
     prevPageFn: () => void;
     totalCount: number;
     itemName: string;
@@ -14,7 +14,7 @@ type Props = {
 export const Pagination = ({
     hasNextPage,
     hasPrevPage,
-    nexPageFn,
+    nextPageFn,
     prevPageFn,
     totalCount,
     itemName,
@@ -41,7 +41,7 @@ export const Pagination = ({
 
                 <button
                     disabled={!hasNextPage}
-                    onClick={nexPageFn}
+                    onClick={nextPageFn}
                     className={cn(
                         !hasNextPage ? "cursor-not-allowed opacity-50" : "",
                         "flex items-center gap-1 rounded-md font-normal transition hover:bg-intg-bg-8",
