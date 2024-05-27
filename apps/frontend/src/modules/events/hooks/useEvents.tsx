@@ -8,7 +8,7 @@ import { NetworkStatus } from "@apollo/client";
 import { useCallback } from "react";
 
 export const useEvents = () => {
-    let eventDefinitionsOnPage = 10;
+    let eventDefinitionsOnPage = 2;
 
     const { data: eventsResponse } = useEventsQuery({ variables: { first: 1 } });
     const {
@@ -83,7 +83,7 @@ export const useEvents = () => {
         eventDefinitions: eventDefinitionsResponse?.eventDefinitions,
         events: eventsResponse?.events,
         getPropertiesWithDefinitions,
-
+        totalCount: eventDefinitionsResponse?.eventDefinitions?.totalCount,
         isFetchingMore,
         propertiesWithDefinitions: propertiesWithDefinitionsResponse?.propertiesWithDefinitions,
         getMoreEventDefinitions,
