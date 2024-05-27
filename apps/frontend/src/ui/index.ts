@@ -6,6 +6,7 @@ export { Info } from "./Info";
 export { AcronynmBox } from "./NavItem/AcronynmBox";
 export { NavItem } from "./NavItem/NavItem";
 export { NavLink } from "./NavItem/NavLink";
+export { Pagination } from "./Pagination";
 export { ProgressRadial } from "./ProgressRadial";
 export { Screen } from "./Screen/Screen";
 export { GlobalSpinner } from "./Spinner/GlobalSpinner";

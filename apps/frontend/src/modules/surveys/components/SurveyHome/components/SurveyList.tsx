@@ -2,21 +2,11 @@ import { Survey, SurveyStatusEnum } from "@/generated/graphql";
 import { useOnboarding } from "@/modules/onboarding/hooks/useOnboarding";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ROUTES } from "@/routes";
-import { Dialog, DialogContent, DialogTrigger } from "@/ui";
+import { Dialog, DialogContent, DialogTrigger, Pagination } from "@/ui";
 import * as Popover from "@radix-ui/react-popover";
-import { Icon, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
-import {
-    Archive,
-    ChevronLeft,
-    ChevronRight,
-    ClipboardCheck,
-    Edit,
-    MoreHorizontal,
-    PauseCircle,
-    Radio,
-    Trash2,
-} from "lucide-react";
+import { Archive, ClipboardCheck, Edit, MoreHorizontal, PauseCircle, Radio, Trash2 } from "lucide-react";
 import React, { useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import SurveyCreate from "../../SurveyCreate";
@@ -122,8 +112,8 @@ export const SurveyList = () => {
                 </Dialog>
             </div>
 
-            <div className="mt-8  flex flex-col">
-                <Table className="scrollbar-hide table-auto rounded-md border border-intg-bg-4">
+            <div className="mt-8 flex flex-col">
+                <Table className="scrollbar-hide table-auto rounded-t-md border border-intg-bg-4">
                     <TableHead className="border-b border-intg-bg-4 bg-intg-bg-8 font-light hover:cursor-pointer">
                         <TableRow>
                             {headers.map(({ title, id }) => {
@@ -296,52 +286,16 @@ export const SurveyList = () => {
                             );
                         })}
                     </TableBody>
-
-                    <tfoot className="table-footer-group h-[50px] border-t border-intg-bg-4">
-                        <tr className="">
-                            <td className="table-cell px-4 py-4">
-                                <button
-                                    disabled={!surveyList?.pageInfo?.hasPreviousPage}
-                                    onClick={() => handleGetMoreSurveys("backward")}
-                                    className={`${
-                                        !surveyList?.pageInfo?.hasPreviousPage ? "cursor-not-allowed opacity-50" : ""
-                                    } hover:bg-intg-bg-8} rounded-md border border-intg-bg-4 transition-all duration-300 ease-in`}
-                                >
-                                    <Icon
-                                        size="md"
-                                        icon={ChevronLeft}
-                                        className="font-normal text-intg-text-4 hover:cursor-pointer"
-                                    />
-                                </button>
-                            </td>
-                            <td className="table-cell">
-                                <button
-                                    disabled={!surveyList?.pageInfo?.hasNextPage}
-                                    onClick={() => handleGetMoreSurveys("forward")}
-                                    className={`${
-                                        !surveyList?.pageInfo?.hasNextPage ? "cursor-not-allowed opacity-50" : ""
-                                    } rounded-md border border-intg-bg-4  transition-all duration-300 ease-in hover:bg-intg-bg-8`}
-                                >
-                                    <Icon
-                                        size="md"
-                                        icon={ChevronRight}
-                                        className="font-normal text-intg-text-4 hover:cursor-pointer"
-                                    />
-                                </button>
-                            </td>
-
-                            <td className="table-cell" />
-
-                            <td className="table-cell whitespace-nowrap px-4 py-4 text-sm font-normal text-intg-text-4">
-                                Rows per page: {surveysOnPage}
-                            </td>
-
-                            <td className="table-cell whitespace-nowrap px-4 py-4 text-sm font-normal text-intg-text-4">
-                                {surveyStartIndex} - {surveyEndIndex} of {surveyList?.totalCount} Surveys
-                            </td>
-                        </tr>
-                    </tfoot>
                 </Table>
+                <Pagination
+                    hasNextPage={surveyList?.pageInfo?.hasNextPage ?? false}
+                    hasPrevPage={surveyList?.pageInfo?.hasPreviousPage ?? false}
+                    nextPageFn={() => handleGetMoreSurveys("forward")}
+                    prevPageFn={() => handleGetMoreSurveys("backward")}
+                    totalCount={surveyList?.totalCount ?? 0}
+                    itemName="Surveys"
+                    className="rounded-b-md border-x border-b border-intg-bg-4 px-4 py-2"
+                />
             </div>
         </div>
     );
