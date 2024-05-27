@@ -5,6 +5,8 @@ import { subDays } from "date-fns";
 import { ReactNode, createContext, useCallback, useMemo, useState } from "react";
 import { useSurvey } from "../hooks/useSurvey";
 
+const RESPONSES_PER_PAGE = 10;
+
 const useAnalyzeFactory = () => {
     const [activeResponse, setActiveResponse] = useState<ParsedResponse | null>(null);
     const [timeFrame, setTimeFrame] = useState<DateFilterValue>({
@@ -12,18 +14,72 @@ const useAnalyzeFactory = () => {
         current: { gte: getISOdateString(), lte: getISOdateString() },
         previous: { gte: getISOdateString(subDays(Date.now(), 1)), lte: getISOdateString(subDays(Date.now(), 1)) },
     });
+
     const { surveyId } = useSurvey();
 
-    const { data: responseQuery } = useResponsesQuery({
-        fetchPolicy: "network-only",
+    const responseQueryVariables = useMemo(
+        () => ({
+            id: surveyId,
+            first: RESPONSES_PER_PAGE,
+            filter: {
+                createdAt: timeFrame.current,
+            },
+        }),
+        [surveyId, timeFrame.current],
+    );
+
+    const { data: lastEightResponsesData } = useResponsesQuery({
+        fetchPolicy: "cache-and-network",
         variables: {
             id: surveyId,
-            first: 100,
+            first: 8,
         },
     });
 
+    const { data: responseQuery, fetchMore } = useResponsesQuery({
+        fetchPolicy: "cache-and-network",
+        variables: responseQueryVariables,
+    });
+
+    const fetchMoreResponses = useCallback(
+        (direction: "forward" | "backward") => {
+            if (
+                (!responseQuery?.responses?.pageInfo.hasNextPage && direction === "forward") ||
+                (!responseQuery?.responses?.pageInfo.endCursor && direction === "forward") ||
+                (!responseQuery?.responses?.pageInfo.hasPreviousPage && direction === "backward") ||
+                (!responseQuery?.responses?.pageInfo.startCursor && direction === "backward")
+            ) {
+                return;
+            }
+
+            const variables =
+                direction === "forward"
+                    ? {
+                          ...responseQueryVariables,
+                          after: responseQuery?.responses?.pageInfo.endCursor,
+                      }
+                    : {
+                          ...responseQueryVariables,
+                          first: undefined,
+                          last: RESPONSES_PER_PAGE,
+                          before: responseQuery?.responses?.pageInfo.startCursor,
+                      };
+
+            fetchMore({
+                variables,
+                updateQuery: (previousQueryResult, options) => {
+                    if (options.fetchMoreResult.responses?.nodes && options.fetchMoreResult.responses.pageInfo) {
+                        return options.fetchMoreResult;
+                    }
+                    return previousQueryResult;
+                },
+            });
+        },
+        [responseQueryVariables, responseQuery],
+    );
+
     const { data: totalResponsesData } = useResponseMetricQuery({
-        fetchPolicy: "network-only",
+        fetchPolicy: "cache-and-network",
         variables: {
             id: surveyId,
             metric: SurveyResponseMetricEnum.TotalResponses,
@@ -33,7 +89,7 @@ const useAnalyzeFactory = () => {
     });
 
     const { data: completionRateData } = useResponseMetricQuery({
-        fetchPolicy: "network-only",
+        fetchPolicy: "cache-and-network",
         variables: {
             id: surveyId,
             metric: SurveyResponseMetricEnum.CompletionRate,
@@ -43,7 +99,7 @@ const useAnalyzeFactory = () => {
     });
 
     const { data: averageTimeData } = useResponseMetricQuery({
-        fetchPolicy: "network-only",
+        fetchPolicy: "cache-and-network",
         variables: {
             id: surveyId,
             metric: SurveyResponseMetricEnum.AverageTime,
@@ -53,7 +109,7 @@ const useAnalyzeFactory = () => {
     });
 
     const { data: npsMetricData } = useResponseMetricQuery({
-        fetchPolicy: "network-only",
+        fetchPolicy: "cache-and-network",
         variables: {
             id: surveyId,
             metric: SurveyResponseMetricEnum.Nps,
@@ -62,7 +118,7 @@ const useAnalyzeFactory = () => {
     });
 
     const { data: csatMetricData } = useResponseMetricQuery({
-        fetchPolicy: "network-only",
+        fetchPolicy: "cache-and-network",
         variables: {
             id: surveyId,
             metric: SurveyResponseMetricEnum.Csat,
@@ -71,13 +127,17 @@ const useAnalyzeFactory = () => {
     });
 
     const { data: cesMetricData } = useResponseMetricQuery({
-        fetchPolicy: "network-only",
+        fetchPolicy: "cache-and-network",
         variables: {
             id: surveyId,
             metric: SurveyResponseMetricEnum.Ces,
             date: timeFrame.current,
         },
     });
+
+    const lastEightResponses = useMemo(() => {
+        return lastEightResponsesData?.responses?.nodes?.map((r) => parseResponse(r)) ?? ([] as ParsedResponse[]);
+    }, [lastEightResponsesData]);
 
     const npsMetric = useMemo(() => {
         return JSON.parse(
@@ -152,6 +212,8 @@ const useAnalyzeFactory = () => {
 
     return {
         responses,
+        lastEightResponses,
+        responseQuery,
         activeResponse,
         totalResponses,
         completionRate,
@@ -160,6 +222,7 @@ const useAnalyzeFactory = () => {
         csatMetric,
         cesMetric,
         timeFrame,
+        fetchMoreResponses,
         setTimeFrame,
         setActiveResponse,
         calculatePercentageDifference,

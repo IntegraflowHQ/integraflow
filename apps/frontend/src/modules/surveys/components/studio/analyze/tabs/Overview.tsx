@@ -12,7 +12,7 @@ import { Summary } from "../components/Summary";
 
 export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) => {
     const {
-        responses,
+        lastEightResponses,
         npsMetric,
         cesMetric,
         csatMetric,
@@ -42,7 +42,7 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
         trendName = "Compared to last year";
     }
 
-    if (responses.length === 0) {
+    if (lastEightResponses.length === 0) {
         return (
             <div className={"flex h-full w-full min-w-[660px] flex-col gap-6 rounded-xl bg-intg-bg-9 px-6 py-9"}>
                 <div className="flex h-full w-full flex-1 flex-col items-center justify-center gap-6">
@@ -262,10 +262,10 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                         </header>
 
                         <div className="space-y-2">
-                            {responses.slice(0, 8).map((response) => (
+                            {lastEightResponses.map((response) => (
                                 <Response
                                     title={response.title}
-                                    date={new Date(response.completedAt ?? response.createdAt ?? "")}
+                                    date={new Date(response.createdAt ?? Date.now())}
                                     responder={response.userAttributes.name ?? response.userAttributes.id}
                                     key={response.id}
                                     onClick={() => {
