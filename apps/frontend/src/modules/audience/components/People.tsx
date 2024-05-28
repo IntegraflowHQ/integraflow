@@ -1,45 +1,18 @@
 import { PersonCountableEdge } from "@/generated/graphql";
 import { Properties } from "@/types";
-import { Dialog, DialogContent, Spinner } from "@/ui";
+import { Dialog, DialogContent, Pagination, Spinner } from "@/ui";
 import PeopleIconLg from "@/ui/icons/PeopleIconLg";
 import { cn } from "@/utils";
-import {
-    Icon,
-    Table,
-    TableBody,
-    TableCell,
-    TableFoot,
-    TableFooterCell,
-    TableHead,
-    TableHeaderCell,
-    TableRow,
-} from "@tremor/react";
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 import { format } from "date-fns";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Fragment, useState } from "react";
 import { useAudience } from "../hooks/useAudience";
 
 export const People = () => {
-    const [page, setPage] = useState<number>(1);
-
-    const { persons, isFetchingMore, getMorePersons, loadingPersons, itemsOnPage } = useAudience();
-
-    const personsStartIndex = (page - 1) * itemsOnPage + 1;
-    const personsEndIndex = Math.min(page * itemsOnPage, persons?.totalCount ?? 0);
-
+    const { persons, isFetchingMore, getMorePersons, loadingPersons } = useAudience();
     const [selectedPerson, setSelectedPerson] = useState<PersonCountableEdge | null>(null);
 
     const parsedPersonProperties = selectedPerson && (JSON.parse(selectedPerson?.node.attributes) as Properties);
-
-    const handleGetMorePersons = (direction: string) => {
-        if (direction === "forward") {
-            setPage((prevPage) => prevPage + 1);
-        } else {
-            setPage((prevPage) => prevPage - 1);
-        }
-
-        getMorePersons(direction);
-    };
 
     return (
         <>
@@ -108,7 +81,7 @@ export const People = () => {
                             return (
                                 <TableRow
                                     key={person.node.id}
-                                    className="cursor-pointer border border-intg-bg-4 text-center font-light transition-all duration-300 ease-in"
+                                    className="cursor-pointer  border-intg-bg-4 text-center font-light transition-all duration-300 ease-in"
                                     onClick={() => {
                                         setSelectedPerson(person as PersonCountableEdge);
                                     }}
@@ -124,56 +97,17 @@ export const People = () => {
                         })}
                     </TableBody>
                 ) : null}
-
-                {persons?.edges.length ? (
-                    <TableFoot className="table-footer-group h-[50px] border-t border-intg-bg-4">
-                        <TableFooterCell className="table-cell px-4 py-4">
-                            <div className="flex gap-10">
-                                <button
-                                    disabled={!persons?.pageInfo?.hasPreviousPage || isFetchingMore}
-                                    onClick={() => handleGetMorePersons("backward")}
-                                    className={`${
-                                        !persons?.pageInfo?.hasPreviousPage || isFetchingMore
-                                            ? "cursor-not-allowed opacity-50"
-                                            : ""
-                                    } hover:bg-intg-bg-8} rounded-md border border-intg-bg-4 transition-all duration-300 ease-in`}
-                                >
-                                    <Icon
-                                        size="md"
-                                        icon={ChevronLeft}
-                                        className="font-normal text-intg-text-4 hover:cursor-pointer"
-                                    />
-                                </button>
-
-                                <button
-                                    disabled={!persons?.pageInfo?.hasNextPage || isFetchingMore}
-                                    onClick={() => handleGetMorePersons("forward")}
-                                    className={`${
-                                        !persons?.pageInfo?.hasNextPage || isFetchingMore
-                                            ? "cursor-not-allowed opacity-50"
-                                            : ""
-                                    } rounded-md border border-intg-bg-4  transition-all duration-300 ease-in hover:bg-intg-bg-8`}
-                                >
-                                    <Icon
-                                        size="md"
-                                        icon={ChevronRight}
-                                        className="font-normal text-intg-text-4 hover:cursor-pointer"
-                                    />
-                                </button>
-                            </div>
-                        </TableFooterCell>
-
-                        <TableFooterCell className="table-cell whitespace-nowrap px-4 py-4 text-sm font-normal text-intg-text-4">
-                            <div className="flex gap-10">
-                                <span>Rows per page: {itemsOnPage}</span>
-                                <span>
-                                    {personsStartIndex} - {personsEndIndex} of {persons?.totalCount} Surveys
-                                </span>
-                            </div>
-                        </TableFooterCell>
-                    </TableFoot>
-                ) : null}
             </Table>
+
+            <Pagination
+                hasNextPage={persons?.pageInfo.hasNextPage as boolean}
+                hasPrevPage={persons?.pageInfo.hasPreviousPage as boolean}
+                itemName="users"
+                nextPageFn={() => getMorePersons("forward")}
+                prevPageFn={() => getMorePersons("backward")}
+                totalCount={persons?.totalCount as number}
+                className="border border-t-0 border-intg-bg-4 p-4"
+            />
 
             {!loadingPersons && !persons?.edges.length ? (
                 <div className="mt-40 flex h-full w-full text-intg-text">
