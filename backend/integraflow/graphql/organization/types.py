@@ -156,7 +156,7 @@ class Organization(AuthOrganization):
         doc_category=DOC_CATEGORY_ORGANIZATIONS,
     )
 
-    billing_usage = FilterConnectionField(
+    billing_usage = PermissionsField(
         JSONString,
         description="Billing usage of the organization.",
         permissions=[AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS],
