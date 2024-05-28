@@ -100,7 +100,7 @@ class User(AuthUser):
 
     projects = FilterConnectionField(
         ProjectCountableConnection,
-        order_by=ProjectSortingInput(
+        sort_by=ProjectSortingInput(
             description="By which field should the pagination order by."
         ),
         description="Projects the user has access to.",

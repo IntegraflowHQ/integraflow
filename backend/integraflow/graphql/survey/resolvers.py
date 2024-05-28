@@ -142,17 +142,17 @@ def resolve_survey_by_channel(info, id=None, link=None):
         return instance.survey
 
 
-def resolve_survey_responses(info, id: str):
+def resolve_survey_responses(info, id: Union[str, None] = None):
     project = cast(Project, info.context.project)
 
-    _, survey_id = from_global_id_or_error(id)
+    lookup = Q(survey__project_id=project.id)
+    if id is not None:
+        _, survey_id = from_global_id_or_error(id)
+        lookup = Q(id=survey_id, survey__project_id=project.id)
 
     return models.SurveyResponse.objects.using(
         get_database_connection_name(info.context)
-    ).filter(
-        survey_id=survey_id,
-        survey__project_id=project.id
-    )
+    ).filter(lookup)
 
 
 def resolve_response_count(
