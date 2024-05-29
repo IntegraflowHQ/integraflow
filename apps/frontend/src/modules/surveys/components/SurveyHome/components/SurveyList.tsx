@@ -27,18 +27,9 @@ export const SurveyList = () => {
     const { orgSlug, projectSlug } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const {
-        createSurvey,
-        creatingSurvey,
-        updateSurvey,
-        deleteSurvey,
-        loading,
-        getMoreSurveys,
-        surveyList,
-        surveysOnPage,
-    } = useSurvey();
+    const { createSurvey, creatingSurvey, updateSurvey, deleteSurvey, loading, getMoreSurveys, surveyList } =
+        useSurvey();
 
-    const [page, setPage] = React.useState<number>(1);
     const [selectedSurveyName, setSelectedSurveyName] = React.useState<string>("");
 
     const { steps: onboardingSteps, markAsCompleted } = useOnboarding();
@@ -54,16 +45,6 @@ export const SurveyList = () => {
             setSearchParams({});
         }
     }, []);
-
-    const handleGetMoreSurveys = (direction: string) => {
-        if (direction === "forward") {
-            setPage((prevPage) => prevPage + 1);
-        } else {
-            setPage((prevPage) => prevPage - 1);
-        }
-
-        getMoreSurveys(direction);
-    };
 
     const handleGetSurvey = (slug: string) => {
         navigate(
@@ -87,9 +68,6 @@ export const SurveyList = () => {
 
         deleteSurvey(survey);
     };
-
-    const surveyStartIndex = (page - 1) * surveysOnPage + 1;
-    const surveyEndIndex = Math.min(page * surveysOnPage, surveyList?.totalCount ?? 0);
 
     return (
         <div className="h-full w-full px-6 py-4 text-white">
@@ -290,8 +268,8 @@ export const SurveyList = () => {
                 <Pagination
                     hasNextPage={surveyList?.pageInfo?.hasNextPage ?? false}
                     hasPrevPage={surveyList?.pageInfo?.hasPreviousPage ?? false}
-                    nextPageFn={() => handleGetMoreSurveys("forward")}
-                    prevPageFn={() => handleGetMoreSurveys("backward")}
+                    nextPageFn={() => getMoreSurveys("forward")}
+                    prevPageFn={() => getMoreSurveys("backward")}
                     totalCount={surveyList?.totalCount ?? 0}
                     itemName="Surveys"
                     className="rounded-b-md border-x border-b border-intg-bg-4 px-4 py-2"
