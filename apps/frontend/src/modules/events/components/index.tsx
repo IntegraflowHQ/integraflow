@@ -20,19 +20,15 @@ export const EventsIndex = () => {
         propertiesWithDefinitions,
         loadingProperties,
         loadingEventDefinitions,
-        eventDefinitionsOnPage,
         getMoreEventDefinitions,
     } = useEvents();
 
-    const [page, setPage] = useState<number>(1);
-    const eventsDefinitionsStartIndex = (page - 1) * eventDefinitionsOnPage + 1;
-    const eventsDefinitionsEndIndex = Math.min(page * eventDefinitionsOnPage, eventDefinitions?.totalCount ?? 0);
-
     const [getEvents, { data: singleEvent, loading: eventLoading }] = useEventsLazyQuery();
 
-    const event =
-        singleEvent?.events?.edges[0].node.properties &&
-        (JSON.parse(singleEvent?.events?.edges[0].node.properties) as Properties);
+    const event: Properties | null =
+        singleEvent?.events?.edges.length && singleEvent?.events?.edges[0].node?.properties
+            ? (JSON.parse(singleEvent?.events?.edges[0].node.properties) as Properties)
+            : null;
 
     const handleEventDetails = async (event: EventDefinitionCountableEdge) => {
         getPropertiesWithDefinitions(event.node.name);
@@ -44,16 +40,6 @@ export const EventsIndex = () => {
                 },
             },
         });
-    };
-
-    const handleGetMoreEventsDefinitions = (direction: string) => {
-        if (direction === "forward") {
-            setPage((prevPage) => prevPage + 1);
-        } else {
-            setPage((prevPage) => prevPage - 1);
-        }
-
-        getMoreEventDefinitions(direction);
     };
 
     return (
@@ -105,8 +91,8 @@ export const EventsIndex = () => {
                             hasNextPage={eventDefinitions.pageInfo.hasNextPage}
                             hasPrevPage={eventDefinitions.pageInfo.hasPreviousPage}
                             itemName="events"
-                            nextPageFn={() => handleGetMoreEventsDefinitions("forward")}
-                            prevPageFn={() => handleGetMoreEventsDefinitions("backward")}
+                            nextPageFn={() => getMoreEventDefinitions("forward")}
+                            prevPageFn={() => getMoreEventDefinitions("backward")}
                             totalCount={eventDefinitions?.totalCount as number}
                             key={"events"}
                             className="border border-t-0 border-intg-bg-4 p-4"
@@ -142,7 +128,7 @@ export const EventsIndex = () => {
                                         const propertyValue = event ? event[item.property] : "N/A";
 
                                         return (
-                                            <TableRow className="border-intg-bg-4">
+                                            <TableRow className="border-intg-bg-4" key={item.event}>
                                                 <TableCell>{item.property}</TableCell>
                                                 <TableCell>{item.propertyType}</TableCell>
                                                 <TableCell>{propertyValue ?? "N/A"}</TableCell>

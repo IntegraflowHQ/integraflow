@@ -79,7 +79,6 @@ export const useEvents = () => {
     return {
         loadingProperties,
         loadingEventDefinitions,
-        eventDefinitionsOnPage,
         eventDefinitions: eventDefinitionsResponse?.eventDefinitions,
         events: eventsResponse?.events,
         getPropertiesWithDefinitions,
