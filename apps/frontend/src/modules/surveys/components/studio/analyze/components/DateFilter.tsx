@@ -1,7 +1,7 @@
 import { DateFilterValue } from "@/types";
 import { DatePicker } from "@/ui";
 import { cn, getISOdateString } from "@/utils";
-import { parseISO, subDays, subMonths, subWeeks, subYears } from "date-fns";
+import { addDays, parseISO, subDays, subMonths, subWeeks, subYears } from "date-fns";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 
@@ -28,7 +28,7 @@ export const DateFilter = ({ defaultValue, onValueChange }: Props) => {
             case "today":
                 onValueChange?.({
                     timePeriod: key,
-                    current: { gte: getISOdateString(), lte: getISOdateString() },
+                    current: { gte: getISOdateString(), lte: getISOdateString(addDays(Date.now(), 1)) },
                     previous: {
                         gte: getISOdateString(subDays(Date.now(), 1)),
                         lte: getISOdateString(subDays(Date.now(), 1)),
@@ -38,7 +38,10 @@ export const DateFilter = ({ defaultValue, onValueChange }: Props) => {
             case "last 7 days":
                 onValueChange?.({
                     timePeriod: key,
-                    current: { gte: getISOdateString(subWeeks(Date.now(), 1)), lte: getISOdateString() },
+                    current: {
+                        gte: getISOdateString(subWeeks(Date.now(), 1)),
+                        lte: getISOdateString(addDays(Date.now(), 1)),
+                    },
                     previous: {
                         gte: getISOdateString(subWeeks(Date.now(), 2)),
                         lte: getISOdateString(subWeeks(Date.now(), 1)),
@@ -48,7 +51,10 @@ export const DateFilter = ({ defaultValue, onValueChange }: Props) => {
             case "30 days":
                 onValueChange?.({
                     timePeriod: key,
-                    current: { gte: getISOdateString(subMonths(Date.now(), 1)), lte: getISOdateString() },
+                    current: {
+                        gte: getISOdateString(subMonths(Date.now(), 1)),
+                        lte: getISOdateString(addDays(Date.now(), 1)),
+                    },
                     previous: {
                         gte: getISOdateString(subMonths(Date.now(), 2)),
                         lte: getISOdateString(subMonths(Date.now(), 1)),
@@ -58,7 +64,10 @@ export const DateFilter = ({ defaultValue, onValueChange }: Props) => {
             case "1 year":
                 onValueChange?.({
                     timePeriod: key,
-                    current: { gte: getISOdateString(subYears(Date.now(), 1)), lte: getISOdateString() },
+                    current: {
+                        gte: getISOdateString(subYears(Date.now(), 1)),
+                        lte: getISOdateString(addDays(Date.now(), 1)),
+                    },
                     previous: {
                         gte: getISOdateString(subYears(Date.now(), 2)),
                         lte: getISOdateString(subYears(Date.now(), 1)),
