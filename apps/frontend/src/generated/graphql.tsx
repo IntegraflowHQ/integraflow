@@ -1742,6 +1742,7 @@ export type QueryResponsesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['ID']>;
   last?: InputMaybe<Scalars['Int']>;
+  sortBy?: InputMaybe<SurveyResponseSortingInput>;
 };
 
 
@@ -2273,10 +2274,14 @@ export type SurveyResponseCreate = {
 export type SurveyResponseCreateInput = {
   /** The user attributes. */
   attributes?: InputMaybe<Scalars['JSONString']>;
+  /** The channel of the response. */
+  channel?: InputMaybe<Scalars['JSONString']>;
   /** Whether the response is completed. */
   completed?: InputMaybe<Scalars['Boolean']>;
   /** The time the survey completed. */
   completedAt?: InputMaybe<Scalars['DateTime']>;
+  /** The event ID. */
+  event?: InputMaybe<Scalars['UUID']>;
   /** The ID of the response. */
   id?: InputMaybe<Scalars['UUID']>;
   /** The response metadata. */
@@ -2316,6 +2321,26 @@ export enum SurveyResponseMetricEnum {
   TotalResponses = 'TOTAL_RESPONSES'
 }
 
+export enum SurveyResponseSortField {
+  /** Sort responses by completed at. */
+  CompletedAt = 'COMPLETED_AT',
+  /** Sort responses by created at. */
+  CreatedAt = 'CREATED_AT',
+  /** Sort responses by last modified at. */
+  LastModifiedAt = 'LAST_MODIFIED_AT',
+  /** Sort responses by status. */
+  Status = 'STATUS',
+  /** Sort responses by time spent. */
+  TimeSpent = 'TIME_SPENT'
+}
+
+export type SurveyResponseSortingInput = {
+  /** Specifies the direction in which to sort responses. */
+  direction: OrderDirection;
+  /** Sort responses by the selected field. */
+  field: SurveyResponseSortField;
+};
+
 export enum SurveyResponseStatusEnum {
   Archived = 'ARCHIVED',
   Completed = 'COMPLETED',
@@ -2334,10 +2359,14 @@ export type SurveyResponseUpdate = {
 export type SurveyResponseUpdateInput = {
   /** The user attributes. */
   attributes?: InputMaybe<Scalars['JSONString']>;
+  /** The channel of the response. */
+  channel?: InputMaybe<Scalars['JSONString']>;
   /** Whether the response is completed. */
   completed?: InputMaybe<Scalars['Boolean']>;
   /** The time the survey completed. */
   completedAt?: InputMaybe<Scalars['DateTime']>;
+  /** The event ID. */
+  event?: InputMaybe<Scalars['UUID']>;
   /** The response metadata. */
   metadata?: InputMaybe<Scalars['JSONString']>;
   /** The partial response for the survey. */
@@ -2470,7 +2499,7 @@ export type UserProjectsArgs = {
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ProjectSortingInput>;
+  sortBy?: InputMaybe<ProjectSortingInput>;
 };
 
 /** Represents errors in user mutations. */

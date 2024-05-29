@@ -128,14 +128,14 @@ export const EventsIndex = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody className="border-t border-intg-bg-4">
-                                    {propertiesWithDefinitions?.map((item) => {
+                                    {propertiesWithDefinitions?.map((item, index) => {
                                         const propertyValue = event ? event[item.property] : "N/A";
 
                                         return (
-                                            <TableRow className="border-intg-bg-4" key={item.event}>
+                                            <TableRow className="border-intg-bg-4" key={index}>
                                                 <TableCell>{item.property}</TableCell>
                                                 <TableCell>{item.propertyType}</TableCell>
-                                                <TableCell>{propertyValue ?? "N/A"}</TableCell>
+                                                <TableCell>{propertyValue}</TableCell>
                                             </TableRow>
                                         );
                                     })}
