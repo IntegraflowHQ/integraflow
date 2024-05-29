@@ -8,7 +8,6 @@ import { WorkspaceInvite } from "@/modules/workspace/components/invite/Workspace
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { ROUTES } from "@/routes";
 import { Button, ProgressRadial } from "@/ui";
-import { JoinDiscord } from "@/ui/Banner/JoinDiscord";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -20,15 +19,7 @@ import {
 import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
 import { NavItem } from "@/ui/NavItem/NavItem";
 import { NavLink } from "@/ui/NavItem/NavLink";
-import {
-    CheckCircleIcon,
-    CirclePlusIcon,
-    CursorIcon,
-    DocumentIcon,
-    PeopleIcon,
-    SettingsIcon,
-    SpeakerIcon,
-} from "@/ui/icons";
+import { CheckCircleIcon, CirclePlusIcon, CursorIcon, DocumentIcon, PeopleIcon, SettingsIcon } from "@/ui/icons";
 import { cn } from "@/utils";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { ChevronDown } from "lucide-react";
@@ -244,14 +235,7 @@ export const Navbar = () => {
                             open={openOrganizationInviteModal}
                             onOpenChange={(value: boolean) => setOpenOrganizationInviteModal(value)}
                         />
-                        <li className="flex cursor-pointer items-center space-x-2 px-3 py-2">
-                            <span>
-                                <SpeakerIcon />
-                            </span>
-                            <span>Feedbacks</span>
-                        </li>
                     </ul>
-                    <JoinDiscord />
                 </div>
             </div>
 
