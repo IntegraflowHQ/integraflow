@@ -1,3 +1,4 @@
+import { cn } from "@/utils";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { XIcon } from "lucide-react";
 import React, { forwardRef } from "react";
@@ -7,10 +8,11 @@ type Props = {
     title?: string;
     description?: string;
     alignHeader?: "center" | "left";
+    className?: string;
 };
 
 export const DialogContent = forwardRef<HTMLDivElement, Props>(
-    ({ children, title, alignHeader = "left", ...props }, forwardedRef) => (
+    ({ children, title, alignHeader = "left", className, ...props }, forwardedRef) => (
         <DialogPrimitive.Portal>
             <DialogPrimitive.Overlay
                 className="fixed inset-0"
@@ -22,7 +24,10 @@ export const DialogContent = forwardRef<HTMLDivElement, Props>(
             <DialogPrimitive.Content
                 {...props}
                 ref={forwardedRef}
-                className="fixed left-1/2 top-1/2 h-fit w-fit -translate-x-1/2 -translate-y-1/2  rounded-2xl bg-intg-bg-8 p-12 text-white"
+                className={cn(
+                    "fixed left-1/2 top-1/2 h-fit w-fit -translate-x-1/2 -translate-y-1/2  rounded-2xl bg-intg-bg-8 p-12 text-white",
+                    className ?? "",
+                )}
             >
                 {alignHeader === "left" && (
                     <>

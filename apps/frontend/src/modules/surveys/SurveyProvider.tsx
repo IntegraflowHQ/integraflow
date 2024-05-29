@@ -41,7 +41,6 @@ export type SurveyList = {
 
 export type SurveyContextValues = {
     loading: boolean;
-    surveysOnPage: number;
     error: ApolloError | undefined;
     parsedQuestions: ParsedQuestion[];
     surveyId: string;
@@ -396,7 +395,6 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
         () => ({
             error,
             createSurvey,
-            surveysOnPage: SURVEYS_PER_PAGE,
             survey: surveyQueryResponse?.survey,
             deleteSurvey,
             updateSurvey,
