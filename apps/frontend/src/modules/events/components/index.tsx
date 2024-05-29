@@ -56,14 +56,16 @@ export const EventsIndex = () => {
                         )}
                     >
                         <TableHead className="bg-intg-bg-9 font-light hover:cursor-pointer">
-                            <TableHeaderCell className="w-1/2">Event Name</TableHeaderCell>
-                            <TableHeaderCell className="text-md flex items-center space-x-1 font-normal">
-                                <span>Count</span>
-                                <span>
-                                    <QuestionIcon />
-                                </span>
-                            </TableHeaderCell>
-                            <TableHeaderCell className="text-md font-normal">Last Seen</TableHeaderCell>
+                            <TableRow>
+                                <TableHeaderCell className="w-1/2">Event Name</TableHeaderCell>
+                                <TableHeaderCell className="text-md flex items-center space-x-1 font-normal">
+                                    <span>Count</span>
+                                    <span>
+                                        <QuestionIcon />
+                                    </span>
+                                </TableHeaderCell>
+                                <TableHeaderCell className="text-md font-normal">Last Seen</TableHeaderCell>
+                            </TableRow>
                         </TableHead>
                         <TableBody>
                             {(eventDefinitions?.edges || []).map((event) => {
@@ -117,11 +119,13 @@ export const EventsIndex = () => {
                         ) : (
                             <Table className="scrollbar-hide mt-4 table-auto rounded-t-lg border border-intg-bg-4">
                                 <TableHead className="bg-intg-bg-9 font-light hover:cursor-pointer">
-                                    <TableHeaderCell className="w-1/2">Property Name</TableHeaderCell>
-                                    <TableHeaderCell className="text-md flex items-center space-x-1 font-normal">
-                                        Type
-                                    </TableHeaderCell>
-                                    <TableHeaderCell className="text-md font-normal">Example</TableHeaderCell>
+                                    <TableRow>
+                                        <TableHeaderCell className="w-1/2">Property Name</TableHeaderCell>
+                                        <TableHeaderCell className="text-md flex items-center space-x-1 font-normal">
+                                            Type
+                                        </TableHeaderCell>
+                                        <TableHeaderCell className="text-md font-normal">Example</TableHeaderCell>
+                                    </TableRow>
                                 </TableHead>
                                 <TableBody className="border-t border-intg-bg-4">
                                     {propertiesWithDefinitions?.map((item) => {
