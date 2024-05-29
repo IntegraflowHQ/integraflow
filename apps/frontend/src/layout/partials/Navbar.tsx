@@ -25,7 +25,6 @@ import {
     CirclePlusIcon,
     CursorIcon,
     DocumentIcon,
-    HomeIcon,
     PeopleIcon,
     SettingsIcon,
     SpeakerIcon,
@@ -51,16 +50,6 @@ export const Navbar = () => {
     };
 
     const navItems = [
-        {
-            id: 1,
-            title: "Home",
-            icon: <HomeIcon />,
-            href: ROUTES.HOME.replace(":orgSlug", workspace?.slug as string).replace(
-                ":projectSlug",
-                project?.slug as string,
-            ),
-            disable: true,
-        },
         {
             id: 2,
             title: "Surveys",
@@ -190,13 +179,13 @@ export const Navbar = () => {
                         )}
                     </div>
                     <hr className="border-intg-bg-4" />
-                    <ul className="space-y-2 py-4 text-sm text-intg-text-4">
+                    <div className="space-y-2 py-4 text-sm text-intg-text-4">
                         {navItems.map((item) => {
                             if (item.disable) {
                                 return (
                                     <Tooltip.Provider key={item.id}>
                                         <Tooltip.Root key={item.id} delayDuration={200}>
-                                            <Tooltip.Trigger className="h-9 w-full  rounded ease-in-out">
+                                            <Tooltip.Trigger className="h-9 w-full rounded ease-in-out">
                                                 <div className="flex w-full cursor-not-allowed items-center gap-2 overflow-x-hidden rounded bg-intg-bg-9 px-3 py-2 capitalize text-gray-500">
                                                     {item.icon}
                                                     {item.title}
@@ -227,6 +216,7 @@ export const Navbar = () => {
                                         key={item.id}
                                         leftIcon={item.icon}
                                         text={item.title}
+                                        className={"block"}
                                         classnames={cn(
                                             isActive(item.href) ? "bg-intg-bg-5" : "",
                                             "cursor-not-allowed px-3 py-2 hover:bg-intg-bg-8",
@@ -235,7 +225,7 @@ export const Navbar = () => {
                                 );
                             }
                         })}
-                    </ul>
+                    </div>
                     <hr className="border-intg-bg-4" />
                     <ul className="space-y-2 py-4 text-sm text-intg-text-4">
                         <li
