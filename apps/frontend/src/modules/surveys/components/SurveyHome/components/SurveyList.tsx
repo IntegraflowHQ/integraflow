@@ -90,7 +90,7 @@ export const SurveyList = () => {
                 </Dialog>
             </div>
 
-            <div className="mt-8 flex flex-col">
+            <div className="mt-8 flex flex-col pb-10">
                 <Table className="scrollbar-hide table-auto rounded-t-md border border-intg-bg-4">
                     <TableHead className="border-b border-intg-bg-4 bg-intg-bg-8 font-light hover:cursor-pointer">
                         <TableRow>
@@ -272,7 +272,7 @@ export const SurveyList = () => {
                     prevPageFn={() => getMoreSurveys("backward")}
                     totalCount={surveyList?.totalCount ?? 0}
                     itemName="Surveys"
-                    className="rounded-b-md border-x border-b border-intg-bg-4 px-4 py-2"
+                    className="rounded-b-md border-x border-b border-intg-bg-4 p-4"
                 />
             </div>
         </div>

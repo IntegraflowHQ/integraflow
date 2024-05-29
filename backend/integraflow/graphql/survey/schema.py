@@ -43,7 +43,10 @@ from .resolvers import (
     resolve_ces_scores,
     resolve_csat_scores
 )
-from .sorters import SurveySortingInput
+from .sorters import (
+    SurveySortingInput,
+    SurveyResponseSortingInput
+)
 from .types import (
     BaseSurvey,
     BaseSurveyCountableConnection,
@@ -139,6 +142,7 @@ class SurveyQueries(graphene.ObjectType):
         filter=SurveyResponseFilterInput(
             description="Filtering options for responses."
         ),
+        sort_by=SurveyResponseSortingInput(description="Sort responses."),
         description="List of the survey's responses.",
         permissions=[AuthorizationFilters.PROJECT_MEMBER_ACCESS],
         doc_category=DOC_CATEGORY_SURVEYS,
@@ -222,7 +226,7 @@ class SurveyQueries(graphene.ObjectType):
 
     @staticmethod
     def resolve_responses(_root, info, **kwargs):
-        qs = resolve_survey_responses(info, id=kwargs["id"])
+        qs = resolve_survey_responses(info, id=kwargs.get("id", None))
         qs = filter_connection_queryset(qs, kwargs)
         return create_connection_slice(
             qs,

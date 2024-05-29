@@ -41,6 +41,9 @@ INVITE_DAYS_VALIDITY = settings.INVITE_DAYS_VALIDITY
 
 class OrganizationManager(models.Manager):
     def create(self, *args: Any, **kwargs: Any):
+        if "slug" in kwargs:
+            return super().create(*args, **kwargs)
+
         return create_with_slug(super().create, *args, **kwargs)
 
     def bootstrap(

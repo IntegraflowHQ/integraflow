@@ -334,3 +334,4 @@ export type DateFilterValue = {
         lte: string;
     };
 };
+export type Properties = Record<string, string>;

@@ -1742,6 +1742,7 @@ export type QueryResponsesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['ID']>;
   last?: InputMaybe<Scalars['Int']>;
+  sortBy?: InputMaybe<SurveyResponseSortingInput>;
 };
 
 
@@ -2273,10 +2274,14 @@ export type SurveyResponseCreate = {
 export type SurveyResponseCreateInput = {
   /** The user attributes. */
   attributes?: InputMaybe<Scalars['JSONString']>;
+  /** The channel of the response. */
+  channel?: InputMaybe<Scalars['JSONString']>;
   /** Whether the response is completed. */
   completed?: InputMaybe<Scalars['Boolean']>;
   /** The time the survey completed. */
   completedAt?: InputMaybe<Scalars['DateTime']>;
+  /** The event ID. */
+  event?: InputMaybe<Scalars['UUID']>;
   /** The ID of the response. */
   id?: InputMaybe<Scalars['UUID']>;
   /** The response metadata. */
@@ -2316,6 +2321,26 @@ export enum SurveyResponseMetricEnum {
   TotalResponses = 'TOTAL_RESPONSES'
 }
 
+export enum SurveyResponseSortField {
+  /** Sort responses by completed at. */
+  CompletedAt = 'COMPLETED_AT',
+  /** Sort responses by created at. */
+  CreatedAt = 'CREATED_AT',
+  /** Sort responses by last modified at. */
+  LastModifiedAt = 'LAST_MODIFIED_AT',
+  /** Sort responses by status. */
+  Status = 'STATUS',
+  /** Sort responses by time spent. */
+  TimeSpent = 'TIME_SPENT'
+}
+
+export type SurveyResponseSortingInput = {
+  /** Specifies the direction in which to sort responses. */
+  direction: OrderDirection;
+  /** Sort responses by the selected field. */
+  field: SurveyResponseSortField;
+};
+
 export enum SurveyResponseStatusEnum {
   Archived = 'ARCHIVED',
   Completed = 'COMPLETED',
@@ -2334,10 +2359,14 @@ export type SurveyResponseUpdate = {
 export type SurveyResponseUpdateInput = {
   /** The user attributes. */
   attributes?: InputMaybe<Scalars['JSONString']>;
+  /** The channel of the response. */
+  channel?: InputMaybe<Scalars['JSONString']>;
   /** Whether the response is completed. */
   completed?: InputMaybe<Scalars['Boolean']>;
   /** The time the survey completed. */
   completedAt?: InputMaybe<Scalars['DateTime']>;
+  /** The event ID. */
+  event?: InputMaybe<Scalars['UUID']>;
   /** The response metadata. */
   metadata?: InputMaybe<Scalars['JSONString']>;
   /** The partial response for the survey. */
@@ -2470,7 +2499,7 @@ export type UserProjectsArgs = {
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ProjectSortingInput>;
+  sortBy?: InputMaybe<ProjectSortingInput>;
 };
 
 /** Represents errors in user mutations. */
@@ -2594,6 +2623,36 @@ export type ViewerQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ViewerQuery = { __typename?: 'Query', viewer?: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, invites?: { __typename?: 'OrganizationInviteCountableConnection', edges: Array<{ __typename?: 'OrganizationInviteCountableEdge', node: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel } }> } | null, members?: { __typename?: 'OrganizationMemberCountableConnection', edges: Array<{ __typename?: 'OrganizationMemberCountableEdge', node: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } }> } | null, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } | null };
+
+export type EventDefinitionsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type EventDefinitionsQuery = { __typename?: 'Query', eventDefinitions?: { __typename?: 'EventDefinitionCountableConnection', totalCount?: number | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }, edges: Array<{ __typename?: 'EventDefinitionCountableEdge', node: { __typename?: 'EventDefinition', id: string, name: string, volume: number, createdAt?: string | null, lastSeenAt?: string | null, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
+
+export type EventsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  filters?: InputMaybe<EventFilterInput>;
+}>;
+
+
+export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventCountableConnection', edges: Array<{ __typename?: 'EventCountableEdge', node: { __typename?: 'Event', id: string, event: string, distinctId: string, properties?: any | null, timestamp?: string | null, createdAt?: string | null, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
+
+export type PropertyDefinitionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PropertyDefinitionsQuery = { __typename?: 'Query', propertyDefinitions?: { __typename?: 'PropertyDefinitionCountableConnection', edges: Array<{ __typename?: 'PropertyDefinitionCountableEdge', node: { __typename?: 'PropertyDefinition', id: string, name: string, isNumerical: boolean, type: PropertyDefinitionTypeEnum, propertyType: PropertyTypeEnum, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
+
+export type PropertiesWithDefinitionsQueryVariables = Exact<{
+  event?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type PropertiesWithDefinitionsQuery = { __typename?: 'Query', propertiesWithDefinitions?: Array<{ __typename?: 'EventPropertyWithDefinition', event: string, property: string, isNumerical: boolean, propertyType: PropertyTypeEnum }> | null };
 
 export type CompleteOnboardingStageMutationVariables = Exact<{
   input: ProjectUpdateInput;
@@ -3678,6 +3737,193 @@ export function useViewerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Vie
 export type ViewerQueryHookResult = ReturnType<typeof useViewerQuery>;
 export type ViewerLazyQueryHookResult = ReturnType<typeof useViewerLazyQuery>;
 export type ViewerQueryResult = Apollo.QueryResult<ViewerQuery, ViewerQueryVariables>;
+export const EventDefinitionsDocument = gql`
+    query EventDefinitions($first: Int, $last: Int, $after: String, $before: String) {
+  eventDefinitions(first: $first, last: $last, after: $after, before: $before) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+    edges {
+      node {
+        id
+        project {
+          ...ProjectFragment
+        }
+        name
+        volume
+        createdAt
+        lastSeenAt
+      }
+    }
+  }
+}
+    ${ProjectFragmentFragmentDoc}`;
+
+/**
+ * __useEventDefinitionsQuery__
+ *
+ * To run a query within a React component, call `useEventDefinitionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEventDefinitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEventDefinitionsQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      last: // value for 'last'
+ *      after: // value for 'after'
+ *      before: // value for 'before'
+ *   },
+ * });
+ */
+export function useEventDefinitionsQuery(baseOptions?: Apollo.QueryHookOptions<EventDefinitionsQuery, EventDefinitionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EventDefinitionsQuery, EventDefinitionsQueryVariables>(EventDefinitionsDocument, options);
+      }
+export function useEventDefinitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventDefinitionsQuery, EventDefinitionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EventDefinitionsQuery, EventDefinitionsQueryVariables>(EventDefinitionsDocument, options);
+        }
+export type EventDefinitionsQueryHookResult = ReturnType<typeof useEventDefinitionsQuery>;
+export type EventDefinitionsLazyQueryHookResult = ReturnType<typeof useEventDefinitionsLazyQuery>;
+export type EventDefinitionsQueryResult = Apollo.QueryResult<EventDefinitionsQuery, EventDefinitionsQueryVariables>;
+export const EventsDocument = gql`
+    query events($first: Int, $filters: EventFilterInput) {
+  events(first: $first, filters: $filters) {
+    edges {
+      node {
+        id
+        project {
+          ...ProjectFragment
+        }
+        event
+        distinctId
+        properties
+        timestamp
+        createdAt
+      }
+    }
+  }
+}
+    ${ProjectFragmentFragmentDoc}`;
+
+/**
+ * __useEventsQuery__
+ *
+ * To run a query within a React component, call `useEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEventsQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useEventsQuery(baseOptions?: Apollo.QueryHookOptions<EventsQuery, EventsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EventsQuery, EventsQueryVariables>(EventsDocument, options);
+      }
+export function useEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EventsQuery, EventsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EventsQuery, EventsQueryVariables>(EventsDocument, options);
+        }
+export type EventsQueryHookResult = ReturnType<typeof useEventsQuery>;
+export type EventsLazyQueryHookResult = ReturnType<typeof useEventsLazyQuery>;
+export type EventsQueryResult = Apollo.QueryResult<EventsQuery, EventsQueryVariables>;
+export const PropertyDefinitionsDocument = gql`
+    query propertyDefinitions {
+  propertyDefinitions(first: 100) {
+    edges {
+      node {
+        id
+        project {
+          ...ProjectFragment
+        }
+        name
+        isNumerical
+        type
+        propertyType
+      }
+    }
+  }
+}
+    ${ProjectFragmentFragmentDoc}`;
+
+/**
+ * __usePropertyDefinitionsQuery__
+ *
+ * To run a query within a React component, call `usePropertyDefinitionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePropertyDefinitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePropertyDefinitionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePropertyDefinitionsQuery(baseOptions?: Apollo.QueryHookOptions<PropertyDefinitionsQuery, PropertyDefinitionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PropertyDefinitionsQuery, PropertyDefinitionsQueryVariables>(PropertyDefinitionsDocument, options);
+      }
+export function usePropertyDefinitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PropertyDefinitionsQuery, PropertyDefinitionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PropertyDefinitionsQuery, PropertyDefinitionsQueryVariables>(PropertyDefinitionsDocument, options);
+        }
+export type PropertyDefinitionsQueryHookResult = ReturnType<typeof usePropertyDefinitionsQuery>;
+export type PropertyDefinitionsLazyQueryHookResult = ReturnType<typeof usePropertyDefinitionsLazyQuery>;
+export type PropertyDefinitionsQueryResult = Apollo.QueryResult<PropertyDefinitionsQuery, PropertyDefinitionsQueryVariables>;
+export const PropertiesWithDefinitionsDocument = gql`
+    query propertiesWithDefinitions($event: String) {
+  propertiesWithDefinitions(event: $event) {
+    event
+    property
+    isNumerical
+    propertyType
+  }
+}
+    `;
+
+/**
+ * __usePropertiesWithDefinitionsQuery__
+ *
+ * To run a query within a React component, call `usePropertiesWithDefinitionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePropertiesWithDefinitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePropertiesWithDefinitionsQuery({
+ *   variables: {
+ *      event: // value for 'event'
+ *   },
+ * });
+ */
+export function usePropertiesWithDefinitionsQuery(baseOptions?: Apollo.QueryHookOptions<PropertiesWithDefinitionsQuery, PropertiesWithDefinitionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PropertiesWithDefinitionsQuery, PropertiesWithDefinitionsQueryVariables>(PropertiesWithDefinitionsDocument, options);
+      }
+export function usePropertiesWithDefinitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PropertiesWithDefinitionsQuery, PropertiesWithDefinitionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PropertiesWithDefinitionsQuery, PropertiesWithDefinitionsQueryVariables>(PropertiesWithDefinitionsDocument, options);
+        }
+export type PropertiesWithDefinitionsQueryHookResult = ReturnType<typeof usePropertiesWithDefinitionsQuery>;
+export type PropertiesWithDefinitionsLazyQueryHookResult = ReturnType<typeof usePropertiesWithDefinitionsLazyQuery>;
+export type PropertiesWithDefinitionsQueryResult = Apollo.QueryResult<PropertiesWithDefinitionsQuery, PropertiesWithDefinitionsQueryVariables>;
 export const CompleteOnboardingStageDocument = gql`
     mutation completeOnboardingStage($input: ProjectUpdateInput!) {
   projectUpdate(input: $input) {

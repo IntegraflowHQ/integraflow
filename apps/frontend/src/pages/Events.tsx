@@ -1,3 +1,5 @@
+import { EventsIndex } from "@/modules/events/components";
+
 export const Events = () => {
-    return <div>Events</div>;
+    return <EventsIndex />;
 };
