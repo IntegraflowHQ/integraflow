@@ -210,7 +210,7 @@ class SurveyResponseQueryset(models.QuerySet["SurveyResponse"]):
 
     def average(self, field: str, filters: models.Q):
         return self.filter(filters).aggregate(
-            average=models.Avg(field)
+            average=models.Avg(field, default=0)
         )["average"]
 
     def calculate_nps_scores(self, filters: models.Q):
@@ -250,9 +250,9 @@ class SurveyResponseQueryset(models.QuerySet["SurveyResponse"]):
             passive=passive_condition,
             detractor=detractor_condition
         ).aggregate(
-            promoters=models.Sum('promoter'),
-            passives=models.Sum('passive'),
-            detractors=models.Sum('detractor')
+            promoters=models.Sum('promoter', default=0),
+            passives=models.Sum('passive', default=0),
+            detractors=models.Sum('detractor', default=0)
         )
 
         promoters = nps_scores.get("promoters", 0)
@@ -309,9 +309,9 @@ class SurveyResponseQueryset(models.QuerySet["SurveyResponse"]):
             neutral=neutral_condition,
             negative=negative_condition
         ).aggregate(
-            total_positive=models.Sum('positive'),
-            total_neutral=models.Sum('neutral'),
-            total_negative=models.Sum('negative')
+            total_positive=models.Sum('positive', default=0),
+            total_neutral=models.Sum('neutral', default=0),
+            total_negative=models.Sum('negative', default=0)
         )
 
         positive = csat_scores.get("total_positive", 0)
@@ -372,11 +372,12 @@ class SurveyResponseQueryset(models.QuerySet["SurveyResponse"]):
             high_effort=high_effort_condition,
             ces_score=KeyTextTransform('ces_score', 'analytics_metadata')
         ).aggregate(
-            low_efforts=models.Sum('low_effort'),
-            medium_efforts=models.Sum('medium_effort'),
-            high_efforts=models.Sum('high_effort'),
+            low_efforts=models.Sum('low_effort', default=0),
+            medium_efforts=models.Sum('medium_effort', default=0),
+            high_efforts=models.Sum('high_effort', default=0),
             total_ces_score=models.Sum(
-                Cast('ces_score', output_field=models.FloatField())
+                Cast('ces_score', output_field=models.FloatField()),
+                default=0
             )
         )
 
