@@ -1,7 +1,7 @@
 import { SurveyResponseMetricEnum, useResponseMetricQuery, useResponsesQuery } from "@/generated/graphql";
 import { CESMetric, CSATMetric, DateFilterValue, NPSMetric, ParsedResponse, Summary } from "@/types";
 import { getISOdateString, parseResponse } from "@/utils";
-import { subDays } from "date-fns";
+import { addDays, subDays } from "date-fns";
 import { ReactNode, createContext, useCallback, useMemo, useState } from "react";
 import { useSurvey } from "../hooks/useSurvey";
 
@@ -11,7 +11,7 @@ const useAnalyzeFactory = () => {
     const [activeResponse, setActiveResponse] = useState<ParsedResponse | null>(null);
     const [timeFrame, setTimeFrame] = useState<DateFilterValue>({
         timePeriod: "today",
-        current: { gte: getISOdateString(), lte: getISOdateString() },
+        current: { gte: getISOdateString(), lte: getISOdateString(addDays(Date.now(), 1)) },
         previous: { gte: getISOdateString(subDays(Date.now(), 1)), lte: getISOdateString(subDays(Date.now(), 1)) },
     });
 
