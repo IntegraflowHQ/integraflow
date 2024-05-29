@@ -1,5 +1,5 @@
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
-import { Button, Header } from "@/ui";
+import { ComingSoon, Header } from "@/ui";
 import { Info, PresentationChartLine } from "@/ui/icons";
 import { DonutChart } from "@tremor/react";
 import ResponseTrends from "assets/images/surveys/studio/response-trends.svg";
@@ -300,21 +300,9 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                     </section>
                 </div>
 
-                <section className="relative w-full">
+                <ComingSoon>
                     <img src={ResponseTrends} className="w-full opacity-30" />
-
-                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-lg">
-                        <span className="text-lg text-white">Coming Soon</span>
-                        <Button
-                            variant="secondary"
-                            text="Notify me"
-                            className="w-max px-8 py-[8px]"
-                            onClick={() => {
-                                //TODO: implement notify me
-                            }}
-                        />
-                    </div>
-                </section>
+                </ComingSoon>
             </div>
         </div>
     );
