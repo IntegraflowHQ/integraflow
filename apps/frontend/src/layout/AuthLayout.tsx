@@ -1,4 +1,6 @@
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import AuthBG from "../assets/images/auth-bg.png";
 import Profile1 from "../assets/images/loginScreen/profile-1.png";
@@ -9,6 +11,10 @@ import Logo from "../assets/images/logo.png";
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 export function AuthLayout() {
+    const { logout } = useAuth();
+    useEffect(() => {
+        logout();
+    }, []);
     return (
         <GoogleOAuthProvider clientId={clientId}>
             <main className="flex h-screen w-screen bg-intg-black">

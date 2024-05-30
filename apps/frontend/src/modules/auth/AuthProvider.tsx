@@ -35,6 +35,7 @@ export type AuthStateChangeCallback = (state?: AuthState | null) => void;
 
 export interface AuthProviderProps {
     apollo: ApolloFactory<NormalizedCacheObject>;
+    purgePersistedCache: () => void;
     children?: React.ReactNode;
 }
 
@@ -82,7 +83,7 @@ const createAuthContext = () => {
 
 export const AuthContext = createAuthContext();
 
-export const AuthProvider = ({ children, apollo }: AuthProviderProps) => {
+export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProviderProps) => {
     const { token, refreshToken, csrfToken, currentProjectId, initialize, refresh, switchProject, reset } =
         useAuthStore();
     const { updateUser: updateUserCache, reset: resetUser, hydrated, ...user } = useUserStore();
@@ -327,9 +328,11 @@ export const AuthProvider = ({ children, apollo }: AuthProviderProps) => {
     const handleLogout = useCallback(async () => {
         logout();
         reset();
-        apollo.getClient().resetStore();
-        apollo.getClient().cache.reset();
-    }, [reset, logout]);
+        resetUser();
+        await apollo.getClient().resetStore();
+        await apollo.getClient().cache.reset();
+        purgePersistedCache();
+    }, [apollo, reset, logout, resetUser, purgePersistedCache]);
 
     useEffect(() => {
         const newProject = project ?? projects?.[0];
