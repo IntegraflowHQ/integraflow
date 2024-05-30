@@ -1,6 +1,9 @@
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
-import { Header } from "@/ui";
+import { ComingSoon, Header } from "@/ui";
 import { ChartPie } from "@/ui/icons";
+import EmojiInsights from "assets/images/surveys/studio/emoji-insights.svg";
+import NPSInsights from "assets/images/surveys/studio/nps-insights.svg";
+import RatingInsights from "assets/images/surveys/studio/rating-insights.svg";
 import { BarChart } from "lucide-react";
 import { DateFilter } from "../components/DateFilter";
 import { ExportBtn } from "../components/ExportBtn";
@@ -42,40 +45,66 @@ export const Insights = () => {
                 </div>
 
                 <div className="flex gap-6 rounded-lg bg-intg-bg-15 p-6">
-                    <Summary
-                        icon={<BarChart strokeWidth={4} className="text-intg-text" />}
-                        title="Response"
-                        value={"4"}
-                        trend={"10%"}
-                        trendName={"Repeat - 0"}
-                        trendVariant={"positive"}
-                    />
-                    <Summary
-                        icon={<BarChart strokeWidth={4} className="text-intg-text" />}
-                        title="CSAT"
-                        value={"3.67"}
-                        trend={"10%"}
-                        trendName={"Responses - 3"}
-                        trendVariant={"positive"}
-                    />
-                    <Summary
-                        icon={<BarChart strokeWidth={4} className="text-intg-text" />}
-                        title="NPS"
-                        value={"-66.67"}
-                        trend={"-10%"}
-                        trendName={"Responses - 3"}
-                        trendVariant={"negative"}
-                    />
-                    <Summary
-                        icon={<BarChart strokeWidth={4} className="text-intg-text" />}
-                        title="CES"
-                        value={"4.67"}
-                        trend={"10%"}
-                        trendName={"Responses - 3"}
-                        trendVariant={"positive"}
-                    />
+                    <ComingSoon>
+                        <Summary
+                            icon={<BarChart strokeWidth={4} className="text-intg-text" />}
+                            title="Response"
+                            value={"4"}
+                            trendName={"Repeat - 0"}
+                            trendVariant={"positive"}
+                            className="opacity-40"
+                        />
+                    </ComingSoon>
+                    <ComingSoon>
+                        <Summary
+                            icon={<BarChart strokeWidth={4} className="text-intg-text" />}
+                            title="CSAT"
+                            value={"3.67"}
+                            trend={"10%"}
+                            trendName={"Responses - 3"}
+                            trendVariant={"positive"}
+                            coloredValue
+                            className="opacity-40"
+                        />
+                    </ComingSoon>
+                    <ComingSoon>
+                        <Summary
+                            icon={<BarChart strokeWidth={4} className="text-intg-text" />}
+                            title="NPS"
+                            value={"-66.67"}
+                            trend={"-10%"}
+                            trendName={"Responses - 3"}
+                            trendVariant={"negative"}
+                            coloredValue
+                            className="opacity-40"
+                        />
+                    </ComingSoon>
+                    <ComingSoon>
+                        <Summary
+                            icon={<BarChart strokeWidth={4} className="text-intg-text" />}
+                            title="CES"
+                            value={"4.67"}
+                            trend={"10%"}
+                            trendName={"Responses - 3"}
+                            trendVariant={"positive"}
+                            coloredValue
+                            className="opacity-40"
+                        />
+                    </ComingSoon>
                 </div>
             </div>
+
+            <ComingSoon>
+                <img src={RatingInsights} className="w-full opacity-30" />
+            </ComingSoon>
+
+            <ComingSoon>
+                <img src={EmojiInsights} className="w-full opacity-30" />
+            </ComingSoon>
+
+            <ComingSoon>
+                <img src={NPSInsights} className="w-full opacity-30" />
+            </ComingSoon>
         </div>
     );
 };

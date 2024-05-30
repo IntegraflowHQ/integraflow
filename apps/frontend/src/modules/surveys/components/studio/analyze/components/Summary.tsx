@@ -7,14 +7,16 @@ type Props = {
     icon: ReactNode;
     title: string;
     value: string;
-    trend: string;
+    trend?: string;
     trendName: string;
     trendVariant: "positive" | "negative" | "neutral";
+    className?: string;
+    coloredValue?: boolean;
 };
 
 const PRINT_IGNORE = "print-ignore";
 
-export const Summary = ({ icon, title, value, trend, trendName, trendVariant }: Props) => {
+export const Summary = ({ icon, title, value, trend, trendName, trendVariant, className, coloredValue }: Props) => {
     const [hovered, setHovered] = useState(false);
     const titleRef = useRef<HTMLHeadingElement>(null);
     const ref = useRef<HTMLDivElement>(null);
@@ -41,7 +43,7 @@ export const Summary = ({ icon, title, value, trend, trendName, trendVariant }: 
 
     return (
         <div
-            className="flex w-full flex-col gap-8 rounded-lg bg-intg-bg-9 p-4"
+            className={cn("flex w-full flex-col gap-8 rounded-lg bg-intg-bg-9 p-4", className ?? "")}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             ref={ref}
@@ -64,23 +66,38 @@ export const Summary = ({ icon, title, value, trend, trendName, trendVariant }: 
 
             <div>
                 <div>
-                    <strong className="text-4xl font-medium leading-[43.57px] text-white">{value}</strong>
+                    <strong
+                        className={cn(
+                            "text-4xl font-medium leading-[43.57px]",
+                            coloredValue && trendVariant === "positive"
+                                ? "text-intg-chart-positive"
+                                : coloredValue && trendVariant === "negative"
+                                  ? "text-intg-chart-negative"
+                                  : coloredValue && trendVariant === "neutral"
+                                    ? "text-intg-chart-neutral"
+                                    : "text-white",
+                        )}
+                    >
+                        {value}
+                    </strong>
                 </div>
 
                 <div className="flex justify-between">
                     <span className="text-intg-text-10">{trendName}</span>
 
-                    <div
-                        className={cn(
-                            "flex items-center gap-1",
-                            trendVariant === "positive" ? "text-intg-chart-positive" : "",
-                            trendVariant === "negative" ? "text-intg-chart-negative" : "",
-                            trendVariant === "neutral" ? "text-intg-chart-neutral" : "",
-                        )}
-                    >
-                        {trendVariant === "positive" ? <TrendingUp /> : <TrendingDown />}
-                        <span>{trend}</span>
-                    </div>
+                    {trend ? (
+                        <div
+                            className={cn(
+                                "flex items-center gap-1",
+                                trendVariant === "positive" ? "text-intg-chart-positive" : "",
+                                trendVariant === "negative" ? "text-intg-chart-negative" : "",
+                                trendVariant === "neutral" ? "text-intg-chart-neutral" : "",
+                            )}
+                        >
+                            {trendVariant === "positive" ? <TrendingUp /> : <TrendingDown />}
+                            <span>{trend}</span>
+                        </div>
+                    ) : null}
                 </div>
             </div>
         </div>
