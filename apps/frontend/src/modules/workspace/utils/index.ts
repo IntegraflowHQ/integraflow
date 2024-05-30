@@ -1,6 +1,12 @@
 import { CursorIcon, PeopleIcon, PlusCircle } from "@/ui/icons";
 import { BarChart } from "lucide-react";
 
+export enum BillingCategoriesEnum {
+    RESPONSES = "responses",
+    EVENTS = "events",
+    PERSONS = "persons",
+}
+
 export const settingsCardInfo = [
     {
         id: crypto.randomUUID,
@@ -37,6 +43,7 @@ export const planDetails = [
         current: 250,
         freeTrial: 750,
         tag: "Free trial reached",
+        category: BillingCategoriesEnum.RESPONSES,
     },
     {
         icon: CursorIcon,
@@ -45,6 +52,7 @@ export const planDetails = [
         current: 250,
         freeTrial: 750,
         tag: "Free trial reached",
+        category: BillingCategoriesEnum.EVENTS,
     },
     {
         icon: PeopleIcon,
@@ -53,6 +61,7 @@ export const planDetails = [
         current: 250,
         freeTrial: 750,
         tag: "Free trial reached",
+        category: BillingCategoriesEnum.PERSONS,
     },
 ];
 
