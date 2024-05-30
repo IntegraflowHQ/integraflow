@@ -1,5 +1,6 @@
 from functools import partial
 from typing import Any
+
 from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 from django.db.models.fields.json import KeyTextTransform
@@ -7,10 +8,7 @@ from django.db.models.functions import Cast
 from django.utils.crypto import get_random_string
 
 from integraflow.core.models import UUIDModel
-from integraflow.core.utils import (
-    MAX_SLUG_LENGTH,
-    create_with_unique_string
-)
+from integraflow.core.utils import MAX_SLUG_LENGTH, create_with_unique_string
 
 
 class Survey(UUIDModel):
@@ -413,10 +411,12 @@ class SurveyResponse(UUIDModel):
         COMPLETED = "completed" "completed"
         ARCHIVED = "archived" "archived"
 
+
     class Meta:
         verbose_name = "SurveyResponse"
         verbose_name_plural = "SurveyResponses"
         db_table = "survey_responses"
+        ordering = ["-created_at"]
         indexes = [
             GinIndex(fields=["response"], name="%(class)s_p_meta_idx"),
             GinIndex(fields=["analytics_metadata"], name="%(class)s_meta_idx"),

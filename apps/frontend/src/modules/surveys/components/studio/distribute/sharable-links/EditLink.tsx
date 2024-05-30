@@ -12,15 +12,14 @@ type Props = LinkProps & {
 
 export default function EditLink({ link, settings, close }: Props) {
     const { updateChannel } = useChannels();
-    const { register, handleSubmit, watch, setValue } =
-        useForm<ChannelSettings>({
-            defaultValues: {
-                name: settings?.name ?? "",
-                singleUse: settings?.singleUse ?? false,
-                startDate: settings?.startDate,
-                endDate: settings?.endDate,
-            },
-        });
+    const { register, handleSubmit, watch, setValue } = useForm<ChannelSettings>({
+        defaultValues: {
+            name: settings?.name ?? "",
+            recurring: settings?.recurring ?? false,
+            startDate: settings?.startDate,
+            endDate: settings?.endDate,
+        },
+    });
 
     const onSubmit: SubmitHandler<ChannelSettings> = (data) => {
         updateChannel(link, {
@@ -30,64 +29,44 @@ export default function EditLink({ link, settings, close }: Props) {
     };
 
     return (
-        <form
-            className="flex w-[572px] flex-col gap-5"
-            onSubmit={handleSubmit(onSubmit)}
-        >
+        <form className="flex w-[572px] flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-4">
-                <TextInput
-                    label="Link name"
-                    {...register("name", { required: true })}
-                />
+                <TextInput label="Link name" {...register("name", { required: true })} />
                 <Switch
                     name="singleUse"
                     label="Allow multiple response from the same device"
                     onChange={(event) => {
-                        setValue("singleUse", event.target.value);
+                        setValue("recurring", event.target.value);
                     }}
-                    value={watch("singleUse")}
+                    value={watch("recurring")}
                 />
                 <DatePicker
+                    mode="single"
                     label="Start date"
-                    value={
-                        watch("startDate")
-                            ? new Date(watch("startDate") as string)
-                            : undefined
-                    }
-                    onChange={(e) => {
-                        if (e.target.value) {
-                            setValue("startDate", e.target.value.toISOString());
+                    selected={watch("startDate") ? new Date(watch("startDate") as string) : undefined}
+                    onSelect={(value) => {
+                        if (value) {
+                            setValue("startDate", value.toISOString());
                         } else {
                             setValue("startDate", "");
                         }
                     }}
                     displayFormat="dd/MM/yyyy"
-                    toDate={
-                        watch("endDate")
-                            ? subDays(new Date(watch("endDate") as string), 1)
-                            : undefined
-                    }
+                    toDate={watch("endDate") ? subDays(new Date(watch("endDate") as string), 1) : undefined}
                 />
                 <DatePicker
+                    mode="single"
                     label="End date"
-                    value={
-                        watch("endDate")
-                            ? new Date(watch("endDate") as string)
-                            : undefined
-                    }
-                    onChange={(e) => {
-                        if (e.target.value) {
-                            setValue("endDate", e.target.value.toISOString());
+                    selected={watch("endDate") ? new Date(watch("endDate") as string) : undefined}
+                    onSelect={(value) => {
+                        if (value) {
+                            setValue("endDate", value.toISOString());
                         } else {
                             setValue("endDate", "");
                         }
                     }}
                     displayFormat="dd/MM/yyyy"
-                    fromDate={
-                        watch("startDate")
-                            ? addDays(new Date(watch("startDate") as string), 1)
-                            : undefined
-                    }
+                    fromDate={watch("startDate") ? addDays(new Date(watch("startDate") as string), 1) : undefined}
                 />
             </div>
 
@@ -99,11 +78,7 @@ export default function EditLink({ link, settings, close }: Props) {
                     onClick={close}
                     className="w-max px-[24px] py-[12px] font-normal"
                 />
-                <Button
-                    text="Save"
-                    type="submit"
-                    className="w-max px-[24px] py-[12px] font-normal"
-                />
+                <Button text="Save" type="submit" className="w-max px-[24px] py-[12px] font-normal" />
             </div>
         </form>
     );

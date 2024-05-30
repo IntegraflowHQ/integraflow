@@ -19,7 +19,7 @@ export default function SurveyHome() {
             ) : (
                 <div className="flex h-full w-full  justify-center">
                     <div className="flex max-w-[386px] flex-col items-center justify-center  gap-[7px]">
-                        <Document size="62" color="#AFAAC7" />
+                        <Document size={62} color="#AFAAC7" />
 
                         <div className="flex flex-col items-center gap-6">
                             <Header

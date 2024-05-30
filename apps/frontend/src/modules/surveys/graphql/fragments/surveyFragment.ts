@@ -114,3 +114,18 @@ export const SURVEY_UPDATE_INPUT = gql`
         themeId: ID
     }
 `;
+
+export const SURVEY_RESPONSE = gql`
+    fragment SurveyResponseFragment on SurveyResponse {
+        id
+        title
+        userAttributes
+        response
+        status
+        completedAt
+        createdAt
+        updatedAt
+        timeSpent
+        stats
+    }
+`;

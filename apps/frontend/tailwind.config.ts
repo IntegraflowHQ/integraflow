@@ -40,7 +40,10 @@ const config: Config = {
                         "7": "#F1F1F1",
                         "8": "#7F76A9",
                         "9": "#EED294",
-
+                        "10": "#827BA3",
+                        "11": "#D8D4FF",
+                        "12": "#705F97",
+                        "13": "#847F98",
                         DEFAULT: "#AFAAC7",
                     },
                     black: {
@@ -51,14 +54,63 @@ const config: Config = {
                         text: "#CE3C55",
                         bg: "rgba(206, 60, 85, 0.20)",
                     },
+                    chart: {
+                        positive: "#8DF0B0",
+                        neutral: "#FFB17B",
+                        negative: "#EB5A6D",
+                    },
                 },
             },
             backgroundImage: {
+                "gradient-text": "linear-gradient(27deg, #B7A6E8 8.33%, #6941C6 91.67%)",
                 "gradient-button": "linear-gradient(27deg, #53389E 8.33%, #6941C6 91.67%)",
                 "gradient-button-hover": "linear-gradient(27deg, #299532 8.33%, #7EE787 91.67%)",
             },
         },
     },
+    safelist: [
+        {
+            pattern:
+                /^(bg-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+            variants: ["hover", "ui-selected"],
+        },
+        {
+            pattern:
+                /^(text-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+            variants: ["hover", "ui-selected"],
+        },
+        {
+            pattern:
+                /^(border-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+            variants: ["hover", "ui-selected"],
+        },
+        {
+            pattern:
+                /^(ring-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+        },
+        {
+            pattern:
+                /^(stroke-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+        },
+        {
+            pattern:
+                /^(fill-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+        },
+        ...["[#EB5A6D]", "[#FFB17B]", "[#8DF0B0]", "[#5D45DB]", "[#A698EB]", "[#D3CCF5]"].flatMap((customColor) => [
+            `bg-${customColor}`,
+            `border-${customColor}`,
+            `hover:bg-${customColor}`,
+            `hover:border-${customColor}`,
+            `hover:text-${customColor}`,
+            `fill-${customColor}`,
+            `ring-${customColor}`,
+            `stroke-${customColor}`,
+            `text-${customColor}`,
+            `ui-selected:bg-${customColor}`,
+            `ui-selected:border-${customColor}`,
+            `ui-selected:text-${customColor}`,
+        ]),
+    ],
 };
 
 export default config;
