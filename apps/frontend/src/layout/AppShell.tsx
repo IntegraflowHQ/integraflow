@@ -7,14 +7,14 @@ import { GlobalSpinner } from "@/ui";
 import { ApolloProvider } from "@apollo/client";
 
 export default function AppShell() {
-    const apolloClient = useApolloFactory();
+    const { apolloClient, purgePersistedCache } = useApolloFactory();
 
     if (!apolloClient) {
         return <GlobalSpinner />;
     }
     return (
         <ApolloProvider client={apolloClient.getClient()}>
-            <AuthProvider apollo={apolloClient}>
+            <AuthProvider apollo={apolloClient} purgePersistedCache={purgePersistedCache}>
                 <Outlet />
                 <Toaster position="bottom-right" />
             </AuthProvider>

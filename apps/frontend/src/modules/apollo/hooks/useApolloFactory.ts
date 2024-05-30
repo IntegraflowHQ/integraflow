@@ -6,7 +6,7 @@ import { useApolloCache } from "./useApolloCache";
 
 export const useApolloFactory = () => {
     const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
-    const { persisting, cache } = useApolloCache();
+    const { persisting, cache, purgePersistedCache } = useApolloCache();
 
     const apolloClient = useMemo(() => {
         if (persisting || !cache) {
@@ -23,5 +23,5 @@ export const useApolloFactory = () => {
         return apolloRef.current;
     }, [cache, persisting]);
 
-    return apolloClient;
+    return { apolloClient, purgePersistedCache };
 };
