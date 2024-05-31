@@ -107,14 +107,9 @@ export default function Create() {
                 </ScrollToBottom>
 
                 {/* preview panel */}
-                <div
-                    className={cn(
-                        "relative min-w-[580px] flex-1 rounded-xl bg-intg-bg-9",
-                        previewViewport === "mobile" ? "flex items-center justify-center pt-14" : "",
-                    )}
-                >
+                <div className={cn("relative flex min-w-[580px] flex-1 flex-col gap-1 rounded-xl bg-intg-bg-9")}>
                     <ToggleGroup.Root
-                        className="absolute left-6 top-6 flex gap-4"
+                        className="flex gap-4 pl-4 pt-2"
                         type="single"
                         value={previewMode}
                         onValueChange={(value) => {
@@ -129,10 +124,7 @@ export default function Create() {
                                 value={opt.value}
                                 aria-label={opt.label}
                                 className={cn(
-                                    "border-b border-transparent p-2 text-sm capitalize  data-[state=on]:border-[#6941C6] ",
-                                    previewViewport === "mobile"
-                                        ? "text-intg-text data-[state=on]:text-white"
-                                        : "text-intg-bg-14 data-[state=on]:text-[#6941C6]",
+                                    "border-b border-transparent p-2 text-sm capitalize text-intg-text data-[state=on]:border-[#6941C6] data-[state=on]:text-white",
                                 )}
                                 key={opt.value}
                             >
@@ -144,7 +136,7 @@ export default function Create() {
                     <div
                         className={cn(
                             previewViewport === "mobile"
-                                ? "h-full max-h-[730px] w-full max-w-[360px] rounded-3xl bg-[#E5EAF2] px-[18px] py-[15px]"
+                                ? "mx-auto h-full max-h-[730px] w-full max-w-[360px] rounded-3xl bg-[#E5EAF2] px-[18px] py-[15px]"
                                 : "h-full w-full",
                         )}
                     >
