@@ -1,5 +1,7 @@
 import graphene
 
+from django.conf import settings
+
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.connection import (
     CountableConnection,
@@ -227,6 +229,22 @@ class Organization(AuthOrganization):
         info: ResolveInfo,
         **kwargs
     ):
+        if not _root.usage_metadata:
+            return {
+                "events": {
+                    "count": 0,
+                    "limit": int(settings.EVENTS_USAGE_FREE_TIER_LIMIT)
+                },
+                "responses": {
+                    "count": 0,
+                    "limit": int(settings.RESPONSES_USAGE_FREE_TIER_LIMIT)
+                },
+                "persons": {
+                    "count": 0,
+                    "limit":  int(settings.PERSONS_USAGE_FREE_TIER_LIMIT),
+                }
+            }
+
         return _root.usage_metadata
 
 
