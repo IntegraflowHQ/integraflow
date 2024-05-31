@@ -27,7 +27,7 @@ const tabs = [
 export default function Studio() {
     const params = useParams();
     const navigate = useNavigate();
-    const { loading, survey, updateSurvey } = useSurvey();
+    const { loading, survey, parsedQuestions, updateSurvey } = useSurvey();
     const [surveyTitle, setSurveyTitle] = useState("");
     const { enableStudioMode, disableStudioMode } = useStudioStore((state) => state);
     const [activeTab, setActiveTab] = useState(tabs[0].label);
@@ -109,11 +109,12 @@ export default function Studio() {
                 />
 
                 <Tabs.List className="flex gap-[15px]">
-                    {tabs.map((tab) => (
+                    {tabs.map((tab, index) => (
                         <Tabs.Trigger
                             key={tab.label}
                             value={tab.label}
                             className={`rounded-md px-3 py-2 text-sm text-intg-text transition-all ease-in hover:bg-[#272138] data-[state=active]:bg-[#272138] data-[state=active]:text-white`}
+                            disabled={index !== 0 && parsedQuestions.length === 0}
                         >
                             {tab.label}
                         </Tabs.Trigger>
@@ -124,6 +125,7 @@ export default function Studio() {
                     <Button
                         className="w-[87px] px-[16px] py-[8px]"
                         text={activeTab === tabs[1].label ? "Publish" : "Next"}
+                        disabled={parsedQuestions.length === 0}
                         onClick={() => {
                             if (activeTab === tabs[1].label) {
                                 publishSurvey();

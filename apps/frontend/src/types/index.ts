@@ -236,8 +236,8 @@ export enum CTAEnums {
     CLOSE = "close",
 }
 
-export type ParsedQuestion = Omit<SurveyQuestionCountableEdge["node"], "questions" | "settings"> & {
-    questions: QuestionOption[];
+export type ParsedQuestion = Omit<SurveyQuestionCountableEdge["node"], "options" | "settings"> & {
+    options: QuestionOption[];
     settings: QuestionSettings;
 };
 
