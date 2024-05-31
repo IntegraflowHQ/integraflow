@@ -122,7 +122,7 @@ export default function Studio() {
 
                 <div className="flex gap-[35px]">
                     <Button
-                        className="px-[16px] py-[8px]"
+                        className="w-[87px] px-[16px] py-[8px]"
                         text={activeTab === tabs[1].label ? "Publish" : "Next"}
                         onClick={() => {
                             if (activeTab === tabs[1].label) {
