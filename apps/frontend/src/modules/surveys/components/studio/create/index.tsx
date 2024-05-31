@@ -109,7 +109,7 @@ export default function Create() {
                 {/* preview panel */}
                 <div className={cn("relative flex min-w-[580px] flex-1 flex-col gap-1 rounded-xl bg-intg-bg-9")}>
                     <ToggleGroup.Root
-                        className="flex gap-4 pl-6"
+                        className="flex gap-4 pl-4 pt-2"
                         type="single"
                         value={previewMode}
                         onValueChange={(value) => {
