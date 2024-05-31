@@ -16,7 +16,7 @@ export default function SharableLinks() {
             id: crypto.randomUUID(),
             settings: JSON.stringify({
                 name: `Link ${linkChannels.length + 1}`,
-                singleUse: false,
+                recurring: false,
                 startDate: "",
                 endDate: "",
             } as ChannelSettings),

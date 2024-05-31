@@ -16,7 +16,10 @@ export default function Preview() {
                 setMode(event.data.mode);
                 setViewPort(event.data.viewPort);
                 setSurvey(
-                    parsedSurveys(event.data.survey, event.data.mode, `${window.origin}/images/preview-bg.svg`)[0],
+                    parsedSurveys(event.data.survey, {
+                        mode: event.data.mode,
+                        backgroundImage: `${window.origin}/images/preview-bg.svg`,
+                    })[0],
                 );
             }
         };

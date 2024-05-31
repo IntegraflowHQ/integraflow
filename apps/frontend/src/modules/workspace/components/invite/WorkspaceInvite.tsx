@@ -138,7 +138,7 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
                 {!toggleInviteType ? (
                     <form onSubmit={handleEmailInvite}>
                         <div className="flex w-full items-start gap-2 pt-3">
-                            <div className="w-[70%]">
+                            <div className="flex-1">
                                 <TextInput
                                     label="Email address"
                                     placeholder="example1@gmail.com, example2@gmail.com, "
@@ -151,9 +151,7 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
                                     errorMessage={inputError}
                                 />
                             </div>
-                            <div className={`mt-7 w-[30%]`}>
-                                <Button text="Send Invite" size="md" />
-                            </div>
+                            <Button text="Send Invite" size="md" className="mt-7 min-w-max max-w-[30%]" />
                         </div>
                     </form>
                 ) : (
@@ -162,7 +160,7 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
                             Invite link will provide a unique URL that allow anyone to join your organization
                         </p>
                         <div className="flex w-full items-end gap-2">
-                            <div className="w-[75%]">
+                            <div className="flex-1">
                                 <TextInput
                                     placeholder=""
                                     value={addEllipsis(inviteLink, 40)}
@@ -174,16 +172,15 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
                                     }
                                 />
                             </div>
-                            <div className="w-[20%]">
-                                <Button
-                                    text="Copy"
-                                    size="md"
-                                    icon={<CopyIcon />}
-                                    textAlign="center"
-                                    disabled={loading}
-                                    onClick={() => copyToClipboard(inviteLink, "Invite link copied to clipboard")}
-                                />
-                            </div>
+                            <Button
+                                text="Copy"
+                                size="md"
+                                icon={<CopyIcon />}
+                                textAlign="center"
+                                disabled={loading}
+                                onClick={() => copyToClipboard(inviteLink, "Invite link copied to clipboard")}
+                                className="min-w-max max-w-[20%]"
+                            />
                         </div>
                     </div>
                 )}
