@@ -1,8 +1,15 @@
 import { gql } from "@apollo/client";
 
 export const EVENT_DEFINITIONS = gql`
-    query EventDefinitions {
-        eventDefinitions(first: 100) {
+    query EventDefinitions($first: Int, $last: Int, $after: String, $before: String) {
+        eventDefinitions(first: $first, last: $last, after: $after, before: $before) {
+            pageInfo {
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
+            }
+            totalCount
             edges {
                 node {
                     id
@@ -10,6 +17,7 @@ export const EVENT_DEFINITIONS = gql`
                         ...ProjectFragment
                     }
                     name
+                    volume
                     createdAt
                     lastSeenAt
                 }

@@ -1,10 +1,6 @@
-export const Document = ({
-    size,
-    color,
-}: {
-    size?: string;
-    color?: string;
-}) => {
+import { IntegraflowIconProps } from "@/types";
+
+export const Document = ({ size, color, ...props }: IntegraflowIconProps) => {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -12,6 +8,7 @@ export const Document = ({
             height={size || 20}
             viewBox="0 0 20 20"
             fill="none"
+            {...props}
         >
             <path
                 fillRule="evenodd"

@@ -1,5 +1,5 @@
 import { GraphQLError } from "graphql";
-import { createContext, useCallback, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 
 import {
     AuthOrganization,
@@ -25,7 +25,7 @@ import { ROUTES } from "@/routes";
 import { GlobalSpinner } from "@/ui";
 import { NormalizedCacheObject } from "@apollo/client";
 import { DeepPartial } from "@apollo/client/utilities";
-import { Navigate, useLocation, useParams, useSearchParams } from "react-router-dom";
+import { Navigate, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ApolloFactory } from "../apollo/services/apollo.factory";
 import { useRedirect } from "./hooks/useRedirect";
 import { useAuthStore, type AuthState } from "./states/auth";
@@ -35,6 +35,7 @@ export type AuthStateChangeCallback = (state?: AuthState | null) => void;
 
 export interface AuthProviderProps {
     apollo: ApolloFactory<NormalizedCacheObject>;
+    purgePersistedCache: () => void;
     children?: React.ReactNode;
 }
 
@@ -82,11 +83,12 @@ const createAuthContext = () => {
 
 export const AuthContext = createAuthContext();
 
-export const AuthProvider = ({ children, apollo }: AuthProviderProps) => {
+export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProviderProps) => {
     const { token, refreshToken, csrfToken, currentProjectId, initialize, refresh, switchProject, reset } =
         useAuthStore();
     const { updateUser: updateUserCache, reset: resetUser, hydrated, ...user } = useUserStore();
     const redirect = useRedirect();
+    const navigate = useNavigate();
     const { orgSlug, projectSlug } = useParams();
     const location = useLocation();
     const [searchParams] = useSearchParams();
@@ -327,9 +329,11 @@ export const AuthProvider = ({ children, apollo }: AuthProviderProps) => {
     const handleLogout = useCallback(async () => {
         logout();
         reset();
-        apollo.getClient().resetStore();
-        apollo.getClient().cache.reset();
-    }, [reset, logout]);
+        resetUser();
+        await apollo.getClient().resetStore();
+        await apollo.getClient().cache.reset();
+        purgePersistedCache();
+    }, [apollo, reset, logout, resetUser, purgePersistedCache]);
 
     useEffect(() => {
         const newProject = project ?? projects?.[0];
@@ -453,6 +457,18 @@ export const AuthProvider = ({ children, apollo }: AuthProviderProps) => {
         }
     }, []);
 
+    useLayoutEffect(() => {
+        if (
+            !refreshToken &&
+            !locationMatch(ROUTES.LOGIN) &&
+            !locationMatch(ROUTES.SIGNUP) &&
+            !locationMatch(ROUTES.MAGIC_SIGN_IN)
+        ) {
+            handleLogout();
+            navigate(ROUTES.LOGIN);
+        }
+    }, [refreshToken, locationMatch, handleLogout, navigate]);
+
     const value = useMemo<AuthContextValue>(
         () => ({
             isAuthenticated: !!refreshToken,
@@ -511,15 +527,6 @@ export const AuthProvider = ({ children, apollo }: AuthProviderProps) => {
                 to={ROUTES.SURVEY_LIST.replace(":orgSlug", workspace.slug).replace(":projectSlug", project.slug)}
             />
         );
-    }
-
-    if (
-        !refreshToken &&
-        !locationMatch(ROUTES.LOGIN) &&
-        !locationMatch(ROUTES.SIGNUP) &&
-        !locationMatch(ROUTES.MAGIC_SIGN_IN)
-    ) {
-        return <Navigate to="/" />;
     }
 
     if (!isValidSession) {

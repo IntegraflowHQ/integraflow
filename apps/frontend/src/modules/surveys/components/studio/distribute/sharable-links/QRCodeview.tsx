@@ -1,4 +1,4 @@
-import html2canvas from "html2canvas";
+import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
 import QRCode from "qrcode.react";
 import React from "react";
@@ -17,20 +17,14 @@ const backgroundTextStyles: React.CSSProperties = {
     padding: "12px",
 };
 
-export default function QRCodeView({
-    url,
-    name,
-}: {
-    url: string;
-    name: string;
-}) {
+export default function QRCodeView({ url, name }: { url: string; name: string }) {
     const id = `pdf-box-${url}`;
 
     const image = async () => {
         const element = document.getElementById(id);
         if (!element) return null;
-        const canvas = await html2canvas(element);
-        return canvas.toDataURL("image/png");
+        const url = await toPng(element);
+        return url;
     };
 
     const downloadPdf = async () => {
@@ -39,8 +33,7 @@ export default function QRCodeView({
         const pdf = new jsPDF("portrait", "pt", "a6");
         const imgProperties = pdf.getImageProperties(img);
         const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight =
-            (imgProperties.height * pdfWidth) / imgProperties.width;
+        const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
         pdf.addImage(img, "PNG", 0, 0, pdfHeight, pdfWidth);
         pdf.save(`${name}.pdf`);
     };

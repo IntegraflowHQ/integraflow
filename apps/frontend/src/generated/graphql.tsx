@@ -1742,6 +1742,7 @@ export type QueryResponsesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['ID']>;
   last?: InputMaybe<Scalars['Int']>;
+  sortBy?: InputMaybe<SurveyResponseSortingInput>;
 };
 
 
@@ -2273,10 +2274,14 @@ export type SurveyResponseCreate = {
 export type SurveyResponseCreateInput = {
   /** The user attributes. */
   attributes?: InputMaybe<Scalars['JSONString']>;
+  /** The channel of the response. */
+  channel?: InputMaybe<Scalars['JSONString']>;
   /** Whether the response is completed. */
   completed?: InputMaybe<Scalars['Boolean']>;
   /** The time the survey completed. */
   completedAt?: InputMaybe<Scalars['DateTime']>;
+  /** The event ID. */
+  event?: InputMaybe<Scalars['UUID']>;
   /** The ID of the response. */
   id?: InputMaybe<Scalars['UUID']>;
   /** The response metadata. */
@@ -2316,6 +2321,26 @@ export enum SurveyResponseMetricEnum {
   TotalResponses = 'TOTAL_RESPONSES'
 }
 
+export enum SurveyResponseSortField {
+  /** Sort responses by completed at. */
+  CompletedAt = 'COMPLETED_AT',
+  /** Sort responses by created at. */
+  CreatedAt = 'CREATED_AT',
+  /** Sort responses by last modified at. */
+  LastModifiedAt = 'LAST_MODIFIED_AT',
+  /** Sort responses by status. */
+  Status = 'STATUS',
+  /** Sort responses by time spent. */
+  TimeSpent = 'TIME_SPENT'
+}
+
+export type SurveyResponseSortingInput = {
+  /** Specifies the direction in which to sort responses. */
+  direction: OrderDirection;
+  /** Sort responses by the selected field. */
+  field: SurveyResponseSortField;
+};
+
 export enum SurveyResponseStatusEnum {
   Archived = 'ARCHIVED',
   Completed = 'COMPLETED',
@@ -2334,10 +2359,14 @@ export type SurveyResponseUpdate = {
 export type SurveyResponseUpdateInput = {
   /** The user attributes. */
   attributes?: InputMaybe<Scalars['JSONString']>;
+  /** The channel of the response. */
+  channel?: InputMaybe<Scalars['JSONString']>;
   /** Whether the response is completed. */
   completed?: InputMaybe<Scalars['Boolean']>;
   /** The time the survey completed. */
   completedAt?: InputMaybe<Scalars['DateTime']>;
+  /** The event ID. */
+  event?: InputMaybe<Scalars['UUID']>;
   /** The response metadata. */
   metadata?: InputMaybe<Scalars['JSONString']>;
   /** The partial response for the survey. */
@@ -2470,7 +2499,7 @@ export type UserProjectsArgs = {
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ProjectSortingInput>;
+  sortBy?: InputMaybe<ProjectSortingInput>;
 };
 
 /** Represents errors in user mutations. */
@@ -2607,10 +2636,15 @@ export type ViewerQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ViewerQuery = { __typename?: 'Query', viewer?: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, organizations?: { __typename?: 'OrganizationCountableConnection', edges: Array<{ __typename?: 'OrganizationCountableEdge', node: { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, invites?: { __typename?: 'OrganizationInviteCountableConnection', edges: Array<{ __typename?: 'OrganizationInviteCountableEdge', node: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel } }> } | null, members?: { __typename?: 'OrganizationMemberCountableConnection', edges: Array<{ __typename?: 'OrganizationMemberCountableEdge', node: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } }> } | null, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null } }> } | null } | null };
 
-export type EventDefinitionsQueryVariables = Exact<{ [key: string]: never; }>;
+export type EventDefinitionsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+}>;
 
 
-export type EventDefinitionsQuery = { __typename?: 'Query', eventDefinitions?: { __typename?: 'EventDefinitionCountableConnection', edges: Array<{ __typename?: 'EventDefinitionCountableEdge', node: { __typename?: 'EventDefinition', id: string, name: string, createdAt?: string | null, lastSeenAt?: string | null, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
+export type EventDefinitionsQuery = { __typename?: 'Query', eventDefinitions?: { __typename?: 'EventDefinitionCountableConnection', totalCount?: number | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }, edges: Array<{ __typename?: 'EventDefinitionCountableEdge', node: { __typename?: 'EventDefinition', id: string, name: string, volume: number, createdAt?: string | null, lastSeenAt?: string | null, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
 
 export type EventsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -2708,6 +2742,8 @@ export type SurveyCoreFragment = { __typename?: 'Survey', id: string, slug: stri
 export type SurveyFragmentFragment = { __typename?: 'Survey', type: SurveyTypeEnum, settings?: any | null, id: string, slug: string, name?: string | null, status: SurveyStatusEnum, createdAt: string, updatedAt: string, reference?: string | null, theme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, createdAt: string, updatedAt: string } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, questions: { __typename?: 'SurveyQuestionCountableConnection', edges: Array<{ __typename?: 'SurveyQuestionCountableEdge', node: { __typename?: 'SurveyQuestion', id: string, reference?: string | null, label: string, description: string, type: SurveyQuestionTypeEnum, options?: any | null, settings?: any | null, orderNumber: number, maxPath: number, createdAt: string, survey?: { __typename?: 'Survey', id: string, reference?: string | null, slug: string, name?: string | null, project?: { __typename?: 'Project', id: string, slug: string, name: string } | null } | null } }> }, channels: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, link: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> }, creator: { __typename?: 'User', firstName: string, lastName: string, email: string } };
 
 export type SurveyErrorFragmentFragment = { __typename?: 'SurveyError', field?: string | null, message?: string | null, code: SurveyErrorCode };
+
+export type SurveyResponseFragmentFragment = { __typename?: 'SurveyResponse', id: string, title: string, userAttributes?: any | null, response: any, status: SurveyResponseStatusEnum, completedAt?: string | null, createdAt: string, updatedAt: string, timeSpent?: number | null, stats?: any | null };
 
 export type SurveyQuestionCreateMutationVariables = Exact<{
   input: SurveyQuestionCreateInput;
@@ -2818,6 +2854,28 @@ export type GetSurveyListQueryVariables = Exact<{
 
 
 export type GetSurveyListQuery = { __typename?: 'Query', surveys?: { __typename?: 'SurveyCountableConnection', totalCount?: number | null, edges: Array<{ __typename?: 'SurveyCountableEdge', node: { __typename?: 'Survey', id: string, slug: string, name?: string | null, status: SurveyStatusEnum, createdAt: string, updatedAt: string, reference?: string | null, creator: { __typename?: 'User', firstName: string, lastName: string, email: string } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, endCursor?: string | null, startCursor?: string | null } } | null };
+
+export type ResponsesQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['ID']>;
+  filter?: InputMaybe<SurveyResponseFilterInput>;
+  before?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type ResponsesQuery = { __typename?: 'Query', responses?: { __typename?: 'SurveyResponseCountableConnection', totalCount?: number | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }, nodes: Array<{ __typename?: 'SurveyResponse', id: string, title: string, userAttributes?: any | null, response: any, status: SurveyResponseStatusEnum, completedAt?: string | null, createdAt: string, updatedAt: string, timeSpent?: number | null, stats?: any | null }> } | null };
+
+export type ResponseMetricQueryVariables = Exact<{
+  id: Scalars['ID'];
+  date?: InputMaybe<DateRangeInput>;
+  previousDate?: InputMaybe<DateRangeInput>;
+  metric: SurveyResponseMetricEnum;
+}>;
+
+
+export type ResponseMetricQuery = { __typename?: 'Query', responseMetric?: { __typename?: 'SurveyResponseMetric', current?: any | null, previous?: any | null } | null };
 
 export type OrganizationFragmentFragment = { __typename?: 'Organization', id: string, slug: string, name: string, memberCount: number, invites?: { __typename?: 'OrganizationInviteCountableConnection', edges: Array<{ __typename?: 'OrganizationInviteCountableEdge', node: { __typename?: 'OrganizationInvite', id: string, email: string, firstName?: string | null, role: RoleLevel } }> } | null, members?: { __typename?: 'OrganizationMemberCountableConnection', edges: Array<{ __typename?: 'OrganizationMemberCountableEdge', node: { __typename?: 'OrganizationMember', id: string, email: string, firstName: string, lastName: string, role: RoleLevel } }> } | null, projects?: { __typename?: 'ProjectCountableConnection', edges: Array<{ __typename?: 'ProjectCountableEdge', node: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } }> } | null };
 
@@ -3233,6 +3291,20 @@ export const SurveyErrorFragmentFragmentDoc = gql`
   field
   message
   code
+}
+    `;
+export const SurveyResponseFragmentFragmentDoc = gql`
+    fragment SurveyResponseFragment on SurveyResponse {
+  id
+  title
+  userAttributes
+  response
+  status
+  completedAt
+  createdAt
+  updatedAt
+  timeSpent
+  stats
 }
     `;
 export const OrganizationErrorFragmentFragmentDoc = gql`
@@ -3745,8 +3817,15 @@ export type ViewerQueryHookResult = ReturnType<typeof useViewerQuery>;
 export type ViewerLazyQueryHookResult = ReturnType<typeof useViewerLazyQuery>;
 export type ViewerQueryResult = Apollo.QueryResult<ViewerQuery, ViewerQueryVariables>;
 export const EventDefinitionsDocument = gql`
-    query EventDefinitions {
-  eventDefinitions(first: 100) {
+    query EventDefinitions($first: Int, $last: Int, $after: String, $before: String) {
+  eventDefinitions(first: $first, last: $last, after: $after, before: $before) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
     edges {
       node {
         id
@@ -3754,6 +3833,7 @@ export const EventDefinitionsDocument = gql`
           ...ProjectFragment
         }
         name
+        volume
         createdAt
         lastSeenAt
       }
@@ -3774,6 +3854,10 @@ export const EventDefinitionsDocument = gql`
  * @example
  * const { data, loading, error } = useEventDefinitionsQuery({
  *   variables: {
+ *      first: // value for 'first'
+ *      last: // value for 'last'
+ *      after: // value for 'after'
+ *      before: // value for 'before'
  *   },
  * });
  */
@@ -4863,6 +4947,106 @@ export function useGetSurveyListLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetSurveyListQueryHookResult = ReturnType<typeof useGetSurveyListQuery>;
 export type GetSurveyListLazyQueryHookResult = ReturnType<typeof useGetSurveyListLazyQuery>;
 export type GetSurveyListQueryResult = Apollo.QueryResult<GetSurveyListQuery, GetSurveyListQueryVariables>;
+export const ResponsesDocument = gql`
+    query responses($id: ID, $filter: SurveyResponseFilterInput, $before: String, $after: String, $first: Int, $last: Int) {
+  responses(
+    id: $id
+    filter: $filter
+    before: $before
+    after: $after
+    first: $first
+    last: $last
+  ) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+    nodes {
+      ...SurveyResponseFragment
+    }
+  }
+}
+    ${SurveyResponseFragmentFragmentDoc}`;
+
+/**
+ * __useResponsesQuery__
+ *
+ * To run a query within a React component, call `useResponsesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useResponsesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useResponsesQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      filter: // value for 'filter'
+ *      before: // value for 'before'
+ *      after: // value for 'after'
+ *      first: // value for 'first'
+ *      last: // value for 'last'
+ *   },
+ * });
+ */
+export function useResponsesQuery(baseOptions?: Apollo.QueryHookOptions<ResponsesQuery, ResponsesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ResponsesQuery, ResponsesQueryVariables>(ResponsesDocument, options);
+      }
+export function useResponsesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ResponsesQuery, ResponsesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ResponsesQuery, ResponsesQueryVariables>(ResponsesDocument, options);
+        }
+export type ResponsesQueryHookResult = ReturnType<typeof useResponsesQuery>;
+export type ResponsesLazyQueryHookResult = ReturnType<typeof useResponsesLazyQuery>;
+export type ResponsesQueryResult = Apollo.QueryResult<ResponsesQuery, ResponsesQueryVariables>;
+export const ResponseMetricDocument = gql`
+    query responseMetric($id: ID!, $date: DateRangeInput, $previousDate: DateRangeInput, $metric: SurveyResponseMetricEnum!) {
+  responseMetric(
+    id: $id
+    date: $date
+    previousDate: $previousDate
+    metric: $metric
+  ) {
+    current
+    previous
+  }
+}
+    `;
+
+/**
+ * __useResponseMetricQuery__
+ *
+ * To run a query within a React component, call `useResponseMetricQuery` and pass it any options that fit your needs.
+ * When your component renders, `useResponseMetricQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useResponseMetricQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      date: // value for 'date'
+ *      previousDate: // value for 'previousDate'
+ *      metric: // value for 'metric'
+ *   },
+ * });
+ */
+export function useResponseMetricQuery(baseOptions: Apollo.QueryHookOptions<ResponseMetricQuery, ResponseMetricQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ResponseMetricQuery, ResponseMetricQueryVariables>(ResponseMetricDocument, options);
+      }
+export function useResponseMetricLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ResponseMetricQuery, ResponseMetricQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ResponseMetricQuery, ResponseMetricQueryVariables>(ResponseMetricDocument, options);
+        }
+export type ResponseMetricQueryHookResult = ReturnType<typeof useResponseMetricQuery>;
+export type ResponseMetricLazyQueryHookResult = ReturnType<typeof useResponseMetricLazyQuery>;
+export type ResponseMetricQueryResult = Apollo.QueryResult<ResponseMetricQuery, ResponseMetricQueryVariables>;
 export const OrganizationCreateDocument = gql`
     mutation organizationCreate($input: OrganizationCreateInput!, $survey: OnboardingCustomerSurvey) {
   organizationCreate(input: $input, survey: $survey) {

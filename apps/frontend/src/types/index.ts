@@ -1,5 +1,5 @@
 import { PROPERTY_FIELDS } from "@/constants";
-import { ProjectTheme, SurveyChannel, SurveyQuestionCountableEdge, User } from "@/generated/graphql";
+import { ProjectTheme, SurveyChannel, SurveyQuestionCountableEdge, SurveyResponse, User } from "@/generated/graphql";
 import { DeepOmit } from "@apollo/client/utilities";
 
 export type CachedViewer = DeepOmit<User, "__typename">;
@@ -107,6 +107,15 @@ export interface EventProperties {
     [key: string]: Jsonish;
 }
 
+export interface SurveyAnswer {
+    finished?: boolean;
+    ctaSuccess?: boolean;
+    fieldType?: FormFieldType;
+    completionRate?: number;
+    answer?: string;
+    answerId?: ID;
+}
+
 export interface FormField extends QuestionOption {
     type: FormFieldType;
     required: boolean;
@@ -129,20 +138,12 @@ export type ChannelSettings = {
     placement?: PlacementType;
     closeOnLimit?: boolean;
     responseLimit?: number;
-    singleUse?: boolean;
 };
 
 export type ParsedChannel = Omit<SurveyChannel, "settings" | "triggers" | "conditions"> & {
     settings: ChannelSettings;
     triggers: Trigger;
     conditions: Audience;
-};
-
-export type LinkSettings = {
-    name: string | null;
-    singleUse: boolean;
-    startDate: string | null;
-    endDate: string | null;
 };
 
 export type EventFilter = {
@@ -172,8 +173,7 @@ export type WebChannelAccordionProps = {
     channel: ParsedChannel;
 };
 
-export type IntegraflowIconProps = {
-    color?: string;
+export type IntegraflowIconProps = React.SVGAttributes<SVGSVGElement> & {
     size?: number;
 };
 
@@ -291,3 +291,48 @@ export type Theme = {
 };
 
 export type Properties = Record<string, string | boolean>;
+
+export type UserAttributes = Record<string, string>;
+export type Response = Record<string, SurveyAnswer[]>;
+
+export type ParsedResponse = Omit<SurveyResponse, "userAttributes" | "response"> & {
+    userAttributes: UserAttributes;
+    response: Response;
+};
+
+export type NPSMetric = {
+    promoters: number;
+    passives: number;
+    detractors: number;
+    score: number;
+};
+
+export type CESMetric = {
+    low: number;
+    medium: number;
+    high: number;
+    score: number;
+};
+
+export type CSATMetric = {
+    positive: number;
+    neutral: number;
+    negative: number;
+    score: number;
+};
+
+export type Summary = {
+    value: number | null;
+};
+
+export type DateFilterValue = {
+    timePeriod: "today" | "last 7 days" | "30 days" | "1 year" | "custom";
+    current: {
+        gte: string;
+        lte: string;
+    };
+    previous?: {
+        gte: string;
+        lte: string;
+    };
+};

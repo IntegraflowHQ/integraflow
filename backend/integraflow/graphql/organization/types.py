@@ -13,6 +13,7 @@ from integraflow.graphql.core.doc_category import (
 from integraflow.graphql.core.enums import RoleLevel
 from integraflow.graphql.core.fields import (
     FilterConnectionField,
+    JSONString,
     PermissionsField
 )
 from integraflow.graphql.core.types.base import BaseObjectType
@@ -155,6 +156,13 @@ class Organization(AuthOrganization):
         doc_category=DOC_CATEGORY_ORGANIZATIONS,
     )
 
+    billing_usage = PermissionsField(
+        JSONString,
+        description="Billing usage of the organization.",
+        permissions=[AuthorizationFilters.ORGANIZATION_MEMBER_ACCESS],
+        doc_category=DOC_CATEGORY_ORGANIZATIONS,
+    )
+
     class Meta:
         description = "Represents an organization."
         model = models.Organization
@@ -212,6 +220,14 @@ class Organization(AuthOrganization):
             kwargs,
             OrganizationInviteCountableConnection
         )
+
+    @staticmethod
+    def resolve_billing_usage(
+        _root: models.Organization,
+        info: ResolveInfo,
+        **kwargs
+    ):
+        return _root.usage_metadata
 
 
 class BaseOrganizationInvite(ModelObjectType):

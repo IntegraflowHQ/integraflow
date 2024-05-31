@@ -1,7 +1,10 @@
 import { BaseSurvey, IntegraflowDocument } from "@integraflow/sdk";
 import { Audience, Question, QuestionOption, Survey, SurveySettings, Theme, Trigger } from "@integraflow/web";
 
-export const parsedSurveys = (survey?: BaseSurvey, mode?: "sdk" | "link", backgroundImage?: string): Survey[] => {
+export const parsedSurveys = (
+    survey?: BaseSurvey,
+    options?: { mode?: "sdk" | "link"; backgroundImage?: string; link?: string },
+): Survey[] => {
     if (!survey) {
         return [] as Survey[];
     }
@@ -29,20 +32,23 @@ export const parsedSurveys = (survey?: BaseSurvey, mode?: "sdk" | "link", backgr
     });
 
     const channel = survey.channels.find((channel) => {
+        if (options?.link) {
+            return channel.link === options.link;
+        }
         return channel.type === IntegraflowDocument.SurveyChannelTypeEnum.WebSdk;
     }) || { settings: "{}", conditions: "{}", triggers: "{}" };
     const channelSettings = JSON.parse(channel?.settings ?? "{}");
     const settings = JSON.parse(survey.settings ?? "{}");
     const surveySettings: SurveySettings = {
         placement: channelSettings.placement ?? "bottomRight",
-        recurring: channelSettings.recurring ?? false,
+        recurring: !options?.link ? true : channelSettings.recurring ?? false,
         recurringPeriod: channelSettings.recurringPeriod ?? 0,
         showProgressBar: settings.showProgressBar ?? true,
         close: settings.close,
         submitText: settings.submitText,
         showBranding: settings.showBranding,
-        backgroundOverlay: mode === "sdk" ? channelSettings.backgroundOverlay : "none",
-        backgroundImage: mode === "link" ? backgroundImage ?? "" : "",
+        backgroundOverlay: options?.mode === "sdk" ? channelSettings.backgroundOverlay : "none",
+        backgroundImage: options?.mode === "link" ? options?.backgroundImage ?? "" : "",
     };
 
     const audience: Audience = JSON.parse(channel.conditions ?? "{}");

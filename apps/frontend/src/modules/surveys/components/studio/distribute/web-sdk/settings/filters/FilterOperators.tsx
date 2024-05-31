@@ -104,12 +104,13 @@ export default function FilterOperators({
                                             ) : null}
                                             {conditionDetails.type === "Datetime" ? (
                                                 <DatePicker
-                                                    onChange={(e) => {
-                                                        if (!e.target.value) return;
+                                                    mode="single"
+                                                    onSelect={(value) => {
+                                                        if (!value) return;
                                                         onInput?.({
                                                             property: conditionDetails.property,
                                                             operator: field.operator,
-                                                            value: e.target.value?.toISOString() ?? "",
+                                                            value: value.toISOString(),
                                                         });
                                                     }}
                                                 />

@@ -1,10 +1,9 @@
 from datetime import datetime
-from dateutil import parser
-from django.db.models import Q
 from typing import Union, cast
 
 import pytz
-
+from dateutil import parser
+from django.db.models import Q
 from integraflow.graphql.core.context import get_database_connection_name
 from integraflow.graphql.core.types.common import DateRangeInput
 from integraflow.graphql.core.utils import from_global_id_or_error
@@ -142,17 +141,17 @@ def resolve_survey_by_channel(info, id=None, link=None):
         return instance.survey
 
 
-def resolve_survey_responses(info, id: str):
+def resolve_survey_responses(info, id: Union[str, None] = None):
     project = cast(Project, info.context.project)
 
-    _, survey_id = from_global_id_or_error(id)
+    lookup = Q(survey__project_id=project.id)
+    if id is not None:
+        _, survey_id = from_global_id_or_error(id)
+        lookup = Q(survey_id=survey_id, survey__project_id=project.id)
 
     return models.SurveyResponse.objects.using(
         get_database_connection_name(info.context)
-    ).filter(
-        survey_id=survey_id,
-        survey__project_id=project.id
-    )
+    ).filter(lookup)
 
 
 def resolve_response_count(

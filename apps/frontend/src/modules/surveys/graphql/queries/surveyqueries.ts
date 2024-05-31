@@ -33,3 +33,41 @@ export const GET_SURVEY_LIST = gql`
         }
     }
 `;
+
+export const SURVEY_RESPONSES = gql`
+    query responses(
+        $id: ID
+        $filter: SurveyResponseFilterInput
+        $before: String
+        $after: String
+        $first: Int
+        $last: Int
+    ) {
+        responses(id: $id, filter: $filter, before: $before, after: $after, first: $first, last: $last) {
+            pageInfo {
+                hasNextPage
+                hasPreviousPage
+                startCursor
+                endCursor
+            }
+            totalCount
+            nodes {
+                ...SurveyResponseFragment
+            }
+        }
+    }
+`;
+
+export const RESPONSE_METRIC = gql`
+    query responseMetric(
+        $id: ID!
+        $date: DateRangeInput
+        $previousDate: DateRangeInput
+        $metric: SurveyResponseMetricEnum!
+    ) {
+        responseMetric(id: $id, date: $date, previousDate: $previousDate, metric: $metric) {
+            current
+            previous
+        }
+    }
+`;
