@@ -52,7 +52,7 @@ export const Billing = () => {
                 <h3 className="font-semibold">Current plan</h3>
                 <div className="space-y-6">
                     <div className="flex justify-between">
-                        <p className="justify-end self-end text-sm">You are currently on a free plan with ()</p>
+                        <p className="justify-end self-end text-sm">You are currently on a free plan.</p>
                     </div>
                     <div className="space-y-6">
                         {planDetails.map(({ icon: Icon, ...plan }) => {
