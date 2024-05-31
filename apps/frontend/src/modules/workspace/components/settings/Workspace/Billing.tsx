@@ -53,12 +53,6 @@ export const Billing = () => {
                 <div className="space-y-6">
                     <div className="flex justify-between">
                         <p className="justify-end self-end text-sm">You are currently on a free plan with ()</p>
-                        {/* billing plans */}
-                        {/* <div>
-                            <Button text="View plans & upgrade" size="md" onClick={() => setOpenBillingModal(true)} />
-                            <BillingModal open={openBillingModal} setOpenBillingModal={setOpenBillingModal} />
-                        </div>
-                        */}
                     </div>
                     <div className="space-y-6">
                         {planDetails.map(({ icon: Icon, ...plan }) => {
