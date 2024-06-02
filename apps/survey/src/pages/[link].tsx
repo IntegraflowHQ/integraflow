@@ -21,7 +21,7 @@ export default function Home({ surveys, appKey }: InferGetServerSidePropsType<ty
                 return;
             }
 
-            const Integraflow = (await import("@integraflow/web")).default;
+            const Integraflow = (await import("integraflow-js")).default;
             if (!intg) {
                 const intg = Integraflow.init({
                     surveys,

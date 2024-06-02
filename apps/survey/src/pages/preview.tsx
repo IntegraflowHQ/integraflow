@@ -44,7 +44,7 @@ export default function Preview() {
                 return;
             }
 
-            const Integraflow = (await import("@integraflow/web")).default;
+            const Integraflow = (await import("integraflow-js")).default;
             const intg = Integraflow.init({
                 surveys: [survey],
                 syncPolicy: "off",
@@ -71,7 +71,7 @@ export default function Preview() {
                     return;
                 }
 
-                const Integraflow = (await import("@integraflow/web")).default;
+                const Integraflow = (await import("integraflow-js")).default;
                 const intg = Integraflow.init({
                     surveys: [survey],
                     syncPolicy: "off",

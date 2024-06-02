@@ -1,6 +1,6 @@
 # Integraflow Web SDK
 
-[![npm package](https://img.shields.io/npm/v/@integraflow/web?style=flat-square)](https://www.npmjs.com/package/@integraflow/web)
+[![npm package](https://img.shields.io/npm/v/integraflow-js?style=flat-square)](https://www.npmjs.com/package/integraflow-js)
 [![MIT License](https://img.shields.io/badge/License-MIT-red.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
 Integraflow provides tools to redefine customer experience with organic feedback and behavioural data in real-time. Enjoy intuitive designs, open source surveys, advanced analytics, seamless collaboration on the go.
@@ -11,32 +11,39 @@ Start by adding the following snippet to your website:
 
 ```html
 <script>
-  (function(w,p){w[p]=w[p]||function(){w[p].q=w[p].q||[];w[p].q.push(arguments)}})(window,"Integraflow");
+    (function(w, p) {
+        w[p] =
+            w[p] ||
+            function() {
+                w[p].q = w[p].q || [];
+                w[p].q.push(arguments);
+            };
+    })(window, "Integraflow");
 
-  Integraflow('init', {
-    surveys: [],
-    debug: true,
-    onAudienceChanged(audience) {
-      // ...
-    },
-    onEventTracked(payload) {
-      // ...
-    },
-    onSurveyDisplayed(surveyId) {
-      // ...
-    },
-    onQuestionAnswered(surveyId, questionId, answers) {
-      // ...
-    },
-    onSurveyCompleted(surveyId) {
-      // ...
-    },
-    onSurveyClosed(surveyId) {
-      // ...
-    },
-  });
+    Integraflow("init", {
+        surveys: [],
+        debug: true,
+        onAudienceChanged(audience) {
+            // ...
+        },
+        onEventTracked(payload) {
+            // ...
+        },
+        onSurveyDisplayed(surveyId) {
+            // ...
+        },
+        onQuestionAnswered(surveyId, questionId, answers) {
+            // ...
+        },
+        onSurveyCompleted(surveyId) {
+            // ...
+        },
+        onSurveyClosed(surveyId) {
+            // ...
+        }
+    });
 </script>
-<script src="https://unpkg.com/@integraflow/web/dist/web-bundle.js" async></script>
+<script src="https://unpkg.com/integraflow-js/dist/web-bundle.js" async></script>
 ```
 
 For more information on integrating the Web SDK with your project, please see the [Integraflow developer guide](https://docs.useintegraflow.com).
@@ -46,35 +53,35 @@ For more information on integrating the Web SDK with your project, please see th
 Start by adding the package dependency to your project:
 
 ```
-npm install --save @integraflow/web
+npm install --save integraflow-js
 ```
 
 After installation, import and initialize the SDK in your application code:
 
 ```javascript
-import Integraflow from '@integraflow/web';
+import Integraflow from "integraflow-js";
 
 const integraflowClient = Integraflow.init({
-  surveys: [],
-  debug: true,
-  onAudienceChanged(audience) {
-    // ...
-  },
-  onEventTracked(payload) {
-    // ...
-  },
-  onSurveyDisplayed(surveyId) {
-    // ...
-  },
-  onQuestionAnswered(surveyId, questionId, answers) {
-    // ...
-  },
-  onSurveyCompleted(surveyId) {
-    // ...
-  },
-  onSurveyClosed(surveyId) {
-    // ...
-  },
+    surveys: [],
+    debug: true,
+    onAudienceChanged(audience) {
+        // ...
+    },
+    onEventTracked(payload) {
+        // ...
+    },
+    onSurveyDisplayed(surveyId) {
+        // ...
+    },
+    onQuestionAnswered(surveyId, questionId, answers) {
+        // ...
+    },
+    onSurveyCompleted(surveyId) {
+        // ...
+    },
+    onSurveyClosed(surveyId) {
+        // ...
+    }
 });
 ```
 
