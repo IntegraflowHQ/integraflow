@@ -2,7 +2,7 @@ import MinusIcon from "@/assets/icons/studio/MinusIcon";
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { LogicConditionEnum, ParsedQuestion, QuestionLogic, LogicOperator } from "@/types";
+import { LogicConditionEnum, LogicOperator, ParsedQuestion, QuestionLogic } from "@/types";
 import { generateUniqueId } from "@/utils";
 import {
     changeableOperator,
@@ -181,7 +181,7 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic, setLogicValues
                                     {
                                         value: editValues.values?.[1] ?? value,
                                         label: question?.options?.find(
-                                            (o: Option) => o.id === (value as SingleValue<Option>)?.value,
+                                            (o) => o.id === (value as SingleValue<Option>)?.value,
                                         )?.label,
                                     },
                                     value as SingleValue<Option>,
@@ -191,7 +191,7 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic, setLogicValues
                                 handleMinMaxChange(value as SingleValue<Option>, {
                                     value: editValues.values?.[0] ?? value,
                                     label: question?.options?.find(
-                                        (o: Option) => o.id === (value as SingleValue<Option>)?.value,
+                                        (o) => o.id === (value as SingleValue<Option>)?.value,
                                     )?.label,
                                 });
                             }}
@@ -219,7 +219,7 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic, setLogicValues
                             onOperatorChange={handleOperatorChange}
                             options={logicValuesOptions(question!)}
                             defaultValue={editValues.values
-                                ?.map((v) => question?.options?.find((o: Option) => o.id === v))
+                                ?.map((v) => question?.options?.find((o) => o.id === v))
                                 .map((v) => ({
                                     value: v?.id,
                                     label: v?.label,
@@ -232,7 +232,7 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic, setLogicValues
                                       }))
                                     : editValues.values &&
                                       editValues?.values
-                                          .map((v) => question?.options?.find((o: Option) => o.id === v))
+                                          .map((v) => question?.options?.find((o) => o.id === v))
                                           .map((v) => ({
                                               value: v?.id,
                                               label: v?.label,

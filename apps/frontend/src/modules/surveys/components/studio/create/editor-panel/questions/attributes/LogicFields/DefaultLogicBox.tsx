@@ -1,7 +1,7 @@
 import MinusIcon from "@/assets/icons/studio/MinusIcon";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { LogicConditionEnum, ParsedQuestion, QuestionLogic, LogicOperator } from "@/types";
+import { LogicConditionEnum, LogicOperator, ParsedQuestion, QuestionLogic } from "@/types";
 import {
     changeableOperator,
     conditionOptions,
@@ -140,11 +140,13 @@ export const DefaultLogicBox: React.FC<Props> = ({
                     <div></div>
                     <div className="w-[330px]">
                         <MinMaxSelector
-                            options={question?.options?.map((option: Option, index: number) => ({
-                                value: option.id,
-                                label: option.label,
-                                index: index,
-                            }))}
+                            options={
+                                question?.options?.map((option, index) => ({
+                                    value: option.id,
+                                    label: option.label,
+                                    index: index,
+                                })) || []
+                            }
                             maxChange={handleMaxChange}
                             minChange={handleMinChange}
                         />
@@ -185,7 +187,7 @@ export const DefaultLogicBox: React.FC<Props> = ({
                                         : logicValues.values &&
                                           logicValues.values.map((v) => ({
                                               value: v,
-                                              label: question?.options?.find((o: Option) => o.id === v)?.label,
+                                              label: question?.options?.find((o) => o.id === v)?.label,
                                           }))
                                 }
                             />
