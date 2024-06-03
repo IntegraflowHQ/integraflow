@@ -1,22 +1,12 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { cn, generateUniqueId, getHighestOrderNumber } from "@/utils";
-import { FormFieldType } from "@/types";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import { AddMultipleQuestions } from "../AddMultipleQuestions";
 import { CommentButton } from "../Buttons/CommentButton";
 import MinusButton from "../Buttons/MinimizeButton";
 import { MoreButton } from "../Buttons/MoreButton";
 import TextButton from "../Buttons/TextButton";
-
-type DefaultOption = {
-    id: number;
-    orderNumber: number;
-    label: string;
-    comment?: string;
-    required?: boolean;
-    type?: FormFieldType;
-};
 
 export const OptionsList = () => {
     const { updateQuestion, question } = useQuestion();
@@ -43,7 +33,7 @@ export const OptionsList = () => {
 
                 {question?.options ? (
                     <div className="space-y-4">
-                        {question?.options.map((option: DefaultOption, index: number) => (
+                        {question?.options.map((option, index) => (
                             <div key={option.id} className="flex items-center gap-2">
                                 <MoreButton />
                                 <EditorTextInput

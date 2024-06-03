@@ -2,7 +2,6 @@ import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { generateUniqueId, getHighestOrderNumber } from "@/utils";
 import { formOptions } from "@/utils/survey";
-import { FormField } from "@/types";
 import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import MinusButton from "../Buttons/MinimizeButton";
@@ -30,7 +29,7 @@ export const FormFieldList = () => {
                 <p className="flex-1 text-sm">Label</p>
             </div>
 
-            {question?.options.map((option: FormField, index: number) => {
+            {question?.options.map((option, index) => {
                 return (
                     <div key={option.id}>
                         <div className="flex items-center justify-between">

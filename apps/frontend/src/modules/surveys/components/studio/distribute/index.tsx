@@ -10,42 +10,49 @@ const tabs = [
         name: "Shareable Links",
         content: <SharableLinks />,
         icon: LinkIcon,
+        enabled: true,
     },
     {
         id: crypto.randomUUID(),
         name: "Web SDK",
         content: <WebSDK />,
         icon: Globe,
+        enabled: true,
     },
     {
         id: crypto.randomUUID(),
         name: "Email (coming soon)",
         content: <div className="text-white">Hello</div>,
         icon: Mail,
+        enabled: false,
     },
     {
         id: crypto.randomUUID(),
         name: "Mobile SDK (coming soon)",
         content: <div className="text-white">Hello</div>,
         icon: TabletSmartphone,
+        enabled: false,
     },
     {
         id: crypto.randomUUID(),
         name: "SMS (coming soon)",
         content: <div className="text-white">Hello</div>,
         icon: MessageCircle,
+        enabled: false,
     },
     {
         id: crypto.randomUUID(),
         name: "Offline apps (coming soon)",
         content: <div className="text-white">Hello</div>,
         icon: WifiOff,
+        enabled: false,
     },
     {
         id: crypto.randomUUID(),
         name: "Integration (coming soon)",
         content: <div className="text-white">Hello</div>,
         icon: Blocks,
+        enabled: false,
     },
 ];
 
@@ -55,11 +62,12 @@ export default function Distribute() {
             <Tabs.Root className="flex w-full gap-12 pl-10 pr-[45px]" defaultValue={tabs[0].id}>
                 <div className="w-[386px] pt-[155px]">
                     <Tabs.List className="flex max-w-[302px] flex-col gap-2 pt-[25px]">
-                        {tabs.map(({ id, icon: Icon, name }) => (
+                        {tabs.map(({ id, icon: Icon, name, enabled }) => (
                             <Tabs.Trigger
                                 key={id}
                                 value={id}
                                 className="flex items-center gap-3 rounded-lg p-6 text-intg-text hover:bg-intg-bg-9 data-[state=active]:bg-intg-bg-9"
+                                disabled={!enabled}
                             >
                                 <Icon />
                                 <span className="min-w-max text-base">{name}</span>

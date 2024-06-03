@@ -236,8 +236,8 @@ export enum CTAEnums {
     CLOSE = "close",
 }
 
-export type ParsedQuestion = Omit<SurveyQuestionCountableEdge["node"], "questions" | "settings"> & {
-    questions: QuestionOption[];
+export type ParsedQuestion = Omit<SurveyQuestionCountableEdge["node"], "options" | "settings"> & {
+    options: QuestionOption[];
     settings: QuestionSettings;
 };
 
@@ -290,6 +290,8 @@ export type Theme = {
     colorScheme: ColorScheme;
 };
 
+export type Properties = Record<string, string | boolean>;
+
 export type UserAttributes = Record<string, string>;
 export type Response = Record<string, SurveyAnswer[]>;
 
@@ -334,4 +336,3 @@ export type DateFilterValue = {
         lte: string;
     };
 };
-export type Properties = Record<string, string>;
