@@ -165,6 +165,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                                         },
                                         ...existingSurveysRefs.edges,
                                     ],
+                                    totalCount: existingSurveysRefs.totalCount + 1,
                                 };
                             },
                         },
