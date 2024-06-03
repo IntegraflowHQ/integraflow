@@ -2562,6 +2562,18 @@ export type _Service = {
   sdl?: Maybe<Scalars['String']>;
 };
 
+export type PersonFragmentFragment = { __typename?: 'Person', id: string, uuid: any, attributes?: any | null, distinctIds?: Array<string> | null, isIdentified: boolean, createdAt?: string | null, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } };
+
+export type GetPersonsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetPersonsQuery = { __typename?: 'Query', persons?: { __typename?: 'PersonCountableConnection', totalCount?: number | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }, edges: Array<{ __typename?: 'PersonCountableEdge', node: { __typename?: 'Person', id: string, uuid: any, attributes?: any | null, distinctIds?: Array<string> | null, isIdentified: boolean, createdAt?: string | null, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
+
 export type AuthUserFragmentFragment = { __typename?: 'AuthUser', id: string, email: string, firstName: string, lastName: string, isStaff: boolean, isActive: boolean, isOnboarded: boolean, organization?: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } | null, project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null };
 
 export type AuthOrganizationFragmentFragment = { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number };
@@ -2642,10 +2654,15 @@ export type EventsQueryVariables = Exact<{
 
 export type EventsQuery = { __typename?: 'Query', events?: { __typename?: 'EventCountableConnection', edges: Array<{ __typename?: 'EventCountableEdge', node: { __typename?: 'Event', id: string, event: string, distinctId: string, properties?: any | null, timestamp?: string | null, createdAt?: string | null, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
 
-export type PropertyDefinitionsQueryVariables = Exact<{ [key: string]: never; }>;
+export type PropertyDefinitionsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+}>;
 
 
-export type PropertyDefinitionsQuery = { __typename?: 'Query', propertyDefinitions?: { __typename?: 'PropertyDefinitionCountableConnection', edges: Array<{ __typename?: 'PropertyDefinitionCountableEdge', node: { __typename?: 'PropertyDefinition', id: string, name: string, isNumerical: boolean, type: PropertyDefinitionTypeEnum, propertyType: PropertyTypeEnum, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
+export type PropertyDefinitionsQuery = { __typename?: 'Query', propertyDefinitions?: { __typename?: 'PropertyDefinitionCountableConnection', totalCount?: number | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }, edges: Array<{ __typename?: 'PropertyDefinitionCountableEdge', node: { __typename?: 'PropertyDefinition', id: string, name: string, isNumerical: boolean, type: PropertyDefinitionTypeEnum, propertyType: PropertyTypeEnum, project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } } }> } | null };
 
 export type PropertiesWithDefinitionsQueryVariables = Exact<{
   event?: InputMaybe<Scalars['String']>;
@@ -2998,6 +3015,19 @@ export const ProjectFragmentFragmentDoc = gql`
   }
 }
     ${AuthOrganizationFragmentFragmentDoc}`;
+export const PersonFragmentFragmentDoc = gql`
+    fragment PersonFragment on Person {
+  id
+  project {
+    ...ProjectFragment
+  }
+  uuid
+  attributes
+  distinctIds
+  isIdentified
+  createdAt
+}
+    ${ProjectFragmentFragmentDoc}`;
 export const AuthUserFragmentFragmentDoc = gql`
     fragment AuthUserFragment on AuthUser {
   id
@@ -3482,6 +3512,55 @@ export const OrganizationMemberUpdateFragmentFragmentDoc = gql`
 }
     ${OrganizationMembershipFragmentFragmentDoc}
 ${OrganizationErrorFragmentFragmentDoc}`;
+export const GetPersonsDocument = gql`
+    query getPersons($first: Int, $last: Int, $after: String, $before: String) {
+  persons(first: $first, last: $last, after: $after, before: $before) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    edges {
+      node {
+        ...PersonFragment
+      }
+    }
+    totalCount
+  }
+}
+    ${PersonFragmentFragmentDoc}`;
+
+/**
+ * __useGetPersonsQuery__
+ *
+ * To run a query within a React component, call `useGetPersonsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPersonsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPersonsQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      last: // value for 'last'
+ *      after: // value for 'after'
+ *      before: // value for 'before'
+ *   },
+ * });
+ */
+export function useGetPersonsQuery(baseOptions?: Apollo.QueryHookOptions<GetPersonsQuery, GetPersonsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPersonsQuery, GetPersonsQueryVariables>(GetPersonsDocument, options);
+      }
+export function useGetPersonsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPersonsQuery, GetPersonsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPersonsQuery, GetPersonsQueryVariables>(GetPersonsDocument, options);
+        }
+export type GetPersonsQueryHookResult = ReturnType<typeof useGetPersonsQuery>;
+export type GetPersonsLazyQueryHookResult = ReturnType<typeof useGetPersonsLazyQuery>;
+export type GetPersonsQueryResult = Apollo.QueryResult<GetPersonsQuery, GetPersonsQueryVariables>;
 export const EmailTokenUserAuthDocument = gql`
     mutation emailTokenUserAuth($email: String!, $token: String!, $inviteLink: String) {
   emailTokenUserAuth(email: $email, token: $token, inviteLink: $inviteLink) {
@@ -3842,8 +3921,14 @@ export type EventsQueryHookResult = ReturnType<typeof useEventsQuery>;
 export type EventsLazyQueryHookResult = ReturnType<typeof useEventsLazyQuery>;
 export type EventsQueryResult = Apollo.QueryResult<EventsQuery, EventsQueryVariables>;
 export const PropertyDefinitionsDocument = gql`
-    query propertyDefinitions {
-  propertyDefinitions(first: 100) {
+    query propertyDefinitions($first: Int, $last: Int, $after: String, $before: String) {
+  propertyDefinitions(first: $first, last: $last, after: $after, before: $before) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
     edges {
       node {
         id
@@ -3856,6 +3941,7 @@ export const PropertyDefinitionsDocument = gql`
         propertyType
       }
     }
+    totalCount
   }
 }
     ${ProjectFragmentFragmentDoc}`;
@@ -3872,6 +3958,10 @@ export const PropertyDefinitionsDocument = gql`
  * @example
  * const { data, loading, error } = usePropertyDefinitionsQuery({
  *   variables: {
+ *      first: // value for 'first'
+ *      last: // value for 'last'
+ *      after: // value for 'after'
+ *      before: // value for 'before'
  *   },
  * });
  */
