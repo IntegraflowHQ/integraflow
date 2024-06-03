@@ -1,4 +1,3 @@
-import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import * as Progress from "@radix-ui/react-progress";
 import { BillingCategoriesEnum, planDetails } from "../../../utils";
@@ -15,14 +14,9 @@ type ParsedBilling = {
 };
 
 export const Billing = () => {
-    const { organizations } = useAuth();
     const { workspace } = useWorkspace();
 
-    const currentWorkspace = organizations.find((org) => {
-        return workspace?.id === org?.id;
-    });
-
-    const parsedBilling = JSON.parse(currentWorkspace?.billingUsage) as ParsedBilling;
+    const parsedBilling = JSON.parse(workspace?.billingUsage) as ParsedBilling;
 
     const getBillingValues = (category: BillingCategoriesEnum): BillingValues => {
         switch (category) {
@@ -69,7 +63,7 @@ export const Billing = () => {
                                     </div>
                                     <div>
                                         <Progress.Root
-                                            className="relative h-[8px] w-full overflow-hidden rounded-sm border-intg-bg-23 bg-intg-bg-23"
+                                            className="border-intg-bg-23 bg-intg-bg-23 relative h-[8px] w-full overflow-hidden rounded-sm"
                                             style={{
                                                 // Fix overflow clipping in Safari
                                                 // https://gist.github.com/domske/b66047671c780a238b51c51ffde8d3a0
@@ -83,14 +77,21 @@ export const Billing = () => {
                                             />
                                         </Progress.Root>
                                         <div className="flex justify-between">
-                                            <div className="h-5 border border-intg-bg-23"></div>
-                                            <div className="h-5 border border-intg-bg-23"></div>
+                                            <div className="border-intg-bg-23 h-5 border"></div>
+                                            <div className="border-intg-bg-23 h-5 border"></div>
                                         </div>
 
                                         <div className="flex justify-between">
-                                            <div>
-                                                <p>Current</p>
-                                                <p>{count}</p>
+                                            <div className="flex gap-3">
+                                                <div>
+                                                    <p>Current</p>
+                                                    <p>{count}</p>
+                                                </div>
+                                                {count === limit ? (
+                                                    <p className="self-end rounded bg-intg-bg-20 px-2 py-1 text-xs text-intg-text-9">
+                                                        Free trial reached
+                                                    </p>
+                                                ) : null}
                                             </div>
                                             <div>
                                                 <p>Free tier limit</p>
