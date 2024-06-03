@@ -1,5 +1,6 @@
 {
     "name": "@integraflow/sdk",
+    "private": true,
     "description": "The Integraflow Client SDK for interacting with the Integraflow GraphQL API",
     "version": "1.0.0",
     "author": "Integraflow <dev@useintegraflow.com>",
