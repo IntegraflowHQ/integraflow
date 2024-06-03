@@ -649,6 +649,13 @@ type Organization implements Node @doc(category: "Organizations") {
     """
     last: Int
   ): OrganizationInviteCountableConnection
+
+  """
+  Billing usage of the organization.
+  
+  Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+  """
+  billingUsage: JSONString
 }
 
 type OrganizationMemberCountableConnection @doc(category: "Organizations") {
@@ -2512,12 +2519,6 @@ input SurveyResponseCreateInput @doc(category: "Surveys") {
   """The user distinct ID."""
   userId: ID
 
-  """The event ID."""
-  event: UUID
-
-  """The channel of the response."""
-  channel: JSONString
-
   """The response metadata."""
   metadata: JSONString
 
@@ -2554,12 +2555,6 @@ input SurveyResponseUpdateInput @doc(category: "Surveys") {
 
   """The user distinct ID."""
   userId: ID
-
-  """The event ID."""
-  event: UUID
-
-  """The channel of the response."""
-  channel: JSONString
 
   """The response metadata."""
   metadata: JSONString

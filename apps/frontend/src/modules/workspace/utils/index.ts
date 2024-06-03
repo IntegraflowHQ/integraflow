@@ -1,6 +1,12 @@
 import { CursorIcon, PeopleIcon, PlusCircle } from "@/ui/icons";
 import { BarChart } from "lucide-react";
 
+export enum BillingCategoriesEnum {
+    RESPONSES = "responses",
+    EVENTS = "events",
+    PERSONS = "persons",
+}
+
 export const settingsCardInfo = [
     {
         id: crypto.randomUUID,
@@ -34,25 +40,22 @@ export const planDetails = [
         title: "Survey responses Usage ",
         description:
             "Build in-app popups with freeform text responses, multiple choice, NPS, ratings, and emoji reactions. Or use the API for complete control.",
-        current: 250,
-        freeTrial: 750,
         tag: "Free trial reached",
+        category: BillingCategoriesEnum.RESPONSES,
     },
     {
         icon: CursorIcon,
         title: "Event Usage",
         description: "Send surveys to your audience ",
-        current: 250,
-        freeTrial: 750,
         tag: "Free trial reached",
+        category: BillingCategoriesEnum.EVENTS,
     },
     {
         icon: PeopleIcon,
         title: "Audience  Usage",
         description: "Send surveys to your audience",
-        current: 250,
-        freeTrial: 750,
         tag: "Free trial reached",
+        category: BillingCategoriesEnum.PERSONS,
     },
 ];
 
