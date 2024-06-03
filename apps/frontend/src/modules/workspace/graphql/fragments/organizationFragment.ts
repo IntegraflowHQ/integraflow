@@ -34,6 +34,7 @@ export const ORGANIZATION = gql`
                 }
             }
         }
+        billingUsage
     }
 `;
 
