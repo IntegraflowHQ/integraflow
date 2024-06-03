@@ -35,10 +35,7 @@ export const Billing = () => {
         <div className="w-[675px] pt-10 text-intg-text-4">
             <div className="w-[515px]">
                 <h3 className="font-semibold">Manage Billing</h3>
-                <p className="text-sm">
-                    Manage your billing information and invoices. For questions about billing, contact
-                    Integraflow@gmail.com or visit Github.
-                </p>
+                <p className="text-sm">Manage your billing information and invoices.</p>
             </div>
             <hr className="my-6 border-[1px] border-intg-bg-4" />
 
