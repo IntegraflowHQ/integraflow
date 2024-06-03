@@ -37,7 +37,7 @@ export const People = () => {
                                     <div className="grid min-w-80 grid-cols-[max-content,1fr] gap-x-20 gap-y-2 -tracking-[0.41px]">
                                         {Object.entries(parsedPersonProperties ?? {}).map(([key, val]) => (
                                             <Fragment key={key}>
-                                                <strong className="text-intg-text-13 w-max self-center rounded bg-intg-bg-22 px-1.5 py-1 text-xs font-normal capitalize leading-[18px]">
+                                                <strong className="w-max self-center rounded bg-intg-bg-22 px-1.5 py-1 text-xs font-normal capitalize leading-[18px] text-intg-text-13">
                                                     {key}
                                                 </strong>
 
@@ -98,16 +98,17 @@ export const People = () => {
                     </TableBody>
                 ) : null}
             </Table>
-
-            <Pagination
-                hasNextPage={persons?.pageInfo.hasNextPage as boolean}
-                hasPrevPage={persons?.pageInfo.hasPreviousPage as boolean}
-                itemName="users"
-                nextPageFn={() => getMorePersons("forward")}
-                prevPageFn={() => getMorePersons("backward")}
-                totalCount={persons?.totalCount as number}
-                className="border border-t-0 border-intg-bg-4 p-4"
-            />
+            {Object.entries(parsedPersonProperties ?? {}).length ? (
+                <Pagination
+                    hasNextPage={persons?.pageInfo.hasNextPage as boolean}
+                    hasPrevPage={persons?.pageInfo.hasPreviousPage as boolean}
+                    itemName="users"
+                    nextPageFn={() => getMorePersons("forward")}
+                    prevPageFn={() => getMorePersons("backward")}
+                    totalCount={persons?.totalCount as number}
+                    className="border border-t-0 border-intg-bg-4 p-4"
+                />
+            ) : null}
 
             {!loadingPersons && !persons?.edges.length ? (
                 <div className="mt-40 flex h-full w-full text-intg-text">
@@ -115,7 +116,7 @@ export const People = () => {
                         <div className=" flex justify-center">
                             <PeopleIconLg />
                         </div>
-                        <p className="text-2xl font-semibold">No events yet</p>
+                        <p className="text-2xl font-semibold">No users yet</p>
                         <p className="text-sm">We couldn't find any events</p>
                     </div>
                 </div>
