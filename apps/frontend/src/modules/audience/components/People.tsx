@@ -116,8 +116,8 @@ export const People = () => {
                         <div className=" flex justify-center">
                             <PeopleIconLg />
                         </div>
-                        <p className="text-2xl font-semibold">No users yet</p>
-                        <p className="text-sm">We couldn't find any events</p>
+                        <p className="text-2xl font-semibold">No persons yet</p>
+                        <p className="text-sm">We couldn't find any persons</p>
                     </div>
                 </div>
             ) : null}
