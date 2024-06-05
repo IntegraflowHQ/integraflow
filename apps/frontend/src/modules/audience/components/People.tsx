@@ -25,32 +25,28 @@ export const People = () => {
                 }}
             >
                 <DialogContent className="p-6">
-                    {0 ? (
-                        <Spinner />
-                    ) : (
-                        <>
-                            {Object.entries(parsedPersonProperties ?? {}).length < 1 ? (
-                                <div className="p-4">No attributes for this user</div>
-                            ) : (
-                                <div className="space-y-6 p-3">
-                                    <h3>User Properties</h3>
-                                    <div className="grid min-w-80 grid-cols-[max-content,1fr] gap-x-20 gap-y-2 -tracking-[0.41px]">
-                                        {Object.entries(parsedPersonProperties ?? {}).map(([key, val]) => (
-                                            <Fragment key={key}>
-                                                <strong className="w-max self-center rounded bg-intg-bg-22 px-1.5 py-1 text-xs font-normal capitalize leading-[18px] text-intg-text-13">
-                                                    {key}
-                                                </strong>
+                    <>
+                        {Object.entries(parsedPersonProperties ?? {}).length < 1 ? (
+                            <div className="p-4">No attributes for this user</div>
+                        ) : (
+                            <div className="space-y-6 p-3">
+                                <h3>User Properties</h3>
+                                <div className="grid min-w-80 grid-cols-[max-content,1fr] gap-x-20 gap-y-2 -tracking-[0.41px]">
+                                    {Object.entries(parsedPersonProperties ?? {}).map(([key, val]) => (
+                                        <Fragment key={key}>
+                                            <strong className="w-max self-center rounded bg-intg-bg-22 px-1.5 py-1 text-xs font-normal capitalize leading-[18px] text-intg-text-13">
+                                                {key}
+                                            </strong>
 
-                                                <span className="self-center text-sm font-normal text-intg-text-2">
-                                                    {val.toString()}
-                                                </span>
-                                            </Fragment>
-                                        ))}
-                                    </div>
+                                            <span className="self-center text-sm font-normal text-intg-text-2">
+                                                {val.toString()}
+                                            </span>
+                                        </Fragment>
+                                    ))}
                                 </div>
-                            )}
-                        </>
-                    )}
+                            </div>
+                        )}
+                    </>
                 </DialogContent>
             </Dialog>
 
