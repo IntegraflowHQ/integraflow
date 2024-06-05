@@ -1,6 +1,5 @@
 {
     "name": "integraflow-js",
-    "private": true,
     "license": "MIT",
     "version": "0.0.1",
     "description": "Integraflow provides tools to redefine customer experience with organic feedback and behavioural data in real-time.",
@@ -96,5 +95,8 @@
             "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/tests/__mocks__/fileMock.js",
             "\\.(css|less)$": "<rootDir>/tests/__mocks__/styleMock.js"
         }
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }
