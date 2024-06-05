@@ -1,9 +1,6 @@
 {
     "$schema": "https://turbo.build/schema.json",
     "pipeline": {
-        "integraflow-js#semantic-release": {
-            "dependsOn": ["integraflow-js#build"]
-        },
         "integraflow-js#build": {
             "dependsOn": ["@integraflow/sdk#build:sdk"],
             "cache": false
