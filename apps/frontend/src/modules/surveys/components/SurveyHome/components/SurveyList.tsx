@@ -271,7 +271,7 @@ export const SurveyList = () => {
                     nextPageFn={() => getMoreSurveys("forward")}
                     prevPageFn={() => getMoreSurveys("backward")}
                     totalCount={surveyList?.totalCount ?? 0}
-                    itemName="Surveys"
+                    itemName={(surveyList.totalCount ?? 0) > 1 ? "Surveys" : "Survey"}
                     className="rounded-b-md border-x border-b border-intg-bg-4 p-4"
                 />
             </div>

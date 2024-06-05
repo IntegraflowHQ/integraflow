@@ -165,6 +165,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                                         },
                                         ...existingSurveysRefs.edges,
                                     ],
+                                    totalCount: existingSurveysRefs.totalCount + 1,
                                 };
                             },
                         },
@@ -382,6 +383,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                                     edges: existingSurveyRefs.edges.filter(({ node }: { node: Reference }) => {
                                         return survey.id !== readField("id", node);
                                     }),
+                                    totalCount: existingSurveyRefs.totalCount - 1,
                                 };
                             },
                         },
