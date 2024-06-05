@@ -16,11 +16,10 @@
     ],
     "scripts": {
         "prebuild": "yarn link @integraflow/sdk",
-        "build": "rollup -c",
+        "build": "NODE_ENV=production rollup -c",
         "postbuild": "yarn link",
         "clean": "rimraf -G dist .rollup-cache tsconfig.tsbuildinfo",
         "dev": "rollup -c -w",
-        "dist": "NODE_ENV=production rollup -c",
         "snippet": "tsc -t es5 --outFile dist/snippet.js src/web/snippet.ts && uglifyjs dist/snippet.js -o dist/snippet.js",
         "test": "jest"
     },
