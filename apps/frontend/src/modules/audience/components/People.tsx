@@ -98,7 +98,7 @@ export const People = () => {
                     </TableBody>
                 ) : null}
             </Table>
-            {Object.entries(parsedPersonProperties ?? {}).length ? (
+            {persons?.edges.length ? (
                 <Pagination
                     hasNextPage={persons?.pageInfo.hasNextPage as boolean}
                     hasPrevPage={persons?.pageInfo.hasPreviousPage as boolean}
