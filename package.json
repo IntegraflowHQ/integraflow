@@ -12,7 +12,6 @@
         "packages/*"
     ],
     "scripts": {
-        "semantic-release": "turbo run semantic-release",
         "build": "turbo run build",
         "build:sdk": "turbo run build:sdk",
         "build:types": "tsc --project tsconfig.check.json",
@@ -32,7 +31,10 @@
         "test:update": "yarn test -u",
         "test:watch": "yarn test --watch",
         "test": "jest -w 1",
-        "update:schema": "turbo run generate:schema"
+        "update:schema": "turbo run generate:schema",
+        "changelog": "changeset",
+        "bump": "changeset version",
+        "release": "yarn build && changeset publish"
     },
     "repository": {
         "type": "git",
@@ -58,6 +60,6 @@
         "yarn": "^1.22.19"
     },
     "devDependencies": {
-        "semantic-release": "^21.1.2"
+        "@changesets/cli": "^2.27.5"
     }
 }

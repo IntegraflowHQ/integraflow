@@ -3,11 +3,11 @@ export const htmlInitSnippet = `<script>
     posthog.init('phc_FPmflXhukgTw36iSFGLYDZoR2ZTLSUJDhrFO6aiiGZg',{api_host:'https://app.posthog.com'})
 </script>`;
 
-export const webInstallSnippet = `npm install @integraflow/web
+export const webInstallSnippet = `npm install integraflow-js
 # OR
-yarn add @integraflow/web
+yarn add integraflow-js
 # OR
-pnpm add @integraflow/web`;
+pnpm add integraflow-js`;
 
 export const androidInstall = `dependencies {
     implementation 'com.integraflow.android:integraflow:1.+'

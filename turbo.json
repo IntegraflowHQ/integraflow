@@ -1,10 +1,7 @@
 {
     "$schema": "https://turbo.build/schema.json",
     "pipeline": {
-        "@integraflow/web#semantic-release": {
-            "dependsOn": ["@integraflow/web#build"]
-        },
-        "@integraflow/web#build": {
+        "integraflow-js#build": {
             "dependsOn": ["@integraflow/sdk#build:sdk"],
             "cache": false
         },
@@ -31,11 +28,11 @@
         },
         "@integraflow/codegen-test#build:codegen-test": {},
         "@integraflow/dashboard#build:dashboard": {
-            "dependsOn": ["@integraflow/web#build"],
+            "dependsOn": ["integraflow-js#build"],
             "cache": false
         },
         "@integraflow/survey#build:survey": {
-            "dependsOn": ["@integraflow/web#build"],
+            "dependsOn": ["integraflow-js#build"],
             "cache": false
         },
         "@integraflow/survey#start:survey": {

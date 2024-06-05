@@ -196,8 +196,7 @@ export const LogicGroup = ({ groups, setEditValues, editValues, logicIndex }: Pr
                                                 group.fields.length > 0
                                                     ? group.fields.map((field) => ({
                                                           value: field,
-                                                          label: question?.options?.find((o) => o.id === field)
-                                                              ?.label,
+                                                          label: question?.options?.find((o) => o.id === field)?.label,
                                                       }))
                                                     : []
                                             }
@@ -205,8 +204,7 @@ export const LogicGroup = ({ groups, setEditValues, editValues, logicIndex }: Pr
                                                 ?.find((g) => g.id === group.id)
                                                 ?.fields.map((field) => ({
                                                     value: field,
-                                                    label: question?.options?.find((o) => o.id === field)
-                                                        ?.label,
+                                                    label: question?.options?.find((o) => o.id === field)?.label,
                                                 }))}
                                             onchange={(values: SingleValue<Option> | MultiValue<Option>) => {
                                                 handleUpdateFields(values, group, index);

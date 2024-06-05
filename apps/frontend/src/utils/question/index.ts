@@ -1,6 +1,5 @@
 import { PropertyDefinition, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { CTAType, LogicConditionEnum, LogicOperator, MentionOption, ParsedQuestion, QuestionOption } from "@/types";
-import {} from "@integraflow/web";
 import RatingIcon from "assets/icons/studio/rating.png";
 import ThankYouIcon from "assets/icons/studio/thankyou.png";
 import { addEllipsis, stripHtmlTags } from "..";
