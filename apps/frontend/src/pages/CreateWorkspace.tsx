@@ -55,7 +55,7 @@ const CreateWorkspace = () => {
         },
     });
     const [workspaceError, setWorkspaceError] = useState<string>();
-    const [name] = watch(["workspaceName"]);
+    const [name, url] = watch(["workspaceName", "workspaceUrl"]);
 
     useEffect(() => {
         if (name && !touchedFields.workspaceUrl) {
@@ -66,16 +66,17 @@ const CreateWorkspace = () => {
         }
     }, [name, setValue, touchedFields.workspaceUrl]);
 
+    useEffect(() => {
+        setWorkspaceError("");
+    }, [url]);
+
     const onSubmit = async (formInfo: WorkSpaceData) => {
         const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
         if (formInfo) {
             const input = {
                 name: formInfo.workspaceName,
-                slug: slugify(formInfo.workspaceName, {
-                    lower: true,
-                    remove: /[*+~.()'"!:@]/g,
-                }),
+                slug: formInfo.workspaceUrl,
                 timezone: userTimezone,
             };
 

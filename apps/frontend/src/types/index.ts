@@ -290,6 +290,8 @@ export type Theme = {
     colorScheme: ColorScheme;
 };
 
+export type Properties = Record<string, string | boolean>;
+
 export type UserAttributes = Record<string, string>;
 export type Response = Record<string, SurveyAnswer[]>;
 
@@ -334,4 +336,3 @@ export type DateFilterValue = {
         lte: string;
     };
 };
-export type Properties = Record<string, string>;

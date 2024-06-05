@@ -1,3 +1,5 @@
+import { AudienceIndex } from "@/modules/audience/components";
+
 export const Audience = () => {
-    return <div>Audience</div>;
+    return <AudienceIndex />;
 };

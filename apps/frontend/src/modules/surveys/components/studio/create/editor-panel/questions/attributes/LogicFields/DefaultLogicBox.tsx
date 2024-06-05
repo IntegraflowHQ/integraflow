@@ -140,13 +140,11 @@ export const DefaultLogicBox: React.FC<Props> = ({
                     <div></div>
                     <div className="w-[330px]">
                         <MinMaxSelector
-                            options={
-                                question?.options?.map((option, index) => ({
-                                    value: option.id,
-                                    label: option.label,
-                                    index: index,
-                                })) || []
-                            }
+                            options={question?.options?.map((option, index) => ({
+                                value: option.id,
+                                label: option.label,
+                                index: index,
+                            })) || []}
                             maxChange={handleMaxChange}
                             minChange={handleMinChange}
                         />
