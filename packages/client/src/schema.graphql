@@ -1090,6 +1090,12 @@ Represents an organization.
 """
 type Organization implements Node @doc(category: "Organizations") {
     """
+    Billing usage of the organization.
+
+    Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    """
+    billingUsage: JSONString
+    """
     The ID of the organization.
     """
     id: ID!
@@ -2337,6 +2343,29 @@ type Query {
         last: Int
     ): SurveyQuestionCountableConnection @doc(category: "Surveys")
     """
+    Response insight for a survey.
+
+    Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+    """
+    responseMetric(
+        """
+        Date range for filtering responses.
+        """
+        date: DateRangeInput
+        """
+        The ID of the survey.
+        """
+        id: ID!
+        """
+        The metric to calculate.
+        """
+        metric: SurveyResponseMetricEnum!
+        """
+        Date range for filtering responses.
+        """
+        previousDate: DateRangeInput
+    ): SurveyResponseMetric @doc(category: "Surveys")
+    """
     List of the survey's responses.
 
     Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -2366,6 +2395,10 @@ type Query {
         Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
         """
         last: Int
+        """
+        Sort responses.
+        """
+        sortBy: SurveyResponseSortingInput
     ): SurveyResponseCountableConnection @doc(category: "Surveys")
     """
     Look up a survey by ID or slug.
@@ -3198,6 +3231,63 @@ input SurveyResponseFilterInput @doc(category: "Surveys") {
     status: SurveyResponseStatusEnum
 }
 
+"""
+Represents a survey response metric (e.g. total responses, nps).
+"""
+type SurveyResponseMetric @doc(category: "Surveys") {
+    """
+    The current value.
+    """
+    current: JSONString
+    """
+    The previous value.
+    """
+    previous: JSONString
+}
+
+enum SurveyResponseMetricEnum {
+    AVERAGE_TIME
+    CES
+    COMPLETION_RATE
+    CSAT
+    NPS
+    TOTAL_RESPONSES
+}
+
+enum SurveyResponseSortField @doc(category: "Surveys") {
+    """
+    Sort responses by completed at.
+    """
+    COMPLETED_AT
+    """
+    Sort responses by created at.
+    """
+    CREATED_AT
+    """
+    Sort responses by last modified at.
+    """
+    LAST_MODIFIED_AT
+    """
+    Sort responses by status.
+    """
+    STATUS
+    """
+    Sort responses by time spent.
+    """
+    TIME_SPENT
+}
+
+input SurveyResponseSortingInput @doc(category: "Surveys") {
+    """
+    Specifies the direction in which to sort responses.
+    """
+    direction: OrderDirection!
+    """
+    Sort responses by the selected field.
+    """
+    field: SurveyResponseSortField!
+}
+
 enum SurveyResponseStatusEnum {
     ARCHIVED
     COMPLETED
@@ -3429,7 +3519,7 @@ type User implements Node @doc(category: "Users") {
         """
         By which field should the pagination order by.
         """
-        orderBy: ProjectSortingInput
+        sortBy: ProjectSortingInput
     ): ProjectCountableConnection
 }
 

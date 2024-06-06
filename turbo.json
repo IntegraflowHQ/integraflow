@@ -2,22 +2,22 @@
     "$schema": "https://turbo.build/schema.json",
     "pipeline": {
         "integraflow-js#build": {
-            "dependsOn": ["@integraflow/sdk#build:sdk"],
+            "dependsOn": ["@integraflow/client#build:client"],
             "cache": false
         },
-        "@integraflow/sdk#build:sdk": {
+        "@integraflow/client#build:client": {
             "cache": false
         },
-        "@integraflow/sdk#generate:doc": {
+        "@integraflow/client#generate:doc": {
             "cache": false
         },
-        "@integraflow/sdk#generate:schema": {
+        "@integraflow/client#generate:schema": {
             "cache": false
         },
-        "@integraflow/sdk#generate:sdk": {
+        "@integraflow/client#generate:sdk": {
             "cache": false
         },
-        "@integraflow/sdk#generate:test": {
+        "@integraflow/client#generate:test": {
             "cache": false
         },
         "@integraflow/codegen-doc#build:codegen-doc": {

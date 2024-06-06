@@ -24,7 +24,7 @@ function parseClientOptions({
         ...headers,
         /** Override any user agent with the sdk name and version */
         "User-Agent": serializeUserAgent({
-            [process.env.npm_package_name ?? "@integraflow/sdk"]: process.env.npm_package_version ?? "unknown",
+            [process.env.npm_package_name ?? "@integraflow/client"]: process.env.npm_package_version ?? "unknown",
         }),
     };
 

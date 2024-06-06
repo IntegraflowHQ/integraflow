@@ -580,6 +580,15 @@ fragment BaseSurvey on BaseSurvey {
     createdAt
 }
 
+# Represents a survey response metric (e.g. total responses, nps).
+fragment SurveyResponseMetric on SurveyResponseMetric {
+    __typename
+    # The current value.
+    current
+    # The previous value.
+    previous
+}
+
 # Represents a survey response.
 fragment SurveyResponse on SurveyResponse {
     __typename
@@ -842,6 +851,10 @@ fragment AuthOrganization on AuthOrganization {
 # Represents an organization.
 fragment Organization on Organization {
     __typename
+    # Billing usage of the organization.
+    #
+    # Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
+    billingUsage
     # Member count
     #
     # Requires one of the following permissions: AUTHENTICATED_USER.
@@ -1951,6 +1964,23 @@ query questions(
         ...SurveyQuestionCountableConnection
     }
 }
+# Response insight for a survey.
+#
+# Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+query responseMetric(
+    # Date range for filtering responses.
+    $date: DateRangeInput
+    # The ID of the survey.
+    $id: ID!
+    # The metric to calculate.
+    $metric: SurveyResponseMetricEnum!
+    # Date range for filtering responses.
+    $previousDate: DateRangeInput
+) {
+    responseMetric(date: $date, id: $id, metric: $metric, previousDate: $previousDate) {
+        ...SurveyResponseMetric
+    }
+}
 # List of the survey's responses.
 #
 # Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
@@ -1967,8 +1997,10 @@ query responses(
     $id: ID
     # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
     $last: Int
+    # Sort responses.
+    $sortBy: SurveyResponseSortingInput
 ) {
-    responses(after: $after, before: $before, filter: $filter, first: $first, id: $id, last: $last) {
+    responses(after: $after, before: $before, filter: $filter, first: $first, id: $id, last: $last, sortBy: $sortBy) {
         ...SurveyResponseCountableConnection
     }
 }
@@ -2255,10 +2287,10 @@ query viewer_projects(
     # Retrieve the last n elements from the list. Note that the system only allows fetching a maximum of 100 objects in a single query.
     $last: Int
     # By which field should the pagination order by.
-    $orderBy: ProjectSortingInput
+    $sortBy: ProjectSortingInput
 ) {
     viewer {
-        projects(after: $after, before: $before, first: $first, last: $last, orderBy: $orderBy) {
+        projects(after: $after, before: $before, first: $first, last: $last, sortBy: $sortBy) {
             ...ProjectCountableConnection
         }
     }

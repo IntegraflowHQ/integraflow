@@ -1,12 +1,12 @@
 # Integraflow Codegen Document
 
-This custom [graphql-code-generator](https://graphql-code-generator.com/) plugin takes the Integraflow GraphQL [schema](../sdk/src/schema.graphql) and generates GraphQL [fragments and operations](../sdk/src/_generated_documents.graphql).
+This custom [graphql-code-generator](https://graphql-code-generator.com/) plugin takes the Integraflow GraphQL [schema](../client/src/schema.graphql) and generates GraphQL [fragments and operations](../client/src/_generated_documents.graphql).
 
-Usage in [codegen.doc.yml](../sdk/codegen.doc.yml).
+Usage in [codegen.doc.yml](../client/codegen.doc.yml).
 
 ## Output
 
-The [@integraflow/sdk](../sdk/README.md) uses this code generator [plugin](./src/plugin.ts) to generate:
+The [@integraflow/client](../client/README.md) uses this code generator [plugin](./src/plugin.ts) to generate:
 
 A fragment for each model in the Integraflow API containing:
 - all scalar fields on the model

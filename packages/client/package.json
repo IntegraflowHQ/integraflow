@@ -1,7 +1,7 @@
 {
-    "name": "@integraflow/sdk",
+    "name": "@integraflow/client",
     "private": true,
-    "description": "The Integraflow Client SDK for interacting with the Integraflow GraphQL API",
+    "description": "The Integraflow Client for interacting with the Integraflow GraphQL API",
     "version": "1.0.0",
     "author": "Integraflow <dev@useintegraflow.com>",
     "license": "MIT",
@@ -19,8 +19,8 @@
     ],
     "scripts": {
         "build:clean": "rimraf -G dist .rollup-cache tsconfig.tsbuildinfo",
-        "build:sdk": "run-s build:clean build:rollup",
-        "postbuild:sdk": "yarn link",
+        "build:client": "run-s build:clean build:rollup",
+        "postbuild:client": "yarn link",
         "build:rollup": "rollup -c",
         "generate:changeset:dependencies": "ts-node scripts/generate-dependencies-changeset.ts",
         "generate:changeset:schema": "ts-node scripts/generate-schema-changeset.ts",

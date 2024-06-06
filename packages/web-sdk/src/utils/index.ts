@@ -1,4 +1,4 @@
-import { BaseSurveyCountableConnection, IntegraflowDocument } from "@integraflow/sdk";
+import { BaseSurveyCountableConnection, IntegraflowDocument } from "@integraflow/client";
 import { Audience, LogicOperator, Question, QuestionOption, Survey, SurveySettings, Theme, Trigger } from "../types";
 
 export function onDOMReady(fn: () => void) {

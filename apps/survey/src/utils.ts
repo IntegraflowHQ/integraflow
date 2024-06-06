@@ -1,4 +1,4 @@
-import { BaseSurvey, IntegraflowDocument } from "@integraflow/sdk";
+import { BaseSurvey, IntegraflowDocument } from "@integraflow/client";
 import { Audience, Question, QuestionOption, Survey, SurveySettings, Theme, Trigger } from "integraflow-js";
 
 export const parsedSurveys = (

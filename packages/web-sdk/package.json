@@ -15,12 +15,11 @@
         "dist"
     ],
     "scripts": {
-        "prebuild": "yarn link @integraflow/sdk",
-        "build": "rollup -c",
+        "prebuild": "yarn link @integraflow/client",
+        "build": "NODE_ENV=production rollup -c",
         "postbuild": "yarn link",
         "clean": "rimraf -G dist .rollup-cache tsconfig.tsbuildinfo",
         "dev": "rollup -c -w",
-        "dist": "NODE_ENV=production rollup -c",
         "snippet": "tsc -t es5 --outFile dist/snippet.js src/web/snippet.ts && uglifyjs dist/snippet.js -o dist/snippet.js",
         "test": "jest"
     },
@@ -45,7 +44,7 @@
     "homepage": "https://github.com/IntegraflowHQ/integraflow#readme",
     "devDependencies": {
         "@babel/preset-react": "^7.23.3",
-        "@integraflow/sdk": "*",
+        "@integraflow/client": "*",
         "@rollup/plugin-babel": "^6.0.0",
         "@rollup/plugin-commonjs": "^17.1.0",
         "@rollup/plugin-node-resolve": "^11.2.0",

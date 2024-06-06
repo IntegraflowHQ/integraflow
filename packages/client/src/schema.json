@@ -4163,6 +4163,18 @@
                         },
                         "isDeprecated": false,
                         "deprecationReason": null
+                    },
+                    {
+                        "name": "billingUsage",
+                        "description": "Billing usage of the organization.\n\nRequires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
                     }
                 ],
                 "inputFields": null,
@@ -8566,6 +8578,18 @@
                                 "deprecationReason": null
                             },
                             {
+                                "name": "sortBy",
+                                "description": "Sort responses.",
+                                "type": {
+                                    "kind": "INPUT_OBJECT",
+                                    "name": "SurveyResponseSortingInput",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
                                 "name": "before",
                                 "description": "Return the elements in the list that come before the specified cursor.",
                                 "type": {
@@ -8617,6 +8641,75 @@
                         "type": {
                             "kind": "OBJECT",
                             "name": "SurveyResponseCountableConnection",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "responseMetric",
+                        "description": "Response insight for a survey.\n\nRequires one of the following permissions: PROJECT_MEMBER_ACCESS.",
+                        "args": [
+                            {
+                                "name": "id",
+                                "description": "The ID of the survey.",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "ID",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "metric",
+                                "description": "The metric to calculate.",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "ENUM",
+                                        "name": "SurveyResponseMetricEnum",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "date",
+                                "description": "Date range for filtering responses.",
+                                "type": {
+                                    "kind": "INPUT_OBJECT",
+                                    "name": "DateRangeInput",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            },
+                            {
+                                "name": "previousDate",
+                                "description": "Date range for filtering responses.",
+                                "type": {
+                                    "kind": "INPUT_OBJECT",
+                                    "name": "DateRangeInput",
+                                    "ofType": null
+                                },
+                                "defaultValue": null,
+                                "isDeprecated": false,
+                                "deprecationReason": null
+                            }
+                        ],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "SurveyResponseMetric",
                             "ofType": null
                         },
                         "isDeprecated": false,
@@ -12237,6 +12330,172 @@
                 "possibleTypes": null
             },
             {
+                "kind": "OBJECT",
+                "name": "SurveyResponseMetric",
+                "description": "Represents a survey response metric (e.g. total responses, nps).",
+                "fields": [
+                    {
+                        "name": "current",
+                        "description": "The current value.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "previous",
+                        "description": "The previous value.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "JSONString",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "ENUM",
+                "name": "SurveyResponseMetricEnum",
+                "description": null,
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": [
+                    {
+                        "name": "TOTAL_RESPONSES",
+                        "description": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "COMPLETION_RATE",
+                        "description": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "AVERAGE_TIME",
+                        "description": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "NPS",
+                        "description": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "CSAT",
+                        "description": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "CES",
+                        "description": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "possibleTypes": null
+            },
+            {
+                "kind": "ENUM",
+                "name": "SurveyResponseSortField",
+                "description": null,
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": [
+                    {
+                        "name": "STATUS",
+                        "description": "Sort responses by status.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "CREATED_AT",
+                        "description": "Sort responses by created at.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "LAST_MODIFIED_AT",
+                        "description": "Sort responses by last modified at.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "COMPLETED_AT",
+                        "description": "Sort responses by completed at.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "TIME_SPENT",
+                        "description": "Sort responses by time spent.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "possibleTypes": null
+            },
+            {
+                "kind": "INPUT_OBJECT",
+                "name": "SurveyResponseSortingInput",
+                "description": null,
+                "fields": null,
+                "inputFields": [
+                    {
+                        "name": "direction",
+                        "description": "Specifies the direction in which to sort responses.",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "ENUM",
+                                "name": "OrderDirection",
+                                "ofType": null
+                            }
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "field",
+                        "description": "Sort responses by the selected field.",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "ENUM",
+                                "name": "SurveyResponseSortField",
+                                "ofType": null
+                            }
+                        },
+                        "defaultValue": null,
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "interfaces": null,
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
                 "kind": "ENUM",
                 "name": "SurveyResponseStatusEnum",
                 "description": null,
@@ -12968,7 +13227,7 @@
                         "description": "Projects the user has access to.\n\nRequires one of the following permissions: AUTHENTICATED_USER.",
                         "args": [
                             {
-                                "name": "orderBy",
+                                "name": "sortBy",
                                 "description": "By which field should the pagination order by.",
                                 "type": {
                                     "kind": "INPUT_OBJECT",
