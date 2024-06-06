@@ -2,4 +2,5 @@
 "integraflow-js": patch
 ---
 
-Minify build
+- Minify build
+- Rename `@integraflow/sdk` to `@integraflow/client`
