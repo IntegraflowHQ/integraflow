@@ -1,4 +1,4 @@
-import { IntegraflowError, IntegraflowErrorType } from "@integraflow/sdk";
+import { IntegraflowError, IntegraflowErrorType } from "@integraflow/client";
 import { Event, EventProperties, ID, QueuedRequest, SurveyAnswer, UserAttributes } from "../types";
 import { getEventAttributes, getUserAttributes, onDOMReady, parsedSurveys, uuidv4 } from "../utils";
 import { Context } from "./context";
@@ -203,7 +203,7 @@ export class SyncManager {
                 surveyId,
                 userId: typeof state.user?.id === "number" ? String(state.user?.id) : state.user?.id,
                 attributes: JSON.stringify(state.user ?? {}),
-                startedAt: new Date(),
+                startedAt: new Date()
             }
         });
     }

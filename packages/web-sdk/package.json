@@ -15,7 +15,7 @@
         "dist"
     ],
     "scripts": {
-        "prebuild": "yarn link @integraflow/sdk",
+        "prebuild": "yarn link @integraflow/client",
         "build": "NODE_ENV=production rollup -c",
         "postbuild": "yarn link",
         "clean": "rimraf -G dist .rollup-cache tsconfig.tsbuildinfo",
@@ -44,7 +44,7 @@
     "homepage": "https://github.com/IntegraflowHQ/integraflow#readme",
     "devDependencies": {
         "@babel/preset-react": "^7.23.3",
-        "@integraflow/sdk": "*",
+        "@integraflow/client": "*",
         "@rollup/plugin-babel": "^6.0.0",
         "@rollup/plugin-commonjs": "^17.1.0",
         "@rollup/plugin-node-resolve": "^11.2.0",

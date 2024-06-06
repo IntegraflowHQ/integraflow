@@ -1,4 +1,4 @@
-import { IntegraflowClient } from "@integraflow/sdk";
+import { IntegraflowClient } from "@integraflow/client";
 import { Configuration, Listeners, State, Survey } from "../types";
 
 type SdkEventType = "eventTracked" | "audienceUpdated";

@@ -1,6 +1,6 @@
 import SurveyCompleted from "@/components/SurveyCompleted";
 import { parsedSurveys } from "@/utils";
-import { IntegraflowClient } from "@integraflow/sdk";
+import { IntegraflowClient } from "@integraflow/client";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Error from "next/error";
 import { Inter } from "next/font/google";
