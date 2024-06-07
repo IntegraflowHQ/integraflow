@@ -63,7 +63,7 @@ export const EmailWorkspaceInvitation = () => {
                         Redefine customer experience with organic feedback and behavioral data in real-time. Enjoy
                         intuitive designs, open source surveys, advanced analytics, seamless collaboration on the go.
                     </p>
-                    <hr className="border border-[.3px] border-intg-text" />
+                    <hr className="border-[.3px] border-intg-text" />
                     <p>
                         To accept the invitation, please login as
                         <br />
