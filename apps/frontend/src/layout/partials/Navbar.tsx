@@ -125,7 +125,17 @@ export const Navbar = () => {
                                 </DropdownMenuGroup>
                                 <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem className="flex cursor-pointer items-center space-x-2 px-3 py-2 text-sm">
+                                    <DropdownMenuItem
+                                        onClick={() =>
+                                            navigate(
+                                                ROUTES.WORKSPACE_SETTINGS_PROJECT.replace(
+                                                    ":orgSlug",
+                                                    workspace?.slug as string,
+                                                ).replace(":projectSlug", project?.slug as string),
+                                            )
+                                        }
+                                        className="flex cursor-pointer items-center space-x-2 px-3 py-2 text-sm"
+                                    >
                                         <span>
                                             <SettingsIcon />
                                         </span>

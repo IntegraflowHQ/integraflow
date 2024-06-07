@@ -12,4 +12,5 @@ export enum ROUTES {
     GET_STARTED = "/:orgSlug/projects/:projectSlug/get-started",
     WORKSPACE_SETTINGS = "/:orgSlug/projects/:projectSlug/settings",
     WORKSPACE_SETTINGS_PROFILE = "/:orgSlug/projects/:projectSlug/settings/profile",
+    WORKSPACE_SETTINGS_PROJECT = "/:orgSlug/projects/:projectSlug/settings/project",
 }
