@@ -7,7 +7,7 @@ import { useProject } from "@/modules/projects/hooks/useProject";
 import { WorkspaceInvite } from "@/modules/workspace/components/invite/WorkspaceInvite";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { ROUTES } from "@/routes";
-import { Button, ProgressRadial } from "@/ui";
+import { AcronymBox, Button, ProgressRadial } from "@/ui";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,7 +16,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/ui/Dropdown/DropdownMenu";
-import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
 import { NavItem } from "@/ui/NavItem/NavItem";
 import { NavLink } from "@/ui/NavItem/NavLink";
 import { CheckCircleIcon, CirclePlusIcon, CursorIcon, DocumentIcon, PeopleIcon, SettingsIcon } from "@/ui/icons";
@@ -91,7 +90,7 @@ export const Navbar = () => {
                             <DropdownMenuTrigger className="w-[177px] select-none outline-none">
                                 <NavItem
                                     text={project?.name as string}
-                                    leftIcon={<AcronynmBox text={project?.name as string} />}
+                                    leftIcon={<AcronymBox text={project?.name as string} />}
                                     rightIcon={<ChevronDown size={16} />}
                                     classnames="w-[181px]"
                                     ellipsis={true}
@@ -112,7 +111,7 @@ export const Navbar = () => {
                                                 }}
                                             >
                                                 <NavItem
-                                                    leftIcon={<AcronynmBox text={item?.name ?? ""} />}
+                                                    leftIcon={<AcronymBox text={item?.name ?? ""} />}
                                                     text={item?.name}
                                                     rightIcon={item?.slug === project?.slug && <CheckCircleIcon />}
                                                     ellipsis={true}

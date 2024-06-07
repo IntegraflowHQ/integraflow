@@ -2,8 +2,7 @@ import { OrganizationInviteDetails } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { ExpiredInviteLink } from "@/modules/workspace/components/invite/ExpiredInviteLink";
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
-import { Button, GlobalSpinner, Screen } from "@/ui";
-import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
+import { AcronymBox, Button, GlobalSpinner, Screen } from "@/ui";
 import { getAcronym } from "@/utils";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -53,7 +52,7 @@ export const EmailWorkspaceInvitation = () => {
             <div className="flex h-[calc(100%-5rem)] w-full items-center justify-between">
                 <div className="m-auto w-1/2 space-y-4 rounded-md bg-intg-bg-4 p-8 text-center text-intg-text lg:w-1/2">
                     <div className="m-auto w-fit">
-                        <AcronynmBox size="md" text={getAcronym(inviteDetails?.organizationName ?? "")} />
+                        <AcronymBox size="md" text={getAcronym(inviteDetails?.organizationName ?? "")} />
                     </div>
                     <p className="text-center text-3xl font-semibold text-white">
                         <span>{inviteDetails?.inviter} invited you to</span>

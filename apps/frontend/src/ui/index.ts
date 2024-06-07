@@ -4,7 +4,7 @@ export { ComingSoon } from "./ComingSoon";
 export { Dialog, DialogContent, DialogTrigger } from "./Dialog/Dialog";
 export * from "./Dropdown/DropdownMenu";
 export { Info } from "./Info";
-export { AcronynmBox } from "./NavItem/AcronynmBox";
+export { AcronymBox } from "./NavItem/AcronymBox";
 export { NavItem } from "./NavItem/NavItem";
 export { NavLink } from "./NavItem/NavLink";
 export { Pagination } from "./Pagination";
