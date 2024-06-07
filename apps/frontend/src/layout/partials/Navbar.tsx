@@ -23,7 +23,7 @@ import { cn } from "@/utils";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export const Navbar = () => {
     const { user, switchProject } = useAuth();
@@ -34,6 +34,7 @@ export const Navbar = () => {
     const { completionRate: onboardingCompletionRate } = useOnboarding();
 
     const location = useLocation();
+    const navigate = useNavigate();
 
     const isActive = (path: string) => {
         return location.pathname === path;
@@ -149,7 +150,16 @@ export const Navbar = () => {
                         />
                     </div>
                     <div className="space-y-[27px] pb-[24px]">
-                        <button className="flex items-center justify-between gap-2 rounded border border-intg-bg-4 bg-intg-bg-9 p-3 text-sm text-intg-text-4">
+                        <button
+                            onClick={() =>
+                                navigate(
+                                    `${ROUTES.SURVEY_LIST}/?create=2`
+                                        .replace(":orgSlug", workspace?.slug as string)
+                                        .replace(":projectSlug", project?.slug as string),
+                                )
+                            }
+                            className="flex items-center justify-between gap-2 rounded border border-intg-bg-4 bg-intg-bg-9 p-3 text-sm text-intg-text-4"
+                        >
                             <span>
                                 <DocumentIcon />
                             </span>

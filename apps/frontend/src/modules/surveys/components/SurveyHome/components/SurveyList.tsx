@@ -7,7 +7,7 @@ import * as Popover from "@radix-ui/react-popover";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
 import { Archive, ClipboardCheck, Edit, MoreHorizontal, PauseCircle, Radio, Trash2 } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import SurveyCreate from "../../SurveyCreate";
 import CreateSurveyButton from "../../partials/CreateSurveyButton";
@@ -26,6 +26,7 @@ export const SurveyList = () => {
     const navigate = useNavigate();
     const { orgSlug, projectSlug } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
+    const [openCreateSurvey, setOpenCreateSurvey] = useState(false);
 
     const { createSurvey, creatingSurvey, updateSurvey, deleteSurvey, loading, getMoreSurveys, surveyList } =
         useSurvey();
@@ -44,7 +45,11 @@ export const SurveyList = () => {
             createSurvey();
             setSearchParams({});
         }
-    }, []);
+        if (searchParams.get("create") === "2") {
+            setSearchParams({});
+            setOpenCreateSurvey(true);
+        }
+    }, [searchParams]);
 
     const handleGetSurvey = (slug: string) => {
         navigate(
@@ -74,7 +79,11 @@ export const SurveyList = () => {
             <div className="flex justify-between">
                 <p className="py-2 text-xl font-normal">Surveys</p>
 
-                <Dialog defaultOpen={searchParams.get("create") === "1"}>
+                <Dialog
+                    defaultOpen={searchParams.get("create") === "1"}
+                    open={openCreateSurvey}
+                    onOpenChange={(open) => setOpenCreateSurvey(open)}
+                >
                     <DialogTrigger asChild>
                         <div>
                             <CreateSurveyButton />
