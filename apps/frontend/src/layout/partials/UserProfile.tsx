@@ -104,7 +104,7 @@ export const UserProfile = () => {
                         />
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
-                    <DropdownMenuSubContent className="ml-4 w-[221px] rounded bg-intg-bg-9 px-2 py-4 text-intg-text">
+                    <DropdownMenuSubContent className="ml-4 max-h-[510px] w-[221px] overflow-y-scroll rounded bg-intg-bg-9 px-2 py-4 text-intg-text">
                         <DropdownMenuLabel>
                             <p className="mb-2 text-xs">OTHER WORKSPACES</p>
                         </DropdownMenuLabel>
@@ -120,7 +120,11 @@ export const UserProfile = () => {
                                         );
                                     }}
                                 >
-                                    <NavItem text={item?.name} leftIcon={<AcronymBox text={item?.name ?? ""} />} />
+                                    <NavItem
+                                        classnames="p-0"
+                                        text={item?.name}
+                                        leftIcon={<AcronymBox text={item?.name ?? ""} />}
+                                    />
                                 </DropdownMenuItem>
                             );
                         })}
