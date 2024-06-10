@@ -1,5 +1,11 @@
 # integraflow-js
 
+## 0.0.3
+
+### Patch Changes
+
+- 5d8a460: Fix event capture
+
 ## 0.0.2
 
 ### Patch Changes
