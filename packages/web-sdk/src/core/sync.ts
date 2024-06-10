@@ -149,11 +149,13 @@ export class SyncManager {
             batchKey: `captureEvent:${event.uuid}`,
             timestamp: new Date().getTime(),
             payload: {
-                ...event,
-                timestamp: new Date(event.timestamp),
-                userId: typeof state.user?.id === "number" ? String(state.user?.id) : state.user?.id,
-                properties: JSON.stringify(event.properties ?? {}),
-                attributes: JSON.stringify(state.user ?? {})
+                input: {
+                    ...event,
+                    timestamp: new Date(event.timestamp),
+                    userId: typeof state.user?.id === "number" ? String(state.user?.id) : state.user?.id,
+                    properties: JSON.stringify(event.properties ?? {}),
+                    attributes: JSON.stringify(state.user ?? {})
+                }
             }
         });
 
