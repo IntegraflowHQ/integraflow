@@ -7,7 +7,7 @@ import { useProject } from "@/modules/projects/hooks/useProject";
 import { WorkspaceInvite } from "@/modules/workspace/components/invite/WorkspaceInvite";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { ROUTES } from "@/routes";
-import { Button, ProgressRadial } from "@/ui";
+import { AcronymBox, Button, ProgressRadial } from "@/ui";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,7 +16,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/ui/Dropdown/DropdownMenu";
-import { AcronynmBox } from "@/ui/NavItem/AcronynmBox";
 import { NavItem } from "@/ui/NavItem/NavItem";
 import { NavLink } from "@/ui/NavItem/NavLink";
 import { CheckCircleIcon, CirclePlusIcon, CursorIcon, DocumentIcon, PeopleIcon, SettingsIcon } from "@/ui/icons";
@@ -24,7 +23,7 @@ import { cn } from "@/utils";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export const Navbar = () => {
     const { user, switchProject } = useAuth();
@@ -35,6 +34,7 @@ export const Navbar = () => {
     const { completionRate: onboardingCompletionRate } = useOnboarding();
 
     const location = useLocation();
+    const navigate = useNavigate();
 
     const isActive = (path: string) => {
         return location.pathname === path;
@@ -91,7 +91,7 @@ export const Navbar = () => {
                             <DropdownMenuTrigger className="w-[177px] select-none outline-none">
                                 <NavItem
                                     text={project?.name as string}
-                                    leftIcon={<AcronynmBox text={project?.name as string} />}
+                                    leftIcon={<AcronymBox text={project?.name as string} />}
                                     rightIcon={<ChevronDown size={16} />}
                                     classnames="w-[181px]"
                                     ellipsis={true}
@@ -112,7 +112,7 @@ export const Navbar = () => {
                                                 }}
                                             >
                                                 <NavItem
-                                                    leftIcon={<AcronynmBox text={item?.name ?? ""} />}
+                                                    leftIcon={<AcronymBox text={item?.name ?? ""} />}
                                                     text={item?.name}
                                                     rightIcon={item?.slug === project?.slug && <CheckCircleIcon />}
                                                     ellipsis={true}
@@ -125,7 +125,17 @@ export const Navbar = () => {
                                 </DropdownMenuGroup>
                                 <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem className="flex cursor-pointer items-center space-x-2 px-3 py-2 text-sm">
+                                    <DropdownMenuItem
+                                        onClick={() =>
+                                            navigate(
+                                                ROUTES.WORKSPACE_SETTINGS_PROJECT.replace(
+                                                    ":orgSlug",
+                                                    workspace?.slug as string,
+                                                ).replace(":projectSlug", project?.slug as string),
+                                            )
+                                        }
+                                        className="flex cursor-pointer items-center space-x-2 px-3 py-2 text-sm"
+                                    >
                                         <span>
                                             <SettingsIcon />
                                         </span>
@@ -150,7 +160,16 @@ export const Navbar = () => {
                         />
                     </div>
                     <div className="space-y-[27px] pb-[24px]">
-                        <button className="flex items-center justify-between gap-2 rounded border border-intg-bg-4 bg-intg-bg-9 p-3 text-sm text-intg-text-4">
+                        <button
+                            onClick={() =>
+                                navigate(
+                                    `${ROUTES.SURVEY_LIST}/?create=2`
+                                        .replace(":orgSlug", workspace?.slug as string)
+                                        .replace(":projectSlug", project?.slug as string),
+                                )
+                            }
+                            className="flex items-center justify-between gap-2 rounded border border-intg-bg-4 bg-intg-bg-9 p-3 text-sm text-intg-text-4"
+                        >
                             <span>
                                 <DocumentIcon />
                             </span>

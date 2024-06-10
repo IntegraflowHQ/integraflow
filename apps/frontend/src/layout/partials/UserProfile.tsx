@@ -2,7 +2,7 @@ import { ChevronDown } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
-import { AcronynmBox, Button, NavItem, NavLink } from "@/ui";
+import { AcronymBox, Button, NavItem, NavLink } from "@/ui";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -98,7 +98,7 @@ export const UserProfile = () => {
                         <NavItem
                             uppercase={true}
                             text={workspace?.name}
-                            leftIcon={<AcronynmBox text={workspace?.name as string} />}
+                            leftIcon={<AcronymBox text={workspace?.name as string} />}
                             rightIcon={<CheckCircleIcon />}
                             classnames="px-3 py-2 my-3 uppercase"
                         />
@@ -120,7 +120,7 @@ export const UserProfile = () => {
                                         );
                                     }}
                                 >
-                                    <NavItem text={item?.name} leftIcon={<AcronynmBox text={item?.name ?? ""} />} />
+                                    <NavItem text={item?.name} leftIcon={<AcronymBox text={item?.name ?? ""} />} />
                                 </DropdownMenuItem>
                             );
                         })}

@@ -1,5 +1,7 @@
 import { Dialog, DialogContent, DialogTrigger, GlobalSpinner, Header } from "@/ui";
 import { Document } from "@/ui/icons";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useSurvey } from "../../hooks/useSurvey";
 import SurveyCreate from "../SurveyCreate";
 import CreateSurveyButton from "../partials/CreateSurveyButton";
@@ -7,6 +9,20 @@ import { SurveyList } from "./components/SurveyList";
 
 export default function SurveyHome() {
     const { surveyList, loading, createSurvey, creatingSurvey } = useSurvey();
+
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const [openCreateSurvey, setOpenCreateSurvey] = useState(false);
+
+    useEffect(() => {
+        if (!searchParams) {
+            return;
+        }
+        if (searchParams.get("create") === "2") {
+            setSearchParams({});
+            setOpenCreateSurvey(true);
+        }
+    }, [searchParams]);
 
     if (loading) {
         return <GlobalSpinner />;
@@ -28,7 +44,7 @@ export default function SurveyHome() {
                                 className="text-center"
                             />
 
-                            <Dialog>
+                            <Dialog open={openCreateSurvey} onOpenChange={(open) => setOpenCreateSurvey(open)}>
                                 <DialogTrigger asChild>
                                     <div>
                                         <CreateSurveyButton />
