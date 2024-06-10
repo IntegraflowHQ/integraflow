@@ -2,13 +2,13 @@ import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { surveyTypes } from "@/modules/surveys/components/Templates";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
+import { CTAType } from "@/types";
 import { Button } from "@/ui";
 import { cn } from "@/utils";
 import { getDefaultValues } from "@/utils/question/defaultOptions";
 import { questionTypes } from "@/utils/survey";
-import { CTAType } from "@/types";
 import { PlusCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { useScrollToBottom } from "react-scroll-to-bottom";
 
 export const QuestionOptions = () => {
@@ -18,6 +18,7 @@ export const QuestionOptions = () => {
     const [welcomeMessageExists, setWelcomeMessageExists] = useState(false);
     const [thankYouMessageExists, setThankYouMessageExists] = useState(false);
     const { createQuestion } = useQuestion();
+    const questionTypesRef: RefObject<HTMLDivElement> = useRef(null);
 
     useEffect(() => {
         const welcomeMessage = parsedQuestions.find((question) => question.settings?.type === CTAType.NEXT);
@@ -26,6 +27,18 @@ export const QuestionOptions = () => {
         );
         setWelcomeMessageExists(!!welcomeMessage);
         setThankYouMessageExists(!!thankYouMessage);
+
+        const handleClickOutside = (event: MouseEvent) => {
+            if (questionTypesRef.current && !questionTypesRef.current.contains(event.target as Node)) {
+                setShowQuestionTypes(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
     }, [parsedQuestions]);
 
     const scrollToBottom = useScrollToBottom();
@@ -61,7 +74,7 @@ export const QuestionOptions = () => {
     };
 
     return (
-        <div className="space-y-2">
+        <div className="space-y-2" ref={questionTypesRef}>
             <div className="flex gap-2">
                 <Button
                     className="flex items-center gap-2 px-[12px] py-[12px]"
