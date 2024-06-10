@@ -27,7 +27,9 @@ export const QuestionOptions = () => {
         );
         setWelcomeMessageExists(!!welcomeMessage);
         setThankYouMessageExists(!!thankYouMessage);
+    }, [parsedQuestions]);
 
+    useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (questionTypesRef.current && !questionTypesRef.current.contains(event.target as Node)) {
                 setShowQuestionTypes(false);
@@ -39,7 +41,7 @@ export const QuestionOptions = () => {
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [parsedQuestions]);
+    }, []);
 
     const scrollToBottom = useScrollToBottom();
 
