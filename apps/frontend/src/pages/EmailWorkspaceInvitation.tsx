@@ -3,43 +3,45 @@ import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { ExpiredInviteLink } from "@/modules/workspace/components/invite/ExpiredInviteLink";
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
 import { AcronymBox, Button, GlobalSpinner, Screen } from "@/ui";
-import { getAcronym } from "@/utils";
+import { getAcronym, parseInviteLink } from "@/utils";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const EmailWorkspaceInvitation = () => {
-    const { inviteLink } = useParams();
     const { loading, getInviteDetails, joinWorkspace } = useWorkspaceInvite();
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const inviteLink = parseInviteLink(window.location.pathname);
 
     const [inviteDetails, setInviteDetails] = useState<OrganizationInviteDetails>();
+    const [ready, setReady] = useState(false);
 
     useEffect(() => {
         const fetchInviteDetails = async () => {
-            const response = await getInviteDetails(window.location.href);
+            const response = await getInviteDetails(inviteLink);
             if (response) {
                 setInviteDetails(response as OrganizationInviteDetails);
             }
+            setReady(true);
         };
 
         fetchInviteDetails();
-    }, [getInviteDetails, inviteLink]);
+    }, []);
 
     const handleAcceptInvitation = async () => {
         if (!user) {
-            navigate(`/?email=${inviteDetails?.email}&inviteLink=${window.location.pathname}`);
+            navigate(`/?email=${inviteDetails?.email}&inviteLink=${inviteLink}`);
             return;
         } else if (user?.email !== inviteDetails?.email) {
             await logout();
-            navigate(`/?email=${inviteDetails?.email}&inviteLink=${window.location.pathname}`);
+            navigate(`/?email=${inviteDetails?.email}&inviteLink=${inviteLink}`);
             return;
         } else if (user?.email === inviteDetails?.email) {
-            await joinWorkspace(window.location.pathname);
+            await joinWorkspace(inviteLink);
         }
     };
 
-    if (loading) {
+    if (loading || !ready) {
         return <GlobalSpinner />;
     }
 
