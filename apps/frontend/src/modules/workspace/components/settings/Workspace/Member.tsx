@@ -1,9 +1,9 @@
 import { WorkspaceInvite } from "@/modules/workspace/components/invite/WorkspaceInvite";
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
 import { Button, TextInput } from "@/ui";
-import { PlusCircle, Search } from "@/ui/icons";
+import { Copy, PlusCircle, Search } from "@/ui/icons";
 import { addEllipsis, copyToClipboard } from "@/utils";
-import { CopyIcon, RefreshCcwIcon } from "lucide-react";
+import { RefreshCcwIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { InviteList } from "./components/InviteList";
 import { MemberList } from "./components/MemberList";
@@ -43,23 +43,23 @@ export const Member = () => {
                 </div>
 
                 <div className="flex w-full items-end gap-2">
-                    <div className="w-[75%]">
+                    <div className="flex-1">
                         <TextInput
                             placeholder=""
                             value={addEllipsis(inviteLink, 60)}
                             disabled={true}
                             rightIcon={
                                 <button disabled={loading} onClick={handleInviteLinkRefresh}>
-                                    <RefreshCcwIcon size={20} className={loading ? "spinner__circle" : ""} />
+                                    <RefreshCcwIcon size={16} className={loading ? "spinner__circle" : ""} />
                                 </button>
                             }
                         />
                     </div>
-                    <div className="w-[25%]">
+                    <div>
                         <Button
                             text="Copy"
-                            className="text-sm"
-                            icon={<CopyIcon size={16} />}
+                            className=" h-[50px] w-[92px] p-3 text-sm"
+                            icon={<Copy color="#FFFFFF" />}
                             textAlign="center"
                             onClick={() => copyToClipboard(inviteLink, "Invite link copied to clipboard")}
                         />
@@ -71,7 +71,7 @@ export const Member = () => {
                 <div>
                     <h3 className="font-semibold">Manage members</h3>
                     <p className="text-sm">
-                        Invite others to your project to collaborate together in intergraflow. An invite is specific to
+                        Invite others to your project to collaborate together in integraflow. An invite is specific to
                         an email address and expires after 3 days.
                     </p>
                 </div>
@@ -86,7 +86,11 @@ export const Member = () => {
                         />
                     </div>
                     <div>
-                        <Button className="flex items-center gap-2 " size="md" onClick={() => setOpenInviteModal(true)}>
+                        <Button
+                            className="flex items-center gap-2 text-sm"
+                            size="md"
+                            onClick={() => setOpenInviteModal(true)}
+                        >
                             <span>
                                 <PlusCircle />
                             </span>
