@@ -4,6 +4,9 @@ const config: Config = {
     content: ["./src/**/*.{html,js,jsx,ts,tsx,mdx}", "../../node_modules/@tremor/**/*.{js,ts,jsx,tsx}"],
     theme: {
         extend: {
+            screens: {
+                "3xl": "1920px",
+            },
             colors: {
                 intg: {
                     bg: {

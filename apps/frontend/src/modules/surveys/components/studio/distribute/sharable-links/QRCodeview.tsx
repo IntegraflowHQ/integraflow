@@ -48,13 +48,17 @@ export default function QRCodeView({ url, name }: { url: string; name: string })
     };
 
     return (
-        <div className="flex w-[600px] flex-col items-center gap-8 pt-8">
-            <div className="rounded-[18.584px] bg-intg-bg-15 p-10" id={id}>
+        <div className="3xl:w-[778px] flex w-[600px] flex-col items-center gap-8 pt-8">
+            <div className="3xl:p-10 rounded-[18.584px] bg-intg-bg-15 p-5" id={id}>
                 <QRCode
                     value={url}
-                    className="bg-transparent"
-                    size={210}
+                    className="3xl:size-[397px] size-[250px] bg-transparent"
                     strokeWidth={1}
+                    size={397}
+                    style={{
+                        height: undefined,
+                        width: undefined,
+                    }}
                     bgColor="#00000000"
                     fgColor="#FFFFFF"
                 />
