@@ -23,6 +23,7 @@ import { AUTH_EXEMPT, EMAIL_REGEX } from "@/constants";
 import { useIsMatchingLocation } from "@/hooks";
 import { ROUTES } from "@/routes";
 import { GlobalSpinner } from "@/ui";
+import { parseInviteLink } from "@/utils";
 import { NormalizedCacheObject } from "@apollo/client";
 import { DeepPartial } from "@apollo/client/utilities";
 import { Navigate, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
@@ -149,7 +150,9 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
     const handleGenerateMagicLink = useCallback(
         async (email: string, inviteLink?: string) => {
             try {
-                const { errors, data } = await emailAuthChallenge({ variables: { email, inviteLink } });
+                const { errors, data } = await emailAuthChallenge({
+                    variables: { email, inviteLink: inviteLink ? parseInviteLink(inviteLink) : undefined },
+                });
                 if (errors) {
                     handleError(errors[0].message);
                     return false;
@@ -172,7 +175,9 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
     const handleAuthenticateWithMagicLink = useCallback(
         async (email: string, code: string, inviteLink?: string) => {
             try {
-                const { errors, data } = await verifyAuthToken({ variables: { email, token: code, inviteLink } });
+                const { errors, data } = await verifyAuthToken({
+                    variables: { email, token: code, inviteLink: inviteLink ? parseInviteLink(inviteLink) : undefined },
+                });
                 if (errors) {
                     handleError(errors[0].message);
                     return;
@@ -462,7 +467,9 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
             !refreshToken &&
             !locationMatch(ROUTES.LOGIN) &&
             !locationMatch(ROUTES.SIGNUP) &&
-            !locationMatch(ROUTES.MAGIC_SIGN_IN)
+            !locationMatch(ROUTES.MAGIC_SIGN_IN) &&
+            !locationMatch(ROUTES.ACCEPT_EMAIL_WORKSPACE_INVITE) &&
+            !locationMatch(ROUTES.ACCEPT_LINK_WORKSPACE_INVITE)
         ) {
             handleLogout();
             navigate(ROUTES.LOGIN);

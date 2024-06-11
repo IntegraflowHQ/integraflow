@@ -16,6 +16,7 @@ import {
 } from "@/generated/graphql";
 
 import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { parseInviteLink } from "@/utils";
 
 export const useWorkspaceInvite = () => {
     const { switchWorkspace } = useAuth();
@@ -36,7 +37,7 @@ export const useWorkspaceInvite = () => {
         async (inviteLink: string) => {
             try {
                 const response = await getInviteDetails({
-                    variables: { inviteLink },
+                    variables: { inviteLink: parseInviteLink(inviteLink) },
                 });
 
                 return response.data?.organizationInviteDetails;
@@ -81,7 +82,7 @@ export const useWorkspaceInvite = () => {
             try {
                 const response = await joinOrganization({
                     variables: {
-                        input: { inviteLink },
+                        input: { inviteLink: parseInviteLink(inviteLink) },
                     },
                 });
 

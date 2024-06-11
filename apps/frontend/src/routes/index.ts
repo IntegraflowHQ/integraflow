@@ -2,6 +2,8 @@ export enum ROUTES {
     LOGIN = "",
     MAGIC_SIGN_IN = "/auth/magic-sign-in/",
     SIGNUP = "signup",
+    ACCEPT_EMAIL_WORKSPACE_INVITE = "/invite/:inviteId/accept/",
+    ACCEPT_LINK_WORKSPACE_INVITE = "/:workspaceName/join/:inviteLink",
     CREATE_WORKSPACE = "/create-workspace",
     HOME = "/:orgSlug/projects/:projectSlug",
     AUDIENCE = "/:orgSlug/projects/:projectSlug/audience",

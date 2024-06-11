@@ -5,7 +5,7 @@ import { Link, createSearchParams, useNavigate } from "react-router-dom";
 
 import { Button, TextInput } from "@/ui";
 import { Google } from "@/ui/icons";
-import { emailRegex } from "@/utils";
+import { emailRegex, parseInviteLink } from "@/utils";
 import { toast } from "@/utils/toast";
 
 import { useAuth } from "../hooks/useAuth";
@@ -32,8 +32,12 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
 
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const inviteLink = urlParams.get("inviteLink") ?? undefined;
+    let inviteLink = urlParams.get("inviteLink") ?? undefined;
     const inviteEmail = urlParams.get("email");
+
+    if (inviteLink) {
+        inviteLink = parseInviteLink(inviteLink);
+    }
 
     const onSubmit: SubmitHandler<Inputs> = useCallback(
         async (data) => {
