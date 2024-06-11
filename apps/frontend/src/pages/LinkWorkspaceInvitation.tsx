@@ -3,38 +3,40 @@ import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { ExpiredInviteLink } from "@/modules/workspace/components/invite/ExpiredInviteLink";
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
 import { AcronymBox, Button, GlobalSpinner, Screen } from "@/ui";
-import { getAcronym } from "@/utils";
+import { getAcronym, parseInviteLink } from "@/utils";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const LinkWorkspaceInvitation = () => {
-    const { inviteLink } = useParams();
+    const inviteLink = parseInviteLink(window.location.pathname);
     const { loading, getInviteDetails, joinWorkspace } = useWorkspaceInvite();
     const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
 
     const [inviteDetails, setInviteDetails] = useState<OrganizationInviteLinkDetails>();
+    const [ready, setReady] = useState(false);
 
     useEffect(() => {
         const fetchInviteDetails = async () => {
-            const response = await getInviteDetails(window.location.href);
+            const response = await getInviteDetails(inviteLink);
             if (response) {
                 setInviteDetails(response as OrganizationInviteLinkDetails);
             }
+            setReady(true);
         };
 
         fetchInviteDetails();
-    }, [getInviteDetails, inviteLink]);
+    }, []);
 
     const handleJoinOrganization = async () => {
         if (isAuthenticated) {
-            await joinWorkspace(window.location.pathname);
+            await joinWorkspace(inviteLink);
         } else {
-            navigate(`/?inviteLink=${window.location.href}`);
+            navigate(`/?inviteLink=${inviteLink}`);
         }
     };
 
-    if (loading) {
+    if (loading || !ready) {
         return <GlobalSpinner />;
     }
 

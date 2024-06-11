@@ -63,6 +63,14 @@ const router = createBrowserRouter([
                 element: <Workspace />,
             },
             {
+                path: ROUTES.ACCEPT_LINK_WORKSPACE_INVITE,
+                element: <LinkWorkspaceInvitation />,
+            },
+            {
+                path: ROUTES.ACCEPT_EMAIL_WORKSPACE_INVITE,
+                element: <EmailWorkspaceInvitation />,
+            },
+            {
                 path: "/:orgSlug/projects/:projectSlug",
                 element: <AppCore />,
                 children: [
@@ -113,14 +121,6 @@ const router = createBrowserRouter([
                         ],
                     },
                 ],
-            },
-            {
-                path: "/:workspaceName/join/:inviteLink",
-                element: <LinkWorkspaceInvitation />,
-            },
-            {
-                path: "/invite/:inviteId/accept",
-                element: <EmailWorkspaceInvitation />,
             },
         ],
     },

@@ -142,3 +142,10 @@ export const getISOdateString = (date?: Date): string => {
     }
     return formatISO(date, { representation: "date" });
 };
+
+export const parseInviteLink = (link: string) => {
+    if (link.endsWith("/")) {
+        return link.slice(0, -1);
+    }
+    return link;
+};
