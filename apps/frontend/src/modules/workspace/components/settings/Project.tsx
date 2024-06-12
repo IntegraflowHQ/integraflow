@@ -1,5 +1,6 @@
 import { useProject } from "@/modules/projects/hooks/useProject";
 import { Button, TextInput } from "@/ui";
+import { toast } from "@/utils/toast";
 import { useForm } from "react-hook-form";
 import { SettingsScreen } from "./SettingsScreen";
 
@@ -25,6 +26,7 @@ export const Project = () => {
             updateProject({
                 name: formInfo.name,
             });
+            toast.success("Your project name has been updated");
         }
     };
     return (
