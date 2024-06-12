@@ -57,9 +57,10 @@ export const People = () => {
                 )}
             >
                 <TableHead className="w-full bg-intg-bg-9 font-light hover:cursor-pointer">
-                    <TableHeaderCell className="w-1/2">User</TableHeaderCell>
-
-                    <TableHeaderCell className="text-md font-normal">First Seen</TableHeaderCell>
+                    <TableRow>
+                        <TableHeaderCell className="w-1/2">User</TableHeaderCell>
+                        <TableHeaderCell className="text-md font-normal">First Seen</TableHeaderCell>
+                    </TableRow>
                 </TableHead>
                 {persons?.edges.length ? (
                     <TableBody>

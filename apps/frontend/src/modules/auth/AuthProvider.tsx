@@ -281,28 +281,6 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
         [apollo, updateUserCache, updateUser],
     );
 
-    const handleSwitchWorkspace = useCallback(
-        (organization: AuthOrganization, project: Project) => {
-            const updatedUser = {
-                organization,
-                project,
-            };
-
-            handleUserUpdate(updatedUser, true);
-
-            if (orgSlug !== organization.slug) {
-                redirect({
-                    ...(user ?? {}),
-                    ...updatedUser,
-                });
-            }
-
-            apollo.getClient().resetStore();
-            apollo.getClient().cache.reset();
-        },
-        [orgSlug, redirect, handleUserUpdate, user],
-    );
-
     const handleSwitchProject = useCallback(
         (project: Project) => {
             const organization = project.organization ?? workspace;
@@ -329,6 +307,13 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
             apollo.getClient().cache.reset();
         },
         [currentProjectId, orgSlug, projectSlug, user, workspace, redirect, switchProject, handleUserUpdate],
+    );
+
+    const handleSwitchWorkspace = useCallback(
+        (organization: AuthOrganization, project: Project) => {
+            handleSwitchProject({ ...project, organization });
+        },
+        [handleSwitchProject],
     );
 
     const handleLogout = useCallback(async () => {
