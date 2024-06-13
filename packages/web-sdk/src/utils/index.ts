@@ -1,5 +1,6 @@
 import { BaseSurveyCountableConnection, IntegraflowDocument } from "@integraflow/client";
 import { Audience, LogicOperator, Question, QuestionOption, Survey, SurveySettings, Theme, Trigger } from "../types";
+import {VERSION_NUMBER} from "./version";
 
 export function onDOMReady(fn: () => void) {
     if (document.readyState !== "loading") {
@@ -153,7 +154,8 @@ export const parsedSurveys = (surveys?: BaseSurveyCountableConnection): Survey[]
             showProgressBar: settings.showProgressBar ?? true,
             close: settings.close,
             submitText: settings.submitText,
-            showBranding: settings.showBranding
+            showBranding: settings.showBranding,
+            backgroundOverlay: channelSettings.backgroundOverlay ?? "none",
         };
 
         const audience: Audience = JSON.parse(channel.conditions ?? "{}");
@@ -295,7 +297,7 @@ export function getUserAttributes() {
         pathname: window.location.pathname,
         time: new Date().toISOString(),
         lib: "web-sdk",
-        lib_version: process.env.VERSION ?? "Unknown",
+        lib_version: VERSION_NUMBER ?? "Unknown",
         bucket: Math.ceil(Math.random() * 1000)
     };
 }
