@@ -8,7 +8,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
     variant?: "primary" | "secondary" | "custom";
     children?: React.ReactNode;
     icon?: React.ReactElement;
-    size?: "full" | "md" | "sm";
+    size?: "full" | "md" | "sm" | "xs";
 }
 
 const Button = React.forwardRef(
@@ -31,7 +31,13 @@ const Button = React.forwardRef(
                 className={cn(
                     "w-full text-base font-medium",
                     textAlign === "left" ? "" : "flex justify-center",
-                    size === "full" ? "rounded-lg px-8 py-4" : size === "md" ? "rounded-md p-3" : "rounded p-1.5",
+                    size === "full"
+                        ? "rounded-lg px-8 py-4"
+                        : size === "md"
+                          ? "rounded-md p-3"
+                          : size === "sm"
+                            ? "rounded p-1.5"
+                            : "p-0",
                     icon ? "flex items-center gap-2" : "",
                     variant === "primary"
                         ? "bg-gradient-button text-white transition-all duration-300 ease-in hover:bg-gradient-button-hover"

@@ -50,10 +50,17 @@ export const Member = () => {
                             value={addEllipsis(inviteLink, 60)}
                             disabled={loading}
                             rightIcon={
-                                <RefreshCcwIcon
-                                    size={16}
-                                    className={loading ? "spinner__circle" : ""}
-                                    onClick={handleInviteLinkRefresh}
+                                <Button
+                                    variant="custom"
+                                    size="sm"
+                                    disabled={loading}
+                                    icon={
+                                        <RefreshCcwIcon
+                                            size={16}
+                                            className={loading ? "spinner__circle" : ""}
+                                            onClick={handleInviteLinkRefresh}
+                                        />
+                                    }
                                 />
                             }
                         />

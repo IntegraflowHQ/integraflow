@@ -166,9 +166,18 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
                                     value={addEllipsis(inviteLink, 40)}
                                     disabled={true}
                                     rightIcon={
-                                        <button disabled={loading} onClick={handleInviteLinkRefresh}>
-                                            <RefreshCcwIcon size={20} className={loading ? "spinner__circle" : ""} />
-                                        </button>
+                                        <Button
+                                            variant="custom"
+                                            size="sm"
+                                            disabled={loading}
+                                            icon={
+                                                <RefreshCcwIcon
+                                                    size={16}
+                                                    className={loading ? "spinner__circle" : ""}
+                                                    onClick={handleInviteLinkRefresh}
+                                                />
+                                            }
+                                        />
                                     }
                                 />
                             </div>
