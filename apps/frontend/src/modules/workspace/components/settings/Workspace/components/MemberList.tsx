@@ -128,7 +128,7 @@ export const MemberList = ({ searchValue }: Props) => {
                     : `${workspace?.memberCount} ${workspace?.memberCount === 1 ? "member" : "members"}`}
             </p>
             <div>
-                {filteredMembers?.map((member, index) => {
+                {filteredMembers?.map((member) => {
                     return (
                         <div key={member?.node?.id}>
                             <div className="flex items-center justify-between px-2 py-3">
@@ -198,7 +198,7 @@ export const MemberList = ({ searchValue }: Props) => {
                                     </DropdownMenu.Root>
                                 )}
                             </div>
-                            {<hr className="border border-intg-bg-4" />}
+                            <hr className="border border-intg-bg-4" />
                         </div>
                     );
                 })}

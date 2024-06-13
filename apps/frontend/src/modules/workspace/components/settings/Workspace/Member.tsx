@@ -46,19 +46,22 @@ export const Member = () => {
                     <div className="flex-1">
                         <TextInput
                             placeholder=""
+                            inputSize="md"
                             value={addEllipsis(inviteLink, 60)}
-                            disabled={true}
+                            disabled={loading}
                             rightIcon={
-                                <button disabled={loading} onClick={handleInviteLinkRefresh}>
-                                    <RefreshCcwIcon size={16} className={loading ? "spinner__circle" : ""} />
-                                </button>
+                                <RefreshCcwIcon
+                                    size={16}
+                                    className={loading ? "spinner__circle" : ""}
+                                    onClick={handleInviteLinkRefresh}
+                                />
                             }
                         />
                     </div>
-                    <div>
+                    <div className="w-[92px]">
                         <Button
                             text="Copy"
-                            className=" h-[50px] w-[92px] p-3 text-sm"
+                            size="sm"
                             icon={<Copy color="#FFFFFF" />}
                             textAlign="center"
                             onClick={() => copyToClipboard(inviteLink, "Invite link copied to clipboard")}
@@ -83,19 +86,16 @@ export const Member = () => {
                             onChange={(e) => setSearchValue(e.target.value)}
                             icon={Search}
                             className="w-full"
+                            inputSize="md"
                         />
                     </div>
                     <div>
                         <Button
-                            className="flex items-center gap-2 text-sm"
-                            size="md"
+                            icon={<PlusCircle />}
+                            size="sm"
+                            text="Invite team member"
                             onClick={() => setOpenInviteModal(true)}
-                        >
-                            <span>
-                                <PlusCircle />
-                            </span>
-                            <span>Invite team member</span>
-                        </Button>
+                        />
                     </div>
                     <WorkspaceInvite
                         open={openInviteModal}
