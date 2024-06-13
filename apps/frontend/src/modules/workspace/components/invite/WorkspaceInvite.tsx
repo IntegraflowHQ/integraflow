@@ -170,11 +170,11 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
                                             variant="custom"
                                             size="sm"
                                             disabled={loading}
+                                            onClick={handleInviteLinkRefresh}
                                             icon={
                                                 <RefreshCcwIcon
                                                     size={16}
                                                     className={loading ? "spinner__circle" : ""}
-                                                    onClick={handleInviteLinkRefresh}
                                                 />
                                             }
                                         />
