@@ -54,13 +54,8 @@ export const Member = () => {
                                     variant="custom"
                                     size="sm"
                                     disabled={loading}
-                                    icon={
-                                        <RefreshCcwIcon
-                                            size={16}
-                                            className={loading ? "spinner__circle" : ""}
-                                            onClick={handleInviteLinkRefresh}
-                                        />
-                                    }
+                                    onClick={handleInviteLinkRefresh}
+                                    icon={<RefreshCcwIcon size={16} className={loading ? "spinner__circle" : ""} />}
                                 />
                             }
                         />
