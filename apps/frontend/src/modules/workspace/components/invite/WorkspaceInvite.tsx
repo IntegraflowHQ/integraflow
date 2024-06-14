@@ -5,7 +5,7 @@ import { OrganizationInvite, OrganizationInviteCreate, User } from "@/generated/
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
-import { Button, Dialog, DialogContent, GlobalSpinner, TextInput } from "@/ui";
+import { Button, Dialog, DialogContent, TextInput } from "@/ui";
 import { CopyIcon } from "@/ui/icons";
 import { addEllipsis, copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
@@ -124,16 +124,12 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
         }
     };
 
-    if (loadingEmailInvite) {
-        return <GlobalSpinner />;
-    }
-
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent
                 alignHeader="left"
                 title={`Invite others to '${workspace?.name}'`}
-                description="Invite others to your project to collaborate together in intergraflow. An invite is specific to an email address and expires after 3 days."
+                description="Invite others to your project to collaborate together in integraflow. An invite is specific to an email address and expires after 3 days."
             >
                 {!toggleInviteType ? (
                     <form onSubmit={handleEmailInvite}>
@@ -151,7 +147,23 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
                                     errorMessage={inputError}
                                 />
                             </div>
-                            <Button text="Send Invite" size="md" className="mt-7 min-w-max max-w-[30%]" />
+                            <div className="min-w-[20%]">
+                                <Button
+                                    text={loadingEmailInvite ? "" : "Submit"}
+                                    textAlign="center"
+                                    size="md"
+                                    className="mt-7"
+                                    disabled={loadingEmailInvite}
+                                    icon={
+                                        loadingEmailInvite ? (
+                                            <RefreshCcwIcon
+                                                size={24}
+                                                className={loadingEmailInvite ? "spinner__circle" : ""}
+                                            />
+                                        ) : null
+                                    }
+                                />
+                            </div>
                         </div>
                     </form>
                 ) : (
