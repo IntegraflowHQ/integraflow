@@ -7,6 +7,12 @@
     src: local("./assets/fonts/Inter/Inter-VariableFont_slnt,wght.ttf");
 }
 
+@layer base {
+    html {
+        font-family: "Inter", sans-serif, system-ui;
+    }
+}
+
 /* custom scrollbar */
 ::-webkit-scrollbar {
     width: 6px;
