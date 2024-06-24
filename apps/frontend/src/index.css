@@ -4,7 +4,7 @@
 
 @font-face {
     font-family: "Inter";
-    src: local("./assets/fonts/Inter/Inter-VariableFont_slnt,wght.ttf");
+    src: local("Inter"), url("./assets/fonts/Inter/Inter-VariableFont_slnt,wght.ttf");
 }
 
 @layer base {
