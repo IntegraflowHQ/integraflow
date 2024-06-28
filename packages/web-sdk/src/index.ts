@@ -4,14 +4,14 @@ import { Configuration, EventProperties, ID, SurveyAnswer, UserAttributes } from
 
 export default class Integraflow {
     private readonly config: Configuration;
-    private static client: Integraflow;
-    private static initialized: boolean = false;
-    private readonly surveyManager: SurveyManager;
+    protected static client: Integraflow;
+    protected static initialized: boolean = false;
+    protected readonly surveyManager: SurveyManager;
     private readonly syncManager: SyncManager;
 
-    private readonly context: Context;
+    protected readonly context: Context;
 
-    private readonly rootFrame: RootFrame;
+    protected readonly rootFrame: RootFrame;
 
     constructor(config: Configuration) {
         this.config = config;
@@ -28,11 +28,6 @@ export default class Integraflow {
         if (!this.client) {
             this.client = new Integraflow(config);
             this.initialized = true;
-        } else {
-            this.client.context.surveys = config.surveys ?? [];
-            if (config.syncPolicy === "off") {
-                this.client.context.fullScreen = config.fullScreen ?? this.client.context.fullScreen;
-            }
         }
 
         return this.client;
