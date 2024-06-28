@@ -43,7 +43,7 @@ export const Preview = ({ className, mode, viewPort, ...props }: Props) => {
                     ...survey,
                     theme: theme ? { ...theme, colorScheme: JSON.stringify(theme.colorScheme) } : {},
                     questions: parsedQuestions.map((q) => {
-                        if (q.orderNumber === question?.orderNumber) {
+                        if (q.reference === question?.reference) {
                             return question;
                         }
                         return q;
@@ -57,7 +57,18 @@ export const Preview = ({ className, mode, viewPort, ...props }: Props) => {
             },
             LINK_SURVEY_HOST ?? "*",
         );
-    }, [modeReceived, parsedQuestions, survey?.id, survey?.settings, survey?.channels, question, theme, viewPort]);
+    }, [
+        modeReceived,
+        parsedQuestions,
+        survey?.id,
+        survey?.settings,
+        survey?.channels,
+        question,
+        question?.id,
+        question?.reference,
+        theme,
+        viewPort,
+    ]);
 
     useEffect(() => {
         if (!ready || !mode || !iframe.current) {
