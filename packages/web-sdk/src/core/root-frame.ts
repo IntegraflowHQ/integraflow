@@ -20,11 +20,7 @@ export class RootFrame {
     }
 
     createContainer(name: string) {
-        const element = document.getElementById(`integraflow-container-${name}`);
-
-        if (element) {
-            element.remove();
-        }
+        this.removeContainer(name);
 
         const container = {
             name,
