@@ -43,7 +43,7 @@ export default function Home({ surveys, appKey }: InferGetServerSidePropsType<ty
         return () => {
             setIntg(undefined);
         };
-    }, [surveys, appKey, intg]);
+    }, [surveys]);
 
     useEffect(() => {
         if (surveys.length === 0 || !intg) {
