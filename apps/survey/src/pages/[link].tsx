@@ -31,7 +31,7 @@ export default function Home({ surveys, appKey }: InferGetServerSidePropsType<ty
                     fullScreen: true,
                     onSurveyCompleted: () => {
                         setCompleted(true);
-                    },
+                    }
                 });
 
                 setIntg(intg);
@@ -43,7 +43,7 @@ export default function Home({ surveys, appKey }: InferGetServerSidePropsType<ty
         return () => {
             setIntg(undefined);
         };
-    }, [surveys]);
+    }, [surveys, appKey, intg]);
 
     useEffect(() => {
         if (surveys.length === 0 || !intg) {
@@ -75,7 +75,7 @@ export default function Home({ surveys, appKey }: InferGetServerSidePropsType<ty
     );
 }
 
-export const getServerSideProps: GetServerSideProps<{ surveys: any[]; appKey: string }> = async (context) => {
+export const getServerSideProps: GetServerSideProps<{ surveys: any[]; appKey: string }> = async context => {
     const { link } = context.params as { link: string };
     const client = new IntegraflowClient({ apiUrl });
     const survey = await client.surveyByChannel({ link });
@@ -84,7 +84,7 @@ export const getServerSideProps: GetServerSideProps<{ surveys: any[]; appKey: st
     return {
         props: {
             surveys: surveys as any[],
-            appKey: survey?.project?.apiToken ?? "",
-        },
+            appKey: survey?.project?.apiToken ?? ""
+        }
     };
 };

@@ -17,10 +17,11 @@ interface Props extends IframeHTMLAttributes<HTMLIFrameElement> {
 
 export const Preview = ({ className, mode, viewPort, ...props }: Props) => {
     const [ready, setReady] = useState(false);
+    const [modeReceived, setModeReceived] = useState(false);
     const iframe = createRef<HTMLIFrameElement>();
     const { parsedQuestions, survey } = useSurvey();
     const { question } = useQuestion();
-    const { theme, updateStudio } = useStudioStore((state) => state);
+    const { theme, updateStudio } = useStudioStore();
 
     useEffect(() => {
         if (survey?.theme) {
@@ -31,7 +32,7 @@ export const Preview = ({ className, mode, viewPort, ...props }: Props) => {
     }, [survey?.theme?.id, survey?.theme?.colorScheme]);
 
     useEffect(() => {
-        if (!ready || !iframe.current || !survey || parsedQuestions.length === 0) {
+        if (!iframe.current || !survey || parsedQuestions.length === 0) {
             return;
         }
 
@@ -42,7 +43,7 @@ export const Preview = ({ className, mode, viewPort, ...props }: Props) => {
                     ...survey,
                     theme: theme ? { ...theme, colorScheme: JSON.stringify(theme.colorScheme) } : {},
                     questions: parsedQuestions.map((q) => {
-                        if (q.id === question?.id) {
+                        if (q.orderNumber === question?.orderNumber) {
                             return question;
                         }
                         return q;
@@ -51,18 +52,29 @@ export const Preview = ({ className, mode, viewPort, ...props }: Props) => {
                         (edge: Omit<SurveyChannelCountableEdge, "cursor">) => edge.node,
                     ),
                 },
-                startFrom: question ? question.id : undefined,
-                mode,
+                startFrom: question?.id ?? undefined,
                 viewPort,
             },
             LINK_SURVEY_HOST ?? "*",
         );
-    }, [parsedQuestions, ready, survey, question, theme, mode, viewPort]);
+    }, [modeReceived, parsedQuestions, survey?.id, survey?.settings, survey?.channels, question, theme, viewPort]);
+
+    useEffect(() => {
+        if (!ready || !mode || !iframe.current) {
+            return;
+        }
+
+        iframe.current.contentWindow?.postMessage({ type: "mode", mode }, LINK_SURVEY_HOST ?? "*");
+    }, [ready, mode, iframe.current]);
 
     useEffect(() => {
         const handleMessage = (e: MessageEvent) => {
             if (e.data && e.data.status === "ready") {
                 setReady(true);
+            }
+
+            if (e.data && e.data.status === "requestSurvey") {
+                setModeReceived((prev) => !prev);
             }
         };
 
