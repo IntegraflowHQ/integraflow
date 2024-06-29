@@ -17,6 +17,7 @@
     "scripts": {
         "prebuild": "yarn link @integraflow/client && ./extract-version.sh",
         "build": "NODE_ENV=production rollup -c",
+        "build:internal": " yarn prebuild && NODE_ENV=production BUILD_INTERNAL=true rollup -c && yarn postbuild",
         "postbuild": "yarn link",
         "clean": "rimraf -G dist .rollup-cache tsconfig.tsbuildinfo",
         "dev": "rollup -c -w",
@@ -49,7 +50,6 @@
         "@rollup/plugin-commonjs": "^17.1.0",
         "@rollup/plugin-node-resolve": "^11.2.0",
         "@rollup/plugin-replace": "^5.0.4",
-        "@rollup/plugin-typescript": "^8.1.1",
         "@types/jest": "^27.0.3",
         "@typescript-eslint/eslint-plugin": "^6.2.1",
         "@typescript-eslint/parser": "^6.2.1",
@@ -63,8 +63,10 @@
         "jest-environment-jsdom": "^29.6.2",
         "jest-fetch-mock": "^3.0.3",
         "jest-preset-preact": "^4.1.0",
+        "lucide-preact": "^0.268.0",
         "postcss": "^8.4.28",
         "postcss-prefix-selector": "^1.16.0",
+        "preact": "10.16.0",
         "preact-cli": "^3.5.0",
         "preact-render-to-string": "^6.2.0",
         "prettier": "^1.19.1",
@@ -74,14 +76,11 @@
         "rollup-plugin-polyfill-node": "^0.13.0",
         "rollup-plugin-postcss": "^4.0.0",
         "rollup-plugin-terser": "^7.0.2",
+        "rollup-plugin-ts": "^3.4.5",
         "sass": "^1.43.5",
         "tailwindcss": "^3.3.3",
         "ts-jest": "^27.0.7",
         "typescript": "^4.4.2"
-    },
-    "dependencies": {
-        "lucide-preact": "^0.268.0",
-        "preact": "10.16.0"
     },
     "jest": {
         "transformIgnorePatterns": [
