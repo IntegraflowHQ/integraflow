@@ -54,7 +54,7 @@ export default function Preview() {
                 }
             }
 
-            if (event.data && event.data.type === "mode") {
+            if (event.data && event.data.type === "reInitialize") {
                 if (survey.current && initialized.current) {
                     _Integraflow.getClient().closeSurvey(survey.current.id);
                 }

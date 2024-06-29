@@ -67,7 +67,6 @@ export const Preview = ({ className, mode, viewPort, ...props }: Props) => {
         question,
         question?.id,
         question?.reference,
-        theme,
         viewPort,
     ]);
 
@@ -76,8 +75,8 @@ export const Preview = ({ className, mode, viewPort, ...props }: Props) => {
             return;
         }
 
-        iframe.current.contentWindow?.postMessage({ type: "mode", mode }, LINK_SURVEY_HOST ?? "*");
-    }, [ready, mode, iframe.current]);
+        iframe.current.contentWindow?.postMessage({ type: "reInitialize", mode }, LINK_SURVEY_HOST ?? "*");
+    }, [ready, mode, iframe.current, theme]);
 
     useEffect(() => {
         const handleMessage = (e: MessageEvent) => {
