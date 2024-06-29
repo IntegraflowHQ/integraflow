@@ -17,7 +17,7 @@ interface Props extends IframeHTMLAttributes<HTMLIFrameElement> {
 
 export const Preview = ({ className, mode, viewPort, ...props }: Props) => {
     const [ready, setReady] = useState(false);
-    const [modeReceived, setModeReceived] = useState(false);
+    const [sendSurveyToggle, setSendSurveyToggle] = useState(false);
     const iframe = createRef<HTMLIFrameElement>();
     const { parsedQuestions, survey } = useSurvey();
     const { question } = useQuestion();
@@ -58,7 +58,8 @@ export const Preview = ({ className, mode, viewPort, ...props }: Props) => {
             LINK_SURVEY_HOST ?? "*",
         );
     }, [
-        modeReceived,
+        ready,
+        sendSurveyToggle,
         parsedQuestions,
         survey?.id,
         survey?.settings,
@@ -85,7 +86,7 @@ export const Preview = ({ className, mode, viewPort, ...props }: Props) => {
             }
 
             if (e.data && e.data.status === "requestSurvey") {
-                setModeReceived((prev) => !prev);
+                setSendSurveyToggle((prev) => !prev);
             }
         };
 
