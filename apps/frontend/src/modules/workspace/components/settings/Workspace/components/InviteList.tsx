@@ -57,10 +57,9 @@ export const InviteList = () => {
                     {workspace?.invites?.edges && workspace?.invites?.edges?.length > 1 ? "invites" : "invite"}
                 </h3>
             )}
-            {workspace?.invites?.edges?.map((invite, index) => {
+            {workspace?.invites?.edges?.map((invite) => {
                 return (
                     <div key={invite?.node?.id}>
-                        {index !== 0 && <hr className="border-[1px] border-intg-bg-4" />}
                         <div className="flex items-center justify-between px-2 py-3">
                             <div className="basis-[60%]">
                                 <p className="font-sm font-medium">
@@ -99,7 +98,7 @@ export const InviteList = () => {
                                 </DropdownMenu.Portal>
                             </DropdownMenu.Root>
                         </div>
-                        {index !== 0 && <hr className="border-[1px] border-intg-bg-4" />}
+                        <hr className="border border-intg-bg-4" />
                     </div>
                 );
             })}

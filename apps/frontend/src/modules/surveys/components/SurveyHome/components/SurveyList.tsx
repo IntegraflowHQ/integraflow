@@ -253,6 +253,7 @@ export const SurveyList = () => {
                                                             alignHeader="left"
                                                             title={`Delete ${selectedSurveyName}`}
                                                             description="Are you sure you want to delete this survey?"
+                                                            className="w-[500px]"
                                                         >
                                                             <button
                                                                 disabled={loading}

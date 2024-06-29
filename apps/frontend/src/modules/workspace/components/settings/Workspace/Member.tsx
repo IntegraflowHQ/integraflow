@@ -1,9 +1,9 @@
 import { WorkspaceInvite } from "@/modules/workspace/components/invite/WorkspaceInvite";
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
 import { Button, TextInput } from "@/ui";
-import { PlusCircle, Search } from "@/ui/icons";
+import { Copy, PlusCircle, Search } from "@/ui/icons";
 import { addEllipsis, copyToClipboard } from "@/utils";
-import { CopyIcon, RefreshCcwIcon } from "lucide-react";
+import { RefreshCcwIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { InviteList } from "./components/InviteList";
 import { MemberList } from "./components/MemberList";
@@ -43,23 +43,28 @@ export const Member = () => {
                 </div>
 
                 <div className="flex w-full items-end gap-2">
-                    <div className="w-[75%]">
+                    <div className="flex-1">
                         <TextInput
                             placeholder=""
+                            inputSize="md"
                             value={addEllipsis(inviteLink, 60)}
-                            disabled={true}
+                            disabled={loading}
                             rightIcon={
-                                <button disabled={loading} onClick={handleInviteLinkRefresh}>
-                                    <RefreshCcwIcon size={20} className={loading ? "spinner__circle" : ""} />
-                                </button>
+                                <Button
+                                    variant="custom"
+                                    size="sm"
+                                    disabled={loading}
+                                    onClick={handleInviteLinkRefresh}
+                                    icon={<RefreshCcwIcon size={16} className={loading ? "spinner__circle" : ""} />}
+                                />
                             }
                         />
                     </div>
-                    <div className="w-[25%]">
+                    <div className="w-[92px]">
                         <Button
                             text="Copy"
-                            className="text-sm"
-                            icon={<CopyIcon size={16} />}
+                            size="sm"
+                            icon={<Copy color="#FFFFFF" />}
                             textAlign="center"
                             onClick={() => copyToClipboard(inviteLink, "Invite link copied to clipboard")}
                         />
@@ -71,7 +76,7 @@ export const Member = () => {
                 <div>
                     <h3 className="font-semibold">Manage members</h3>
                     <p className="text-sm">
-                        Invite others to your project to collaborate together in intergraflow. An invite is specific to
+                        Invite others to your project to collaborate together in Integraflow. An invite is specific to
                         an email address and expires after 3 days.
                     </p>
                 </div>
@@ -83,15 +88,16 @@ export const Member = () => {
                             onChange={(e) => setSearchValue(e.target.value)}
                             icon={Search}
                             className="w-full"
+                            inputSize="md"
                         />
                     </div>
                     <div>
-                        <Button className="flex items-center gap-2 " size="md" onClick={() => setOpenInviteModal(true)}>
-                            <span>
-                                <PlusCircle />
-                            </span>
-                            <span>Invite team member</span>
-                        </Button>
+                        <Button
+                            icon={<PlusCircle />}
+                            size="sm"
+                            text="Invite team member"
+                            onClick={() => setOpenInviteModal(true)}
+                        />
                     </div>
                     <WorkspaceInvite
                         open={openInviteModal}
