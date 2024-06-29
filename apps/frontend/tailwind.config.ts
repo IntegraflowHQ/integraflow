@@ -1,9 +1,13 @@
 import type { Config } from "tailwindcss";
+import defaultTheme from "tailwindcss/defaultTheme";
 
 const config: Config = {
     content: ["./src/**/*.{html,js,jsx,ts,tsx,mdx}", "../../node_modules/@tremor/**/*.{js,ts,jsx,tsx}"],
     theme: {
         extend: {
+            fontFamily: {
+                sans: ["Inter var", ...defaultTheme.fontFamily.sans],
+            },
             screens: {
                 "3xl": "1920px",
             },
