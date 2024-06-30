@@ -6,7 +6,7 @@ const config: Config = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ["Inter var", ...defaultTheme.fontFamily.sans],
+                sans: ["Inter", ...defaultTheme.fontFamily.sans],
             },
             screens: {
                 "3xl": "1920px",
