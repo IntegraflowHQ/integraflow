@@ -22,7 +22,7 @@ export class SurveyManager {
     private surveyContainer: RootFrameContainer;
     private state?: SurveyManagerState;
     private surveys: Survey[];
-    private activeSurveys: Survey[];
+    protected activeSurveys: Survey[];
 
     constructor(client: Integraflow, ctx: Context, rootFrame: RootFrame) {
         this.surveys = [];
@@ -124,12 +124,12 @@ export class SurveyManager {
         }
     }
 
-    private render(survey: Survey, startFrom?: ID) {
+    protected render(survey: Survey, startFrom?: ID, rerender = false) {
         if (!this.state || !survey) {
             return;
         }
 
-        if (this.state !== "ready") {
+        if (this.state !== "ready" && !rerender) {
             return;
         }
 

@@ -129,7 +129,7 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
             <DialogContent
                 alignHeader="left"
                 title={`Invite others to '${workspace?.name}'`}
-                description="Invite others to your project to collaborate together in integraflow. An invite is specific to an email address and expires after 3 days."
+                description="Invite others to your project to collaborate together in Integraflow. An invite is specific to an email address and expires after 3 days."
             >
                 {!toggleInviteType ? (
                     <form onSubmit={handleEmailInvite}>

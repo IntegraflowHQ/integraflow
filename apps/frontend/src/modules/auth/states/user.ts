@@ -10,7 +10,7 @@ export type UserState = DeepPartial<User> & {
 };
 
 export type UserActions = {
-    updateUser: (user: DeepPartial<User>) => void;
+    updateUser: (user: DeepPartial<UserState>) => void;
     reset: () => void;
 };
 
@@ -24,6 +24,11 @@ export const convertToAuthOrganization = (organization?: DeepPartial<Organizatio
 
 const initialState: UserState = {
     hydrated: false,
+    id: undefined,
+    isOnboarded: undefined,
+    project: undefined,
+    organization: undefined,
+    organizations: undefined,
 };
 
 export const useUserStore = create<UserState & UserActions>()(
@@ -31,7 +36,7 @@ export const useUserStore = create<UserState & UserActions>()(
         persist(
             (set) => ({
                 ...initialState,
-                updateUser: (user) => set({ ...user, hydrated: true }),
+                updateUser: (user) => set(user),
                 reset: () => set(initialState),
             }),
             {

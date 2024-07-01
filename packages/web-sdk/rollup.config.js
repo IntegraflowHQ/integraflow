@@ -2,13 +2,14 @@ import babel from "@rollup/plugin-babel";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
-import typescript from "@rollup/plugin-typescript";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import nodePolyfills from "rollup-plugin-polyfill-node";
 import postcss from "rollup-plugin-postcss";
 import { terser } from "rollup-plugin-terser";
+import typescript from "rollup-plugin-ts";
 
 const environment = process.env.NODE_ENV || "development";
+const isInternal = process.env.BUILD_INTERNAL === "true";
 const isProd = environment === "production";
 
 const minPlugins = isProd ? [terser()] : [];
@@ -45,7 +46,7 @@ const plugins = [
 
 export default [
     {
-        input: "src/index.ts",
+        input: isInternal ? "src/index.internal.ts" : "src/index.ts",
         output: [
             {
                 file: "dist/index.js",

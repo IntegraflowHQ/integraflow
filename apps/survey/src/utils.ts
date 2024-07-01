@@ -3,7 +3,7 @@ import { Audience, Question, QuestionOption, Survey, SurveySettings, Theme, Trig
 
 export const parsedSurveys = (
     survey?: BaseSurvey,
-    options?: { mode?: "sdk" | "link"; backgroundImage?: string; link?: string },
+    options?: { mode?: "sdk" | "link"; backgroundImage?: string; link?: string }
 ): Survey[] => {
     if (!survey) {
         return [] as Survey[];

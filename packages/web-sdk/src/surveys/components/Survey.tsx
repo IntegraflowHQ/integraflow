@@ -34,13 +34,13 @@ export default function Survey({
     const contentRef = useRef<HTMLDivElement>(null);
 
     useLayoutEffect(() => {
-        if (!startFrom) {
-            return;
-        }
-
-        const index = survey.questions.findIndex(question => question.id === startFrom);
-        if (index > -1) {
-            setActiveQuestion(survey.questions[index]);
+        if (startFrom) {
+            const index = survey.questions.findIndex(question => question.id === startFrom);
+            if (index > -1) {
+                setActiveQuestion(survey.questions[index]);
+            }
+        } else {
+            setActiveQuestion(survey.questions[0]);
         }
     }, [startFrom]);
 

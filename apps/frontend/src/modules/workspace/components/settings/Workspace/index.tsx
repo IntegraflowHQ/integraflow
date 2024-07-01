@@ -1,5 +1,6 @@
 import * as Tabs from "@radix-ui/react-tabs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { SettingsScreen } from "../SettingsScreen";
 import { Billing } from "./Billing";
 import { General } from "./General";
@@ -21,7 +22,24 @@ const tabs = [
 ];
 
 export const Workspace = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
     const [activeTab, setActiveTab] = useState(tabs[0].label);
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        if (queryParams.has("billing")) {
+            setActiveTab(tabs[2].label);
+        }
+    }, [location.search]);
+
+    useEffect(() => {
+        if (activeTab === "Billing") {
+            navigate(`${window.location.pathname}?billing`, { replace: true });
+        } else {
+            navigate(window.location.pathname, { replace: true });
+        }
+    }, [activeTab, navigate]);
 
     return (
         <SettingsScreen label="" title="Workspace" showHeaderLine={false}>

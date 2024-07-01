@@ -109,16 +109,22 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
         fetchPolicy: "cache-and-network",
         onCompleted: (data) => {
             if (data?.viewer) {
-                const organization = data.viewer.organizations?.edges.find(
+                const currentOrg = data.viewer.organizations?.edges.find(
                     ({ node }) => node.id === user.organization?.id,
                 )?.node;
-                const project = organization?.projects?.edges.find(({ node }) => node.id === user.project?.id)?.node;
 
-                updateUserCache({
-                    ...data.viewer,
-                    organization: convertToAuthOrganization(organization),
-                    project,
-                });
+                if (currentOrg) {
+                    const project = currentOrg?.projects?.edges.find(({ node }) => node.id === user.project?.id)?.node;
+                    updateUserCache({
+                        ...data.viewer,
+                        organization: convertToAuthOrganization(currentOrg),
+                        project,
+                        hydrated: true,
+                    });
+                    return;
+                }
+
+                updateUserCache({ ...data.viewer, hydrated: true });
             }
         },
     });
@@ -142,9 +148,41 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
                 currentProjectId: response.user?.project?.id ?? null,
             });
 
+            if (response.user && response.user?.project?.slug && response.user?.organization?.slug) {
+                updateUserCache({
+                    ...response.user,
+                    organizations: {
+                        __typename: "OrganizationCountableConnection",
+                        edges: [
+                            {
+                                node: {
+                                    ...response.user.organization,
+                                    __typename: "OrganizationCountableEdge",
+                                    projects: {
+                                        __typename: "ProjectCountableConnection",
+                                        edges: [
+                                            {
+                                                node: {
+                                                    ...response.user.project,
+                                                    __typename: "ProjectCountableEdge",
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                } as unknown as DeepPartial<User>);
+                redirect(response.user);
+            } else if (response.user) {
+                updateUserCache(response.user as DeepPartial<User>);
+                redirect(response.user);
+            }
+
             return response;
         },
-        [initialize],
+        [initialize, updateUserCache],
     );
 
     const handleGenerateMagicLink = useCallback(
@@ -235,7 +273,7 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
         const slug = orgSlug ?? user?.organization?.slug;
 
         return organizations.find((organization) => organization?.slug === slug) ?? null;
-    }, [orgSlug, user, organizations]);
+    }, [orgSlug, user?.organization?.slug, organizations]);
 
     const projects = useMemo(() => {
         if (!workspace || !workspace.projects?.edges) {
@@ -369,46 +407,33 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
     useEffect(() => {
         const hydrate = async () => {
             if (!!refreshToken && !hydrated) {
-                const { data } = await getUser();
-                if (data?.viewer) {
-                    const organization = data.viewer.organizations?.edges.find(
-                        ({ node }) => node.id === user.organization?.id,
-                    )?.node;
-                    const project = organization?.projects?.edges.find(
-                        ({ node }) => node.id === user.project?.id,
-                    )?.node;
-                    updateUserCache({
-                        ...data.viewer,
-                        organization: convertToAuthOrganization(organization),
-                        project,
-                    });
-                }
+                await getUser();
             }
         };
 
         hydrate();
-    }, [apollo, hydrated, refreshToken, getUser]);
-
-    const isCurrentOrg = useMemo(() => {
-        if (!orgSlug) return false;
-        return workspace?.slug?.toLowerCase() === orgSlug.toLowerCase();
-    }, [workspace?.slug, orgSlug]);
-
-    const isValidProject = useMemo(() => {
-        if (!projectSlug) {
-            return project?.organization?.slug?.toLowerCase() === workspace?.slug?.toLowerCase();
-        } else {
-            return (
-                project?.slug?.toLowerCase() === projectSlug.toLowerCase() &&
-                project?.organization?.slug?.toLowerCase() === workspace?.slug?.toLowerCase()
-            );
-        }
-    }, [projectSlug, orgSlug, project]);
+    }, [hydrated, refreshToken, getUser]);
 
     const isValidSession = useMemo(() => {
-        if (!projectSlug && !orgSlug) return true;
-        return isCurrentOrg && isValidProject;
-    }, [projectSlug, orgSlug, isCurrentOrg, isValidProject]);
+        if (!projectSlug && !orgSlug) {
+            return true;
+        }
+
+        if (orgSlug && projectSlug) {
+            return (
+                workspace?.slug?.toLowerCase() === orgSlug.toLowerCase() &&
+                project?.organization?.slug?.toLowerCase() === orgSlug.toLowerCase() &&
+                project?.slug?.toLowerCase() === projectSlug.toLowerCase()
+            );
+        }
+
+        if (orgSlug && !projectSlug) {
+            return (
+                workspace?.slug?.toLowerCase() === orgSlug.toLowerCase() &&
+                project?.organization?.slug?.toLowerCase() === orgSlug.toLowerCase()
+            );
+        }
+    }, [workspace, project, projectSlug, orgSlug]);
 
     useEffect(() => {
         if (apollo) {
@@ -432,7 +457,8 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
 
     useEffect(() => {
         if (
-            user &&
+            user.organization &&
+            user.project &&
             !!refreshToken &&
             (locationMatch(ROUTES.LOGIN) || locationMatch(ROUTES.SIGNUP) || locationMatch(ROUTES.MAGIC_SIGN_IN))
         ) {
@@ -509,7 +535,13 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
         ],
     );
 
-    if (!ready || generatingMagicLink || verifyingToken || googleAuthLoading) {
+    if (
+        !ready ||
+        generatingMagicLink ||
+        verifyingToken ||
+        googleAuthLoading ||
+        (!isValidSession && refreshToken && !hydrated)
+    ) {
         return <GlobalSpinner />;
     }
 

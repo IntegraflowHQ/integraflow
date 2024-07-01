@@ -136,7 +136,7 @@ export default function Create() {
                     <div
                         className={cn(
                             previewViewport === "mobile"
-                                ? "mx-auto h-full max-h-[730px] w-full max-w-[360px] rounded-3xl bg-[#E5EAF2] px-[18px] py-[15px]"
+                                ? "m-auto h-full max-h-[730px] w-full max-w-[360px] rounded-3xl bg-[#E5EAF2] px-[18px] py-[15px]"
                                 : "h-full w-full",
                         )}
                     >

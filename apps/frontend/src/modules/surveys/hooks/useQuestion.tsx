@@ -169,6 +169,8 @@ export const useQuestion = () => {
             return;
         }
 
+        clear();
+
         await deleteQuestionMutation({
             variables: {
                 id: question.id,

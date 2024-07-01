@@ -5,6 +5,10 @@
             "dependsOn": ["@integraflow/client#build:client"],
             "cache": false
         },
+        "integraflow-js#build:internal": {
+            "dependsOn": ["@integraflow/client#build:client"],
+            "cache": false
+        },
         "@integraflow/client#build:client": {
             "cache": false
         },
@@ -32,7 +36,7 @@
             "cache": false
         },
         "@integraflow/survey#build:survey": {
-            "dependsOn": ["integraflow-js#build"],
+            "dependsOn": ["integraflow-js#build:internal"],
             "cache": false
         },
         "@integraflow/survey#start:survey": {

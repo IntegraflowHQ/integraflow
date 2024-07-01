@@ -1,5 +1,15 @@
 # integraflow-js
 
+## 0.0.4
+
+### Patch Changes
+
+- ea3c2f2: # Enable background overlay and update user attributes
+
+  - enable backgroundOverlay
+  - extract lib version before build
+  - add lib_version to user attributes
+
 ## 0.0.3
 
 ### Patch Changes
