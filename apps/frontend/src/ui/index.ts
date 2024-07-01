@@ -16,6 +16,7 @@ export { Switch } from "./Switch/Switch";
 export { Tab } from "./Tab";
 export { CodeBlock } from "./Typography/CodeBlock";
 export { Header } from "./Typography/Header";
+export { ContainerWithTooltip } from "./containers/ContainerWithTooltip";
 export { DatePicker } from "./input/DatePicker";
 export { NumberInput } from "./input/NumberInput";
 export { SelectInput } from "./input/SelectInput";
