@@ -26,10 +26,11 @@ export const MemberList = ({ searchValue }: Props) => {
 
     useEffect(() => {
         if (searchValue) {
-            const filtered = workspace?.members?.edges?.filter((member) =>
-                `${member?.node?.firstName} ${member?.node?.lastName}`
-                    .toLowerCase()
-                    .includes(searchValue.toLowerCase()),
+            const value = searchValue.toLowerCase();
+            const filtered = workspace?.members?.edges?.filter(
+                (member) =>
+                    `${member?.node?.firstName} ${member?.node?.lastName}`.toLowerCase().includes(value) ||
+                    member?.node?.email?.toLowerCase().includes(value),
             );
             setFilteredMembers(filtered as OrganizationMemberCountableEdge[]);
         } else {
