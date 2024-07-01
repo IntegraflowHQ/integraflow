@@ -1,3 +1,5 @@
+import { SurveyStatusEnum } from "@/generated/graphql";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { LogicOperator } from "@/types";
 import { cn } from "@/utils";
 import { useState } from "react";
@@ -47,6 +49,7 @@ export const ReactSelect = ({
     const [values, setValue] = useState<Option | Option[]>([]);
     const [userOptions, setUserOptions] = useState<Option[]>([]);
     const [logicalOperatorValue, setLogicalOperatorValue] = useState<LogicOperator>(logicOperator as LogicOperator);
+    const { survey } = useSurvey();
 
     const handleCreate = (inputValue: string) => {
         setTimeout(() => {
@@ -165,6 +168,7 @@ export const ReactSelect = ({
                         onChange={(newValue) => onchange && onchange(newValue)}
                         styles={styles}
                         className={classname}
+                        isDisabled={survey?.status === SurveyStatusEnum.Active}
                     />
                 </div>
             ) : (
@@ -186,6 +190,7 @@ export const ReactSelect = ({
                             }}
                             className={classname}
                             styles={styles}
+                            isDisabled={survey?.status === SurveyStatusEnum.Active}
                         />
                     ) : (
                         <div>
@@ -201,6 +206,7 @@ export const ReactSelect = ({
                                 className={classname}
                                 styles={styles}
                                 closeMenuOnSelect={false}
+                                isDisabled={survey?.status === SurveyStatusEnum.Active}
                             />
                         </div>
                     )}

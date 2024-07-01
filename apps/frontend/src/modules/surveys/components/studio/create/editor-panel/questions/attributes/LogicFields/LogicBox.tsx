@@ -1,5 +1,5 @@
 import MinusIcon from "@/assets/icons/studio/MinusIcon";
-import { SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum, SurveyStatusEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { LogicConditionEnum, LogicOperator, ParsedQuestion, QuestionLogic } from "@/types";
@@ -24,7 +24,7 @@ type Props = {
 };
 
 export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic, setLogicValues }: Props) => {
-    const { parsedQuestions } = useSurvey();
+    const { parsedQuestions, survey } = useSurvey();
     const { updateQuestion, question } = useQuestion();
     const [enableUserOptions, setEnableUserOptions] = useState(false);
     const [editValues, setEditValues] = useState(logic);
@@ -257,19 +257,21 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic, setLogicValues
                 </div>
             </div>
 
-            <div
-                className="absolute -right-2.5 bottom-[50%] translate-y-1/2 cursor-pointer"
-                onClick={() =>
-                    updateQuestion({
-                        settings: {
-                            ...question?.settings,
-                            logic: (question?.settings.logic as QuestionLogic[]).filter((l) => l.id !== logic.id),
-                        },
-                    })
-                }
-            >
-                <MinusIcon />
-            </div>
+            {survey?.status !== SurveyStatusEnum.Active ? (
+                <div
+                    className="absolute -right-2.5 bottom-[50%] translate-y-1/2 cursor-pointer"
+                    onClick={() =>
+                        updateQuestion({
+                            settings: {
+                                ...question?.settings,
+                                logic: (question?.settings.logic as QuestionLogic[]).filter((l) => l.id !== logic.id),
+                            },
+                        })
+                    }
+                >
+                    <MinusIcon />
+                </div>
+            ) : null}
         </div>
     );
 };

@@ -1,6 +1,6 @@
 import useChannels from "@/modules/surveys/hooks/useChannels";
 import { ParsedChannel } from "@/types";
-import { Dialog, DialogContent, DialogTrigger, Header } from "@/ui";
+import { ContainerWithTooltip, Dialog, DialogContent, DialogTrigger, Header } from "@/ui";
 import { Copy, QRCode, SettingsIcon, Trash } from "@/ui/icons";
 import { cn, copyToClipboard } from "@/utils";
 import { ExternalLink } from "lucide-react";
@@ -25,39 +25,49 @@ export default function Link({ link }: LinkProps) {
             <Header variant="3" title={settings.name || "Link"} description={url} font="medium" />
 
             <div className={cn("flex gap-2 transition-opacity duration-300 ease-in")}>
-                <button
-                    onClick={() => {
-                        copyToClipboard(url, "Link copied to clipboard!");
-                    }}
-                >
-                    <Copy />
-                </button>
+                <ContainerWithTooltip text={"Copy"}>
+                    <button
+                        onClick={() => {
+                            copyToClipboard(url, "Link copied to clipboard!");
+                        }}
+                    >
+                        <Copy />
+                    </button>
+                </ContainerWithTooltip>
 
-                <Dialog>
-                    <DialogTrigger>
-                        <QRCode />
-                    </DialogTrigger>
-                    <DialogContent title={"QR Code"}>
-                        <QRCodeView url={url} name={settings.name || "Link"} />
-                    </DialogContent>
-                </Dialog>
+                <ContainerWithTooltip text={"QR code"}>
+                    <Dialog>
+                        <DialogTrigger>
+                            <QRCode />
+                        </DialogTrigger>
+                        <DialogContent title={"QR Code"}>
+                            <QRCodeView url={url} name={settings.name || "Link"} />
+                        </DialogContent>
+                    </Dialog>
+                </ContainerWithTooltip>
 
-                <Dialog open={editing} onOpenChange={(value) => setEditing(value)}>
-                    <DialogTrigger onClick={() => setEditing(true)}>
-                        <SettingsIcon />
-                    </DialogTrigger>
-                    <DialogContent title={`${settings.name} settings`}>
-                        <EditLink link={link} settings={settings} close={() => setEditing(false)} />
-                    </DialogContent>
-                </Dialog>
+                <ContainerWithTooltip text={"Settings"}>
+                    <Dialog open={editing} onOpenChange={(value) => setEditing(value)}>
+                        <DialogTrigger onClick={() => setEditing(true)}>
+                            <SettingsIcon />
+                        </DialogTrigger>
+                        <DialogContent title={`${settings.name} settings`}>
+                            <EditLink link={link} settings={settings} close={() => setEditing(false)} />
+                        </DialogContent>
+                    </Dialog>
+                </ContainerWithTooltip>
 
-                <a href={url} className="text-intg-text" target="_blank">
-                    <ExternalLink size={20} />
-                </a>
+                <ContainerWithTooltip text={"Open"}>
+                    <a href={url} className="text-intg-text" target="_blank">
+                        <ExternalLink size={20} />
+                    </a>
+                </ContainerWithTooltip>
 
-                <button onClick={() => deleteChannel(link)}>
-                    <Trash />
-                </button>
+                <ContainerWithTooltip text={"Delete"}>
+                    <button onClick={() => deleteChannel(link)}>
+                        <Trash />
+                    </button>
+                </ContainerWithTooltip>
             </div>
         </div>
     );

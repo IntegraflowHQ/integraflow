@@ -1,5 +1,6 @@
-import { SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum, SurveyStatusEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { generateUniqueId, getHighestOrderNumber } from "@/utils";
 import { formOptions } from "@/utils/survey";
 import { SingleValue } from "react-select";
@@ -11,6 +12,7 @@ import TextButton from "../Buttons/TextButton";
 import { Option, ReactSelect } from "../ReactSelect";
 
 export const FormFieldList = () => {
+    const { survey } = useSurvey();
     const { updateQuestion, question } = useQuestion();
 
     if (
@@ -94,23 +96,25 @@ export const FormFieldList = () => {
                 );
             })}
 
-            <TextButton
-                text={"Add next field"}
-                onclick={() => {
-                    const highestOrderNumber = getHighestOrderNumber(question?.options);
-                    const newOptions = [...question.options];
-                    newOptions.push({
-                        id: generateUniqueId(),
-                        orderNumber: highestOrderNumber + 1,
-                        label: formOptions[0].label,
-                        type: formOptions[0].value,
-                        required: false,
-                    });
-                    updateQuestion({
-                        options: newOptions,
-                    });
-                }}
-            />
+            {survey?.status !== SurveyStatusEnum.Active ? (
+                <TextButton
+                    text={"Add next field"}
+                    onclick={() => {
+                        const highestOrderNumber = getHighestOrderNumber(question?.options);
+                        const newOptions = [...question.options];
+                        newOptions.push({
+                            id: generateUniqueId(),
+                            orderNumber: highestOrderNumber + 1,
+                            label: formOptions[0].label,
+                            type: formOptions[0].value,
+                            required: false,
+                        });
+                        updateQuestion({
+                            options: newOptions,
+                        });
+                    }}
+                />
+            ) : null}
         </>
     );
 };

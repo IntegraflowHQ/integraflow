@@ -1,5 +1,6 @@
-import { SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum, SurveyStatusEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { Switch } from "@/ui";
 import { rangeOptions } from "@/utils/question";
 import { useState } from "react";
@@ -24,6 +25,7 @@ const limitRange = [
 ];
 
 export const ChoiceSettings = () => {
+    const { survey } = useSurvey();
     const { question, updateSettings } = useQuestion();
     const [rangeOption, setRangeOption] = useState(
         question?.settings.choice?.min === question?.settings.choice?.max ? limitRange[0].value : limitRange[1].value,
@@ -84,6 +86,7 @@ export const ChoiceSettings = () => {
                             onChange={(e) => {
                                 updateSettings({ randomize: e.target.value });
                             }}
+                            disabled={survey?.status === SurveyStatusEnum.Active}
                         />
                     </div>
 
@@ -95,6 +98,7 @@ export const ChoiceSettings = () => {
                             onChange={(e) => {
                                 updateSettings({ randomizeExceptLast: e.target.value });
                             }}
+                            disabled={survey?.status === SurveyStatusEnum.Active}
                         />
                     </div>
                 </>

@@ -1,32 +1,48 @@
-function SurveyCompleted() {
+export default function CTA({ title, description }: { title: string; description: string }) {
     return (
         <main className="flex h-screen w-screen bg-white">
-            <div
-                className="flex w-[45%] flex-col justify-between px-12 pb-8 pt-12"
-                style={
-                    {
-                        // backgroundImage:
-                        //     "radial-gradient(rgba(28, 15, 89, 0.30) 50%, rgba(5, 5, 5, 0.30))",
-                        // backgroundRepeat: "no-repeat",
-                        // backgroundPosition: "center",
-                        // backgroundSize: "cover",
-                    }
-                }
-            >
-                <div>
+            <div className="flex lg:w-[45%] flex-col px-12 pb-8 pt-12">
+                <div className="pb-16">
                     <img src={"/images/logo.png"} alt="Logo" className="w-[197px] h-[29px]" />
                 </div>
 
-                <header className="flex flex-col gap-2">
-                    <h2 className="text-[28px] font-medium leading-normal text-[#28213B]">Survey completed</h2>
-                    <p className="text-base text-[#AFAAC7]">Thank you for taking the time to complete this survey.</p>
+                <header className="flex flex-col gap-2 pb-10">
+                    <h2 className="text-[28px] font-medium leading-normal text-[#28213B]">{title}</h2>
+                    <p className="text-base">{description}</p>
                 </header>
 
-                <div />
+                <div className="max-w-[520px] text-black">
+                    <p className="pb-10">
+                        With Integraflow, you can automate, simplify, track Your ever-changing customer's journey in one
+                        space.
+                    </p>
+                    <ul className="list-disc pl-5 pb-10 space-y-3.5">
+                        <li>
+                            Transform survey data into actionable insights, visualize trends, track responses, and
+                            generate efficient reports with analytics tools.
+                        </li>
+                        <li>
+                            Generate links for sharing via email, social media, or embedding in apps to easily interact
+                            and collect responses.
+                        </li>
+                        <li>
+                            Our platform seamlessly connects with a range of third-party apps, enhancing your
+                            productivity.
+                        </li>
+                    </ul>
+
+                    <a
+                        href="https://useintegraflow.com"
+                        target="_blank"
+                        className="bg-black text-white px-5 py-2 inline-block rounded"
+                    >
+                        Learn More
+                    </a>
+                </div>
             </div>
 
             <div
-                className="flex flex-1 flex-col justify-end rounded-b-3xl"
+                className="flex-1 flex-col justify-end rounded-b-3xl hidden lg:flex"
                 style={{
                     padding: "4px",
                     border: "4px solid transparent",
@@ -37,7 +53,7 @@ function SurveyCompleted() {
                     backgroundClip: "padding-box, content-box, padding-box",
                 }}
             >
-                <div className="flex flex-col gap-[60px] px-[60px] pb-[60px]">
+                <div className="flex flex-col gap-[60px] px-[60px] pb-[60px] text-white">
                     <header className="flex flex-col gap-4">
                         <h2 className="max-w-[631px] text-[52px] font-semibold leading-[60px]">
                             Redefine customer experience with organic feedback
@@ -63,5 +79,3 @@ function SurveyCompleted() {
         </main>
     );
 }
-
-export default SurveyCompleted;

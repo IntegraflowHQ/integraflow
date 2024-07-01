@@ -1,4 +1,5 @@
 import MinusIcon from "@/assets/icons/studio/MinusIcon";
+import { SurveyStatusEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { LogicConditionEnum, LogicOperator, ParsedQuestion, QuestionLogic } from "@/types";
@@ -27,7 +28,7 @@ export const DefaultLogicBox: React.FC<Props> = ({
     setLogicValues,
     setIsCreatingLogic,
 }: Props) => {
-    const { parsedQuestions } = useSurvey();
+    const { parsedQuestions, survey } = useSurvey();
     const { updateQuestion, question } = useQuestion();
     const [enableUserOptions, setEnableUserOptions] = useState(false);
     const [logicOperator, setLogicOperator] = useState(logicValues.operator);
@@ -140,11 +141,13 @@ export const DefaultLogicBox: React.FC<Props> = ({
                     <div></div>
                     <div className="w-[330px]">
                         <MinMaxSelector
-                            options={question?.options?.map((option, index) => ({
-                                value: option.id,
-                                label: option.label,
-                                index: index,
-                            })) || []}
+                            options={
+                                question?.options?.map((option, index) => ({
+                                    value: option.id,
+                                    label: option.label,
+                                    index: index,
+                                })) || []
+                            }
                             maxChange={handleMaxChange}
                             minChange={handleMinChange}
                         />
@@ -206,9 +209,11 @@ export const DefaultLogicBox: React.FC<Props> = ({
                 </div>
             ) : null}
 
-            <div className="absolute -right-2.5 bottom-[50%] translate-y-1/2 cursor-pointer" onClick={handleCancel}>
-                <MinusIcon />
-            </div>
+            {survey?.status !== SurveyStatusEnum.Active ? (
+                <div className="absolute -right-2.5 bottom-[50%] translate-y-1/2 cursor-pointer" onClick={handleCancel}>
+                    <MinusIcon />
+                </div>
+            ) : null}
         </div>
     );
 };

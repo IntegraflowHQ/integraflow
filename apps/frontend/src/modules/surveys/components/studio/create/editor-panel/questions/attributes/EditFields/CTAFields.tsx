@@ -1,4 +1,4 @@
-import { PropertyDefinition } from "@/generated/graphql";
+import { PropertyDefinition, SurveyStatusEnum } from "@/generated/graphql";
 import { useProject } from "@/modules/projects/hooks/useProject";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
@@ -10,7 +10,7 @@ import TextButton from "../Buttons/TextButton";
 
 export const CTAFields = () => {
     const { updateQuestion, question } = useQuestion();
-    const { parsedQuestions } = useSurvey();
+    const { parsedQuestions, survey } = useSurvey();
     const [showDescription, setShowDescription] = useState(false);
     const { personProperties } = useProject();
 
@@ -79,11 +79,13 @@ export const CTAFields = () => {
                 </div>
             ) : null}
 
-            <TextButton
-                classname={`${showDescription ? "hidden" : "block"} mt-2`}
-                text="Add description"
-                onclick={() => setShowDescription(true)}
-            />
+            {survey?.status !== SurveyStatusEnum.Active ? (
+                <TextButton
+                    classname={`${showDescription ? "hidden" : "block"} mt-2`}
+                    text="Add description"
+                    onclick={() => setShowDescription(true)}
+                />
+            ) : null}
         </div>
     );
 };
