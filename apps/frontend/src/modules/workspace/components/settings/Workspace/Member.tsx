@@ -76,7 +76,7 @@ export const Member = () => {
                 <div>
                     <h3 className="font-semibold text-white">Manage members</h3>
                     <p className="text-sm">
-                        Invite others to your project to collaborate together in integraflow. An invite is specific to
+                        Invite others to your project to collaborate together in Integraflow. An invite is specific to
                         an email address and expires after 3 days.
                     </p>
                 </div>
