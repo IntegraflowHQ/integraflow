@@ -48,6 +48,7 @@ export const Billing = () => {
                     <div className="space-y-6">
                         {planDetails.map(({ icon: Icon, ...plan }) => {
                             const { count, limit } = getBillingValues(plan.category);
+                            const percentage = (count / limit) * 100;
 
                             return (
                                 <div className="space-y-6 rounded-lg bg-intg-bg-9 p-4 text-sm" key={plan.title}>
@@ -60,22 +61,22 @@ export const Billing = () => {
                                     </div>
                                     <div>
                                         <Progress.Root
-                                            className="border-intg-bg-23 bg-intg-bg-23 relative h-[8px] w-full overflow-hidden rounded-sm"
+                                            className="relative h-[8px] w-full overflow-hidden rounded-sm border-intg-bg-23 bg-intg-bg-23"
                                             style={{
                                                 // Fix overflow clipping in Safari
                                                 // https://gist.github.com/domske/b66047671c780a238b51c51ffde8d3a0
                                                 transform: "translateZ(0)",
                                             }}
-                                            value={count}
+                                            value={percentage}
                                         >
                                             <Progress.Indicator
-                                                className="ease-[cubic-bezier(0.65, 0, 0.35, 1)] h-full w-full bg-intg-bg-13 transition-transform duration-[660ms]"
-                                                style={{ transform: `translateX(-${100 - count}%)` }}
+                                                className="ease-[cubic-bezier(0.65, 0, 0.35, 1)] h-full bg-intg-bg-13 transition-transform duration-[660ms]"
+                                                style={{ transform: `translateX(${percentage}%)` }}
                                             />
                                         </Progress.Root>
                                         <div className="flex justify-between">
-                                            <div className="border-intg-bg-23 h-5 border"></div>
-                                            <div className="border-intg-bg-23 h-5 border"></div>
+                                            <div className="h-5 border border-intg-bg-23"></div>
+                                            <div className="h-5 border border-intg-bg-23"></div>
                                         </div>
 
                                         <div className="flex justify-between">
