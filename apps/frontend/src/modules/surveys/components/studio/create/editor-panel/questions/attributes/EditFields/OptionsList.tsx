@@ -1,5 +1,6 @@
-import { SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum, SurveyStatusEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { cn, generateUniqueId, getHighestOrderNumber } from "@/utils";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import { AddMultipleQuestions } from "../AddMultipleQuestions";
@@ -10,6 +11,7 @@ import TextButton from "../Buttons/TextButton";
 
 export const OptionsList = () => {
     const { updateQuestion, question } = useQuestion();
+    const { survey } = useSurvey();
 
     if (!question) {
         return null;
@@ -87,22 +89,24 @@ export const OptionsList = () => {
                     </div>
                 ) : null}
 
-                <TextButton
-                    text={"Add an answer at choice"}
-                    onclick={() => {
-                        const highestOrderNumber = getHighestOrderNumber(question?.options);
-                        const newOptions = [...question.options];
-                        newOptions.push({
-                            id: generateUniqueId(),
-                            orderNumber: highestOrderNumber + 1,
-                            label: "",
-                            comment: false,
-                        });
-                        updateQuestion({
-                            options: newOptions,
-                        });
-                    }}
-                />
+                {survey?.status !== SurveyStatusEnum.Active ? (
+                    <TextButton
+                        text={"Add an answer at choice"}
+                        onclick={() => {
+                            const highestOrderNumber = getHighestOrderNumber(question?.options);
+                            const newOptions = [...question.options];
+                            newOptions.push({
+                                id: generateUniqueId(),
+                                orderNumber: highestOrderNumber + 1,
+                                label: "",
+                                comment: false,
+                            });
+                            updateQuestion({
+                                options: newOptions,
+                            });
+                        }}
+                    />
+                ) : null}
             </div>
         </div>
     );

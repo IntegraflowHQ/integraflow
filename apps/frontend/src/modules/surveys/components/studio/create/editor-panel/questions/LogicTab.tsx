@@ -1,6 +1,7 @@
-import { SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum, SurveyStatusEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { QuestionLogic, QuestionSettings, LogicOperator } from "@/types";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
+import { LogicOperator, QuestionLogic, QuestionSettings } from "@/types";
 import { cn, generateUniqueId } from "@/utils";
 import { useEffect, useState } from "react";
 import { TabHeader } from "./TabHeader";
@@ -15,6 +16,7 @@ type Props = {
 
 export const LogicTab = ({ questionIndex }: Props) => {
     const [isCreatingLogic, setIsCreatingLogic] = useState(false);
+    const { survey } = useSurvey();
     const { question } = useQuestion();
 
     const [logicValues, setLogicValues] = useState<QuestionLogic>({
@@ -151,15 +153,17 @@ export const LogicTab = ({ questionIndex }: Props) => {
                 </>
             )}
 
-            <div
-                className={cn(
-                    isCreatingLogic ? "cursor-not-allowed" : "cursor-pointer",
-                    "border-3 rounded-md border border-dotted border-intg-bg-4 p-6 text-center",
-                )}
-                onClick={() => setIsCreatingLogic(true)}
-            >
-                <p className="text-xs underline">Add new Logic</p>
-            </div>
+            {survey?.status !== SurveyStatusEnum.Active ? (
+                <div
+                    className={cn(
+                        isCreatingLogic ? "cursor-not-allowed" : "cursor-pointer",
+                        "border-3 rounded-md border border-dotted border-intg-bg-4 p-6 text-center",
+                    )}
+                    onClick={() => setIsCreatingLogic(true)}
+                >
+                    <p className="text-xs underline">Add new Logic</p>
+                </div>
+            ) : null}
 
             <p className="text-sm">All other answers will direct the respondents to the next question.</p>
         </div>
