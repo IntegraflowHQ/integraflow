@@ -36,7 +36,7 @@ export const Member = () => {
         <div className="w-[810px] pt-10 text-intg-text-4">
             <div className="space-y-4">
                 <div>
-                    <h3 className="font-semibold">Invite Link</h3>
+                    <h3 className="font-semibold text-white">Invite Link</h3>
                     <p className="text-sm">
                         Invite link will provide a unique URL that allow anyone to join your organization
                     </p>
@@ -74,7 +74,7 @@ export const Member = () => {
             <hr className="my-6 border-[1px] border-intg-bg-4" />
             <div className="space-y-6">
                 <div>
-                    <h3 className="font-semibold">Manage members</h3>
+                    <h3 className="font-semibold text-white">Manage members</h3>
                     <p className="text-sm">
                         Invite others to your project to collaborate together in integraflow. An invite is specific to
                         an email address and expires after 3 days.
