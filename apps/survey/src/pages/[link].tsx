@@ -1,8 +1,7 @@
-import SurveyCompleted from "@/components/SurveyCompleted";
+import CTA from "@/components/CTA";
 import { parsedSurveys } from "@/utils";
 import { IntegraflowClient } from "@integraflow/client";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import Error from "next/error";
 import { Inter } from "next/font/google";
 import { useEffect, useState } from "react";
 
@@ -31,7 +30,7 @@ export default function Home({ surveys, appKey }: InferGetServerSidePropsType<ty
                     fullScreen: true,
                     onSurveyCompleted: () => {
                         setCompleted(true);
-                    }
+                    },
                 });
 
                 setIntg(intg);
@@ -62,10 +61,15 @@ export default function Home({ surveys, appKey }: InferGetServerSidePropsType<ty
     }, [surveys, intg]);
 
     if (surveys.length === 0) {
-        return <Error statusCode={404} />;
+        return (
+            <CTA
+                title="Uh-oh! This survey is currently unavailable 😔"
+                description="Don't let that stop you! Create your own survey in just a few clicks."
+            />
+        );
     }
     if (completed) {
-        return <SurveyCompleted />;
+        return <CTA title="Survey completed" description="Thank you for taking the time to complete this survey." />;
     }
 
     return (
@@ -75,7 +79,7 @@ export default function Home({ surveys, appKey }: InferGetServerSidePropsType<ty
     );
 }
 
-export const getServerSideProps: GetServerSideProps<{ surveys: any[]; appKey: string }> = async context => {
+export const getServerSideProps: GetServerSideProps<{ surveys: any[]; appKey: string }> = async (context) => {
     const { link } = context.params as { link: string };
     const client = new IntegraflowClient({ apiUrl });
     const survey = await client.surveyByChannel({ link });
@@ -84,7 +88,7 @@ export const getServerSideProps: GetServerSideProps<{ surveys: any[]; appKey: st
     return {
         props: {
             surveys: surveys as any[],
-            appKey: survey?.project?.apiToken ?? ""
-        }
+            appKey: survey?.project?.apiToken ?? "",
+        },
     };
 };
