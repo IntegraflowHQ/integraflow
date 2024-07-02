@@ -38,7 +38,7 @@ export const Member = () => {
                 <div>
                     <h3 className="font-semibold">Invite Link</h3>
                     <p className="text-sm">
-                        Invite link will provide a unique URL that allow anyone to join your organization
+                        Invite link will provide a unique URL that allows anyone to join your organization.
                     </p>
                 </div>
 
