@@ -190,7 +190,7 @@ export const EditorTextInput = ({
                             handleFallbackChange();
                         }
                     }}
-                    className="mention-input border-0 bg-intg-bg-4 px-[10px] py-0 min-h-[30px] text-xs text-intg-text"
+                    className="mention-input min-h-[30px] border-0 bg-intg-bg-4 px-[10px] py-0 text-xs text-intg-text"
                     onBlur={() => {
                         setDisplayFallbackField(false);
                         setFallbackValue("");
@@ -239,7 +239,10 @@ export const EditorTextInput = ({
             )}
             {showCharacterCount && (
                 <div className="absolute bottom-0 right-0 translate-y-1/2 rounded bg-[#2B2045] p-1 text-xs text-intg-text">
-                    {stripHtmlTags(defaultValue ?? "")?.length}/{maxCharacterCount}
+                    {showMention
+                        ? stripHtmlTags(defaultValue ?? "")?.length - 1
+                        : stripHtmlTags(defaultValue ?? "")?.length}
+                    /{maxCharacterCount}
                 </div>
             )}
         </div>

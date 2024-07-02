@@ -38,6 +38,7 @@ export const OptionsList = () => {
                                 <MoreButton />
                                 <EditorTextInput
                                     maxCharacterCount={100}
+                                    placeholder={`Answer ${index + 1}`}
                                     defaultValue={option.label}
                                     onChange={(e) => {
                                         const newOptions = [...question.options];
