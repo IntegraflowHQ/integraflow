@@ -153,17 +153,21 @@ export const LogicTab = ({ questionIndex }: Props) => {
                 </>
             )}
 
-            {survey?.status !== SurveyStatusEnum.Active ? (
-                <div
-                    className={cn(
-                        isCreatingLogic ? "cursor-not-allowed" : "cursor-pointer",
-                        "border-3 rounded-md border border-dotted border-intg-bg-4 p-6 text-center",
-                    )}
-                    onClick={() => setIsCreatingLogic(true)}
-                >
-                    <p className="text-xs underline">Add new Logic</p>
-                </div>
-            ) : null}
+            <div
+                className={cn(
+                    isCreatingLogic ? "cursor-not-allowed" : "cursor-pointer",
+                    "border-3 rounded-md border border-dotted border-intg-bg-4 p-6 text-center",
+                )}
+                onClick={() => {
+                    if (survey?.status !== SurveyStatusEnum.Active) {
+                        return;
+                    }
+
+                    setIsCreatingLogic(true);
+                }}
+            >
+                <p className="text-xs underline">Add new Logic</p>
+            </div>
 
             <p className="text-sm">All other answers will direct the respondents to the next question.</p>
         </div>
