@@ -1,14 +1,13 @@
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { ComingSoon, Header } from "@/ui";
-import { Info, PresentationChartLine } from "@/ui/icons";
-import { DonutChart } from "@tremor/react";
+import { PresentationChartLine } from "@/ui/icons";
 import ResponseTrends from "assets/images/surveys/studio/response-trends.svg";
 import { intervalToDuration } from "date-fns";
 import { BadgeCheck, BarChart, Clock3 } from "lucide-react";
 import { useMemo } from "react";
 import { DateFilter } from "../components/DateFilter";
 import { ExportBtn } from "../components/ExportBtn";
-import { Legend } from "../components/Legend";
+import { MetricPieChart } from "../components/MetricPieChart";
 import { Response } from "../components/Response";
 import { Summary } from "../components/Summary";
 
@@ -137,132 +136,65 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
 
                 <div className="flex gap-[14px] py-4">
                     <section className="flex flex-col gap-[14px]">
-                        <div className="h-[280px] max-w-[419px] rounded-lg bg-intg-bg-15 p-4">
-                            <header className="flex items-center gap-2 pb-4">
-                                <h2 className="text-base font-medium text-intg-text">Net Promoter Score</h2>
-                                <Info />
-                            </header>
+                        <MetricPieChart
+                            title="Net Promoter Score"
+                            description="View your customers' loyalty metrics."
+                            data={
+                                npsMetric.detractors + npsMetric.passives + npsMetric.promoters > 0
+                                    ? [
+                                          { name: "promoters", value: npsMetric.promoters },
+                                          { name: "passives", value: npsMetric.passives },
+                                          { name: "detractors", value: npsMetric.detractors },
+                                      ]
+                                    : [{ name: "placeholder", value: 1 }]
+                            }
+                            average={npsMetric.score.toFixed(2)}
+                            legendData={[
+                                { name: "Promoters", value: npsMetric.promoters, color: "#8DF0B0" },
+                                { name: "Passives", value: npsMetric.passives, color: "#FFB17B" },
+                                { name: "Detractors", value: npsMetric.detractors, color: "#EB5A6D" },
+                            ]}
+                        />
 
-                            <div className="flex gap-[30px]">
-                                <div className="relative flex-1">
-                                    <DonutChart
-                                        data={
-                                            npsMetric.detractors + npsMetric.passives + npsMetric.promoters > 0
-                                                ? [
-                                                      { name: "promoters", value: npsMetric.promoters },
-                                                      { name: "passives", value: npsMetric.passives },
-                                                      { name: "detractors", value: npsMetric.detractors },
-                                                  ]
-                                                : [{ name: "placeholder", value: 1 }]
-                                        }
-                                        showLabel={false}
-                                        showTooltip={false}
-                                        colors={["#EB5A6D", "#FFB17B", "#8DF0B0"]}
-                                        className="h-[186px] w-[186px]"
-                                    />
-                                    <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center">
-                                        <strong className="text-3xl font-medium text-white">
-                                            {npsMetric.score.toFixed(2)}
-                                        </strong>
-                                        <span className="text-xs text-intg-text">Avg score</span>
-                                    </div>
-                                </div>
+                        <MetricPieChart
+                            title="Customer Effort Score (CES)"
+                            description="View how much effort your customers exert on your website."
+                            data={
+                                cesMetric.high + cesMetric.medium + cesMetric.low > 0
+                                    ? [
+                                          { name: "low", value: cesMetric.low },
+                                          { name: "medium", value: cesMetric.medium },
+                                          { name: "high", value: cesMetric.high },
+                                      ]
+                                    : [{ name: "placeholder", value: 1 }]
+                            }
+                            average={cesMetric.score.toFixed(2)}
+                            legendData={[
+                                { name: "Low Effort", value: cesMetric.low, color: "#EB5A6D" },
+                                { name: "Med Effort", value: cesMetric.medium, color: "#FFB17B" },
+                                { name: "High Effort", value: cesMetric.high, color: "#8DF0B0" },
+                            ]}
+                        />
 
-                                <Legend
-                                    data={[
-                                        { name: "Promoters", value: npsMetric.promoters, color: "#8DF0B0" },
-                                        { name: "Passives", value: npsMetric.passives, color: "#FFB17B" },
-                                        { name: "Detractors", value: npsMetric.detractors, color: "#EB5A6D" },
-                                    ]}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="h-[280px] max-w-[419px] rounded-lg bg-intg-bg-15 p-4">
-                            <header className="flex items-center gap-2 pb-4">
-                                <h2 className="text-base font-medium text-intg-text">Customer Effort Score (CES)</h2>
-                                <Info />
-                            </header>
-
-                            <div className="flex gap-[30px]">
-                                <div className="relative flex-1">
-                                    <DonutChart
-                                        data={
-                                            cesMetric.high + cesMetric.medium + cesMetric.low > 0
-                                                ? [
-                                                      { name: "low", value: cesMetric.low },
-                                                      { name: "medium", value: cesMetric.medium },
-                                                      { name: "high", value: cesMetric.high },
-                                                  ]
-                                                : [{ name: "placeholder", value: 1 }]
-                                        }
-                                        colors={["#EB5A6D", "#FFB17B", "#8DF0B0"]}
-                                        showTooltip={false}
-                                        showLabel={false}
-                                        className="h-[186px] w-[186px]"
-                                    />
-
-                                    <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center">
-                                        <strong className="text-3xl font-medium text-white">
-                                            {cesMetric.score.toFixed(2)}
-                                        </strong>
-                                        <span className="text-xs text-intg-text">Avg score</span>
-                                    </div>
-                                </div>
-
-                                <Legend
-                                    data={[
-                                        { name: "Low Effort", value: cesMetric.low, color: "#EB5A6D" },
-                                        { name: "Med Effort", value: cesMetric.medium, color: "#FFB17B" },
-                                        { name: "High Effort", value: cesMetric.high, color: "#8DF0B0" },
-                                    ]}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="h-[280px] max-w-[419px] rounded-lg bg-intg-bg-15 p-4">
-                            <header className="flex items-center gap-2 pb-4">
-                                <h2 className="text-base font-medium text-intg-text">
-                                    Customer Satisfaction Score (CSAT)
-                                </h2>
-                                <Info />
-                            </header>
-
-                            <div className="flex gap-[30px]">
-                                <div className="relative flex-1">
-                                    <DonutChart
-                                        data={
-                                            csatMetric.negative + csatMetric.neutral + csatMetric.positive > 0
-                                                ? [
-                                                      { name: "positive", value: csatMetric.positive },
-                                                      { name: "neutral", value: csatMetric.negative },
-                                                      { name: "negative", value: csatMetric.neutral },
-                                                  ]
-                                                : [{ name: "placeholder", value: 1 }]
-                                        }
-                                        colors={["#5D45DB", "#A698EB", "#D3CCF5"]}
-                                        showTooltip={false}
-                                        showLabel={false}
-                                        className="h-[186px] w-[186px]"
-                                    />
-
-                                    <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center">
-                                        <strong className="text-3xl font-medium text-white">
-                                            {csatMetric.score.toFixed(2)}
-                                        </strong>
-                                        <span className="text-xs text-intg-text">Avg score</span>
-                                    </div>
-                                </div>
-
-                                <Legend
-                                    data={[
-                                        { name: "Positive", value: csatMetric.positive, color: "#5D45DB" },
-                                        { name: "Neutral", value: csatMetric.neutral, color: "#A698EB" },
-                                        { name: "Negative", value: csatMetric.negative, color: "#D3CCF5" },
-                                    ]}
-                                />
-                            </div>
-                        </div>
+                        <MetricPieChart
+                            title="Customer Satisfaction Score (CSAT)"
+                            description="View your Customers' Satisfaction metrics."
+                            data={
+                                csatMetric.negative + csatMetric.neutral + csatMetric.positive > 0
+                                    ? [
+                                          { name: "positive", value: csatMetric.positive },
+                                          { name: "neutral", value: csatMetric.negative },
+                                          { name: "negative", value: csatMetric.neutral },
+                                      ]
+                                    : [{ name: "placeholder", value: 1 }]
+                            }
+                            average={csatMetric.score.toFixed(2)}
+                            legendData={[
+                                { name: "Positive", value: csatMetric.positive, color: "#5D45DB" },
+                                { name: "Neutral", value: csatMetric.neutral, color: "#A698EB" },
+                                { name: "Negative", value: csatMetric.negative, color: "#D3CCF5" },
+                            ]}
+                        />
                     </section>
 
                     <section className="flex-1 rounded-lg bg-intg-bg-15 px-4 pt-6">
