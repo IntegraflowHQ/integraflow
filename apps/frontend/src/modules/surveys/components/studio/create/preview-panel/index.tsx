@@ -115,7 +115,7 @@ export const Preview = ({ className, mode, viewPort, ...props }: Props) => {
                         <img src={EmptySurvey} alt="" />
                         <Header
                             title="Nothing to see here yet."
-                            description="Add your first question first!"
+                            description="Add your first question!"
                             className="text-center"
                         />
                     </div>

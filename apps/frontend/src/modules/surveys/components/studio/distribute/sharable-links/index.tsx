@@ -34,7 +34,7 @@ export default function SharableLinks() {
                 <Header
                     title="Sharable links"
                     font="medium"
-                    description="Create survey links or QR codes to distribute your survey."
+                    description="Get survey links and QR codes to distribute your survey."
                 />
                 {linkChannels.length ? (
                     <Button
@@ -60,7 +60,7 @@ export default function SharableLinks() {
                     <div className="flex flex-col items-center gap-2">
                         <LinkIcon className="text-intg-text" size={62} strokeWidth={2} />
                         <p className="max-w-[371px] text-center text-sm text-intg-text">
-                            There is no link created. Click on 'Add link button to create your first shareable link for
+                            There is no link created. Click on 'Add link' button to create your first shareable link for
                             this survey.
                         </p>
                     </div>
