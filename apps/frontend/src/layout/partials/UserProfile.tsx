@@ -105,14 +105,14 @@ export const UserProfile = () => {
                         />
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
-                    <DropdownMenuSubContent className="ml-4 max-h-[510px] w-[221px] overflow-y-scroll rounded bg-intg-bg-9 px-2 py-4 text-intg-text">
+                    <DropdownMenuSubContent className="ml-4 max-h-[510px] min-w-[250px] overflow-y-scroll rounded bg-intg-bg-9 px-2 py-4 text-intg-text">
                         <DropdownMenuLabel>
                             <p className="mb-2 text-xs">OTHER WORKSPACES</p>
                         </DropdownMenuLabel>
                         {organizations?.map((item) => {
                             return (
                                 <DropdownMenuItem
-                                    className="px-3 py-2"
+                                    className="px-3 py-2 hover:rounded-md hover:bg-intg-bg-11"
                                     key={item?.id}
                                     onClick={() => {
                                         switchWorkspace(
@@ -130,14 +130,13 @@ export const UserProfile = () => {
                             );
                         })}
                         <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
-                        <DropdownMenuItem className="px-3 py-2">
+                        <DropdownMenuItem>
                             <a href="/create-workspace">
                                 <Button
                                     icon={<CirclePlusIcon />}
                                     variant="custom"
                                     text="New Workspace"
-                                    size="md"
-                                    className="w-full bg-intg-bg-11"
+                                    className="bg-intg-bg-11 text-sm"
                                 />
                             </a>
                         </DropdownMenuItem>
