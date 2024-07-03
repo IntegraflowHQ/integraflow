@@ -64,10 +64,7 @@ export const InviteList = () => {
                         className="flex items-center justify-between border-b border-intg-bg-4 px-2 py-3"
                     >
                         <div className="flex h-[48px] basis-[60%] flex-col justify-center">
-                            <p className="font-sm font-medium capitalize text-white">{`${invite?.node?.firstName}`}</p>
-                            <p className="font-sm">
-                                <span>{invite?.node?.email}</span>
-                            </p>
+                            <p className="font-sm">{invite?.node?.email}</p>
                         </div>
 
                         <div className="w-[24px] basis-[20%] capitalize">{invite?.node?.role?.toLocaleLowerCase()}</div>
