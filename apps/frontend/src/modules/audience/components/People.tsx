@@ -53,10 +53,10 @@ export const People = () => {
             <Table
                 className={cn(
                     persons?.edges.length ? "border" : "",
-                    "scrollbar-hide table-auto rounded-t-lg border-intg-bg-4 text-intg-text",
+                    "scrollbar-hide table-auto rounded-t-lg border-intg-bg-4 text-white",
                 )}
             >
-                <TableHead className="w-full bg-intg-bg-9 font-light hover:cursor-pointer">
+                <TableHead className="w-full bg-intg-bg-9 font-light text-intg-text">
                     <TableRow>
                         <TableHeaderCell className="w-1/2">User</TableHeaderCell>
                         <TableHeaderCell className="text-md font-normal">First Seen</TableHeaderCell>

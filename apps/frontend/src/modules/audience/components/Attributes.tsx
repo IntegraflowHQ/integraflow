@@ -16,10 +16,10 @@ export const Attributes = () => {
             <Table
                 className={cn(
                     propertyDefinitions?.edges.length ? "border" : "",
-                    "scrollbar-hide mt-4 table-auto rounded-t-lg  border-intg-bg-4 text-intg-text",
+                    "scrollbar-hide mt-4 table-auto rounded-t-lg  border-intg-bg-4 text-white",
                 )}
             >
-                <TableHead className="bg-intg-bg-9 font-light hover:cursor-pointer">
+                <TableHead className="bg-intg-bg-9 font-light text-intg-text">
                     <TableRow>
                         <TableHeaderCell className="w-1/2">Property Name</TableHeaderCell>
                         <TableHeaderCell className="text-md flex items-center space-x-1 font-normal">

@@ -43,19 +43,19 @@ export const EventsIndex = () => {
     };
 
     return (
-        <section className="px-[72px] pb-20 pt-20">
+        <section className="px-[72px] pb-20 pt-20 text-white">
             <Header title="Events" description="The events that you have sent" />
             <div className="mt-4 h-full w-full">
                 <h3 className="font-semibold text-intg-text"></h3>
 
-                <div className="text-intg-text">
+                <div className="">
                     <Table
                         className={cn(
                             eventDefinitions?.edges.length ? "border" : "",
                             "scrollbar-hide bg-red table-auto rounded-t-lg border-intg-bg-4",
                         )}
                     >
-                        <TableHead className="bg-intg-bg-9 font-light hover:cursor-pointer">
+                        <TableHead className="bg-intg-bg-9 font-light text-intg-text">
                             <TableRow>
                                 <TableHeaderCell className="w-1/2">Event Name</TableHeaderCell>
                                 <TableHeaderCell className="text-md flex items-center space-x-1 font-normal">
