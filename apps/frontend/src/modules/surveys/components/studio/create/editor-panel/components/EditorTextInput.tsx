@@ -1,3 +1,5 @@
+import { SurveyStatusEnum } from "@/generated/graphql";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { MentionItem, MentionOption } from "@/types";
 import { cn, stripHtmlTags } from "@/utils";
 import { encodeText } from "@/utils/question";
@@ -39,6 +41,7 @@ export const EditorTextInput = ({
     const [fallbackFieldPosition, setFallbackFieldPosition] = useState({ left: 0, bottom: 0 });
 
     const id = useId();
+    const { survey } = useSurvey();
 
     const ref = useRef<ReactQuill>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -224,6 +227,7 @@ export const EditorTextInput = ({
                     }}
                     formats={["mention"]}
                     modules={modules}
+                    readOnly={survey?.status === SurveyStatusEnum.Active}
                 />
             ) : (
                 <TextInput
@@ -235,6 +239,7 @@ export const EditorTextInput = ({
                     placeholder={placeholder}
                     className="rounded-lg border border-transparent bg-[#272138] text-sm text-intg-text-1 placeholder:text-intg-text-3 focus:border-intg-text-3 focus:outline-none"
                     disabled={maxCharacterCount === stripHtmlTags(defaultValue ?? "")?.length}
+                    readOnly={survey?.status === SurveyStatusEnum.Active}
                 />
             )}
             {showCharacterCount && (

@@ -1,10 +1,12 @@
-import { SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum, SurveyStatusEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { Switch } from "@/ui";
 import { useEffect, useState } from "react";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 
 export const FormSettings = () => {
+    const { survey } = useSurvey();
     const { question, updateQuestion } = useQuestion();
 
     const [showDisclaimer, setShowDisclaimer] = useState(false);
@@ -44,6 +46,7 @@ export const FormSettings = () => {
                                 });
                                 setShowDisclaimer(!showDisclaimer);
                             }}
+                            disabled={survey?.status === SurveyStatusEnum.Active}
                         />
                     </div>
 
@@ -83,6 +86,7 @@ export const FormSettings = () => {
                                 });
                                 setShowConsent(!showConsent);
                             }}
+                            disabled={survey?.status === SurveyStatusEnum.Active}
                         />
                     </div>
 

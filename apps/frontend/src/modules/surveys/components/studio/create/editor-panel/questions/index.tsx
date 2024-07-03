@@ -1,3 +1,4 @@
+import { SurveyStatusEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ParsedQuestion } from "@/types";
@@ -9,7 +10,7 @@ import { QuestionPanel } from "./QuestionPanel";
 import { QuestionOptions } from "./attributes/QuestionTypes";
 
 export default function UpdateQuestion() {
-    const { parsedQuestions } = useSurvey();
+    const { parsedQuestions, survey } = useSurvey();
     const { question, switchQuestion, clear } = useQuestion();
 
     useEffect(() => {
@@ -50,7 +51,7 @@ export default function UpdateQuestion() {
                                                 <div>
                                                     <img src={getQuestionIcon(question)} alt="icon" />
                                                 </div>
-                                                <div className="text-intg-text-9 text-sm font-bold">
+                                                <div className="text-sm font-bold text-intg-text-9">
                                                     {index + 1 < 10 ? `0${index + 1}` : index + 1}
                                                 </div>
                                                 <div className="w-[415px] rounded-lg bg-intg-bg-15 px-[16px] py-4 text-start text-sm text-intg-text ">
@@ -72,7 +73,8 @@ export default function UpdateQuestion() {
                     </Accordion.Root>
                 ) : null}
             </div>
-            <QuestionOptions />
+
+            {survey?.status !== SurveyStatusEnum.Active ? <QuestionOptions /> : null}
         </div>
     );
 }

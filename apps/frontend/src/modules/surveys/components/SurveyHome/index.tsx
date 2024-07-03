@@ -40,7 +40,7 @@ export default function SurveyHome() {
                         <div className="flex flex-col items-center gap-6">
                             <Header
                                 title="Create your first survey"
-                                description="Integraflow enables you to understand your customers To get started, we'll need to integrate your SDK product."
+                                description="Integraflow enables you to understand your customers. To get started, click on 'Create new survey'. You may need to integrate our SDK to your website/platform."
                                 className="text-center"
                             />
 

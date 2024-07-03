@@ -31,11 +31,7 @@ export default function IntegrateWeb() {
             <hr className="border border-intg-bg-4" />
 
             <div className="flex flex-col gap-6 pt-6">
-                <Header
-                    variant="2"
-                    title="Option 2. Install a npm library"
-                    description="Insert this snippet in your website within the <head> tag."
-                />
+                <Header variant="2" title="Option 2. Install a npm library" />
 
                 <div className="space-y-3">
                     <Header variant="3" title="Install the package" />
