@@ -6,7 +6,6 @@ import { cn } from "@/utils/index.ts";
 import * as Tabs from "@radix-ui/react-tabs";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { LucideIcon, Monitor, Pen, Smartphone } from "lucide-react";
-import React from "react";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { UpdateDesignEditor } from "./editor-panel/DesignEditor/index.tsx";
 import { UpdateSettingsEditor } from "./editor-panel/SettingsEditor/index.tsx";
@@ -55,15 +54,15 @@ export default function Create() {
 
     return (
         <Tabs.Root className="flex h-screen pt-[84px]" defaultValue={tabs[0].label}>
+            {/* sidebar */}
             <Tabs.List className="flex h-full flex-col gap-6 border-r border-intg-bg-4 px-[18px] pt-12">
-                {tabs.map(({ id, label, icon }, index: React.Key) => (
+                {tabs.map(({ id, label, icon }) => (
                     <Tabs.Trigger
                         value={label}
-                        key={index}
+                        key={id}
                         className="data-[state=active]:rounded-md data-[state=active]:bg-[#272138]"
                         asChild
                     >
-                        {/* sidebar */}
                         <div>
                             <ContainerWithTooltip text={label} side="right">
                                 <div className="flex h-9 items-center justify-center rounded px-2 ease-in-out hover:bg-intg-bg-15 hover:transition-all">
