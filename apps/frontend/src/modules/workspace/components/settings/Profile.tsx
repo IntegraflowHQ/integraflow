@@ -1,5 +1,6 @@
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { Button, TextInput } from "@/ui";
+import { toast } from "@/utils/toast";
 import { useForm } from "react-hook-form";
 import { SettingsScreen } from "./SettingsScreen";
 
@@ -23,10 +24,11 @@ export const Profile = () => {
 
     const onSubmit = async (formInfo: ProfileData) => {
         if (formInfo.lastName || formInfo.firstName) {
-            updateUser({
+            await updateUser({
                 firstName: formInfo.firstName,
                 lastName: formInfo.lastName,
             });
+            toast.success("Your project has been updated");
         }
     };
 
