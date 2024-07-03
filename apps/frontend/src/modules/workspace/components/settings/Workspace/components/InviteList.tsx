@@ -50,55 +50,55 @@ export const InviteList = () => {
     };
 
     return (
-        <div className="mt-6">
+        <div className="mt-6 text-sm">
             {(workspace?.invites?.edges?.length as number) > 0 && (
-                <h3 className="font-semibold">
+                <h3 className="font-semibold text-white">
                     {workspace?.invites?.edges?.length}{" "}
                     {workspace?.invites?.edges && workspace?.invites?.edges?.length > 1 ? "invites" : "invite"}
                 </h3>
             )}
             {workspace?.invites?.edges?.map((invite) => {
                 return (
-                    <div key={invite?.node?.id}>
-                        <div className="flex items-center justify-between px-2 py-3">
-                            <div className="basis-[60%]">
-                                <p className="font-sm font-medium">
-                                    {invite?.node?.firstName} {invite?.node?.firstName}
-                                </p>
-                                <p className="font-sm">{invite?.node?.email}</p>
-                            </div>
-                            <DropdownMenu.Root>
-                                <DropdownMenu.Trigger asChild>
-                                    <button className="w-fit rounded-md px-1 py-1 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 data-[state=a]:bg-intg-bg-1">
-                                        <MoreHorizontal color="#AFAAC7" />
-                                    </button>
-                                </DropdownMenu.Trigger>
-
-                                <DropdownMenu.Portal>
-                                    <DropdownMenu.Content
-                                        align="end"
-                                        alignOffset={5}
-                                        className="w-[140px] rounded-md border border-intg-bg-4 bg-intg-bg-8 px-3 py-4"
-                                    >
-                                        <DropdownMenu.Item
-                                            onClick={() => {
-                                                handleResendInviteLink(invite?.node?.id as string);
-                                            }}
-                                            className="flex gap-[6px] rounded-md px-2 py-[7px] text-sm font-normal text-intg-text-4 hover:cursor-pointer hover:bg-intg-bg-1"
-                                        >
-                                            Resend Invite
-                                        </DropdownMenu.Item>
-                                        <DropdownMenu.Item
-                                            onClick={() => handleRevokeInviteLink(invite?.node?.id as string)}
-                                            className="flex gap-[6px] rounded-md px-2 py-[7px] text-sm font-normal text-intg-text-4 hover:cursor-pointer hover:bg-intg-bg-1"
-                                        >
-                                            Revoke Invite
-                                        </DropdownMenu.Item>
-                                    </DropdownMenu.Content>
-                                </DropdownMenu.Portal>
-                            </DropdownMenu.Root>
+                    <div
+                        key={invite?.node?.id}
+                        className="flex items-center justify-between border-b border-intg-bg-4 px-2 py-3"
+                    >
+                        <div className="flex h-[48px] basis-[60%] flex-col justify-center">
+                            <p className="font-sm">{invite?.node?.email}</p>
                         </div>
-                        <hr className="border border-intg-bg-4" />
+
+                        <div className="w-[24px] basis-[20%] capitalize">{invite?.node?.role?.toLocaleLowerCase()}</div>
+
+                        <DropdownMenu.Root>
+                            <DropdownMenu.Trigger asChild>
+                                <button className="w-fit rounded-md px-1 py-1 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 data-[state=a]:bg-intg-bg-1">
+                                    <MoreHorizontal color="#AFAAC7" />
+                                </button>
+                            </DropdownMenu.Trigger>
+
+                            <DropdownMenu.Portal>
+                                <DropdownMenu.Content
+                                    align="end"
+                                    alignOffset={5}
+                                    className="rounded-md border border-intg-bg-4 bg-intg-bg-8 px-3 py-4"
+                                >
+                                    <DropdownMenu.Item
+                                        onClick={() => {
+                                            handleResendInviteLink(invite?.node?.id as string);
+                                        }}
+                                        className="flex gap-[6px] rounded-md px-2 py-[7px] text-sm font-normal text-intg-text-4 hover:cursor-pointer hover:bg-intg-bg-1"
+                                    >
+                                        Resend Invite
+                                    </DropdownMenu.Item>
+                                    <DropdownMenu.Item
+                                        onClick={() => handleRevokeInviteLink(invite?.node?.id as string)}
+                                        className="flex gap-[6px] rounded-md px-2 py-[7px] text-sm font-normal text-intg-text-4 hover:cursor-pointer hover:bg-intg-bg-1"
+                                    >
+                                        Revoke Invite
+                                    </DropdownMenu.Item>
+                                </DropdownMenu.Content>
+                            </DropdownMenu.Portal>
+                        </DropdownMenu.Root>
                     </div>
                 );
             })}

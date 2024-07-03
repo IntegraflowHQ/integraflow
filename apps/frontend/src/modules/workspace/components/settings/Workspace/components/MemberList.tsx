@@ -54,6 +54,7 @@ export const MemberList = ({ searchValue }: Props) => {
             }
         }
     };
+
     const handleRemoveMember = async (memberId: string) => {
         const response = await removeOrganizationMember(memberId);
         if (response?.organizationMembership) {
@@ -76,6 +77,7 @@ export const MemberList = ({ searchValue }: Props) => {
             return;
         }
     };
+
     const handleUpdateMemberRole = async (memberId: string, currentRole: RoleLevel) => {
         let newRole = currentRole;
         if (currentRole === RoleLevel.Member) {
@@ -123,7 +125,7 @@ export const MemberList = ({ searchValue }: Props) => {
     }
     return (
         <div>
-            <p className="font-semibold">
+            <p className="text-sm font-semibold text-white">
                 {filteredMembers
                     ? `${filteredMembers.length} ${filteredMembers.length === 1 ? "member" : "members"}`
                     : `${workspace?.memberCount} ${workspace?.memberCount === 1 ? "member" : "members"}`}
@@ -131,75 +133,77 @@ export const MemberList = ({ searchValue }: Props) => {
             <div>
                 {filteredMembers?.map((member) => {
                     return (
-                        <div key={member?.node?.id}>
-                            <div className="flex items-center justify-between px-2 py-3">
-                                <div className="basis-[60%]">
-                                    <p className="font-sm font-medium">
-                                        {member?.node?.firstName} {member?.node?.lastName}
-                                    </p>
-                                    <p className="font-sm">{member?.node?.email}</p>
-                                </div>
-                                <div className="font-sm basis-[20%] lowercase">
-                                    {member?.node?.role}{" "}
-                                    {member?.node?.email === user.email ? (
-                                        <span className="rounded-md bg-intg-bg-2 p-1 text-xs text-white">YOU</span>
-                                    ) : null}
-                                </div>
-                                {member.node.role === RoleLevel.Owner ||
-                                (userIsMember && member?.node?.email !== user.email) ? (
-                                    <div></div>
-                                ) : (
-                                    <DropdownMenu.Root>
-                                        <DropdownMenu.Trigger asChild>
-                                            <button className="w-fit rounded-md px-1 py-1 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 data-[state=a]:bg-intg-bg-1">
-                                                <MoreHorizontal color="#AFAAC7" />
-                                            </button>
-                                        </DropdownMenu.Trigger>
-
-                                        <DropdownMenu.Portal>
-                                            <DropdownMenu.Content
-                                                align="end"
-                                                alignOffset={5}
-                                                className="w-[140px] rounded-md border border-intg-bg-4 bg-intg-bg-8 px-3 py-4"
-                                            >
-                                                {(userIsOwner ||
-                                                    (userIsAdmin && member?.node?.email !== user.email)) && (
-                                                    <DropdownMenu.Item
-                                                        onClick={() => handleRemoveMember(member?.node?.id as string)}
-                                                        className="flex gap-[6px] rounded-md px-2 py-[7px] text-sm font-normal text-intg-text-4 hover:cursor-pointer hover:bg-intg-bg-1"
-                                                    >
-                                                        Remove user
-                                                    </DropdownMenu.Item>
-                                                )}
-                                                {(userIsAdmin && member?.node?.role !== RoleLevel.Admin) ||
-                                                userIsOwner ? (
-                                                    <DropdownMenu.Item
-                                                        onClick={() =>
-                                                            handleUpdateMemberRole(member?.node?.id, member?.node?.role)
-                                                        }
-                                                        className="flex gap-[6px] rounded-md px-2 py-[7px] text-sm font-normal text-intg-text-4 hover:cursor-pointer hover:bg-intg-bg-1"
-                                                    >
-                                                        {member?.node?.role === RoleLevel.Member
-                                                            ? "Make Admin"
-                                                            : member?.node?.role === RoleLevel.Admin
-                                                              ? "Make member"
-                                                              : null}
-                                                    </DropdownMenu.Item>
-                                                ) : null}
-                                                {!userIsOwner && member?.node?.email === user.email && (
-                                                    <DropdownMenu.Item
-                                                        onClick={() => handleLeaveOrganization(workspace?.id as string)}
-                                                        className="flex gap-[6px] rounded-md px-2 py-[7px] text-sm font-normal text-intg-text-4 hover:cursor-pointer hover:bg-intg-bg-1"
-                                                    >
-                                                        Leave workspace
-                                                    </DropdownMenu.Item>
-                                                )}
-                                            </DropdownMenu.Content>
-                                        </DropdownMenu.Portal>
-                                    </DropdownMenu.Root>
-                                )}
+                        <div
+                            key={member?.node?.id}
+                            className="flex items-center justify-between border-b border-intg-bg-4 px-2 py-3 text-sm"
+                        >
+                            <div className="flex h-[48px] basis-[60%] flex-col justify-center">
+                                <p className="font-sm font-medium capitalize text-white">{`${member.node.firstName} ${member.node.lastName}`}</p>
+                                <p className="font-sm space-x-1">
+                                    <span>{member?.node?.email}</span>
+                                    <span>
+                                        {member?.node?.email === user.email ? (
+                                            <span className="rounded-md bg-intg-bg-2 p-1 text-xs text-white">you</span>
+                                        ) : null}
+                                    </span>
+                                </p>
                             </div>
-                            <hr className="border border-intg-bg-4" />
+
+                            <div className="font-sm basis-[20%] capitalize">
+                                {member?.node?.role.toLocaleLowerCase()}
+                            </div>
+
+                            {member.node.role === RoleLevel.Owner ||
+                            (userIsMember && member?.node?.email !== user.email) ? (
+                                <div className="w-[24px]"></div>
+                            ) : (
+                                <DropdownMenu.Root>
+                                    <DropdownMenu.Trigger asChild>
+                                        <button className="w-fit rounded-md px-1 py-1 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 data-[state=a]:bg-intg-bg-1">
+                                            <MoreHorizontal color="#AFAAC7" />
+                                        </button>
+                                    </DropdownMenu.Trigger>
+
+                                    <DropdownMenu.Portal>
+                                        <DropdownMenu.Content
+                                            align="end"
+                                            alignOffset={5}
+                                            className="rounded-md border border-intg-bg-4 bg-intg-bg-8 px-3 py-4"
+                                        >
+                                            {(userIsOwner || (userIsAdmin && member?.node?.email !== user.email)) && (
+                                                <DropdownMenu.Item
+                                                    onClick={() => handleRemoveMember(member?.node?.id as string)}
+                                                    className="flex gap-[6px] rounded-md px-2 py-[7px] text-sm font-normal text-intg-text-4 hover:cursor-pointer hover:bg-intg-bg-1"
+                                                >
+                                                    Remove user
+                                                </DropdownMenu.Item>
+                                            )}
+                                            {(userIsAdmin && member?.node?.role !== RoleLevel.Admin) || userIsOwner ? (
+                                                <DropdownMenu.Item
+                                                    onClick={() =>
+                                                        handleUpdateMemberRole(member?.node?.id, member?.node?.role)
+                                                    }
+                                                    className="flex gap-[6px] rounded-md px-2 py-[7px] text-sm font-normal text-intg-text-4 hover:cursor-pointer hover:bg-intg-bg-1"
+                                                >
+                                                    {member?.node?.role === RoleLevel.Member
+                                                        ? "Make Admin"
+                                                        : member?.node?.role === RoleLevel.Admin
+                                                          ? "Make member"
+                                                          : null}
+                                                </DropdownMenu.Item>
+                                            ) : null}
+                                            {!userIsOwner && member?.node?.email === user.email && (
+                                                <DropdownMenu.Item
+                                                    onClick={() => handleLeaveOrganization(workspace?.id as string)}
+                                                    className="flex gap-[6px] rounded-md px-2 py-[7px] text-sm font-normal text-intg-text-4 hover:cursor-pointer hover:bg-intg-bg-1"
+                                                >
+                                                    Leave workspace
+                                                </DropdownMenu.Item>
+                                            )}
+                                        </DropdownMenu.Content>
+                                    </DropdownMenu.Portal>
+                                </DropdownMenu.Root>
+                            )}
                         </div>
                     );
                 })}

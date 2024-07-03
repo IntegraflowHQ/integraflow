@@ -18,14 +18,13 @@ import { AppCore } from "./layout/AppCore";
 import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
 import { SurveyShell } from "./layout/SurveyShell";
-import { Profile } from "./modules/workspace/components/settings/Profile";
-import { Project } from "./modules/workspace/components/settings/Project";
-import { Workspace as WorkspaceSettings } from "./modules/workspace/components/settings/Workspace";
 import { Audience } from "./pages/Audience";
 import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
 import { Events } from "./pages/Events";
 import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
-import { Settings } from "./pages/Settings";
+import { ProfileSettings } from "./pages/ProfileSettings";
+import { ProjectSettings } from "./pages/ProjectSettings";
+import { WorkspaceSettings } from "./pages/WorkspaceSettings";
 import { ROUTES } from "./routes";
 
 const isDebugMode = import.meta.env.MODE === "development";
@@ -75,16 +74,12 @@ const router = createBrowserRouter([
                 element: <AppCore />,
                 children: [
                     {
-                        path: "settings",
-                        element: <Settings />,
-                    },
-                    {
                         path: "settings/profile",
-                        element: <Profile />,
+                        element: <ProfileSettings />,
                     },
                     {
                         path: "settings/project",
-                        element: <Project />,
+                        element: <ProjectSettings />,
                     },
                     {
                         path: "settings/workspace",

@@ -1,7 +1,7 @@
 import { Link, LucideMail, RefreshCcwIcon } from "lucide-react";
 import { useState } from "react";
 
-import { OrganizationInvite, OrganizationInviteCreate, User } from "@/generated/graphql";
+import { OrganizationErrorCode, OrganizationInvite, OrganizationInviteCreate, User } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
@@ -10,7 +10,6 @@ import { CopyIcon } from "@/ui/icons";
 import { addEllipsis, copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
 import { DeepPartial } from "@apollo/client/utilities";
-import { GraphQLError } from "graphql";
 
 type Props = {
     open: boolean;
@@ -58,7 +57,14 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
         });
 
         const responses = await Promise.all(promises);
-        const successfulPromises = responses.filter((response) => !(response instanceof GraphQLError));
+        const successfulPromises: typeof responses = [];
+        const failedPromises: typeof responses = [];
+        responses.filter((response) => {
+            if (response && (response as OrganizationInviteCreate).organizationInvite) {
+                successfulPromises.push(response);
+            }
+            failedPromises.push(response);
+        });
 
         const updatedUser = JSON.parse(JSON.stringify(user)) as DeepPartial<User>;
         const currentOrganization = updatedUser.organizations?.edges?.find((org) => org?.node?.id === workspace?.id);
@@ -72,28 +78,24 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
                     };
                 }),
             ];
-            updateUser(updatedUser);
+            updateUser(updatedUser, true);
         }
 
-        const failedPromise = responses.filter((response) => {
-            if (response instanceof Error) {
-                return true;
-            }
-            return (response?.errors?.length ?? 0) > 0;
-        });
-
-        const errorMessages = failedPromise.flatMap((response) => {
+        const errorMessages = failedPromises.flatMap((response) => {
             if (response instanceof Error) {
                 return [response.message];
             }
 
-            return response?.errors?.map((error) => error.message);
+            return response?.errors
+                ?.filter((error) => error.code !== OrganizationErrorCode.AlreadyExists)
+                .map((error) => error.message);
         });
 
         const flatErrorMessages = new Set(errorMessages);
 
-        if (failedPromise.length === 0) {
+        if (errorMessages.length === 0) {
             onOpenChange(!open);
+            setInviteEmail("");
             toast.success("Success! Your email to join the workspace has been sent");
         }
 

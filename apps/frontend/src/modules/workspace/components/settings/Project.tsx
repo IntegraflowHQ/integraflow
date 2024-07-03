@@ -30,7 +30,7 @@ export const Project = () => {
         }
     };
     return (
-        <SettingsScreen title="Project" label="Manage your Integraflow Profile">
+        <SettingsScreen title="Project" label="Manage your Integraflow Project">
             <div className="my-6 w-[593px] rounded-md">
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-6">
