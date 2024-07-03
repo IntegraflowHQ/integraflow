@@ -86,13 +86,13 @@ export const createOptions = (type: SurveyQuestionTypeEnum): QuestionOption[] | 
             {
                 id: generateUniqueId(),
                 orderNumber: 1,
-                label: "Answer 1",
+                label: "",
                 comment: false,
             },
             {
                 id: generateUniqueId(),
                 orderNumber: 2,
-                label: "Answer 2",
+                label: "",
                 comment: false,
             },
         ];
