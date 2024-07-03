@@ -1,4 +1,5 @@
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
+import { Header } from "@/ui";
 import * as Progress from "@radix-ui/react-progress";
 import { BillingCategoriesEnum, planDetails } from "../../../utils";
 
@@ -33,17 +34,16 @@ export const Billing = () => {
 
     return (
         <div className="w-[675px] pt-10 text-intg-text-4">
-            <div className="w-[515px]">
-                <h3 className="font-semibold">Manage Billing</h3>
-                <p className="text-sm">Manage your billing information and invoices.</p>
-            </div>
+            <Header title="Manage Billing" description="Manage your billing information and invoices." variant="3" />
             <hr className="my-6 border-[1px] border-intg-bg-4" />
 
             <>
-                <h3 className="font-semibold">Current plan</h3>
+                <Header title="Current plan" variant="3" />
                 <div className="space-y-6">
                     <div className="flex justify-between">
-                        <p className="justify-end self-end text-sm">You are currently on a free plan.</p>
+                        <p className="justify-end self-end text-sm">
+                            You are currently on a <span className="text-white">free plan</span>.
+                        </p>
                     </div>
                     <div className="space-y-6">
                         {planDetails.map(({ icon: Icon, ...plan }) => {
