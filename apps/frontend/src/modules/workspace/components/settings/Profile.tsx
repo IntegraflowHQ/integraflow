@@ -28,7 +28,7 @@ export const Profile = () => {
                 firstName: formInfo.firstName,
                 lastName: formInfo.lastName,
             });
-            toast.success("Your project has been updated");
+            toast.success("Your profile has been updated");
         }
     };
 

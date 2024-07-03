@@ -112,7 +112,7 @@ export const UserProfile = () => {
                         {organizations?.map((item) => {
                             return (
                                 <DropdownMenuItem
-                                    className="px-3 py-2 hover:rounded-md hover:bg-intg-bg-11"
+                                    className="px-3 py-2 hover:rounded-md hover:bg-intg-bg-10"
                                     key={item?.id}
                                     onClick={() => {
                                         switchWorkspace(
@@ -122,9 +122,9 @@ export const UserProfile = () => {
                                     }}
                                 >
                                     <NavItem
-                                        classnames="p-0"
                                         text={item?.name}
                                         leftIcon={<AcronymBox text={item?.name ?? ""} />}
+                                        rightIcon={item?.name === workspace?.name && <CheckCircleIcon />}
                                     />
                                 </DropdownMenuItem>
                             );
@@ -135,6 +135,7 @@ export const UserProfile = () => {
                                 <Button
                                     icon={<CirclePlusIcon />}
                                     variant="custom"
+                                    size="md"
                                     text="New Workspace"
                                     className="bg-intg-bg-11 text-sm"
                                 />

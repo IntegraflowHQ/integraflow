@@ -18,13 +18,13 @@ import { AppCore } from "./layout/AppCore";
 import AppShell from "./layout/AppShell";
 import { AuthLayout } from "./layout/AuthLayout";
 import { SurveyShell } from "./layout/SurveyShell";
-import { Workspace as WorkspaceSettings } from "./modules/workspace/components/settings/Workspace";
 import { Audience } from "./pages/Audience";
 import { EmailWorkspaceInvitation } from "./pages/EmailWorkspaceInvitation";
 import { Events } from "./pages/Events";
 import { LinkWorkspaceInvitation } from "./pages/LinkWorkspaceInvitation";
 import { ProfileSettings } from "./pages/ProfileSettings";
 import { ProjectSettings } from "./pages/ProjectSettings";
+import { WorkspaceSettings } from "./pages/WorkspaceSettings";
 import { ROUTES } from "./routes";
 
 const isDebugMode = import.meta.env.MODE === "development";

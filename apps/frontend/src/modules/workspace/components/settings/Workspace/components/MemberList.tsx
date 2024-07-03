@@ -167,7 +167,7 @@ export const MemberList = ({ searchValue }: Props) => {
                                         <DropdownMenu.Content
                                             align="end"
                                             alignOffset={5}
-                                            className="w-[140px] rounded-md border border-intg-bg-4 bg-intg-bg-8 px-3 py-4"
+                                            className="rounded-md border border-intg-bg-4 bg-intg-bg-8 px-3 py-4"
                                         >
                                             {(userIsOwner || (userIsAdmin && member?.node?.email !== user.email)) && (
                                                 <DropdownMenu.Item

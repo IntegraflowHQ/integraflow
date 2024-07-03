@@ -67,11 +67,6 @@ export const InviteList = () => {
                             <p className="font-sm font-medium capitalize text-white">{`${invite?.node?.firstName}`}</p>
                             <p className="font-sm">
                                 <span>{invite?.node?.email}</span>
-                                <span>
-                                    {invite?.node?.email === user.email ? (
-                                        <span className="rounded-md bg-intg-bg-2 p-1 text-xs text-white">you</span>
-                                    ) : null}
-                                </span>
                             </p>
                         </div>
 
@@ -88,7 +83,7 @@ export const InviteList = () => {
                                 <DropdownMenu.Content
                                     align="end"
                                     alignOffset={5}
-                                    className="w-[140px] rounded-md border border-intg-bg-4 bg-intg-bg-8 px-3 py-4"
+                                    className="rounded-md border border-intg-bg-4 bg-intg-bg-8 px-3 py-4"
                                 >
                                     <DropdownMenu.Item
                                         onClick={() => {
