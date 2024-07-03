@@ -98,6 +98,7 @@ export const Navbar = () => {
                                     ellipsisLength={16}
                                 />
                             </DropdownMenuTrigger>
+
                             <DropdownMenuContent
                                 align="start"
                                 className=" rounded border border-intg-bg-10 bg-intg-bg-9 p-2 py-3 text-intg-text"
@@ -123,8 +124,10 @@ export const Navbar = () => {
                                         );
                                     })}
                                 </DropdownMenuGroup>
-                                <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
-                                <DropdownMenuGroup>
+
+                                <DropdownMenuSeparator className="my-2 border-[.5px] border-intg-bg-4" />
+
+                                <DropdownMenuGroup className="space-y-2">
                                     <DropdownMenuItem
                                         onClick={() =>
                                             navigate(
@@ -134,13 +137,14 @@ export const Navbar = () => {
                                                 ).replace(":projectSlug", project?.slug as string),
                                             )
                                         }
-                                        className="flex cursor-pointer items-center space-x-2 px-3 py-2 text-sm"
+                                        className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm"
                                     >
                                         <span>
                                             <SettingsIcon />
                                         </span>
                                         <span>Project Settings</span>
                                     </DropdownMenuItem>
+
                                     <DropdownMenuItem>
                                         <Button
                                             icon={<CirclePlusIcon />}
