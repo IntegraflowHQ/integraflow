@@ -336,3 +336,11 @@ export type DateFilterValue = {
         lte: string;
     };
 };
+
+export enum AnalyzeTabs {
+    Overview = "Overview",
+    Responses = "Responses",
+    Insight = "Insight",
+    Trends = "Trends",
+    Text = "Text",
+}
