@@ -25,11 +25,11 @@ export const useEvents = () => {
     });
 
     const [fetchPropertiesWithDefinitions, { data: propertiesWithDefinitionsResponse, loading: loadingProperties }] =
-        usePropertiesWithDefinitionsLazyQuery();
+        usePropertiesWithDefinitionsLazyQuery({ fetchPolicy: "cache-and-network" });
 
     const getPropertiesWithDefinitions = useCallback(
         (event: string) => {
-            fetchPropertiesWithDefinitions({ fetchPolicy: "cache-and-network", variables: { event } });
+            fetchPropertiesWithDefinitions({ variables: { event } });
         },
         [fetchPropertiesWithDefinitions],
     );
