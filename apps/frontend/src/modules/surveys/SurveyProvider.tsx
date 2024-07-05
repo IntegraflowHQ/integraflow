@@ -67,7 +67,9 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     const [updateSurveyMutation, { error }] = useSurveyUpdateMutation({});
     const [deleteSurveyMutation] = useSurveyDeleteMutation();
 
-    const [getSurvey, { data: surveyQueryResponse, loading: loadingSurvey }] = useGetSurveyLazyQuery();
+    const [getSurvey, { data: surveyQueryResponse, loading: loadingSurvey }] = useGetSurveyLazyQuery({
+        fetchPolicy: "cache-and-network",
+    });
 
     const {
         refetch,
@@ -75,6 +77,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
         data: surveyList,
         loading: surveyListLoading,
     } = useGetSurveyListQuery({
+        fetchPolicy: "cache-and-network",
         variables: {
             first: SURVEYS_PER_PAGE,
             sortBy: {

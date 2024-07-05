@@ -115,6 +115,7 @@ export const SurveyList = () => {
 
                     <TableBody>
                         {surveyList?.edges?.map((survey) => {
+                            const surveyStats = JSON.parse(survey?.stats ?? '{"response_count": "0"}');
                             return (
                                 <TableRow
                                     key={survey.id}
@@ -144,7 +145,7 @@ export const SurveyList = () => {
                                             {format(new Date(survey.createdAt ?? ""), "MMM dd, yyyy")}
                                         </span>
                                     </TableCell>
-                                    <TableCell className="px-12">0</TableCell>
+                                    <TableCell className="px-12">{surveyStats.response_count}</TableCell>
                                     <TableCell className="text-center">
                                         <Popover.Root>
                                             <Popover.Trigger asChild>

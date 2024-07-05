@@ -53,6 +53,7 @@ export const SURVEY_CORE = gql`
             lastName
             email
         }
+        stats
     }
 `;
 
