@@ -77,6 +77,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
         data: surveyList,
         loading: surveyListLoading,
     } = useGetSurveyListQuery({
+        fetchPolicy: "cache-and-network",
         variables: {
             first: SURVEYS_PER_PAGE,
             sortBy: {
