@@ -110,7 +110,6 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
         }
 
         getSurvey({
-            fetchPolicy: "cache-and-network",
             variables: {
                 slug: surveySlug,
             },
