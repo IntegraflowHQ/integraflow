@@ -17,6 +17,7 @@ export const useEvents = () => {
         fetchMore,
         networkStatus,
     } = useEventDefinitionsQuery({
+        fetchPolicy: "cache-and-network",
         variables: {
             first: eventDefinitionsOnPage,
         },
@@ -28,7 +29,7 @@ export const useEvents = () => {
 
     const getPropertiesWithDefinitions = useCallback(
         (event: string) => {
-            fetchPropertiesWithDefinitions({ variables: { event } });
+            fetchPropertiesWithDefinitions({ fetchPolicy: "cache-and-network", variables: { event } });
         },
         [fetchPropertiesWithDefinitions],
     );
