@@ -1,6 +1,6 @@
 import { EventDefinitionCountableEdge, useEventsLazyQuery } from "@/generated/graphql";
 import { Properties } from "@/types";
-import { Dialog, DialogContent, DialogTrigger, Header, Pagination, Spinner } from "@/ui";
+import { ContainerWithTooltip, Dialog, DialogContent, DialogTrigger, Header, Pagination, Spinner } from "@/ui";
 import { QuestionIcon } from "@/ui/icons";
 import { CursorIconLg } from "@/ui/icons/CursorIconLg";
 import { cn } from "@/utils";
@@ -44,7 +44,7 @@ export const EventsIndex = () => {
 
     return (
         <section className="px-[72px] pb-20 pt-20 text-white">
-            <Header title="Events" description="The events that you have sent" />
+            <Header title="Events" description="The events that you have received." />
             <div className="mt-4 h-full w-full">
                 <div>
                     <Table
@@ -58,9 +58,9 @@ export const EventsIndex = () => {
                                 <TableHeaderCell className="w-1/2">Event Name</TableHeaderCell>
                                 <TableHeaderCell className="text-md flex items-center space-x-1 font-normal">
                                     <span>Count</span>
-                                    <span>
+                                    <ContainerWithTooltip text="This is the number of times an event has been done.">
                                         <QuestionIcon />
-                                    </span>
+                                    </ContainerWithTooltip>
                                 </TableHeaderCell>
                                 <TableHeaderCell className="text-md font-normal">Last Seen</TableHeaderCell>
                             </TableRow>
