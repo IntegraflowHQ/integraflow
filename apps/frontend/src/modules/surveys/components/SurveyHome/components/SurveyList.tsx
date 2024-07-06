@@ -7,9 +7,8 @@ import * as Popover from "@radix-ui/react-popover";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
 import { Archive, ClipboardCheck, Edit, MoreHorizontal, PauseCircle, Radio, Trash2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import SurveyCreate from "../../SurveyCreate";
+import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import CreateSurveyButton from "../../partials/CreateSurveyButton";
 import { StatusBadge } from "./StatusBadge";
 
@@ -22,34 +21,20 @@ const headers = [
     { id: crypto.randomUUID(), title: "" },
 ];
 
-export const SurveyList = () => {
+export const SurveyList = ({
+    setOpenCreateSurvey,
+}: {
+    setOpenCreateSurvey: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
     const navigate = useNavigate();
     const { orgSlug, projectSlug } = useParams();
-    const [searchParams, setSearchParams] = useSearchParams();
-    const [openCreateSurvey, setOpenCreateSurvey] = useState(false);
 
-    const { createSurvey, creatingSurvey, updateSurvey, deleteSurvey, loading, getMoreSurveys, surveyList } =
-        useSurvey();
+    const { updateSurvey, deleteSurvey, loading, getMoreSurveys, surveyList } = useSurvey();
 
     const [selectedSurveyName, setSelectedSurveyName] = React.useState<string>("");
 
     const { steps: onboardingSteps, markAsCompleted } = useOnboarding();
     const surveyPublishIndex = onboardingSteps.findIndex((s) => s.key === "publish");
-
-    useEffect(() => {
-        if (!searchParams) {
-            return;
-        }
-
-        if (searchParams.get("create") === "1") {
-            createSurvey();
-            setSearchParams({});
-        }
-        if (searchParams.get("create") === "2") {
-            setSearchParams({});
-            setOpenCreateSurvey(true);
-        }
-    }, [searchParams]);
 
     const handleGetSurvey = (slug: string) => {
         navigate(
@@ -78,25 +63,7 @@ export const SurveyList = () => {
         <div className="h-full w-full px-6 py-4 text-white">
             <div className="flex justify-between">
                 <p className="py-2 text-xl font-normal">Surveys</p>
-
-                <Dialog
-                    defaultOpen={searchParams.get("create") === "1"}
-                    open={openCreateSurvey}
-                    onOpenChange={(open) => setOpenCreateSurvey(open)}
-                >
-                    <DialogTrigger asChild>
-                        <div>
-                            <CreateSurveyButton />
-                        </div>
-                    </DialogTrigger>
-                    <DialogContent title="Create new survey" description="Pick a method that suits you best">
-                        <SurveyCreate
-                            createFn={createSurvey}
-                            busy={creatingSurvey}
-                            className="h-[357px] w-[762px] pt-8"
-                        />
-                    </DialogContent>
-                </Dialog>
+                <CreateSurveyButton onClick={() => setOpenCreateSurvey(true)} />
             </div>
 
             <div className="mt-8 flex flex-col pb-10">

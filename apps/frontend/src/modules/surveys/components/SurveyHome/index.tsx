@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTrigger, GlobalSpinner, Header } from "@/ui";
+import { Dialog, DialogContent, GlobalSpinner, Header } from "@/ui";
 import { Document } from "@/ui/icons";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -18,6 +18,11 @@ export default function SurveyHome() {
         if (!searchParams) {
             return;
         }
+
+        if (searchParams.get("create") === "1") {
+            createSurvey();
+            setSearchParams({});
+        }
         if (searchParams.get("create") === "2") {
             setSearchParams({});
             setOpenCreateSurvey(true);
@@ -31,7 +36,7 @@ export default function SurveyHome() {
     return (
         <main className="flex h-full w-full flex-col">
             {surveyList?.edges?.length > 0 ? (
-                <SurveyList />
+                <SurveyList setOpenCreateSurvey={setOpenCreateSurvey} />
             ) : (
                 <div className="flex h-full w-full  justify-center">
                     <div className="flex max-w-[386px] flex-col items-center justify-center  gap-[7px]">
@@ -43,28 +48,17 @@ export default function SurveyHome() {
                                 description="Integraflow enables you to understand your customers. To get started, click on 'Create new survey'. You may need to integrate our SDK to your website/platform."
                                 className="text-center"
                             />
-
-                            <Dialog open={openCreateSurvey} onOpenChange={(open) => setOpenCreateSurvey(open)}>
-                                <DialogTrigger asChild>
-                                    <div>
-                                        <CreateSurveyButton />
-                                    </div>
-                                </DialogTrigger>
-                                <DialogContent
-                                    title="Create new survey"
-                                    description="Pick a method that suits you best"
-                                >
-                                    <SurveyCreate
-                                        createFn={createSurvey}
-                                        busy={creatingSurvey}
-                                        className="h-[357px] w-[762px] pt-8"
-                                    />
-                                </DialogContent>
-                            </Dialog>
+                            <CreateSurveyButton onClick={() => setOpenCreateSurvey(true)} />
                         </div>
                     </div>
                 </div>
             )}
+
+            <Dialog open={openCreateSurvey} onOpenChange={(open) => setOpenCreateSurvey(open)}>
+                <DialogContent title="Create new survey" description="Pick a method that suits you best">
+                    <SurveyCreate createFn={createSurvey} busy={creatingSurvey} className="h-[357px] w-[762px] pt-8" />
+                </DialogContent>
+            </Dialog>
         </main>
     );
 }
