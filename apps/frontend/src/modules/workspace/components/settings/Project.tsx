@@ -1,6 +1,8 @@
 import { useProject } from "@/modules/projects/hooks/useProject";
 import { Button, TextInput } from "@/ui";
+import { addEllipsis, copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
+import { CopyIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { SettingsScreen } from "./SettingsScreen";
 
@@ -31,7 +33,7 @@ export const Project = () => {
     };
     return (
         <SettingsScreen title="Project" label="Manage your Integraflow Project">
-            <div className="my-6 w-[593px] rounded-md">
+            <div className="my-6 w-[593px] space-y-8 rounded-md">
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-6">
                         <TextInput
@@ -52,6 +54,35 @@ export const Project = () => {
                         </div>
                     </div>
                 </form>
+                <hr className="border-intg-bg-4" />
+                <div className="flex w-full items-end gap-2">
+                    <div className="flex-1">
+                        <TextInput
+                            label="API Key"
+                            placeholder=""
+                            value={addEllipsis(project?.apiToken as string, 40)}
+                            disabled={true}
+                            rightIcon={
+                                <Button
+                                    variant="custom"
+                                    size="sm"
+                                    // disabled={loading}
+                                    // onClick={handleInviteLinkRefresh}
+                                    // icon={<RefreshCcwIcon size={16} className={loading ? "spinner__circle" : ""} />}
+                                />
+                            }
+                        />
+                    </div>
+                    <Button
+                        text="Copy"
+                        size="md"
+                        icon={<CopyIcon size={16} />}
+                        textAlign="center"
+                        // disabled={loading}
+                        onClick={() => copyToClipboard(project?.apiToken as string, "API key copied to clipboard")}
+                        className="min-w-max max-w-[20%]"
+                    />
+                </div>
             </div>
         </SettingsScreen>
     );
