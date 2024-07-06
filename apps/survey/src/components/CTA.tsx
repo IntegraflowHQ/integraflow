@@ -8,8 +8,8 @@ export default function CTA({ title, description }: { title: string; description
                     <Image src={"/images/logo.png"} alt="Logo" className="w-[197px] h-[29px]" />
                 </div>
 
-                <header className="flex flex-col gap-2 pb-10">
-                    <h2 className="text-[28px] font-medium leading-normal text-[#28213B]">{title}</h2>
+                <header className="flex flex-col gap-2 pb-10 text-[#28213B]">
+                    <h2 className="text-[28px] font-medium leading-normal">{title}</h2>
                     <p className="text-base">{description}</p>
                 </header>
 

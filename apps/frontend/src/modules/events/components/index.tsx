@@ -46,9 +46,7 @@ export const EventsIndex = () => {
         <section className="px-[72px] pb-20 pt-20 text-white">
             <Header title="Events" description="The events that you have sent" />
             <div className="mt-4 h-full w-full">
-                <h3 className="font-semibold text-intg-text"></h3>
-
-                <div className="">
+                <div>
                     <Table
                         className={cn(
                             eventDefinitions?.edges.length ? "border" : "",
@@ -67,6 +65,7 @@ export const EventsIndex = () => {
                                 <TableHeaderCell className="text-md font-normal">Last Seen</TableHeaderCell>
                             </TableRow>
                         </TableHead>
+
                         <TableBody>
                             {(eventDefinitions?.edges || []).map((event) => {
                                 return (
@@ -88,6 +87,7 @@ export const EventsIndex = () => {
                             })}
                         </TableBody>
                     </Table>
+
                     {!eventDefinitions?.edges.length ? null : (
                         <Pagination
                             hasNextPage={eventDefinitions.pageInfo.hasNextPage}
@@ -146,22 +146,15 @@ export const EventsIndex = () => {
                 </Dialog>
 
                 {!events?.edges.length && !loadingEventDefinitions ? (
-                    <div className="mt-40 flex h-full w-full text-intg-text">
-                        <div className=" m-auto flex-col text-center">
-                            <div className=" flex justify-center">
-                                <CursorIconLg />
-                            </div>
-                            <p className="text-2xl font-semibold">No events yet</p>
-                            <p className="text-sm">We couldn't find any events</p>
-                        </div>
+                    <div className="mt-40 flex flex-col items-center justify-center text-center">
+                        <CursorIconLg />
+                        <Header title="No events yet" description="We couldn't find any event." variant="2" />
                     </div>
                 ) : null}
 
                 {loadingEventDefinitions && !isFetchingMore ? (
-                    <div className="mt-40 flex h-full w-full text-intg-text">
-                        <div className=" m-auto flex-col text-center">
-                            <Spinner />
-                        </div>
+                    <div className="mt-40 flex h-full w-full justify-center">
+                        <Spinner />
                     </div>
                 ) : null}
             </div>

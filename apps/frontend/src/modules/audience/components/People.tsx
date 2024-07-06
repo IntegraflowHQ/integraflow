@@ -1,6 +1,6 @@
 import { PersonCountableEdge } from "@/generated/graphql";
 import { Properties } from "@/types";
-import { Dialog, DialogContent, Pagination, Spinner } from "@/ui";
+import { Dialog, DialogContent, Header, Pagination, Spinner } from "@/ui";
 import PeopleIconLg from "@/ui/icons/PeopleIconLg";
 import { cn } from "@/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
@@ -62,6 +62,7 @@ export const People = () => {
                         <TableHeaderCell className="text-md font-normal">First Seen</TableHeaderCell>
                     </TableRow>
                 </TableHead>
+
                 {persons?.edges.length ? (
                     <TableBody>
                         {persons?.edges.map((person) => {
@@ -95,6 +96,7 @@ export const People = () => {
                     </TableBody>
                 ) : null}
             </Table>
+
             {persons?.edges.length ? (
                 <Pagination
                     hasNextPage={persons?.pageInfo.hasNextPage as boolean}
@@ -108,21 +110,15 @@ export const People = () => {
             ) : null}
 
             {!loadingPersons && !persons?.edges.length ? (
-                <div className="mt-40 flex h-full w-full text-intg-text">
-                    <div className=" m-auto flex-col text-center">
-                        <div className=" flex justify-center">
-                            <PeopleIconLg />
-                        </div>
-                        <p className="text-2xl font-semibold">No persons yet</p>
-                        <p className="text-sm">We couldn't find any persons</p>
-                    </div>
+                <div className="mt-40 flex flex-col items-center justify-center text-center">
+                    <PeopleIconLg />
+                    <Header title="No persons yet" description="We couldn't find any person." variant="2" />
                 </div>
             ) : null}
+
             {loadingPersons && !isFetchingMore ? (
-                <div className="mt-40 flex h-full w-full text-intg-text">
-                    <div className=" m-auto flex-col text-center">
-                        <Spinner />
-                    </div>
+                <div className="mt-40 flex h-full w-full justify-center">
+                    <Spinner />
                 </div>
             ) : null}
         </>

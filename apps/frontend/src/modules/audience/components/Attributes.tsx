@@ -1,5 +1,5 @@
 import { Properties } from "@/types";
-import { Pagination, Spinner } from "@/ui";
+import { Header, Pagination, Spinner } from "@/ui";
 import PeopleIconLg from "@/ui/icons/PeopleIconLg";
 import { cn } from "@/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
@@ -55,22 +55,17 @@ export const Attributes = () => {
                     className="border border-t-0 border-intg-bg-4 p-4"
                 />
             )}
+
             {!propertyDefinitions?.edges.length && !loadingPropertyDefinitions ? (
-                <div className="mt-40 flex h-full w-full text-intg-text">
-                    <div className=" m-auto flex-col text-center">
-                        <div className=" flex justify-center">
-                            <PeopleIconLg />
-                        </div>
-                        <p className="text-2xl font-semibold">No attributes yet</p>
-                        <p className="text-sm">We couldn't find any attributes</p>
-                    </div>
+                <div className="mt-40 flex flex-col items-center justify-center text-center">
+                    <PeopleIconLg />
+                    <Header title="No attributes yet" description="We couldn't find any attribute." variant="2" />
                 </div>
             ) : null}
+
             {loadingPropertyDefinitions && !isFetchingMore ? (
-                <div className="mt-40 flex h-full w-full text-intg-text">
-                    <div className=" m-auto flex-col text-center">
-                        <Spinner />
-                    </div>
+                <div className="mt-40 flex h-full w-full justify-center">
+                    <Spinner />
                 </div>
             ) : null}
         </>
