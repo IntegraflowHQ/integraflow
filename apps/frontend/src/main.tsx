@@ -1,13 +1,4 @@
-import {
-    LoginScreen,
-    MagicSignIn,
-    Onboarding,
-    Signup,
-    SurveyStudio,
-    SurveyTemplates,
-    Surveys,
-    Workspace,
-} from "@/pages";
+import { LoginScreen, MagicSignIn, Onboarding, Signup, SurveyStudio, Surveys, Workspace } from "@/pages";
 import { loadDevMessages, loadErrorMessages } from "@apollo/client/dev";
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -104,10 +95,6 @@ const router = createBrowserRouter([
                             {
                                 path: "surveys",
                                 element: <Surveys />,
-                            },
-                            {
-                                path: "surveys/templates",
-                                element: <SurveyTemplates />,
                             },
                             {
                                 path: "survey/:surveySlug",
