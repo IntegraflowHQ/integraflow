@@ -37,7 +37,7 @@ export const Member = () => {
             <div className="space-y-4">
                 <Header
                     title="Invite Link"
-                    description="Invite link will provide a unique URL that allow anyone to join your organization."
+                    description="Invite link will provide a unique URL that allows anyone to join your organization."
                     variant="3"
                 />
 

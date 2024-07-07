@@ -38,7 +38,7 @@ export default function Onboarding() {
         <section className="px-[72px] pb-20 pt-20">
             <Header
                 title="Getting started"
-                description="Integraflow enables you to understand your customers  To get started, we'll need to integrate your SDK product."
+                description="Integraflow enables you to understand your customers. To get started, you may need to integrate our SDK to your product."
                 className="max-w-[386px]"
             />
 
