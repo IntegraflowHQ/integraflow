@@ -1,7 +1,7 @@
 import { ProjectTheme, SurveyStatusEnum } from "@/generated/graphql";
 import { useOnboarding } from "@/modules/onboarding/hooks/useOnboarding";
 import { ROUTES } from "@/routes";
-import { Button, GlobalSpinner } from "@/ui";
+import { Announce, Button, GlobalSpinner } from "@/ui";
 import { parseTheme } from "@/utils";
 import { toast } from "@/utils/toast";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -93,6 +93,15 @@ export default function Studio() {
         markAsCompleted(surveyPublishIndex);
     };
 
+    const pauseSurvey = async () => {
+        if (!survey) return;
+
+        await updateSurvey(survey, {
+            status: SurveyStatusEnum.Paused,
+        });
+        toast.success("Survey paused successfully");
+    };
+
     if (loading || !survey) return <GlobalSpinner />;
 
     return (
@@ -122,18 +131,42 @@ export default function Studio() {
                 </Tabs.List>
 
                 <div className="flex gap-[35px]">
-                    <Button
-                        className="w-[87px] px-[16px] py-[8px]"
-                        text={activeTab === tabs[1].label ? "Publish" : "Next"}
-                        disabled={parsedQuestions.length === 0}
-                        onClick={() => {
-                            if (activeTab === tabs[1].label) {
-                                publishSurvey();
-                            } else {
-                                setActiveTab(tabs[1].label);
+                    {survey.status === SurveyStatusEnum.Active ? (
+                        <Announce text="You have published this survey." variant="green" />
+                    ) : (
+                        <div className="w-[195px]" />
+                    )}
+
+                    {activeTab === tabs[2].label && survey.status !== SurveyStatusEnum.Active ? (
+                        <div className="w-[87px]" />
+                    ) : (
+                        <Button
+                            size="sm"
+                            className="!w-[87px]"
+                            text={
+                                survey.status === SurveyStatusEnum.Active
+                                    ? "Pause"
+                                    : activeTab === tabs[1].label
+                                      ? "Publish"
+                                      : "Next"
                             }
-                        }}
-                    />
+                            disabled={parsedQuestions.length === 0}
+                            onClick={() => {
+                                if (survey.status === SurveyStatusEnum.Active) {
+                                    pauseSurvey();
+                                    return;
+                                }
+
+                                if (activeTab === tabs[1].label) {
+                                    publishSurvey();
+                                    return;
+                                }
+
+                                setActiveTab(tabs[1].label);
+                            }}
+                        />
+                    )}
+
                     <button onClick={closeStudio}>
                         <XIcon color="#AFAAC7" />
                     </button>

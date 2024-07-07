@@ -1,5 +1,6 @@
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { Button, TextInput } from "@/ui";
+import { toast } from "@/utils/toast";
 import { useForm } from "react-hook-form";
 import { SettingsScreen } from "./SettingsScreen";
 
@@ -23,10 +24,11 @@ export const Profile = () => {
 
     const onSubmit = async (formInfo: ProfileData) => {
         if (formInfo.lastName || formInfo.firstName) {
-            updateUser({
+            await updateUser({
                 firstName: formInfo.firstName,
                 lastName: formInfo.lastName,
             });
+            toast.success("Your profile has been updated");
         }
     };
 
@@ -48,15 +50,11 @@ export const Profile = () => {
                             {...register("firstName", {
                                 required: {
                                     value: true,
-                                    message: "Full name is required",
+                                    message: "First name is required",
                                 },
                                 maxLength: {
                                     value: 48,
-                                    message: "Full name must be at most 60 characters",
-                                },
-                                pattern: {
-                                    value: /^[A-Za-z\s'-]+$/,
-                                    message: "xoxo",
+                                    message: "First name must be at most 48 characters",
                                 },
                             })}
                             error={!!errors.firstName?.message}
@@ -68,15 +66,11 @@ export const Profile = () => {
                             {...register("lastName", {
                                 required: {
                                     value: true,
-                                    message: "Full name is required",
+                                    message: "Last name is required",
                                 },
                                 maxLength: {
                                     value: 48,
-                                    message: "Full name must be at most 60 characters",
-                                },
-                                pattern: {
-                                    value: /^[A-Za-z\s'-]+$/,
-                                    message: "xoxo",
+                                    message: "Last name must be at most 60 characters",
                                 },
                             })}
                             error={!!errors.lastName?.message}

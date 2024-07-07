@@ -82,7 +82,7 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
                         {variant === "signup" ? "Create your Integraflow account" : "Log in to Integraflow"}
                     </h1>
                     <p className="text-base text-intg-text">
-                        {variant === "signup" ? "Let's get your account set up" : "Welcome back 🥰"}
+                        {variant === "signup" ? "Let's get your account set up" : "Welcome 🥰"}
                     </p>
                 </header>
 

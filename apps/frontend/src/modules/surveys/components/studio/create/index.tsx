@@ -1,12 +1,11 @@
 import { useStudioStore } from "@/modules/surveys/states/studio.ts";
 import { PreviewMode, ViewPortType } from "@/types/index.ts";
 import { HelpCircle, SettingsIcon } from "@/ui/icons";
+import { ContainerWithTooltip } from "@/ui/index.ts";
 import { cn } from "@/utils/index.ts";
 import * as Tabs from "@radix-ui/react-tabs";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import * as Tooltip from "@radix-ui/react-tooltip";
 import { LucideIcon, Monitor, Pen, Smartphone } from "lucide-react";
-import React from "react";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { UpdateDesignEditor } from "./editor-panel/DesignEditor/index.tsx";
 import { UpdateSettingsEditor } from "./editor-panel/SettingsEditor/index.tsx";
@@ -55,38 +54,21 @@ export default function Create() {
 
     return (
         <Tabs.Root className="flex h-screen pt-[84px]" defaultValue={tabs[0].label}>
+            {/* sidebar */}
             <Tabs.List className="flex h-full flex-col gap-6 border-r border-intg-bg-4 px-[18px] pt-12">
-                {tabs.map(({ id, label, icon }, index: React.Key) => (
+                {tabs.map(({ id, label, icon }) => (
                     <Tabs.Trigger
                         value={label}
-                        key={index}
+                        key={id}
                         className="data-[state=active]:rounded-md data-[state=active]:bg-[#272138]"
                         asChild
                     >
-                        {/* sidebar */}
                         <div>
-                            <Tooltip.Provider>
-                                <Tooltip.Root key={id} delayDuration={200}>
-                                    <Tooltip.Trigger className="h-9 rounded px-2 ease-in-out hover:bg-intg-bg-15 hover:transition-all">
-                                        {icon}
-                                    </Tooltip.Trigger>
-
-                                    <Tooltip.Portal>
-                                        <Tooltip.Content
-                                            side="right"
-                                            align="center"
-                                            className="rounded border border-intg-bg-10 bg-intg-bg-9 px-2 py-3 text-xs leading-[18px] text-intg-text"
-                                        >
-                                            {label}
-                                            <Tooltip.Arrow
-                                                width={18}
-                                                height={16}
-                                                className="-mt-[1px] fill-[#181325] stroke-intg-bg-10"
-                                            />
-                                        </Tooltip.Content>
-                                    </Tooltip.Portal>
-                                </Tooltip.Root>
-                            </Tooltip.Provider>
+                            <ContainerWithTooltip text={label} side="right">
+                                <div className="flex h-9 items-center justify-center rounded px-2 ease-in-out hover:bg-intg-bg-15 hover:transition-all">
+                                    {icon}
+                                </div>
+                            </ContainerWithTooltip>
                         </div>
                     </Tabs.Trigger>
                 ))}

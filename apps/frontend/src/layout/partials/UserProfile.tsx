@@ -1,8 +1,5 @@
-import { ChevronDown } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
-
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
-import { AcronymBox, Button, NavItem, NavLink } from "@/ui";
+import { AcronymBox, Button, NavItem } from "@/ui";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -14,15 +11,9 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/ui/Dropdown/DropdownMenu";
-import {
-    CheckCircleIcon,
-    CirclePlusIcon,
-    CircleStackIcon,
-    LogoutIcon,
-    NewspaperIcon,
-    QuestionIcon,
-    SettingsIcon,
-} from "@/ui/icons";
+import { CheckCircleIcon, CirclePlusIcon, LogoutIcon, NewspaperIcon, SettingsIcon } from "@/ui/icons";
+import { ChevronDown } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { AuthOrganization, Project } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
@@ -35,17 +26,18 @@ const profileNavItems = [
         id: 1,
         title: "Billing",
         icon: <NewspaperIcon />,
+        href: ROUTES.BILLING,
     },
-    {
-        id: 2,
-        title: "Status Page",
-        icon: <CircleStackIcon />,
-    },
-    {
-        id: 3,
-        title: "Help and doc",
-        icon: <QuestionIcon />,
-    },
+    // {
+    //     id: 2,
+    //     title: "Status Page",
+    //     icon: <CircleStackIcon />,
+    // },
+    // {
+    //     id: 3,
+    //     title: "Help and doc",
+    //     icon: <QuestionIcon />,
+    // },
 ];
 
 export const UserProfile = () => {
@@ -73,7 +65,16 @@ export const UserProfile = () => {
                 <DropdownMenuLabel className="pb-1">
                     <p className="text-xs">SIGNED IN AS USER</p>
                 </DropdownMenuLabel>
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                    onClick={() =>
+                        navigate(
+                            `${ROUTES.WORKSPACE_SETTINGS_PROFILE}`
+                                .replace(":orgSlug", orgSlug!)
+                                .replace(":projectSlug", projectSlug!),
+                        )
+                    }
+                    className="cursor-pointer"
+                >
                     <div className="flex items-center justify-between px-2 py-[6px]">
                         <div className="flex items-center gap-2">
                             <img src={Frame} alt="user avatar" className="h-[31px] w-[31px] rounded object-contain" />
@@ -104,14 +105,14 @@ export const UserProfile = () => {
                         />
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
-                    <DropdownMenuSubContent className="ml-4 max-h-[510px] w-[221px] overflow-y-scroll rounded bg-intg-bg-9 px-2 py-4 text-intg-text">
+                    <DropdownMenuSubContent className="ml-4 max-h-[510px] min-w-[250px] overflow-y-scroll rounded bg-intg-bg-9 px-2 py-4 text-intg-text">
                         <DropdownMenuLabel>
                             <p className="mb-2 text-xs">OTHER WORKSPACES</p>
                         </DropdownMenuLabel>
                         {organizations?.map((item) => {
                             return (
                                 <DropdownMenuItem
-                                    className="px-3 py-2"
+                                    className="px-3 py-2 hover:rounded-md hover:bg-intg-bg-10"
                                     key={item?.id}
                                     onClick={() => {
                                         switchWorkspace(
@@ -121,58 +122,59 @@ export const UserProfile = () => {
                                     }}
                                 >
                                     <NavItem
-                                        classnames="p-0"
                                         text={item?.name}
                                         leftIcon={<AcronymBox text={item?.name ?? ""} />}
+                                        rightIcon={item?.name === workspace?.name && <CheckCircleIcon />}
                                     />
                                 </DropdownMenuItem>
                             );
                         })}
                         <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
-                        <DropdownMenuItem className="px-3 py-2">
+                        <DropdownMenuItem>
                             <a href="/create-workspace">
                                 <Button
                                     icon={<CirclePlusIcon />}
                                     variant="custom"
-                                    text="New Workspace"
                                     size="md"
-                                    className="w-full bg-intg-bg-11"
+                                    text="New Workspace"
+                                    className="bg-intg-bg-11 text-sm"
                                 />
                             </a>
                         </DropdownMenuItem>
                     </DropdownMenuSubContent>
                 </DropdownMenuSub>
-                <DropdownMenuItem className="flex items-center gap-2 px-3 py-2 ">
+                <DropdownMenuItem
+                    className="flex items-center gap-2 px-3 py-2"
+                    onClick={() =>
+                        navigate(
+                            `${ROUTES.WORKSPACE_SETTINGS}`
+                                .replace(":orgSlug", orgSlug!)
+                                .replace(":projectSlug", projectSlug!),
+                        )
+                    }
+                >
                     <SettingsIcon />
-                    <p
-                        className="cursor-pointer text-sm"
-                        onClick={() => {
-                            navigate(
-                                `${ROUTES.WORKSPACE_SETTINGS}`
-                                    .replace(":orgSlug", orgSlug!)
-                                    .replace(":projectSlug", projectSlug!),
-                            );
-                        }}
-                    >
-                        Workspace Settings
-                    </p>
+                    <p className="cursor-pointer text-sm">Workspace Settings</p>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
                 {profileNavItems.map((item) => {
                     return (
                         <DropdownMenuItem key={item.id}>
-                            <NavLink
+                            <NavItem
+                                onclick={() =>
+                                    navigate(
+                                        item.href.replace(":orgSlug", orgSlug!).replace(":projectSlug", projectSlug!),
+                                    )
+                                }
                                 text={item.title}
                                 leftIcon={item.icon}
-                                to="/test"
-                                className={({ isActive }) => (isActive ? "" : "")}
                                 classnames="px-3 py-2 text-sm text-intg-text"
                             />
                         </DropdownMenuItem>
                     );
                 })}
                 <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
-                <DropdownMenuItem className="flex items-center gap-2 px-3 py-2" onClick={logout}>
+                <DropdownMenuItem className="flex cursor-pointer items-center gap-2 px-3 py-2" onClick={logout}>
                     <LogoutIcon />
                     <p className="text-sm text-intg-error-text">Log out</p>
                 </DropdownMenuItem>

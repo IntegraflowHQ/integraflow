@@ -1,7 +1,7 @@
 import { cn } from "@/utils";
 import React from "react";
 
-type Props = React.HtmlHTMLAttributes<HTMLDivElement> & {
+export type LegendProps = React.HtmlHTMLAttributes<HTMLDivElement> & {
     data: {
         name: string;
         color: string;
@@ -9,7 +9,7 @@ type Props = React.HtmlHTMLAttributes<HTMLDivElement> & {
     }[];
 };
 
-export const Legend = ({ className, data, ...props }: Props) => {
+export const Legend = ({ className, data, ...props }: LegendProps) => {
     const total = data.reduce((acc, d) => {
         return acc + d.value;
     }, 0);

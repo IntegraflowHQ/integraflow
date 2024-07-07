@@ -1,4 +1,4 @@
-import { SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { SurveyQuestionTypeEnum, SurveyStatusEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import * as Tabs from "@radix-ui/react-tabs";
 import { Trash2, XIcon } from "lucide-react";
@@ -15,7 +15,7 @@ type Props = {
 
 export const QuestionPanel = ({ questionIndex }: Props) => {
     const { question, clear, deleteQuestion } = useQuestion();
-    const { parsedQuestions } = useSurvey();
+    const { parsedQuestions, survey } = useSurvey();
     const lastQuestionIndex = parsedQuestions.length - 1;
 
     if (!question) {
@@ -64,7 +64,9 @@ export const QuestionPanel = ({ questionIndex }: Props) => {
                 </Tabs.List>
 
                 <div className="flex items-center gap-3">
-                    <Trash2 onClick={() => deleteQuestion(question)} className="cursor-pointer" size={20} />
+                    {survey?.status !== SurveyStatusEnum.Active ? (
+                        <Trash2 onClick={() => deleteQuestion(question)} className="cursor-pointer" size={20} />
+                    ) : null}
 
                     <button onClick={clear}>
                         <XIcon className="cursor-pointer" />

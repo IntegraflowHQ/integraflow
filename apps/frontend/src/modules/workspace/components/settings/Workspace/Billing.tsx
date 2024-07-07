@@ -1,4 +1,5 @@
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
+import { Header } from "@/ui";
 import * as Progress from "@radix-ui/react-progress";
 import { BillingCategoriesEnum, planDetails } from "../../../utils";
 
@@ -33,21 +34,21 @@ export const Billing = () => {
 
     return (
         <div className="w-[675px] pt-10 text-intg-text-4">
-            <div className="w-[515px]">
-                <h3 className="font-semibold">Manage Billing</h3>
-                <p className="text-sm">Manage your billing information and invoices.</p>
-            </div>
+            <Header title="Manage Billing" description="Manage your billing information and invoices." variant="3" />
             <hr className="my-6 border-[1px] border-intg-bg-4" />
 
             <>
-                <h3 className="font-semibold">Current plan</h3>
+                <Header title="Current plan" variant="3" />
                 <div className="space-y-6">
                     <div className="flex justify-between">
-                        <p className="justify-end self-end text-sm">You are currently on a free plan.</p>
+                        <p className="justify-end self-end text-sm">
+                            You are currently on a <span className="text-white">free plan</span>.
+                        </p>
                     </div>
                     <div className="space-y-6">
                         {planDetails.map(({ icon: Icon, ...plan }) => {
                             const { count, limit } = getBillingValues(plan.category);
+                            const percentage = (count / limit) * 100;
 
                             return (
                                 <div className="space-y-6 rounded-lg bg-intg-bg-9 p-4 text-sm" key={plan.title}>
@@ -60,22 +61,22 @@ export const Billing = () => {
                                     </div>
                                     <div>
                                         <Progress.Root
-                                            className="border-intg-bg-23 bg-intg-bg-23 relative h-[8px] w-full overflow-hidden rounded-sm"
+                                            className="relative h-[8px] w-full overflow-hidden rounded-sm border-intg-bg-23 bg-intg-bg-23"
                                             style={{
                                                 // Fix overflow clipping in Safari
                                                 // https://gist.github.com/domske/b66047671c780a238b51c51ffde8d3a0
                                                 transform: "translateZ(0)",
                                             }}
-                                            value={count}
+                                            value={percentage}
                                         >
                                             <Progress.Indicator
-                                                className="ease-[cubic-bezier(0.65, 0, 0.35, 1)] h-full w-full bg-intg-bg-13 transition-transform duration-[660ms]"
-                                                style={{ transform: `translateX(-${100 - count}%)` }}
+                                                className="ease-[cubic-bezier(0.65, 0, 0.35, 1)] h-full bg-intg-bg-13 transition-transform duration-[660ms]"
+                                                style={{ transform: `translateX(${percentage}%)` }}
                                             />
                                         </Progress.Root>
                                         <div className="flex justify-between">
-                                            <div className="border-intg-bg-23 h-5 border"></div>
-                                            <div className="border-intg-bg-23 h-5 border"></div>
+                                            <div className="h-5 border border-intg-bg-23"></div>
+                                            <div className="h-5 border border-intg-bg-23"></div>
                                         </div>
 
                                         <div className="flex justify-between">

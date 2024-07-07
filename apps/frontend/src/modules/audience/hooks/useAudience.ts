@@ -11,6 +11,7 @@ export const useAudience = () => {
         fetchMore,
         networkStatus,
     } = useGetPersonsQuery({
+        fetchPolicy: "cache-and-network",
         variables: {
             first: itemsOnPage,
         },
@@ -23,6 +24,7 @@ export const useAudience = () => {
         fetchMore: fetchMorePropertyDefinitions,
         networkStatus: propertyDefinitionsNetworkStatus,
     } = usePropertyDefinitionsQuery({
+        fetchPolicy: "cache-and-network",
         variables: {
             first: itemsOnPage,
         },

@@ -17,6 +17,7 @@ export const useEvents = () => {
         fetchMore,
         networkStatus,
     } = useEventDefinitionsQuery({
+        fetchPolicy: "cache-and-network",
         variables: {
             first: eventDefinitionsOnPage,
         },
@@ -24,7 +25,7 @@ export const useEvents = () => {
     });
 
     const [fetchPropertiesWithDefinitions, { data: propertiesWithDefinitionsResponse, loading: loadingProperties }] =
-        usePropertiesWithDefinitionsLazyQuery();
+        usePropertiesWithDefinitionsLazyQuery({ fetchPolicy: "cache-and-network" });
 
     const getPropertiesWithDefinitions = useCallback(
         (event: string) => {

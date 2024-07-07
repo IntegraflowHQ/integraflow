@@ -1,3 +1,5 @@
+import { SurveyStatusEnum } from "@/generated/graphql";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { MentionItem, MentionOption } from "@/types";
 import { cn, stripHtmlTags } from "@/utils";
 import { encodeText } from "@/utils/question";
@@ -39,6 +41,7 @@ export const EditorTextInput = ({
     const [fallbackFieldPosition, setFallbackFieldPosition] = useState({ left: 0, bottom: 0 });
 
     const id = useId();
+    const { survey } = useSurvey();
 
     const ref = useRef<ReactQuill>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -190,7 +193,7 @@ export const EditorTextInput = ({
                             handleFallbackChange();
                         }
                     }}
-                    className="mention-input border-0 bg-intg-bg-4 px-[10px] py-0 min-h-[30px] text-xs text-intg-text"
+                    className="mention-input min-h-[30px] border-0 bg-intg-bg-4 px-[10px] py-0 text-xs text-intg-text"
                     onBlur={() => {
                         setDisplayFallbackField(false);
                         setFallbackValue("");
@@ -224,6 +227,7 @@ export const EditorTextInput = ({
                     }}
                     formats={["mention"]}
                     modules={modules}
+                    readOnly={survey?.status === SurveyStatusEnum.Active}
                 />
             ) : (
                 <TextInput
@@ -235,11 +239,15 @@ export const EditorTextInput = ({
                     placeholder={placeholder}
                     className="rounded-lg border border-transparent bg-[#272138] text-sm text-intg-text-1 placeholder:text-intg-text-3 focus:border-intg-text-3 focus:outline-none"
                     disabled={maxCharacterCount === stripHtmlTags(defaultValue ?? "")?.length}
+                    readOnly={survey?.status === SurveyStatusEnum.Active}
                 />
             )}
             {showCharacterCount && (
                 <div className="absolute bottom-0 right-0 translate-y-1/2 rounded bg-[#2B2045] p-1 text-xs text-intg-text">
-                    {stripHtmlTags(defaultValue ?? "")?.length}/{maxCharacterCount}
+                    {showMention
+                        ? stripHtmlTags(defaultValue ?? "")?.length - 1
+                        : stripHtmlTags(defaultValue ?? "")?.length}
+                    /{maxCharacterCount}
                 </div>
             )}
         </div>
