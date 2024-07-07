@@ -1,31 +1,24 @@
-import { Dialog, DialogContent, GlobalSpinner, Header } from "@/ui";
+import { GlobalSpinner, Header } from "@/ui";
 import { Document } from "@/ui/icons";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useSurvey } from "../../hooks/useSurvey";
-import SurveyCreate from "../SurveyCreate";
 import CreateSurveyButton from "../partials/CreateSurveyButton";
 import { SurveyList } from "./components/SurveyList";
 
 export default function SurveyHome() {
-    const { surveyList, loading, createSurvey, creatingSurvey } = useSurvey();
+    const { surveyList, loading, createSurvey } = useSurvey();
 
     const [searchParams, setSearchParams] = useSearchParams();
-
-    const [openCreateSurvey, setOpenCreateSurvey] = useState(false);
 
     useEffect(() => {
         if (!searchParams) {
             return;
         }
 
-        if (searchParams.get("create") === "1") {
+        if (searchParams.get("create") === "1" || searchParams.get("create") === "2") {
             createSurvey();
             setSearchParams({});
-        }
-        if (searchParams.get("create") === "2") {
-            setSearchParams({});
-            setOpenCreateSurvey(true);
         }
     }, [searchParams]);
 
@@ -36,7 +29,7 @@ export default function SurveyHome() {
     return (
         <main className="flex h-full w-full flex-col">
             {surveyList?.edges?.length > 0 ? (
-                <SurveyList setOpenCreateSurvey={setOpenCreateSurvey} />
+                <SurveyList />
             ) : (
                 <div className="flex h-full w-full  justify-center">
                     <div className="flex max-w-[386px] flex-col items-center justify-center  gap-[7px]">
@@ -48,17 +41,11 @@ export default function SurveyHome() {
                                 description="Integraflow enables you to understand your customers. To get started, click on 'Create new survey'. You may need to integrate our SDK to your website/platform."
                                 className="text-center"
                             />
-                            <CreateSurveyButton onClick={() => setOpenCreateSurvey(true)} />
+                            <CreateSurveyButton onClick={() => createSurvey()} />
                         </div>
                     </div>
                 </div>
             )}
-
-            <Dialog open={openCreateSurvey} onOpenChange={(open) => setOpenCreateSurvey(open)}>
-                <DialogContent title="Create new survey" description="Pick a method that suits you best">
-                    <SurveyCreate createFn={createSurvey} busy={creatingSurvey} className="h-[357px] w-[762px] pt-8" />
-                </DialogContent>
-            </Dialog>
         </main>
     );
 }

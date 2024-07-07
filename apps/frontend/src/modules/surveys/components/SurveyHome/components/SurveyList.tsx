@@ -21,15 +21,11 @@ const headers = [
     { id: crypto.randomUUID(), title: "" },
 ];
 
-export const SurveyList = ({
-    setOpenCreateSurvey,
-}: {
-    setOpenCreateSurvey: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+export const SurveyList = () => {
     const navigate = useNavigate();
     const { orgSlug, projectSlug } = useParams();
 
-    const { updateSurvey, deleteSurvey, loading, getMoreSurveys, surveyList } = useSurvey();
+    const { createSurvey, updateSurvey, deleteSurvey, loading, getMoreSurveys, surveyList } = useSurvey();
 
     const [selectedSurveyName, setSelectedSurveyName] = React.useState<string>("");
 
@@ -63,7 +59,7 @@ export const SurveyList = ({
         <div className="h-full w-full px-6 py-4 text-white">
             <div className="flex justify-between">
                 <p className="py-2 text-xl font-normal">Surveys</p>
-                <CreateSurveyButton onClick={() => setOpenCreateSurvey(true)} />
+                <CreateSurveyButton onClick={() => createSurvey()} />
             </div>
 
             <div className="mt-8 flex flex-col pb-10">
