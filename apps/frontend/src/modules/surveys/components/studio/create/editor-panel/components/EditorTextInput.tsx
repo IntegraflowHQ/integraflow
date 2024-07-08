@@ -171,6 +171,10 @@ export const EditorTextInput = ({
                         font-size: 14px;
                         margin-bottom: -6px;
                     }
+                    .ql-editor.ql-blank::before {
+                        color: #9582C0;
+                        font-style: normal;
+                    }
                     .mention[aria-disabled="true"]{
                         background-color: purple;
                     }
@@ -219,6 +223,7 @@ export const EditorTextInput = ({
                             },
                         } as React.ChangeEvent<HTMLInputElement>);
                     }}
+                    placeholder={placeholder}
                     defaultValue={defaultValue}
                     style={{
                         width: "100%",
