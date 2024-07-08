@@ -10,7 +10,7 @@ export const ChannelInfo = () => {
             <Header title="Channel information" variant="3" className="[&>*]:text-intg-text-11" />
 
             <div className="grid grid-cols-[max-content,1fr] gap-x-3.5 gap-y-2 -tracking-[0.41px]">
-                {Object.entries(activeResponse?.userAttributes ?? {}).map(([key, val]) => (
+                {Object.entries(activeResponse?.response.userAttributes ?? {}).map(([key, val]) => (
                     <Fragment key={key}>
                         <strong className="w-max self-center rounded bg-intg-bg-22 px-1.5 py-1 text-xs font-normal capitalize leading-[18px] text-intg-text-13">
                             {key.replace("_", " ")}

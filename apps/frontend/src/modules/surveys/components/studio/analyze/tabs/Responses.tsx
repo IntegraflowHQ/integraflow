@@ -1,4 +1,5 @@
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
+import { AnalyzeTabs } from "@/types";
 import { Header, Pagination } from "@/ui";
 import { ChartBar } from "@/ui/icons";
 import { DateFilter } from "../components/DateFilter";
@@ -16,6 +17,7 @@ export const Responses = () => {
         fetchMoreResponses,
         setTimeFrame,
         setActiveResponse,
+        setTab,
     } = useAnalyze();
 
     if (lastEightResponses.length === 0) {
@@ -69,7 +71,7 @@ export const Responses = () => {
                                     }
                                     key={response.id}
                                     onClick={() => {
-                                        setActiveResponse(response);
+                                        setActiveResponse({ response, openedFrom: AnalyzeTabs.Responses });
                                     }}
                                 />
                             ))
@@ -108,6 +110,9 @@ export const Responses = () => {
                     <ResponseDetails
                         onBackPress={() => {
                             setActiveResponse(null);
+                            if (activeResponse.openedFrom !== "Responses") {
+                                setTab(activeResponse.openedFrom);
+                            }
                         }}
                     />
                 )}
