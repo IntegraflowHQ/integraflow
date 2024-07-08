@@ -236,6 +236,11 @@ export enum CTAEnums {
     CLOSE = "close",
 }
 
+export enum LimitRange {
+    EXACT = "exact",
+    RANGE = "range",
+}
+
 export type ParsedQuestion = Omit<SurveyQuestionCountableEdge["node"], "options" | "settings"> & {
     options: QuestionOption[];
     settings: QuestionSettings;
