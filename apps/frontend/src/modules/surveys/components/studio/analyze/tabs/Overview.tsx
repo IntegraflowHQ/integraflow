@@ -232,7 +232,7 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                     </section>
                 </div>
 
-                <ComingSoon>
+                <ComingSoon className="min-h-[462px]">
                     <img src={ResponseTrends} className="w-full opacity-30" />
                 </ComingSoon>
             </div>

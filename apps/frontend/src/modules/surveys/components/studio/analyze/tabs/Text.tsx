@@ -42,11 +42,11 @@ export const Text = () => {
                 </div>
             </div>
 
-            <ComingSoon>
+            <ComingSoon className="min-h-[437px]">
                 <img src={WordCount} className="w-full opacity-40" />
             </ComingSoon>
 
-            <ComingSoon>
+            <ComingSoon className="min-h-[774px]">
                 <img src={WordCountTable} className="w-full opacity-40" />
             </ComingSoon>
         </div>

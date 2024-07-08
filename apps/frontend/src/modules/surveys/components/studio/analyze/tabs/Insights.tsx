@@ -45,7 +45,7 @@ export const Insights = () => {
                 </div>
 
                 <div className="flex gap-6 rounded-lg bg-intg-bg-15 p-6">
-                    <ComingSoon>
+                    <ComingSoon className="min-h-[155px]">
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
                             title="Response"
@@ -55,7 +55,7 @@ export const Insights = () => {
                             className="opacity-40"
                         />
                     </ComingSoon>
-                    <ComingSoon>
+                    <ComingSoon className="min-h-[155px]">
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
                             title="CSAT"
@@ -67,7 +67,7 @@ export const Insights = () => {
                             className="opacity-40"
                         />
                     </ComingSoon>
-                    <ComingSoon>
+                    <ComingSoon className="min-h-[155px]">
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
                             title="NPS"
@@ -79,7 +79,7 @@ export const Insights = () => {
                             className="opacity-40"
                         />
                     </ComingSoon>
-                    <ComingSoon>
+                    <ComingSoon className="min-h-[155px]">
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
                             title="CES"
@@ -94,15 +94,15 @@ export const Insights = () => {
                 </div>
             </div>
 
-            <ComingSoon>
+            <ComingSoon className="min-h-[877px]">
                 <img src={RatingInsights} className="w-full opacity-30" />
             </ComingSoon>
 
-            <ComingSoon>
+            <ComingSoon className="min-h-[877px]">
                 <img src={EmojiInsights} className="w-full opacity-30" />
             </ComingSoon>
 
-            <ComingSoon>
+            <ComingSoon className="min-h-[516px]">
                 <img src={NPSInsights} className="w-full opacity-30" />
             </ComingSoon>
         </div>

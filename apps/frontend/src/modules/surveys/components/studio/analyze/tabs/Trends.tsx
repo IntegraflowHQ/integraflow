@@ -42,11 +42,11 @@ export const Trends = () => {
                 </div>
             </div>
 
-            <ComingSoon>
+            <ComingSoon className="min-h-[769px]">
                 <img src={NPSTrends} className="w-full opacity-30" />
             </ComingSoon>
 
-            <ComingSoon>
+            <ComingSoon className="min-h-[246px]">
                 <img src={ResponsesByDayAndTime} className="w-full opacity-30" />
             </ComingSoon>
         </div>
