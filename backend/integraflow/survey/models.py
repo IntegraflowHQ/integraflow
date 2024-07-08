@@ -253,9 +253,9 @@ class SurveyResponseQueryset(models.QuerySet["SurveyResponse"]):
             detractors=models.Sum('detractor', default=0)
         )
 
-        promoters = nps_scores.get("promoters", 0)
-        passives = nps_scores.get("passives", 0)
-        detractors = nps_scores.get("detractors", 0)
+        promoters = getattr(nps_scores, "promoters", 0)
+        passives = getattr(nps_scores, "passives", 0)
+        detractors = getattr(nps_scores, "detractors", 0)
 
         total_responses = promoters + passives + detractors
         if total_responses == 0:
@@ -312,9 +312,9 @@ class SurveyResponseQueryset(models.QuerySet["SurveyResponse"]):
             total_negative=models.Sum('negative', default=0)
         )
 
-        positive = csat_scores.get("total_positive", 0)
-        neutral = csat_scores.get("total_neutral", 0)
-        negative = csat_scores.get("total_negative", 0)
+        positive = getattr(csat_scores, "total_positive", 0)
+        neutral = getattr(csat_scores, "total_neutral", 0)
+        negative = getattr(csat_scores, "total_negative", 0)
 
         total_responses = positive + neutral + negative
         if total_responses == 0:
@@ -379,10 +379,10 @@ class SurveyResponseQueryset(models.QuerySet["SurveyResponse"]):
             )
         )
 
-        low_efforts = ces_scores.get("low_efforts", 0)
-        medium_efforts = ces_scores.get("medium_efforts", 0)
-        high_efforts = ces_scores.get("high_efforts", 0)
-        total_ces_score = ces_scores.get("total_ces_score", 0)
+        low_efforts = getattr(ces_scores, "low_efforts", 0)
+        medium_efforts = getattr(ces_scores, "medium_efforts", 0)
+        high_efforts = getattr(ces_scores, "high_efforts", 0)
+        total_ces_score = getattr(ces_scores, "total_ces_score", 0)
 
         total_responses = low_efforts + medium_efforts + high_efforts
         if total_responses == 0:
@@ -410,7 +410,6 @@ class SurveyResponse(UUIDModel):
         IN_PROGRESS = "in_progress" "in progress"
         COMPLETED = "completed" "completed"
         ARCHIVED = "archived" "archived"
-
 
     class Meta:
         verbose_name = "SurveyResponse"
