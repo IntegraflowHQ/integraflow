@@ -58,7 +58,9 @@ export default function UpdateQuestion() {
                                                     {question.label && question.label !== emptyLabel ? (
                                                         addEllipsis(stripHtmlTags(question.label), 40)
                                                     ) : (
-                                                        <p className="text-sm text-intg-text">Enter your text here</p>
+                                                        <p className="text-sm text-intg-text">
+                                                            Enter your question here, use '@' to recall information.
+                                                        </p>
                                                     )}
                                                 </div>
                                             </div>
