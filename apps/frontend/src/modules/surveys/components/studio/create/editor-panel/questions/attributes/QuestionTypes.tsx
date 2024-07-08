@@ -79,7 +79,7 @@ export const QuestionOptions = () => {
         <div className="space-y-2" ref={questionTypesRef}>
             <div className="flex gap-2">
                 <Button
-                    className="flex items-center gap-2 px-[12px] py-[12px]"
+                    className="flex items-center justify-center gap-2 px-[12px] py-[12px]"
                     onClick={() => {
                         setShowQuestionTypes(!showQuestionTypes);
                         scrollToBottom({ behavior: "smooth" });
@@ -89,10 +89,6 @@ export const QuestionOptions = () => {
                     <span className="w-max text-base font-normal">
                         {parsedQuestions.length > 0 ? "Add your next question" : "Add your first question"}
                     </span>
-                </Button>
-                <Button className="flex items-center gap-2 px-[12px] py-[12px]" variant="secondary">
-                    <PlusCircle />
-                    <span className="w-max text-base font-normal">Add question from library</span>
                 </Button>
             </div>
 
