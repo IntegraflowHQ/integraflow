@@ -37,43 +37,43 @@ export const surveyTypes: TemplateProps[] = [
     },
     {
         title: "Rating scale",
-        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Ask your customers to rate their experience on your platform or your services.",
         image: Star,
     },
     {
         title: "NPS®",
-        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Measure customer loyalty and satisfaction by asking customers a single question.",
         image: NPS,
         right: true,
     },
     {
         title: "Contact form",
-        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Ask for your customers data to personalize their experience.",
         image: Contact,
     },
     {
         title: "Birthday",
-        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Take note of dates important to your customers.",
         image: Birthday,
     },
     {
         title: "Dropdown list",
-        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Make a list of options for your customers to choose from.",
         image: Dropdown,
     },
     {
         title: "Boolean",
-        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Get people to select only one option. Good for getting definite answers.",
         image: Boolean,
     },
     {
         title: "Smiley scale",
-        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Get people to express their satisfaction using emojis.",
         image: Welcome,
     },
     {
         title: "Thank you",
-        description: "Take a moment to introduce the purpose of your survey or say hi to your audience.",
+        description: "Let your customers know you appreciate their feedback.",
         image: Welcome,
     },
 ];

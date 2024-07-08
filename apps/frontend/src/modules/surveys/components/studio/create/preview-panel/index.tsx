@@ -112,7 +112,7 @@ export const Preview = ({ className, mode, viewPort, ...props }: Props) => {
             {parsedQuestions.length === 0 && (
                 <div className="flex h-full flex-col items-center justify-center rounded-xl bg-intg-bg-9">
                     <div className="space-y-8">
-                        <img src={EmptySurvey} alt="" />
+                        <img src={EmptySurvey} />
                         <Header
                             title="Nothing to see here yet."
                             description="Add your first question!"
