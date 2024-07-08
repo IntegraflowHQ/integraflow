@@ -57,4 +57,4 @@ class OrganizationJoin(BaseMutation):
             invite_link=input.get("invite_link")
         )
 
-        return cls(user=user)
+        return cls(user=User.objects.get(pk=user.pk))
