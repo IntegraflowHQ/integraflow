@@ -121,6 +121,10 @@ class Project(UUIDModel):
             return self.name
         return str(self.pk)
 
+    def reset_api_token(self):
+        self.api_token = generate_random_token_project()
+        self.save()
+
     __repr__ = sane_repr("name", "api_token")  # type: ignore
 
 
