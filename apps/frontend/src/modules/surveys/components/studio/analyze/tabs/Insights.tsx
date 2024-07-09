@@ -1,4 +1,4 @@
-import { useAnalytics } from "@/hooks/useAnalytics";
+import { AnalyticsEnum, useAnalytics } from "@/hooks/useAnalytics";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { ComingSoon, Header } from "@/ui";
 import { ChartPie } from "@/ui/icons";
@@ -12,7 +12,7 @@ import { Summary } from "../components/Summary";
 
 export const Insights = () => {
     const { lastEightResponses, timeFrame, setTimeFrame } = useAnalyze();
-    const { handleAnalytics } = useAnalytics();
+    const { capture } = useAnalytics();
 
     if (lastEightResponses.length === 0) {
         return (
@@ -50,7 +50,7 @@ export const Insights = () => {
                     <ComingSoon
                         className="min-h-[155px]"
                         notifyFn={() =>
-                            handleAnalytics("Notify me", {
+                            capture(AnalyticsEnum.NOTIFY_ME, {
                                 screen: "Analyze",
                                 feature: "Insight",
                                 component: "Response",
@@ -69,7 +69,7 @@ export const Insights = () => {
                     <ComingSoon
                         className="min-h-[155px]"
                         notifyFn={() =>
-                            handleAnalytics("Notify me", {
+                            capture(AnalyticsEnum.NOTIFY_ME, {
                                 screen: "Analyze",
                                 feature: "Insight",
                                 component: "CSAT",
@@ -90,7 +90,7 @@ export const Insights = () => {
                     <ComingSoon
                         className="min-h-[155px]"
                         notifyFn={() =>
-                            handleAnalytics("Notify me", {
+                            capture(AnalyticsEnum.NOTIFY_ME, {
                                 screen: "Analyze",
                                 feature: "Insight",
                                 component: "NPS",
@@ -111,7 +111,7 @@ export const Insights = () => {
                     <ComingSoon
                         className="min-h-[155px]"
                         notifyFn={() =>
-                            handleAnalytics("Notify me", {
+                            capture(AnalyticsEnum.NOTIFY_ME, {
                                 screen: "Analyze",
                                 feature: "Insight",
                                 component: " CES",
@@ -135,7 +135,7 @@ export const Insights = () => {
             <ComingSoon
                 className="min-h-[877px]"
                 notifyFn={() =>
-                    handleAnalytics("Notify me", {
+                    capture(AnalyticsEnum.NOTIFY_ME, {
                         screen: "Analyze",
                         feature: "Insight",
                         component: "Rating",
@@ -148,7 +148,7 @@ export const Insights = () => {
             <ComingSoon
                 className="min-h-[877px]"
                 notifyFn={() =>
-                    handleAnalytics("Notify me", {
+                    capture(AnalyticsEnum.NOTIFY_ME, {
                         screen: "Analyze",
                         feature: "Insight",
                         component: "Emoji",
@@ -161,7 +161,7 @@ export const Insights = () => {
             <ComingSoon
                 className="min-h-[516px]"
                 notifyFn={() =>
-                    handleAnalytics("Notify me", {
+                    capture(AnalyticsEnum.NOTIFY_ME, {
                         screen: "Analyze",
 
                         feature: "Insight",

@@ -1,4 +1,4 @@
-import { useAnalytics } from "@/hooks/useAnalytics";
+import { AnalyticsEnum, useAnalytics } from "@/hooks/useAnalytics";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { ComingSoon, Header } from "@/ui";
 import { PresentationChartLine } from "@/ui/icons";
@@ -27,7 +27,7 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
         calculatePercentageDifference,
     } = useAnalyze();
 
-    const { handleAnalytics } = useAnalytics();
+    const { capture } = useAnalytics();
 
     const completionRatePercentageDifference = calculatePercentageDifference(completionRate);
     const totalResponsesPercentageDifference = calculatePercentageDifference(totalResponses);
@@ -238,7 +238,7 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                 <ComingSoon
                     className="min-h-[462px]"
                     notifyFn={() =>
-                        handleAnalytics("Notify me", {
+                        capture(AnalyticsEnum.NOTIFY_ME, {
                             screen: "Analyze",
                             feature: "Overview",
                             component: "Response trend",

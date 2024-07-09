@@ -3,15 +3,21 @@ import { toast } from "@/utils/toast";
 import posthog from "posthog-js";
 import { useCallback } from "react";
 
+export enum AnalyticsEnum {
+    NOTIFY_ME = "Notify Me",
+    UPDATE_SURVEY_STATUS = "Update Survey Status",
+    CREATE_SURVEY = "Create Survey",
+}
+
 type Props = {
-    screen: string;
-    feature: string;
-    component: string;
+    screen?: string;
+    feature?: string;
+    component?: string;
 };
 export const useAnalytics = () => {
     const { user } = useAuth();
 
-    const handleAnalytics = useCallback(
+    const capture = useCallback(
         (action: string, properties: Props) => {
             if (user) {
                 posthog.capture(action, properties, {
@@ -31,5 +37,5 @@ export const useAnalytics = () => {
         [user],
     );
 
-    return { handleAnalytics };
+    return { capture };
 };

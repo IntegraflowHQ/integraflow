@@ -9,7 +9,7 @@ import { ExportBtn } from "../components/ExportBtn";
 
 export const Text = () => {
     const { lastEightResponses, timeFrame, setTimeFrame } = useAnalyze();
-    const { handleAnalytics } = useAnalytics();
+    const { capture } = useAnalytics();
 
     if (lastEightResponses.length === 0) {
         return (
@@ -47,7 +47,7 @@ export const Text = () => {
             <ComingSoon
                 className="min-h-[437px]"
                 notifyFn={() =>
-                    handleAnalytics("Notify me", {
+                    capture("Notify me", {
                         screen: "Analyze",
                         feature: "Text",
                         component: "NPS",
@@ -60,7 +60,7 @@ export const Text = () => {
             <ComingSoon
                 className="min-h-[774px]"
                 notifyFn={() =>
-                    handleAnalytics("Notify me", {
+                    capture("Notify me", {
                         screen: "Analyze",
                         feature: "Text",
                         component: "Word count table",
