@@ -16,7 +16,7 @@ export const Project = () => {
 
     const [projectToken, setProjectToken] = useState(project?.apiToken);
 
-    const handleProjectTokeRefresh = async () => {
+    const handleProjectTokenRefresh = async () => {
         const response = await refreshProjectToken();
         if (response?.project) {
             setProjectToken(response?.project.apiToken);
@@ -69,7 +69,6 @@ export const Project = () => {
                     <div className="flex-1">
                         <TextInput
                             label="API Key"
-                            placeholder=""
                             value={addEllipsis(projectToken as string, 40)}
                             disabled={true}
                             rightIcon={
@@ -77,7 +76,7 @@ export const Project = () => {
                                     variant="custom"
                                     size="sm"
                                     disabled={loading}
-                                    onClick={handleProjectTokeRefresh}
+                                    onClick={handleProjectTokenRefresh}
                                     icon={<RefreshCcwIcon size={16} className={loading ? "spinner__circle" : ""} />}
                                 />
                             }
@@ -89,7 +88,7 @@ export const Project = () => {
                         icon={<CopyIcon size={16} />}
                         textAlign="center"
                         disabled={loading}
-                        onClick={() => copyToClipboard(project?.apiToken as string, "API key copied to clipboard")}
+                        onClick={() => copyToClipboard(projectToken as string, "API key copied to clipboard")}
                         className="min-w-max max-w-[20%]"
                     />
                 </div>
