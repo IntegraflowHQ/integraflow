@@ -30,10 +30,9 @@ import { ROUTES } from "./routes";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 
-// Initialize PostHog
 posthog.init(import.meta.env.VITE_PUBLIC_POSTHOG_KEY, {
     api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
-    person_profiles: "always", // or 'always' to create profiles for anonymous users as well
+    person_profiles: "always",
 });
 
 const isDebugMode = import.meta.env.MODE === "development";
