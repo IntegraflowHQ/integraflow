@@ -41,6 +41,14 @@ class SurveyResponseInput(BaseInputObjectType):
         description="The user distinct ID.",
         required=False
     )
+    event = UUID(
+        description="The event ID.",
+        required=False
+    )
+    channel = JSONString(
+        description="The channel of the response.",
+        required=False
+    )
     metadata = JSONString(
         description="The response metadata.",
         required=False

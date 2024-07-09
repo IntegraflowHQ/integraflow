@@ -19,18 +19,21 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
             return "";
         }
 
-        if (!activeResponse?.response[q.reference] || activeResponse.response[q.reference].length < 1) {
+        if (
+            !activeResponse?.response.response[q.reference] ||
+            activeResponse.response.response[q.reference].length < 1
+        ) {
             return "";
         }
 
-        if (q.type === SurveyQuestionTypeEnum.Cta && activeResponse?.response[q.reference][0].ctaSuccess) {
+        if (q.type === SurveyQuestionTypeEnum.Cta && activeResponse?.response.response[q.reference][0].ctaSuccess) {
             return "clicked";
         }
-        if (q.type === SurveyQuestionTypeEnum.Cta && !activeResponse?.response[q.reference][0].ctaSuccess) {
+        if (q.type === SurveyQuestionTypeEnum.Cta && !activeResponse?.response.response[q.reference][0].ctaSuccess) {
             return "not clicked";
         }
 
-        return activeResponse?.response[q.reference][0].answer;
+        return activeResponse?.response.response[q.reference][0].answer;
     };
 
     return (

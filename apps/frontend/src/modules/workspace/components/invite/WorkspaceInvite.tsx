@@ -171,7 +171,7 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
                 ) : (
                     <div onSubmit={handleLinkInvite} className="mt-3">
                         <p className="mb-4 text-sm text-intg-text">
-                            Invite link will provide a unique URL that allow anyone to join your organization
+                            Invite link will provide a unique URL that allows anyone to join your organization.
                         </p>
                         <div className="flex w-full items-end gap-2">
                             <div className="flex-1">

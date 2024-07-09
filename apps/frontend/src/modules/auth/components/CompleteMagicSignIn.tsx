@@ -85,7 +85,7 @@ export default function CompleteMagicSignIn() {
                     <header className="flex flex-col gap-4 text-center">
                         <h1 className="text-5xl font-medium leading-[52px] text-white">Check your email</h1>
                         <p className="text-base text-intg-text">
-                            We&apos;ve sent a temporary login link please check your inbox at {email}
+                            We&apos;ve sent a temporary login link, please check your inbox at {email}.
                         </p>
                     </header>
 

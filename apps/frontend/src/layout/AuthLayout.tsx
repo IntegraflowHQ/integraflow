@@ -43,10 +43,10 @@ export function AuthLayout() {
                     <div className="flex flex-col gap-[60px] px-[60px] pb-[60px]">
                         <header className="flex flex-col gap-4 text-white">
                             <h2 className="max-w-[631px] text-[52px] font-semibold leading-[60px]">
-                                Redefine customer experience with organic feedback
+                                Redefine customer experience with organic feedback.
                             </h2>
                             <p className="max-w-[476px] text-xl ">
-                                Automate. Simplify. Track Your Ever-Changing Customer's Journey in One Space
+                                Automate, Simplify, Track Your Ever-Changing Customer's Journey in One Space.
                             </p>
                         </header>
 
@@ -58,8 +58,7 @@ export function AuthLayout() {
                             </div>
 
                             <p className="max-w-[295px] text-lg text-intg-text-5">
-                                Join over <span className="text-white">(50+)</span> other businesses from around the
-                                globe
+                                Join over <span className="text-white">50</span> other businesses from around the globe.
                             </p>
                         </div>
                     </div>

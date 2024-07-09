@@ -52,7 +52,7 @@ export const LinkWorkspaceInvitation = () => {
                         <AcronymBox size="md" text={getAcronym(inviteDetails?.organizationName ?? "")} />
                     </div>
                     <p className="text-center text-3xl font-semibold text-white">
-                        <span>You have been invited you to</span>
+                        <span>You have been invited to</span>
                         <br />
                         {inviteDetails?.organizationName}
                     </p>

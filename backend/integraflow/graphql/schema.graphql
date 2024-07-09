@@ -1990,6 +1990,13 @@ type Mutation {
     input: ProjectThemeUpdateInput!
   ): ProjectThemeUpdate @doc(category: "Projects")
 
+  """
+  Updates a project token. 
+  
+  Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+  """
+  projectTokenReset: ProjectTokenReset @doc(category: "Projects")
+
   """Updates a project."""
   projectUpdate(
     """A partial object to update the project with."""
@@ -2519,6 +2526,12 @@ input SurveyResponseCreateInput @doc(category: "Surveys") {
   """The user distinct ID."""
   userId: ID
 
+  """The event ID."""
+  event: UUID
+
+  """The channel of the response."""
+  channel: JSONString
+
   """The response metadata."""
   metadata: JSONString
 
@@ -2555,6 +2568,12 @@ input SurveyResponseUpdateInput @doc(category: "Surveys") {
 
   """The user distinct ID."""
   userId: ID
+
+  """The event ID."""
+  event: UUID
+
+  """The channel of the response."""
+  channel: JSONString
 
   """The response metadata."""
   metadata: JSONString
@@ -2692,6 +2711,18 @@ input ProjectThemeUpdateInput @doc(category: "Projects") {
 
   """The color scheme of the theme."""
   colorScheme: JSONString
+}
+
+"""
+Updates a project token. 
+
+Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+"""
+type ProjectTokenReset @doc(category: "Projects") {
+  """The project the token belongs to"""
+  project: Project!
+  projectErrors: [ProjectError!]!
+  errors: [ProjectError!]!
 }
 
 """Updates a project."""

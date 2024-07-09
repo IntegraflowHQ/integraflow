@@ -8,6 +8,7 @@ from integraflow.graphql.project.mutations import (
     ProjectThemeCreate,
     ProjectThemeDelete,
     ProjectThemeUpdate,
+    ProjectTokenReset,
     ProjectUpdate
 )
 from integraflow.permission.auth_filters import AuthorizationFilters
@@ -41,4 +42,5 @@ class ProjectMutations(graphene.ObjectType):
     project_theme_create = ProjectThemeCreate.Field()
     project_theme_delete = ProjectThemeDelete.Field()
     project_theme_update = ProjectThemeUpdate.Field()
+    project_token_reset = ProjectTokenReset.Field()
     project_update = ProjectUpdate.Field()

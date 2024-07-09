@@ -1,6 +1,7 @@
 import { SurveyQuestionTypeEnum, SurveyStatusEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
+import { LimitRange } from "@/types";
 import { cn, generateUniqueId, getHighestOrderNumber } from "@/utils";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import { AddMultipleQuestions } from "../AddMultipleQuestions";
@@ -12,6 +13,81 @@ import TextButton from "../Buttons/TextButton";
 export const OptionsList = () => {
     const { updateQuestion, question } = useQuestion();
     const { survey } = useSurvey();
+
+    const rangeOption =
+        question?.settings.choice?.min === question?.settings.choice?.max ? LimitRange.EXACT : LimitRange.RANGE;
+
+    const addNewOPtion = () => {
+        if (!question) {
+            return;
+        }
+
+        const highestOrderNumber = getHighestOrderNumber(question?.options);
+        const newOptions = [...question.options];
+        newOptions.push({
+            id: generateUniqueId(),
+            orderNumber: highestOrderNumber + 1,
+            label: "",
+            comment: false,
+        });
+
+        if (question.type !== SurveyQuestionTypeEnum.Multiple) {
+            updateQuestion({
+                options: newOptions,
+            });
+            return;
+        }
+
+        const newSettings = { ...question.settings };
+        newSettings["choice"] =
+            rangeOption === LimitRange.RANGE
+                ? {
+                      min: newSettings.choice?.min ?? 1,
+                      max: newOptions.length,
+                  }
+                : {
+                      min: Math.min(newSettings.choice?.min ?? 1, newOptions.length),
+                      max: Math.min(newSettings.choice?.min ?? 1, newOptions.length),
+                  };
+
+        updateQuestion({
+            options: newOptions,
+            settings: newSettings,
+        });
+    };
+
+    const removeOption = (index: number) => {
+        if (!question) {
+            return;
+        }
+
+        const newOptions = [...question.options];
+        newOptions.splice(index, 1);
+
+        if (question.type !== SurveyQuestionTypeEnum.Multiple) {
+            updateQuestion({
+                options: newOptions,
+            });
+            return;
+        }
+
+        const newSettings = { ...question.settings };
+        newSettings["choice"] =
+            rangeOption === LimitRange.RANGE
+                ? {
+                      min: newSettings.choice?.min ?? 1,
+                      max: Math.min(newSettings.choice?.max ?? 1, newOptions.length),
+                  }
+                : {
+                      min: Math.min(newSettings.choice?.min ?? 1, newOptions.length),
+                      max: Math.min(newSettings.choice?.min ?? 1, newOptions.length),
+                  };
+
+        updateQuestion({
+            options: newOptions,
+            settings: newSettings,
+        });
+    };
 
     if (!question) {
         return null;
@@ -77,11 +153,7 @@ export const OptionsList = () => {
                                 {question?.options.length < 3 ? null : (
                                     <MinusButton
                                         onclick={() => {
-                                            const newOptions = [...question.options];
-                                            newOptions.splice(index, 1);
-                                            updateQuestion({
-                                                options: newOptions,
-                                            });
+                                            removeOption(index);
                                         }}
                                     />
                                 )}
@@ -91,22 +163,7 @@ export const OptionsList = () => {
                 ) : null}
 
                 {survey?.status !== SurveyStatusEnum.Active ? (
-                    <TextButton
-                        text={"Add an answer at choice"}
-                        onclick={() => {
-                            const highestOrderNumber = getHighestOrderNumber(question?.options);
-                            const newOptions = [...question.options];
-                            newOptions.push({
-                                id: generateUniqueId(),
-                                orderNumber: highestOrderNumber + 1,
-                                label: "",
-                                comment: false,
-                            });
-                            updateQuestion({
-                                options: newOptions,
-                            });
-                        }}
-                    />
+                    <TextButton text={"Add an answer at choice"} onclick={addNewOPtion} />
                 ) : null}
             </div>
         </div>
