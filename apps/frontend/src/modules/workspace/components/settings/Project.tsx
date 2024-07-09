@@ -2,7 +2,8 @@ import { useProject } from "@/modules/projects/hooks/useProject";
 import { Button, TextInput } from "@/ui";
 import { addEllipsis, copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
-import { CopyIcon } from "lucide-react";
+import { CopyIcon, RefreshCcwIcon } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { SettingsScreen } from "./SettingsScreen";
 
@@ -11,7 +12,16 @@ type ProjectData = {
 };
 
 export const Project = () => {
-    const { updateProject, project } = useProject();
+    const { updateProject, project, loading, refreshProjectToken } = useProject();
+
+    const [projectToken, setProjectToken] = useState(project?.apiToken);
+
+    const handleProjectTokeRefresh = async () => {
+        const response = await refreshProjectToken();
+        if (response?.project) {
+            setProjectToken(response?.project.apiToken);
+        }
+    };
 
     const {
         register,
@@ -60,15 +70,15 @@ export const Project = () => {
                         <TextInput
                             label="API Key"
                             placeholder=""
-                            value={addEllipsis(project?.apiToken as string, 40)}
+                            value={addEllipsis(projectToken as string, 40)}
                             disabled={true}
                             rightIcon={
                                 <Button
                                     variant="custom"
                                     size="sm"
-                                    // disabled={loading}
-                                    // onClick={handleInviteLinkRefresh}
-                                    // icon={<RefreshCcwIcon size={16} className={loading ? "spinner__circle" : ""} />}
+                                    disabled={loading}
+                                    onClick={handleProjectTokeRefresh}
+                                    icon={<RefreshCcwIcon size={16} className={loading ? "spinner__circle" : ""} />}
                                 />
                             }
                         />
@@ -78,7 +88,7 @@ export const Project = () => {
                         size="md"
                         icon={<CopyIcon size={16} />}
                         textAlign="center"
-                        // disabled={loading}
+                        disabled={loading}
                         onClick={() => copyToClipboard(project?.apiToken as string, "API key copied to clipboard")}
                         className="min-w-max max-w-[20%]"
                     />

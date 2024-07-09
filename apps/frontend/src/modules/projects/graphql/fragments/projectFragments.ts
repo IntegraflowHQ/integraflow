@@ -37,6 +37,20 @@ export const PROJECT = gql`
     }
 `;
 
+export const PROJECT_TOKEN_REFRESH = gql`
+    fragment ProjectTokenResetFragment on ProjectTokenReset {
+        project {
+            ...ProjectFragment
+        }
+        projectErrors {
+            ...ProjectErrorFragment
+        }
+        errors {
+            ...ProjectErrorFragment
+        }
+    }
+`;
+
 export const PROJECT_UPDATE = gql`
     fragment ProjectUpdateFragment on ProjectUpdate {
         project {

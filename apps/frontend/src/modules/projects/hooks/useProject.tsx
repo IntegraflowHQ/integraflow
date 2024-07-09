@@ -8,18 +8,21 @@ import {
     useAudiencePropertiesQuery,
     useProjectCreateMutation,
     useProjectEventsDataQuery,
+    useProjectTokenResetMutation,
     useProjectUpdateMutation,
 } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { convertToAuthOrganization } from "@/modules/auth/states/user";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { EventProperties } from "@/types";
+import { toast } from "@/utils/toast";
 
 export const useProject = () => {
     const { workspace, project, updateUser, switchProject } = useAuth();
     const { updateWorkspace } = useWorkspace();
     const [projectCreate, { loading: loadingCreateProject }] = useProjectCreateMutation();
     const [projectUpdate] = useProjectUpdateMutation();
+    const [resetProjectToken, { loading: loadingProjectTokenReset }] = useProjectTokenResetMutation();
     const { data: eventsData } = useProjectEventsDataQuery();
     const { data: audienceProperties } = useAudiencePropertiesQuery();
 
@@ -129,6 +132,15 @@ export const useProject = () => {
         [project, projectUpdate, updateUser, updateWorkspace, workspace],
     );
 
+    const handleResetProjectToken = useCallback(async () => {
+        try {
+            const response = await resetProjectToken();
+            return response?.data?.projectTokenReset;
+        } catch (error) {
+            toast.error("An error occurred while resetting the project token. Please try again.");
+        }
+    }, [resetProjectToken]);
+
     const eventDefinitions = useMemo(() => {
         return eventsData?.eventDefinitions?.edges.map(({ node }) => node) || ([] as EventDefinition[]);
     }, [eventsData?.eventDefinitions]);
@@ -167,7 +179,7 @@ export const useProject = () => {
     }, [audienceProperties]);
 
     return {
-        loading: loadingCreateProject,
+        loading: loadingCreateProject || loadingProjectTokenReset,
         project,
         eventDefinitions,
         eventProperties,
@@ -178,5 +190,6 @@ export const useProject = () => {
         addProject: handleAddProject,
         createProject: handleCreateProject,
         updateProject: handleUpdateProject,
+        refreshProjectToken: handleResetProjectToken,
     };
 };
