@@ -1,3 +1,4 @@
+import { useAnalytics } from "@/hooks/useAnalytics";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { ComingSoon, Header } from "@/ui";
 import { PresentationChartLine } from "@/ui/icons";
@@ -25,6 +26,8 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
         setTimeFrame,
         calculatePercentageDifference,
     } = useAnalyze();
+
+    const { handleAnalytics } = useAnalytics();
 
     const completionRatePercentageDifference = calculatePercentageDifference(completionRate);
     const totalResponsesPercentageDifference = calculatePercentageDifference(totalResponses);
@@ -232,7 +235,16 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                     </section>
                 </div>
 
-                <ComingSoon className="min-h-[462px]">
+                <ComingSoon
+                    className="min-h-[462px]"
+                    notifyFn={() =>
+                        handleAnalytics("Notify me", {
+                            screen: "Analyze",
+                            feature: "Overview",
+                            component: "Response trend",
+                        })
+                    }
+                >
                     <img src={ResponseTrends} className="w-full opacity-30" />
                 </ComingSoon>
             </div>

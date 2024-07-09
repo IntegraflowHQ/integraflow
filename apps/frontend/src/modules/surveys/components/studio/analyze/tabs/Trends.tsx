@@ -1,3 +1,4 @@
+import { useAnalytics } from "@/hooks/useAnalytics";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { ComingSoon, Header } from "@/ui";
 import { TrendingUp } from "@/ui/icons";
@@ -8,6 +9,7 @@ import { ExportBtn } from "../components/ExportBtn";
 
 export const Trends = () => {
     const { lastEightResponses, timeFrame, setTimeFrame } = useAnalyze();
+    const { handleAnalytics } = useAnalytics();
 
     if (lastEightResponses.length === 0) {
         return (
@@ -42,11 +44,29 @@ export const Trends = () => {
                 </div>
             </div>
 
-            <ComingSoon className="min-h-[769px]">
+            <ComingSoon
+                className="min-h-[769px]"
+                notifyFn={() =>
+                    handleAnalytics("Notify me", {
+                        screen: "Analyze",
+                        feature: "Text",
+                        component: "Word count table",
+                    })
+                }
+            >
                 <img src={NPSTrends} className="w-full opacity-30" />
             </ComingSoon>
 
-            <ComingSoon className="min-h-[246px]">
+            <ComingSoon
+                className="min-h-[246px]"
+                notifyFn={() =>
+                    handleAnalytics("Notify me", {
+                        screen: "Analyze",
+                        feature: "Trends",
+                        component: "Responses by day and time",
+                    })
+                }
+            >
                 <img src={ResponsesByDayAndTime} className="w-full opacity-30" />
             </ComingSoon>
         </div>

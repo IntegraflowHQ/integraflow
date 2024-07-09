@@ -1,3 +1,4 @@
+import { useAnalytics } from "@/hooks/useAnalytics";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { ComingSoon, Header } from "@/ui";
 import { ChartPie } from "@/ui/icons";
@@ -11,6 +12,7 @@ import { Summary } from "../components/Summary";
 
 export const Insights = () => {
     const { lastEightResponses, timeFrame, setTimeFrame } = useAnalyze();
+    const { handleAnalytics } = useAnalytics();
 
     if (lastEightResponses.length === 0) {
         return (
@@ -45,7 +47,16 @@ export const Insights = () => {
                 </div>
 
                 <div className="flex gap-6 rounded-lg bg-intg-bg-15 p-6">
-                    <ComingSoon className="min-h-[155px]">
+                    <ComingSoon
+                        className="min-h-[155px]"
+                        notifyFn={() =>
+                            handleAnalytics("Notify me", {
+                                screen: "Analyze",
+                                feature: "Insight",
+                                component: "Response",
+                            })
+                        }
+                    >
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
                             title="Response"
@@ -55,7 +66,16 @@ export const Insights = () => {
                             className="opacity-40"
                         />
                     </ComingSoon>
-                    <ComingSoon className="min-h-[155px]">
+                    <ComingSoon
+                        className="min-h-[155px]"
+                        notifyFn={() =>
+                            handleAnalytics("Notify me", {
+                                screen: "Analyze",
+                                feature: "Insight",
+                                component: "CSAT",
+                            })
+                        }
+                    >
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
                             title="CSAT"
@@ -67,7 +87,16 @@ export const Insights = () => {
                             className="opacity-40"
                         />
                     </ComingSoon>
-                    <ComingSoon className="min-h-[155px]">
+                    <ComingSoon
+                        className="min-h-[155px]"
+                        notifyFn={() =>
+                            handleAnalytics("Notify me", {
+                                screen: "Analyze",
+                                feature: "Insight",
+                                component: "NPS",
+                            })
+                        }
+                    >
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
                             title="NPS"
@@ -79,7 +108,16 @@ export const Insights = () => {
                             className="opacity-40"
                         />
                     </ComingSoon>
-                    <ComingSoon className="min-h-[155px]">
+                    <ComingSoon
+                        className="min-h-[155px]"
+                        notifyFn={() =>
+                            handleAnalytics("Notify me", {
+                                screen: "Analyze",
+                                feature: "Insight",
+                                component: " CES",
+                            })
+                        }
+                    >
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
                             title="CES"
@@ -94,15 +132,43 @@ export const Insights = () => {
                 </div>
             </div>
 
-            <ComingSoon className="min-h-[877px]">
+            <ComingSoon
+                className="min-h-[877px]"
+                notifyFn={() =>
+                    handleAnalytics("Notify me", {
+                        screen: "Analyze",
+                        feature: "Insight",
+                        component: "Rating",
+                    })
+                }
+            >
                 <img src={RatingInsights} className="w-full opacity-30" />
             </ComingSoon>
 
-            <ComingSoon className="min-h-[877px]">
+            <ComingSoon
+                className="min-h-[877px]"
+                notifyFn={() =>
+                    handleAnalytics("Notify me", {
+                        screen: "Analyze",
+                        feature: "Insight",
+                        component: "Emoji",
+                    })
+                }
+            >
                 <img src={EmojiInsights} className="w-full opacity-30" />
             </ComingSoon>
 
-            <ComingSoon className="min-h-[516px]">
+            <ComingSoon
+                className="min-h-[516px]"
+                notifyFn={() =>
+                    handleAnalytics("Notify me", {
+                        screen: "Analyze",
+
+                        feature: "Insight",
+                        component: "NPS",
+                    })
+                }
+            >
                 <img src={NPSInsights} className="w-full opacity-30" />
             </ComingSoon>
         </div>

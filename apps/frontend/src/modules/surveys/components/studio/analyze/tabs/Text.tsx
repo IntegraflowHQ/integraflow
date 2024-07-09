@@ -1,3 +1,4 @@
+import { useAnalytics } from "@/hooks/useAnalytics";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { ComingSoon, Header } from "@/ui";
 import { Document } from "@/ui/icons";
@@ -8,6 +9,7 @@ import { ExportBtn } from "../components/ExportBtn";
 
 export const Text = () => {
     const { lastEightResponses, timeFrame, setTimeFrame } = useAnalyze();
+    const { handleAnalytics } = useAnalytics();
 
     if (lastEightResponses.length === 0) {
         return (
@@ -42,11 +44,29 @@ export const Text = () => {
                 </div>
             </div>
 
-            <ComingSoon className="min-h-[437px]">
+            <ComingSoon
+                className="min-h-[437px]"
+                notifyFn={() =>
+                    handleAnalytics("Notify me", {
+                        screen: "Analyze",
+                        feature: "Text",
+                        component: "NPS",
+                    })
+                }
+            >
                 <img src={WordCount} className="w-full opacity-40" />
             </ComingSoon>
 
-            <ComingSoon className="min-h-[774px]">
+            <ComingSoon
+                className="min-h-[774px]"
+                notifyFn={() =>
+                    handleAnalytics("Notify me", {
+                        screen: "Analyze",
+                        feature: "Text",
+                        component: "Word count table",
+                    })
+                }
+            >
                 <img src={WordCountTable} className="w-full opacity-40" />
             </ComingSoon>
         </div>
