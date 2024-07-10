@@ -3,11 +3,11 @@ import { useCallback, useMemo } from "react";
 import {
     EventDefinition,
     Project,
-    ProjectUpdateInput,
     PropertyDefinition,
     useAudiencePropertiesQuery,
     useProjectCreateMutation,
     useProjectEventsDataQuery,
+    useProjectTokenResetMutation,
     useProjectUpdateMutation,
 } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
@@ -20,6 +20,7 @@ export const useProject = () => {
     const { updateWorkspace } = useWorkspace();
     const [projectCreate, { loading: loadingCreateProject }] = useProjectCreateMutation();
     const [projectUpdate] = useProjectUpdateMutation();
+    const [resetProjectToken, { loading: loadingProjectTokenReset }] = useProjectTokenResetMutation();
     const { data: eventsData } = useProjectEventsDataQuery();
     const { data: audienceProperties } = useAudiencePropertiesQuery();
 
@@ -70,13 +71,10 @@ export const useProject = () => {
     );
 
     const handleUpdateProject = useCallback(
-        async (input: ProjectUpdateInput, cacheOnly = false) => {
+        async (input: Partial<Project>, cacheOnly = false) => {
             const updatedProject = {
                 ...project,
-                hasCompletedOnboardingFor: input.hasCompletedOnboardingFor,
-                name: input.name ?? project?.name,
-                accessControl: input.private,
-                timezone: input.timezone ?? project?.timezone,
+                ...input,
             };
 
             const organization = {
@@ -113,7 +111,12 @@ export const useProject = () => {
             try {
                 const response = await projectUpdate({
                     variables: {
-                        input,
+                        input: {
+                            hasCompletedOnboardingFor: input.hasCompletedOnboardingFor,
+                            name: input.name ?? project?.name,
+                            private: input.accessControl ?? project?.accessControl,
+                            timezone: input.timezone ?? project?.timezone,
+                        },
                     },
                 });
 
@@ -128,6 +131,15 @@ export const useProject = () => {
         },
         [project, projectUpdate, updateUser, updateWorkspace, workspace],
     );
+
+    const handleResetProjectToken = useCallback(async () => {
+        const response = await resetProjectToken();
+        if (response.data?.projectTokenReset?.project.apiToken) {
+            handleUpdateProject({ apiToken: response.data?.projectTokenReset?.project.apiToken }, true);
+            return true;
+        }
+        return false;
+    }, [resetProjectToken, project, handleUpdateProject]);
 
     const eventDefinitions = useMemo(() => {
         return eventsData?.eventDefinitions?.edges.map(({ node }) => node) || ([] as EventDefinition[]);
@@ -167,7 +179,7 @@ export const useProject = () => {
     }, [audienceProperties]);
 
     return {
-        loading: loadingCreateProject,
+        loading: loadingCreateProject || loadingProjectTokenReset,
         project,
         eventDefinitions,
         eventProperties,
@@ -178,5 +190,6 @@ export const useProject = () => {
         addProject: handleAddProject,
         createProject: handleCreateProject,
         updateProject: handleUpdateProject,
+        refreshProjectToken: handleResetProjectToken,
     };
 };

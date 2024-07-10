@@ -543,6 +543,12 @@ export type Mutation = {
    * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
    */
   projectThemeUpdate?: Maybe<ProjectThemeUpdate>;
+  /**
+   * Updates a project token.
+   *
+   * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+   */
+  projectTokenReset?: Maybe<ProjectTokenReset>;
   /** Updates a project. */
   projectUpdate?: Maybe<ProjectUpdate>;
   /**
@@ -1467,6 +1473,19 @@ export type ProjectThemeUpdateInput = {
   name?: InputMaybe<Scalars['String']>;
 };
 
+/**
+ * Updates a project token.
+ *
+ * Requires one of the following permissions: PROJECT_MEMBER_ACCESS.
+ */
+export type ProjectTokenReset = {
+  __typename?: 'ProjectTokenReset';
+  errors: Array<ProjectError>;
+  /** The project the token belongs to */
+  project: Project;
+  projectErrors: Array<ProjectError>;
+};
+
 /** Updates a project. */
 export type ProjectUpdate = {
   __typename?: 'ProjectUpdate';
@@ -2280,10 +2299,14 @@ export type SurveyResponseCreate = {
 export type SurveyResponseCreateInput = {
   /** The user attributes. */
   attributes?: InputMaybe<Scalars['JSONString']>;
+  /** The channel of the response. */
+  channel?: InputMaybe<Scalars['JSONString']>;
   /** Whether the response is completed. */
   completed?: InputMaybe<Scalars['Boolean']>;
   /** The time the survey completed. */
   completedAt?: InputMaybe<Scalars['DateTime']>;
+  /** The event ID. */
+  event?: InputMaybe<Scalars['UUID']>;
   /** The ID of the response. */
   id?: InputMaybe<Scalars['UUID']>;
   /** The response metadata. */
@@ -2361,10 +2384,14 @@ export type SurveyResponseUpdate = {
 export type SurveyResponseUpdateInput = {
   /** The user attributes. */
   attributes?: InputMaybe<Scalars['JSONString']>;
+  /** The channel of the response. */
+  channel?: InputMaybe<Scalars['JSONString']>;
   /** Whether the response is completed. */
   completed?: InputMaybe<Scalars['Boolean']>;
   /** The time the survey completed. */
   completedAt?: InputMaybe<Scalars['DateTime']>;
+  /** The event ID. */
+  event?: InputMaybe<Scalars['UUID']>;
   /** The response metadata. */
   metadata?: InputMaybe<Scalars['JSONString']>;
   /** The partial response for the survey. */
@@ -2682,6 +2709,8 @@ export type ProjectErrorFragmentFragment = { __typename?: 'ProjectError', field?
 
 export type ProjectFragmentFragment = { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } };
 
+export type ProjectTokenResetFragmentFragment = { __typename?: 'ProjectTokenReset', project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
+
 export type ProjectUpdateFragmentFragment = { __typename?: 'ProjectUpdate', project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> };
 
 export type ProjectThemeFragmentFragment = { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, createdAt: string, updatedAt: string };
@@ -2701,6 +2730,11 @@ export type ProjectUpdateMutationVariables = Exact<{
 
 
 export type ProjectUpdateMutation = { __typename?: 'Mutation', projectUpdate?: { __typename?: 'ProjectUpdate', project?: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
+
+export type ProjectTokenResetMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ProjectTokenResetMutation = { __typename?: 'Mutation', projectTokenReset?: { __typename?: 'ProjectTokenReset', project: { __typename?: 'Project', id: string, name: string, slug: string, apiToken: string, accessControl?: boolean | null, hasCompletedOnboardingFor?: any | null, timezone: string, organization: { __typename?: 'AuthOrganization', id: string, slug: string, name: string, memberCount: number } }, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
 
 export type ProjectThemeCreateMutationVariables = Exact<{
   input: ProjectThemeCreateInput;
@@ -3151,6 +3185,20 @@ export const ProjectErrorFragmentFragmentDoc = gql`
     `;
 export const ProjectCreateFragmentFragmentDoc = gql`
     fragment ProjectCreateFragment on ProjectCreate {
+  project {
+    ...ProjectFragment
+  }
+  projectErrors {
+    ...ProjectErrorFragment
+  }
+  errors {
+    ...ProjectErrorFragment
+  }
+}
+    ${ProjectFragmentFragmentDoc}
+${ProjectErrorFragmentFragmentDoc}`;
+export const ProjectTokenResetFragmentFragmentDoc = gql`
+    fragment ProjectTokenResetFragment on ProjectTokenReset {
   project {
     ...ProjectFragment
   }
@@ -4117,6 +4165,38 @@ export function useProjectUpdateMutation(baseOptions?: Apollo.MutationHookOption
 export type ProjectUpdateMutationHookResult = ReturnType<typeof useProjectUpdateMutation>;
 export type ProjectUpdateMutationResult = Apollo.MutationResult<ProjectUpdateMutation>;
 export type ProjectUpdateMutationOptions = Apollo.BaseMutationOptions<ProjectUpdateMutation, ProjectUpdateMutationVariables>;
+export const ProjectTokenResetDocument = gql`
+    mutation projectTokenReset {
+  projectTokenReset {
+    ...ProjectTokenResetFragment
+  }
+}
+    ${ProjectTokenResetFragmentFragmentDoc}`;
+export type ProjectTokenResetMutationFn = Apollo.MutationFunction<ProjectTokenResetMutation, ProjectTokenResetMutationVariables>;
+
+/**
+ * __useProjectTokenResetMutation__
+ *
+ * To run a mutation, you first call `useProjectTokenResetMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useProjectTokenResetMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [projectTokenResetMutation, { data, loading, error }] = useProjectTokenResetMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useProjectTokenResetMutation(baseOptions?: Apollo.MutationHookOptions<ProjectTokenResetMutation, ProjectTokenResetMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ProjectTokenResetMutation, ProjectTokenResetMutationVariables>(ProjectTokenResetDocument, options);
+      }
+export type ProjectTokenResetMutationHookResult = ReturnType<typeof useProjectTokenResetMutation>;
+export type ProjectTokenResetMutationResult = Apollo.MutationResult<ProjectTokenResetMutation>;
+export type ProjectTokenResetMutationOptions = Apollo.BaseMutationOptions<ProjectTokenResetMutation, ProjectTokenResetMutationVariables>;
 export const ProjectThemeCreateDocument = gql`
     mutation ProjectThemeCreate($input: ProjectThemeCreateInput!) {
   projectThemeCreate(input: $input) {
