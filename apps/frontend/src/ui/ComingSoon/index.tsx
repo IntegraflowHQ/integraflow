@@ -4,7 +4,6 @@ import { useState } from "react";
 import Button from "../Button/Button";
 
 type Props = React.HTMLAttributes<HTMLDivElement> & {
-    notifyFn?: () => void;
     eventProperties: {
         screen?: string;
         feature?: string;
@@ -12,7 +11,7 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
     };
 };
 
-export const ComingSoon = ({ className, children, notifyFn, eventProperties, ...props }: Props) => {
+export const ComingSoon = ({ className, children, eventProperties, ...props }: Props) => {
     const { capture } = useAnalytics();
     const [buttonText, setButtonText] = useState("Notify me");
 
@@ -24,9 +23,11 @@ export const ComingSoon = ({ className, children, notifyFn, eventProperties, ...
         });
 
         setButtonText("Done");
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
             setButtonText("Notify me");
         }, 3000);
+
+        return () => clearTimeout(timeoutId);
     };
 
     return (
