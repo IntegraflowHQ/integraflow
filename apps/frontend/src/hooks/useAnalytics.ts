@@ -1,5 +1,4 @@
 import { useAuth } from "@/modules/auth/hooks/useAuth";
-import { toast } from "@/utils/toast";
 import posthog from "posthog-js";
 import { useCallback } from "react";
 
@@ -30,8 +29,6 @@ export const useAnalytics = () => {
                         name: { firstName: user.firstName, lastName: user.lastName },
                     },
                 });
-
-                toast.custom("We will let you know when this feature is implemented");
             }
         },
         [user],

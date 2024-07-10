@@ -1,4 +1,4 @@
-import { AnalyticsEnum, useAnalytics } from "@/hooks/useAnalytics";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { ComingSoon, Header } from "@/ui";
 import { PresentationChartLine } from "@/ui/icons";
@@ -237,13 +237,7 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
 
                 <ComingSoon
                     className="min-h-[462px]"
-                    notifyFn={() =>
-                        capture(AnalyticsEnum.NOTIFY_ME, {
-                            screen: "Analyze",
-                            feature: "Overview",
-                            component: "Response trend",
-                        })
-                    }
+                    eventProperties={{ screen: "Analyze", feature: "Response Trend", component: "Overview tab" }}
                 >
                     <img src={ResponseTrends} className="w-full opacity-30" />
                 </ComingSoon>

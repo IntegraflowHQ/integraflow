@@ -1,4 +1,4 @@
-import { AnalyticsEnum, useAnalytics } from "@/hooks/useAnalytics";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { ComingSoon, Header } from "@/ui";
 import { ChartPie } from "@/ui/icons";
@@ -40,22 +40,15 @@ export const Insights = () => {
                 distribution channels."
                     className="max-w-[375px] pb-8"
                 />
-
                 <div className="flex items-center justify-between pb-[14px]">
                     <DateFilter defaultValue={timeFrame} onValueChange={setTimeFrame} />
                     <ExportBtn />
                 </div>
-
+                feature="Insight" component="Response"
                 <div className="flex gap-6 rounded-lg bg-intg-bg-15 p-6">
                     <ComingSoon
+                        eventProperties={{ screen: "Analyze", feature: "Response Insight", component: "Insights tab" }}
                         className="min-h-[155px]"
-                        notifyFn={() =>
-                            capture(AnalyticsEnum.NOTIFY_ME, {
-                                screen: "Analyze",
-                                feature: "Insight",
-                                component: "Response",
-                            })
-                        }
                     >
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
@@ -67,14 +60,8 @@ export const Insights = () => {
                         />
                     </ComingSoon>
                     <ComingSoon
+                        eventProperties={{ screen: "Analyze", feature: "CSAT Insight", component: "Insight tab" }}
                         className="min-h-[155px]"
-                        notifyFn={() =>
-                            capture(AnalyticsEnum.NOTIFY_ME, {
-                                screen: "Analyze",
-                                feature: "Insight",
-                                component: "CSAT",
-                            })
-                        }
                     >
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
@@ -89,13 +76,7 @@ export const Insights = () => {
                     </ComingSoon>
                     <ComingSoon
                         className="min-h-[155px]"
-                        notifyFn={() =>
-                            capture(AnalyticsEnum.NOTIFY_ME, {
-                                screen: "Analyze",
-                                feature: "Insight",
-                                component: "NPS",
-                            })
-                        }
+                        eventProperties={{ screen: "Analyze", feature: "NPS Insight", component: "Insight tab" }}
                     >
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
@@ -109,14 +90,8 @@ export const Insights = () => {
                         />
                     </ComingSoon>
                     <ComingSoon
+                        eventProperties={{ screen: "Analyze", feature: "CES Insight", component: "Insight tab" }}
                         className="min-h-[155px]"
-                        notifyFn={() =>
-                            capture(AnalyticsEnum.NOTIFY_ME, {
-                                screen: "Analyze",
-                                feature: "Insight",
-                                component: " CES",
-                            })
-                        }
                     >
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
@@ -134,40 +109,21 @@ export const Insights = () => {
 
             <ComingSoon
                 className="min-h-[877px]"
-                notifyFn={() =>
-                    capture(AnalyticsEnum.NOTIFY_ME, {
-                        screen: "Analyze",
-                        feature: "Insight",
-                        component: "Rating",
-                    })
-                }
+                eventProperties={{ screen: "Analyze", feature: "Rating Insight", component: "Insight tab" }}
             >
                 <img src={RatingInsights} className="w-full opacity-30" />
             </ComingSoon>
 
             <ComingSoon
+                eventProperties={{ screen: "Analyze", feature: "Emoji Insight", component: "Insight tab" }}
                 className="min-h-[877px]"
-                notifyFn={() =>
-                    capture(AnalyticsEnum.NOTIFY_ME, {
-                        screen: "Analyze",
-                        feature: "Insight",
-                        component: "Emoji",
-                    })
-                }
             >
                 <img src={EmojiInsights} className="w-full opacity-30" />
             </ComingSoon>
 
             <ComingSoon
+                eventProperties={{ screen: "Analyze", feature: "NPS Insight", component: "Insight tab" }}
                 className="min-h-[516px]"
-                notifyFn={() =>
-                    capture(AnalyticsEnum.NOTIFY_ME, {
-                        screen: "Analyze",
-
-                        feature: "Insight",
-                        component: "NPS",
-                    })
-                }
             >
                 <img src={NPSInsights} className="w-full opacity-30" />
             </ComingSoon>

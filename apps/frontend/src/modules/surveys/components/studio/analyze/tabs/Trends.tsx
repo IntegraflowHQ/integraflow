@@ -1,4 +1,4 @@
-import { AnalyticsEnum, useAnalytics } from "@/hooks/useAnalytics";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { ComingSoon, Header } from "@/ui";
 import { TrendingUp } from "@/ui/icons";
@@ -45,27 +45,15 @@ export const Trends = () => {
             </div>
 
             <ComingSoon
+                eventProperties={{ screen: "Analyze", feature: "NPS graph", component: "Trends tab" }}
                 className="min-h-[769px]"
-                notifyFn={() =>
-                    capture(AnalyticsEnum.NOTIFY_ME, {
-                        screen: "Analyze",
-                        feature: "Text",
-                        component: "Word count table",
-                    })
-                }
             >
                 <img src={NPSTrends} className="w-full opacity-30" />
             </ComingSoon>
 
             <ComingSoon
                 className="min-h-[246px]"
-                notifyFn={() =>
-                    capture(AnalyticsEnum.NOTIFY_ME, {
-                        screen: "Analyze",
-                        feature: "Trends",
-                        component: "Responses by day and time",
-                    })
-                }
+                eventProperties={{ screen: "Analyze", feature: "Responses by day and time", component: "Trends tab" }}
             >
                 <img src={ResponsesByDayAndTime} className="w-full opacity-30" />
             </ComingSoon>

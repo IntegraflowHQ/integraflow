@@ -46,26 +46,14 @@ export const Text = () => {
 
             <ComingSoon
                 className="min-h-[437px]"
-                notifyFn={() =>
-                    capture("Notify me", {
-                        screen: "Analyze",
-                        feature: "Text",
-                        component: "NPS",
-                    })
-                }
+                eventProperties={{ screen: "Analyze", feature: "Word cloud", component: "Text tab" }}
             >
                 <img src={WordCount} className="w-full opacity-40" />
             </ComingSoon>
 
             <ComingSoon
                 className="min-h-[774px]"
-                notifyFn={() =>
-                    capture("Notify me", {
-                        screen: "Analyze",
-                        feature: "Text",
-                        component: "Word count table",
-                    })
-                }
+                eventProperties={{ screen: "Analyze", feature: "Word count table", component: "Text tab" }}
             >
                 <img src={WordCountTable} className="w-full opacity-40" />
             </ComingSoon>
