@@ -233,7 +233,10 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                     </section>
                 </div>
 
-                <ComingSoon>
+                <ComingSoon
+                    className="min-h-[462px]"
+                    eventProperties={{ screen: "Analyze", feature: "Response Trends", component: "Overview tab" }}
+                >
                     <img src={ResponseTrends} className="w-full opacity-30" />
                 </ComingSoon>
             </div>

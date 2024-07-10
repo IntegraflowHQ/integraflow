@@ -42,11 +42,17 @@ export const Text = () => {
                 </div>
             </div>
 
-            <ComingSoon>
+            <ComingSoon
+                className="min-h-[437px]"
+                eventProperties={{ screen: "Analyze", feature: "Word cloud", component: "Text tab" }}
+            >
                 <img src={WordCount} className="w-full opacity-40" />
             </ComingSoon>
 
-            <ComingSoon>
+            <ComingSoon
+                className="min-h-[774px]"
+                eventProperties={{ screen: "Analyze", feature: "Word count table", component: "Text tab" }}
+            >
                 <img src={WordCountTable} className="w-full opacity-40" />
             </ComingSoon>
         </div>

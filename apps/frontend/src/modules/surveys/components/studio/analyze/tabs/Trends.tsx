@@ -42,11 +42,17 @@ export const Trends = () => {
                 </div>
             </div>
 
-            <ComingSoon>
+            <ComingSoon
+                eventProperties={{ screen: "Analyze", feature: "NPS graph", component: "Trends tab" }}
+                className="min-h-[769px]"
+            >
                 <img src={NPSTrends} className="w-full opacity-30" />
             </ComingSoon>
 
-            <ComingSoon>
+            <ComingSoon
+                className="min-h-[246px]"
+                eventProperties={{ screen: "Analyze", feature: "Responses by day and time", component: "Trends tab" }}
+            >
                 <img src={ResponsesByDayAndTime} className="w-full opacity-30" />
             </ComingSoon>
         </div>

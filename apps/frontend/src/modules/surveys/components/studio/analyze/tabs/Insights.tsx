@@ -38,14 +38,15 @@ export const Insights = () => {
                 distribution channels."
                     className="max-w-[375px] pb-8"
                 />
-
                 <div className="flex items-center justify-between pb-[14px]">
                     <DateFilter defaultValue={timeFrame} onValueChange={setTimeFrame} />
                     <ExportBtn />
                 </div>
-
                 <div className="flex gap-6 rounded-lg bg-intg-bg-15 p-6">
-                    <ComingSoon>
+                    <ComingSoon
+                        eventProperties={{ screen: "Analyze", feature: "Response Insight", component: "Insights tab" }}
+                        className="min-h-[155px]"
+                    >
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
                             title="Response"
@@ -55,7 +56,10 @@ export const Insights = () => {
                             className="opacity-40"
                         />
                     </ComingSoon>
-                    <ComingSoon>
+                    <ComingSoon
+                        eventProperties={{ screen: "Analyze", feature: "CSAT Insight", component: "Insights tab" }}
+                        className="min-h-[155px]"
+                    >
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
                             title="CSAT"
@@ -67,7 +71,10 @@ export const Insights = () => {
                             className="opacity-40"
                         />
                     </ComingSoon>
-                    <ComingSoon>
+                    <ComingSoon
+                        className="min-h-[155px]"
+                        eventProperties={{ screen: "Analyze", feature: "NPS Insight", component: "Insights tab" }}
+                    >
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
                             title="NPS"
@@ -79,7 +86,10 @@ export const Insights = () => {
                             className="opacity-40"
                         />
                     </ComingSoon>
-                    <ComingSoon>
+                    <ComingSoon
+                        eventProperties={{ screen: "Analyze", feature: "CES Insight", component: "Insights tab" }}
+                        className="min-h-[155px]"
+                    >
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
                             title="CES"
@@ -94,15 +104,24 @@ export const Insights = () => {
                 </div>
             </div>
 
-            <ComingSoon>
+            <ComingSoon
+                className="min-h-[877px]"
+                eventProperties={{ screen: "Analyze", feature: "Rating Insight", component: "Insights tab" }}
+            >
                 <img src={RatingInsights} className="w-full opacity-30" />
             </ComingSoon>
 
-            <ComingSoon>
+            <ComingSoon
+                eventProperties={{ screen: "Analyze", feature: "Emoji Insight", component: "Insights tab" }}
+                className="min-h-[877px]"
+            >
                 <img src={EmojiInsights} className="w-full opacity-30" />
             </ComingSoon>
 
-            <ComingSoon>
+            <ComingSoon
+                eventProperties={{ screen: "Analyze", feature: "NPS Insight", component: "Insights tab" }}
+                className="min-h-[516px]"
+            >
                 <img src={NPSInsights} className="w-full opacity-30" />
             </ComingSoon>
         </div>

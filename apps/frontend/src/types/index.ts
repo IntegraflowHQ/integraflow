@@ -345,7 +345,7 @@ export type DateFilterValue = {
 export enum AnalyzeTabs {
     Overview = "Overview",
     Responses = "Responses",
-    Insight = "Insight",
+    Insights = "Insights",
     Trends = "Trends",
     Text = "Text",
 }
