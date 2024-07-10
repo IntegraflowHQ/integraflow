@@ -57,7 +57,7 @@ export const Insights = () => {
                         />
                     </ComingSoon>
                     <ComingSoon
-                        eventProperties={{ screen: "Analyze", feature: "CSAT Insight", component: "Insight tab" }}
+                        eventProperties={{ screen: "Analyze", feature: "CSAT Insight", component: "Insights tab" }}
                         className="min-h-[155px]"
                     >
                         <Summary
@@ -73,7 +73,7 @@ export const Insights = () => {
                     </ComingSoon>
                     <ComingSoon
                         className="min-h-[155px]"
-                        eventProperties={{ screen: "Analyze", feature: "NPS Insight", component: "Insight tab" }}
+                        eventProperties={{ screen: "Analyze", feature: "NPS Insight", component: "Insights tab" }}
                     >
                         <Summary
                             icon={<BarChart strokeWidth={4} className="text-intg-text" />}
@@ -87,7 +87,7 @@ export const Insights = () => {
                         />
                     </ComingSoon>
                     <ComingSoon
-                        eventProperties={{ screen: "Analyze", feature: "CES Insight", component: "Insight tab" }}
+                        eventProperties={{ screen: "Analyze", feature: "CES Insight", component: "Insights tab" }}
                         className="min-h-[155px]"
                     >
                         <Summary
@@ -106,20 +106,20 @@ export const Insights = () => {
 
             <ComingSoon
                 className="min-h-[877px]"
-                eventProperties={{ screen: "Analyze", feature: "Rating Insight", component: "Insight tab" }}
+                eventProperties={{ screen: "Analyze", feature: "Rating Insight", component: "Insights tab" }}
             >
                 <img src={RatingInsights} className="w-full opacity-30" />
             </ComingSoon>
 
             <ComingSoon
-                eventProperties={{ screen: "Analyze", feature: "Emoji Insight", component: "Insight tab" }}
+                eventProperties={{ screen: "Analyze", feature: "Emoji Insight", component: "Insights tab" }}
                 className="min-h-[877px]"
             >
                 <img src={EmojiInsights} className="w-full opacity-30" />
             </ComingSoon>
 
             <ComingSoon
-                eventProperties={{ screen: "Analyze", feature: "NPS Insight", component: "Insight tab" }}
+                eventProperties={{ screen: "Analyze", feature: "NPS Insight", component: "Insights tab" }}
                 className="min-h-[516px]"
             >
                 <img src={NPSInsights} className="w-full opacity-30" />

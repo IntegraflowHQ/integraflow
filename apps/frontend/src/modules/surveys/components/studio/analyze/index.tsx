@@ -12,7 +12,7 @@ import { Trends } from "./tabs/Trends";
 const tabs = [
     { label: "Overview", screen: Overview, icon: PresentationChartLine },
     { label: "Responses", screen: Responses, icon: ChartBar },
-    { label: "Insight", screen: Insights, icon: ChartPie },
+    { label: "Insights", screen: Insights, icon: ChartPie },
     { label: "Trends", screen: Trends, icon: TrendingUp },
     { label: "Text", screen: Text, icon: Document },
 ];
