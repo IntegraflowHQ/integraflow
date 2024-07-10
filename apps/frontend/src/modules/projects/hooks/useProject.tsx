@@ -134,8 +134,11 @@ export const useProject = () => {
 
     const handleResetProjectToken = useCallback(async () => {
         const response = await resetProjectToken();
-        handleUpdateProject({ apiToken: response.data?.projectTokenReset?.project.apiToken }, true);
-        return response.data;
+        if (response.data?.projectTokenReset?.project.apiToken) {
+            handleUpdateProject({ apiToken: response.data?.projectTokenReset?.project.apiToken }, true);
+            return true;
+        }
+        return false;
     }, [resetProjectToken, project, handleUpdateProject]);
 
     const eventDefinitions = useMemo(() => {
