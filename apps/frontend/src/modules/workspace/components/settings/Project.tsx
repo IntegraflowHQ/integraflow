@@ -16,11 +16,13 @@ export const Project = () => {
     const handleProjectTokenRefresh = async () => {
         try {
             const response = await refreshProjectToken();
-            if (response?.projectTokenReset) {
+            if (response) {
                 toast.success("APP key reset successfully");
+            } else {
+                toast.error("An error occurred while resetting the APP Key. Please try again.");
             }
         } catch (error) {
-            toast.error("An error occurred while resetting the APP key. Please try again.");
+            toast.error("An error occurred while resetting the APP Key. Please try again.");
         }
     };
 
@@ -69,7 +71,7 @@ export const Project = () => {
                 <div className="flex w-full items-end gap-2">
                     <div className="flex-1">
                         <TextInput
-                            label="App Key"
+                            label="APP Key"
                             value={addEllipsis(project?.apiToken as string, 40)}
                             disabled={true}
                             rightIcon={

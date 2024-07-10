@@ -20,7 +20,7 @@ export const TextInput = forwardRef<HTMLInputElement, InputFieldProps>(
 
         const sizeClass = inputSize === "lg" ? "rounded-lg py-[6px]" : "rounded";
         const disabledClass = disabled
-            ? "[&>input]:cursor-not-allowed border border-intg-bg-4 text-gray-500"
+            ? "[&>input]:cursor-not-allowed border border-intg-bg-4 text-intg-text-4"
             : "bg-[#272138] text-intg-text-1 border-transparent";
 
         return (
