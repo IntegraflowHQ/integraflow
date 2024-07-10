@@ -1,9 +1,9 @@
-import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
+import { PropertyDefinition } from "@/generated/graphql";
+import { useProject } from "@/modules/projects/hooks/useProject";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ArrowLeft } from "@/ui/icons";
-import { stripHtmlTags } from "@/utils";
-import { getQuestionIcon } from "@/utils/question";
+import { decodeAnswerLabelOrDescription, getQuestionIcon, resolveAnswer } from "@/utils/question";
 import { ChannelInfo } from "./ChannelInfo";
 
 type Props = React.HtmlHTMLAttributes<HTMLDivElement> & {
@@ -13,28 +13,11 @@ type Props = React.HtmlHTMLAttributes<HTMLDivElement> & {
 export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
     const { parsedQuestions } = useSurvey();
     const { activeResponse } = useAnalyze();
+    const { personProperties } = useProject();
 
-    const getAnswer = (q: SurveyQuestion) => {
-        if (!q.reference) {
-            return "";
-        }
-
-        if (
-            !activeResponse?.response.response[q.reference] ||
-            activeResponse.response.response[q.reference].length < 1
-        ) {
-            return "";
-        }
-
-        if (q.type === SurveyQuestionTypeEnum.Cta && activeResponse?.response.response[q.reference][0].ctaSuccess) {
-            return "clicked";
-        }
-        if (q.type === SurveyQuestionTypeEnum.Cta && !activeResponse?.response.response[q.reference][0].ctaSuccess) {
-            return "not clicked";
-        }
-
-        return activeResponse?.response.response[q.reference][0].answer;
-    };
+    if (!activeResponse) {
+        return null;
+    }
 
     return (
         <div className="flex gap-[23px]" {...props}>
@@ -54,13 +37,25 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
                                     {index < 10 ? `0${index + 1}` : `${index + 1}`}
                                 </strong>
 
-                                <h3 className="text-sm -tracking-[0.41px] text-intg-text-2">
-                                    {stripHtmlTags(q.label)}
-                                </h3>
+                                <h3
+                                    className="text-sm -tracking-[0.41px] text-intg-text-2"
+                                    dangerouslySetInnerHTML={{
+                                        __html: decodeAnswerLabelOrDescription(
+                                            q.label,
+                                            parsedQuestions,
+                                            activeResponse.response,
+                                            personProperties as PropertyDefinition[],
+                                            activeResponse?.response.userAttributes,
+                                            q,
+                                        ),
+                                    }}
+                                />
                             </div>
 
                             <div className="w-full rounded-lg bg-intg-bg-21 px-4 py-3.5">
-                                <span className="text-sm font-medium text-intg-text-3">Answer: {getAnswer(q)}</span>
+                                <span className="text-sm font-medium text-intg-text-3">
+                                    Answer: {resolveAnswer(q, activeResponse.response)}
+                                </span>
                             </div>
                         </div>
                     ))}

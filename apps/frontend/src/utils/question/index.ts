@@ -1,5 +1,14 @@
 import { PropertyDefinition, SurveyQuestionTypeEnum } from "@/generated/graphql";
-import { CTAType, LogicConditionEnum, LogicOperator, MentionOption, ParsedQuestion, QuestionOption } from "@/types";
+import {
+    CTAType,
+    LogicConditionEnum,
+    LogicOperator,
+    MentionOption,
+    ParsedQuestion,
+    ParsedResponse,
+    QuestionOption,
+    UserAttributes,
+} from "@/types";
 import RatingIcon from "assets/icons/studio/rating.png";
 import ThankYouIcon from "assets/icons/studio/thankyou.png";
 import { addEllipsis, stripHtmlTags } from "..";
@@ -309,6 +318,25 @@ function resolveTaggedQuestion(questionId: string, tagOptions: MentionOption[]):
     return option?.value ?? "";
 }
 
+export function resolveAnswer(q: ParsedQuestion, response: ParsedResponse): string {
+    if (!q.reference) {
+        return "";
+    }
+
+    if (!response?.response[q.reference] || response.response[q.reference].length < 1) {
+        return "";
+    }
+
+    if (q.type === SurveyQuestionTypeEnum.Cta && response.response[q.reference][0].ctaSuccess) {
+        return "Action performed";
+    }
+    if (q.type === SurveyQuestionTypeEnum.Cta && !response.response[q.reference][0].ctaSuccess) {
+        return "Action not performed";
+    }
+
+    return response.response[q.reference][0].answer ?? "";
+}
+
 export function encodeText(textContent: string): string {
     const encodedText = textContent.replace(
         /<span class="mention"([^>]*)data-id="([^"]*)"([^>]*)data-type="([^"]*)"([^>]*)data-fallback="([^"]*)"([^>]*)>(.*?)<\/span>/g,
@@ -330,6 +358,53 @@ export function decodeText(encodedText: string, tagOptions: MentionOption[]): st
         })
         .replace(/{{attribute.([^ ]+) \| "([^"]*)"}}/g, (_, attr, fallback) => {
             return `<span class="mention" data-index="4" data-denotation-char="" data-value="${attr}" data-id="attribute" data-type="attribute.${attr}" data-fallback="${fallback}"><span contenteditable="false">${attr}</span></span>`;
+        });
+
+    return decodedText + " ";
+}
+
+function resolveTaggedAnswer(questionId: string, questions: ParsedQuestion[], response: ParsedResponse): string | null {
+    const question = questions.find((q) => q.id === questionId);
+    if (!question) {
+        return null;
+    }
+
+    const answer = resolveAnswer(question, response);
+
+    if (answer !== "") {
+        return answer;
+    }
+    return null;
+}
+
+export function decodeAnswerLabelOrDescription(
+    encodedText: string,
+    questions: ParsedQuestion[],
+    surveyResponse: ParsedResponse,
+    properties: PropertyDefinition[],
+    userAttributes: UserAttributes,
+    question: ParsedQuestion,
+): string {
+    const decodedText = encodedText
+        .replace(/{{answer:([^ ]+) \| "([^"]*)"}}/g, (_, id, fallback = "") => {
+            let result = resolveTaggedAnswer(id, questions, surveyResponse);
+            if (!result && fallback && fallback !== "") {
+                result = fallback;
+            } else if (!result) {
+                result = resolveTaggedQuestion(id, tagOptions(questions, question, properties));
+            }
+
+            return `<span style="background-color:#392D72;border-radius:2px;padding:4px;">${result}</span>`;
+        })
+        .replace(/{{attribute.([^ ]+) \| "([^"]*)"}}/g, (_, attr, fallback) => {
+            let attribute = userAttributes.hasOwnProperty(attr) ? userAttributes[attr] : null;
+            if (!attribute && fallback && fallback !== "") {
+                attribute = fallback;
+            } else if (!attribute) {
+                attribute = attr;
+            }
+
+            return `<span style="background-color:#392D72;border-radius:2px;padding:4px;">${attribute}</span>`;
         });
 
     return decodedText + " ";
