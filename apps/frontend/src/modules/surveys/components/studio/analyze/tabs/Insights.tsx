@@ -1,4 +1,3 @@
-import { useAnalytics } from "@/hooks/useAnalytics";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { ComingSoon, Header } from "@/ui";
 import { ChartPie } from "@/ui/icons";
@@ -12,7 +11,6 @@ import { Summary } from "../components/Summary";
 
 export const Insights = () => {
     const { lastEightResponses, timeFrame, setTimeFrame } = useAnalyze();
-    const { capture } = useAnalytics();
 
     if (lastEightResponses.length === 0) {
         return (

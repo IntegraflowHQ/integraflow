@@ -1,4 +1,3 @@
-import { useAnalytics } from "@/hooks/useAnalytics";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { ComingSoon, Header } from "@/ui";
 import { PresentationChartLine } from "@/ui/icons";
@@ -26,8 +25,6 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
         setTimeFrame,
         calculatePercentageDifference,
     } = useAnalyze();
-
-    const { capture } = useAnalytics();
 
     const completionRatePercentageDifference = calculatePercentageDifference(completionRate);
     const totalResponsesPercentageDifference = calculatePercentageDifference(totalResponses);

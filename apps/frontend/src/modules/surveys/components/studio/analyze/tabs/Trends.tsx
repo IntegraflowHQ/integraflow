@@ -1,4 +1,3 @@
-import { useAnalytics } from "@/hooks/useAnalytics";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { ComingSoon, Header } from "@/ui";
 import { TrendingUp } from "@/ui/icons";
@@ -9,7 +8,6 @@ import { ExportBtn } from "../components/ExportBtn";
 
 export const Trends = () => {
     const { lastEightResponses, timeFrame, setTimeFrame } = useAnalyze();
-    const { capture } = useAnalytics();
 
     if (lastEightResponses.length === 0) {
         return (
