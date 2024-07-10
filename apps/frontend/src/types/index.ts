@@ -236,6 +236,11 @@ export enum CTAEnums {
     CLOSE = "close",
 }
 
+export enum LimitRange {
+    EXACT = "exact",
+    RANGE = "range",
+}
+
 export type ParsedQuestion = Omit<SurveyQuestionCountableEdge["node"], "options" | "settings"> & {
     options: QuestionOption[];
     settings: QuestionSettings;
@@ -336,3 +341,11 @@ export type DateFilterValue = {
         lte: string;
     };
 };
+
+export enum AnalyzeTabs {
+    Overview = "Overview",
+    Responses = "Responses",
+    Insights = "Insights",
+    Trends = "Trends",
+    Text = "Text",
+}

@@ -1,17 +1,13 @@
 import { SurveyQuestionTypeEnum, SurveyStatusEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
+import { LimitRange } from "@/types";
 import { Switch } from "@/ui";
 import { rangeOptions } from "@/utils/question";
 import { useState } from "react";
 import { MultiValue, SingleValue } from "react-select";
 import MinMaxSelector from "../MinMaxSelector";
 import { Option, ReactSelect } from "../ReactSelect";
-
-enum LimitRange {
-    EXACT = "exact",
-    RANGE = "range",
-}
 
 const limitRange = [
     {

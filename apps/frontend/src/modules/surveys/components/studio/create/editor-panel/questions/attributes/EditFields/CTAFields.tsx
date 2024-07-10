@@ -31,7 +31,7 @@ export const CTAFields = () => {
     return (
         <div>
             <EditorTextInput
-                placeholder=""
+                placeholder="Enter your question here, use '@' to recall information."
                 showMention={true}
                 mentionOptions={mentionOptions}
                 onChange={(e) => {
@@ -51,7 +51,7 @@ export const CTAFields = () => {
                     <EditorTextInput
                         showMention={true}
                         label={"Description"}
-                        placeholder=""
+                        placeholder="Enter your description here, use '@' to recall information."
                         className="flex-1"
                         mentionOptions={mentionOptions}
                         defaultValue={decodeText(question?.description ?? "", mentionOptions)}

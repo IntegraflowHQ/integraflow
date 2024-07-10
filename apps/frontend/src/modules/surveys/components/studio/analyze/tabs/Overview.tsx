@@ -1,4 +1,5 @@
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
+import { AnalyzeTabs } from "@/types";
 import { ComingSoon, Header } from "@/ui";
 import { PresentationChartLine } from "@/ui/icons";
 import ResponseTrends from "assets/images/surveys/studio/response-trends.svg";
@@ -223,7 +224,7 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                                     }
                                     key={response.id}
                                     onClick={() => {
-                                        setActiveResponse(response);
+                                        setActiveResponse({ response, openedFrom: AnalyzeTabs.Overview });
                                         jumpToResponses?.();
                                     }}
                                 />

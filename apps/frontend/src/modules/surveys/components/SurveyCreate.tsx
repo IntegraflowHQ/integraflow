@@ -1,9 +1,7 @@
-import { ROUTES } from "@/routes";
 import { CreateSurvey } from "@/types";
 import { GlobalSpinner, Header } from "@/ui";
-import { List, PlusCircle } from "@/ui/icons";
+import { PlusCircle } from "@/ui/icons";
 import { cn } from "@/utils";
-import { useNavigate, useParams } from "react-router-dom";
 
 type Props = {
     className?: string;
@@ -13,9 +11,6 @@ type Props = {
 };
 
 export default function SurveyCreate({ createFn, className, busy = false, size = "lg" }: Props) {
-    const navigate = useNavigate();
-    const { orgSlug, projectSlug } = useParams();
-
     const surveyCreateOptions = [
         {
             id: CreateSurvey.START_FROM_SCRATCH,
@@ -23,15 +18,6 @@ export default function SurveyCreate({ createFn, className, busy = false, size =
             title: "Start form scratch",
             description: "Craft and design your unique survey",
             onClick: createFn,
-        },
-        {
-            id: CreateSurvey.USE_TEMPLATE,
-            icon: <List />,
-            title: "Use a template",
-            description: "Select one from our curated list of templates",
-            onClick: () => {
-                navigate(ROUTES.SURVEY_TEMPLATES.replace(":orgSlug", orgSlug!).replace(":projectSlug", projectSlug!));
-            },
         },
     ];
 
@@ -44,7 +30,7 @@ export default function SurveyCreate({ createFn, className, busy = false, size =
             {surveyCreateOptions.map((option, index) => (
                 <button
                     key={option.title}
-                    className="flex flex-1 flex-col items-center justify-center gap-3 rounded-lg bg-[#261F36]"
+                    className="flex flex-1 flex-col items-center justify-center gap-3 rounded-lg transition hover:bg-[#261F36]"
                     onClick={option.onClick}
                     disabled={option.id === CreateSurvey.START_FROM_SCRATCH && busy}
                 >

@@ -15,3 +15,11 @@ export const PROJECT_UPDATE = gql`
         }
     }
 `;
+
+export const REFRESH_PROJECT_TOKEN = gql`
+    mutation projectTokenReset {
+        projectTokenReset {
+            ...ProjectTokenResetFragment
+        }
+    }
+`;
