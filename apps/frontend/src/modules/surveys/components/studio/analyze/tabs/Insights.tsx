@@ -42,7 +42,6 @@ export const Insights = () => {
                     <DateFilter defaultValue={timeFrame} onValueChange={setTimeFrame} />
                     <ExportBtn />
                 </div>
-                feature="Insight" component="Response"
                 <div className="flex gap-6 rounded-lg bg-intg-bg-15 p-6">
                     <ComingSoon
                         eventProperties={{ screen: "Analyze", feature: "Response Insight", component: "Insights tab" }}
