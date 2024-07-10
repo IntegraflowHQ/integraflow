@@ -3,7 +3,6 @@ import { Button, TextInput } from "@/ui";
 import { addEllipsis, copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
 import { CopyIcon, RefreshCcwIcon } from "lucide-react";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { SettingsScreen } from "./SettingsScreen";
 
@@ -14,12 +13,14 @@ type ProjectData = {
 export const Project = () => {
     const { updateProject, project, loading, refreshProjectToken } = useProject();
 
-    const [projectToken, setProjectToken] = useState(project?.apiToken);
-
     const handleProjectTokenRefresh = async () => {
-        const response = await refreshProjectToken();
-        if (response?.project) {
-            setProjectToken(response?.project.apiToken);
+        try {
+            const response = await refreshProjectToken();
+            if (response?.projectTokenReset) {
+                toast.success("APP key reset successfully");
+            }
+        } catch (error) {
+            toast.error("An error occurred while resetting the APP key. Please try again.");
         }
     };
 
@@ -68,8 +69,8 @@ export const Project = () => {
                 <div className="flex w-full items-end gap-2">
                     <div className="flex-1">
                         <TextInput
-                            label="API Key"
-                            value={addEllipsis(projectToken as string, 40)}
+                            label="App Key"
+                            value={addEllipsis(project?.apiToken as string, 40)}
                             disabled={true}
                             rightIcon={
                                 <Button
@@ -88,7 +89,7 @@ export const Project = () => {
                         icon={<CopyIcon size={16} />}
                         textAlign="center"
                         disabled={loading}
-                        onClick={() => copyToClipboard(projectToken as string, "API key copied to clipboard")}
+                        onClick={() => copyToClipboard(project?.apiToken as string, "APP key copied to clipboard")}
                         className="min-w-max max-w-[20%]"
                     />
                 </div>

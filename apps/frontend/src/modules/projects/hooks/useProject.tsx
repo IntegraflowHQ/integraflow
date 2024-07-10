@@ -3,7 +3,6 @@ import { useCallback, useMemo } from "react";
 import {
     EventDefinition,
     Project,
-    ProjectUpdateInput,
     PropertyDefinition,
     useAudiencePropertiesQuery,
     useProjectCreateMutation,
@@ -15,7 +14,6 @@ import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { convertToAuthOrganization } from "@/modules/auth/states/user";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { EventProperties } from "@/types";
-import { toast } from "@/utils/toast";
 
 export const useProject = () => {
     const { workspace, project, updateUser, switchProject } = useAuth();
@@ -73,13 +71,10 @@ export const useProject = () => {
     );
 
     const handleUpdateProject = useCallback(
-        async (input: ProjectUpdateInput, cacheOnly = false) => {
+        async (input: Partial<Project>, cacheOnly = false) => {
             const updatedProject = {
                 ...project,
-                hasCompletedOnboardingFor: input.hasCompletedOnboardingFor,
-                name: input.name ?? project?.name,
-                accessControl: input.private,
-                timezone: input.timezone ?? project?.timezone,
+                ...input,
             };
 
             const organization = {
@@ -116,7 +111,12 @@ export const useProject = () => {
             try {
                 const response = await projectUpdate({
                     variables: {
-                        input,
+                        input: {
+                            hasCompletedOnboardingFor: input.hasCompletedOnboardingFor,
+                            name: input.name ?? project?.name,
+                            private: input.accessControl ?? project?.accessControl,
+                            timezone: input.timezone ?? project?.timezone,
+                        },
                     },
                 });
 
@@ -133,13 +133,10 @@ export const useProject = () => {
     );
 
     const handleResetProjectToken = useCallback(async () => {
-        try {
-            const response = await resetProjectToken();
-            return response?.data?.projectTokenReset;
-        } catch (error) {
-            toast.error("An error occurred while resetting the project token. Please try again.");
-        }
-    }, [resetProjectToken]);
+        const response = await resetProjectToken();
+        handleUpdateProject({ apiToken: response.data?.projectTokenReset?.project.apiToken }, true);
+        return response.data;
+    }, [resetProjectToken, project, handleUpdateProject]);
 
     const eventDefinitions = useMemo(() => {
         return eventsData?.eventDefinitions?.edges.map(({ node }) => node) || ([] as EventDefinition[]);
