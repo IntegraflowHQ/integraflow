@@ -9,7 +9,6 @@ import { getDefaultValues } from "@/utils/question/defaultOptions";
 import { questionTypes } from "@/utils/survey";
 import { PlusCircle } from "lucide-react";
 import { RefObject, useEffect, useRef, useState } from "react";
-import { useScrollToBottom } from "react-scroll-to-bottom";
 
 export const QuestionOptions = () => {
     const [currentView, setCurrentView] = useState<string>("Welcome message");
@@ -18,7 +17,8 @@ export const QuestionOptions = () => {
     const [welcomeMessageExists, setWelcomeMessageExists] = useState(false);
     const [thankYouMessageExists, setThankYouMessageExists] = useState(false);
     const { createQuestion } = useQuestion();
-    const questionTypesRef: RefObject<HTMLDivElement> = useRef(null);
+    const questionTypesContainerRef: RefObject<HTMLDivElement> = useRef(null);
+    const questionTypesListRef: RefObject<HTMLDivElement> = useRef(null);
 
     useEffect(() => {
         const welcomeMessage = parsedQuestions.find((question) => question.settings?.type === CTAType.NEXT);
@@ -31,7 +31,10 @@ export const QuestionOptions = () => {
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (questionTypesRef.current && !questionTypesRef.current.contains(event.target as Node)) {
+            if (
+                questionTypesContainerRef.current &&
+                !questionTypesContainerRef.current.contains(event.target as Node)
+            ) {
                 setShowQuestionTypes(false);
             }
         };
@@ -43,7 +46,11 @@ export const QuestionOptions = () => {
         };
     }, []);
 
-    const scrollToBottom = useScrollToBottom();
+    useEffect(() => {
+        if (showQuestionTypes) {
+            questionTypesListRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }, [showQuestionTypes]);
 
     const handleCreateQuestion = async (type: SurveyQuestionTypeEnum, id: string) => {
         const options = getDefaultValues(type);
@@ -76,13 +83,12 @@ export const QuestionOptions = () => {
     };
 
     return (
-        <div className="space-y-2" ref={questionTypesRef}>
+        <div className="space-y-2" ref={questionTypesContainerRef}>
             <div className="flex gap-2">
                 <Button
                     className="flex items-center justify-center gap-2 px-[12px] py-[12px]"
                     onClick={() => {
                         setShowQuestionTypes(!showQuestionTypes);
-                        scrollToBottom({ behavior: "smooth" });
                     }}
                 >
                     <PlusCircle />
@@ -93,7 +99,7 @@ export const QuestionOptions = () => {
             </div>
 
             {showQuestionTypes && (
-                <div className="flex max-w-[40rem] overflow-y-auto rounded-lg bg-intg-bg-9">
+                <div ref={questionTypesListRef} className="flex max-w-[40rem] overflow-y-auto rounded-lg bg-intg-bg-9">
                     <div className="w-[50%] p-2">
                         {questionTypes.map((questionType) => {
                             if (thankYouMessageExists && questionType.id === "thankyou") return null;
