@@ -50,15 +50,12 @@ export function CodeBlock(block: Props) {
 
     if (block.type === "multiple") {
         return (
-            <Tabs.Root
-                className="flex flex-col"
-                defaultValue={block.blocks[0].language}
-            >
+            <Tabs.Root className="flex flex-col" defaultValue={block.blocks[0].title}>
                 <Tabs.List className="flex justify-end gap-2 rounded-t-lg bg-intg-bg-12 px-[19px] pb-[5px] pt-[10px]">
                     {block.blocks.map((block) => (
                         <Tabs.Trigger
-                            key={block.language}
-                            value={block.language}
+                            key={block.title}
+                            value={block.title}
                             className="px-[3px] text-intg-text-8 data-[state=active]:border-b data-[state=active]:border-[#299532] data-[state=active]:bg-gradient-button-hover data-[state=active]:bg-clip-text data-[state=active]:text-transparent"
                         >
                             {block.title}
@@ -67,11 +64,7 @@ export function CodeBlock(block: Props) {
                 </Tabs.List>
 
                 {block.blocks.map((block) => (
-                    <Tabs.Content
-                        key={block.language}
-                        value={block.language}
-                        className="relative"
-                    >
+                    <Tabs.Content key={block.title} value={block.title} className="relative">
                         <CopyButton
                             onClick={() => {
                                 copyText(block.code);

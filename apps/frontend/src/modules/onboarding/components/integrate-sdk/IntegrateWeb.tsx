@@ -1,5 +1,5 @@
 import { CodeBlock, Header } from "@/ui";
-import { htmlInitSnippet, webInstallSnippet } from "../../snippets";
+import { esmInitSnippet, htmlInitSnippet, webInstallSnippet } from "../../snippets";
 
 export default function IntegrateWeb() {
     return (
@@ -19,11 +19,19 @@ export default function IntegrateWeb() {
                     />
 
                     <CodeBlock
-                        type="single"
-                        block={{
-                            language: "javascript",
-                            code: htmlInitSnippet,
-                        }}
+                        type="multiple"
+                        blocks={[
+                            {
+                                language: "javascript",
+                                code: htmlInitSnippet,
+                                title: "HTML",
+                            },
+                            {
+                                language: "javascript",
+                                code: esmInitSnippet,
+                                title: "ESM",
+                            },
+                        ]}
                     />
                 </div>
             </div>
