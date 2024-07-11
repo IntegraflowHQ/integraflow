@@ -21,6 +21,7 @@ import {
     useSurveyDeleteMutation,
     useSurveyUpdateMutation,
 } from "@/generated/graphql";
+import { AnalyticsEnum, useAnalytics } from "@/hooks/useAnalytics";
 import { ROUTES } from "@/routes";
 import { ParsedQuestion } from "@/types";
 import { generateRandomString, parseQuestion } from "@/utils";
@@ -62,6 +63,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
 
     const navigate = useNavigate();
     const { orgSlug, projectSlug, surveySlug } = useParams();
+    const { capture } = useAnalytics();
 
     const [createSurveyMutation, { loading: creatingSurvey }] = useSurveyCreateMutation();
     const [updateSurveyMutation, { error }] = useSurveyUpdateMutation({});
@@ -139,6 +141,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                             .replace(":projectSlug", projectSlug!)
                             .replace(":surveySlug", surveySlug),
                     );
+                    capture(AnalyticsEnum.CREATE_SURVEY, { feature: "Create Survey" });
                 },
 
                 onError: () => {
@@ -296,7 +299,11 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                         errors: [],
                     },
                 },
-
+                onCompleted: (data) => {
+                    capture(AnalyticsEnum.UPDATE_SURVEY_STATUS, {
+                        feature: `${data.surveyUpdate?.survey?.status} survey`,
+                    });
+                },
                 update: (cache, { data }) => {
                     if (!data?.surveyUpdate?.survey) return;
 

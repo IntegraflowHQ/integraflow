@@ -10,6 +10,7 @@ import {
     useProjectTokenResetMutation,
     useProjectUpdateMutation,
 } from "@/generated/graphql";
+import { AnalyticsEnum, useAnalytics } from "@/hooks/useAnalytics";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { convertToAuthOrganization } from "@/modules/auth/states/user";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
@@ -17,6 +18,7 @@ import { EventProperties } from "@/types";
 
 export const useProject = () => {
     const { workspace, project, updateUser, switchProject } = useAuth();
+    const { capture } = useAnalytics();
     const { updateWorkspace } = useWorkspace();
     const [projectCreate, { loading: loadingCreateProject }] = useProjectCreateMutation();
     const [projectUpdate] = useProjectUpdateMutation();
@@ -58,7 +60,7 @@ export const useProject = () => {
 
                 if (data && data.projectCreate && data.projectCreate.project) {
                     const project = data.projectCreate.project;
-
+                    capture(AnalyticsEnum.CREATE_PROJECT, { feature: "Create Project" });
                     handleAddProject(project);
                 }
 
@@ -122,6 +124,11 @@ export const useProject = () => {
 
                 if (response.errors) {
                     return response.errors[0];
+                }
+                if (response.data?.projectUpdate) {
+                    capture(AnalyticsEnum.UPDATE_PROJECT, {
+                        feature: "Update project settings",
+                    });
                 }
 
                 return response.data?.projectUpdate;

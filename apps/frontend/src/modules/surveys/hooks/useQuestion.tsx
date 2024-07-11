@@ -8,6 +8,7 @@ import {
     useSurveyQuestionDeleteMutation,
     useSurveyQuestionUpdateMutation,
 } from "@/generated/graphql";
+import { AnalyticsEnum, useAnalytics } from "@/hooks/useAnalytics";
 import { ParsedQuestion, QuestionSettings } from "@/types";
 import { parseQuestion } from "@/utils";
 import debounce from "lodash.debounce";
@@ -22,6 +23,7 @@ const TEMP_ID_PREFIX = "temp-";
 export const useQuestion = () => {
     const { surveySlug } = useParams();
     const { parsedQuestions: questions, surveyId, survey } = useSurvey();
+    const { capture } = useAnalytics();
 
     const {
         question: activeQuestion,
@@ -73,6 +75,14 @@ export const useQuestion = () => {
                     errors: [],
                 },
             },
+            onCompleted: (data) => {
+                if (data.surveyQuestionCreate?.surveyQuestion) {
+                    capture(AnalyticsEnum.UPDATE_SURVEY, {
+                        feature: "Create survey question",
+                    });
+                }
+            },
+
             update: (cache, { data }) => {
                 if (!data?.surveyQuestionCreate?.surveyQuestion) {
                     return;

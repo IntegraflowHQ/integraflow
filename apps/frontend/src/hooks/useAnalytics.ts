@@ -6,6 +6,14 @@ export enum AnalyticsEnum {
     NOTIFY_ME = "Notify Me",
     UPDATE_SURVEY_STATUS = "Update Survey Status",
     CREATE_SURVEY = "Create Survey",
+    UPDATE_SURVEY = "Update Survey",
+    CREATE_PROJECT = "Create Project",
+    UPDATE_PROJECT = "Update Project",
+    CREATE_WORKSPACE = "Create Workspace",
+    UPDATE_WORKSPACE = "Update Workspace",
+    UPDATE_USER_PROFILE = "Update User Profile",
+    LOGIN = "Authenticate User",
+    ONBOARDING_PROGRESS = "Update Onboarding Status",
 }
 
 type Props = {

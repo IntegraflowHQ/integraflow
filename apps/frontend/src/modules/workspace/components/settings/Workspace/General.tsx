@@ -77,7 +77,7 @@ export const General = () => {
                         },
                         maxLength: {
                             value: 48,
-                            message: "Workspace URL must be at most 20 characters",
+                            message: "Workspace URL must be at most 48 characters",
                         },
                         pattern: {
                             value: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
