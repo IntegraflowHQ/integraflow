@@ -77,7 +77,7 @@ export default function Create() {
             <div className="flex max-h-[calc(100vh-110px)] flex-1 gap-[38px] pl-5 pr-12 pt-6">
                 {/* editor panel */}
                 <ScrollToBottom
-                    mode="bottom"
+                    mode="top"
                     scrollViewClassName="scrollbar-hide overflow-y-auto max-h-[calc(100vh-110px)] h-full"
                     className="max-h-[calc(100vh-110px)] w-[519px] pb-8"
                 >
