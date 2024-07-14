@@ -318,23 +318,41 @@ function resolveTaggedQuestion(questionId: string, tagOptions: MentionOption[]):
     return option?.value ?? "";
 }
 
-export function resolveAnswer(q: ParsedQuestion, response: ParsedResponse): string {
+export function resolveAnswer(q: ParsedQuestion, response: ParsedResponse): string[] {
     if (!q.reference) {
-        return "";
+        return [""];
     }
 
     if (!response?.response[q.reference] || response.response[q.reference].length < 1) {
-        return "";
+        return [""];
     }
 
-    if (q.type === SurveyQuestionTypeEnum.Cta && response.response[q.reference][0].ctaSuccess) {
-        return "Action performed";
-    }
-    if (q.type === SurveyQuestionTypeEnum.Cta && !response.response[q.reference][0].ctaSuccess) {
-        return "Action not performed";
+    if (q.type === SurveyQuestionTypeEnum.Cta) {
+        if (response.response[q.reference][0].ctaSuccess) {
+            return ["Action performed"];
+        } else {
+            return ["Action not performed"];
+        }
     }
 
-    return response.response[q.reference][0].answer ?? "";
+    if (q.type === SurveyQuestionTypeEnum.Form) {
+        const labels = q.options.map((item) => item.label);
+        const texts = response.response[q.reference].map((item) => item.answer || "");
+
+        const result = labels.map((label, index) => ({
+            [label]: texts[index] || "",
+        }));
+
+        return result.map((obj) => JSON.stringify(obj));
+    }
+
+    if (q.type === SurveyQuestionTypeEnum.Multiple) {
+        const texts = response.response[q.reference].map((item) => item.answer);
+
+        return texts;
+    }
+
+    return [response.response[q.reference][0].answer ?? ""];
 }
 
 export function encodeText(textContent: string): string {
@@ -371,8 +389,8 @@ function resolveTaggedAnswer(questionId: string, questions: ParsedQuestion[], re
 
     const answer = resolveAnswer(question, response);
 
-    if (answer !== "") {
-        return answer;
+    if (answer) {
+        return answer[0];
     }
     return null;
 }
