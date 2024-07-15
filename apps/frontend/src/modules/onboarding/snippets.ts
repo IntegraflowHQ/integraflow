@@ -1,61 +1,18 @@
-export const htmlInitSnippet = `<script>
-    (function(w, p) {
-        w[p] =
-            w[p] ||
-            function() {
-                w[p].q = w[p].q || [];
-                w[p].q.push(arguments);
-            };
-    })(window, "Integraflow");
+export const htmlInitSnippet = (appKey?: string) => {
+    return `<script>
+    (function(w, p) {w[p] = w[p] || function() { w[p].q = w[p].q || []; w[p].q.push(arguments); };})(window, "Integraflow");
 
     Integraflow("init", {
-        surveys: [],
-        debug: true,
-        onAudienceChanged(audience) {
-            // ...
-        },
-        onEventTracked(payload) {
-            // ...
-        },
-        onSurveyDisplayed(surveyId) {
-            // ...
-        },
-        onQuestionAnswered(surveyId, questionId, answers) {
-            // ...
-        },
-        onSurveyCompleted(surveyId) {
-            // ...
-        },
-        onSurveyClosed(surveyId) {
-            // ...
-        }
+        appKey: ${appKey ? `"${appKey}"` : "INTEGRAFLOW_APP_KEY"}
     });
 </script>
 <script src="https://unpkg.com/integraflow-js/dist/web-bundle.js" async></script>`;
+};
 
-export const esmInitSnippet = `import Integraflow from "integraflow-js";
+export const esmInitSnippet = (appKey?: string) => `import Integraflow from "integraflow-js";
 
 const integraflowClient = Integraflow.init({
-    surveys: [],
-    debug: true,
-    onAudienceChanged(audience) {
-        // ...
-    },
-    onEventTracked(payload) {
-        // ...
-    },
-    onSurveyDisplayed(surveyId) {
-        // ...
-    },
-    onQuestionAnswered(surveyId, questionId, answers) {
-        // ...
-    },
-    onSurveyCompleted(surveyId) {
-        // ...
-    },
-    onSurveyClosed(surveyId) {
-        // ...
-    }
+    appKey: ${appKey ? appKey : "INTEGRAFLOW_APP_KEY"}
 });`;
 
 export const webInstallSnippet = `npm install integraflow-js
@@ -88,3 +45,43 @@ export const androidConfigure = `public class SampleApp extends Application {
 }`;
 
 export const androidSendEvent = `Integraflow.with(this).capture("test-event");`;
+
+export const htmlIdentify = `Integraflow("identify", user.id, {
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    // ...other fields
+})`;
+
+export const esmIdentify = `integraflowClient.identify(user.id, {
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    // ...other fields
+})`;
+
+export const htmlTrackEvent = `Integraflow("track", "checkout", {
+    subtotal: cart.subtotal,
+    tax_total: cart.tax_total,
+    total: cart.total,
+    discount_total: cart.discount_total,
+    gift_card_total: cart.gift_card_total,
+    gift_card_tax_total: cart.gift_card_tax_total,
+    item_total: cart.items.reduce((total, item) => {
+        return total + item.quantity
+    }, 0),
+    // ...other fields
+})`;
+
+export const esmTrackEvent = `integraflowClient.track("checkout", {
+    subtotal: cart.subtotal,
+    tax_total: cart.tax_total,
+    total: cart.total,
+    discount_total: cart.discount_total,
+    gift_card_total: cart.gift_card_total,
+    gift_card_tax_total: cart.gift_card_tax_total,
+    item_total: cart.items.reduce((total, item) => {
+        return total + item.quantity
+    }, 0),
+    // ...other fields
+})`;
