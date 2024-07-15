@@ -1,9 +1,18 @@
+import { Button } from "@/ui";
 import { useOnboarding } from "../../hooks/useOnboarding";
 import Container, { OnboardingScreenProps } from "../Container";
 import SelectEventSource from "./SelectEventSource";
 import SelectMobilePlatform from "./SelectMobilePlatform";
 
-export default function PlatformRequired({ children, title, description, onSkip, onBack }: OnboardingScreenProps) {
+export default function PlatformRequired({
+    title,
+    description,
+    webScreen,
+    mobileScreen,
+    onSkip,
+    onBack,
+    onComplete,
+}: OnboardingScreenProps & { mobileScreen: React.ReactNode; webScreen: React.ReactNode }) {
     const { eventSource, mobilePlatform, setMobilePlatform, clearEventSource } = useOnboarding();
 
     return (
@@ -30,7 +39,19 @@ export default function PlatformRequired({ children, title, description, onSkip,
             ) : eventSource === "mobile" && !mobilePlatform ? (
                 <SelectMobilePlatform />
             ) : (
-                children
+                <>
+                    {eventSource === "web" && webScreen}
+                    {eventSource === "mobile" && mobileScreen}
+
+                    <div className="pt-8">
+                        <Button
+                            text="Continue"
+                            onClick={() => {
+                                onComplete?.();
+                            }}
+                        />
+                    </div>
+                </>
             )}
         </Container>
     );
