@@ -5,7 +5,13 @@ import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ParsedQuestion } from "@/types";
 import { ArrowLeft } from "@/ui/icons";
-import { decodeAnswerLabelOrDescription, emojiArray, getQuestionIcon, resolveAnswer } from "@/utils/question";
+import {
+    decodeAnswerLabelOrDescription,
+    emojiArray,
+    emptyLabel,
+    getQuestionIcon,
+    resolveAnswer,
+} from "@/utils/question";
 import { ThumbsDown, ThumbsUp } from "lucide-react";
 import { ChannelInfo } from "./ChannelInfo";
 
@@ -88,22 +94,28 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
                                     <img src={getQuestionIcon(q)} alt="icon" />
 
                                     <strong className="text-base font-bold leading-5 -tracking-[0.41px] text-intg-text-12">
-                                        {index < 10 ? `0${index + 1}` : `${index + 1}`}
+                                        {index < 9 ? `0${index + 1}` : `${index + 1}`}
                                     </strong>
 
-                                    <h3
-                                        className="text-sm -tracking-[0.41px] text-intg-text-2"
-                                        dangerouslySetInnerHTML={{
-                                            __html: decodeAnswerLabelOrDescription(
-                                                q.label,
-                                                parsedQuestions,
-                                                activeResponse.response,
-                                                personProperties as PropertyDefinition[],
-                                                activeResponse?.response.userAttributes,
-                                                q,
-                                            ),
-                                        }}
-                                    />
+                                    {q.label === emptyLabel || q.label === "" ? (
+                                        <h3 className="text-sm italic -tracking-[0.41px] text-intg-error-text">
+                                            You did not provide a label for this question
+                                        </h3>
+                                    ) : (
+                                        <h3
+                                            className="text-sm -tracking-[0.41px] text-intg-text-2"
+                                            dangerouslySetInnerHTML={{
+                                                __html: decodeAnswerLabelOrDescription(
+                                                    q.label,
+                                                    parsedQuestions,
+                                                    activeResponse.response,
+                                                    personProperties as PropertyDefinition[],
+                                                    activeResponse?.response.userAttributes,
+                                                    q,
+                                                ),
+                                            }}
+                                        />
+                                    )}
                                 </div>
                                 <div className="w-full rounded-lg bg-intg-bg-21 px-4 py-3.5 text-sm font-medium text-intg-text-3">
                                     <span className="text-sm font-medium text-intg-text-3">
