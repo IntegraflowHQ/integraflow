@@ -1,9 +1,9 @@
-import { SurveyStatusEnum } from "@/generated/graphql";
+import { PropertyDefinition, SurveyStatusEnum } from "@/generated/graphql";
+import { useProject } from "@/modules/projects/hooks/useProject";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ParsedQuestion } from "@/types";
-import { addEllipsis, stripHtmlTags } from "@/utils";
-import { emptyLabel, getQuestionIcon } from "@/utils/question";
+import { decodeText, emptyLabel, getQuestionIcon, tagOptions } from "@/utils/question";
 import * as Accordion from "@radix-ui/react-accordion";
 import { useEffect } from "react";
 import { QuestionPanel } from "./QuestionPanel";
@@ -12,6 +12,7 @@ import { QuestionOptions } from "./attributes/QuestionTypes";
 export default function UpdateQuestion() {
     const { parsedQuestions, survey } = useSurvey();
     const { question, switchQuestion, clear } = useQuestion();
+    const { personProperties } = useProject();
 
     useEffect(() => {
         if ((!question || !question.reference) && parsedQuestions.length > 0) {
@@ -56,7 +57,19 @@ export default function UpdateQuestion() {
                                                 </div>
                                                 <div className="w-[415px] rounded-lg bg-intg-bg-15 px-[16px] py-4 text-start text-sm text-intg-text ">
                                                     {question.label && question.label !== emptyLabel ? (
-                                                        addEllipsis(stripHtmlTags(question.label), 40)
+                                                        <div
+                                                            className="truncate [&>*]:inline"
+                                                            dangerouslySetInnerHTML={{
+                                                                __html: decodeText(
+                                                                    question?.label ?? "",
+                                                                    tagOptions(
+                                                                        parsedQuestions,
+                                                                        question,
+                                                                        personProperties as PropertyDefinition[],
+                                                                    ),
+                                                                ),
+                                                            }}
+                                                        />
                                                     ) : (
                                                         <p className="text-sm text-intg-text">
                                                             Enter your question here, use '@' to recall information.
