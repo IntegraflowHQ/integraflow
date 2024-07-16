@@ -91,6 +91,9 @@ export const ReactSelect = ({
         }),
         singleValue: (provided: CSSObjectWithLabel) => ({
             ...provided,
+            ":first-letter": {
+                textTransform: "capitalize",
+            },
             fontSize: "14px",
             lineHeight: "17px",
             color: "#CFD4E0",
@@ -105,6 +108,9 @@ export const ReactSelect = ({
             ...provided,
             ":hover": {
                 backgroundColor: "#272138",
+            },
+            ":first-letter": {
+                textTransform: "capitalize",
             },
             backgroundColor: state.isSelected ? "#272138" : "transparent",
             color: "#CFD4E0",
