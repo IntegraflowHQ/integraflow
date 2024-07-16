@@ -59,7 +59,7 @@ export const Responses = () => {
                         {responses.length > 0 ? (
                             responses.map((response) => (
                                 <Response
-                                    title={response.title}
+                                    title={response.title || "Untitled Response"}
                                     date={new Date(response.createdAt ?? Date.now())}
                                     responder={
                                         response.userAttributes.name ??

@@ -41,7 +41,7 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
                 <RatingIcon key={i} shape={shape} color={"#9582C0"} fill={i <= parsedRating ? "#9582C0" : "#2E2743"} />,
             );
         }
-        return <div className="flex">{icons}</div>;
+        return <>{icons}</>;
     };
 
     const getEmoji = (index: string) => {
@@ -97,7 +97,7 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
                                         {index < 9 ? `0${index + 1}` : `${index + 1}`}
                                     </strong>
 
-                                    {q.label === emptyLabel || q.label === "" ? (
+                                    {q.label === emptyLabel || !q.label ? (
                                         <h3 className="text-sm italic -tracking-[0.41px] text-intg-error-text">
                                             You did not provide a label for this question
                                         </h3>
@@ -118,44 +118,53 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
                                     )}
                                 </div>
                                 <div className="w-full rounded-lg bg-intg-bg-21 px-4 py-3.5 text-sm font-medium text-intg-text-3">
-                                    <span className="text-sm font-medium text-intg-text-3">
-                                        {q.type === SurveyQuestionTypeEnum.Form ? (
-                                            resolvedAnswer.map((answer, i) => {
-                                                try {
-                                                    const parsedAnswer = JSON.parse(answer);
-                                                    return (
-                                                        <div key={i}>
-                                                            {Object.keys(parsedAnswer).map((key) => (
-                                                                <div key={key}>
-                                                                    {key}: {parsedAnswer[key]}
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    );
-                                                } catch (e) {
-                                                    return null;
-                                                }
-                                            })
-                                        ) : q.type === SurveyQuestionTypeEnum.Multiple ? (
-                                            <>Answer: {resolvedAnswer.join(", ")}</>
-                                        ) : q.type === SurveyQuestionTypeEnum.SmileyScale ? (
-                                            <>{+resolvedAnswer[0] > 0 ? getEmoji(resolvedAnswer[0]) : "Answer:"}</>
-                                        ) : q.type === SurveyQuestionTypeEnum.Rating ? (
-                                            <>
-                                                {+resolvedAnswer[0].length > 0
-                                                    ? renderRatingIcons(
-                                                          q.settings.shape,
-                                                          resolvedAnswer[0],
-                                                          q.options.length,
-                                                      )
-                                                    : "Answer:"}
-                                            </>
-                                        ) : q.type === SurveyQuestionTypeEnum.Boolean ? (
-                                            <>Answer: {getBooleanAnswer(q, resolvedAnswer[0])} </>
-                                        ) : (
-                                            <>Answer: {resolvedAnswer[0]}</>
-                                        )}
-                                    </span>
+                                    <div className="flex items-center gap-1 text-sm font-medium text-intg-text-3">
+                                        {q.type !== SurveyQuestionTypeEnum.Form && <span>Answer:</span>}
+                                        <span>
+                                            {q.type === SurveyQuestionTypeEnum.Form ? (
+                                                <>
+                                                    {resolvedAnswer[0]
+                                                        ? resolvedAnswer.map((answer, i) => {
+                                                              try {
+                                                                  const parsedAnswer = JSON.parse(answer);
+                                                                  return (
+                                                                      <div key={i}>
+                                                                          {Object.keys(parsedAnswer).map((key) => (
+                                                                              <div key={key}>
+                                                                                  {key}: {parsedAnswer[key]}
+                                                                              </div>
+                                                                          ))}
+                                                                      </div>
+                                                                  );
+                                                              } catch (e) {
+                                                                  return null;
+                                                              }
+                                                          })
+                                                        : q.options.map((opt) => (
+                                                              <div key={opt.id}>{`${opt.label}:`}</div>
+                                                          ))}
+                                                </>
+                                            ) : q.type === SurveyQuestionTypeEnum.Multiple ? (
+                                                <>{resolvedAnswer.join(", ")}</>
+                                            ) : q.type === SurveyQuestionTypeEnum.SmileyScale ? (
+                                                <> {+resolvedAnswer[0] > 0 ? getEmoji(resolvedAnswer[0]) : ""}</>
+                                            ) : q.type === SurveyQuestionTypeEnum.Rating ? (
+                                                <>
+                                                    {+resolvedAnswer[0].length > 0
+                                                        ? renderRatingIcons(
+                                                              q.settings.shape,
+                                                              resolvedAnswer[0],
+                                                              q.options.length,
+                                                          )
+                                                        : ""}
+                                                </>
+                                            ) : q.type === SurveyQuestionTypeEnum.Boolean ? (
+                                                <>{getBooleanAnswer(q, resolvedAnswer[0])} </>
+                                            ) : (
+                                                <> {resolvedAnswer[0]}</>
+                                            )}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         );
