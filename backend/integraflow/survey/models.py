@@ -6,7 +6,6 @@ from django.db import models
 from django.db.models.fields.json import KeyTextTransform
 from django.db.models.functions import Cast
 from django.utils.crypto import get_random_string
-
 from integraflow.core.models import UUIDModel
 from integraflow.core.utils import MAX_SLUG_LENGTH, create_with_unique_string
 
@@ -286,7 +285,7 @@ class SurveyResponseQueryset(models.QuerySet["SurveyResponse"]):
         )
 
         neutral_condition = models.Case(
-            models.When(analytics_metadata__csat_score=3, then=1),
+            models.When(analytics_metadata__csat_score__exact=3, then=1),
             default=0,
             output_field=models.IntegerField()
         )
@@ -347,7 +346,7 @@ class SurveyResponseQueryset(models.QuerySet["SurveyResponse"]):
         )
 
         medium_effort_condition = models.Case(
-            models.When(analytics_metadata__ces_score=4, then=1),
+            models.When(analytics_metadata__ces_score__exact=4, then=1),
             default=0,
             output_field=models.IntegerField()
         )
