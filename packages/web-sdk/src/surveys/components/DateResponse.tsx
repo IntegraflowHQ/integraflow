@@ -15,13 +15,7 @@ interface DateResponseProps {
     theme?: Theme;
 }
 
-export default function DateResponse({
-    label,
-    description,
-    onAnswered,
-    submitText,
-    theme
-}: DateResponseProps) {
+export default function DateResponse({ label, description, onAnswered, submitText, theme }: DateResponseProps) {
     const [day, setDay] = useState("");
     const [month, setMonth] = useState("");
     const [year, setYear] = useState("");
@@ -57,6 +51,11 @@ export default function DateResponse({
 
     const handleSubmit = (e: h.JSX.TargetedEvent<HTMLFormElement, Event>) => {
         e.preventDefault();
+        if (!date) {
+            onAnswered([{ answer: undefined }]);
+            return;
+        }
+
         const inputDate = new Date(date);
         if (!isNaN(inputDate.getTime())) {
             onAnswered([{ answer: date }]);
@@ -66,16 +65,9 @@ export default function DateResponse({
     };
 
     return (
-        <form
-            className="flex flex-col min-w-[255px] gap-4"
-            onSubmit={handleSubmit}
-        >
+        <form className="flex flex-col min-w-[255px] gap-4" onSubmit={handleSubmit}>
             <div className="mr-6">
-                <Header
-                    title={label}
-                    color={theme?.question}
-                    description={description ?? "Date"}
-                />
+                <Header title={label} color={theme?.question} description={description ?? "Date"} />
             </div>
 
             <div style={styles} className={"rounded-xl p-3 flex justify-end"}>
@@ -86,9 +78,7 @@ export default function DateResponse({
                         ref={ref}
                         onChange={e => {
                             const value = e.currentTarget.value;
-                            const valid = value.match(
-                                /(\d{4})-(\d{2})-(\d{2})/
-                            );
+                            const valid = value.match(/(\d{4})-(\d{2})-(\d{2})/);
                             if (valid) {
                                 const [year, month, day] = value.split("-");
                                 setYear(year);
