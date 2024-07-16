@@ -3,8 +3,10 @@ import { PropertyDefinition, SurveyQuestionTypeEnum } from "@/generated/graphql"
 import { useProject } from "@/modules/projects/hooks/useProject";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
+import { ParsedQuestion } from "@/types";
 import { ArrowLeft } from "@/ui/icons";
 import { decodeAnswerLabelOrDescription, emojiArray, getQuestionIcon, resolveAnswer } from "@/utils/question";
+import { ThumbsDown, ThumbsUp } from "lucide-react";
 import { ChannelInfo } from "./ChannelInfo";
 
 type Props = React.HtmlHTMLAttributes<HTMLDivElement> & {
@@ -22,25 +24,51 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
 
     const renderRatingIcons = (
         shape: "star" | "thumb" | "heart" | "button" | undefined,
-        rating: number,
+        rating: string,
         count: number,
     ) => {
         const icons = [];
+        const parsedRating = parseInt(rating);
 
         for (let i = 1; i <= count; i++) {
             icons.push(
-                <RatingIcon key={i} shape={shape} color={"#9582C0"} fill={i <= rating ? "#9582C0" : "#2E2743"} />,
+                <RatingIcon key={i} shape={shape} color={"#9582C0"} fill={i <= parsedRating ? "#9582C0" : "#2E2743"} />,
             );
         }
         return <div className="flex">{icons}</div>;
     };
 
-    const getEmoji = (index: number) => {
-        if (index < 1 || index > 5) {
+    const getEmoji = (index: string) => {
+        const parsedIndex = parseInt(index);
+        if (parsedIndex < 1 || parsedIndex > 5) {
             return null;
         }
-        const Emoji = emojiArray[index - 1];
+        const Emoji = emojiArray[parsedIndex - 1];
         return <Emoji />;
+    };
+
+    const getBooleanAnswer = (q: ParsedQuestion, answer: string): JSX.Element | string => {
+        if (answer === null || answer === undefined || answer === "") {
+            return "";
+        }
+
+        const parsedString = parseInt(answer);
+
+        if (q.settings.shape === "button") {
+            if (parsedString === 0) {
+                return q.settings.negativeText as string;
+            } else if (parsedString === 1) {
+                return q.settings.positiveText as string;
+            }
+        } else if (q.settings.shape === "thumb") {
+            if (parsedString === 0) {
+                return <ThumbsDown fill="#9582C0" />;
+            } else if (parsedString === 1) {
+                return <ThumbsUp fill="#9582C0" />;
+            }
+        }
+
+        return "";
     };
 
     return (
@@ -80,36 +108,38 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
                                 <div className="w-full rounded-lg bg-intg-bg-21 px-4 py-3.5 text-sm font-medium text-intg-text-3">
                                     <span className="text-sm font-medium text-intg-text-3">
                                         {q.type === SurveyQuestionTypeEnum.Form ? (
-                                            <>
-                                                {resolvedAnswer.map((answer, i) => {
-                                                    try {
-                                                        const parsedAnswer = JSON.parse(answer);
-                                                        return (
-                                                            <div key={i}>
-                                                                {Object.keys(parsedAnswer).map((key) => (
-                                                                    <div key={key}>
-                                                                        {key}: {parsedAnswer[key]}
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        );
-                                                    } catch (e) {
-                                                        return null;
-                                                    }
-                                                })}
-                                            </>
+                                            resolvedAnswer.map((answer, i) => {
+                                                try {
+                                                    const parsedAnswer = JSON.parse(answer);
+                                                    return (
+                                                        <div key={i}>
+                                                            {Object.keys(parsedAnswer).map((key) => (
+                                                                <div key={key}>
+                                                                    {key}: {parsedAnswer[key]}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    );
+                                                } catch (e) {
+                                                    return null;
+                                                }
+                                            })
                                         ) : q.type === SurveyQuestionTypeEnum.Multiple ? (
                                             <>Answer: {resolvedAnswer.join(", ")}</>
                                         ) : q.type === SurveyQuestionTypeEnum.SmileyScale ? (
-                                            <>{+resolvedAnswer[0] > 0 ? getEmoji(+resolvedAnswer[0]) : "Answer:"} </>
+                                            <>{+resolvedAnswer[0] > 0 ? getEmoji(resolvedAnswer[0]) : "Answer:"}</>
                                         ) : q.type === SurveyQuestionTypeEnum.Rating ? (
                                             <>
-                                                {renderRatingIcons(
-                                                    q.settings.shape,
-                                                    +resolvedAnswer[0],
-                                                    +q.options.length,
-                                                )}
+                                                {+resolvedAnswer[0].length > 0
+                                                    ? renderRatingIcons(
+                                                          q.settings.shape,
+                                                          resolvedAnswer[0],
+                                                          q.options.length,
+                                                      )
+                                                    : "Answer:"}
                                             </>
+                                        ) : q.type === SurveyQuestionTypeEnum.Boolean ? (
+                                            <>Answer: {getBooleanAnswer(q, resolvedAnswer[0])} </>
                                         ) : (
                                             <>Answer: {resolvedAnswer[0]}</>
                                         )}
