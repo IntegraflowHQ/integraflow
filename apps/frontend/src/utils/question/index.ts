@@ -1,3 +1,4 @@
+import { AngryEmoji, HappyEmoji, NeutralEmoji, SadEmoji, SatisfiedEmoji } from "@/assets/icons/studio/emoji";
 import { PropertyDefinition, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import {
     CTAType,
@@ -21,6 +22,7 @@ export const questionsWithoutSettingsTab = [
     SurveyQuestionTypeEnum.Date,
 ];
 
+export const emojiArray = [AngryEmoji, SadEmoji, NeutralEmoji, SatisfiedEmoji, HappyEmoji];
 export const emptyLabel = "<p><br></p>";
 
 const MultipleLogicConditions = [
@@ -337,7 +339,7 @@ export function resolveAnswer(q: ParsedQuestion, response: ParsedResponse): stri
 
     if (q.type === SurveyQuestionTypeEnum.Form) {
         const labels = q.options.map((item) => item.label);
-        const texts = response.response[q.reference].map((item) => item.answer || "");
+        const texts = response.response[q.reference].map((item) => item.answer ?? "");
 
         const result = labels.map((label, index) => ({
             [label]: texts[index] || "",
@@ -347,7 +349,7 @@ export function resolveAnswer(q: ParsedQuestion, response: ParsedResponse): stri
     }
 
     if (q.type === SurveyQuestionTypeEnum.Multiple) {
-        const texts = response.response[q.reference].map((item) => item.answer);
+        const texts = response.response[q.reference].map((item) => item.answer ?? "");
 
         return texts;
     }

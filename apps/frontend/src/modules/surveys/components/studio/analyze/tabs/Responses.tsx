@@ -55,7 +55,7 @@ export const Responses = () => {
                 ) : null}
 
                 {!activeResponse ? (
-                    <div className="flex flex-col gap-2 rounded-lg bg-intg-bg-15 p-4">
+                    <div className="flex cursor-pointer flex-col gap-2 rounded-lg bg-intg-bg-15 p-4">
                         {responses.length > 0 ? (
                             responses.map((response) => (
                                 <Response

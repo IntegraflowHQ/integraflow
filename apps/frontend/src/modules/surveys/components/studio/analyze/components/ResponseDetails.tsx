@@ -1,9 +1,10 @@
+import RatingIcon from "@/assets/icons/studio/RatingIcon";
 import { PropertyDefinition, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useProject } from "@/modules/projects/hooks/useProject";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ArrowLeft } from "@/ui/icons";
-import { decodeAnswerLabelOrDescription, getQuestionIcon, resolveAnswer } from "@/utils/question";
+import { decodeAnswerLabelOrDescription, emojiArray, getQuestionIcon, resolveAnswer } from "@/utils/question";
 import { ChannelInfo } from "./ChannelInfo";
 
 type Props = React.HtmlHTMLAttributes<HTMLDivElement> & {
@@ -18,15 +19,28 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
     if (!activeResponse) {
         return null;
     }
-    console.log(activeResponse);
 
-    const isValidJson = (str: string) => {
-        try {
-            JSON.parse(str);
-        } catch (e) {
-            return false;
+    const renderRatingIcons = (
+        shape: "star" | "thumb" | "heart" | "button" | undefined,
+        rating: number,
+        count: number,
+    ) => {
+        const icons = [];
+
+        for (let i = 1; i <= count; i++) {
+            icons.push(
+                <RatingIcon key={i} shape={shape} color={"#9582C0"} fill={i <= rating ? "#9582C0" : "#2E2743"} />,
+            );
         }
-        return true;
+        return <div className="flex">{icons}</div>;
+    };
+
+    const getEmoji = (index: number) => {
+        if (index < 1 || index > 5) {
+            return null;
+        }
+        const Emoji = emojiArray[index - 1];
+        return <Emoji />;
     };
 
     return (
@@ -63,34 +77,43 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
                                         }}
                                     />
                                 </div>
-
                                 <div className="w-full rounded-lg bg-intg-bg-21 px-4 py-3.5 text-sm font-medium text-intg-text-3">
-                                    {q.type === SurveyQuestionTypeEnum.Form && (
-                                        <>
-                                            {resolvedAnswer.map((answer, i) => {
-                                                if (!isValidJson(answer)) return null;
-                                                const parsedAnswer = JSON.parse(answer);
-                                                return (
-                                                    <div key={i}>
-                                                        {Object.keys(parsedAnswer).map((key) => (
-                                                            <>
-                                                                {key}: {parsedAnswer[key]}
-                                                            </>
-                                                        ))}
-                                                    </div>
-                                                );
-                                            })}
-                                        </>
-                                    )}
-
-                                    {q.type === SurveyQuestionTypeEnum.Multiple && (
-                                        <span className="text-sm font-medium">Answer: {resolvedAnswer.join(", ")}</span>
-                                    )}
-
-                                    {q.type !== SurveyQuestionTypeEnum.Form &&
-                                        q.type !== SurveyQuestionTypeEnum.Multiple && (
-                                            <span>Answer: {resolvedAnswer[0]}</span>
+                                    <span className="text-sm font-medium text-intg-text-3">
+                                        {q.type === SurveyQuestionTypeEnum.Form ? (
+                                            <>
+                                                {resolvedAnswer.map((answer, i) => {
+                                                    try {
+                                                        const parsedAnswer = JSON.parse(answer);
+                                                        return (
+                                                            <div key={i}>
+                                                                {Object.keys(parsedAnswer).map((key) => (
+                                                                    <div key={key}>
+                                                                        {key}: {parsedAnswer[key]}
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        );
+                                                    } catch (e) {
+                                                        return null;
+                                                    }
+                                                })}
+                                            </>
+                                        ) : q.type === SurveyQuestionTypeEnum.Multiple ? (
+                                            <>Answer: {resolvedAnswer.join(", ")}</>
+                                        ) : q.type === SurveyQuestionTypeEnum.SmileyScale ? (
+                                            <>{+resolvedAnswer[0] > 0 ? getEmoji(+resolvedAnswer[0]) : "Answer:"} </>
+                                        ) : q.type === SurveyQuestionTypeEnum.Rating ? (
+                                            <>
+                                                {renderRatingIcons(
+                                                    q.settings.shape,
+                                                    +resolvedAnswer[0],
+                                                    +q.options.length,
+                                                )}
+                                            </>
+                                        ) : (
+                                            <>Answer: {resolvedAnswer[0]}</>
                                         )}
+                                    </span>
                                 </div>
                             </div>
                         );
