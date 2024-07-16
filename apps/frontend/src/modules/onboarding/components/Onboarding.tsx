@@ -7,12 +7,14 @@ import { CheckComplete, CheckPending } from "@/ui/icons";
 import { useOnboarding } from "../hooks/useOnboarding";
 import ConnectIntegration from "./ConnectIntegration";
 import CreateFirstSurvey from "./CreateFirstSurvey";
+import IdentifyUsers from "./identify-users/IdentifyUsers";
 import IntegrateSDK from "./integrate-sdk/IntegrateSDK";
+import TrackEvents from "./track-events/TrackEvents";
 
 export const TabContents = [
     { content: IntegrateSDK },
-    { content: IntegrateSDK },
-    { content: IntegrateSDK },
+    { content: IdentifyUsers },
+    { content: TrackEvents },
     { content: CreateFirstSurvey },
     { content: ConnectIntegration },
 ];

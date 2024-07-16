@@ -1,20 +1,22 @@
+import { useProject } from "@/modules/projects/hooks/useProject";
 import { CodeBlock, Header } from "@/ui";
-import { htmlInitSnippet, webInstallSnippet } from "../../snippets";
+import { esmInitSnippet, htmlInitSnippet, webInstallSnippet } from "../../snippets";
 
 export default function IntegrateWeb() {
+    const { project } = useProject();
     return (
         <>
             <div className="flex flex-col gap-8 py-6">
                 <Header
                     title="Option 1. Code snippet"
-                    description="Simply include this code snippet on your website, and it will seamlessly collect data on page views, sessions, and other meaningful interactions taking place on your site."
+                    description="Simply include this code snippet on your website, and you can start collecting website and in-product feedback."
                     variant="2"
                 />
 
                 <div className="flex flex-col gap-4">
                     <Header
                         variant="3"
-                        title="Install the snippet"
+                        title="Copy the snippet"
                         description="Insert this snippet in your website within the <head> tag."
                     />
 
@@ -22,7 +24,7 @@ export default function IntegrateWeb() {
                         type="single"
                         block={{
                             language: "javascript",
-                            code: htmlInitSnippet,
+                            code: htmlInitSnippet(project?.apiToken),
                         }}
                     />
                 </div>
@@ -41,6 +43,18 @@ export default function IntegrateWeb() {
                         block={{
                             language: "bash",
                             code: webInstallSnippet,
+                        }}
+                    />
+                </div>
+
+                <div className="space-y-3">
+                    <Header variant="3" title="Initialize the SDK" />
+
+                    <CodeBlock
+                        type="single"
+                        block={{
+                            language: "javascript",
+                            code: esmInitSnippet(project?.apiToken),
                         }}
                     />
                 </div>
