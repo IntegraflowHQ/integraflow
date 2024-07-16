@@ -140,17 +140,9 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                         <MetricPieChart
                             title="Net Promoter Score"
                             description="View your customers' loyalty metrics."
-                            data={
-                                npsMetric.detractors + npsMetric.passives + npsMetric.promoters > 0
-                                    ? [
-                                          { name: "promoters", value: npsMetric.promoters },
-                                          { name: "passives", value: npsMetric.passives },
-                                          { name: "detractors", value: npsMetric.detractors },
-                                      ]
-                                    : [{ name: "placeholder", value: 1 }]
-                            }
+                            showPlaceHolder={npsMetric.detractors + npsMetric.passives + npsMetric.promoters === 0}
                             average={npsMetric.score.toFixed(2)}
-                            legendData={[
+                            data={[
                                 { name: "Promoters", value: npsMetric.promoters, color: "#8DF0B0" },
                                 { name: "Passives", value: npsMetric.passives, color: "#FFB17B" },
                                 { name: "Detractors", value: npsMetric.detractors, color: "#EB5A6D" },
@@ -160,17 +152,9 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                         <MetricPieChart
                             title="Customer Effort Score (CES)"
                             description="View how much effort your customers exert on your website."
-                            data={
-                                cesMetric.high + cesMetric.medium + cesMetric.low > 0
-                                    ? [
-                                          { name: "low", value: cesMetric.low },
-                                          { name: "medium", value: cesMetric.medium },
-                                          { name: "high", value: cesMetric.high },
-                                      ]
-                                    : [{ name: "placeholder", value: 1 }]
-                            }
+                            showPlaceHolder={cesMetric.high + cesMetric.medium + cesMetric.low === 0}
                             average={cesMetric.score.toFixed(2)}
-                            legendData={[
+                            data={[
                                 { name: "Low Effort", value: cesMetric.low, color: "#EB5A6D" },
                                 { name: "Med Effort", value: cesMetric.medium, color: "#FFB17B" },
                                 { name: "High Effort", value: cesMetric.high, color: "#8DF0B0" },
@@ -180,20 +164,12 @@ export const Overview = ({ jumpToResponses }: { jumpToResponses?: () => void }) 
                         <MetricPieChart
                             title="Customer Satisfaction Score (CSAT)"
                             description="View your Customers' Satisfaction metrics."
-                            data={
-                                csatMetric.negative + csatMetric.neutral + csatMetric.positive > 0
-                                    ? [
-                                          { name: "positive", value: csatMetric.positive },
-                                          { name: "neutral", value: csatMetric.negative },
-                                          { name: "negative", value: csatMetric.neutral },
-                                      ]
-                                    : [{ name: "placeholder", value: 1 }]
-                            }
+                            showPlaceHolder={csatMetric.negative + csatMetric.neutral + csatMetric.positive === 0}
                             average={csatMetric.score.toFixed(2)}
-                            legendData={[
-                                { name: "Positive", value: csatMetric.positive, color: "#5D45DB" },
-                                { name: "Neutral", value: csatMetric.neutral, color: "#A698EB" },
-                                { name: "Negative", value: csatMetric.negative, color: "#D3CCF5" },
+                            data={[
+                                { name: "Positive", value: csatMetric.positive, color: "#8DF0B0" },
+                                { name: "Neutral", value: csatMetric.neutral, color: "#FFB17B" },
+                                { name: "Negative", value: csatMetric.negative, color: "#EB5A6D" },
                             ]}
                         />
                     </section>
