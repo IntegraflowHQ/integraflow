@@ -252,6 +252,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                             settings: input?.settings ?? survey.settings ?? "{}",
                             createdAt: survey.createdAt ?? new Date().toISOString(),
                             updatedAt: survey.updatedAt ?? new Date().toISOString(),
+                            stats: survey.stats,
                             project: survey.project
                                 ? (survey.project as Project)
                                 : {

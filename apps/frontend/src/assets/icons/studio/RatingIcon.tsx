@@ -6,9 +6,9 @@ type Props = {
 };
 
 const RatingIcon = ({ color = "", shape, fill }: Props) => {
-    if (shape === "heart") return <Heart color={color} fill={fill} size={20} />;
-    if (shape === "thumb") return <ThumbsUp color={color} fill={fill} size={20} />;
-    return <Star color={color} fill={fill} size={20} />;
+    if (shape === "heart") return <Heart color={color} fill={fill} size={20} className="inline" />;
+    if (shape === "thumb") return <ThumbsUp color={color} fill={fill} size={20} className="inline" />;
+    return <Star color={color} fill={fill} size={20} className="inline" />;
 };
 
 export default RatingIcon;
