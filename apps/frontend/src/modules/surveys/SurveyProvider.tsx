@@ -300,9 +300,27 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                     },
                 },
                 onCompleted: (data) => {
-                    capture(AnalyticsEnum.UPDATE_SURVEY_STATUS, {
-                        feature: `${data.surveyUpdate?.survey?.status} survey`,
-                    });
+                    if (input.status) {
+                        capture(AnalyticsEnum.UPDATE_SURVEY_STATUS, {
+                            feature: `${data.surveyUpdate?.survey?.status} survey`,
+                        });
+                    } else if (input.themeId) {
+                        capture(AnalyticsEnum.UPDATE_SURVEY, {
+                            feature: `Change survey theme`,
+                        });
+                    } else if (input.settings) {
+                        capture(AnalyticsEnum.UPDATE_SURVEY, {
+                            feature: "Update survey settings",
+                        });
+                    } else if (input.name) {
+                        capture(AnalyticsEnum.UPDATE_SURVEY, {
+                            feature: "Rename survey",
+                        });
+                    } else {
+                        capture(AnalyticsEnum.UPDATE_SURVEY, {
+                            feature: `update survey`,
+                        });
+                    }
                 },
                 update: (cache, { data }) => {
                     if (!data?.surveyUpdate?.survey) return;
