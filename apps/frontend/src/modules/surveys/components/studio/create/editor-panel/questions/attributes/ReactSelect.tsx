@@ -91,9 +91,6 @@ export const ReactSelect = ({
         }),
         singleValue: (provided: CSSObjectWithLabel) => ({
             ...provided,
-            ":first-letter": {
-                textTransform: "capitalize",
-            },
             fontSize: "14px",
             lineHeight: "17px",
             color: "#CFD4E0",
@@ -108,9 +105,6 @@ export const ReactSelect = ({
             ...provided,
             ":hover": {
                 backgroundColor: "#272138",
-            },
-            ":first-letter": {
-                textTransform: "capitalize",
             },
             backgroundColor: state.isSelected ? "#272138" : "transparent",
             color: "#CFD4E0",
@@ -175,6 +169,7 @@ export const ReactSelect = ({
                         styles={styles}
                         className={classname}
                         isDisabled={survey?.status === SurveyStatusEnum.Active}
+                        classNamePrefix={"react-select"}
                     />
                 </div>
             ) : (
@@ -197,6 +192,7 @@ export const ReactSelect = ({
                             className={classname}
                             styles={styles}
                             isDisabled={survey?.status === SurveyStatusEnum.Active}
+                            classNamePrefix={"react-select"}
                         />
                     ) : (
                         <div>
@@ -213,6 +209,7 @@ export const ReactSelect = ({
                                 styles={styles}
                                 closeMenuOnSelect={false}
                                 isDisabled={survey?.status === SurveyStatusEnum.Active}
+                                classNamePrefix={"react-select"}
                             />
                         </div>
                     )}
