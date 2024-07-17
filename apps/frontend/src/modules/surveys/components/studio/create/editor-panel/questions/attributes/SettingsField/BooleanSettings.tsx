@@ -1,5 +1,6 @@
 import { SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
+import { useState } from "react";
 import { SingleValue } from "react-select";
 import { EditorTextInput } from "../../../components/EditorTextInput";
 import { Option, ReactSelect } from "../ReactSelect";
@@ -21,30 +22,40 @@ export const BooleanSettings = () => {
         return null;
     }
 
+    const [selectedShape, setSelectedShape] = useState(question.settings.shape);
+    console.log(selectedShape);
+
     return (
         <div className="space-y-6">
-            <EditorTextInput
-                label="Positive text"
-                maxCharacterCount={100}
-                placeholder="Positive text"
-                defaultValue={question?.settings?.positiveText}
-                onChange={(e) => updateSettings({ positiveText: e.target.value }, true)}
-            />
-
-            <EditorTextInput
-                maxCharacterCount={100}
-                label="Negative text"
-                placeholder="Negative text"
-                defaultValue={question?.settings?.negativeText}
-                onChange={(e) => updateSettings({ negativeText: e.target.value }, true)}
-            />
-
             <ReactSelect
                 label="Shape"
                 options={booleanOptionsShape}
                 defaultValue={booleanOptionsShape.find((option) => option.value === question?.settings?.shape)}
-                onchange={(value) => updateSettings({ shape: (value as SingleValue<Option>)?.value })}
+                onchange={(value) => {
+                    updateSettings({ shape: (value as SingleValue<Option>)?.value });
+                    setSelectedShape((value as SingleValue<Option>)?.value);
+                }}
             />
+
+            {selectedShape === "thumb" ? null : (
+                <>
+                    <EditorTextInput
+                        label="Positive text"
+                        maxCharacterCount={100}
+                        placeholder="Positive text"
+                        defaultValue={question?.settings?.positiveText}
+                        onChange={(e) => updateSettings({ positiveText: e.target.value }, true)}
+                    />
+
+                    <EditorTextInput
+                        maxCharacterCount={100}
+                        label="Negative text"
+                        placeholder="Negative text"
+                        defaultValue={question?.settings?.negativeText}
+                        onChange={(e) => updateSettings({ negativeText: e.target.value }, true)}
+                    />
+                </>
+            )}
         </div>
     );
 };
