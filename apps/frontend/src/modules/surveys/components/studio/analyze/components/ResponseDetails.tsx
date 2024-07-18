@@ -1,4 +1,3 @@
-import RatingIcon from "@/assets/icons/studio/RatingIcon";
 import { PropertyDefinition, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useProject } from "@/modules/projects/hooks/useProject";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
@@ -14,6 +13,7 @@ import {
 } from "@/utils/question";
 import { ThumbsDown, ThumbsUp } from "lucide-react";
 import { ChannelInfo } from "./ChannelInfo";
+import RatingIcon from "./RatingIcon";
 
 type Props = React.HtmlHTMLAttributes<HTMLDivElement> & {
     onBackPress: () => void;

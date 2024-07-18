@@ -1,7 +1,7 @@
-import MinusIcon from "@/assets/icons/studio/MinusIcon";
 import { SurveyQuestion, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { FormLogicGroup, LogicOperator, QuestionLogic } from "@/types";
+import { MinusIcon } from "@/ui/icons";
 import { generateUniqueId } from "@/utils";
 import { changeableOperator, conditionOptions, logicValuesOptions } from "@/utils/question";
 import { useCallback, useState } from "react";

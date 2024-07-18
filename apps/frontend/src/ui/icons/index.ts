@@ -23,6 +23,7 @@ export { HomeIcon } from "./HomeIcon";
 export { Info } from "./Info";
 export { List } from "./List";
 export { LogoutIcon } from "./LogoutIcon";
+export { default as MinusIcon } from "./MinusIcon";
 export { NewspaperIcon } from "./NewspaperIcon";
 export { PeopleIcon } from "./PeopleIcon";
 export { PlusCircle } from "./PlusCircle";
