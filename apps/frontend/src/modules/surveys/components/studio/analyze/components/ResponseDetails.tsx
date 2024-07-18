@@ -129,7 +129,7 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
                                                 <> {+resolvedAnswer[0] > 0 ? getEmoji(resolvedAnswer[0]) : ""}</>
                                             ) : q.type === SurveyQuestionTypeEnum.Rating ? (
                                                 <>
-                                                    {+resolvedAnswer[0].length > 0
+                                                    {+resolvedAnswer[0] > 0
                                                         ? renderRatingIcons(
                                                               q.settings.shape,
                                                               resolvedAnswer[0],
