@@ -169,6 +169,7 @@ export const ReactSelect = ({
                         styles={styles}
                         className={classname}
                         isDisabled={survey?.status === SurveyStatusEnum.Active}
+                        classNamePrefix={"react-select"}
                     />
                 </div>
             ) : (
@@ -191,6 +192,7 @@ export const ReactSelect = ({
                             className={classname}
                             styles={styles}
                             isDisabled={survey?.status === SurveyStatusEnum.Active}
+                            classNamePrefix={"react-select"}
                         />
                     ) : (
                         <div>
@@ -207,6 +209,7 @@ export const ReactSelect = ({
                                 styles={styles}
                                 closeMenuOnSelect={false}
                                 isDisabled={survey?.status === SurveyStatusEnum.Active}
+                                classNamePrefix={"react-select"}
                             />
                         </div>
                     )}

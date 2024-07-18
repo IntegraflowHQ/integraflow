@@ -55,11 +55,11 @@ export const Responses = () => {
                 ) : null}
 
                 {!activeResponse ? (
-                    <div className="flex flex-col gap-2 rounded-lg bg-intg-bg-15 p-4">
+                    <div className="flex cursor-pointer flex-col gap-2 rounded-lg bg-intg-bg-15 p-4">
                         {responses.length > 0 ? (
                             responses.map((response) => (
                                 <Response
-                                    title={response.title}
+                                    title={response.title || "Untitled Response"}
                                     date={new Date(response.createdAt ?? Date.now())}
                                     responder={
                                         response.userAttributes.name ??

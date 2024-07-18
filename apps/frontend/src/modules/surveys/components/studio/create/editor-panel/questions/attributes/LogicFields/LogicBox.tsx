@@ -1,8 +1,8 @@
-import MinusIcon from "@/assets/icons/studio/MinusIcon";
 import { SurveyQuestionTypeEnum, SurveyStatusEnum } from "@/generated/graphql";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { LogicConditionEnum, LogicOperator, ParsedQuestion, QuestionLogic } from "@/types";
+import { MinusIcon } from "@/ui/icons";
 import { generateUniqueId } from "@/utils";
 import {
     changeableOperator,

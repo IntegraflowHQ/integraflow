@@ -9,6 +9,7 @@ import {
     QuestionOption,
     UserAttributes,
 } from "@/types";
+import { AngryEmoji, HappyEmoji, NeutralEmoji, SadEmoji, SatisfiedEmoji } from "@/ui/SmileyEmojis";
 import RatingIcon from "assets/icons/studio/rating.png";
 import ThankYouIcon from "assets/icons/studio/thankyou.png";
 import { addEllipsis, stripHtmlTags } from "..";
@@ -21,6 +22,7 @@ export const questionsWithoutSettingsTab = [
     SurveyQuestionTypeEnum.Date,
 ];
 
+export const emojiArray = [AngryEmoji, SadEmoji, NeutralEmoji, SatisfiedEmoji, HappyEmoji];
 export const emptyLabel = "<p><br></p>";
 
 const MultipleLogicConditions = [
@@ -318,23 +320,39 @@ function resolveTaggedQuestion(questionId: string, tagOptions: MentionOption[]):
     return option?.value ?? "";
 }
 
-export function resolveAnswer(q: ParsedQuestion, response: ParsedResponse): string {
+export function resolveAnswer(q: ParsedQuestion, response: ParsedResponse): string[] {
     if (!q.reference) {
-        return "";
+        return [""];
     }
 
     if (!response?.response[q.reference] || response.response[q.reference].length < 1) {
-        return "";
+        return [""];
     }
 
-    if (q.type === SurveyQuestionTypeEnum.Cta && response.response[q.reference][0].ctaSuccess) {
-        return "Action performed";
-    }
-    if (q.type === SurveyQuestionTypeEnum.Cta && !response.response[q.reference][0].ctaSuccess) {
-        return "Action not performed";
+    if (q.type === SurveyQuestionTypeEnum.Cta) {
+        if (response.response[q.reference][0].ctaSuccess) {
+            return ["Action performed"];
+        } else {
+            return ["Action not performed"];
+        }
     }
 
-    return response.response[q.reference][0].answer ?? "";
+    if (q.type === SurveyQuestionTypeEnum.Form) {
+        const texts = response.response[q.reference].map((item) => {
+            const option = q.options.find((opt) => opt.id === item.answerId);
+            return `${option?.label ?? "Deleted field"}: ${item.answer ?? ""}`;
+        });
+
+        return texts;
+    }
+
+    if (q.type === SurveyQuestionTypeEnum.Multiple) {
+        const texts = response.response[q.reference].map((item) => item.answer ?? "");
+
+        return texts;
+    }
+
+    return [response.response[q.reference][0].answer ?? ""];
 }
 
 export function encodeText(textContent: string): string {
@@ -363,18 +381,18 @@ export function decodeText(encodedText: string, tagOptions: MentionOption[]): st
     return decodedText + " ";
 }
 
-function resolveTaggedAnswer(questionId: string, questions: ParsedQuestion[], response: ParsedResponse): string | null {
+function resolveTaggedAnswer(
+    questionId: string,
+    questions: ParsedQuestion[],
+    response: ParsedResponse,
+): string[] | null {
     const question = questions.find((q) => q.id === questionId);
     if (!question) {
         return null;
     }
 
     const answer = resolveAnswer(question, response);
-
-    if (answer !== "") {
-        return answer;
-    }
-    return null;
+    return answer;
 }
 
 export function decodeAnswerLabelOrDescription(
@@ -387,7 +405,8 @@ export function decodeAnswerLabelOrDescription(
 ): string {
     const decodedText = encodedText
         .replace(/{{answer:([^ ]+) \| "([^"]*)"}}/g, (_, id, fallback = "") => {
-            let result = resolveTaggedAnswer(id, questions, surveyResponse);
+            let result = resolveTaggedAnswer(id, questions, surveyResponse)?.join(", ");
+
             if (!result && fallback && fallback !== "") {
                 result = fallback;
             } else if (!result) {

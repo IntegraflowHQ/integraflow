@@ -39,3 +39,8 @@
 .editor-input__placeholder::placeholder {
     color: red !important;
 }
+
+.react-select__option::first-letter,
+.react-select__single-value::first-letter {
+    text-transform: capitalize;
+}

@@ -1,6 +1,6 @@
-import MinusIcon from "@/assets/icons/studio/MinusIcon";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
-import { FormLogicGroup, QuestionLogic, LogicOperator } from "@/types";
+import { FormLogicGroup, LogicOperator, QuestionLogic } from "@/types";
+import { MinusIcon } from "@/ui/icons";
 import { changeableOperator, conditionOptions, logicValuesOptions } from "@/utils/question";
 import { MultiValue, SingleValue } from "react-select";
 import { Option, ReactSelect } from "../../ReactSelect";
