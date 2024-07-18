@@ -191,7 +191,7 @@ export class SurveyManager {
         for (let i = 0; i < surveys.length; ++i) {
             const survey = surveys[i];
 
-            if (deferSurveyActivation(survey, this.activateDeferredSurvey)) {
+            if (deferSurveyActivation(survey, survey => this.activateDeferredSurvey(survey))) {
                 continue;
             }
 
