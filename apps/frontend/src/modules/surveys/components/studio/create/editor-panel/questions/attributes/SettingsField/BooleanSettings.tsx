@@ -17,13 +17,11 @@ const booleanOptionsShape = [
 
 export const BooleanSettings = () => {
     const { question, updateSettings } = useQuestion();
+    const [selectedShape, setSelectedShape] = useState(question?.settings.shape);
 
     if (!question || question?.type !== SurveyQuestionTypeEnum.Boolean) {
         return null;
     }
-
-    const [selectedShape, setSelectedShape] = useState(question.settings.shape);
-    console.log(selectedShape);
 
     return (
         <div className="space-y-6">
