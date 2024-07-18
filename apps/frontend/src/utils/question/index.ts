@@ -1,4 +1,3 @@
-import { AngryEmoji, HappyEmoji, NeutralEmoji, SadEmoji, SatisfiedEmoji } from "@/assets/icons/studio/emoji";
 import { PropertyDefinition, SurveyQuestionTypeEnum } from "@/generated/graphql";
 import {
     CTAType,
@@ -10,6 +9,7 @@ import {
     QuestionOption,
     UserAttributes,
 } from "@/types";
+import { AngryEmoji, HappyEmoji, NeutralEmoji, SadEmoji, SatisfiedEmoji } from "@/ui/SmileyEmojis";
 import RatingIcon from "assets/icons/studio/rating.png";
 import ThankYouIcon from "assets/icons/studio/thankyou.png";
 import { addEllipsis, stripHtmlTags } from "..";
