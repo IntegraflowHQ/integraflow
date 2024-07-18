@@ -2,7 +2,7 @@ import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import { useProject } from "@/modules/projects/hooks/useProject";
 import useChannels from "@/modules/surveys/hooks/useChannels";
 import { EventFilter, LogicOperator, TriggerCondition, WebChannelAccordionProps } from "@/types";
-import { TextInput } from "@/ui";
+import { NumberInput, TextInput } from "@/ui";
 import { Popover, PopoverContent, PopoverTrigger } from "@/ui/Popover";
 import { Info, Search } from "@/ui/icons";
 import { Zap } from "lucide-react";
@@ -202,6 +202,20 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
                                 </div>
                             </PopoverContent>
                         </Popover>
+
+                        <NumberInput
+                            label="Delay"
+                            defaultValue={channel.triggers.delay}
+                            onChange={(e) => {
+                                updateChannel(channel, {
+                                    triggers: JSON.stringify({
+                                        ...channel.triggers,
+                                        delay: e.target.value,
+                                    }),
+                                });
+                            }}
+                            className="max-w-72"
+                        />
                     </div>
                 </div>
             </div>
