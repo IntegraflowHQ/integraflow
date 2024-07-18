@@ -1,5 +1,12 @@
 # integraflow-js
 
+## 0.0.5
+
+### Patch Changes
+
+- 1bc5267: - Make dropdown response not required.
+  - Validate date in date response only when user provides a date.
+
 ## 0.0.4
 
 ### Patch Changes
