@@ -338,14 +338,12 @@ export function resolveAnswer(q: ParsedQuestion, response: ParsedResponse): stri
     }
 
     if (q.type === SurveyQuestionTypeEnum.Form) {
-        const labels = q.options.map((item) => item.label);
-        const texts = response.response[q.reference].map((item) => item.answer ?? "");
+        const texts = response.response[q.reference].map((item) => {
+            const option = q.options.find((opt) => opt.id === item.answerId);
+            return `${option?.label ?? "Deleted field"}: ${item.answer ?? ""}`;
+        });
 
-        const result = labels.map((label, index) => ({
-            [label]: texts[index] || "",
-        }));
-
-        return result.map((obj) => JSON.stringify(obj));
+        return texts;
     }
 
     if (q.type === SurveyQuestionTypeEnum.Multiple) {

@@ -122,28 +122,7 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
                                         {q.type !== SurveyQuestionTypeEnum.Form && <span>Answer:</span>}
                                         <span>
                                             {q.type === SurveyQuestionTypeEnum.Form ? (
-                                                <>
-                                                    {resolvedAnswer[0]
-                                                        ? resolvedAnswer.map((answer, i) => {
-                                                              try {
-                                                                  const parsedAnswer = JSON.parse(answer);
-                                                                  return (
-                                                                      <div key={i}>
-                                                                          {Object.keys(parsedAnswer).map((key) => (
-                                                                              <div key={key}>
-                                                                                  {key}: {parsedAnswer[key]}
-                                                                              </div>
-                                                                          ))}
-                                                                      </div>
-                                                                  );
-                                                              } catch (e) {
-                                                                  return null;
-                                                              }
-                                                          })
-                                                        : q.options.map((opt) => (
-                                                              <div key={opt.id}>{`${opt.label}:`}</div>
-                                                          ))}
-                                                </>
+                                                resolvedAnswer.map((answer, i) => <div key={i}>{answer}</div>)
                                             ) : q.type === SurveyQuestionTypeEnum.Multiple ? (
                                                 <>{resolvedAnswer.join(", ")}</>
                                             ) : q.type === SurveyQuestionTypeEnum.SmileyScale ? (
