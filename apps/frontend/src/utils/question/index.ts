@@ -381,18 +381,18 @@ export function decodeText(encodedText: string, tagOptions: MentionOption[]): st
     return decodedText + " ";
 }
 
-function resolveTaggedAnswer(questionId: string, questions: ParsedQuestion[], response: ParsedResponse): string | null {
+function resolveTaggedAnswer(
+    questionId: string,
+    questions: ParsedQuestion[],
+    response: ParsedResponse,
+): string[] | null {
     const question = questions.find((q) => q.id === questionId);
     if (!question) {
         return null;
     }
 
     const answer = resolveAnswer(question, response);
-
-    if (answer) {
-        return answer[0];
-    }
-    return null;
+    return answer;
 }
 
 export function decodeAnswerLabelOrDescription(
@@ -405,7 +405,8 @@ export function decodeAnswerLabelOrDescription(
 ): string {
     const decodedText = encodedText
         .replace(/{{answer:([^ ]+) \| "([^"]*)"}}/g, (_, id, fallback = "") => {
-            let result = resolveTaggedAnswer(id, questions, surveyResponse);
+            let result = resolveTaggedAnswer(id, questions, surveyResponse)?.join(", ");
+
             if (!result && fallback && fallback !== "") {
                 result = fallback;
             } else if (!result) {
