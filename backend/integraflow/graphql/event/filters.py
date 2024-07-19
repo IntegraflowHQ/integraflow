@@ -10,13 +10,13 @@ from integraflow.graphql.core.types.filter_input import FilterInputObjectType
 def filter_events_list(qs, _, values):
     if not values:
         return qs
-    return qs.filter(slug__in=values)
+    return qs.filter(event__in=values)
 
 
 def filter_event(qs, _, value):
     if not value:
         return qs
-    return qs.filter(status=value)
+    return qs.filter(event=value)
 
 
 class EventFilter(django_filters.FilterSet):
