@@ -1,5 +1,11 @@
 # integraflow-js
 
+## 0.0.6
+
+### Patch Changes
+
+- 19cb63b: fix delayed survey trigger
+
 ## 0.0.5
 
 ### Patch Changes
