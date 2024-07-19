@@ -21,11 +21,13 @@ import { toast } from "@/utils/toast";
 import { NotFound } from "@/components/NotFound";
 import { AUTH_EXEMPT, EMAIL_REGEX } from "@/constants";
 import { useIsMatchingLocation } from "@/hooks";
+import { AnalyticsEnum } from "@/hooks/useAnalytics";
 import { ROUTES } from "@/routes";
 import { GlobalSpinner } from "@/ui";
 import { parseInviteLink } from "@/utils";
 import { NormalizedCacheObject } from "@apollo/client";
 import { DeepPartial } from "@apollo/client/utilities";
+import posthog from "posthog-js";
 import { Navigate, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ApolloFactory } from "../apollo/services/apollo.factory";
 import { useRedirect } from "./hooks/useRedirect";
@@ -135,6 +137,19 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
         toast.error(message);
     };
 
+    const posthogCapture = (eventName: string, properties: {}) => {
+        posthog.capture(eventName, properties, {
+            $set_once: {
+                email: user.email,
+            },
+            $set: {
+                organization: { name: user.organization?.name, slug: user.organization?.slug },
+                project: { name: user.project?.name, slug: user.project?.slug },
+                name: { firstName: user.firstName, lastName: user.lastName },
+            },
+        });
+    };
+
     const handleSuccess = useCallback(
         (response?: AuthResponse) => {
             if (!response) {
@@ -175,6 +190,8 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
                     },
                 } as unknown as DeepPartial<User>);
                 redirect(response.user);
+
+                posthogCapture(AnalyticsEnum.LOGIN, { feature: "Authenticate User" });
             } else if (response.user) {
                 updateUserCache(response.user as DeepPartial<User>);
                 redirect(response.user);
@@ -314,6 +331,7 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
                         },
                     },
                 });
+                posthogCapture(AnalyticsEnum.UPDATE_USER_PROFILE, { feature: "Update user profile" });
             }
         },
         [apollo, updateUserCache, updateUser],

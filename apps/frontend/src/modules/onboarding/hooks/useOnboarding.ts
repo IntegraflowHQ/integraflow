@@ -1,3 +1,4 @@
+import { AnalyticsEnum, useAnalytics } from "@/hooks/useAnalytics";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { useRedirect } from "@/modules/auth/hooks/useRedirect";
 import { useProject } from "@/modules/projects/hooks/useProject";
@@ -8,6 +9,8 @@ export const useOnboarding = () => {
     const { project, updateProject } = useProject();
     const { user, updateUser } = useAuth();
     const redirect = useRedirect();
+    const { capture } = useAnalytics();
+
     const {
         steps,
         eventSource,
@@ -69,6 +72,7 @@ export const useOnboarding = () => {
             await updateProject({
                 hasCompletedOnboardingFor: JSON.stringify(updatedKeys),
             });
+            capture(AnalyticsEnum.ONBOARDING_PROGRESS, { feature: steps[index].name });
         },
         [completedKeys, steps, updateProject],
     );

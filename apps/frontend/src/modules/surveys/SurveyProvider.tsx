@@ -21,6 +21,7 @@ import {
     useSurveyDeleteMutation,
     useSurveyUpdateMutation,
 } from "@/generated/graphql";
+import { AnalyticsEnum, useAnalytics } from "@/hooks/useAnalytics";
 import { ROUTES } from "@/routes";
 import { ParsedQuestion } from "@/types";
 import { generateRandomString, parseQuestion } from "@/utils";
@@ -62,6 +63,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
 
     const navigate = useNavigate();
     const { orgSlug, projectSlug, surveySlug } = useParams();
+    const { capture } = useAnalytics();
 
     const [createSurveyMutation, { loading: creatingSurvey }] = useSurveyCreateMutation();
     const [updateSurveyMutation, { error }] = useSurveyUpdateMutation({});
@@ -139,6 +141,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                             .replace(":projectSlug", projectSlug!)
                             .replace(":surveySlug", surveySlug),
                     );
+                    capture(AnalyticsEnum.CREATE_SURVEY, { feature: "Create Survey" });
                 },
 
                 onError: () => {
@@ -297,7 +300,29 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                         errors: [],
                     },
                 },
-
+                onCompleted: (data) => {
+                    if (input.status) {
+                        capture(AnalyticsEnum.UPDATE_SURVEY_STATUS, {
+                            feature: `${data.surveyUpdate?.survey?.status} survey`,
+                        });
+                    } else if (input.themeId) {
+                        capture(AnalyticsEnum.UPDATE_SURVEY, {
+                            feature: `Change survey theme`,
+                        });
+                    } else if (input.settings) {
+                        capture(AnalyticsEnum.UPDATE_SURVEY, {
+                            feature: "Update survey settings",
+                        });
+                    } else if (input.name) {
+                        capture(AnalyticsEnum.UPDATE_SURVEY, {
+                            feature: "Rename survey",
+                        });
+                    } else {
+                        capture(AnalyticsEnum.UPDATE_SURVEY, {
+                            feature: `update survey`,
+                        });
+                    }
+                },
                 update: (cache, { data }) => {
                     if (!data?.surveyUpdate?.survey) return;
 

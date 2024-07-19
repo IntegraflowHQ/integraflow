@@ -11,11 +11,13 @@ import {
     useOrganizationCreateMutation,
     useOrganizationUpdateMutation,
 } from "@/generated/graphql";
+import { AnalyticsEnum, useAnalytics } from "@/hooks/useAnalytics";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { convertToAuthOrganization } from "@/modules/auth/states/user";
 
 export const useWorkspace = () => {
     const { user, workspace, projects, updateUser, switchWorkspace } = useAuth();
+    const { capture } = useAnalytics();
     const [createOrganization, { loading }] = useOrganizationCreateMutation();
     const [updateOrganization] = useOrganizationUpdateMutation();
 
@@ -36,7 +38,6 @@ export const useWorkspace = () => {
                 },
                 true,
             );
-
             const project = organization.projects?.edges?.[0]?.node as Project;
             if (organization && project) {
                 switchWorkspace(convertToAuthOrganization(organization) as AuthOrganization, project);
@@ -81,6 +82,9 @@ export const useWorkspace = () => {
                         },
                     },
                 });
+                capture(AnalyticsEnum.UPDATE_WORKSPACE, {
+                    feature: "update workspace settings",
+                });
                 if (response.data?.organizationUpdate?.organization) {
                     updateUserCache(response.data?.organizationUpdate?.organization);
                 }
@@ -109,7 +113,9 @@ export const useWorkspace = () => {
 
                 if (data && data.organizationCreate && data.organizationCreate.user) {
                     const { organization, project } = data.organizationCreate.user as AuthUser;
-
+                    capture(AnalyticsEnum.CREATE_WORKSPACE, {
+                        feature: "Create workspace",
+                    });
                     if (organization && project) {
                         handleAddWorkspace({
                             id: organization?.id,
