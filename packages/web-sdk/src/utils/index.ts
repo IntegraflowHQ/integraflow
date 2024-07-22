@@ -1,6 +1,6 @@
 import { BaseSurveyCountableConnection, IntegraflowDocument } from "@integraflow/client";
 import { Audience, LogicOperator, Question, QuestionOption, Survey, SurveySettings, Theme, Trigger } from "../types";
-import {VERSION_NUMBER} from "./version";
+import { VERSION_NUMBER } from "./version";
 
 export function onDOMReady(fn: () => void) {
     if (document.readyState !== "loading") {
@@ -155,7 +155,7 @@ export const parsedSurveys = (surveys?: BaseSurveyCountableConnection): Survey[]
             close: settings.close,
             submitText: settings.submitText,
             showBranding: settings.showBranding,
-            backgroundOverlay: channelSettings.backgroundOverlay ?? "none",
+            backgroundOverlay: channelSettings.backgroundOverlay ?? "none"
         };
 
         const audience: Audience = JSON.parse(channel.conditions ?? "{}");
@@ -264,11 +264,11 @@ export function getEventAttributes() {
     const os = getOperatingSystem();
 
     return {
-        os: os.os,
-        os_version: os.version,
-        browser: browser.browser,
-        browser_version: browser.version,
-        device_type: getDeviceType()
+        $os: os.os,
+        $os_version: os.version,
+        $browser: browser.browser,
+        $browser_version: browser.version,
+        $device_type: getDeviceType()
     };
 }
 
@@ -281,23 +281,23 @@ export function getUserAttributes() {
     const os = getOperatingSystem();
 
     return {
-        os: os.os,
-        os_version: os.version,
-        browser: browser.browser,
-        browser_version: browser.version,
-        browser_language: navigator.language,
-        device_type: getDeviceType(),
-        screen_height: window.screen.height.toString(),
-        screen_width: window.screen.width.toString(),
-        viewport_height: window.innerHeight.toString(),
-        viewport_width: window.innerWidth.toString(),
-        raw_user_agent: navigator.userAgent,
-        current_url: window.location.href,
-        host: window.location.host,
-        pathname: window.location.pathname,
-        time: new Date().toISOString(),
-        lib: "web-sdk",
-        lib_version: VERSION_NUMBER ?? "Unknown",
-        bucket: Math.ceil(Math.random() * 1000)
+        $os: os.os,
+        $os_version: os.version,
+        $browser: browser.browser,
+        $browser_version: browser.version,
+        $browser_language: navigator.language,
+        $device_type: getDeviceType(),
+        $screen_height: window.screen.height.toString(),
+        $screen_width: window.screen.width.toString(),
+        $viewport_height: window.innerHeight.toString(),
+        $viewport_width: window.innerWidth.toString(),
+        $raw_user_agent: navigator.userAgent,
+        $current_url: window.location.href,
+        $host: window.location.host,
+        $pathname: window.location.pathname,
+        $time: new Date().toISOString(),
+        $lib: "web-sdk",
+        $lib_version: VERSION_NUMBER ?? "Unknown",
+        $bucket: Math.ceil(Math.random() * 1000)
     };
 }
