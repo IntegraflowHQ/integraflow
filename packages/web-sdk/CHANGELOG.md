@@ -1,5 +1,11 @@
 # integraflow-js
 
+## 0.0.7
+
+### Patch Changes
+
+- 32f9671: Add dollar sign to internal attribute names.
+
 ## 0.0.6
 
 ### Patch Changes
