@@ -36,7 +36,7 @@ from .types import (
 class EventQueries(graphene.ObjectType):
     events = FilterConnectionField(
         EventCountableConnection,
-        filters=EventFilterInput(
+        filter=EventFilterInput(
             description="Filter events by the provided values.",
             required=False
         ),
