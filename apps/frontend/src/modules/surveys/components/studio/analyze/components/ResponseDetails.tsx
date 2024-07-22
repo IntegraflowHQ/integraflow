@@ -79,7 +79,7 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
 
     return (
         <div className="flex gap-[23px]" {...props}>
-            <div className="w-full rounded-lg bg-intg-bg-15 px-[25px] py-5">
+            <div className="min-h-[70vh] w-full rounded-lg bg-intg-bg-15 px-[25px] py-5">
                 <button className="mb-[25px] flex items-center gap-2 text-white" onClick={onBackPress}>
                     <ArrowLeft />
                     <span>Back</span>

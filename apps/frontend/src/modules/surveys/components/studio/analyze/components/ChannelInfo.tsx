@@ -1,24 +1,50 @@
+import { Attribute } from "@/components/Attribute";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { Header } from "@/ui";
+import * as Accordion from "@radix-ui/react-accordion";
+import { ChevronDown } from "lucide-react";
 
 export const ChannelInfo = () => {
     const { activeResponse } = useAnalyze();
 
+    const attributeTypes = [
+        {
+            name: "user attributes",
+            attributes: Object.entries(activeResponse?.response.userAttributes ?? {}).filter(([key]) => {
+                return !key.startsWith("$");
+            }),
+        },
+
+        {
+            name: "response details",
+            attributes: Object.entries(activeResponse?.response.userAttributes ?? {}).filter(([key]) => {
+                return key.startsWith("$");
+            }),
+        },
+    ];
+
     return (
-        <div className="flex w-96 flex-col gap-[21px] rounded bg-intg-bg-15 p-3.5">
-            <Header title="Response Details" variant="3" className="[&>*]:text-intg-text-11" />
+        <Accordion.Root
+            type="multiple"
+            defaultValue={[attributeTypes[0].name]}
+            className="flex w-96 flex-col gap-[21px]"
+        >
+            {attributeTypes.map((type) => (
+                <Accordion.Item value={type.name} className="rounded bg-intg-bg-15">
+                    <Accordion.Header>
+                        <Accordion.Trigger className="flex w-full items-center justify-between p-3.5 [&>svg]:data-[state=open]:rotate-180">
+                            <Header title={type.name} variant="3" className="capitalize [&>*]:text-intg-text-11" />
+                            <ChevronDown className="text-intg-text-11" />
+                        </Accordion.Trigger>
+                    </Accordion.Header>
 
-            <div className="flex flex-col gap-2 -tracking-[0.41px]">
-                {Object.entries(activeResponse?.response.userAttributes ?? {}).map(([key, val]) => (
-                    <div className="flex items-center gap-3.5" key={key}>
-                        <strong className="min-w-max rounded bg-intg-bg-22 px-1.5 py-1 text-xs font-normal capitalize leading-[18px] text-intg-text-13">
-                            {key.replace(/_/g, " ")}
-                        </strong>
-
-                        <span className="truncate text-sm font-normal text-intg-text-2">{val}</span>
-                    </div>
-                ))}
-            </div>
-        </div>
+                    <Accordion.Content className="space-y-2 px-3.5 pb-3.5">
+                        {type.attributes.map(([key, val]) => (
+                            <Attribute name={key.replace(/_/g, " ")} value={val.toString()} />
+                        ))}
+                    </Accordion.Content>
+                </Accordion.Item>
+            ))}
+        </Accordion.Root>
     );
 };
