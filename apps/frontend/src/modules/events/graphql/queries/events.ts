@@ -27,8 +27,8 @@ export const EVENT_DEFINITIONS = gql`
 `;
 
 export const EVENTS = gql`
-    query events($first: Int, $filters: EventFilterInput) {
-        events(first: $first, filters: $filters) {
+    query events($first: Int, $filter: EventFilterInput) {
+        events(first: $first, filter: $filter) {
             edges {
                 node {
                     id
