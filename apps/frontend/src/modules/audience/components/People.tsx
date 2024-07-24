@@ -1,17 +1,17 @@
+import { Attribute } from "@/components/Attribute";
 import { PersonCountableEdge } from "@/generated/graphql";
 import { Properties } from "@/types";
 import { Dialog, DialogContent, Header, Pagination, Spinner } from "@/ui";
 import PeopleIconLg from "@/ui/icons/PeopleIconLg";
-import { cn } from "@/utils";
+import { cn, isoTimestampRegex } from "@/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 import { format } from "date-fns";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { useAudience } from "../hooks/useAudience";
 
 export const People = () => {
     const { persons, isFetchingMore, getMorePersons, loadingPersons } = useAudience();
     const [selectedPerson, setSelectedPerson] = useState<PersonCountableEdge | null>(null);
-
     const parsedPersonProperties = selectedPerson && (JSON.parse(selectedPerson?.node.attributes) as Properties);
 
     return (
@@ -24,25 +24,30 @@ export const People = () => {
                     }
                 }}
             >
-                <DialogContent className="p-6">
+                <DialogContent className="min-h-[15rem] min-w-[25rem] max-w-xl p-6">
                     <>
                         {Object.entries(parsedPersonProperties ?? {}).length < 1 ? (
-                            <div className="p-4">No attributes for this user</div>
+                            <div className="flex h-[10rem] items-center justify-center">
+                                <p>No attributes for this user</p>
+                            </div>
                         ) : (
                             <div className="space-y-6 p-3">
                                 <h3>User Properties</h3>
-                                <div className="grid min-w-80 grid-cols-[max-content,1fr] gap-x-20 gap-y-2 -tracking-[0.41px]">
-                                    {Object.entries(parsedPersonProperties ?? {}).map(([key, val]) => (
-                                        <Fragment key={key}>
-                                            <strong className="w-max self-center rounded bg-intg-bg-22 px-1.5 py-1 text-xs font-normal capitalize leading-[18px] text-intg-text-13">
-                                                {key}
-                                            </strong>
-
-                                            <span className="self-center text-sm font-normal text-intg-text-2">
-                                                {val.toString()}
-                                            </span>
-                                        </Fragment>
-                                    ))}
+                                <div className="grid min-w-80 gap-x-20 gap-y-2 -tracking-[0.41px]">
+                                    {Object.entries(parsedPersonProperties ?? {}).map(([key, val]) => {
+                                        return (
+                                            <Attribute
+                                                name={key}
+                                                value={
+                                                    isoTimestampRegex.test(val as string)
+                                                        ? format(new Date((val as string) ?? ""), "MMM dd, yyyy, HH:mm")
+                                                        : val
+                                                }
+                                                key={key}
+                                                wrapText
+                                            />
+                                        );
+                                    })}
                                 </div>
                             </div>
                         )}
@@ -53,18 +58,24 @@ export const People = () => {
             <Table
                 className={cn(
                     persons?.edges.length ? "border" : "",
+                    loadingPersons || isFetchingMore ? "opacity-70" : "",
                     "scrollbar-hide table-auto rounded-t-lg border-intg-bg-4 text-white",
                 )}
             >
-                <TableHead className="w-full bg-intg-bg-9 font-light text-intg-text">
+                <TableHead className="border-b border-intg-bg-4 bg-intg-bg-8 font-light text-intg-text">
                     <TableRow>
-                        <TableHeaderCell className="w-1/2">User</TableHeaderCell>
+                        <TableHeaderCell className="text-md w-1/2 font-normal">User</TableHeaderCell>
                         <TableHeaderCell className="text-md font-normal">First Seen</TableHeaderCell>
                     </TableRow>
                 </TableHead>
 
                 {persons?.edges.length ? (
-                    <TableBody>
+                    <TableBody className="relative">
+                        {loadingPersons || isFetchingMore ? (
+                            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                                <Spinner size="md" removeLogo />
+                            </div>
+                        ) : null}
                         {persons?.edges.map((person) => {
                             const parsedPerson = JSON.parse(person?.node.attributes) as Properties;
                             const {
@@ -116,11 +127,11 @@ export const People = () => {
                 </div>
             ) : null}
 
-            {loadingPersons && !isFetchingMore ? (
-                <div className="mt-40 flex h-full w-full justify-center">
+            {(loadingPersons || isFetchingMore) && !persons?.edges.length && (
+                <div className="mt-40 flex flex-col items-center justify-center text-center">
                     <Spinner />
                 </div>
-            ) : null}
+            )}
         </>
     );
 };

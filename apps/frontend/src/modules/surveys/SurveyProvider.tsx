@@ -25,7 +25,7 @@ import { AnalyticsEnum, useAnalytics } from "@/hooks/useAnalytics";
 import { ROUTES } from "@/routes";
 import { ParsedQuestion } from "@/types";
 import { generateRandomString, parseQuestion } from "@/utils";
-import { ApolloError, FetchResult } from "@apollo/client";
+import { ApolloError, FetchResult, NetworkStatus } from "@apollo/client";
 import { DeepPartial, Reference } from "@apollo/client/utilities";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -52,6 +52,7 @@ export type SurveyContextValues = {
     deleteSurvey: (survey: Survey) => Promise<void | undefined>;
     getMoreSurveys: (direction: string) => Promise<void | undefined>;
     creatingSurvey: boolean;
+    isFetchingMore: boolean;
 };
 
 const createSurveyContext = () => React.createContext<SurveyContextValues | null>(null);
@@ -76,6 +77,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     const {
         refetch,
         fetchMore,
+        networkStatus,
         data: surveyList,
         loading: surveyListLoading,
     } = useGetSurveyListQuery({
@@ -87,6 +89,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                 direction: OrderDirection.Desc,
             },
         },
+        notifyOnNetworkStatusChange: true,
     });
 
     const surveyId = surveyQueryResponse?.survey?.id ?? "";
@@ -422,6 +425,9 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
         },
         [deleteSurveyMutation],
     );
+
+    const isFetchingMore = networkStatus === NetworkStatus.fetchMore;
+
     const values = React.useMemo<SurveyContextValues>(
         () => ({
             error,
@@ -430,6 +436,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             deleteSurvey,
             updateSurvey,
             getMoreSurveys,
+            isFetchingMore,
             filterSurveyByName: filterSurveyList,
             surveyList: surveyListData,
             loading: loadingSurvey || surveyListLoading,
@@ -450,6 +457,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
             updateSurvey,
             deleteSurvey,
             getMoreSurveys,
+            isFetchingMore,
             creatingSurvey,
         ],
     );

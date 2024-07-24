@@ -28,6 +28,7 @@ export const useAudience = () => {
         variables: {
             first: itemsOnPage,
         },
+        notifyOnNetworkStatusChange: true,
     });
 
     const handlePagination = (direction: string, pageInfo: PageInfo) => {
