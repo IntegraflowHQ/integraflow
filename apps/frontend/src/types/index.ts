@@ -17,6 +17,23 @@ export type BackgroundOverLayType = "none" | "dark" | "light";
 export type ViewPortType = "mobile" | "desktop";
 export type PreviewMode = "link" | "sdk";
 
+export enum AnswerType {
+    SINGLE = "single",
+    MULTIPLE = "multiple",
+    TEXT = "text",
+    DATE = "date",
+    CSAT = "csat",
+    CES = "ces",
+    SMILEY_SCALE = "smiley_scale",
+    NUMERICAL_SCALE = "numerical_scale",
+    RATING = "rating",
+    NPS = "nps",
+    FORM = "form",
+    CTA = "cta",
+    BOOLEAN = "boolean",
+    DROPDOWN = "dropdown",
+}
+
 export enum FormFieldType {
     FIRST_NAME = "first_name",
     LAST_NAME = "last_name",
@@ -107,13 +124,20 @@ export interface EventProperties {
     [key: string]: Jsonish;
 }
 
+export type Shape = "heart" | "thumb" | "star" | "button";
+
 export interface SurveyAnswer {
+    orderNumber: number;
+    type: AnswerType;
     finished?: boolean;
     ctaSuccess?: boolean;
     fieldType?: FormFieldType;
     completionRate?: number;
     answer?: string;
     answerId?: ID;
+    count?: number;
+    shape?: Shape;
+    ctaType?: CTAType;
 }
 
 export interface FormField extends QuestionOption {
@@ -218,7 +242,7 @@ export type QuestionSettings = {
     rightText?: string;
     leftText?: string;
     count?: number;
-    shape?: "star" | "thumb" | "heart" | "button";
+    shape?: Shape;
     positiveText?: string;
     negativeText?: string;
     singleLine?: boolean;

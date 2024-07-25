@@ -30,7 +30,7 @@ export const ChannelInfo = () => {
             className="flex w-96 flex-col gap-[21px]"
         >
             {attributeTypes.map((type) => (
-                <Accordion.Item value={type.name} className="rounded bg-intg-bg-15">
+                <Accordion.Item value={type.name} className="rounded bg-intg-bg-15" key={type.name}>
                     <Accordion.Header>
                         <Accordion.Trigger className="flex w-full items-center justify-between p-3.5 [&>svg]:data-[state=open]:rotate-180">
                             <Header title={type.name} variant="3" className="capitalize [&>*]:text-intg-text-11" />
@@ -40,7 +40,7 @@ export const ChannelInfo = () => {
 
                     <Accordion.Content className="space-y-2 px-3.5 pb-3.5">
                         {type.attributes.map(([key, val]) => (
-                            <Attribute name={key.replace(/_/g, " ")} value={val.toString()} />
+                            <Attribute name={key.replace(/_/g, " ")} value={val.toString()} key={key} />
                         ))}
                     </Accordion.Content>
                 </Accordion.Item>

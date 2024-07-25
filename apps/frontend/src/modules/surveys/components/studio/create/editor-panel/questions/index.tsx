@@ -2,7 +2,7 @@ import { PropertyDefinition, SurveyStatusEnum } from "@/generated/graphql";
 import { useProject } from "@/modules/projects/hooks/useProject";
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { ParsedQuestion } from "@/types";
+import { CTAType, ParsedQuestion } from "@/types";
 import { decodeText, emptyLabel, getQuestionIcon, tagOptions } from "@/utils/question";
 import * as Accordion from "@radix-ui/react-accordion";
 import { useEffect } from "react";
@@ -50,7 +50,13 @@ export default function UpdateQuestion() {
                                         >
                                             <div className="flex items-center gap-4">
                                                 <div>
-                                                    <img src={getQuestionIcon(question)} alt="icon" />
+                                                    <img
+                                                        src={getQuestionIcon(
+                                                            question.type,
+                                                            question.settings.type as CTAType,
+                                                        )}
+                                                        alt="icon"
+                                                    />
                                                 </div>
                                                 <div className="text-sm font-bold text-intg-text-9">
                                                     {index + 1 < 10 ? `0${index + 1}` : index + 1}
