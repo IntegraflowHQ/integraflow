@@ -15,7 +15,14 @@ interface DateResponseProps {
     theme?: Theme;
 }
 
-export default function DateResponse({ label, description, onAnswered, submitText, theme }: DateResponseProps) {
+export default function DateResponse({
+    question,
+    label,
+    description,
+    onAnswered,
+    submitText,
+    theme
+}: DateResponseProps) {
     const [day, setDay] = useState("");
     const [month, setMonth] = useState("");
     const [year, setYear] = useState("");
@@ -51,14 +58,16 @@ export default function DateResponse({ label, description, onAnswered, submitTex
 
     const handleSubmit = (e: h.JSX.TargetedEvent<HTMLFormElement, Event>) => {
         e.preventDefault();
+        const details = { type: question.type, orderNumber: question.orderNumber };
+
         if (!date) {
-            onAnswered([{ answer: undefined }]);
+            onAnswered([{ ...details, answer: undefined }]);
             return;
         }
 
         const inputDate = new Date(date);
         if (!isNaN(inputDate.getTime())) {
-            onAnswered([{ answer: date }]);
+            onAnswered([{ ...details, answer: date }]);
         } else {
             alert("Please enter a valid date in the format DD/MM/YYYY.");
         }

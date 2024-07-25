@@ -117,7 +117,14 @@ export default function DropdownResponse({
 
     const handleSubmit = (e: h.JSX.TargetedEvent<HTMLFormElement, Event>) => {
         e.preventDefault();
-        onAnswered([{ answerId: selectedOption?.id, answer: selectedOption?.label }]);
+        onAnswered([
+            {
+                type: question.type,
+                orderNumber: question.orderNumber,
+                answerId: selectedOption?.id,
+                answer: selectedOption?.label
+            }
+        ]);
     };
 
     return (
