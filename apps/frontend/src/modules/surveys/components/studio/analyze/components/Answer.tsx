@@ -25,7 +25,7 @@ const getEmoji = (index: string) => {
     return <Emoji />;
 };
 
-const getBooleanAnswer = (answer: SurveyAnswer, q?: ParsedQuestion): JSX.Element | string => {
+const getBooleanAnswer = (answer: SurveyAnswer): JSX.Element | string => {
     if (answer === null || answer === undefined) {
         return "";
     }
