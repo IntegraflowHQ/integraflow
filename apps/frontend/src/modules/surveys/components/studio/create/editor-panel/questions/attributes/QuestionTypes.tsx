@@ -47,8 +47,15 @@ export const QuestionOptions = () => {
     }, []);
 
     useEffect(() => {
-        if (showQuestionTypes) {
-            questionTypesListRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (showQuestionTypes && questionTypesListRef.current) {
+            const rect = questionTypesListRef.current.getBoundingClientRect();
+            const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+
+            if (!isVisible) {
+                requestAnimationFrame(() => {
+                    questionTypesListRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                });
+            }
         }
     }, [showQuestionTypes]);
 
@@ -82,14 +89,20 @@ export const QuestionOptions = () => {
         }
     };
 
+    const toggleQuestionTypes = () => {
+        if (showQuestionTypes) {
+            setShowQuestionTypes(false);
+        } else {
+            setShowQuestionTypes(true);
+        }
+    };
+
     return (
         <div className="space-y-2" ref={questionTypesContainerRef}>
             <div className="flex gap-2">
                 <Button
                     className="flex items-center justify-center gap-2 px-[12px] py-[12px]"
-                    onClick={() => {
-                        setShowQuestionTypes(!showQuestionTypes);
-                    }}
+                    onClick={toggleQuestionTypes}
                 >
                     <PlusCircle />
                     <span className="w-max text-base font-normal">
@@ -108,10 +121,10 @@ export const QuestionOptions = () => {
                             return (
                                 <div
                                     key={questionType.name}
-                                    className="flex items-center gap-4 rounded-lg p-3.5 text-intg-text hover:bg-intg-bg-10"
+                                    className="flex cursor-pointer items-center gap-4 rounded-lg p-3.5 text-intg-text hover:bg-intg-bg-10"
                                     onClick={() => {
                                         handleCreateQuestion(questionType.type, questionType.id);
-                                        setShowQuestionTypes(!showQuestionTypes);
+                                        setShowQuestionTypes(false);
                                     }}
                                     onMouseEnter={() => setCurrentView(questionType.name)}
                                 >
@@ -124,7 +137,7 @@ export const QuestionOptions = () => {
                     <div>
                         <hr className="h-full border-[.1px] border-intg-bg-4" />
                     </div>
-                    <div className={cn(`w-[50%] p-2 text-intg-text`)}>
+                    <div className="w-[50%] p-2 text-intg-text">
                         {surveyTypes.map((surveyType) => (
                             <div
                                 key={surveyType.title}
