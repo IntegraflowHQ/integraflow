@@ -23,22 +23,24 @@ export const Attributes = () => {
                         <TableHeaderCell className="text-md  font-normal">Type</TableHeaderCell>
                     </TableRow>
                 </TableHead>
-                <TableBody className="relative">
-                    {loadingPropertyDefinitions || isFetchingMore ? (
-                        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                            <Spinner size="md" removeLogo />
-                        </div>
-                    ) : null}
-                    {propertyDefinitions &&
-                        propertyDefinitions.edges.map((p) => {
-                            return (
-                                <TableRow key={p.node.name} className=" border-intg-bg-4">
-                                    <TableCell>{p.node.name}</TableCell>
-                                    <TableCell>{p.node.propertyType}</TableCell>
-                                </TableRow>
-                            );
-                        })}
-                </TableBody>
+                {propertyDefinitions?.edges.length ? (
+                    <TableBody className="relative">
+                        {loadingPropertyDefinitions || isFetchingMore ? (
+                            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                                <Spinner size="md" removeLogo />
+                            </div>
+                        ) : null}
+                        {propertyDefinitions &&
+                            propertyDefinitions.edges.map((p) => {
+                                return (
+                                    <TableRow key={p.node.name} className=" border-intg-bg-4">
+                                        <TableCell>{p.node.name}</TableCell>
+                                        <TableCell>{p.node.propertyType}</TableCell>
+                                    </TableRow>
+                                );
+                            })}
+                    </TableBody>
+                ) : null}
             </Table>
 
             {!propertyDefinitions?.edges.length ? null : (

@@ -24,7 +24,7 @@ export const People = () => {
                     }
                 }}
             >
-                <DialogContent className="min-h-[15rem] min-w-[25rem] max-w-xl p-6">
+                <DialogContent title="User Properties" className="min-h-[15rem] min-w-[25rem] max-w-xl p-6">
                     <>
                         {Object.entries(parsedPersonProperties ?? {}).length < 1 ? (
                             <div className="flex h-[10rem] items-center justify-center">
@@ -32,7 +32,6 @@ export const People = () => {
                             </div>
                         ) : (
                             <div className="space-y-6 p-3">
-                                <h3>User Properties</h3>
                                 <div className="grid min-w-80 gap-x-20 gap-y-2 -tracking-[0.41px]">
                                     {Object.entries(parsedPersonProperties ?? {}).map(([key, val]) => {
                                         return (

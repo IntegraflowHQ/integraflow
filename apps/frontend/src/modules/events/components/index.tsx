@@ -69,32 +69,34 @@ export const EventsIndex = () => {
                             </TableRow>
                         </TableHead>
 
-                        <TableBody className="relative">
-                            {loadingEventDefinitions || isFetchingMore ? (
-                                <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                                    <Spinner size="md" removeLogo />
-                                </div>
-                            ) : null}
+                        {eventDefinitions?.edges.length ? (
+                            <TableBody className="relative">
+                                {loadingEventDefinitions || isFetchingMore ? (
+                                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                                        <Spinner size="md" removeLogo />
+                                    </div>
+                                ) : null}
 
-                            {(eventDefinitions?.edges || []).map((event) => {
-                                return (
-                                    <TableRow
-                                        key={event.node.id}
-                                        className="border-intg-bg-4 text-center font-light transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-8"
-                                        onClick={() => {
-                                            setSelectedEvent(event as EventDefinitionCountableEdge);
-                                            handleEventDetails(event as EventDefinitionCountableEdge);
-                                        }}
-                                    >
-                                        <TableCell>{event.node.name}</TableCell>
-                                        <TableCell>{event.node.volume}</TableCell>
-                                        <TableCell>
-                                            {format(new Date(event.node.lastSeenAt ?? ""), "MMM dd, yyyy")}
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
+                                {(eventDefinitions?.edges || []).map((event) => {
+                                    return (
+                                        <TableRow
+                                            key={event.node.id}
+                                            className="border-intg-bg-4 text-center font-light transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-8"
+                                            onClick={() => {
+                                                setSelectedEvent(event as EventDefinitionCountableEdge);
+                                                handleEventDetails(event as EventDefinitionCountableEdge);
+                                            }}
+                                        >
+                                            <TableCell>{event.node.name}</TableCell>
+                                            <TableCell>{event.node.volume}</TableCell>
+                                            <TableCell>
+                                                {format(new Date(event.node.lastSeenAt ?? ""), "MMM dd, yyyy")}
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            </TableBody>
+                        ) : null}
                     </Table>
 
                     {!eventDefinitions?.edges.length ? null : (
@@ -120,10 +122,9 @@ export const EventsIndex = () => {
                     }}
                 >
                     <DialogTrigger />
-                    <DialogContent className="min-h-[15rem] min-w-[25rem] space-y-4 p-6">
-                        <Header title="Event properties" variant="3" />
+                    <DialogContent title="Event properties" className="min-h-[15rem] min-w-[25rem] space-y-4 p-6">
                         {eventLoading || loadingProperties ? (
-                            <div className="flex justify-center">
+                            <div className="flex h-[15rem] items-center justify-center">
                                 <Spinner removeLogo size="md" />
                             </div>
                         ) : (
