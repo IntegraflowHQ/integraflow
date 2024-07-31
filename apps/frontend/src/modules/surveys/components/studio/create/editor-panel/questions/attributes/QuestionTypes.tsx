@@ -9,7 +9,7 @@ import { cn } from "@/utils";
 import { getDefaultValues } from "@/utils/question/defaultOptions";
 import { questionTypes } from "@/utils/survey";
 import { PlusCircle } from "lucide-react";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export const QuestionOptions = () => {
     const [currentView, setCurrentView] = useState<string>("Welcome message");
@@ -18,8 +18,6 @@ export const QuestionOptions = () => {
     const [welcomeMessageExists, setWelcomeMessageExists] = useState(false);
     const [thankYouMessageExists, setThankYouMessageExists] = useState(false);
     const { createQuestion } = useQuestion();
-    const questionTypesContainerRef: RefObject<HTMLDivElement> = useRef(null);
-    const questionTypesListRef: RefObject<HTMLDivElement> = useRef(null);
 
     useEffect(() => {
         const welcomeMessage = parsedQuestions.find((question) => question.settings?.type === CTAType.NEXT);
@@ -29,19 +27,6 @@ export const QuestionOptions = () => {
         setWelcomeMessageExists(!!welcomeMessage);
         setThankYouMessageExists(!!thankYouMessage);
     }, [parsedQuestions]);
-
-    useEffect(() => {
-        if (showQuestionTypes && questionTypesListRef.current) {
-            const rect = questionTypesListRef.current.getBoundingClientRect();
-            const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
-
-            if (!isVisible) {
-                requestAnimationFrame(() => {
-                    questionTypesListRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-                });
-            }
-        }
-    }, [showQuestionTypes]);
 
     const handleCreateQuestion = async (type: SurveyQuestionTypeEnum, id: string) => {
         const options = getDefaultValues(type);
@@ -74,73 +59,66 @@ export const QuestionOptions = () => {
     };
 
     return (
-        <div className="space-y-2" ref={questionTypesContainerRef}>
-            <Popover open={showQuestionTypes} onOpenChange={(open) => setShowQuestionTypes(open)}>
-                <PopoverTrigger className="w-full">
-                    <div className="flex gap-2">
-                        <Button
-                            className="flex items-center justify-center gap-2 px-[12px] py-[12px]"
-                            onClick={() => {
-                                setShowQuestionTypes(!showQuestionTypes);
-                            }}
-                        >
-                            <PlusCircle />
-                            <span className="w-max text-base font-normal">
-                                {parsedQuestions.length > 0 ? "Add your next question" : "Add your first question"}
-                            </span>
-                        </Button>
-                    </div>
-                </PopoverTrigger>
-                <PopoverContent className="w-[540px]" side="left">
-                    <div
-                        ref={questionTypesListRef}
-                        className="flex w-full max-w-[40rem] overflow-y-auto rounded-lg bg-intg-bg-9"
-                    >
-                        <div className="w-[50%] p-2">
-                            {questionTypes.map((questionType) => {
-                                if (thankYouMessageExists && questionType.id === "thankyou") return null;
-                                if (welcomeMessageExists && questionType.id === "welcome") return null;
+        <Popover open={showQuestionTypes} onOpenChange={(open) => setShowQuestionTypes(open)}>
+            <PopoverTrigger className="w-full">
+                <Button
+                    className="flex items-center justify-center gap-2 px-[12px] py-[12px]"
+                    onClick={() => {
+                        setShowQuestionTypes(!showQuestionTypes);
+                    }}
+                >
+                    <PlusCircle />
+                    <span className="w-max text-base font-normal">
+                        {parsedQuestions.length > 0 ? "Add your next question" : "Add your first question"}
+                    </span>
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[540px]" side="left">
+                <div className="flex w-full max-w-[40rem] overflow-y-auto rounded-lg bg-intg-bg-9">
+                    <div className="w-[50%] p-2">
+                        {questionTypes.map((questionType) => {
+                            if (thankYouMessageExists && questionType.id === "thankyou") return null;
+                            if (welcomeMessageExists && questionType.id === "welcome") return null;
 
-                                return (
-                                    <div
-                                        key={questionType.name}
-                                        className="flex items-center gap-4 rounded-lg p-2 text-intg-text hover:bg-intg-bg-10"
-                                        onClick={() => {
-                                            handleCreateQuestion(questionType.type, questionType.id);
-                                            setShowQuestionTypes(!showQuestionTypes);
-                                        }}
-                                        onMouseEnter={() => setCurrentView(questionType.name)}
-                                    >
-                                        <img src={questionType.icon} alt={questionType.name} className="h-4 w-4" />
-                                        <span className="text-sm font-medium">{questionType.name}</span>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                        <div>
-                            <hr className="h-full border-[.1px] border-intg-bg-4" />
-                        </div>
-                        <div className={cn(`w-[50%] p-2 text-intg-text`)}>
-                            {surveyTypes.map((surveyType) => (
+                            return (
                                 <div
-                                    key={surveyType.title}
-                                    className={cn(
-                                        `${surveyType.title === currentView ? "block" : "hidden"} mr-3 mt-[2rem] space-y-4`,
-                                    )}
+                                    key={questionType.name}
+                                    className="flex items-center gap-4 rounded-lg p-2 text-intg-text hover:bg-intg-bg-10"
+                                    onClick={() => {
+                                        handleCreateQuestion(questionType.type, questionType.id);
+                                        setShowQuestionTypes(!showQuestionTypes);
+                                    }}
+                                    onMouseEnter={() => setCurrentView(questionType.name)}
                                 >
-                                    <div className="flex h-[196px] items-end justify-center rounded-[9.455px] bg-[#261F36]">
-                                        <img src={surveyType.image} alt="survey" className="block" />
-                                    </div>
-                                    <div className="max-w-[300px] space-y-2 text-xs">
-                                        <p className="font-bold">{surveyType.title}</p>
-                                        <p>{surveyType.description}</p>
-                                    </div>
+                                    <img src={questionType.icon} alt={questionType.name} className="h-4 w-4" />
+                                    <span className="text-sm font-medium">{questionType.name}</span>
                                 </div>
-                            ))}
-                        </div>
+                            );
+                        })}
                     </div>
-                </PopoverContent>
-            </Popover>
-        </div>
+                    <div>
+                        <hr className="h-full border-[.1px] border-intg-bg-4" />
+                    </div>
+                    <div className={cn(`w-[50%] p-2 text-intg-text`)}>
+                        {surveyTypes.map((surveyType) => (
+                            <div
+                                key={surveyType.title}
+                                className={cn(
+                                    `${surveyType.title === currentView ? "block" : "hidden"} mr-3 mt-[2rem] space-y-4`,
+                                )}
+                            >
+                                <div className="flex h-[196px] items-end justify-center rounded-[9.455px] bg-[#261F36]">
+                                    <img src={surveyType.image} alt="survey" className="block" />
+                                </div>
+                                <div className="max-w-[300px] space-y-2 text-xs">
+                                    <p className="font-bold">{surveyType.title}</p>
+                                    <p>{surveyType.description}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </PopoverContent>
+        </Popover>
     );
 };
