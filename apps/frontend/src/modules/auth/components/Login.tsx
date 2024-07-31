@@ -8,6 +8,7 @@ import { Google } from "@/ui/icons";
 import { emailRegex, parseInviteLink } from "@/utils";
 import { toast } from "@/utils/toast";
 
+import { ROUTES } from "@/routes";
 import { useAuth } from "../hooks/useAuth";
 import { useRedirect } from "../hooks/useRedirect";
 
@@ -41,13 +42,15 @@ function Login({ variant = "login" }: { variant?: "login" | "signup" }) {
 
     const onSubmit: SubmitHandler<Inputs> = useCallback(
         async (data) => {
-            await generateMagicLink(data.email, inviteLink);
-            navigate({
-                pathname: `/auth/magic-sign-in/`,
-                search: createSearchParams(
-                    !inviteLink ? { email: data.email } : { email: data.email, inviteLink },
-                ).toString(),
-            });
+            const generated = await generateMagicLink(data.email, inviteLink);
+            if (generated) {
+                navigate({
+                    pathname: ROUTES.MAGIC_SIGN_IN,
+                    search: createSearchParams(
+                        !inviteLink ? { email: data.email } : { email: data.email, inviteLink },
+                    ).toString(),
+                });
+            }
         },
         [generateMagicLink, inviteLink, navigate],
     );
