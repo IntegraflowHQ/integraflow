@@ -2,7 +2,7 @@ import { SurveyChannelTypeEnum, SurveyStatusEnum } from "@/generated/graphql";
 import useChannels from "@/modules/surveys/hooks/useChannels";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ChannelSettings } from "@/types";
-import { Announce, Button, Header } from "@/ui";
+import { Button, Header } from "@/ui";
 import { cn } from "@/utils";
 import { toast } from "@/utils/toast";
 import { LinkIcon } from "lucide-react";
@@ -34,27 +34,12 @@ export default function SharableLinks() {
             )}
         >
             <div className="flex items-center justify-between">
-                <div>
-                    <div className="">
-                        <div className="flex items-center gap-2">
-                            <h3 className="text-[24px] font-semibold leading-9 text-white">Sharable links </h3>
-                            {survey?.status !== SurveyStatusEnum.Active ? (
-                                <div className="self-start">
-                                    <Announce
-                                        variant="green"
-                                        text="This survey is Unpublished"
-                                        key={crypto.randomUUID()}
-                                    />
-                                </div>
-                            ) : null}
-                        </div>
-                        <Header
-                            title={""}
-                            font="medium"
-                            description="Get survey links and QR codes to distribute your survey."
-                        />
-                    </div>
-                </div>
+                <Header
+                    title={"Sharable links"}
+                    font="medium"
+                    description="Get survey links and QR codes to distribute your survey."
+                    announceText={survey?.status !== SurveyStatusEnum.Active ? "This survey is Unpublished" : ""}
+                />
                 {linkChannels.length ? (
                     <Button
                         icon={<LinkIcon size={20} strokeWidth={1} />}

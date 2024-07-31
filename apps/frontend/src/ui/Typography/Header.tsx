@@ -1,4 +1,5 @@
 import { cn } from "@/utils";
+import { Announce, AnnounceVariant } from "../Info/Announce";
 
 type Props = {
     title: string;
@@ -6,6 +7,8 @@ type Props = {
     className?: string;
     variant?: "1" | "2" | "3" | "4";
     font?: "medium" | "semibold";
+    announceVariant?: AnnounceVariant;
+    announceText?: string;
 };
 
 export const Header = ({
@@ -14,56 +17,44 @@ export const Header = ({
     variant = "1",
     font = "semibold",
     className,
+    announceVariant = "green",
+    announceText,
 }: Props) => {
     return (
         <header className={`flex flex-col gap-2 ${className}`}>
-            {variant === "1" && (
-                <h1
-                    className={cn(
-                        "text-[24px] leading-9 text-white",
-                        font === "medium" ? "font-medium" : "font-semibold",
-                    )}
-                >
-                    {title}
-                </h1>
-            )}
+            <div className="flex gap-2">
+                {variant === "1" && (
+                    <h1
+                        className={cn(
+                            "text-[24px] leading-9 text-white",
+                            font === "medium" ? "font-medium" : "font-semibold",
+                        )}
+                    >
+                        {title}
+                    </h1>
+                )}
 
-            {variant === "2" && (
-                <h2
-                    className={cn(
-                        "text-lg text-white",
-                        font === "medium" ? "font-medium" : "font-semibold",
-                    )}
-                >
-                    {title}
-                </h2>
-            )}
+                {variant === "2" && (
+                    <h2 className={cn("text-lg text-white", font === "medium" ? "font-medium" : "font-semibold")}>
+                        {title}
+                    </h2>
+                )}
 
-            {variant === "3" && (
-                <h3
-                    className={cn(
-                        "text-base text-white",
-                        font === "medium" ? "font-medium" : "font-semibold",
-                    )}
-                >
-                    {title}
-                </h3>
-            )}
+                {variant === "3" && (
+                    <h3 className={cn("text-base text-white", font === "medium" ? "font-medium" : "font-semibold")}>
+                        {title}
+                    </h3>
+                )}
 
-            {variant === "4" && (
-                <h3
-                    className={cn(
-                        "text-sm text-white",
-                        font === "medium" ? "font-medium" : "font-semibold",
-                    )}
-                >
-                    {title}
-                </h3>
-            )}
+                {variant === "4" && (
+                    <h3 className={cn("text-sm text-white", font === "medium" ? "font-medium" : "font-semibold")}>
+                        {title}
+                    </h3>
+                )}
+                {announceText && <Announce text={announceText} variant={announceVariant} />}
+            </div>
 
-            {description && (
-                <p className="text-sm text-intg-text">{description}</p>
-            )}
+            {description && <p className="text-sm text-intg-text">{description}</p>}
         </header>
     );
 };

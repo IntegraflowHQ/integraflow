@@ -1,7 +1,7 @@
 import { SurveyStatusEnum } from "@/generated/graphql";
 import IntegrateWeb from "@/modules/onboarding/components/integrate-sdk/IntegrateWeb";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { Announce, Header } from "@/ui";
+import { Header } from "@/ui";
 import * as Tabs from "@radix-ui/react-tabs";
 import Settings from "./settings";
 
@@ -40,16 +40,9 @@ export default function WebSDK() {
 
             {tabs.map((tab) => (
                 <Tabs.Content key={tab.id} value={tab.id}>
-                    <div className="flex items-center gap-2">
-                        <h3 className="text-[24px] font-semibold leading-9 text-white">Web SDK </h3>
-                        {survey?.status !== SurveyStatusEnum.Active ? (
-                            <div className="self-start">
-                                <Announce variant="green" text="This survey is Unpublished" key={crypto.randomUUID()} />
-                            </div>
-                        ) : null}
-                    </div>{" "}
                     <Header
-                        title=""
+                        title="Web SDK"
+                        announceText={survey?.status !== SurveyStatusEnum.Active ? "This survey is Unpublished" : ""}
                         description="Add Feedback Button or launch surveys based on events and actions on website, in-product and in web app."
                         className="max-w-[417px] pb-[25px]"
                     />
