@@ -1,10 +1,11 @@
 import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import useChannels from "@/modules/surveys/hooks/useChannels";
-import { ParsedChannel, LogicOperator } from "@/types";
+import { LogicOperator, ParsedChannel } from "@/types";
 import * as Accordion from "@radix-ui/react-accordion";
 import { ChevronRight } from "lucide-react";
 import Audience from "./Audience";
 import Behavior from "./Behavior";
+import Publish from "./Publish";
 import Triggers from "./Triggers";
 
 const sections = [
@@ -22,6 +23,11 @@ const sections = [
         id: crypto.randomUUID(),
         name: "Target Audience",
         content: Audience,
+    },
+    {
+        id: crypto.randomUUID(),
+        name: "Publish",
+        content: Publish,
     },
 ];
 
