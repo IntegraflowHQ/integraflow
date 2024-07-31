@@ -8,12 +8,14 @@ export type StudioState = {
     theme: Theme | null;
     previewMode: PreviewMode;
     previewViewport: ViewPortType;
+    showStudioOverlay: boolean;
 };
 
 export type StudioActions = {
     enableStudioMode: () => void;
     disableStudioMode: () => void;
     updateStudio: (data: Partial<StudioState>) => void;
+    setShowStudioOverlay: (value: boolean) => void;
 };
 
 const initialState: StudioState = {
@@ -23,6 +25,7 @@ const initialState: StudioState = {
     theme: null,
     previewMode: "sdk",
     previewViewport: "desktop",
+    showStudioOverlay: false,
 };
 
 export const useStudioStore = create<StudioState & StudioActions>()((set) => ({
@@ -33,4 +36,8 @@ export const useStudioStore = create<StudioState & StudioActions>()((set) => ({
         }),
     disableStudioMode: () => set({ studioModeIsActive: false }),
     updateStudio: (data) => set(data),
+    setShowStudioOverlay: (value: boolean) =>
+        set({
+            showStudioOverlay: value,
+        }),
 }));
