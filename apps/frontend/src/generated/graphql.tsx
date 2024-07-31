@@ -1710,7 +1710,7 @@ export type QueryEventPropertiesArgs = {
 export type QueryEventsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
-  filters?: InputMaybe<EventFilterInput>;
+  filter?: InputMaybe<EventFilterInput>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
 };
@@ -2673,7 +2673,7 @@ export type EventDefinitionsQuery = { __typename?: 'Query', eventDefinitions?: {
 
 export type EventsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
-  filters?: InputMaybe<EventFilterInput>;
+  filter?: InputMaybe<EventFilterInput>;
 }>;
 
 
@@ -3921,8 +3921,8 @@ export type EventDefinitionsQueryHookResult = ReturnType<typeof useEventDefiniti
 export type EventDefinitionsLazyQueryHookResult = ReturnType<typeof useEventDefinitionsLazyQuery>;
 export type EventDefinitionsQueryResult = Apollo.QueryResult<EventDefinitionsQuery, EventDefinitionsQueryVariables>;
 export const EventsDocument = gql`
-    query events($first: Int, $filters: EventFilterInput) {
-  events(first: $first, filters: $filters) {
+    query events($first: Int, $filter: EventFilterInput) {
+  events(first: $first, filter: $filter) {
     edges {
       node {
         id
@@ -3953,7 +3953,7 @@ export const EventsDocument = gql`
  * const { data, loading, error } = useEventsQuery({
  *   variables: {
  *      first: // value for 'first'
- *      filters: // value for 'filters'
+ *      filter: // value for 'filter'
  *   },
  * });
  */

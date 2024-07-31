@@ -1,4 +1,4 @@
-import { GlobalSpinner, Header } from "@/ui";
+import { Header } from "@/ui";
 import { Document } from "@/ui/icons";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -7,7 +7,7 @@ import CreateSurveyButton from "../partials/CreateSurveyButton";
 import { SurveyList } from "./components/SurveyList";
 
 export default function SurveyHome() {
-    const { surveyList, loading, createSurvey } = useSurvey();
+    const { surveyList, createSurvey } = useSurvey();
 
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -21,10 +21,6 @@ export default function SurveyHome() {
             setSearchParams({});
         }
     }, [searchParams]);
-
-    if (loading) {
-        return <GlobalSpinner />;
-    }
 
     return (
         <main className="flex h-full w-full flex-col">

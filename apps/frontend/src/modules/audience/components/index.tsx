@@ -16,7 +16,7 @@ export const AudienceIndex = () => {
     const [activeTab, setActiveTab] = useState(tabs[0].label);
 
     return (
-        <section className="px-[72px] pb-20 pt-20">
+        <section className="px-6 py-4">
             <Header title="Audience" description="The customers that you have identified in your product" />
             <Tabs.Root className="mt-4 h-full w-full space-y-4" value={activeTab} onValueChange={setActiveTab}>
                 <Tabs.List className="flex gap-4">
