@@ -25,6 +25,8 @@ export const useQuestion = () => {
     const { parsedQuestions: questions, surveyId, survey } = useSurvey();
     const { capture } = useAnalytics();
 
+    const highestOrderNumber = questions.length > 0 ? questions[questions.length - 1].orderNumber : 1;
+
     const {
         question: activeQuestion,
         switchQuestion,
@@ -48,7 +50,7 @@ export const useQuestion = () => {
                 input: {
                     ...input,
                     label: "",
-                    orderNumber: questions.length + 1,
+                    orderNumber: highestOrderNumber + 1,
                     surveyId: surveyId,
                     id,
                 },
@@ -64,7 +66,7 @@ export const useQuestion = () => {
                         label: "",
                         description: input.description ?? "",
                         maxPath: 0,
-                        orderNumber: questions.length + 1,
+                        orderNumber: highestOrderNumber + 1,
                         reference: id,
                         type: input.type!,
                         settings: input.settings ?? {},

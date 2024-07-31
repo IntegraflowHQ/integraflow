@@ -122,34 +122,44 @@ export const EventsIndex = () => {
                     }}
                 >
                     <DialogTrigger />
-                    <DialogContent title="Event properties" className="min-h-[15rem] min-w-[25rem] space-y-4 p-6">
-                        {eventLoading || loadingProperties ? (
-                            <div className="flex h-[15rem] items-center justify-center">
-                                <Spinner removeLogo size="md" />
-                            </div>
-                        ) : (
-                            <div className="grid min-w-80  gap-x-20 gap-y-2  -tracking-[0.41px]">
-                                {propertiesWithDefinitions?.map((item) => {
-                                    let propertyValue = event ? event[item.property] : "N/A";
+                    <DialogContent className="min-h-[15rem] min-w-[25rem] space-y-4 p-6">
+                        <div className="mt-4 space-y-6 rounded bg-intg-bg-15 px-6 py-[14px]">
+                            <Header variant="3" title="Event properties" />
 
-                                    return (
-                                        <Attribute
-                                            name={item.property}
-                                            value={
-                                                isoTimestampRegex.test(propertyValue as string)
-                                                    ? format(
-                                                          new Date((propertyValue as string) ?? ""),
-                                                          "MMM dd, yyyy, HH:mm",
-                                                      )
-                                                    : propertyValue
-                                            }
-                                            type={item.propertyType}
-                                            key={item.property}
-                                        />
-                                    );
-                                })}
-                            </div>
-                        )}
+                            {eventLoading || loadingProperties ? (
+                                <div className="flex h-[15rem] items-center justify-center">
+                                    <Spinner removeLogo size="md" />
+                                </div>
+                            ) : (
+                                <div className="grid min-w-80  gap-x-20 gap-y-2  -tracking-[0.41px]">
+                                    {propertiesWithDefinitions && propertiesWithDefinitions?.length < 1 ? (
+                                        <div className="flex h-[10rem] items-center justify-center">
+                                            <p className="-mt-8">No properties for this event</p>
+                                        </div>
+                                    ) : (
+                                        propertiesWithDefinitions?.map((item) => {
+                                            let propertyValue = event ? event[item.property] : "N/A";
+
+                                            return (
+                                                <Attribute
+                                                    name={item.property}
+                                                    value={
+                                                        isoTimestampRegex.test(propertyValue as string)
+                                                            ? format(
+                                                                  new Date((propertyValue as string) ?? ""),
+                                                                  "MMM dd, yyyy, HH:mm",
+                                                              )
+                                                            : propertyValue
+                                                    }
+                                                    type={item.propertyType}
+                                                    key={item.property}
+                                                />
+                                            );
+                                        })
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </DialogContent>
                 </Dialog>
 
