@@ -1,14 +1,17 @@
-import { SurveyChannelTypeEnum } from "@/generated/graphql";
+import { SurveyChannelTypeEnum, SurveyStatusEnum } from "@/generated/graphql";
 import useChannels from "@/modules/surveys/hooks/useChannels";
+import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ChannelSettings } from "@/types";
 import { Button, Header } from "@/ui";
 import { cn } from "@/utils";
+import { toast } from "@/utils/toast";
 import { LinkIcon } from "lucide-react";
 import Link from "./Link";
 
 export default function SharableLinks() {
     const { createChannel, getChannels } = useChannels();
     const linkChannels = getChannels(SurveyChannelTypeEnum.Link);
+    const { survey } = useSurvey();
 
     const handleCreate = async () => {
         await createChannel({
@@ -32,9 +35,10 @@ export default function SharableLinks() {
         >
             <div className="flex items-center justify-between">
                 <Header
-                    title="Sharable links"
+                    title={"Sharable links"}
                     font="medium"
                     description="Get survey links and QR codes to distribute your survey."
+                    announceText={survey?.status !== SurveyStatusEnum.Active ? "This survey is Unpublished" : ""}
                 />
                 {linkChannels.length ? (
                     <Button
@@ -68,7 +72,10 @@ export default function SharableLinks() {
                         icon={<LinkIcon size={20} strokeWidth={1} />}
                         text="Add link"
                         className="w-max px-[24px] py-[12px] text-base font-normal"
-                        onClick={handleCreate}
+                        onClick={() => {
+                            handleCreate();
+                            toast.custom("You are yet to Publish your Survey");
+                        }}
                     />
                 </div>
             )}
