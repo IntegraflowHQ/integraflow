@@ -2,7 +2,8 @@ import { Survey, SurveyStatusEnum } from "@/generated/graphql";
 import { useOnboarding } from "@/modules/onboarding/hooks/useOnboarding";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ROUTES } from "@/routes";
-import { Dialog, DialogContent, DialogTrigger, Pagination } from "@/ui";
+import { Dialog, DialogContent, DialogTrigger, Pagination, Spinner } from "@/ui";
+import { cn } from "@/utils";
 import * as Popover from "@radix-ui/react-popover";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
@@ -25,7 +26,8 @@ export const SurveyList = () => {
     const navigate = useNavigate();
     const { orgSlug, projectSlug } = useParams();
 
-    const { createSurvey, updateSurvey, deleteSurvey, loading, getMoreSurveys, surveyList } = useSurvey();
+    const { createSurvey, updateSurvey, deleteSurvey, loading, getMoreSurveys, surveyList, isFetchingMore } =
+        useSurvey();
 
     const [selectedSurveyName, setSelectedSurveyName] = React.useState<string>("");
 
@@ -62,9 +64,14 @@ export const SurveyList = () => {
                 <CreateSurveyButton onClick={() => createSurvey()} />
             </div>
 
-            <div className="mt-8 flex flex-col pb-10">
-                <Table className="scrollbar-hide table-auto rounded-t-md border border-intg-bg-4">
-                    <TableHead className="border-b border-intg-bg-4 bg-intg-bg-8 font-light text-intg-text hover:cursor-pointer">
+            <div className=" mt-8 flex flex-col pb-10">
+                <Table
+                    className={cn(
+                        loading ? "opacity-70" : "",
+                        "scrollbar-hide relative table-auto rounded-t-md border border-intg-bg-4",
+                    )}
+                >
+                    <TableHead className="border-b border-intg-bg-4 bg-intg-bg-8 font-light text-intg-text">
                         <TableRow>
                             {headers.map(({ title, id }) => {
                                 return (
@@ -76,15 +83,23 @@ export const SurveyList = () => {
                         </TableRow>
                     </TableHead>
 
-                    <TableBody>
+                    <TableBody className="relative">
+                        {loading || isFetchingMore ? (
+                            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                                <Spinner size="md" removeLogo className="h-3 w-3" />
+                            </div>
+                        ) : null}
                         {surveyList?.edges?.map((survey) => {
                             const surveyStats = JSON.parse(survey?.stats ?? '{"response_count": "0"}');
                             return (
                                 <TableRow
                                     key={survey.id}
-                                    className="border-intg-bg-4 text-center font-light transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-8"
+                                    className="border-intg-bg-4 text-center font-light transition-all duration-300 ease-in hover:bg-intg-bg-8"
                                 >
-                                    <TableCell onClick={() => handleGetSurvey(survey?.slug ?? "")}>
+                                    <TableCell
+                                        className="cursor-pointer"
+                                        onClick={() => handleGetSurvey(survey?.slug ?? "")}
+                                    >
                                         {survey.name}
                                     </TableCell>
                                     <TableCell>

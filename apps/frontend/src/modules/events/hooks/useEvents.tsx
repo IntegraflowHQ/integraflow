@@ -10,7 +10,7 @@ import { useCallback } from "react";
 export const useEvents = () => {
     let eventDefinitionsOnPage = 10;
 
-    const { data: eventsResponse } = useEventsQuery({ variables: { first: 1 } });
+    const { data: eventsResponse } = useEventsQuery({ variables: { first: 1 }, fetchPolicy: "cache-and-network" });
     const {
         data: eventDefinitionsResponse,
         loading: loadingEventDefinitions,
