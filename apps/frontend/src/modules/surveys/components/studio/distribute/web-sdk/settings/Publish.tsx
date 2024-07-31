@@ -40,7 +40,7 @@ export default function Publish() {
                     text={survey?.status === SurveyStatusEnum.Active ? "Pause" : "Publish"}
                     disabled={parsedQuestions.length === 0}
                     onClick={() => {
-                        if (survey?.status === SurveyStatusEnum.Paused) {
+                        if (survey?.status === SurveyStatusEnum.Paused || survey?.status === SurveyStatusEnum.Draft) {
                             publishSurvey();
                         } else if (survey?.status === SurveyStatusEnum.Active) {
                             pauseSurvey();
