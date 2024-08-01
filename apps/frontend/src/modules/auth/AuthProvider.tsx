@@ -5,6 +5,7 @@ import {
     AuthOrganization,
     Organization,
     Project,
+    RoleLevel,
     User,
     useEmailTokenUserAuthMutation,
     useEmailUserAuthChallengeMutation,
@@ -60,6 +61,7 @@ export type AuthContextValue = {
     user: DeepPartial<User>;
     organizations: (DeepPartial<Organization> | undefined)[];
     workspace: DeepPartial<Organization> | null;
+    roleLevel?: RoleLevel;
     projects: (DeepPartial<Project> | undefined)[];
     project: DeepPartial<Project> | null;
     generateMagicLink: (email: string, inviteLink?: string) => Promise<boolean>;
@@ -453,6 +455,11 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
         }
     }, [workspace, project, projectSlug, orgSlug]);
 
+    const roleLevel = useMemo(() => {
+        const membership = workspace?.members?.edges?.find((edge) => edge?.node?.email === user.email);
+        return membership?.node?.role;
+    }, [workspace, user]);
+
     useEffect(() => {
         if (apollo) {
             apollo.updateAuthParams({
@@ -516,6 +523,7 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
             user,
             organizations,
             workspace,
+            roleLevel,
             projects,
             project,
             generateMagicLink: handleGenerateMagicLink,
@@ -540,6 +548,7 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
             user,
             organizations,
             workspace,
+            roleLevel,
             projects,
             handleGenerateMagicLink,
             handleAuthenticateWithMagicLink,
