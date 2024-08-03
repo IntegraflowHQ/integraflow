@@ -102,17 +102,32 @@ export const SurveyList = () => {
                                     >
                                         {survey.name}
                                     </TableCell>
-                                    <TableCell>
-                                        {!survey?.creator?.firstName
-                                            ? "Unknown User"
-                                            : `${survey?.creator.firstName} ${survey?.creator.lastName}`}
-                                        <br />
-                                        <span className="text-[12px] text-intg-text-4">{survey?.creator?.email}</span>
+                                    <TableCell
+                                        className="cursor-pointer"
+                                        onClick={() => handleGetSurvey(survey?.slug ?? "")}
+                                    >
+                                        {!survey.creator.firstName ? (
+                                            <span>{survey?.creator?.email}</span>
+                                        ) : (
+                                            <>
+                                                {`${survey?.creator.firstName} ${survey?.creator.lastName}`}
+                                                <br />
+                                                <span className="text-[12px] text-intg-text-4">
+                                                    {survey?.creator?.email}
+                                                </span>
+                                            </>
+                                        )}
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell
+                                        className="cursor-pointer"
+                                        onClick={() => handleGetSurvey(survey?.slug ?? "")}
+                                    >
                                         <StatusBadge survey={survey} />
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell
+                                        className="cursor-pointer"
+                                        onClick={() => handleGetSurvey(survey?.slug ?? "")}
+                                    >
                                         <span className="first-letter:capitalize">
                                             {formatDistanceToNow(parseISO(survey.createdAt ?? ""), {
                                                 addSuffix: true,
@@ -123,7 +138,12 @@ export const SurveyList = () => {
                                             {format(new Date(survey.createdAt ?? ""), "MMM dd, yyyy")}
                                         </span>
                                     </TableCell>
-                                    <TableCell className="px-12">{surveyStats.response_count}</TableCell>
+                                    <TableCell
+                                        className="cursor-pointer px-12"
+                                        onClick={() => handleGetSurvey(survey?.slug ?? "")}
+                                    >
+                                        {surveyStats.response_count}
+                                    </TableCell>
                                     <TableCell className="text-center">
                                         <Popover.Root>
                                             <Popover.Trigger asChild>
