@@ -38,6 +38,7 @@ export default function Publish() {
                     size="sm"
                     className="!w-[87px]"
                     text={survey?.status === SurveyStatusEnum.Active ? "Pause" : "Publish"}
+                    ping={survey?.status === SurveyStatusEnum.Paused || survey?.status === SurveyStatusEnum.Draft}
                     disabled={parsedQuestions.length === 0}
                     onClick={() => {
                         if (survey?.status === SurveyStatusEnum.Paused || survey?.status === SurveyStatusEnum.Draft) {
