@@ -2,7 +2,7 @@ import { useProject } from "@/modules/projects/hooks/useProject";
 import useChannels from "@/modules/surveys/hooks/useChannels";
 import { useStudioStore } from "@/modules/surveys/states/studio";
 import { EventFilter, FilterOperator, LogicOperator, TriggerConditionInput, WebChannelAccordionProps } from "@/types";
-import { Info } from "@/ui/icons";
+import { Header } from "@/ui";
 import { cn } from "@/utils";
 import { useState } from "react";
 import FilterDetails from "./filters/FilterDetails";
@@ -63,10 +63,7 @@ export default function Audience({ channel }: WebChannelAccordionProps) {
     return (
         <div className="px-4 pb-6 text-intg-text">
             <div className="flex flex-col gap-[26px] rounded-lg bg-intg-bg-9 p-6">
-                <header className="inline-flex items-center gap-2">
-                    <h3 className="text-base font-medium text-white">Audience</h3>
-                    <Info />
-                </header>
+                <Header variant="3" font="medium" title="Audience" />
 
                 <div className="inline-flex flex-wrap gap-1 [&>*]:mb-4">
                     <Filters

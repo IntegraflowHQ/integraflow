@@ -2,9 +2,9 @@ import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import { useProject } from "@/modules/projects/hooks/useProject";
 import useChannels from "@/modules/surveys/hooks/useChannels";
 import { EventFilter, LogicOperator, TriggerCondition, WebChannelAccordionProps } from "@/types";
-import { NumberInput, TextInput } from "@/ui";
+import { Header, NumberInput, TextInput } from "@/ui";
 import { Popover, PopoverContent, PopoverTrigger } from "@/ui/Popover";
-import { Info, Search } from "@/ui/icons";
+import { Search } from "@/ui/icons";
 import { Zap } from "lucide-react";
 import { useState } from "react";
 import Event from "./Event";
@@ -138,10 +138,7 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
     return (
         <div className="px-4 pb-6 text-intg-text">
             <div className="flex flex-col gap-[26px] rounded-lg bg-intg-bg-9 p-6">
-                <header className="flex items-center gap-2">
-                    <h3 className="text-base font-medium text-white">When to send</h3>
-                    <Info />
-                </header>
+                <Header variant="3" font="medium" title="When to send" />
 
                 <div className="space-y-2">
                     {channel?.triggers?.conditions?.map((condition: TriggerCondition, index: number) => (
