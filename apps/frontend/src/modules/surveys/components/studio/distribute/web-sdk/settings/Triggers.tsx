@@ -136,88 +136,86 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
     };
 
     return (
-        <div className="p-4">
-            <div className="rounded-lg bg-intg-bg-9 p-6">
+        <div className="px-4 pb-6 text-intg-text">
+            <div className="flex flex-col gap-[26px] rounded-lg bg-intg-bg-9 p-6">
+                <header className="flex items-center gap-2">
+                    <h3 className="text-base font-medium text-white">When to send</h3>
+                    <Info />
+                </header>
+
                 <div className="space-y-2">
-                    <header className="flex items-center gap-2">
-                        <h3 className="text-base font-medium text-white">When to send</h3>
-                        <Info />
-                    </header>
-
-                    <div className="space-y-2">
-                        {channel?.triggers?.conditions?.map((condition: TriggerCondition, index: number) => (
-                            <Event
-                                key={index}
-                                condition={condition}
-                                properties={getProperties(condition.event)}
-                                onRemove={() => handleRemoveEvent(condition.event)}
-                                onAddFilter={(filter) => handleAddFilter(condition.event, filter)}
-                                onOperatorChange={(operator) => handleOperatorChange(condition.event, operator)}
-                                onRemoveFilter={(index) => handleRemoveFilter(condition.event, index)}
-                            />
-                        ))}
-
-                        <Popover
-                            open={isAddingEvent}
-                            onOpenChange={(value) => {
-                                setIsAddingEvent(value);
-                                setEventQ("");
-                            }}
-                        >
-                            <PopoverTrigger asChild>
-                                <button className="text-intg-text underline">Add event rule</button>
-                            </PopoverTrigger>
-
-                            <PopoverContent className="flex flex-col gap-2 rounded-lg border border-intg-bg-10 bg-intg-bg-9 px-2 py-3 text-intg-text">
-                                <TextInput
-                                    placeholder="Search events..."
-                                    value={eventQ}
-                                    onChange={(e) => setEventQ(e.target.value)}
-                                    icon={Search}
-                                />
-                                <div className="flex max-h-[250px] w-[268px] flex-col overflow-y-auto">
-                                    {filteredOptions.map((option, index) => {
-                                        if (!option) return null;
-
-                                        return (
-                                            <button
-                                                key={index}
-                                                className="flex gap-2 rounded-lg border-2 border-intg-bg-9 p-2 text-intg-text hover:border-[#28213B] "
-                                                onClick={() => {
-                                                    handleAddEvent(option.name);
-                                                }}
-                                            >
-                                                <EventIcon />
-                                                <span>{option.name}</span>
-                                            </button>
-                                        );
-                                    })}
-
-                                    {filteredOptions.length === 0 ? (
-                                        <div className="flex h-full flex-col items-center justify-center">
-                                            <EventIcon />
-                                            <span className="text-intg-text">No events found</span>
-                                        </div>
-                                    ) : null}
-                                </div>
-                            </PopoverContent>
-                        </Popover>
-
-                        <NumberInput
-                            label="Delay"
-                            defaultValue={channel.triggers.delay}
-                            onChange={(e) => {
-                                updateChannel(channel, {
-                                    triggers: JSON.stringify({
-                                        ...channel.triggers,
-                                        delay: e.target.value,
-                                    }),
-                                });
-                            }}
-                            className="max-w-72"
+                    {channel?.triggers?.conditions?.map((condition: TriggerCondition, index: number) => (
+                        <Event
+                            key={index}
+                            condition={condition}
+                            properties={getProperties(condition.event)}
+                            onRemove={() => handleRemoveEvent(condition.event)}
+                            onAddFilter={(filter) => handleAddFilter(condition.event, filter)}
+                            onOperatorChange={(operator) => handleOperatorChange(condition.event, operator)}
+                            onRemoveFilter={(index) => handleRemoveFilter(condition.event, index)}
                         />
-                    </div>
+                    ))}
+
+                    <Popover
+                        open={isAddingEvent}
+                        onOpenChange={(value) => {
+                            setIsAddingEvent(value);
+                            setEventQ("");
+                        }}
+                    >
+                        <PopoverTrigger asChild>
+                            <button className="text-intg-text underline">Add event rule</button>
+                        </PopoverTrigger>
+
+                        <PopoverContent className="flex flex-col gap-2 rounded-lg border border-intg-bg-10 bg-intg-bg-9 px-2 py-3 text-intg-text">
+                            <TextInput
+                                placeholder="Search events..."
+                                value={eventQ}
+                                onChange={(e) => setEventQ(e.target.value)}
+                                icon={Search}
+                            />
+                            <div className="flex max-h-[250px] w-[268px] flex-col overflow-y-auto">
+                                {filteredOptions.map((option, index) => {
+                                    if (!option) return null;
+
+                                    return (
+                                        <button
+                                            key={index}
+                                            className="flex gap-2 rounded-lg border-2 border-intg-bg-9 p-2 text-intg-text hover:border-[#28213B] "
+                                            onClick={() => {
+                                                handleAddEvent(option.name);
+                                            }}
+                                        >
+                                            <EventIcon />
+                                            <span>{option.name}</span>
+                                        </button>
+                                    );
+                                })}
+
+                                {filteredOptions.length === 0 ? (
+                                    <div className="flex h-full flex-col items-center justify-center">
+                                        <EventIcon />
+                                        <span className="text-intg-text">No events found</span>
+                                    </div>
+                                ) : null}
+                            </div>
+                        </PopoverContent>
+                    </Popover>
                 </div>
+
+                <NumberInput
+                    label="Delay"
+                    defaultValue={channel.triggers.delay}
+                    onChange={(e) => {
+                        updateChannel(channel, {
+                            triggers: JSON.stringify({
+                                ...channel.triggers,
+                                delay: e.target.value,
+                            }),
+                        });
+                    }}
+                    className="max-w-72"
+                />
             </div>
         </div>
     );

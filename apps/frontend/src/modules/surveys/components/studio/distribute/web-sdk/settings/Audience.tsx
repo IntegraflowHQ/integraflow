@@ -1,8 +1,9 @@
 import { useProject } from "@/modules/projects/hooks/useProject";
 import useChannels from "@/modules/surveys/hooks/useChannels";
 import { useStudioStore } from "@/modules/surveys/states/studio";
-import { EventFilter, TriggerConditionInput, WebChannelAccordionProps, FilterOperator, LogicOperator } from "@/types";
+import { EventFilter, FilterOperator, LogicOperator, TriggerConditionInput, WebChannelAccordionProps } from "@/types";
 import { Info } from "@/ui/icons";
+import { cn } from "@/utils";
 import { useState } from "react";
 import FilterDetails from "./filters/FilterDetails";
 import FilterOperators from "./filters/FilterOperators";
@@ -113,7 +114,7 @@ export default function Audience({ channel }: WebChannelAccordionProps) {
                         }}
                     >
                         <button
-                            className="p-2 underline"
+                            className={cn("py-2 underline", channel.conditions.filters.length ? "px-2" : "")}
                             onClick={() => updateStudio({ addingAudienceProperty: true })}
                         >
                             add audience rule
