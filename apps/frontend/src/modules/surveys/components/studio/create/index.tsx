@@ -50,7 +50,7 @@ const viewPortOptions: { icon: LucideIcon; value: ViewPortType }[] = [
 ];
 
 export default function Create() {
-    const { previewMode, previewViewport, updateStudio } = useStudioStore();
+    const { previewMode, previewViewport, updateStudio, showStudioOverlay, setShowStudioOverlay } = useStudioStore();
 
     return (
         <Tabs.Root className="flex h-screen pt-[84px]" defaultValue={tabs[0].label}>
@@ -114,7 +114,6 @@ export default function Create() {
                             </ToggleGroup.Item>
                         ))}
                     </ToggleGroup.Root>
-
                     <div
                         className={cn(
                             previewViewport === "mobile"
@@ -124,7 +123,6 @@ export default function Create() {
                     >
                         <Preview mode={previewMode} viewPort={previewViewport} />
                     </div>
-
                     <ToggleGroup.Root
                         className="absolute bottom-5 left-1/2 flex -translate-x-1/2 rounded-[4px] bg-intg-bg-14 p-0.5"
                         type="single"
@@ -147,6 +145,13 @@ export default function Create() {
                             </ToggleGroup.Item>
                         ))}
                     </ToggleGroup.Root>
+                    //overlay
+                    {showStudioOverlay && (
+                        <div
+                            className="absolute h-full w-full bg-transparent"
+                            onClick={() => setShowStudioOverlay(!showStudioOverlay)}
+                        ></div>
+                    )}
                 </div>
             </div>
         </Tabs.Root>
