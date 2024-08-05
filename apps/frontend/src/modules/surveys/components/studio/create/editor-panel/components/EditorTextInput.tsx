@@ -125,6 +125,22 @@ export const EditorTextInput = ({
         };
     }, []);
 
+    const calculateCharacterCount = (showMention: boolean) => {
+        if (!defaultValue) return 0;
+
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = defaultValue;
+
+        const mentions = tempDiv.querySelectorAll(".mention");
+
+        mentions.forEach((mention) => mention.remove());
+
+        const textWithoutMentions = tempDiv.textContent || "";
+        const textLength = textWithoutMentions.length;
+
+        return showMention ? textLength - 1 : textLength;
+    };
+
     return (
         <div className={cn(`${className} ${label ? "space-y-2" : ""} relative w-full`)}>
             <style>
@@ -132,7 +148,14 @@ export const EditorTextInput = ({
                     .mention{
                         background-color: #392D72;
                         border-radius: 2px;
-                        padding:4px
+                        padding: 4px;
+                    }
+                    .mention span {
+                        display: inline-block;
+                        max-width: 100px;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        overflow: clip
                     }
                     .ql-mention-list-container {
                         background-color:#181325;
@@ -146,6 +169,7 @@ export const EditorTextInput = ({
                         width: 200px;
                         z-index:1000;
                         font-family: inherit;
+                        color: #AFAAC7
                     }
                     .ql-mention-list-container-bottom{
                         background-color: #181325;
@@ -160,6 +184,9 @@ export const EditorTextInput = ({
                         font-size: 14px;
                         padding:8px;
                         width: 100%;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
                     }
                     .ql-mention-list-item:hover {
                         background-color:#272138;
@@ -249,10 +276,7 @@ export const EditorTextInput = ({
             )}
             {showCharacterCount && (
                 <div className="absolute bottom-0 right-0 translate-y-1/2 rounded bg-[#2B2045] p-1 text-xs text-intg-text">
-                    {showMention
-                        ? stripHtmlTags(defaultValue ?? "")?.length - 1
-                        : stripHtmlTags(defaultValue ?? "")?.length}
-                    /{maxCharacterCount}
+                    {calculateCharacterCount(showMention)} / {maxCharacterCount}
                 </div>
             )}
         </div>

@@ -33,7 +33,7 @@ export const QuestionPanel = ({ questionIndex }: Props) => {
                     <Tabs.Trigger
                         key="edit"
                         value="edit"
-                        className="p-2  data-[state=active]:border-b-[2px] data-[state=active]:border-b-intg-bg-4 data-[state=active]:text-white "
+                        className="p-2 data-[state=active]:border-b-[2px] data-[state=active]:border-b-intg-bg-4 data-[state=active]:text-white "
                     >
                         Edit
                     </Tabs.Trigger>

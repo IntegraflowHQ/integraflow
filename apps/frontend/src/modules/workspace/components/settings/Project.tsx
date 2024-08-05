@@ -1,6 +1,6 @@
 import { useProject } from "@/modules/projects/hooks/useProject";
 import { Button, TextInput } from "@/ui";
-import { addEllipsis, copyToClipboard } from "@/utils";
+import { copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
 import { CopyIcon, RefreshCcwIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -71,8 +71,8 @@ export const Project = () => {
                 <div className="flex w-full items-end gap-2">
                     <div className="flex-1">
                         <TextInput
-                            label="APP Key"
-                            value={addEllipsis(project?.apiToken as string, 40)}
+                            label="Project Key"
+                            value={project?.apiToken}
                             disabled={true}
                             rightIcon={
                                 <Button

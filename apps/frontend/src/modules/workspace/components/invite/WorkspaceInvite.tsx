@@ -7,7 +7,7 @@ import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
 import { Button, Dialog, DialogContent, TextInput } from "@/ui";
 import { CopyIcon } from "@/ui/icons";
-import { addEllipsis, copyToClipboard } from "@/utils";
+import { copyToClipboard } from "@/utils";
 import { toast } from "@/utils/toast";
 import { DeepPartial } from "@apollo/client/utilities";
 
@@ -177,7 +177,7 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
                             <div className="flex-1">
                                 <TextInput
                                     placeholder=""
-                                    value={addEllipsis(inviteLink, 40)}
+                                    value={inviteLink}
                                     disabled={true}
                                     rightIcon={
                                         <Button

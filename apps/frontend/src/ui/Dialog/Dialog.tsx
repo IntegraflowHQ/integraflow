@@ -25,7 +25,7 @@ export const DialogContent = forwardRef<HTMLDivElement, Props>(
                 {...props}
                 ref={forwardedRef}
                 className={cn(
-                    "fixed left-1/2 top-1/2 h-fit max-h-[calc(100%-10rem)] w-fit -translate-x-1/2 -translate-y-1/2  overflow-y-auto rounded-2xl bg-intg-bg-8 p-12 text-white ",
+                    "fixed left-1/2 top-1/2 flex max-h-[calc(100%-10rem)] w-fit -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-intg-bg-8 p-12 text-white",
                     className ?? "",
                 )}
             >
@@ -57,7 +57,7 @@ export const DialogContent = forwardRef<HTMLDivElement, Props>(
                         </div>
                     </>
                 )}
-                {children}
+                <div className="flex-1 overflow-auto">{children}</div>
             </DialogPrimitive.Content>
         </DialogPrimitive.Portal>
     ),
