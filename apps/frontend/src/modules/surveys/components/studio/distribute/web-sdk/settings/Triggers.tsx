@@ -1,4 +1,3 @@
-import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import { useProject } from "@/modules/projects/hooks/useProject";
 import useChannels from "@/modules/surveys/hooks/useChannels";
 import { EventFilter, LogicOperator, TriggerCondition, WebChannelAccordionProps } from "@/types";
@@ -27,8 +26,9 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
     const handleAddEvent = (event: string) => {
         if (!channel.id) {
             createChannel({
+                ...channel,
                 id: crypto.randomUUID(),
-                triggers: JSON.stringify({
+                triggers: {
                     conditions: [
                         {
                             event,
@@ -37,8 +37,7 @@ export default function Triggers({ channel }: WebChannelAccordionProps) {
                         },
                     ],
                     delay: 0,
-                }),
-                type: SurveyChannelTypeEnum.WebSdk,
+                },
             });
         } else {
             const conditions = [

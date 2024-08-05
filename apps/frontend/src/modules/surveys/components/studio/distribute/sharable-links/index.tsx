@@ -1,6 +1,5 @@
 import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import useChannels from "@/modules/surveys/hooks/useChannels";
-import { ChannelSettings } from "@/types";
 import { Button, Header } from "@/ui";
 import { cn } from "@/utils";
 import { toast } from "@/utils/toast";
@@ -15,12 +14,12 @@ export default function SharableLinks() {
         await createChannel({
             type: SurveyChannelTypeEnum.Link,
             id: crypto.randomUUID(),
-            settings: JSON.stringify({
+            settings: {
                 name: `Link ${linkChannels.length + 1}`,
                 recurring: false,
                 startDate: "",
                 endDate: "",
-            } as ChannelSettings),
+            },
         });
     };
 

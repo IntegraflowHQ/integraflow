@@ -12,7 +12,7 @@ import PropertySelect from "./filters/PropertySelect";
 
 export default function Audience({ channel }: WebChannelAccordionProps) {
     const { addingAudienceProperty, updateStudio } = useStudioStore((state) => state);
-    const { updateChannel } = useChannels();
+    const { createChannel, updateChannel } = useChannels();
     const { personProperties } = useProject();
     const [filterInput, setFilterInput] = useState<EventFilter | null>(null);
     const [conditionInput, setConditionInput] = useState<TriggerConditionInput | undefined>();
@@ -28,20 +28,18 @@ export default function Audience({ channel }: WebChannelAccordionProps) {
     };
 
     const handleAddFilter = (filter: EventFilter) => {
-        if (!channel.id) return;
-        if (!channel.conditions || !channel.conditions.filters || !channel.conditions.operator) {
-            const conditions = {
-                operator: LogicOperator.AND,
-                filters: [{ ...filter, attribute: filter.property }],
-            };
-            updateChannel(channel, {
-                conditions: JSON.stringify(conditions),
+        const conditions = {
+            ...channel.conditions,
+            filters: [...channel.conditions.filters, { ...filter, attribute: filter.property }],
+        };
+
+        if (!channel.id) {
+            createChannel({
+                ...channel,
+                id: crypto.randomUUID(),
+                conditions: conditions,
             });
         } else {
-            const conditions = {
-                ...channel.conditions,
-                filters: [...channel?.conditions?.filters, { ...filter, attribute: filter.property }],
-            };
             updateChannel(channel, {
                 conditions: JSON.stringify(conditions),
             });

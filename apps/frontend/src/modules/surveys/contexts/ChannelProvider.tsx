@@ -20,16 +20,19 @@ function useChannelContextFactory() {
     const [updateChannelMutation] = useSurveyChannelUpdateMutation();
     const [deleteChannelMutation] = useSurveyChannelDeleteMutation();
 
-    const createChannel = async (input: Omit<SurveyChannelCreateInput, "surveyId">) => {
+    const createChannel = async (input: Partial<ParsedChannel>) => {
         if (!survey) return;
+
+        const parsedInput = toSurveyChannel(input as ParsedChannel);
         const data: SurveyChannelCreateInput = {
-            type: input.type ?? SurveyChannelTypeEnum.WebSdk,
-            id: input.id ?? crypto.randomUUID(),
-            triggers: input.triggers ?? "{}",
-            conditions: input.conditions ?? "{}",
-            settings: input.settings ?? "{}",
+            type: parsedInput.type ?? SurveyChannelTypeEnum.WebSdk,
+            id: parsedInput.id ?? crypto.randomUUID(),
+            triggers: parsedInput.triggers ?? "{}",
+            conditions: parsedInput.conditions ?? "{}",
+            settings: parsedInput.settings ?? "{}",
             surveyId: survey.id,
         };
+
         await createChannelMutation({
             variables: {
                 input: data,
