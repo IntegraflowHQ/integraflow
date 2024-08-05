@@ -225,13 +225,17 @@ export const changeableOperator = (type: SurveyQuestionTypeEnum) => {
 };
 
 export const destinationOptions = (questions: ParsedQuestion[], openQuestion: ParsedQuestion) => {
+    const getCurrentIndex = (question: ParsedQuestion) => {
+        return questions.findIndex((q) => q.id === question?.id) + 1;
+    };
+
     return [
-        ...questions.slice(questions.findIndex((q) => q.id === openQuestion?.id) + 1).map((q) => ({
+        ...questions.slice(getCurrentIndex(openQuestion)).map((q) => ({
             value: q.id,
             label:
                 stripHtmlTags(q.label) && stripHtmlTags(q.label) !== emptyLabel
-                    ? `${q.orderNumber} - ${addEllipsis(stripHtmlTags(q.label), 40)} `
-                    : `${q.orderNumber} - Empty Question`,
+                    ? `${getCurrentIndex(q)} - ${addEllipsis(stripHtmlTags(q.label), 40)} `
+                    : `${getCurrentIndex(q)} - Empty Question`,
         })),
         {
             value: "-1",
@@ -244,7 +248,7 @@ export const logicValuesOptions = (question: ParsedQuestion) => {
     return [
         ...(question?.options?.map((option: QuestionOption, index: number) => ({
             value: option?.id,
-            label: option?.label ?? `Empty Option ${index + 1}`,
+            label: option?.label ? option.label : `${index + 1}- Empty Option`,
         })) ?? []),
     ];
 };

@@ -25,7 +25,7 @@ export const People = () => {
                 }}
             >
                 <DialogContent className="min-h-[15rem] min-w-[25rem] max-w-xl p-6">
-                    <div className="mt-4 space-y-6 rounded bg-intg-bg-15 px-6 py-[14px]">
+                    <div className="space-y-6 rounded px-6 py-[14px]">
                         <Header variant="3" title="User details" />
                         {Object.entries(parsedPersonProperties ?? {}).length < 1 ? (
                             <div className="flex h-[10rem] items-center justify-center">

@@ -122,8 +122,8 @@ export const EventsIndex = () => {
                     }}
                 >
                     <DialogTrigger />
-                    <DialogContent className="min-h-[15rem] min-w-[25rem] space-y-4 p-6">
-                        <div className="mt-4 space-y-6 rounded bg-intg-bg-15 px-6 py-[14px]">
+                    <DialogContent className="min-h-[15rem] min-w-[25rem] p-6">
+                        <div className="space-y-6 rounded px-6 py-[14px]">
                             <Header variant="3" title="Event properties" />
 
                             {eventLoading || loadingProperties ? (

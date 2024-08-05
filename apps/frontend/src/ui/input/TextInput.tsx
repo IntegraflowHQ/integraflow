@@ -38,7 +38,8 @@ export const TextInput = forwardRef<HTMLInputElement, InputFieldProps>(
                         className={cn(
                             sizeClass,
                             disabledClass,
-                            "pl-1 text-sm font-medium tracking-[-0.408px] placeholder:text-intg-text-3 focus:border-intg-text-3 focus:outline-none",
+                            rightIcon ? "pr-5" : "",
+                            "pl-1 text-sm font-medium tracking-[-0.408px] placeholder:text-intg-text-3 focus:border-intg-text-3 focus:outline-none [&>input]:truncate",
                         )}
                         icon={prefix ? Prefix : icon}
                     />

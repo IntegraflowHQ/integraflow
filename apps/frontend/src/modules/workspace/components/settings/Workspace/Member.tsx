@@ -2,7 +2,7 @@ import { WorkspaceInvite } from "@/modules/workspace/components/invite/Workspace
 import { useWorkspaceInvite } from "@/modules/workspace/hooks/useWorkspaceInvite";
 import { Button, Header, TextInput } from "@/ui";
 import { Copy, PlusCircle, Search } from "@/ui/icons";
-import { addEllipsis, copyToClipboard } from "@/utils";
+import { copyToClipboard } from "@/utils";
 import { RefreshCcwIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { InviteList } from "./components/InviteList";
@@ -46,8 +46,8 @@ export const Member = () => {
                         <TextInput
                             placeholder=""
                             inputSize="md"
-                            value={addEllipsis(inviteLink, 60)}
-                            disabled={loading}
+                            value={inviteLink}
+                            disabled={true}
                             rightIcon={
                                 <Button
                                     variant="custom"
