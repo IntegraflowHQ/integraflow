@@ -23,8 +23,8 @@ export const useProject = () => {
     const [projectCreate, { loading: loadingCreateProject }] = useProjectCreateMutation();
     const [projectUpdate] = useProjectUpdateMutation();
     const [resetProjectToken, { loading: loadingProjectTokenReset }] = useProjectTokenResetMutation();
-    const { data: eventsData } = useProjectEventsDataQuery();
-    const { data: audienceProperties } = useAudiencePropertiesQuery();
+    const { data: eventsData } = useProjectEventsDataQuery({ fetchPolicy: "cache-and-network" });
+    const { data: audienceProperties } = useAudiencePropertiesQuery({ fetchPolicy: "cache-and-network" });
 
     const handleAddProject = useCallback(
         (project: Project) => {
