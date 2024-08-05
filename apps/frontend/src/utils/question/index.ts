@@ -5,8 +5,8 @@ import {
     LogicOperator,
     MentionOption,
     ParsedQuestion,
-    ParsedResponse,
     QuestionOption,
+    SurveyAnswer,
     UserAttributes,
 } from "@/types";
 import { AngryEmoji, HappyEmoji, NeutralEmoji, SadEmoji, SatisfiedEmoji } from "@/ui/SmileyEmojis";
@@ -320,39 +320,35 @@ function resolveTaggedQuestion(questionId: string, tagOptions: MentionOption[]):
     return option?.value ?? "";
 }
 
-export function resolveAnswer(q: ParsedQuestion, response: ParsedResponse): string[] {
-    if (!q.reference) {
+export function resolveAnswer(answer: SurveyAnswer[], question?: ParsedQuestion): string[] {
+    if (!answer.length) {
         return [""];
     }
 
-    if (!response?.response[q.reference] || response.response[q.reference].length < 1) {
-        return [""];
-    }
-
-    if (q.type === SurveyQuestionTypeEnum.Cta) {
-        if (response.response[q.reference][0].ctaSuccess) {
+    if (answer[0].type?.toLowerCase() === SurveyQuestionTypeEnum.Cta.toLocaleLowerCase()) {
+        if (answer[0].ctaSuccess) {
             return ["Action performed"];
         } else {
             return ["Action not performed"];
         }
     }
 
-    if (q.type === SurveyQuestionTypeEnum.Form) {
-        const texts = response.response[q.reference].map((item) => {
-            const option = q.options.find((opt) => opt.id === item.answerId);
-            return `${option?.label ?? "Deleted field"}: ${item.answer ?? ""}`;
+    if (answer[0].type?.toLocaleLowerCase() === SurveyQuestionTypeEnum.Form.toLocaleLowerCase()) {
+        const texts = answer.map((item) => {
+            const option = question?.options.find((opt) => opt.id === item.answerId);
+            return `${option?.label ?? item.fieldType ?? "Deleted field"}: ${item.answer ?? ""}`;
         });
 
         return texts;
     }
 
-    if (q.type === SurveyQuestionTypeEnum.Multiple) {
-        const texts = response.response[q.reference].map((item) => item.answer ?? "");
+    if (answer[0].type?.toLocaleLowerCase() === SurveyQuestionTypeEnum.Multiple.toLocaleLowerCase()) {
+        const texts = answer.map((item) => item.answer ?? "");
 
         return texts;
     }
 
-    return [response.response[q.reference][0].answer ?? ""];
+    return [answer[0].answer ?? ""];
 }
 
 export function encodeText(textContent: string): string {
@@ -384,28 +380,35 @@ export function decodeText(encodedText: string, tagOptions: MentionOption[]): st
 function resolveTaggedAnswer(
     questionId: string,
     questions: ParsedQuestion[],
-    response: ParsedResponse,
+    answers: [string, SurveyAnswer[]][],
 ): string[] | null {
     const question = questions.find((q) => q.id === questionId);
     if (!question) {
         return null;
     }
 
-    const answer = resolveAnswer(question, response);
-    return answer;
+    const answer = answers.find(([questionRef, _]) => {
+        return questionRef === question.reference;
+    });
+
+    if (!answer || answer.length < 2) {
+        return null;
+    }
+
+    return resolveAnswer(answer[1], question);
 }
 
 export function decodeAnswerLabelOrDescription(
     encodedText: string,
     questions: ParsedQuestion[],
-    surveyResponse: ParsedResponse,
+    answers: [string, SurveyAnswer[]][],
     properties: PropertyDefinition[],
     userAttributes: UserAttributes,
     question: ParsedQuestion,
 ): string {
     const decodedText = encodedText
         .replace(/{{answer:([^ ]+) \| "([^"]*)"}}/g, (_, id, fallback = "") => {
-            let result = resolveTaggedAnswer(id, questions, surveyResponse)?.join(", ");
+            let result = resolveTaggedAnswer(id, questions, answers)?.join(", ");
 
             if (!result && fallback && fallback !== "") {
                 result = fallback;
@@ -429,20 +432,23 @@ export function decodeAnswerLabelOrDescription(
     return decodedText + " ";
 }
 
-export const getQuestionIcon = (question: ParsedQuestion) => {
-    if (question.type === SurveyQuestionTypeEnum.Cta && question.settings.type !== CTAType.NEXT) {
+export const getQuestionIcon = (type: SurveyQuestionTypeEnum, ctaType?: CTAType) => {
+    if (
+        type.toLowerCase() === SurveyQuestionTypeEnum.Cta.toLowerCase() &&
+        ctaType?.toLowerCase() !== CTAType.NEXT.toLowerCase()
+    ) {
         return ThankYouIcon;
     }
     if (
         [
-            SurveyQuestionTypeEnum.Rating,
-            SurveyQuestionTypeEnum.NumericalScale,
-            SurveyQuestionTypeEnum.Csat,
-            SurveyQuestionTypeEnum.Ces,
-        ].includes(question?.type)
+            SurveyQuestionTypeEnum.Rating.toLowerCase(),
+            SurveyQuestionTypeEnum.NumericalScale.toLowerCase(),
+            SurveyQuestionTypeEnum.Csat.toLowerCase(),
+            SurveyQuestionTypeEnum.Ces.toLowerCase(),
+        ].includes(type.toLowerCase())
     ) {
         return RatingIcon;
     }
 
-    return questionTypes.find((type) => type.type === question?.type)?.icon;
+    return questionTypes.find((question) => question.type.toLowerCase() === type.toLowerCase())?.icon;
 };

@@ -102,15 +102,22 @@ export type PlacementType = "bottomLeft" | "bottomRight" | "topLeft" | "topRight
 
 export type BackgroundOverLayType = "light" | "dark" | "none";
 
+export type Shape = "heart" | "thumb" | "star" | "button";
+
 export type ID = string | number;
 
 export interface SurveyAnswer {
+    orderNumber: number;
+    type: AnswerType;
     finished?: boolean;
     ctaSuccess?: boolean;
     fieldType?: FormFieldType;
     completionRate?: number;
     answer?: string;
     answerId?: ID;
+    count?: number;
+    shape?: Shape;
+    ctaType?: CTAType;
 }
 
 export interface QuestionOption {

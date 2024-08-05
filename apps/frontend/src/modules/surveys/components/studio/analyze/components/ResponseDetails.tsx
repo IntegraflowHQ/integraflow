@@ -2,18 +2,11 @@ import { PropertyDefinition, SurveyQuestionTypeEnum } from "@/generated/graphql"
 import { useProject } from "@/modules/projects/hooks/useProject";
 import useAnalyze from "@/modules/surveys/hooks/useAnalyze";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { ParsedQuestion } from "@/types";
 import { ArrowLeft } from "@/ui/icons";
-import {
-    decodeAnswerLabelOrDescription,
-    emojiArray,
-    emptyLabel,
-    getQuestionIcon,
-    resolveAnswer,
-} from "@/utils/question";
-import { ThumbsDown, ThumbsUp } from "lucide-react";
+import { cn } from "@/utils";
+import { decodeAnswerLabelOrDescription, emptyLabel, getQuestionIcon } from "@/utils/question";
+import Answer from "./Answer";
 import { ChannelInfo } from "./ChannelInfo";
-import RatingIcon from "./RatingIcon";
 
 type Props = React.HtmlHTMLAttributes<HTMLDivElement> & {
     onBackPress: () => void;
@@ -28,54 +21,9 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
         return null;
     }
 
-    const renderRatingIcons = (
-        shape: "star" | "thumb" | "heart" | "button" | undefined,
-        rating: string,
-        count: number,
-    ) => {
-        const icons = [];
-        const parsedRating = parseInt(rating);
-
-        for (let i = 1; i <= count; i++) {
-            icons.push(
-                <RatingIcon key={i} shape={shape} color={"#9582C0"} fill={i <= parsedRating ? "#9582C0" : "#2E2743"} />,
-            );
-        }
-        return <>{icons}</>;
-    };
-
-    const getEmoji = (index: string) => {
-        const parsedIndex = parseInt(index);
-        if (parsedIndex < 1 || parsedIndex > 5) {
-            return null;
-        }
-        const Emoji = emojiArray[parsedIndex - 1];
-        return <Emoji />;
-    };
-
-    const getBooleanAnswer = (q: ParsedQuestion, answer: string): JSX.Element | string => {
-        if (answer === null || answer === undefined || answer === "") {
-            return "";
-        }
-
-        const parsedString = parseInt(answer);
-
-        if (q.settings.shape === "button") {
-            if (parsedString === 0) {
-                return q.settings.negativeText as string;
-            } else if (parsedString === 1) {
-                return q.settings.positiveText as string;
-            }
-        } else if (q.settings.shape === "thumb") {
-            if (parsedString === 0) {
-                return <ThumbsDown fill="#9582C0" />;
-            } else if (parsedString === 1) {
-                return <ThumbsUp fill="#9582C0" />;
-            }
-        }
-
-        return "";
-    };
+    const answers = Object.entries(activeResponse.response.response).sort(
+        ([_, a], [__, b]) => a[0].orderNumber - b[0].orderNumber,
+    );
 
     return (
         <div className="flex gap-[23px]" {...props}>
@@ -86,74 +34,60 @@ export const ResponseDetails = ({ onBackPress, ...props }: Props) => {
                 </button>
 
                 <div className="flex flex-col gap-6">
-                    {parsedQuestions.map((q, index) => {
-                        const resolvedAnswer = resolveAnswer(q, activeResponse.response);
+                    {answers.map(([questionRef, answer]) => {
+                        const question = parsedQuestions.find((q) => q.reference === questionRef);
+
                         return (
-                            <div className="flex w-full flex-col gap-2" key={q.id}>
+                            <div className="space-y-2" key={questionRef}>
                                 <div className="flex items-center gap-2">
-                                    <img src={getQuestionIcon(q)} alt="icon" />
+                                    <img
+                                        src={getQuestionIcon(
+                                            answer[0].hasOwnProperty("type")
+                                                ? (answer[0].type as unknown as SurveyQuestionTypeEnum)
+                                                : (question?.type as SurveyQuestionTypeEnum) ??
+                                                      ("type" as SurveyQuestionTypeEnum),
+                                            answer[0].ctaType,
+                                        )}
+                                        alt="icon"
+                                    />
 
-                                    <strong className="text-base font-bold leading-5 -tracking-[0.41px] text-intg-text-12">
-                                        {index < 9 ? `0${index + 1}` : `${index + 1}`}
-                                    </strong>
-
-                                    {q.label === emptyLabel || !q.label ? (
-                                        <h3 className="text-sm italic -tracking-[0.41px] text-intg-error-text">
-                                            You did not provide a label for this question
-                                        </h3>
-                                    ) : (
+                                    {question ? (
                                         <h3
-                                            className="text-sm -tracking-[0.41px] text-intg-text-2"
+                                            className={cn(
+                                                "text-sm -tracking-[0.41px]",
+                                                question.label === emptyLabel || !question.label
+                                                    ? "italic text-intg-error-text"
+                                                    : "text-intg-text-2",
+                                            )}
                                             dangerouslySetInnerHTML={{
-                                                __html: decodeAnswerLabelOrDescription(
-                                                    q.label,
-                                                    parsedQuestions,
-                                                    activeResponse.response,
-                                                    personProperties as PropertyDefinition[],
-                                                    activeResponse?.response.userAttributes,
-                                                    q,
-                                                ),
+                                                __html:
+                                                    question.label === emptyLabel || !question.label
+                                                        ? "You did not provide a label for this question"
+                                                        : decodeAnswerLabelOrDescription(
+                                                              question.label,
+                                                              parsedQuestions,
+                                                              answers,
+                                                              personProperties as PropertyDefinition[],
+                                                              activeResponse?.response.userAttributes,
+                                                              question,
+                                                          ),
                                             }}
                                         />
+                                    ) : (
+                                        <h3 className="text-sm italic -tracking-[0.41px] text-intg-error-text">
+                                            Deleted question
+                                        </h3>
                                     )}
                                 </div>
-                                <div className="w-full rounded-lg bg-intg-bg-21 px-4 py-3.5 text-sm font-medium text-intg-text-3">
-                                    <div className="flex items-center gap-1 text-sm font-medium text-intg-text-3">
-                                        {q.type !== SurveyQuestionTypeEnum.Form && <span>Answer:</span>}
-                                        <span>
-                                            {q.type === SurveyQuestionTypeEnum.Form ? (
-                                                resolvedAnswer.map((answer, i) => <div key={i}>{answer}</div>)
-                                            ) : q.type === SurveyQuestionTypeEnum.Multiple ? (
-                                                <>{resolvedAnswer.join(", ")}</>
-                                            ) : q.type === SurveyQuestionTypeEnum.SmileyScale ? (
-                                                <> {+resolvedAnswer[0] > 0 ? getEmoji(resolvedAnswer[0]) : ""}</>
-                                            ) : q.type === SurveyQuestionTypeEnum.Rating ? (
-                                                <>
-                                                    {+resolvedAnswer[0] > 0
-                                                        ? renderRatingIcons(
-                                                              q.settings.shape,
-                                                              resolvedAnswer[0],
-                                                              q.options.length,
-                                                          )
-                                                        : ""}
-                                                </>
-                                            ) : q.type === SurveyQuestionTypeEnum.Boolean ? (
-                                                <>{getBooleanAnswer(q, resolvedAnswer[0])} </>
-                                            ) : (
-                                                <> {resolvedAnswer[0]}</>
-                                            )}
-                                        </span>
-                                    </div>
-                                </div>
+
+                                <Answer answer={answer} question={question} />
                             </div>
                         );
                     })}
                 </div>
             </div>
 
-            <div className="flex flex-col gap-3 p-3.5">
-                <ChannelInfo />
-            </div>
+            <ChannelInfo />
         </div>
     );
 };
