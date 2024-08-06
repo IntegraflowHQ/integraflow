@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: lts/*
 
-      - name: Start backend server
+      - name: Build backend server
         run: docker compose -f ./docker-compose.yml build
 
       - name: Start Backend Server
