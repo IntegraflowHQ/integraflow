@@ -16,15 +16,6 @@ jobs:
         with:
           node-version: lts/*
 
-      - name: Check Docker Status
-        run: docker --version
-
-      - name: Build Backend Server
-        run: docker compose build
-
-      - name: Start Backend Server
-        run: docker compose up -d
-
       - name: Navigate to Frontend Directory
         working-directory: apps/frontend
         run: pwd
