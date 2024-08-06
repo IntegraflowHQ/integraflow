@@ -16,6 +16,12 @@ jobs:
         with:
           node-version: lts/*
 
+      - name: Start backend server
+        run: docker compose -f ./docker-compose.yml build
+
+      - name: Start Backend Server
+        run: docker compose up -d
+
       - name: Navigate to Frontend Directory
         working-directory: apps/frontend
         run: pwd
