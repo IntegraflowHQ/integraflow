@@ -16,6 +16,12 @@ jobs:
         with:
           node-version: lts/*
 
+      - name: Set environment variables
+        run:
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+
       - name: Build backend server
         run: docker compose -f ./docker-compose.yml build
 
