@@ -20,7 +20,7 @@ jobs:
         run: docker compose -f ./docker-compose.yml build
 
       - name: Start Backend Server
-        run: docker compose up -d
+        run: docker compose -f ./docker-compose.yml up -d
 
       - name: Navigate to Frontend Directory
         working-directory: apps/frontend
