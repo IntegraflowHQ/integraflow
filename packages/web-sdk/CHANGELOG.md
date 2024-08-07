@@ -1,5 +1,11 @@
 # integraflow-js
 
+## 0.0.8
+
+### Patch Changes
+
+- 99f5a8f: Add question details to answer
+
 ## 0.0.7
 
 ### Patch Changes
