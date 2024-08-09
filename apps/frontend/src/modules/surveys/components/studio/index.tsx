@@ -143,6 +143,11 @@ export default function Studio() {
                         <Button
                             size="sm"
                             className="!w-[87px]"
+                            ping={
+                                survey?.status !== SurveyStatusEnum.Active &&
+                                parsedQuestions.length !== 0 &&
+                                activeTab === tabs[1].label
+                            }
                             text={
                                 survey.status === SurveyStatusEnum.Active
                                     ? "Pause"

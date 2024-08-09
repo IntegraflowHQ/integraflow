@@ -1,3 +1,5 @@
+import { RoleLevel } from "@/generated/graphql";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { ColorScheme, Theme } from "@/types";
 import { Button, ColorPicker } from "@/ui";
 import { themeKeys } from "@/utils";
@@ -14,6 +16,7 @@ type Props = {
 
 export const ThemeEditor = ({ onCompleted, onDeleteClicked, onClose, defaultValue, createMode = false }: Props) => {
     const [value, setValue] = useState(defaultValue);
+    const { roleLevel } = useAuth();
 
     return (
         <>
@@ -81,7 +84,7 @@ export const ThemeEditor = ({ onCompleted, onDeleteClicked, onClose, defaultValu
             </div>
 
             <div className="mt-4 flex justify-end gap-2">
-                {!createMode ? (
+                {!createMode && [RoleLevel.Admin, RoleLevel.Owner].includes(roleLevel ?? RoleLevel.Member) ? (
                     <Button
                         text="Delete theme"
                         variant="secondary"

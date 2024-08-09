@@ -1,7 +1,6 @@
-import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import { Preview } from "@/modules/surveys/components/studio/create/preview-panel";
 import useChannels from "@/modules/surveys/hooks/useChannels";
-import { BackgroundOverLayType, ChannelSettings, WebChannelAccordionProps, PlacementType } from "@/types";
+import { BackgroundOverLayType, ChannelSettings, PlacementType, WebChannelAccordionProps } from "@/types";
 import { DatePicker, NumberInput, Switch } from "@/ui";
 import { BottomLeft, BottomRight, Center, TopLeft, TopRight } from "@/ui/icons";
 import { cn } from "@/utils";
@@ -76,9 +75,9 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
             if (!channel.id) {
                 logDebug("create channel", value);
                 createChannel({
-                    type: SurveyChannelTypeEnum.WebSdk,
+                    ...channel,
                     id: crypto.randomUUID(),
-                    settings: JSON.stringify(value),
+                    settings: value,
                 });
             } else {
                 logDebug("update channel", value);

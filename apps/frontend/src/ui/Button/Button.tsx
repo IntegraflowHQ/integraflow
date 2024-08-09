@@ -9,6 +9,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
     children?: React.ReactNode;
     icon?: React.ReactElement | null;
     size?: "full" | "md" | "sm" | "xs";
+    ping?: boolean;
 }
 
 const Button = React.forwardRef(
@@ -21,6 +22,7 @@ const Button = React.forwardRef(
             size = "full",
             icon,
             textAlign = "left",
+            ping,
             ...props
         }: ButtonProps,
         forwardedRef: React.ForwardedRef<HTMLButtonElement>,
@@ -29,7 +31,7 @@ const Button = React.forwardRef(
             <button
                 {...props}
                 className={cn(
-                    "w-full text-base font-medium",
+                    "relative w-full text-base font-medium",
                     textAlign === "left" ? "" : "flex justify-center",
                     size === "full"
                         ? "rounded-lg px-8 py-4"
@@ -48,6 +50,12 @@ const Button = React.forwardRef(
                 )}
                 ref={forwardedRef}
             >
+                {ping && (
+                    <>
+                        <span className="absolute right-0 top-0 inline-flex h-2 w-2 animate-ping rounded-full bg-white opacity-75"></span>
+                        <span className="absolute right-0 top-0 inline-flex h-2 w-2 rounded-full bg-white"></span>
+                    </>
+                )}
                 {icon && <span>{icon}</span>}
                 {text && <span>{text}</span>}
                 {children}

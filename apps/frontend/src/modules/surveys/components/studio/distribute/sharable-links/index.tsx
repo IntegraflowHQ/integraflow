@@ -1,7 +1,5 @@
-import { SurveyChannelTypeEnum, SurveyStatusEnum } from "@/generated/graphql";
+import { SurveyChannelTypeEnum } from "@/generated/graphql";
 import useChannels from "@/modules/surveys/hooks/useChannels";
-import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { ChannelSettings } from "@/types";
 import { Button, Header } from "@/ui";
 import { cn } from "@/utils";
 import { toast } from "@/utils/toast";
@@ -11,18 +9,17 @@ import Link from "./Link";
 export default function SharableLinks() {
     const { createChannel, getChannels } = useChannels();
     const linkChannels = getChannels(SurveyChannelTypeEnum.Link);
-    const { survey } = useSurvey();
 
     const handleCreate = async () => {
         await createChannel({
             type: SurveyChannelTypeEnum.Link,
             id: crypto.randomUUID(),
-            settings: JSON.stringify({
+            settings: {
                 name: `Link ${linkChannels.length + 1}`,
                 recurring: false,
                 startDate: "",
                 endDate: "",
-            } as ChannelSettings),
+            },
         });
     };
 
@@ -38,7 +35,6 @@ export default function SharableLinks() {
                     title={"Sharable links"}
                     font="medium"
                     description="Get survey links and QR codes to distribute your survey."
-                    announceText={survey?.status !== SurveyStatusEnum.Active ? "This survey is Unpublished" : ""}
                 />
                 {linkChannels.length ? (
                     <Button

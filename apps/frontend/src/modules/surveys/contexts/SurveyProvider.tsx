@@ -67,7 +67,7 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
     const { capture } = useAnalytics();
 
     const [createSurveyMutation, { loading: creatingSurvey }] = useSurveyCreateMutation();
-    const [updateSurveyMutation, { error }] = useSurveyUpdateMutation({});
+    const [updateSurveyMutation, { error }] = useSurveyUpdateMutation();
     const [deleteSurveyMutation] = useSurveyDeleteMutation();
 
     const [getSurvey, { data: surveyQueryResponse, loading: loadingSurvey }] = useGetSurveyLazyQuery({

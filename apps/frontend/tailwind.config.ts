@@ -81,6 +81,17 @@ const config: Config = {
                 "gradient-button": "linear-gradient(27deg, #53389E 8.33%, #6941C6 91.67%)",
                 "gradient-button-hover": "linear-gradient(27deg, #299532 8.33%, #7EE787 91.67%)",
             },
+            keyframes: {
+                ping: {
+                    "75%, 100%": {
+                        transform: "scale(3.5)",
+                        opacity: "0.5",
+                    },
+                },
+            },
+            animation: {
+                "animate-ping": "ping 1s cubic-bezier(0, 0, 0.2, 1) infinite",
+            },
         },
     },
     safelist: [
