@@ -1,5 +1,4 @@
-import { ProjectTheme, RoleLevel } from "@/generated/graphql";
-import { useAuth } from "@/modules/auth/hooks/useAuth";
+import { ProjectTheme } from "@/generated/graphql";
 import { PresetThemes } from "@/modules/projects/components/PresetThemes";
 import { ThemeCard } from "@/modules/projects/components/ThemeCard";
 import { useTheme } from "@/modules/projects/hooks/useTheme";
@@ -26,7 +25,6 @@ const CREATE_THEME_DEFAULT_VALUE: Theme = {
 
 export const UpdateDesignEditor = () => {
     const { updateSurvey, survey } = useSurvey();
-    const { roleLevel } = useAuth();
     const { themes, loading, createTheme, updateTheme, deleteTheme } = useTheme();
     const [themeEditorValue, setThemeEditorValue] = useState<Theme | null>(null);
     const { theme: surveyTheme, updateStudio } = useStudioStore((state) => state);
@@ -135,14 +133,6 @@ export const UpdateDesignEditor = () => {
 
     const handleDeleteTheme = async () => {
         if (!themeEditorValue?.id || !survey) {
-            return;
-        }
-
-        if (![RoleLevel.Admin, RoleLevel.Owner].includes(roleLevel ?? RoleLevel.Member)) {
-            toast.error(
-                "You do not have the required permissions to delete this theme. Only workspace admins can perform this action.",
-            );
-
             return;
         }
 
