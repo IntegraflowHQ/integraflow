@@ -159,7 +159,7 @@ export const LogicTab = ({ questionIndex }: Props) => {
                     "border-3 rounded-md border border-dotted border-intg-bg-4 p-6 text-center",
                 )}
                 onClick={() => {
-                    if (survey?.status !== SurveyStatusEnum.Active) {
+                    if (survey?.status === SurveyStatusEnum.Active) {
                         return;
                     }
 

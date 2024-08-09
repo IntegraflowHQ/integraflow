@@ -44,7 +44,6 @@ export default function Publish() {
                         }
                     }}
                 />
-                <p className="text-sm">Manage your survey status: publish to go live or pause to stop.</p>
             </div>
         </div>
     );
