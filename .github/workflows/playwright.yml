@@ -16,32 +16,32 @@ jobs:
         with:
           node-version: lts/*
 
-      - name: Build backend server
-        run: docker compose -f ./docker-compose-test.yml build
-
-      - name: Start Backend Server
-        run: docker compose -f ./docker-compose-test.yml up -d
-
-      - name: Build survey app
-        run: yarn build:dashboard
-
-      - name: Start survey app
-        run: yarn  start:survey
-
-      - name: Build dashboard
-        run: yarn build:dashboard
-
-      - name: Start dashboard
-        run: yarn preview
-        working-directory: apps/frontend
-
       - name: Install dependencies
         working-directory: apps/frontend
-        run: npm install -g yarn && yarn
+        run: yarn install --immutable
 
       - name: Install Playwright Browsers
         working-directory: apps/frontend
         run: yarn playwright install --with-deps
+
+      - name: Build backend server
+        run: docker compose -f ./docker-compose-test.yml build
+
+      - name: Build survey app
+        run: yarn build:survey
+
+      - name: Build dashboard
+        run: yarn build:dashboard
+
+      - name: Start Backend Server
+        run: docker compose -f ./docker-compose-test.yml up -d
+
+      - name: Start survey app
+        run: yarn start:survey
+
+      - name: Start dashboard
+        run: yarn preview
+        working-directory: apps/frontend
 
       - name: Run Playwright tests
         working-directory: apps/frontend
