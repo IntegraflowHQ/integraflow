@@ -22,9 +22,17 @@ jobs:
       - name: Start Backend Server
         run: docker compose -f ./docker-compose-test.yml up -d
 
-      - name: Navigate to Frontend Directory
-        working-directory: apps/frontend
-        run: pwd
+      - name: Build survey app
+        run: build:dashboard
+
+      - name: Start survey app
+        run: start:survey
+
+      - name: Build dashboard
+        run: build:dashboard
+
+      - name: Start dashboard
+        run: start:dashboard
 
       - name: Install dependencies
         working-directory: apps/frontend
