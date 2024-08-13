@@ -33,7 +33,7 @@ export const DialogContent = forwardRef<HTMLDivElement, Props>(
                     <>
                         <div className="flex justify-between">
                             <DialogPrimitive.Title className="text-600 mb-3 text-2xl">{title}</DialogPrimitive.Title>
-                            <DialogPrimitive.Close aria-label="Close">
+                            <DialogPrimitive.Close aria-label="Close" className="self-start pt-1">
                                 <XIcon />
                             </DialogPrimitive.Close>
                         </div>

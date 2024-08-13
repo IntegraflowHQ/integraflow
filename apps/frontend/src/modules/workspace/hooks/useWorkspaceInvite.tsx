@@ -21,8 +21,12 @@ import { parseInviteLink } from "@/utils";
 export const useWorkspaceInvite = () => {
     const { switchWorkspace } = useAuth();
 
-    const [getInviteLink, { loading: loadingInviteLink }] = useOrganizationInviteLinkCreateLazyQuery();
-    const [getInviteDetails, { loading: inviteDetailsLoading }] = useOrganizationInviteDetailsLazyQuery();
+    const [getInviteLink, { loading: loadingInviteLink }] = useOrganizationInviteLinkCreateLazyQuery({
+        fetchPolicy: "cache-and-network",
+    });
+    const [getInviteDetails, { loading: inviteDetailsLoading }] = useOrganizationInviteDetailsLazyQuery({
+        fetchPolicy: "cache-and-network",
+    });
 
     const [emailInvite, { loading: loadingEmailInvite }] = useOrganizationInviteCreateMutation();
     const [resetInviteLink, { loading: loadingLinkReset }] = useOrganizationInviteLinkResetMutation();
