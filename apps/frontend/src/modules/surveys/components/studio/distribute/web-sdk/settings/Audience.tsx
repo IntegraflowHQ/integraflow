@@ -1,8 +1,9 @@
 import { useProject } from "@/modules/projects/hooks/useProject";
 import useChannels from "@/modules/surveys/hooks/useChannels";
 import { useStudioStore } from "@/modules/surveys/states/studio";
-import { EventFilter, TriggerConditionInput, WebChannelAccordionProps, FilterOperator, LogicOperator } from "@/types";
-import { Info } from "@/ui/icons";
+import { EventFilter, FilterOperator, LogicOperator, TriggerConditionInput, WebChannelAccordionProps } from "@/types";
+import { Header } from "@/ui";
+import { cn } from "@/utils";
 import { useState } from "react";
 import FilterDetails from "./filters/FilterDetails";
 import FilterOperators from "./filters/FilterOperators";
@@ -11,7 +12,7 @@ import PropertySelect from "./filters/PropertySelect";
 
 export default function Audience({ channel }: WebChannelAccordionProps) {
     const { addingAudienceProperty, updateStudio } = useStudioStore((state) => state);
-    const { updateChannel } = useChannels();
+    const { createChannel, updateChannel } = useChannels();
     const { personProperties } = useProject();
     const [filterInput, setFilterInput] = useState<EventFilter | null>(null);
     const [conditionInput, setConditionInput] = useState<TriggerConditionInput | undefined>();
@@ -27,20 +28,18 @@ export default function Audience({ channel }: WebChannelAccordionProps) {
     };
 
     const handleAddFilter = (filter: EventFilter) => {
-        if (!channel.id) return;
-        if (!channel.conditions || !channel.conditions.filters || !channel.conditions.operator) {
-            const conditions = {
-                operator: LogicOperator.AND,
-                filters: [{ ...filter, attribute: filter.property }],
-            };
-            updateChannel(channel, {
-                conditions: JSON.stringify(conditions),
+        const conditions = {
+            ...channel.conditions,
+            filters: [...channel.conditions.filters, { ...filter, attribute: filter.property }],
+        };
+
+        if (!channel.id) {
+            createChannel({
+                ...channel,
+                id: crypto.randomUUID(),
+                conditions: conditions,
             });
         } else {
-            const conditions = {
-                ...channel.conditions,
-                filters: [...channel?.conditions?.filters, { ...filter, attribute: filter.property }],
-            };
             updateChannel(channel, {
                 conditions: JSON.stringify(conditions),
             });
@@ -62,10 +61,7 @@ export default function Audience({ channel }: WebChannelAccordionProps) {
     return (
         <div className="px-4 pb-6 text-intg-text">
             <div className="flex flex-col gap-[26px] rounded-lg bg-intg-bg-9 p-6">
-                <header className="inline-flex items-center gap-2">
-                    <h3 className="text-base font-medium text-white">Audience</h3>
-                    <Info />
-                </header>
+                <Header variant="3" font="medium" title="Audience" />
 
                 <div className="inline-flex flex-wrap gap-1 [&>*]:mb-4">
                     <Filters
@@ -113,7 +109,7 @@ export default function Audience({ channel }: WebChannelAccordionProps) {
                         }}
                     >
                         <button
-                            className="p-2 underline"
+                            className={cn("py-2 underline", channel.conditions.filters.length ? "px-2" : "")}
                             onClick={() => updateStudio({ addingAudienceProperty: true })}
                         >
                             add audience rule

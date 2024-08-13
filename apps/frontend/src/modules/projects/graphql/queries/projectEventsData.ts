@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const EVENT_DEFINITIONS = gql`
+export const PROJECT_EVENTS_DATA = gql`
     query projectEventsData {
         eventDefinitions(first: 100) {
             edges {

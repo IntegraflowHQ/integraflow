@@ -2758,6 +2758,11 @@ export type ProjectThemeUpdateMutationVariables = Exact<{
 
 export type ProjectThemeUpdateMutation = { __typename?: 'Mutation', projectThemeUpdate?: { __typename?: 'ProjectThemeUpdate', projectTheme?: { __typename?: 'ProjectTheme', id: string, reference?: string | null, name: string, colorScheme?: any | null, createdAt: string, updatedAt: string } | null, projectErrors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }>, errors: Array<{ __typename?: 'ProjectError', field?: string | null, message?: string | null, code: ProjectErrorCode }> } | null };
 
+export type ProjectEventsDataQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ProjectEventsDataQuery = { __typename?: 'Query', eventDefinitions?: { __typename?: 'EventDefinitionCountableConnection', edges: Array<{ __typename?: 'EventDefinitionCountableEdge', node: { __typename?: 'EventDefinition', id: string, name: string, createdAt?: string | null, lastSeenAt?: string | null } }> } | null, eventProperties?: { __typename?: 'EventPropertyCountableConnection', edges: Array<{ __typename?: 'EventPropertyCountableEdge', node: { __typename?: 'EventProperty', id: string, event: string, property: string } }> } | null, propertyDefinitions?: { __typename?: 'PropertyDefinitionCountableConnection', edges: Array<{ __typename?: 'PropertyDefinitionCountableEdge', node: { __typename?: 'PropertyDefinition', id: string, name: string, isNumerical: boolean, type: PropertyDefinitionTypeEnum, propertyType: PropertyTypeEnum } }> } | null };
+
 export type ThemesQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
 }>;
@@ -2854,11 +2859,6 @@ export type ChannelsQueryVariables = Exact<{
 
 
 export type ChannelsQuery = { __typename?: 'Query', channels?: { __typename?: 'SurveyChannelCountableConnection', edges: Array<{ __typename?: 'SurveyChannelCountableEdge', node: { __typename?: 'SurveyChannel', id: string, link: string, reference?: string | null, type: SurveyChannelTypeEnum, triggers?: any | null, conditions?: any | null, settings?: any | null, createdAt: string } }> } | null };
-
-export type ProjectEventsDataQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ProjectEventsDataQuery = { __typename?: 'Query', eventDefinitions?: { __typename?: 'EventDefinitionCountableConnection', edges: Array<{ __typename?: 'EventDefinitionCountableEdge', node: { __typename?: 'EventDefinition', id: string, name: string, createdAt?: string | null, lastSeenAt?: string | null } }> } | null, eventProperties?: { __typename?: 'EventPropertyCountableConnection', edges: Array<{ __typename?: 'EventPropertyCountableEdge', node: { __typename?: 'EventProperty', id: string, event: string, property: string } }> } | null, propertyDefinitions?: { __typename?: 'PropertyDefinitionCountableConnection', edges: Array<{ __typename?: 'PropertyDefinitionCountableEdge', node: { __typename?: 'PropertyDefinition', id: string, name: string, isNumerical: boolean, type: PropertyDefinitionTypeEnum, propertyType: PropertyTypeEnum } }> } | null };
 
 export type GetQuestionsQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -4324,6 +4324,67 @@ export function useProjectThemeUpdateMutation(baseOptions?: Apollo.MutationHookO
 export type ProjectThemeUpdateMutationHookResult = ReturnType<typeof useProjectThemeUpdateMutation>;
 export type ProjectThemeUpdateMutationResult = Apollo.MutationResult<ProjectThemeUpdateMutation>;
 export type ProjectThemeUpdateMutationOptions = Apollo.BaseMutationOptions<ProjectThemeUpdateMutation, ProjectThemeUpdateMutationVariables>;
+export const ProjectEventsDataDocument = gql`
+    query projectEventsData {
+  eventDefinitions(first: 100) {
+    edges {
+      node {
+        id
+        name
+        createdAt
+        lastSeenAt
+      }
+    }
+  }
+  eventProperties(first: 100) {
+    edges {
+      node {
+        id
+        event
+        property
+      }
+    }
+  }
+  propertyDefinitions(first: 100, definitionType: EVENT) {
+    edges {
+      node {
+        id
+        name
+        isNumerical
+        type
+        propertyType
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useProjectEventsDataQuery__
+ *
+ * To run a query within a React component, call `useProjectEventsDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProjectEventsDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProjectEventsDataQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useProjectEventsDataQuery(baseOptions?: Apollo.QueryHookOptions<ProjectEventsDataQuery, ProjectEventsDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProjectEventsDataQuery, ProjectEventsDataQueryVariables>(ProjectEventsDataDocument, options);
+      }
+export function useProjectEventsDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProjectEventsDataQuery, ProjectEventsDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProjectEventsDataQuery, ProjectEventsDataQueryVariables>(ProjectEventsDataDocument, options);
+        }
+export type ProjectEventsDataQueryHookResult = ReturnType<typeof useProjectEventsDataQuery>;
+export type ProjectEventsDataLazyQueryHookResult = ReturnType<typeof useProjectEventsDataLazyQuery>;
+export type ProjectEventsDataQueryResult = Apollo.QueryResult<ProjectEventsDataQuery, ProjectEventsDataQueryVariables>;
 export const ThemesDocument = gql`
     query Themes($first: Int) {
   themes(first: $first) {
@@ -4826,67 +4887,6 @@ export function useChannelsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<C
 export type ChannelsQueryHookResult = ReturnType<typeof useChannelsQuery>;
 export type ChannelsLazyQueryHookResult = ReturnType<typeof useChannelsLazyQuery>;
 export type ChannelsQueryResult = Apollo.QueryResult<ChannelsQuery, ChannelsQueryVariables>;
-export const ProjectEventsDataDocument = gql`
-    query projectEventsData {
-  eventDefinitions(first: 100) {
-    edges {
-      node {
-        id
-        name
-        createdAt
-        lastSeenAt
-      }
-    }
-  }
-  eventProperties(first: 100) {
-    edges {
-      node {
-        id
-        event
-        property
-      }
-    }
-  }
-  propertyDefinitions(first: 100, definitionType: EVENT) {
-    edges {
-      node {
-        id
-        name
-        isNumerical
-        type
-        propertyType
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useProjectEventsDataQuery__
- *
- * To run a query within a React component, call `useProjectEventsDataQuery` and pass it any options that fit your needs.
- * When your component renders, `useProjectEventsDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useProjectEventsDataQuery({
- *   variables: {
- *   },
- * });
- */
-export function useProjectEventsDataQuery(baseOptions?: Apollo.QueryHookOptions<ProjectEventsDataQuery, ProjectEventsDataQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ProjectEventsDataQuery, ProjectEventsDataQueryVariables>(ProjectEventsDataDocument, options);
-      }
-export function useProjectEventsDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProjectEventsDataQuery, ProjectEventsDataQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ProjectEventsDataQuery, ProjectEventsDataQueryVariables>(ProjectEventsDataDocument, options);
-        }
-export type ProjectEventsDataQueryHookResult = ReturnType<typeof useProjectEventsDataQuery>;
-export type ProjectEventsDataLazyQueryHookResult = ReturnType<typeof useProjectEventsDataLazyQuery>;
-export type ProjectEventsDataQueryResult = Apollo.QueryResult<ProjectEventsDataQuery, ProjectEventsDataQueryVariables>;
 export const GetQuestionsDocument = gql`
     query GetQuestions($id: ID!) {
   questions(id: $id, first: 50) {
