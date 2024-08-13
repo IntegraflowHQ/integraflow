@@ -1,4 +1,5 @@
-import { Survey, SurveyStatusEnum } from "@/generated/graphql";
+import { RoleLevel, Survey, SurveyStatusEnum } from "@/generated/graphql";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { useOnboarding } from "@/modules/onboarding/hooks/useOnboarding";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { ROUTES } from "@/routes";
@@ -28,6 +29,7 @@ export const SurveyList = () => {
 
     const { createSurvey, updateSurvey, deleteSurvey, loading, getMoreSurveys, surveyList, isFetchingMore } =
         useSurvey();
+    const { roleLevel } = useAuth();
 
     const [selectedSurveyName, setSelectedSurveyName] = React.useState<string>("");
 
@@ -53,6 +55,10 @@ export const SurveyList = () => {
     const handleSurveyDelete = (event: React.MouseEvent<HTMLButtonElement>, survey: Survey) => {
         event.stopPropagation();
         event.preventDefault();
+
+        if (![RoleLevel.Admin, RoleLevel.Owner].includes(roleLevel ?? RoleLevel.Member)) {
+            return;
+        }
 
         deleteSurvey(survey);
     };
@@ -215,36 +221,43 @@ export const SurveyList = () => {
                                                             Restore
                                                         </div>
                                                     )}
-                                                    <Dialog>
-                                                        <DialogTrigger asChild>
-                                                            <div
-                                                                onClick={(event) =>
-                                                                    getSurveyNameOnSelect(survey?.id ?? "", event)
-                                                                }
-                                                                className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
-                                                            >
-                                                                <Trash2 size="18" color="#AFAAC7" />
-                                                                Delete
-                                                            </div>
-                                                        </DialogTrigger>
 
-                                                        <DialogContent
-                                                            alignHeader="left"
-                                                            title={`Delete ${selectedSurveyName}`}
-                                                            description="Are you sure you want to delete this survey?"
-                                                            className="w-[500px]"
-                                                        >
-                                                            <button
-                                                                disabled={loading}
-                                                                onClick={(e) => handleSurveyDelete(e, survey as Survey)}
-                                                                className={`${
-                                                                    loading ? "opacity-50" : ""
-                                                                } mt-[30px] w-full rounded-md bg-red-600 py-3 text-center transition-all duration-300 ease-in hover:cursor-pointer`}
+                                                    {[RoleLevel.Admin, RoleLevel.Owner].includes(
+                                                        roleLevel ?? RoleLevel.Member,
+                                                    ) && (
+                                                        <Dialog>
+                                                            <DialogTrigger asChild>
+                                                                <div
+                                                                    onClick={(event) =>
+                                                                        getSurveyNameOnSelect(survey?.id ?? "", event)
+                                                                    }
+                                                                    className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
+                                                                >
+                                                                    <Trash2 size="18" color="#AFAAC7" />
+                                                                    Delete
+                                                                </div>
+                                                            </DialogTrigger>
+
+                                                            <DialogContent
+                                                                alignHeader="left"
+                                                                title={`Delete ${selectedSurveyName}`}
+                                                                description="Are you sure you want to delete this survey?"
+                                                                className="w-[500px]"
                                                             >
-                                                                {loading ? "Deleting..." : "Delete"}
-                                                            </button>
-                                                        </DialogContent>
-                                                    </Dialog>
+                                                                <button
+                                                                    disabled={loading}
+                                                                    onClick={(e) =>
+                                                                        handleSurveyDelete(e, survey as Survey)
+                                                                    }
+                                                                    className={`${
+                                                                        loading ? "opacity-50" : ""
+                                                                    } mt-[30px] w-full rounded-md bg-red-600 py-3 text-center transition-all duration-300 ease-in hover:cursor-pointer`}
+                                                                >
+                                                                    {loading ? "Deleting..." : "Delete"}
+                                                                </button>
+                                                            </DialogContent>
+                                                        </Dialog>
+                                                    )}
                                                 </Popover.Content>
                                             </Popover.Portal>
                                         </Popover.Root>
