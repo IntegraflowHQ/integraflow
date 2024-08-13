@@ -2,6 +2,7 @@ import ast
 import logging
 import os
 import os.path
+import sys
 import warnings
 from datetime import timedelta
 from typing import List, Optional
@@ -62,6 +63,23 @@ def get_url_from_env(name, *, schemes=None) -> Optional[str]:
 
 
 DEBUG = get_bool_from_env("DEBUG", True)
+TEST = (
+    "test" in sys.argv or sys.argv[0].endswith("pytest") or get_bool_from_env(
+        "TEST",
+        False
+    )
+)
+
+E2E_TESTING = get_bool_from_env(
+    "E2E_TESTING",
+    False
+)  # whether the app is currently running for E2E tests
+
+if E2E_TESTING:
+    warnings.warn(
+        "️WARNING! E2E_TESTING is set to `True`. "
+        "This is a security vulnerability unless you are running tests."
+    )
 
 PROJECT_ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
 
