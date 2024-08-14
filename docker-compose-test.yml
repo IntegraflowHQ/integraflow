@@ -24,11 +24,12 @@ services:
     ports:
       - 8000:8000
     environment:
-      - DATABASE_URL=postgres://testuser:postgres@db:5432/postgres
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CACHE_URL=redis://redis:6379/0
       - ALLOWED_HOSTS=localhost,127.0.0.1
       - SITE_URL=http://localhost:5173
+      - E2E_TESTING=True
     restart: always
     depends_on:
       - db
