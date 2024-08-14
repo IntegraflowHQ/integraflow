@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: redis
+
+  db:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    container_name: postgres_db
+    ports:
+      - 5432:5432
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+    ports:
+      - 8000:8000
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CACHE_URL=redis://redis:6379/0
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+      - SITE_URL=http://localhost:5173
+      - E2E_TESTING=True
+    restart: always
+    depends_on:
+      - db

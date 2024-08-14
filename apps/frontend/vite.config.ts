@@ -12,4 +12,7 @@ export default defineConfig({
             ui: `${path.resolve(__dirname, "./src/ui/")}`,
         },
     },
+    preview: {
+        port: 5173,
+    },
 });

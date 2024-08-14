@@ -9,7 +9,9 @@
         "build:dashboard": "tsc && vite build",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview",
-        "graphql:generate": "graphql-codegen --config codegen.ts"
+        "graphql:generate": "graphql-codegen --config codegen.ts",
+        "test": "yarn playwright test",
+        "test:ui": "yarn playwright test --ui"
     },
     "dependencies": {
         "@apollo/client": "^3.8.6",
@@ -63,9 +65,11 @@
         "@graphql-codegen/typescript": "^3.0.4",
         "@graphql-codegen/typescript-operations": "^3.0.4",
         "@graphql-codegen/typescript-react-apollo": "^3.3.7",
+        "@playwright/test": "^1.46.0",
         "@types/js-cookie": "^3.0.5",
         "@types/localforage": "^0.0.34",
         "@types/lodash.debounce": "^4.0.9",
+        "@types/node": "^22.1.0",
         "@types/randomstring": "^1.1.11",
         "@types/react": "^18.2.15",
         "@types/react-dom": "^18.2.7",
