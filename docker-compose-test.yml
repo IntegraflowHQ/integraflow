@@ -7,11 +7,9 @@ services:
 
   db:
     image: postgres:alpine
-    volumes:
-      - ./data/db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=postgres
-      - POSTGRES_USER=testuser
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     container_name: postgres_db
     ports:

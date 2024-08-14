@@ -42,6 +42,9 @@
         "@integraflow/survey#start:survey": {
             "cache": false
         },
+        "@integraflow/dashboard#test": {
+            "cache": false
+        },
         "@integraflow/dashboard#test:ui": {
             "cache": false
         },

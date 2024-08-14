@@ -10,6 +10,7 @@
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview",
         "graphql:generate": "graphql-codegen --config codegen.ts",
+        "test": "yarn playwright test",
         "test:ui": "yarn playwright test --ui"
     },
     "dependencies": {
