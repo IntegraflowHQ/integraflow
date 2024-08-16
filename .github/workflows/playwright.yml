@@ -44,7 +44,8 @@ jobs:
         working-directory: apps/frontend
 
       - name: Run Playwright tests
-        run: yarn test-e2e
+        working-directory: apps/frontend
+        run: yarn playwright test
 
       - uses: actions/upload-artifact@v4
         if: always()
