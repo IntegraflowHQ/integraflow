@@ -31,16 +31,11 @@ setup("authenticate as onboarded user", async ({ page }) => {
     await authenticateUser(page, "onboarded@example.com", ONBOARDED_USER_FILE);
 
     // Wait for the navigation to complete to one of the expected URLs
-    await page.waitForURL(
-        (url) => {
-            return (
-                onboardingUrl.test(url.pathname) ||
-                url.pathname === createWorkspaceUrl ||
-                surveyListUrl.test(url.pathname)
-            );
-        },
-        { waitUntil: "load" },
-    );
+    await page.waitForURL((url) => {
+        return (
+            onboardingUrl.test(url.pathname) || url.pathname === createWorkspaceUrl || surveyListUrl.test(url.pathname)
+        );
+    });
 
     const currentUrl = page.url();
 
@@ -65,12 +60,9 @@ setup("authenticate as onboarded user", async ({ page }) => {
 setup("authenticate as non onboarded user", async ({ page }) => {
     await authenticateUser(page, "test2@example.com", NON_ONBOARDED_USER_FILE);
 
-    await page.waitForURL(
-        (url) => {
-            return onboardingUrl.test(url.pathname) || url.pathname === createWorkspaceUrl;
-        },
-        { waitUntil: "load" },
-    );
+    await page.waitForURL((url) => {
+        return onboardingUrl.test(url.pathname) || url.pathname === createWorkspaceUrl;
+    });
 
     const currentUrl = page.url();
 
