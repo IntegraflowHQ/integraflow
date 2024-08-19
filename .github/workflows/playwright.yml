@@ -32,6 +32,8 @@ jobs:
 
       - name: Build dashboard
         run: yarn build:dashboard
+        env:
+          VITE_SERVER_BASE_URL: http://localhost:8000
 
       - name: Start Backend Server
         run: docker compose -f ./docker-compose-test.yml up -d
@@ -44,7 +46,8 @@ jobs:
         working-directory: apps/frontend
 
       - name: Run Playwright tests
-        run: yarn test-e2e
+        working-directory: apps/frontend
+        run: yarn playwright test
 
       - uses: actions/upload-artifact@v4
         if: always()
