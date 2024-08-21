@@ -1,11 +1,8 @@
+import { faker } from "@faker-js/faker";
 import { expect, Page, test as setup } from "@playwright/test";
-import { NEW_USER_FILE, NON_ONBOARDED_USER_FILE, ONBOARDED_USER_FILE } from "./utils/constants";
+import { NEW_USER_FILE, NON_ONBOARDED_USER_FILE, ONBOARDED_USER_FILE, ROUTES } from "./utils/constants";
 
 const e2eTestToken = "e2e_test_token";
-
-const createWorkspaceUrl = "/create-workspace";
-const onboardingUrl = /\/[\w-]+\/projects\/[\w-]+\/get-started/;
-const surveyListUrl = /\/onboarded\/projects\/[\w-]+\/surveys/;
 
 async function authenticateUser(page: Page, email: string, stateFile: string) {
     await page.goto("/");
@@ -15,7 +12,13 @@ async function authenticateUser(page: Page, email: string, stateFile: string) {
     await page.getByRole("button", { name: /enter code manually/i }).click();
     await page.fill('input[name="code"]', e2eTestToken);
     await page.getByRole("button", { name: /continue/i }).click();
-
+    await page.waitForURL((url) => {
+        return (
+            ROUTES.ONBOARDING_URL.test(url.pathname) ||
+            url.pathname === ROUTES.CREATE_WORKSPACE_URL ||
+            ROUTES.SURVEY_LIST_URL.test(url.pathname)
+        );
+    });
     await page.context().storageState({ path: stateFile });
 }
 
@@ -33,25 +36,29 @@ setup("authenticate as onboarded user", async ({ page }) => {
     // Wait for the navigation to complete to one of the expected URLs
     await page.waitForURL((url) => {
         return (
-            onboardingUrl.test(url.pathname) || url.pathname === createWorkspaceUrl || surveyListUrl.test(url.pathname)
+            ROUTES.ONBOARDING_URL.test(url.pathname) ||
+            url.pathname === ROUTES.CREATE_WORKSPACE_URL ||
+            ROUTES.SURVEY_LIST_URL.test(url.pathname)
         );
     });
 
     const currentUrl = page.url();
 
-    if (currentUrl.includes(createWorkspaceUrl)) {
-        await expect(page).toHaveURL(createWorkspaceUrl);
+    if (currentUrl.includes(ROUTES.CREATE_WORKSPACE_URL)) {
+        await expect(page).toHaveURL(ROUTES.CREATE_WORKSPACE_URL);
         await expect(page.locator("h3")).toContainText("Create a new workspace");
 
         await page.locator('[name="workspaceName"]').fill("onboarded");
         await page.locator('[name="workspaceUrl"]').fill("onboarded");
         await page.getByRole("button", { name: /Create Workspace/i }).click();
 
-        await page.waitForURL(onboardingUrl);
-        await expect(page).toHaveURL(onboardingUrl);
+        await page.waitForURL(ROUTES.ONBOARDING_URL);
+        await expect(page).toHaveURL(ROUTES.ONBOARDING_URL);
         await handleOnboardingSteps(page);
-    } else if (surveyListUrl.test(currentUrl)) {
-        await expect(page).toHaveURL(surveyListUrl);
+    } else if (ROUTES.SURVEY_LIST_URL.test(currentUrl)) {
+        console.log("survey list");
+        await expect(page).toHaveURL(ROUTES.SURVEY_LIST_URL);
+        await expect(page.locator("h1").nth(0)).toContainText(/Create your first survey/i);
     } else {
         throw new Error(`Unexpected URL: ${currentUrl}`);
     }
@@ -61,24 +68,24 @@ setup("authenticate as non onboarded user", async ({ page }) => {
     await authenticateUser(page, "test2@example.com", NON_ONBOARDED_USER_FILE);
 
     await page.waitForURL((url) => {
-        return onboardingUrl.test(url.pathname) || url.pathname === createWorkspaceUrl;
+        return ROUTES.ONBOARDING_URL.test(url.pathname) || url.pathname === ROUTES.CREATE_WORKSPACE_URL;
     });
 
     const currentUrl = page.url();
 
-    if (currentUrl.includes(createWorkspaceUrl)) {
-        await expect(page).toHaveURL(createWorkspaceUrl);
+    if (currentUrl.includes(ROUTES.CREATE_WORKSPACE_URL)) {
+        await expect(page).toHaveURL(ROUTES.CREATE_WORKSPACE_URL);
         await expect(page.locator("h3")).toContainText("Create a new workspace");
 
-        await page.locator('[name="workspaceName"]').fill("test2");
-        await page.locator('[name="workspaceUrl"]').fill("test2");
+        await page.locator('[name="workspaceName"]').fill(faker.word.words(2));
+        await page.locator('[name="workspaceUrl"]').fill(`${faker.word.words(1)}-${faker.word.words(1)}`);
         await page.getByRole("button", { name: /Create Workspace/i }).click();
 
-        await page.waitForURL(onboardingUrl);
-        await expect(page).toHaveURL(onboardingUrl);
+        await page.waitForURL(ROUTES.ONBOARDING_URL);
+        await expect(page).toHaveURL(ROUTES.ONBOARDING_URL);
         await expect(page.locator("h1").nth(0)).toContainText("Getting started");
-    } else if (onboardingUrl.test(currentUrl)) {
-        await expect(page).toHaveURL(onboardingUrl);
+    } else if (ROUTES.ONBOARDING_URL.test(currentUrl)) {
+        await expect(page).toHaveURL(ROUTES.ONBOARDING_URL);
         await expect(page.locator("h1").nth(0)).toContainText("Getting started");
     } else {
         throw new Error(`Unexpected URL: ${currentUrl}`);
