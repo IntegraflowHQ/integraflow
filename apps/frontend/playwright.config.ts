@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import { ONBOARDED_USER_FILE } from "./tests/utils/constants";
 
 /**
  * Read environment variables from file.
@@ -37,19 +38,19 @@ export default defineConfig({
 
         {
             name: "chromium",
-            use: { ...devices["Desktop Chrome"] },
+            use: { ...devices["Desktop Chrome"], storageState: ONBOARDED_USER_FILE },
             dependencies: ["setup"],
         },
 
         {
             name: "firefox",
-            use: { ...devices["Desktop Firefox"] },
+            use: { ...devices["Desktop Firefox"], storageState: ONBOARDED_USER_FILE },
             dependencies: ["setup"],
         },
 
         {
             name: "webkit",
-            use: { ...devices["Desktop Safari"] },
+            use: { ...devices["Desktop Safari"], storageState: ONBOARDED_USER_FILE },
             dependencies: ["setup"],
         },
 
