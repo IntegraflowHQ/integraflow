@@ -28,7 +28,7 @@ export const QuestionPanel = ({ questionIndex }: Props) => {
             className="space-y-6 rounded-lg bg-intg-bg-9 p-6 text-intg-text"
             defaultValue="edit"
         >
-            <div className="flex items-center justify-between border-b-[1px] border-intg-bg-4 ">
+            <div className="flex items-center justify-between border border-b-[1px] border-intg-bg-4 ">
                 <Tabs.List className="space-x-4">
                     <Tabs.Trigger
                         key="edit"
@@ -64,11 +64,12 @@ export const QuestionPanel = ({ questionIndex }: Props) => {
                 </Tabs.List>
 
                 <div className="flex items-center gap-3">
-                    {survey?.status !== SurveyStatusEnum.Active ? (
-                        <Trash2 onClick={() => deleteQuestion(question)} className="cursor-pointer" size={20} />
-                    ) : null}
-
-                    <button onClick={clear}>
+                    <button data-testid="delete-question">
+                        {survey?.status !== SurveyStatusEnum.Active ? (
+                            <Trash2 onClick={() => deleteQuestion(question)} className="cursor-pointer" size={20} />
+                        ) : null}
+                    </button>
+                    <button onClick={clear} name="close-question">
                         <XIcon className="cursor-pointer" />
                     </button>
                 </div>

@@ -42,11 +42,16 @@ export default function UpdateQuestion() {
                     >
                         {parsedQuestions?.map((question, index) => {
                             return (
-                                <Accordion.Item value={question.reference ?? ""} key={question.reference}>
+                                <Accordion.Item
+                                    value={question.reference ?? ""}
+                                    key={question.reference}
+                                    data-testid="question"
+                                >
                                     <Accordion.Header>
                                         <Accordion.Trigger
                                             value={question.reference ?? ""}
                                             className="w-full items-center  justify-between gap-2 rounded-lg bg-intg-bg-9 p-4 text-intg-text-7 data-[state=close]:flex data-[state=open]:hidden"
+                                            data-testid="question-trigger"
                                         >
                                             <div className="flex items-center gap-4">
                                                 <div>
@@ -77,7 +82,7 @@ export default function UpdateQuestion() {
                                                             }}
                                                         />
                                                     ) : (
-                                                        <p className="text-sm text-intg-text">
+                                                        <p className="text-sm text-intg-text" data-test-id="question">
                                                             Enter your question here, use '@' to recall information.
                                                         </p>
                                                     )}

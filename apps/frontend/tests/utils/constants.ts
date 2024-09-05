@@ -12,8 +12,8 @@ export const ROUTES = {
 
     SURVEY: {
         LIST: (workspaceSlug: string, projectSlug: string) => `/${workspaceSlug}/projects/${projectSlug}/surveys`,
-        SINGLE: (workspaceSlug: string, projectSlug: string, surveyId: string) =>
-            `/${workspaceSlug}/projects/${projectSlug}/survey/${surveyId}`,
+        SINGLE: (workspaceSlug: string, projectSlug: string, surveySlug: string) =>
+            `/${workspaceSlug}/projects/${projectSlug}/survey/${surveySlug}`,
     },
 
     PATTERNS: {

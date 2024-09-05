@@ -152,7 +152,7 @@ export const SurveyList = () => {
                                     </TableCell>
                                     <TableCell className="text-center">
                                         <Popover.Root>
-                                            <Popover.Trigger asChild>
+                                            <Popover.Trigger asChild data-testid="survey-dropdown-menu">
                                                 <button className="w-fit rounded-md px-1 py-1 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 data-[state=a]:bg-intg-bg-1">
                                                     <MoreHorizontal color="#AFAAC7" />
                                                 </button>
@@ -252,6 +252,7 @@ export const SurveyList = () => {
                                                                         getSurveyNameOnSelect(survey?.id ?? "", event)
                                                                     }
                                                                     className="flex gap-[6px] rounded-md py-[7px] text-sm font-normal text-intg-text-4 transition-all duration-300 ease-in hover:cursor-pointer hover:bg-intg-bg-1 hover:pl-[8px]"
+                                                                    data-testid="delete-survey"
                                                                 >
                                                                     <Trash2 size="18" color="#AFAAC7" />
                                                                     Delete
@@ -265,6 +266,7 @@ export const SurveyList = () => {
                                                                 className="w-[500px]"
                                                             >
                                                                 <button
+                                                                    data-testid="confirm-delete-survey"
                                                                     disabled={loading}
                                                                     onClick={(e) =>
                                                                         handleSurveyDelete(e, survey as Survey)
