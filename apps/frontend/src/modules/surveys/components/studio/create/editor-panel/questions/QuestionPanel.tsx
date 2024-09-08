@@ -28,7 +28,7 @@ export const QuestionPanel = ({ questionIndex }: Props) => {
             className="space-y-6 rounded-lg bg-intg-bg-9 p-6 text-intg-text"
             defaultValue="edit"
         >
-            <div className="flex items-center justify-between border border-b-[1px] border-intg-bg-4 ">
+            <div className="flex items-center justify-between border-b-[1px] border-intg-bg-4 ">
                 <Tabs.List className="space-x-4">
                     <Tabs.Trigger
                         key="edit"
