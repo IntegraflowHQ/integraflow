@@ -88,7 +88,10 @@ export const Navbar = () => {
                     <div className="mb-6 space-y-2">
                         <p className="text-xs text-intg-text-4">Project</p>
                         <DropdownMenu>
-                            <DropdownMenuTrigger className="w-[177px] select-none outline-none">
+                            <DropdownMenuTrigger
+                                className="w-[177px] select-none outline-none"
+                                data-testid="project-dropdown"
+                            >
                                 <NavItem
                                     text={project?.name as string}
                                     leftIcon={<AcronymBox text={project?.name as string} />}
@@ -107,10 +110,12 @@ export const Navbar = () => {
                                     {projects.map((item) => {
                                         return (
                                             <DropdownMenuItem
+                                                data-testid={"project-btn"}
                                                 key={item?.id}
                                                 onClick={() => {
                                                     switchProject(item as Project);
                                                 }}
+                                                className={cn(item?.slug === project?.slug ? "active" : "")}
                                             >
                                                 <NavItem
                                                     leftIcon={<AcronymBox text={item?.name ?? ""} />}
@@ -147,6 +152,7 @@ export const Navbar = () => {
 
                                     <DropdownMenuItem>
                                         <Button
+                                            data-testid="create-new-project"
                                             icon={<CirclePlusIcon />}
                                             variant="custom"
                                             text="New Project"
