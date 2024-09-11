@@ -354,7 +354,10 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
                 switchProject(project.id);
             }
 
-            if (orgSlug !== organization?.slug || projectSlug !== project.slug) {
+            if (
+                orgSlug?.toLowerCase() !== organization?.slug.toLowerCase() ||
+                projectSlug?.toLowerCase() !== project.slug.toLowerCase()
+            ) {
                 redirect({
                     ...(user ?? {}),
                     ...updatedUser,
