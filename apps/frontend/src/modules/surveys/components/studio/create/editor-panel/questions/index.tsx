@@ -45,7 +45,7 @@ export default function UpdateQuestion() {
                                 <Accordion.Item
                                     value={question.reference ?? ""}
                                     key={question.reference}
-                                    data-testid="question"
+                                    data-testid={question.reference}
                                 >
                                     <Accordion.Header>
                                         <Accordion.Trigger

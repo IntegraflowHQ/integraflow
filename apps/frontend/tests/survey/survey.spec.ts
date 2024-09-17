@@ -2,13 +2,12 @@ import { faker } from "@faker-js/faker";
 import { expect, test } from "@playwright/test";
 import fs from "fs";
 import { ROUTES, userDetailsFile } from "../utils/constants";
+import { waitForResponse } from "../utils/helper";
 
 test.describe("Create survey", () => {
     let projectSlug;
     let workspaceSlug;
-    test.beforeAll(async ({ browser }) => {
-        // const context = await browser.newContext();
-        // const page = await context.newPage();
+    test.beforeEach(async () => {
         const details = JSON.parse(fs.readFileSync(userDetailsFile, "utf-8"));
         workspaceSlug = details.workspaceSlug;
         projectSlug = details.projectSlug;
@@ -17,40 +16,47 @@ test.describe("Create survey", () => {
     test("should allow user create a survey", async ({ page }) => {
         await page.goto(ROUTES.SURVEY.LIST(workspaceSlug, projectSlug));
 
-        await expect(page.getByRole("button", { name: /Create new survey/i }).last()).toBeVisible();
-        await page
-            .getByRole("button", { name: /Create new survey/i })
-            .last()
-            .click();
+        await page.getByTestId("create-survey").waitFor();
+        await page.getByTestId("create-survey").click();
         await page.waitForURL((url) => ROUTES.PATTERNS.SINGLE_SURVEY.test(url.pathname));
+        await page.locator('[name="title"]').waitFor();
         await page.locator('[name="title"]').fill(faker.word.noun(10));
 
         await expect(page.getByRole("tab", { name: "Create" })).toBeVisible();
-
-        await expect(page.locator('[name="title"]')).toBeVisible();
     });
+
     test("should allow user to delete a survey", async ({ page }) => {
         await page.goto(ROUTES.SURVEY.LIST(workspaceSlug, projectSlug));
 
-        await page
-            .getByRole("button", { name: /Create new survey/i })
-            .last()
-            .click();
-        await page.locator('[name="title"]').fill(faker.word.noun(10));
-        await expect(page.locator('[name="title"]')).toBeVisible();
+        const surveyTitle = faker.word.noun(10);
 
+        await page.getByTestId("create-survey").waitFor();
+        await page.getByTestId("create-survey").click();
         await page.waitForURL((url) => ROUTES.PATTERNS.SINGLE_SURVEY.test(url.pathname));
+        await page.locator('[name="title"]').waitFor();
+        await page.locator('[name="title"]').fill(surveyTitle);
+
+        await waitForResponse(page, "SurveyUpdate", async () => {
+            await page.locator('[name="title"]').fill(surveyTitle);
+        });
 
         await page.goto(ROUTES.SURVEY.LIST(workspaceSlug, projectSlug));
 
-        const initialCount = parseInt((await page.getByTestId("survey-count").textContent()) || "0", 10);
+        await page.waitForURL((url) => ROUTES.PATTERNS.SURVEY_LIST_URL.test(url.pathname));
 
-        await page.getByTestId("survey-dropdown-menu").first().click();
+        await page.getByTestId(surveyTitle).waitFor();
+
+        const surveyElement = page.locator(`[data-testid="${surveyTitle}"]`);
+        await surveyElement.locator('[data-testid="survey-dropdown-menu"]').click();
+
         await page.getByTestId("delete-survey").click();
-        await page.getByTestId("confirm-delete-survey").click();
 
-        const finalCount = parseInt((await page.getByTestId("survey-count").textContent()) || "0", 10);
+        await waitForResponse(page, "SurveyDelete", async () => {
+            await page.getByTestId("confirm-delete-survey").click();
+        });
 
-        expect(finalCount).toBe(initialCount - 1);
+        await page.getByTestId("create-survey").waitFor();
+
+        await expect(surveyElement).toBeHidden();
     });
 });

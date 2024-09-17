@@ -61,6 +61,18 @@ setup("authenticate as onboarded user", async ({ page }) => {
         await page.waitForURL(ROUTES.PATTERNS.ONBOARDING_URL);
         await expect(page).toHaveURL(ROUTES.PATTERNS.ONBOARDING_URL);
         await handleOnboardingSteps(page);
+
+        await page.waitForURL((url) => {
+            return ROUTES.PATTERNS.SURVEY_LIST_URL.test(url.pathname);
+        });
+
+        const url = new URL(page.url());
+
+        const workspaceSlug = url.pathname.split("/")[1];
+        const projectSlug = url.pathname.split("/")[3];
+        const details = { workspaceSlug, projectSlug };
+
+        fs.writeFileSync(userDetailsFile, JSON.stringify(details), "utf-8");
     } else if (ROUTES.PATTERNS.SURVEY_LIST_URL.test(currentUrl)) {
         await expect(page).toHaveURL(ROUTES.PATTERNS.SURVEY_LIST_URL);
         await expect(page.getByRole("button", { name: /Create new survey/i }).last()).toBeVisible();
