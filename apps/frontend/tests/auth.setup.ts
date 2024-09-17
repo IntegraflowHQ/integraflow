@@ -63,9 +63,10 @@ setup("authenticate as onboarded user", async ({ page }) => {
         await handleOnboardingSteps(page);
 
         await page.waitForURL((url) => {
+            console.log("PATHNAME", url.pathname);
             return ROUTES.PATTERNS.SURVEY_LIST_URL.test(url.pathname);
         });
-
+        // ("");
         const url = new URL(page.url());
 
         const workspaceSlug = url.pathname.split("/")[1];
