@@ -62,13 +62,14 @@ export const QuestionOptions = () => {
 
     return (
         <Popover open={showQuestionTypes} onOpenChange={(open) => setShowQuestionTypes(open)}>
-            <PopoverTrigger className="w-full">
+            <PopoverTrigger className="w-full" asChild>
                 <Button
                     className="flex items-center justify-center gap-2 px-[12px] py-[12px]"
                     onClick={() => {
                         setShowQuestionTypes(!showQuestionTypes);
                         setShowStudioOverlay(!showStudioOverlay);
                     }}
+                    data-testid="add-question"
                 >
                     <PlusCircle />
                     <span className="w-max text-base font-normal">
