@@ -100,6 +100,7 @@ export const SurveyList = () => {
                             return (
                                 <TableRow
                                     key={survey.id}
+                                    data-testid={survey.name ?? survey.id}
                                     className="border-intg-bg-4 text-center font-light transition-all duration-300 ease-in hover:bg-intg-bg-8"
                                 >
                                     <TableCell
