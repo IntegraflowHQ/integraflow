@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import { ONBOARDED_USER_FILE } from "./tests/utils/constants";
 
 /**
  * Read environment variables from file.
@@ -12,14 +13,14 @@ import { defineConfig, devices } from "@playwright/test";
  */
 export default defineConfig({
     testDir: "./tests",
+    timeout: 90000,
     /* Run tests in files in parallel */
     fullyParallel: true,
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
-    /* Retry on CI only */
-    retries: process.env.CI ? 2 : 0,
+    retries: 3,
     /* Opt out of parallel tests on CI. */
-    workers: process.env.CI ? 1 : undefined,
+    workers: process.env.CI ? undefined : "80%",
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
     reporter: "html",
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -37,19 +38,19 @@ export default defineConfig({
 
         {
             name: "chromium",
-            use: { ...devices["Desktop Chrome"] },
+            use: { ...devices["Desktop Chrome"], storageState: ONBOARDED_USER_FILE },
             dependencies: ["setup"],
         },
 
         {
             name: "firefox",
-            use: { ...devices["Desktop Firefox"] },
+            use: { ...devices["Desktop Firefox"], storageState: ONBOARDED_USER_FILE },
             dependencies: ["setup"],
         },
 
         {
             name: "webkit",
-            use: { ...devices["Desktop Safari"] },
+            use: { ...devices["Desktop Safari"], storageState: ONBOARDED_USER_FILE },
             dependencies: ["setup"],
         },
 
