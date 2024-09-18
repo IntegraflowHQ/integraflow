@@ -20,12 +20,10 @@ test.describe("Create workspace", () => {
         await page.getByRole("button", { name: /Create Workspace/i }).click();
 
         await page.waitForURL((url) => {
-            console.log(url.pathname);
             return ROUTES.PATTERNS.SURVEY_LIST_URL.test(url.pathname);
         });
 
         const url = new URL(page.url());
-        console.log("pathname", url.pathname);
 
         const workspaceSlug = url.pathname.split("/")[1];
         const projectSlug = url.pathname.split("/")[3];
@@ -43,12 +41,10 @@ test.describe("Create workspace", () => {
         await page.getByRole("button", { name: /Create Workspace/i }).click();
 
         await page.waitForURL((url) => {
-            console.log("not repeated", ROUTES.SURVEY.LIST);
             return ROUTES.PATTERNS.SURVEY_LIST_URL.test(url.pathname);
         });
 
         const url = new URL(page.url());
-        console.log("pathname", url.pathname);
 
         const workspaceSlug = url.pathname.split("/")[1];
         const projectSlug = url.pathname.split("/")[3];
@@ -64,7 +60,7 @@ test.describe("Create workspace", () => {
         await page.locator('[name="workspaceUrl"]').fill(workspaceUrl);
         await page.getByRole("button", { name: /Create Workspace/i }).click();
 
-        await page.locator(".tremor-TextInput-errorMessage").waitFor();
+        await page.locator(".tremor-TextInput-errorMessage").waitFor({ state: "attached" });
         await expect(page.locator(".tremor-TextInput-errorMessage")).toBeVisible();
     });
 });
