@@ -2,6 +2,7 @@ import { faker } from "@faker-js/faker";
 import { expect, test } from "@playwright/test";
 import fs from "fs";
 import { ROUTES, userDetailsFile } from "../utils/constants";
+import { waitForResponse } from "./../utils/helper";
 
 test.describe("Create workspace", () => {
     let projectSlug;
@@ -19,8 +20,6 @@ test.describe("Create workspace", () => {
         const oldUrl = page.url();
 
         const newProject = faker.company.name();
-
-        // await expect(page.getByRole("button", { name: /Create new survey/i }).last()).toBeVisible();
         await page.getByText(/invite team/i).waitFor();
 
         await page.getByTestId("project-dropdown").waitFor();
@@ -31,8 +30,6 @@ test.describe("Create workspace", () => {
         await page.getByPlaceholder(/Project name/i).fill(newProject);
 
         await page.getByRole("button", { name: /Create project/i }).click();
-
-        // await expect(page.getByRole("button", { name: /Create new survey/i }).last()).toBeVisible();
         await expect(page.locator("div").filter({ hasText: "Success!Project created" }).nth(3)).toBeVisible();
         await page.waitForURL((url) => ROUTES.PATTERNS.SURVEY_LIST_URL.test(url.pathname));
 
@@ -50,7 +47,6 @@ test.describe("Create workspace", () => {
         const newProjectName = extractProjectNameFromUrl(newUrl);
 
         expect(newProjectName).not.toEqual(oldProjectName);
-        // expect(newProjectName).toContain(newProject.replace(/\s+/g, "-").toLowerCase());
 
         projectSlug = url.pathname.split("/")[3];
 
@@ -77,7 +73,6 @@ test.describe("Create workspace", () => {
 
         let activeIndex = -1;
 
-        // find the one with the 'active' class
         for (let i = 0; i < projectButtons.length; i++) {
             const isActive = await projectButtons[i].evaluate((el) => {
                 return (el as HTMLElement).classList.contains("active");
@@ -91,7 +86,6 @@ test.describe("Create workspace", () => {
         console.log("Active button index:", activeIndex);
 
         if (projectButtons.length === 1) {
-            // Only one project, click it if it's not active
             if (activeIndex === -1) {
                 activeIndex = 0;
                 await projectButtons[activeIndex].click();
@@ -101,28 +95,19 @@ test.describe("Create workspace", () => {
             console.log(activeIndex, "has clicked the next index");
             console.log(activeIndex + 1);
             activeIndex = activeIndex + 1;
-            // Click the next button if there's more than one project and we're not at the last project
             await projectButtons[activeIndex].click();
         } else if (activeIndex !== -1 && activeIndex === projectButtons.length - 1) {
-            // If it's the last button, click the first one
-            console.log(activeIndex, "I am last so i clicked first");
             activeIndex = 0;
 
             await projectButtons[activeIndex].click();
         } else if (activeIndex === -1) {
-            console.log(activeIndex, "no project found");
             activeIndex = 0;
-            // If no active button is found, click the first one as a fallback
             await projectButtons[activeIndex].click();
         }
 
-        console.log("new active index", activeIndex);
-
-        // Capture the new URL and verify project change
         const url = new URL(page.url());
         const newUrl = url.pathname;
 
-        // Extract project names from the old and new URLs
         const extractProjectNameFromUrl = (url) => {
             const match = url.match(/projects\/([\w-]+)\//);
             return match ? match[1] : null;
@@ -132,14 +117,62 @@ test.describe("Create workspace", () => {
         const newProjectName = extractProjectNameFromUrl(newUrl);
         console.log({ oldProjectName }, { newProjectName });
 
-        // Assert that the project name in the new URL is different
         expect(newProjectName).not.toEqual(oldProjectName);
 
-        // Save the new project slug for later tests
         projectSlug = url.pathname.split("/")[3];
 
         const details = { workspaceSlug, projectSlug };
 
         fs.writeFileSync(userDetailsFile, JSON.stringify(details), "utf-8");
+    });
+
+    test("should allow user to update Project", async ({ page }) => {
+        await page.goto(ROUTES.PROJECT.SETTINGS(workspaceSlug, projectSlug));
+        await page.getByText(/Manage your Integraflow Project/i).waitFor();
+        const prevName = await page.getByTestId("project-name").inputValue();
+
+        await page.getByTestId("project-name").fill(faker.company.buzzAdjective());
+        await waitForResponse(page, "projectUpdate", async () => {
+            await page.getByRole("button", { name: "Update" }).click();
+        });
+
+        await page.reload();
+        await page.getByTestId("project-name").waitFor();
+
+        const newName = await page.getByTestId("project-name").inputValue();
+        expect(prevName).not.toBe(newName);
+    });
+    test("should allow user to refresh Project key", async ({ page }) => {
+        await page.goto(ROUTES.PROJECT.SETTINGS(workspaceSlug, projectSlug));
+        await page.getByText(/Manage your Integraflow Project/i).waitFor();
+
+        const previousKey = await page.getByTestId("project-key").inputValue();
+
+        await waitForResponse(page, "projectTokenReset", async () => {
+            await page.getByTestId("refresh-project-key").click();
+        });
+
+        await page.reload();
+        await page.getByTestId("project-key").waitFor();
+
+        const newKey = await page.getByTestId("project-key").inputValue();
+        expect(previousKey).not.toBe(newKey);
+    });
+
+    test("should allow user to copy Project key", async ({ page, context, browserName }) => {
+        if (browserName === "firefox" || browserName === "webkit") {
+            test.skip();
+        }
+
+        await page.goto(ROUTES.PROJECT.SETTINGS(workspaceSlug, projectSlug));
+        await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+        await page.getByText(/Manage your Integraflow Project/i).waitFor();
+
+        const projectKey = await page.getByTestId("project-key").inputValue();
+        await page.getByTestId("copy-project-key").click();
+        const handle = await page.evaluateHandle(() => navigator.clipboard.readText());
+        const clipboardContent = await handle.jsonValue();
+
+        expect(clipboardContent).toBe(projectKey);
     });
 });

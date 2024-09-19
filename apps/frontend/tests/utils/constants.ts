@@ -10,6 +10,11 @@ export const ROUTES = {
             `/${workspaceSlug}/projects/${projectSlug}/get-started`,
     },
 
+    PROJECT: {
+        SETTINGS: (workspaceSlug: string, projectSlug: string) =>
+            `/${workspaceSlug}/projects/${projectSlug}/settings/project`,
+    },
+
     SURVEY: {
         LIST: (workspaceSlug: string, projectSlug: string) => `/${workspaceSlug}/projects/${projectSlug}/surveys`,
         SINGLE: (workspaceSlug: string, projectSlug: string, surveySlug: string) =>
