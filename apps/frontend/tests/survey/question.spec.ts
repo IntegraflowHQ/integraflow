@@ -103,23 +103,18 @@ test.describe("Create questions", () => {
         // // Log the inner HTML of the text editor for each question
         await page.getByTestId("question-trigger").nth(0).click();
         await page.waitForSelector(".ql-editor", { state: "attached" });
-        console.log("Question 1 HTML:", await page.locator(".ql-editor").evaluate((el) => el.innerHTML));
 
         await page.getByTestId("question-trigger").nth(1).click();
         await page.waitForSelector(".ql-editor", { state: "attached" });
-        console.log("Question 2 HTML:", await page.locator(".ql-editor").evaluate((el) => el.innerHTML));
 
         await page.getByTestId("question-trigger").nth(2).click();
         await page.waitForSelector(".ql-editor", { state: "attached" });
-        console.log("Question 3 HTML:", await page.locator(".ql-editor").evaluate((el) => el.innerHTML));
 
         await page.getByTestId("question-trigger").nth(3).click();
         await page.waitForSelector(".ql-editor", { state: "attached" });
-        console.log("Question 4 HTML:", await page.locator(".ql-editor").evaluate((el) => el.innerHTML));
 
         await page.getByTestId("question-trigger").nth(0).click();
         await page.waitForSelector(".ql-editor", { state: "attached" });
-        console.log("Question 4 HTML:", await page.locator(".ql-editor").evaluate((el) => el.innerHTML));
     });
 
     test("should allow user to delete a question", async ({ page }) => {

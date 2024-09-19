@@ -83,17 +83,12 @@ test.describe("Create workspace", () => {
             }
         }
 
-        console.log("Active button index:", activeIndex);
-
         if (projectButtons.length === 1) {
             if (activeIndex === -1) {
                 activeIndex = 0;
                 await projectButtons[activeIndex].click();
             }
-            console.log("has only one project");
         } else if (activeIndex !== -1 && activeIndex < projectButtons.length - 1) {
-            console.log(activeIndex, "has clicked the next index");
-            console.log(activeIndex + 1);
             activeIndex = activeIndex + 1;
             await projectButtons[activeIndex].click();
         } else if (activeIndex !== -1 && activeIndex === projectButtons.length - 1) {
@@ -115,9 +110,12 @@ test.describe("Create workspace", () => {
 
         const oldProjectName = extractProjectNameFromUrl(oldUrl);
         const newProjectName = extractProjectNameFromUrl(newUrl);
-        console.log({ oldProjectName }, { newProjectName });
 
-        expect(newProjectName).not.toEqual(oldProjectName);
+        if (projectButtons.length === 1) {
+            expect(newProjectName).toEqual(oldProjectName);
+        } else {
+            expect(newProjectName).not.toEqual(oldProjectName);
+        }
 
         projectSlug = url.pathname.split("/")[3];
 
