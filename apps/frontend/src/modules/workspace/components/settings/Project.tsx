@@ -50,6 +50,7 @@ export const Project = () => {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-6">
                         <TextInput
+                            data-testid="project-name"
                             label={"Project Name"}
                             className="font-semibold"
                             defaultValue={project?.name}
@@ -71,11 +72,13 @@ export const Project = () => {
                 <div className="flex w-full items-end gap-2">
                     <div className="flex-1">
                         <TextInput
+                            data-testid="project-key"
                             label="Project Key"
                             value={project?.apiToken}
                             disabled={true}
                             rightIcon={
                                 <Button
+                                    data-testid="refresh-project-key"
                                     variant="custom"
                                     size="sm"
                                     disabled={loading}
@@ -87,6 +90,7 @@ export const Project = () => {
                     </div>
                     <Button
                         text="Copy"
+                        data-testid="copy-project-key"
                         size="md"
                         icon={<CopyIcon size={16} />}
                         textAlign="center"
