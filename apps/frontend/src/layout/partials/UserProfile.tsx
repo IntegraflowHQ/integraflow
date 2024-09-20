@@ -48,7 +48,10 @@ export const UserProfile = () => {
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger className="flex w-full items-center text-intg-text outline-none">
+            <DropdownMenuTrigger
+                data-testid="profile-btn"
+                className="flex w-full items-center text-intg-text outline-none"
+            >
                 <div className="flex items-center gap-2">
                     <img src={Frame} alt="picture frame" className="h-[31px] w-[31px] rounded object-contain" />
                     <span className="text-sm">Profile</span>
@@ -174,7 +177,11 @@ export const UserProfile = () => {
                     );
                 })}
                 <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
-                <DropdownMenuItem className="flex cursor-pointer items-center gap-2 px-3 py-2" onClick={logout}>
+                <DropdownMenuItem
+                    data-testid="logout"
+                    className="flex cursor-pointer items-center gap-2 px-3 py-2"
+                    onClick={logout}
+                >
                     <LogoutIcon />
                     <p className="text-sm text-intg-error-text">Log out</p>
                 </DropdownMenuItem>
