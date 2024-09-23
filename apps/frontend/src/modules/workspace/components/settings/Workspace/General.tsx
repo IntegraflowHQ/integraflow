@@ -49,7 +49,7 @@ export const General = () => {
             );
             toast.success(`Your organization name has been updated`);
         } else {
-            toast.success(`Your organization failed to update, please try again later`);
+            toast.error(`Your organization failed to update, please try again later`);
         }
     };
     return (
