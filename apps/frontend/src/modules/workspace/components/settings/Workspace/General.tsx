@@ -47,9 +47,10 @@ export const General = () => {
                     .replace(":orgSlug", response.data.organizationUpdate.organization?.slug)
                     .replace(":projectSlug", project?.slug),
             );
+            toast.success(`Your organization name has been updated`);
+        } else {
+            toast.success(`Your organization failed to update, please try again later`);
         }
-
-        toast.success(`Your organization name has been updated`);
     };
     return (
         <form className="w-[593px] pt-10" onSubmit={handleSubmit(onSubmit)}>
