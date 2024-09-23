@@ -88,6 +88,7 @@ export const useWorkspace = () => {
                 if (response.data?.organizationUpdate?.organization) {
                     updateUserCache(response.data?.organizationUpdate?.organization);
                 }
+                return response;
             } catch (error) {
                 console.error(error);
             }
