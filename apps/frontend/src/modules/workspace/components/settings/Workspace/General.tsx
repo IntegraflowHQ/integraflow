@@ -1,7 +1,10 @@
+import { useProject } from "@/modules/projects/hooks/useProject";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
+import { ROUTES } from "@/routes";
 import { Button, TextInput } from "@/ui";
 import { toast } from "@/utils/toast";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 type WorkspaceData = {
     workspaceName: string | undefined;
@@ -9,7 +12,9 @@ type WorkspaceData = {
 };
 
 export const General = () => {
+    const navigate = useNavigate();
     const { workspace, updateWorkspace } = useWorkspace();
+    const { project } = useProject();
 
     const {
         register,
@@ -28,13 +33,22 @@ export const General = () => {
             return;
         }
 
-        await updateWorkspace(
+        const response = await updateWorkspace(
             {
                 name: formInfo.workspaceName,
                 slug: formInfo.workspaceUrl,
             },
             false,
         );
+
+        if (response?.data?.organizationUpdate) {
+            navigate(
+                `${ROUTES.WORKSPACE_SETTINGS}`
+                    .replace(":orgSlug", response.data.organizationUpdate.organization?.slug!)
+                    .replace(":projectSlug", project?.slug!),
+            );
+        }
+
         toast.success(`Your organization name has been updated`);
     };
     return (
