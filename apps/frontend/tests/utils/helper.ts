@@ -1,0 +1,63 @@
+import { Page } from "@playwright/test";
+import fs from "fs";
+import { e2eTestToken, ROUTES, userDetailsFile } from "./constants";
+
+export const waitForResponse = async (page: Page, operationName: string, actionCallback: () => void) => {
+    const [response] = await Promise.all([
+        page.waitForResponse((response) => {
+            const request = response.request();
+            if (request) {
+                const postData = request.postData();
+                if (postData && postData.includes(operationName)) {
+                    return response.url().includes("/graphql") && response.status() === 200;
+                }
+            }
+            return false;
+        }),
+        actionCallback(),
+    ]);
+
+    const request = response.request();
+    const postData = request?.postData();
+
+    if (postData) {
+        try {
+            const parsedData = JSON.parse(postData);
+            return parsedData;
+        } catch (error) {
+            return null;
+        }
+    }
+    return null;
+};
+
+export async function authenticateUser(page: Page, email: string) {
+    await page.goto("/");
+    await page.getByPlaceholder("Enter your email").fill(email);
+    await page.getByRole("button", { name: /Continue with email/i }).click();
+    await page.waitForURL(`/auth/magic-sign-in/?email=${encodeURIComponent(email)}`);
+    await page.getByRole("button", { name: /enter code manually/i }).click();
+    await page.fill('input[name="code"]', e2eTestToken);
+    await page.getByRole("button", { name: /continue/i }).click();
+    await page.waitForURL((url) => {
+        return (
+            ROUTES.PATTERNS.ONBOARDING_URL.test(url.pathname) ||
+            url.pathname === ROUTES.WORKSPACE.CREATE ||
+            ROUTES.PATTERNS.SURVEY_LIST_URL.test(url.pathname)
+        );
+    });
+}
+
+export function extractWorkspaceAndProjectSlugs(url: string) {
+    const pathname = new URL(url).pathname;
+    const workspaceSlug = pathname.split("/")[1];
+    const projectSlug = pathname.split("/")[3];
+    return { workspaceSlug, projectSlug };
+}
+
+export async function saveUserDetails(page: Page, storageFile: string) {
+    const { workspaceSlug, projectSlug } = extractWorkspaceAndProjectSlugs(page.url());
+    const details = { workspaceSlug, projectSlug };
+    fs.writeFileSync(userDetailsFile, JSON.stringify(details), "utf-8");
+    await page.context().storageState({ path: storageFile });
+}
