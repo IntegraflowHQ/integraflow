@@ -41,11 +41,11 @@ export const General = () => {
             false,
         );
 
-        if (response?.data?.organizationUpdate) {
+        if (response?.data?.organizationUpdate?.organization?.slug && project?.slug) {
             navigate(
                 `${ROUTES.WORKSPACE_SETTINGS}`
-                    .replace(":orgSlug", response.data.organizationUpdate.organization?.slug!)
-                    .replace(":projectSlug", project?.slug!),
+                    .replace(":orgSlug", response.data.organizationUpdate.organization?.slug)
+                    .replace(":projectSlug", project?.slug),
             );
         }
 
