@@ -147,6 +147,7 @@ export const UserProfile = () => {
                     </DropdownMenuSubContent>
                 </DropdownMenuSub>
                 <DropdownMenuItem
+                    data-testid="workspace-settings-btn"
                     className="flex items-center gap-2 px-3 py-2"
                     onClick={() =>
                         navigate(

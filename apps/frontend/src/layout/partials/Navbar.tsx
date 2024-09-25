@@ -248,6 +248,7 @@ export const Navbar = () => {
                             onClick={() => {
                                 setOpenOrganizationInviteModal(true);
                             }}
+                            data-testid="invite-team-btn"
                         >
                             <span>
                                 <CirclePlusIcon />

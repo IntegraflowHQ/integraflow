@@ -1,5 +1,5 @@
 import { Link, LucideMail, RefreshCcwIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { OrganizationErrorCode, OrganizationInvite, OrganizationInviteCreate, User } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
@@ -35,6 +35,10 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
             setInviteLink(`${window.location.host}${response?.inviteLink}`);
         }
     };
+
+    useEffect(() => {
+        handleLinkInvite();
+    }, [onOpenChange]);
 
     const handleEmailInvite = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -169,7 +173,7 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
                         </div>
                     </form>
                 ) : (
-                    <div onSubmit={handleLinkInvite} className="mt-3">
+                    <div className="mt-3">
                         <p className="mb-4 text-sm text-intg-text">
                             Invite link will provide a unique URL that allows anyone to join your organization.
                         </p>
@@ -185,6 +189,7 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
                                             size="sm"
                                             disabled={loading}
                                             onClick={handleInviteLinkRefresh}
+                                            data-testid="refresh-invite-link"
                                             icon={
                                                 <RefreshCcwIcon
                                                     size={16}
@@ -193,6 +198,7 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
                                             }
                                         />
                                     }
+                                    data-testid="invite-link"
                                 />
                             </div>
                             <Button
@@ -219,8 +225,8 @@ export const WorkspaceInvite = ({ open, onOpenChange }: Props) => {
                         size="md"
                         onClick={() => {
                             setToggleInviteType(!toggleInviteType);
-                            !toggleInviteType && handleInviteLinkRefresh();
                         }}
+                        data-testid="toggle-invite-type"
                     />
                 </div>
             </DialogContent>

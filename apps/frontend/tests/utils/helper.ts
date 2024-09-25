@@ -55,8 +55,8 @@ export function extractWorkspaceAndProjectSlugs(url: string) {
     return { workspaceSlug, projectSlug };
 }
 
-export async function saveUserDetails(page: Page, storageFile: string) {
-    const { workspaceSlug, projectSlug } = extractWorkspaceAndProjectSlugs(page.url());
+export async function saveUserDetails(page: Page, storageFile: string, url) {
+    const { workspaceSlug, projectSlug } = extractWorkspaceAndProjectSlugs(url);
     const details = { workspaceSlug, projectSlug };
     fs.writeFileSync(userDetailsFile, JSON.stringify(details), "utf-8");
     await page.context().storageState({ path: storageFile });

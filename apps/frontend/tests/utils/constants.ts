@@ -18,6 +18,13 @@ export const ROUTES = {
             `/${workspaceSlug}/projects/${projectSlug}/get-started`,
     },
 
+    SETTINGS: {
+        PROJECT: (workspaceSlug: string, projectSlug: string) =>
+            `/${workspaceSlug}/projects/${projectSlug}/settings/project`,
+        WORKSPACE: (workspaceSlug: string, projectSlug: string) =>
+            `/${workspaceSlug}/projects/${projectSlug}/settings/workspace`,
+    },
+
     SURVEY: {
         LIST: (workspaceSlug: string, projectSlug: string) => `/${workspaceSlug}/projects/${projectSlug}/surveys`,
         SINGLE: (workspaceSlug: string, projectSlug: string, surveySlug: string) =>
@@ -28,5 +35,7 @@ export const ROUTES = {
         ONBOARDING_URL: /\/[\w-]+\/projects\/[\w-]+\/get-started/,
         SURVEY_LIST_URL: /\/[\w-]+\/projects\/[\w-]+\/surveys/,
         SINGLE_SURVEY: /\/[\w-]+\/projects\/[\w-]+\/survey\/[\w-]+/,
+        WORKSPACE_SETTINGS: /\/[\w-]+\/projects\/[\w-]+\/settings\/workspace/,
+        PROJECT_SETTINGS: /\/[\w-]+\/projects\/[\w-]+\/settings\/project/,
     },
 };
