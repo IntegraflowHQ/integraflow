@@ -1,7 +1,10 @@
+import { useProject } from "@/modules/projects/hooks/useProject";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
-import { Button, TextInput } from "@/ui";
+import { ROUTES } from "@/routes";
+import { Button, GlobalSpinner, TextInput } from "@/ui";
 import { toast } from "@/utils/toast";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 type WorkspaceData = {
     workspaceName: string | undefined;
@@ -9,7 +12,9 @@ type WorkspaceData = {
 };
 
 export const General = () => {
-    const { workspace, updateWorkspace } = useWorkspace();
+    const { project } = useProject();
+    const { workspace, updateWorkspace, loading } = useWorkspace();
+    const navigate = useNavigate();
 
     const {
         register,
@@ -28,15 +33,26 @@ export const General = () => {
             return;
         }
 
-        await updateWorkspace(
+        const response = await updateWorkspace(
             {
                 name: formInfo.workspaceName,
                 slug: formInfo.workspaceUrl,
             },
             false,
         );
+        if (response?.data?.organizationUpdate) {
+            navigate(
+                `${ROUTES.WORKSPACE_SETTINGS}`
+                    .replace(":orgSlug", response?.data?.organizationUpdate?.organization?.slug!)
+                    .replace(":projectSlug", project?.slug!),
+            );
+        }
         toast.success(`Your organization name has been updated`);
     };
+
+    if (loading) {
+        return <GlobalSpinner />;
+    }
     return (
         <form className="w-[593px] pt-10" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-4">
@@ -60,6 +76,7 @@ export const General = () => {
                     defaultValue={workspace?.name}
                     error={!!errors.workspaceName?.message}
                     errorMessage={errors.workspaceName?.message}
+                    data-testid="workspace-name"
                 />
                 <TextInput
                     prefix="integraflow.app/"
@@ -86,6 +103,7 @@ export const General = () => {
                     })}
                     error={!!errors.workspaceUrl?.message}
                     errorMessage={errors.workspaceUrl?.message}
+                    data-testid="workspace-url"
                 />
                 <div className="w-[114px]">
                     <Button text="Update" type="submit" className="w-[114px]" size="md" />

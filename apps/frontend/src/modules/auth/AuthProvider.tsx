@@ -291,7 +291,7 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
     const workspace = useMemo(() => {
         const slug = orgSlug ?? user?.organization?.slug;
 
-        return organizations.find((organization) => organization?.slug === slug) ?? null;
+        return organizations.find((organization) => organization?.slug?.toLowerCase() === slug?.toLowerCase()) ?? null;
     }, [orgSlug, user?.organization?.slug, organizations]);
 
     const projects = useMemo(() => {
@@ -313,7 +313,7 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
 
         const slug = projectSlug ?? user?.project?.slug;
 
-        return projects?.find((project) => project?.slug === slug) ?? null;
+        return projects?.find((project) => project?.slug?.toLowerCase() === slug?.toLowerCase()) ?? null;
     }, [user, orgSlug, projectSlug, projects, workspace]);
 
     const handleUserUpdate = useCallback(
@@ -354,7 +354,10 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
                 switchProject(project.id);
             }
 
-            if (orgSlug !== organization?.slug || projectSlug !== project.slug) {
+            if (
+                orgSlug?.toLowerCase() !== organization?.slug.toLowerCase() ||
+                projectSlug?.toLowerCase() !== project.slug.toLowerCase()
+            ) {
                 redirect({
                     ...(user ?? {}),
                     ...updatedUser,

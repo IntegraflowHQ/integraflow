@@ -41,13 +41,16 @@ setup("authenticate as onboarded user", async ({ page }) => {
         await page.getByRole("button", { name: /Create Workspace/i }).click();
 
         await page.waitForURL(ROUTES.PATTERNS.ONBOARDING_URL);
+        const url = new URL(page.url());
         await handleOnboardingSteps(page);
-        await saveUserDetails(page, ONBOARDED_USER_FILE);
+        await saveUserDetails(page, ONBOARDED_USER_FILE, url);
     } else if (ROUTES.PATTERNS.ONBOARDING_URL.test(currentUrl)) {
+        const url = new URL(page.url());
         await handleOnboardingSteps(page);
-        await saveUserDetails(page, ONBOARDED_USER_FILE);
+        await saveUserDetails(page, ONBOARDED_USER_FILE, url);
     } else if (ROUTES.PATTERNS.SURVEY_LIST_URL.test(currentUrl)) {
-        await saveUserDetails(page, ONBOARDED_USER_FILE);
+        const url = new URL(page.url());
+        await saveUserDetails(page, ONBOARDED_USER_FILE, url);
     } else {
         throw new Error(`Unexpected URL: ${currentUrl}`);
     }
@@ -71,9 +74,12 @@ setup("authenticate as non onboarded user", async ({ page }) => {
         await page.getByRole("button", { name: /Create Workspace/i }).click();
 
         await page.waitForURL(ROUTES.PATTERNS.ONBOARDING_URL);
-        await saveUserDetails(page, NON_ONBOARDED_USER_FILE);
+        const url = new URL(page.url());
+
+        await saveUserDetails(page, NON_ONBOARDED_USER_FILE, url);
     } else if (ROUTES.PATTERNS.ONBOARDING_URL.test(currentUrl)) {
-        await saveUserDetails(page, NON_ONBOARDED_USER_FILE);
+        const url = new URL(page.url());
+        await saveUserDetails(page, NON_ONBOARDED_USER_FILE, url);
     } else {
         throw new Error(`Unexpected URL: ${currentUrl}`);
     }
