@@ -1,11 +1,14 @@
-export const waitForResponse = async (page, operationName, actionCallback) => {
+import { Page } from "@playwright/test";
+import fs from "fs";
+import { e2eTestToken, ROUTES, userDetailsFile } from "./constants";
+
+export const waitForResponse = async (page: Page, operationName: string, actionCallback: () => void) => {
     const [response] = await Promise.all([
         page.waitForResponse((response) => {
             const request = response.request();
             if (request) {
                 const postData = request.postData();
                 if (postData && postData.includes(operationName)) {
-                    console.log("POSTDATAAAAAAAAAAAAAAAAAAAAAAAAA", postData);
                     return response.url().includes("/graphql") && response.status() === 200;
                 }
             }
@@ -16,60 +19,45 @@ export const waitForResponse = async (page, operationName, actionCallback) => {
 
     const request = response.request();
     const postData = request?.postData();
-    console.log(postData);
 
     if (postData) {
         try {
             const parsedData = JSON.parse(postData);
-            console.log("Parsed postData:", parsedData); // Log the parsed postData
             return parsedData;
         } catch (error) {
-            console.error("Error parsing postData:", error);
             return null;
         }
     }
     return null;
 };
-// export const waitForResponse = async (page, operationName, actionCallback) => {
-//     const [response] = await Promise.all([
-//         page.waitForResponse((response) => {
-//             const request = response.request();
-//             console.log("Received a response, checking request..."); // Log when a response is received
 
-//             if (request) {
-//                 const postData = request.postData();
-//                 console.log("Request postData:", postData); // Log the postData even if it's not the expected one
+export async function authenticateUser(page: Page, email: string) {
+    await page.goto("/");
+    await page.getByPlaceholder("Enter your email").fill(email);
+    await page.getByRole("button", { name: /Continue with email/i }).click();
+    await page.waitForURL(`/auth/magic-sign-in/?email=${encodeURIComponent(email)}`);
+    await page.getByRole("button", { name: /enter code manually/i }).click();
+    await page.fill('input[name="code"]', e2eTestToken);
+    await page.getByRole("button", { name: /continue/i }).click();
+    await page.waitForURL((url) => {
+        return (
+            ROUTES.PATTERNS.ONBOARDING_URL.test(url.pathname) ||
+            url.pathname === ROUTES.WORKSPACE.CREATE ||
+            ROUTES.PATTERNS.SURVEY_LIST_URL.test(url.pathname)
+        );
+    });
+}
 
-//                 if (postData && postData.includes(operationName)) {
-//                     console.log(`Found matching operation: ${operationName}`); // Log if the operation name matches
-//                     return response.url().includes("/graphql") && response.status() === 200;
-//                 }
-//             }
-//             return false;
-//         }),
-//         actionCallback(), // Trigger the action that causes the response
-//     ]);
+export function extractWorkspaceAndProjectSlugs(url: string) {
+    const pathname = new URL(url).pathname;
+    const workspaceSlug = pathname.split("/")[1];
+    const projectSlug = pathname.split("/")[3];
+    return { workspaceSlug, projectSlug };
+}
 
-//     if (!response) {
-//         console.error("Response not found!"); // Log when no response is matched
-//         return null;
-//     }
-
-//     console.log({ response }); // Log the response object
-
-// const request = response.request();
-// const postData = request?.postData();
-
-// if (postData) {
-//     try {
-//         const parsedData = JSON.parse(postData);
-//         console.log("Parsed postData:", parsedData); // Log the parsed postData
-//         return parsedData;
-//     } catch (error) {
-//         console.error("Error parsing postData:", error);
-//         return null;
-//     }
-// }
-
-//     return null;
-// };
+export async function saveUserDetails(page: Page, storageFile: string, url) {
+    const { workspaceSlug, projectSlug } = extractWorkspaceAndProjectSlugs(url);
+    const details = { workspaceSlug, projectSlug };
+    fs.writeFileSync(userDetailsFile, JSON.stringify(details), "utf-8");
+    await page.context().storageState({ path: storageFile });
+}

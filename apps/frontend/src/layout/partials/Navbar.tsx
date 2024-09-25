@@ -165,6 +165,7 @@ export const Navbar = () => {
                     </div>
                     <div className="space-y-[27px] pb-[24px]">
                         <button
+                            data-testid="create-survey"
                             onClick={() =>
                                 navigate(
                                     `${ROUTES.SURVEY_LIST}/?create=2`
@@ -172,7 +173,6 @@ export const Navbar = () => {
                                         .replace(":projectSlug", project?.slug as string),
                                 )
                             }
-                            data-testid="create-survey"
                             className="flex items-center justify-between gap-2 rounded border border-intg-bg-4 bg-intg-bg-9 p-3 text-sm text-intg-text-4"
                         >
                             <span>
@@ -248,6 +248,7 @@ export const Navbar = () => {
                             onClick={() => {
                                 setOpenOrganizationInviteModal(true);
                             }}
+                            data-testid="invite-team-btn"
                         >
                             <span>
                                 <CirclePlusIcon />
