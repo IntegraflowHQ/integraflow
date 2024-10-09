@@ -207,6 +207,8 @@ export const LogicBox = ({ logicIndex, logic, setIsCreatingLogic, setLogicValues
                 LogicConditionEnum.IS_FALSE,
                 LogicConditionEnum.IS_TRUE,
                 LogicConditionEnum.BETWEEN,
+                LogicConditionEnum.INCLUDES_ALL,
+                LogicConditionEnum.INCLUDES_ANY,
             ].includes(editValues.condition as LogicConditionEnum) ? (
                 <div className="flex justify-between">
                     <div />

@@ -159,6 +159,8 @@ export const DefaultLogicBox: React.FC<Props> = ({
                 ![
                     LogicConditionEnum.NOT_ANSWERED,
                     LogicConditionEnum.HAS_ANY_VALUE,
+                    LogicConditionEnum.INCLUDES_ALL,
+                    LogicConditionEnum.INCLUDES_ANY,
                     LogicConditionEnum.ANSWERED,
                     LogicConditionEnum.IS_FALSE,
                     LogicConditionEnum.IS_TRUE,
@@ -197,7 +199,16 @@ export const DefaultLogicBox: React.FC<Props> = ({
                 )}
 
             {(logicValues.values && logicValues.values.length > 0) ||
-            ["not_answered", "any_value", "answered", "is_false", "is_true"].includes(logicValues.condition ?? "") ? (
+            (logicValues.condition &&
+                [
+                    LogicConditionEnum.INCLUDES_ALL,
+                    LogicConditionEnum.INCLUDES_ANY,
+                    LogicConditionEnum.NOT_ANSWERED,
+                    LogicConditionEnum.HAS_ANY_VALUE,
+                    LogicConditionEnum.ANSWERED,
+                    LogicConditionEnum.IS_FALSE,
+                    LogicConditionEnum.IS_TRUE,
+                ].includes(logicValues.condition ?? "")) ? (
                 <div className="flex justify-between gap-14">
                     <p>then</p>
                     <div className="w-[330px]">
