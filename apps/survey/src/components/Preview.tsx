@@ -22,7 +22,7 @@ export default function Preview() {
                 startFrom.current = event.data.startFrom;
                 survey.current = parsedSurveys(event.data.survey, {
                     mode: mode.current,
-                    backgroundImage: `${window.origin}/images/preview-bg.svg`
+                    backgroundImage: `${window.origin}/images/preview-bg.svg`,
                 })[0];
 
                 if (!initialized.current && survey.current) {
@@ -36,13 +36,13 @@ export default function Preview() {
                                     if (!survey.current) {
                                         return;
                                     }
-                                    _Integraflow.getClient().showSurvey(survey.current.id);
+                                    _Integraflow.init({ surveys: [survey.current] }).showSurvey(survey.current.id);
                                 }, 500);
 
                                 return () => {
                                     clearTimeout(timeoutId);
                                 };
-                            }
+                            },
                         })
                         .showSurvey(survey.current.id, event.data.startFrom);
 
@@ -72,7 +72,7 @@ export default function Preview() {
 
         window.parent.postMessage(
             {
-                status: "ready"
+                status: "ready",
             },
             DASHBOARD_ORIGIN
         );
