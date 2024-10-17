@@ -21,10 +21,7 @@ test.describe.serial("Create questions", () => {
 
         await page.getByTestId("add-question").click();
         const parsedPostData = await waitForResponse(page, "SurveyQuestionCreate", async () => {
-            await page
-                .locator("div")
-                .filter({ hasText: /^Multiple answer selection$/ })
-                .click();
+            await page.getByTestId("Multiple answer selection").click();
         });
         const newQuestionId = (parsedPostData.variables.input as SurveyQuestionCreateInput).id;
 
