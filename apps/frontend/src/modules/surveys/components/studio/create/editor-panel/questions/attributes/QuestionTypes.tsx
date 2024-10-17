@@ -89,6 +89,7 @@ export const QuestionOptions = () => {
                         return (
                             <div
                                 key={questionType.name}
+                                data-testid={questionType.name}
                                 className="flex items-center gap-4 rounded-lg p-2 text-intg-text hover:bg-intg-bg-10"
                                 onClick={() => {
                                     handleCreateQuestion(questionType.type, questionType.id);

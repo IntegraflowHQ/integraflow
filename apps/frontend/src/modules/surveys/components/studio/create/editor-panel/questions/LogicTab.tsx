@@ -165,10 +165,9 @@ export const LogicTab = ({ questionIndex }: Props) => {
 
                     setIsCreatingLogic(true);
                 }}
+                data-testid="add-new-logic"
             >
-                <p className="text-xs underline" data-testid="add-new-logic">
-                    Add new Logic
-                </p>
+                <p className="text-xs underline">Add new Logic</p>
             </div>
 
             <p className="text-sm">All other answers will direct the respondents to the next question.</p>
