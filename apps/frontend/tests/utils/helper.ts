@@ -61,3 +61,24 @@ export async function saveUserDetails(page: Page, storageFile: string, url) {
     fs.writeFileSync(userDetailsFile, JSON.stringify(details), "utf-8");
     await page.context().storageState({ path: storageFile });
 }
+
+export const gotoSurvey = async (page: Page, workspaceSlug: string, projectSlug: string, surveySlug: string) => {
+    await page.goto(ROUTES.SURVEY.SINGLE(workspaceSlug, projectSlug, surveySlug));
+    await page.waitForURL((url) => {
+        return ROUTES.PATTERNS.SINGLE_SURVEY.test(url.pathname);
+    });
+};
+
+export const createQuestion = async (page: Page, questionType: string) => {
+    await page.getByTestId("add-question").click();
+    await waitForResponse(page, "SurveyQuestionCreate", async () => {
+        await page.getByTestId(questionType).click();
+    });
+    await waitForResponse(page, "SurveyQuestionUpdate", async () => {
+        await page.locator(".ql-editor").fill("Hello");
+    });
+    await page.getByTestId("add-description-btn").click();
+    await waitForResponse(page, "SurveyQuestionUpdate", async () => {
+        await page.locator(".ql-editor").last().fill("Hi there");
+    });
+};
