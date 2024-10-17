@@ -145,7 +145,7 @@ export default function Create() {
                             </ToggleGroup.Item>
                         ))}
                     </ToggleGroup.Root>
-                    //overlay
+
                     {showStudioOverlay && (
                         <div
                             className="absolute h-full w-full bg-transparent"
