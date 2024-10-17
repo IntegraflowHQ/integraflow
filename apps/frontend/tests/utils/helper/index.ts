@@ -1,6 +1,6 @@
 import { Page } from "@playwright/test";
 import fs from "fs";
-import { e2eTestToken, ROUTES, userDetailsFile } from "./constants";
+import { e2eTestToken, ROUTES, userDetailsFile } from "../constants";
 
 export const waitForResponse = async (page: Page, operationName: string, actionCallback: () => void) => {
     const [response] = await Promise.all([
