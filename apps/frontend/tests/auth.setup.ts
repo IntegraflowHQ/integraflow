@@ -5,9 +5,10 @@ import {
     NON_ONBOARDED_USER_FILE,
     ONBOARDED_USER_FILE,
     ROUTES,
+    SURVEY_MAKER_FILE,
     userCredentials,
 } from "./utils/constants";
-import { authenticateUser, saveUserDetails } from "./utils/helper";
+import { authenticateUser, saveSurveyMakerDetails, saveUserDetails } from "./utils/helper";
 
 setup("authenticate as new user", async ({ page }) => {
     await authenticateUser(page, userCredentials.NEW_USER_EMAIL);
@@ -17,6 +18,34 @@ setup("authenticate as new user", async ({ page }) => {
     await expect(page.locator("h3")).toContainText("Create a new workspace");
 
     await page.context().storageState({ path: NEW_USER_FILE });
+});
+
+setup("authenticate as survey maker", async ({ page }) => {
+    await authenticateUser(page, userCredentials.SURVEY_MAKER);
+
+    await page.waitForURL((url) => {
+        return ROUTES.PATTERNS.ONBOARDING_URL.test(url.pathname) || url.pathname === ROUTES.WORKSPACE.CREATE;
+    });
+
+    const currentUrl = page.url();
+
+    if (currentUrl.includes(ROUTES.WORKSPACE.CREATE)) {
+        await expect(page).toHaveURL(ROUTES.WORKSPACE.CREATE);
+        await expect(page.locator("h3")).toContainText("Create a new workspace");
+
+        await page.locator('[name="workspaceName"]').fill("survey maker");
+        await page.locator('[name="workspaceUrl"]').fill("survey-maker");
+        await page.getByRole("button", { name: /Create Workspace/i }).click();
+
+        await page.waitForURL(ROUTES.PATTERNS.ONBOARDING_URL);
+        const url = new URL(page.url());
+        await page.getByRole("link", { name: "Surveys" }).click();
+        await saveSurveyMakerDetails(page, SURVEY_MAKER_FILE, url);
+    } else if (ROUTES.PATTERNS.ONBOARDING_URL.test(currentUrl)) {
+        await page.getByRole("link", { name: "Surveys" }).click();
+        const url = new URL(page.url());
+        await saveSurveyMakerDetails(page, SURVEY_MAKER_FILE, url);
+    }
 });
 
 setup("authenticate as onboarded user", async ({ page }) => {
