@@ -70,6 +70,7 @@ test.describe("Update workspace", () => {
         });
 
         await page.reload();
+        await page.waitForURL((url) => ROUTES.PATTERNS.WORKSPACE_SETTINGS.test(url.pathname));
 
         const url = new URL(page.url());
 

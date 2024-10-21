@@ -15,7 +15,7 @@ test.describe.serial("should allow full question editing and settings management
     });
 
     test("should allow users to edit the question and update question settings", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         await page.getByTestId("add-question").waitFor();
 
@@ -37,7 +37,7 @@ test.describe.serial("should allow full question editing and settings management
     });
 
     test("should verify question settings: selection limit", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
         const iframe = page.frameLocator('iframe[title="Survey preview"]');
         await page.getByTestId("add-question").waitFor();
 

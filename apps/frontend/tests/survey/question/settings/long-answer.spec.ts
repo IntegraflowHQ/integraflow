@@ -15,14 +15,14 @@ test.describe.serial("Text answer length settings ", () => {
     });
 
     test("should allow users to create and edit a text answer question", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         await page.getByTestId("add-question").waitFor();
         await createQuestion(page, "Text answer");
     });
 
     test("should display the long answer input box for a text answer question", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         const iframe = page.frameLocator('iframe[title="Survey preview"]');
         await iframe.getByTestId("textarea-box").waitFor();

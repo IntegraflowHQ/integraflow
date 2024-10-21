@@ -24,7 +24,7 @@ test.describe.serial("should allow full question editing and settings management
     });
 
     test("should allow users to edit a single answer selection question and enable randomization", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         await page.getByTestId("add-question").waitFor();
 
@@ -42,7 +42,7 @@ test.describe.serial("should allow full question editing and settings management
     });
 
     test("should randomize answers when 'randomize answers' setting is enabled", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         const firstRunOrder = await getAnswersOrder(page);
 

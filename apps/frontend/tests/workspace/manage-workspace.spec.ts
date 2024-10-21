@@ -14,6 +14,7 @@ test.describe.serial("Manage workspace", () => {
     });
     test("should redirect user to new workspace invitation", async ({ page }) => {
         await page.goto(ROUTES.SURVEY.LIST(workspaceSlug, projectSlug));
+        await page.waitForURL((url) => ROUTES.PATTERNS.SURVEY_LIST_URL.test(url.pathname));
 
         await page.getByTestId("invite-team-btn").waitFor();
         await page.getByTestId("invite-team-btn").click();

@@ -15,7 +15,7 @@ test.describe.serial("should allow button label edit", () => {
     });
 
     test("should edit the question and update settings", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         await page.getByTestId("add-question").waitFor();
 
@@ -28,7 +28,7 @@ test.describe.serial("should allow button label edit", () => {
     });
 
     test("should verify question settings: shape", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         const iframe = page.frameLocator('iframe[title="Survey preview"]');
         await page.getByTestId("add-question").waitFor();

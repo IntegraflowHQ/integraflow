@@ -16,7 +16,7 @@ test.describe.serial("Survey question editing and settings update", () => {
     });
 
     test("should allow users to create and edit a question with consent and disclaimer settings", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         await page.getByTestId("add-question").waitFor();
 
@@ -33,7 +33,7 @@ test.describe.serial("Survey question editing and settings update", () => {
     });
 
     test("should display and interact with the consent checkbox in the preview", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         const iframe = page.frameLocator('iframe[title="Survey preview"]');
         await page.getByTestId("add-question").waitFor();

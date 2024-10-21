@@ -10,6 +10,8 @@ test.describe.serial("Create questions", () => {
     let workspaceSlug: string, projectSlug: string, surveySlug: string;
 
     test.beforeAll(async ({ browser }) => {
+        test.setTimeout(120000);
+
         const setup = await setupQuestion(browser);
         workspaceSlug = setup.workspaceSlug;
         projectSlug = setup.projectSlug;
@@ -17,7 +19,7 @@ test.describe.serial("Create questions", () => {
     });
 
     test("should allow user to delete a question", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         await page.getByTestId("add-question").waitFor();
 

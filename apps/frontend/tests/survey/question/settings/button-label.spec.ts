@@ -16,7 +16,7 @@ test.describe.serial("Button label editing in survey questions", () => {
     });
 
     test("should allow users to edit and update the button label in question settings", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         await page.getByTestId("add-question").waitFor();
 
@@ -26,7 +26,7 @@ test.describe.serial("Button label editing in survey questions", () => {
     });
 
     test("should display the updated button label correctly in the survey preview", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         const iframe = page.frameLocator('iframe[title="Survey preview"]');
         await iframe.getByRole("button", { name: "Next" }).waitFor();

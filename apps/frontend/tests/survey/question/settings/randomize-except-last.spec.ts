@@ -25,7 +25,7 @@ test.describe.serial("Question editing and randomized settings management", () =
     test("should allow users to create a multiple-answer question and randomize answers except last answer", async ({
         page,
     }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         await page.getByTestId("add-question").waitFor();
 
@@ -43,7 +43,7 @@ test.describe.serial("Question editing and randomized settings management", () =
     });
 
     test("should randomize answers except the last one", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         const firstRunOrder = await getAnswersOrder(page);
 

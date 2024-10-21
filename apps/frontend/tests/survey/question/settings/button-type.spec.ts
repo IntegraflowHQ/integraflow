@@ -16,7 +16,7 @@ test.describe.serial("Survey button type settings", () => {
     });
 
     test("should allow creating and editing the first question to hide the submit button", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         await page.getByTestId("add-question").waitFor();
 
@@ -27,7 +27,7 @@ test.describe.serial("Survey button type settings", () => {
     });
 
     test("should hide the submit button when 'button type' is set to hidden", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         await page.getByTestId("add-question").waitFor();
         const iframe = page.frameLocator('iframe[title="Survey preview"]');
@@ -36,7 +36,7 @@ test.describe.serial("Survey button type settings", () => {
     });
 
     test("should allow creating and editing the second question to set 'button type' as link", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         await page.getByTestId("add-question").waitFor();
 
@@ -53,7 +53,7 @@ test.describe.serial("Survey button type settings", () => {
     });
 
     test("should open the correct link when 'button type' is set to link", async ({ page }) => {
-        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         await page.getByTestId("add-question").waitFor();
         const iframe = page.frameLocator('iframe[title="Survey preview"]');
