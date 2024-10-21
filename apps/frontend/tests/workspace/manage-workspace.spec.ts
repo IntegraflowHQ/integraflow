@@ -3,7 +3,7 @@ import fs from "fs";
 import { ROUTES, userDetailsFile } from "../utils/constants";
 import { waitForResponse } from "../utils/helper";
 
-test.describe("Manage workspace", () => {
+test.describe.serial("Manage workspace", () => {
     let workspaceSlug;
     let projectSlug;
 

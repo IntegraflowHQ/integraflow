@@ -1,17 +1,52 @@
 import { faker } from "@faker-js/faker";
 import test, { expect } from "@playwright/test";
-import fs from "fs";
 import slugify from "slugify";
-import { ONBOARDED_USER_FILE, ROUTES, userDetailsFile } from "../utils/constants";
-import { saveUserDetails, waitForResponse } from "./../utils/helper";
+import { ONBOARDED_USER_FILE, ROUTES } from "../utils/constants";
+import { extractWorkspaceAndProjectSlugs, saveUserDetails, waitForResponse } from "../utils/helper";
 
 test.describe("Update workspace", () => {
     let projectSlug;
     let workspaceSlug;
-    test.beforeEach(async () => {
-        const details = JSON.parse(fs.readFileSync(userDetailsFile, "utf-8"));
-        workspaceSlug = details.workspaceSlug;
-        projectSlug = details.projectSlug;
+    test.beforeAll(async ({ browser }) => {
+        const context = await browser.newContext();
+        const page = await context.newPage();
+
+        await page.goto(ROUTES.WORKSPACE.CREATE);
+
+        await expect(page.locator("h3")).toContainText("Create a new workspace");
+
+        await page.locator('[name="workspaceName"]').fill(faker.person.firstName("female"));
+        await page.getByRole("button", { name: /Create Workspace/i }).click();
+
+        await page.waitForURL((url) => ROUTES.PATTERNS.SURVEY_LIST_URL.test(url.pathname));
+
+        const { projectSlug: newProjectSlug, workspaceSlug: newWorkspaceSlug } = extractWorkspaceAndProjectSlugs(
+            page.url(),
+        );
+        projectSlug = newProjectSlug;
+        workspaceSlug = newWorkspaceSlug;
+    });
+
+    test("should allow user to refresh workspace invite link", async ({ page }) => {
+        await page.goto(ROUTES.SURVEY.LIST(workspaceSlug, projectSlug));
+
+        await page.getByTestId("invite-team-btn").waitFor();
+
+        await waitForResponse(page, "OrganizationInviteLinkCreate", async () => {
+            await page.getByTestId("invite-team-btn").click();
+        });
+
+        await page.getByTestId("toggle-invite-type").click();
+
+        await page.getByTestId("invite-link").waitFor();
+        const prevLink = await page.getByTestId("invite-link").inputValue();
+
+        await waitForResponse(page, "organizationInviteLinkReset", async () => {
+            await page.getByTestId("refresh-invite-link").click();
+        });
+
+        const newLink = await page.getByTestId("invite-link").inputValue();
+        expect(prevLink).not.toBe(newLink);
     });
 
     test("should allow user to update Workspace fields", async ({ page }) => {
@@ -45,23 +80,5 @@ test.describe("Update workspace", () => {
         const newUrl = await page.getByTestId("workspace-url").inputValue();
         expect(prevName).not.toBe(newName);
         expect(prevUrl).not.toBe(newUrl);
-    });
-    test("should allow user to refresh workspace invite link", async ({ page }) => {
-        await page.goto(ROUTES.SURVEY.LIST(workspaceSlug, projectSlug));
-
-        await page.getByTestId("invite-team-btn").waitFor();
-        await page.getByTestId("invite-team-btn").click();
-
-        await page.getByTestId("toggle-invite-type").click();
-
-        await page.getByTestId("invite-link").waitFor();
-        const prevLink = await page.getByTestId("invite-link").inputValue();
-
-        await waitForResponse(page, "organizationInviteLinkReset", async () => {
-            await page.getByTestId("refresh-invite-link").click();
-        });
-
-        const newLink = await page.getByTestId("invite-link").inputValue();
-        expect(prevLink).not.toBe(newLink);
     });
 });
