@@ -1,7 +1,9 @@
 import test, { expect } from "@playwright/test";
+import { SURVEY_MAKER_FILE } from "../../../utils/constants";
 import { createQuestion, gotoSurvey, waitForResponse } from "../../../utils/helper";
 import { setupQuestion } from "../../../utils/helper/questionSetup";
 
+test.use({ storageState: SURVEY_MAKER_FILE });
 test.describe.serial("should allow full question editing and settings management", () => {
     let workspaceSlug: string, projectSlug: string, surveySlug: string;
 

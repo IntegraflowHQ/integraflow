@@ -1,13 +1,16 @@
-import test, { expect } from "@playwright/test";
+import test, { expect, Page } from "@playwright/test";
+import { SURVEY_MAKER_FILE } from "../../../utils/constants";
 import { createQuestion, gotoSurvey } from "../../../utils/helper";
 import { setupQuestion } from "../../../utils/helper/questionSetup";
 
-async function getAnswersOrder(page) {
+async function getAnswersOrder(page: Page) {
     const iframe = page.frameLocator('iframe[title="Survey preview"]');
     await iframe.locator("label").first().waitFor();
     const answers = await iframe.locator("label").allInnerTexts();
     return answers;
 }
+
+test.use({ storageState: SURVEY_MAKER_FILE });
 
 test.describe.serial("Question editing and randomized settings management", () => {
     let workspaceSlug: string, projectSlug: string, surveySlug: string;

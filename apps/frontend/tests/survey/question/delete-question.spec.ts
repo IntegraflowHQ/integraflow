@@ -1,8 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { SurveyQuestionCreateInput } from "../../../../../packages/client/src/_generated_documents";
-import { ROUTES } from "../../utils/constants";
-import { waitForResponse } from "../../utils/helper";
+import { SURVEY_MAKER_FILE } from "../../utils/constants";
+import { gotoSurvey, waitForResponse } from "../../utils/helper";
 import { setupQuestion } from "../../utils/helper/questionSetup";
+import { SurveyQuestionCreateInput } from "./../../../../../packages/client/dist/_generated_documents.d";
+
+test.use({ storageState: SURVEY_MAKER_FILE });
 
 test.describe.serial("Create questions", () => {
     let workspaceSlug: string, projectSlug: string, surveySlug: string;
@@ -15,7 +17,8 @@ test.describe.serial("Create questions", () => {
     });
 
     test("should allow user to delete a question", async ({ page }) => {
-        await page.goto(ROUTES.SURVEY.SINGLE(workspaceSlug, projectSlug, surveySlug));
+        gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+        console.log({ workspaceSlug }, { projectSlug }, { surveySlug });
 
         await page.getByTestId("add-question").waitFor();
 
