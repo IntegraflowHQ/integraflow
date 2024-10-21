@@ -104,6 +104,7 @@ export default function ChoiceResponse({
                                 backgroundColor: theme?.answer ? hexToRgba(theme.answer, 0.1) : "#F0F0F0",
                                 color: theme?.answer ?? "#050505"
                             }}
+                            data-testid={option.label}
                         >
                             <input
                                 style={{

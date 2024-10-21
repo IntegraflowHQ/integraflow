@@ -42,6 +42,7 @@ export const RangeSettings = () => {
                                     updateSettings({ leftText: e.target.value }, true);
                                 }}
                                 maxCharacterCount={100}
+                                dataTestid="left-text"
                             />
                         </div>
                     </div>
@@ -54,6 +55,7 @@ export const RangeSettings = () => {
                                 onChange={(e) => {
                                     updateSettings({ rightText: e.target.value }, true);
                                 }}
+                                dataTestid="right-text"
                             />
                         </div>
                     </div>
@@ -77,6 +79,7 @@ export const RangeSettings = () => {
                         placeholder=""
                         defaultValue={question?.settings.rightText}
                         onChange={(e) => updateSettings({ rightText: e.target.value }, true)}
+                        dataTestid="right-text"
                     />
                     <EditorTextInput
                         label="Left text"
@@ -84,6 +87,7 @@ export const RangeSettings = () => {
                         placeholder=""
                         defaultValue={question?.settings.leftText}
                         onChange={(e) => updateSettings({ leftText: e.target.value })}
+                        dataTestid="left-text"
                     />
 
                     <ReactSelect
