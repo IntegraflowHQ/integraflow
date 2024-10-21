@@ -60,14 +60,12 @@ export async function saveUserDetails(page: Page, storageFile: string, url) {
     const details = { workspaceSlug, projectSlug };
     fs.writeFileSync(userDetailsFile, JSON.stringify(details), "utf-8");
     await page.context().storageState({ path: storageFile });
-    console.log({ workspaceSlug }, { projectSlug });
 }
 export async function saveSurveyMakerDetails(page: Page, storageFile: string, url) {
     const { workspaceSlug, projectSlug } = extractWorkspaceAndProjectSlugs(url);
     const details = { workspaceSlug, projectSlug };
     fs.writeFileSync(surveyMakerDetailsFile, JSON.stringify(details), "utf-8");
     await page.context().storageState({ path: storageFile });
-    console.log({ workspaceSlug }, { projectSlug });
 }
 
 export const gotoSurvey = async (page: Page, workspaceSlug: string, projectSlug: string, surveySlug: string) => {

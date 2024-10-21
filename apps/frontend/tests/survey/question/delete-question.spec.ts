@@ -18,7 +18,6 @@ test.describe.serial("Create questions", () => {
 
     test("should allow user to delete a question", async ({ page }) => {
         gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
-        console.log({ workspaceSlug }, { projectSlug }, { surveySlug });
 
         await page.getByTestId("add-question").waitFor();
 
