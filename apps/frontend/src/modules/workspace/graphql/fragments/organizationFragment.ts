@@ -51,10 +51,7 @@ export const ORGANIZATION_MEMBERSHIP = gql`
 export const ORGANIZATION_CREATE = gql`
     fragment OrganizationCreateFragment on OrganizationCreate {
         organization {
-            ...AuthOrganizationFragment
-        }
-        user {
-            ...AuthUserFragment
+            ...OrganizationFragment
         }
         organizationErrors {
             ...OrganizationErrorFragment

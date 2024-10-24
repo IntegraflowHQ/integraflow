@@ -2,8 +2,6 @@ import { DeepPartial } from "@apollo/client/utilities";
 import { useCallback } from "react";
 
 import {
-    AuthOrganization,
-    AuthUser,
     OnboardingCustomerSurvey,
     Organization,
     OrganizationCreateInput,
@@ -40,7 +38,7 @@ export const useWorkspace = () => {
             );
             const project = organization.projects?.edges?.[0]?.node as Project;
             if (organization && project) {
-                switchWorkspace(convertToAuthOrganization(organization) as AuthOrganization, project);
+                switchWorkspace(convertToAuthOrganization(organization) as Organization, project);
             }
         },
         [switchWorkspace, updateUser, user.organizations],
@@ -61,11 +59,14 @@ export const useWorkspace = () => {
                         return edge;
                     }),
                 };
-                updateUser({
-                    organization: convertToAuthOrganization(organization as DeepPartial<Organization>),
-                    organizations,
-                }),
-                    true;
+
+                updateUser(
+                    {
+                        organization: convertToAuthOrganization(organization as DeepPartial<Organization>),
+                        organizations,
+                    },
+                    true,
+                );
             };
 
             if (cacheOnly) {
@@ -93,7 +94,7 @@ export const useWorkspace = () => {
                 console.error(error);
             }
         },
-        [updateUser, user],
+        [updateUser, user.organizations],
     );
 
     const handleCreateWorkspace = useCallback(
@@ -112,22 +113,13 @@ export const useWorkspace = () => {
 
                 const { data } = response;
 
-                if (data && data.organizationCreate && data.organizationCreate.user) {
-                    const { organization, project } = data.organizationCreate.user as AuthUser;
+                if (data && data.organizationCreate?.organization) {
+                    const { organization } = data.organizationCreate;
                     capture(AnalyticsEnum.CREATE_WORKSPACE, {
                         feature: "Create workspace",
                     });
-                    if (organization && project) {
-                        handleAddWorkspace({
-                            id: organization?.id,
-                            name: organization?.name,
-                            slug: organization?.slug,
-                            memberCount: organization?.memberCount,
-                            projects: {
-                                edges: [{ node: project }],
-                            },
-                        });
-                    }
+
+                    handleAddWorkspace(organization);
                 }
 
                 return data?.organizationCreate;

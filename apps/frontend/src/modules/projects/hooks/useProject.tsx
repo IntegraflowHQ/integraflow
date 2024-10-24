@@ -61,7 +61,7 @@ export const useProject = () => {
                 if (data && data.projectCreate && data.projectCreate.project) {
                     const project = data.projectCreate.project;
                     capture(AnalyticsEnum.CREATE_PROJECT, { feature: "Create Project" });
-                    handleAddProject(project);
+                    handleAddProject(project as Project);
                 }
 
                 return data?.projectCreate;
