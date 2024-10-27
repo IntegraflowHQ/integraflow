@@ -10,7 +10,10 @@ export const USER = gql`
         isActive
         isOnboarded
         organization {
-            ...AuthOrganizationFragment
+            id
+            slug
+            name
+            memberCount
         }
         project {
             ...ProjectFragment

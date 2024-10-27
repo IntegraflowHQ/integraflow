@@ -271,11 +271,10 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                                       hasCompletedOnboardingFor: null,
                                       timezone: "",
                                       organization: {
-                                          __typename: "AuthOrganization",
+                                          __typename: "Organization",
                                           id: "",
                                           slug: "",
                                           name: "",
-                                          memberCount: 1,
                                       },
                                   },
 
@@ -377,11 +376,10 @@ export const SurveyProvider = ({ children }: SurveyProviderProp) => {
                                       hasCompletedOnboardingFor: null,
                                       timezone: "",
                                       organization: {
-                                          __typename: "AuthOrganization",
+                                          __typename: "Organization",
                                           id: "",
                                           slug: "",
                                           name: "",
-                                          memberCount: 1,
                                       },
                                   },
                             creator: {

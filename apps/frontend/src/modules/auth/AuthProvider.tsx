@@ -2,7 +2,6 @@ import { GraphQLError } from "graphql";
 import { createContext, useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 
 import {
-    AuthOrganization,
     Organization,
     Project,
     RoleLevel,
@@ -70,7 +69,7 @@ export type AuthContextValue = {
     updateUser: (updatedUser: DeepPartial<User>, cacheOnly?: boolean) => Promise<void>;
     refresh: (token: string) => void;
     switchProject: (project: Project) => void;
-    switchWorkspace: (organization: AuthOrganization, project: Project) => void;
+    switchWorkspace: (organization: Organization, project: Project) => void;
     logout: () => void;
     reset: () => void;
 };
@@ -371,7 +370,7 @@ export const AuthProvider = ({ children, apollo, purgePersistedCache }: AuthProv
     );
 
     const handleSwitchWorkspace = useCallback(
-        (organization: AuthOrganization, project: Project) => {
+        (organization: Organization, project: Project) => {
             handleSwitchProject({ ...project, organization });
         },
         [handleSwitchProject],

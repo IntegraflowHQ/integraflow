@@ -2,7 +2,7 @@ import { DeepPartial, mergeDeep } from "@apollo/client/utilities";
 import { create } from "zustand";
 import { createJSONStorage, devtools, persist } from "zustand/middleware";
 
-import { AuthOrganization, Organization, User } from "@/generated/graphql";
+import { Organization, User } from "@/generated/graphql";
 import { userCache } from "@/utils/cache";
 
 export type UserState = DeepPartial<User> & {
@@ -14,8 +14,8 @@ export type UserActions = {
     reset: () => void;
 };
 
-export const convertToAuthOrganization = (organization?: DeepPartial<Organization>): DeepPartial<AuthOrganization> => ({
-    __typename: "AuthOrganization",
+export const convertToAuthOrganization = (organization?: DeepPartial<Organization>): DeepPartial<Organization> => ({
+    __typename: organization?.__typename,
     id: organization?.id,
     slug: organization?.slug,
     name: organization?.name,

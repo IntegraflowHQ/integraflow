@@ -32,7 +32,9 @@ export const PROJECT = gql`
         hasCompletedOnboardingFor
         timezone
         organization {
-            ...AuthOrganizationFragment
+            id
+            slug
+            name
         }
     }
 `;
