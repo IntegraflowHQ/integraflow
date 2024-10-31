@@ -75,16 +75,23 @@ export const gotoSurvey = async (page: Page, workspaceSlug: string, projectSlug:
     });
 };
 
-export const createQuestion = async (page: Page, questionType: string) => {
+export const createQuestion = async (
+    page: Page,
+    questionType: string,
+    text: { label?: string; desc?: string } = {},
+) => {
     await page.getByTestId("add-question").click();
     await waitForResponse(page, "SurveyQuestionCreate", async () => {
         await page.getByTestId(questionType).click();
     });
     await waitForResponse(page, "SurveyQuestionUpdate", async () => {
-        await page.locator(".ql-editor").fill("Hello");
+        await page.locator(".ql-editor").fill(text.label ?? "Hello");
     });
     await page.getByTestId("add-description-btn").click();
     await waitForResponse(page, "SurveyQuestionUpdate", async () => {
-        await page.locator(".ql-editor").last().fill("Hi there");
+        await page
+            .locator(".ql-editor")
+            .last()
+            .fill(text.desc ?? "Hi there");
     });
 };
