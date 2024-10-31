@@ -132,7 +132,7 @@ export const DefaultLogicBox: React.FC<Props> = ({
                         value={conditionOptions((question as ParsedQuestion).type!)?.find(
                             (option: Option) => option.value === (logicValues.condition as string),
                         )}
-                        dataTestid="select-condition-indicator"
+                        dataTestid="condition-indicator"
                     />
                 </div>
             </div>

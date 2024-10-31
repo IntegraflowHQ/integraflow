@@ -104,7 +104,7 @@ export const Wrapper: preact.FunctionComponent<ContainerProps> = ({
                                 >
                                     {showProgressBar && <Progress bgColor={theme?.progressBar} progress={progress} />}
                                     {!fullScreen && showClose && (
-                                        <button onClick={close}>
+                                        <button onClick={close} data-testid="close-survey">
                                             <XIcon color={calculateTextColor(theme?.background ?? "#FFFFFF")} />
                                         </button>
                                     )}
