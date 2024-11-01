@@ -1,5 +1,4 @@
 import graphene
-
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.connection import CountableConnection
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_PROJECTS
@@ -48,7 +47,7 @@ class Project(BaseProject):
         description="The timezone of the project.",
     )
     organization = graphene.Field(
-        "integraflow.graphql.organization.types.AuthOrganization",
+        "integraflow.graphql.organization.types.Organization",
         required=True,
         description="Organization the project belongs to."
     )

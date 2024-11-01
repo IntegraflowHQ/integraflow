@@ -407,7 +407,7 @@ type User implements Node @doc(category: "Users") {
   
   Requires one of the following permissions: AUTHENTICATED_USER.
   """
-  organization: AuthOrganization
+  organization: Organization
 
   """
   The current project of the user.
@@ -470,93 +470,6 @@ type User implements Node @doc(category: "Users") {
 interface Node {
   """The ID of the object."""
   id: ID!
-}
-
-"""Represents an organization."""
-type AuthOrganization implements Node @doc(category: "Organizations") {
-  """The ID of the organization."""
-  id: ID!
-
-  """Slug of the organization."""
-  slug: String!
-
-  """
-  Name of the organization.
-  
-  Requires one of the following permissions: AUTHENTICATED_USER.
-  """
-  name: String!
-
-  """
-  Member count
-  
-  Requires one of the following permissions: AUTHENTICATED_USER.
-  """
-  memberCount: Int!
-}
-
-"""Represents a project."""
-type Project implements Node @doc(category: "Projects") {
-  """The ID of the project."""
-  id: ID!
-
-  """Name of the project."""
-  name: String!
-
-  """API token for project."""
-  apiToken: String!
-
-  """Slug of the project."""
-  slug: String!
-
-  """Whether the project is private or not."""
-  accessControl: Boolean
-
-  """The data required for the onboarding process"""
-  hasCompletedOnboardingFor: JSONString
-
-  """The timezone of the project."""
-  timezone: String!
-
-  """Organization the project belongs to."""
-  organization: AuthOrganization!
-}
-
-scalar JSONString
-
-type OrganizationCountableConnection @doc(category: "Organizations") {
-  """Pagination data for this connection."""
-  pageInfo: PageInfo!
-  edges: [OrganizationCountableEdge!]!
-
-  """A total count of items in the collection."""
-  totalCount: Int
-  nodes: [Organization!]!
-}
-
-"""
-The Relay compliant `PageInfo` type, containing data necessary to paginate this connection.
-"""
-type PageInfo {
-  """When paginating forwards, are there more items?"""
-  hasNextPage: Boolean!
-
-  """When paginating backwards, are there more items?"""
-  hasPreviousPage: Boolean!
-
-  """When paginating backwards, the cursor to continue."""
-  startCursor: String
-
-  """When paginating forwards, the cursor to continue."""
-  endCursor: String
-}
-
-type OrganizationCountableEdge @doc(category: "Organizations") {
-  """The item at the end of the edge."""
-  node: Organization!
-
-  """A cursor for use in pagination."""
-  cursor: String!
 }
 
 """Represents an organization."""
@@ -668,6 +581,23 @@ type OrganizationMemberCountableConnection @doc(category: "Organizations") {
   nodes: [OrganizationMember!]!
 }
 
+"""
+The Relay compliant `PageInfo` type, containing data necessary to paginate this connection.
+"""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
 type OrganizationMemberCountableEdge @doc(category: "Organizations") {
   """The item at the end of the edge."""
   node: OrganizationMember!
@@ -731,6 +661,35 @@ type ProjectCountableEdge @doc(category: "Projects") {
   cursor: String!
 }
 
+"""Represents a project."""
+type Project implements Node @doc(category: "Projects") {
+  """The ID of the project."""
+  id: ID!
+
+  """Name of the project."""
+  name: String!
+
+  """API token for project."""
+  apiToken: String!
+
+  """Slug of the project."""
+  slug: String!
+
+  """Whether the project is private or not."""
+  accessControl: Boolean
+
+  """The data required for the onboarding process"""
+  hasCompletedOnboardingFor: JSONString
+
+  """The timezone of the project."""
+  timezone: String!
+
+  """Organization the project belongs to."""
+  organization: Organization!
+}
+
+scalar JSONString
+
 type OrganizationInviteCountableConnection @doc(category: "Organizations") {
   """Pagination data for this connection."""
   pageInfo: PageInfo!
@@ -785,6 +744,24 @@ type OrganizationInvite implements Node @doc(category: "Organizations") {
   Requires one of the following permissions: ORGANIZATION_MEMBER_ACCESS.
   """
   organization: Organization!
+}
+
+type OrganizationCountableConnection @doc(category: "Organizations") {
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+  edges: [OrganizationCountableEdge!]!
+
+  """A total count of items in the collection."""
+  totalCount: Int
+  nodes: [Organization!]!
+}
+
+type OrganizationCountableEdge @doc(category: "Organizations") {
+  """The item at the end of the edge."""
+  node: Organization!
+
+  """A cursor for use in pagination."""
+  cursor: String!
 }
 
 input ProjectSortingInput @doc(category: "Projects") {
@@ -2174,6 +2151,29 @@ type AuthUser implements Node @doc(category: "Users") {
   project: Project
 }
 
+"""Represents an organization."""
+type AuthOrganization implements Node @doc(category: "Organizations") {
+  """The ID of the organization."""
+  id: ID!
+
+  """Slug of the organization."""
+  slug: String!
+
+  """
+  Name of the organization.
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  name: String!
+
+  """
+  Member count
+  
+  Requires one of the following permissions: AUTHENTICATED_USER.
+  """
+  memberCount: Int!
+}
+
 """Represents errors in user mutations."""
 type UserError @doc(category: "Users") {
   """
@@ -2758,7 +2758,7 @@ type OrganizationCreate @doc(category: "Organizations") {
   """
   An organization. Organizations are root-level objects that contain users and projects.
   """
-  organization: AuthOrganization
+  organization: Organization
 
   """A user that has access to the the resources of an organization."""
   user: AuthUser

@@ -1,20 +1,19 @@
 from typing import cast
 
-from django.core.exceptions import ValidationError
 import graphene
-
+from django.core.exceptions import ValidationError
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.doc_category import DOC_CATEGORY_ORGANIZATIONS
 from integraflow.graphql.core.mutations import BaseMutation
 from integraflow.graphql.core.types.base import BaseInputObjectType
 from integraflow.graphql.core.types.common import OrganizationError
 from integraflow.graphql.user.types import AuthUser
+from integraflow.organization import models
 from integraflow.organization.error_codes import OrganizationErrorCode
-from integraflow.organization.models import Organization
 from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.user.models import User
 
-from ..types import AuthOrganization
+from ..types import Organization
 
 
 class OrganizationCreateInput(BaseInputObjectType):
@@ -61,7 +60,7 @@ class OrganizationCreate(BaseMutation):
         )
 
     organization = graphene.Field(
-        AuthOrganization,
+        Organization,
         description=(
             "An organization. Organizations are root-level objects that "
             "contain users and projects."
@@ -83,7 +82,7 @@ class OrganizationCreate(BaseMutation):
 
     @classmethod
     def clean_slug(cls, slug):
-        slugExists = Organization.objects.filter(slug=slug).exists()
+        slugExists = models.Organization.objects.filter(slug=slug).exists()
         if slugExists:
             raise ValidationError(
                 {
@@ -106,7 +105,7 @@ class OrganizationCreate(BaseMutation):
         project_fields = {}
         project_fields["timezone"] = input["timezone"]
 
-        organization, user, _ = Organization.objects.bootstrap(
+        organization, user, _ = models.Organization.objects.bootstrap(
             cast(User, info.context.user),
             **input,
             project_fields=project_fields

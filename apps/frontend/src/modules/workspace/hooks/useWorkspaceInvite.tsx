@@ -15,11 +15,11 @@ import {
     useOrganizationMemberUpdateMutation,
 } from "@/generated/graphql";
 
-import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { parseInviteLink } from "@/utils";
+import { useWorkspace } from "./useWorkspace";
 
 export const useWorkspaceInvite = () => {
-    const { switchWorkspace } = useAuth();
+    const { addWorkspace } = useWorkspace();
 
     const [getInviteLink, { loading: loadingInviteLink }] = useOrganizationInviteLinkCreateLazyQuery({
         fetchPolicy: "cache-and-network",
@@ -97,7 +97,10 @@ export const useWorkspaceInvite = () => {
                 const { data } = response;
 
                 if (data && data.organizationJoin?.user.organization && data.organizationJoin.user.project) {
-                    switchWorkspace(data.organizationJoin.user.organization, data.organizationJoin.user.project);
+                    addWorkspace({
+                        ...data.organizationJoin.user.project.organization,
+                        memberCount: data.organizationJoin.user.organization.memberCount,
+                    });
                 }
 
                 return data?.organizationJoin;
@@ -105,7 +108,7 @@ export const useWorkspaceInvite = () => {
                 console.error(error);
             }
         },
-        [switchWorkspace, joinOrganization],
+        [addWorkspace, joinOrganization],
     );
 
     const handleResetInviteLink = useCallback(async () => {

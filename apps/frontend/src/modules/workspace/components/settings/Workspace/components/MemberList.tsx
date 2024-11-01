@@ -1,4 +1,4 @@
-import { AuthOrganization, OrganizationMemberCountableEdge, Project, RoleLevel, User } from "@/generated/graphql";
+import { Organization, OrganizationMemberCountableEdge, Project, RoleLevel, User } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { convertToAuthOrganization } from "@/modules/auth/states/user";
 import { useWorkspace } from "@/modules/workspace/hooks/useWorkspace";
@@ -46,7 +46,7 @@ export const MemberList = ({ searchValue }: Props) => {
 
             if (remainingOrganizations && remainingOrganizations[0]?.projects?.edges?.length) {
                 switchWorkspace(
-                    convertToAuthOrganization(remainingOrganizations[0]) as AuthOrganization,
+                    convertToAuthOrganization(remainingOrganizations[0]) as Organization,
                     remainingOrganizations[0].projects?.edges[0]?.node as Project,
                 );
             } else {

@@ -1,7 +1,6 @@
 import graphene
 from django.contrib.auth import get_user_model
 from graphene import relay
-
 from integraflow.graphql.core import ResolveInfo
 from integraflow.graphql.core.connection import (
     CountableConnection,
@@ -14,20 +13,15 @@ from integraflow.graphql.core.doc_category import (
     DOC_CATEGORY_USERS,
 )
 from integraflow.graphql.core.federation import federated_entity
-from integraflow.graphql.core.fields import (
-    FilterConnectionField,
-    PermissionsField
-)
+from integraflow.graphql.core.fields import FilterConnectionField, PermissionsField
 from integraflow.graphql.core.types.model import ModelObjectType
 from integraflow.graphql.organization.types import (
     AuthOrganization,
+    Organization,
     OrganizationCountableConnection,
 )
 from integraflow.graphql.project.sorters import ProjectSortingInput
-from integraflow.graphql.project.types import (
-    Project,
-    ProjectCountableConnection
-)
+from integraflow.graphql.project.types import Project, ProjectCountableConnection
 from integraflow.permission.auth_filters import AuthorizationFilters
 from integraflow.user import models
 
@@ -91,6 +85,15 @@ class AuthUser(ModelObjectType[models.User]):
 @federated_entity("id")
 @federated_entity("email")
 class User(AuthUser):
+    organization = PermissionsField(
+        Organization,
+        required=False,
+        description="The current organization of the user.",
+        permissions=[
+            AuthorizationFilters.AUTHENTICATED_USER,
+        ],
+    )
+
     organizations = FilterConnectionField(
         OrganizationCountableConnection,
         description="Organizations the user is part of.",

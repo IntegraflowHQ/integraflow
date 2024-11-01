@@ -13,9 +13,9 @@ import {
 } from "@/ui/Dropdown/DropdownMenu";
 import { CheckCircleIcon, CirclePlusIcon, LogoutIcon, NewspaperIcon, SettingsIcon } from "@/ui/icons";
 import { ChevronDown } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { AuthOrganization, Project } from "@/generated/graphql";
+import { Organization, Project } from "@/generated/graphql";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { convertToAuthOrganization } from "@/modules/auth/states/user";
 import { ROUTES } from "@/routes";
@@ -28,16 +28,6 @@ const profileNavItems = [
         icon: <NewspaperIcon />,
         href: ROUTES.BILLING,
     },
-    // {
-    //     id: 2,
-    //     title: "Status Page",
-    //     icon: <CircleStackIcon />,
-    // },
-    // {
-    //     id: 3,
-    //     title: "Help and doc",
-    //     icon: <QuestionIcon />,
-    // },
 ];
 
 export const UserProfile = () => {
@@ -95,7 +85,7 @@ export const UserProfile = () => {
                     <DropdownMenuLabel>
                         <p className="text-xs">CURRENT WORKSPACE</p>
                     </DropdownMenuLabel>
-                    <DropdownMenuSubTrigger>
+                    <DropdownMenuSubTrigger data-testid="show-workspaces">
                         <NavItem
                             uppercase={true}
                             text={workspace?.name}
@@ -116,7 +106,7 @@ export const UserProfile = () => {
                                     key={item?.id}
                                     onClick={() => {
                                         switchWorkspace(
-                                            convertToAuthOrganization(item) as AuthOrganization,
+                                            convertToAuthOrganization(item) as Organization,
                                             item?.projects?.edges![0]?.node as Project,
                                         );
                                     }}
@@ -131,7 +121,7 @@ export const UserProfile = () => {
                         })}
                         <DropdownMenuSeparator className="my-3 border-[.5px] border-intg-bg-4" />
                         <DropdownMenuItem>
-                            <a href="/create-workspace">
+                            <Link to="/create-workspace" data-testid="create-new-workspace">
                                 <Button
                                     icon={<CirclePlusIcon />}
                                     variant="custom"
@@ -139,7 +129,7 @@ export const UserProfile = () => {
                                     text="New Workspace"
                                     className="bg-intg-bg-11 text-sm"
                                 />
-                            </a>
+                            </Link>
                         </DropdownMenuItem>
                     </DropdownMenuSubContent>
                 </DropdownMenuSub>
