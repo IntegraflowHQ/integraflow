@@ -24,6 +24,7 @@ test.describe.serial("Edit questions and verify Multiple Answer Selection logic 
 
         await createQuestion(page, "Multiple answer selection", { label: "Question two" });
         await page.getByPlaceholder("Answer 1").fill("green");
+
         await page.getByPlaceholder("Answer 2").fill("blue");
         await page.getByText("Add an answer at choice").click();
         await page.getByPlaceholder("Answer 3").fill("red");

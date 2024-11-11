@@ -1,4 +1,4 @@
-import test from "@playwright/test";
+import test, { expect } from "@playwright/test";
 import { SURVEY_MAKER_FILE } from "../../../utils/constants";
 import { createQuestion, gotoSurvey } from "../../../utils/helper";
 import { setupQuestion } from "../../../utils/helper/questionSetup";
@@ -21,29 +21,32 @@ test.describe.serial("Test ", () => {
         await page.getByTestId("add-question").waitFor();
 
         await createQuestion(page, "Welcome message", { label: "Question one" }); //01
-        await page.getByRole("tab", { name: "Settings" }).click();
-        await page.getByTestId("button-label").fill("Next");
 
         await createQuestion(page, "Text answer", { label: "Question two" }); //02
 
         await createQuestion(page, "Text answer", { label: "Question three" }); //03
 
-        await createQuestion(page, "Smiley scale", { label: "Question four" }); //04
+        await createQuestion(page, "Text answer", { label: "Question four" }); //04
 
-        await createQuestion(page, "Thank you", { label: "Thank you. Question five" }); //05
+        await createQuestion(page, "Text answer", { label: "Question five" }); //04
+
+        await createQuestion(page, "Thank you", { label: "Thank you. Question six" }); //05
     });
     test("should allow user to update question logic", async ({ page }) => {
         await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         await page.getByTestId("question-trigger").nth(1).click();
         await page.getByRole("tab", { name: "Logic" }).click();
-        // await page.getByTestId("add-new-logic").click();
-        // await page.getByTestId("condition-indicator").click();
-        // await page.getByRole("option", { name: "answer contains" }).click();
-        // await page.getByTestId("value-indicator").click();
-        // await page.locator(".react-select__input-container").fill("Hello");
-        // await page.getByText("Add logic").click();
-        // await page.getByRole("option", { name: "Question four" }).click();
+        await page.getByTestId("add-new-logic").click();
+        await page.getByTestId("condition-indicator").click();
+        await page.getByRole("option", { name: "answer contains" }).click();
+        await page.getByTestId("value-indicator").click();
+        await page.locator(".react-select__input").focus();
+        await page.locator(".react-select__input").fill("Hello");
+        await page.keyboard.press("Enter");
+        await page.getByText("Add logic").click();
+        await page.getByTestId("destination-indicator").click();
+        await page.getByRole("option", { name: "Question four" }).click();
 
         await page.getByTestId("add-new-logic").click();
         await page.getByTestId("condition-indicator").click();
@@ -53,14 +56,19 @@ test.describe.serial("Test ", () => {
 
         await page.getByTestId("question-trigger").nth(2).click();
         await page.getByRole("tab", { name: "Logic" }).click();
-        // await page.getByTestId("add-new-logic").click();
-        // await page.getByTestId("condition-indicator").click();
-        // await page.getByRole("option", { name: "answer does not contain" }).click();
-        // await page.getByTestId("value-indicator").click();
-        // await page.locator(".react-select__input-container").fill("Hello");
-        // await page.getByText("Add logic").click();
-        // await page.getByRole("option", { name: "Thank you. Question five" }).click();
+        await page.getByTestId("add-new-logic").click();
+        await page.getByTestId("condition-indicator").click();
+        await page.getByRole("option", { name: "answer does not contain" }).click();
+        await page.getByTestId("value-indicator").click();
+        await page.locator(".react-select__input").focus();
+        await page.locator(".react-select__input").fill("Hello");
+        await page.keyboard.press("Enter");
+        await page.getByText("Add logic").click();
+        await page.getByTestId("destination-indicator").click();
+        await page.getByRole("option", { name: "Thank you" }).click();
 
+        await page.getByTestId("question-trigger").nth(3).click();
+        await page.getByRole("tab", { name: "Logic" }).click();
         await page.getByTestId("add-new-logic").click();
         await page.getByTestId("condition-indicator").click();
         await page.getByRole("option", { name: "question is answered" }).click();
@@ -68,15 +76,53 @@ test.describe.serial("Test ", () => {
         await page.getByRole("option", { name: "End survey" }).click();
     });
 
-    test("should display the updated button label correctly in the survey preview", async ({ page }) => {
+    test("should verify ANSWER_CONTAINS logic in the survey preview", async ({ page }) => {
         await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
 
         const iframe = page.frameLocator('iframe[title="Survey preview"]');
 
-        // await page.getByTestId("question-trigger").nth(0).click();
-        // await iframe.getByRole("button", { name: "Next" }).waitFor();
+        await iframe.getByRole("button", { name: "Submit" }).waitFor();
+        await iframe.getByRole("button", { name: "Submit" }).click();
+        await iframe.getByTestId("textarea-box").fill("hello there");
+        await iframe.getByRole("button", { name: "Submit" }).click();
+        await expect(iframe.getByText("Question four")).toBeVisible();
+    });
 
-        // await expect(iframe.getByRole("button", { name: "Next" })).toBeVisible();
-        // await iframe.getByRole("button", { name: "Next" }).click();
+    test("should verify QUESTION_IS_NOT_ANSWERED logic in the survey preview", async ({ page }) => {
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+
+        const iframe = page.frameLocator('iframe[title="Survey preview"]');
+
+        await iframe.getByRole("button", { name: "Submit" }).waitFor();
+        await iframe.getByRole("button", { name: "Submit" }).click();
+        await iframe.getByRole("button", { name: "Submit" }).click();
+        await expect(iframe.getByText("Thank you")).toBeVisible();
+    });
+
+    test("should verify ANSWER_DOES_NOT_CONTAIN logic in the survey preview", async ({ page }) => {
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+
+        const iframe = page.frameLocator('iframe[title="Survey preview"]');
+
+        await iframe.getByRole("button", { name: "Submit" }).waitFor();
+        await iframe.getByRole("button", { name: "Submit" }).click();
+        await iframe.getByRole("button", { name: "Submit" }).click();
+        await iframe.getByTestId("textarea-box").fill("hi there");
+        await iframe.getByRole("button", { name: "Submit" }).click();
+        await expect(iframe.getByText("Thank you")).toBeVisible();
+    });
+
+    test("should verify QUESTION_IS_ANSWERED logic in the survey preview", async ({ page }) => {
+        await gotoSurvey(page, workspaceSlug, projectSlug, surveySlug);
+
+        const iframe = page.frameLocator('iframe[title="Survey preview"]');
+
+        await iframe.getByRole("button", { name: "Submit" }).waitFor();
+        await iframe.getByRole("button", { name: "Submit" }).click();
+        await iframe.getByRole("button", { name: "Submit" }).click();
+        await iframe.getByRole("button", { name: "Submit" }).click();
+        await iframe.getByTestId("textarea-box").fill("hi there");
+        await iframe.getByRole("button", { name: "Submit" }).click();
+        await expect(iframe.getByText("Question one")).toBeVisible();
     });
 });
