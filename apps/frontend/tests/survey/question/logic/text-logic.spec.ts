@@ -106,6 +106,7 @@ test.describe.serial("Test ", () => {
 
         await iframe.getByRole("button", { name: "Submit" }).waitFor();
         await iframe.getByRole("button", { name: "Submit" }).click();
+        await iframe.getByTestId("textarea-box").fill("hey there");
         await iframe.getByRole("button", { name: "Submit" }).click();
         await iframe.getByTestId("textarea-box").fill("hi there");
         await iframe.getByRole("button", { name: "Submit" }).click();
@@ -119,9 +120,11 @@ test.describe.serial("Test ", () => {
 
         await iframe.getByRole("button", { name: "Submit" }).waitFor();
         await iframe.getByRole("button", { name: "Submit" }).click();
+        await iframe.getByTestId("textarea-box").fill("hey there");
         await iframe.getByRole("button", { name: "Submit" }).click();
+        await iframe.getByTestId("textarea-box").fill("hello there");
         await iframe.getByRole("button", { name: "Submit" }).click();
-        await iframe.getByTestId("textarea-box").fill("hi there");
+        await iframe.getByTestId("textarea-box").fill("hello there");
         await iframe.getByRole("button", { name: "Submit" }).click();
         await expect(iframe.getByText("Question one")).toBeVisible();
     });
