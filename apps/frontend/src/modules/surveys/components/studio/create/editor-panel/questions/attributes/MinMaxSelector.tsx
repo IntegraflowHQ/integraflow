@@ -46,11 +46,23 @@ const MinMaxSelector = ({ options, maxChange, minChange, minValue, maxValue, max
         <div className="flex gap-4">
             <div className="flex-1">
                 <p className="text-sm">Min</p>
-                <ReactSelect onchange={handleMinChange} options={options} value={min} defaultValue={minDefault} />
+                <ReactSelect
+                    onchange={handleMinChange}
+                    dataTestid={"min-indicator"}
+                    options={options}
+                    value={min}
+                    defaultValue={minDefault}
+                />
             </div>
             <div className="flex-1">
                 <p className="text-sm">Max</p>
-                <ReactSelect onchange={handleMaxChange} options={options} value={max} defaultValue={maxDefault} />
+                <ReactSelect
+                    onchange={handleMaxChange}
+                    dataTestid="max-indicator"
+                    options={options}
+                    value={max}
+                    defaultValue={maxDefault}
+                />
             </div>
         </div>
     );

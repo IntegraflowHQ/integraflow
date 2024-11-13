@@ -94,6 +94,7 @@ export const FormLogicBox = ({ logic, logicIndex }: Props) => {
                         onchange={(value) => {
                             handleUpdateDestination(value);
                         }}
+                        dataTestid="destination-indicator"
                     />
                 </div>
             </div>
