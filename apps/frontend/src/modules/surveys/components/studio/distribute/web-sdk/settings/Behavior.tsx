@@ -100,6 +100,7 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
                         <div className="flex w-full justify-between">
                             {positions.map(({ value, icon: Icon }) => (
                                 <button
+                                    data-testid={`${value}-position`}
                                     key={value}
                                     className={cn(
                                         "w-max rounded bg-intg-bg-18 px-[14px] py-[8px] hover:bg-gradient-button hover:text-white",
@@ -118,6 +119,7 @@ export default function Behavior({ channel }: WebChannelAccordionProps) {
                         <div className="flex w-full justify-between gap-2 rounded bg-intg-bg-18 p-1">
                             {backgrounds.map((item) => (
                                 <button
+                                    data-testid={`${item.label}-overlay`}
                                     key={item.value}
                                     className={cn(
                                         "flex items-center justify-center gap-1 rounded px-3 py-2 text-xs leading-[18px] text-intg-text hover:bg-gradient-button hover:text-white",

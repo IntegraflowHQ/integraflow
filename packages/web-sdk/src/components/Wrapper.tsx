@@ -54,9 +54,9 @@ export const Wrapper: preact.FunctionComponent<ContainerProps> = ({
         <Fragment>
             {/* Overlay */}
             {backgroundOverlay === "light" ? (
-                <div className={"bg-white fixed inset-0 opacity-50"}></div>
+                <div id={"light-overlay"} className={"bg-white fixed inset-0 opacity-50"}></div>
             ) : backgroundOverlay === "dark" ? (
-                <div className={"bg-black fixed inset-0 opacity-50"}></div>
+                <div id={"dark-overlay"} className={"bg-black fixed inset-0 opacity-50"}></div>
             ) : null}
 
             {/* survey div start */}
