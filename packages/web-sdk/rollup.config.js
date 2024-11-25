@@ -46,7 +46,7 @@ const plugins = [
 
 export default [
     {
-        input: isInternal ? "src/index.internal.ts" : "src/index.ts",
+        input: isInternal || !isProd ? "src/index.internal.ts" : "src/index.ts",
         output: [
             {
                 file: "dist/index.js",
