@@ -1,5 +1,11 @@
 # integraflow-js
 
+## 0.0.9
+
+### Patch Changes
+
+- f627fea: Stop survey response creation after survey completion.
+
 ## 0.0.8
 
 ### Patch Changes
