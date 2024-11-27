@@ -5,7 +5,7 @@ export default function CTA({ title, description }: { title: string; description
         <main className="flex h-screen w-screen bg-white">
             <div className="flex lg:w-[45%] flex-col px-12 pb-8 pt-12">
                 <div className="pb-16">
-                    <Image src={"/images/logo.png"} alt="Logo" className="w-[197px] h-[29px]" />
+                    <Image src={"/images/logo.png"} alt="Logo" width={197} height={29} className="w-[197px] h-[29px]" />
                 </div>
 
                 <header className="flex flex-col gap-2 pb-10 text-[#28213B]">
@@ -67,9 +67,27 @@ export default function CTA({ title, description }: { title: string; description
 
                     <div className="flex items-center gap-[14px]">
                         <div className="flex w-max">
-                            <Image src={"/images/profile-1.png"} className="h-10 w-10 rounded-full" alt="user" />
-                            <Image src={"/images/profile-2.png"} className="-ml-4 h-10 w-10 rounded-full" alt="user" />
-                            <Image src={"/images/profile-3.png"} className="-ml-4 h-10 w-10 rounded-full" alt="user" />
+                            <Image
+                                src={"/images/profile-1.png"}
+                                width={40}
+                                height={40}
+                                className="h-10 w-10 rounded-full"
+                                alt="user"
+                            />
+                            <Image
+                                src={"/images/profile-2.png"}
+                                width={40}
+                                height={40}
+                                className="-ml-4 h-10 w-10 rounded-full"
+                                alt="user"
+                            />
+                            <Image
+                                src={"/images/profile-3.png"}
+                                width={40}
+                                height={40}
+                                className="-ml-4 h-10 w-10 rounded-full"
+                                alt="user"
+                            />
                         </div>
 
                         <p className="max-w-[295px] text-lg text-[#F2F2F2]]">

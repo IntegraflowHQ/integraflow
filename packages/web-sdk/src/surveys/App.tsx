@@ -31,7 +31,7 @@ export default function App({
 
     useEffect(() => {
         onSurveyDisplayed?.(survey);
-    });
+    }, []);
 
     const close = (force: boolean = false) => {
         setIsOpen(false);
