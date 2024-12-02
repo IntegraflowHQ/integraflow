@@ -209,6 +209,7 @@ export const LogicGroup = ({ groups, setEditValues, editValues, logicIndex }: Pr
                                             onchange={(values: SingleValue<Option> | MultiValue<Option>) => {
                                                 handleUpdateFields(values, group, index);
                                             }}
+                                            dataTestid="value-indicator"
                                         />
                                     </div>
                                 </div>
@@ -230,6 +231,7 @@ export const LogicGroup = ({ groups, setEditValues, editValues, logicIndex }: Pr
                                                 onchange={(value: SingleValue<Option> | MultiValue<Option>) => {
                                                     handleUpdateCondition(value, group, index);
                                                 }}
+                                                dataTestid="condition-indicator"
                                             />
                                         </div>
                                     </div>

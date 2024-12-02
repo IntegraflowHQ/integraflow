@@ -76,6 +76,7 @@ export const ChoiceSettings = () => {
                 <>
                     <div className="rounded bg-[#272138]">
                         <Switch
+                            dataTestid="randomize-answers"
                             name="randomizeAnswers"
                             label="Randomize answers"
                             defaultValue={question?.settings?.randomize}
@@ -88,6 +89,7 @@ export const ChoiceSettings = () => {
 
                     <div className="rounded bg-[#272138]">
                         <Switch
+                            dataTestid="randomize-except-last"
                             name="randomizeAnswersExceptLast"
                             label="Randomize except last"
                             defaultValue={question?.settings.randomizeExceptLast}

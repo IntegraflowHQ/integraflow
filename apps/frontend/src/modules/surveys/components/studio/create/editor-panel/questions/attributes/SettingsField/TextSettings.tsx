@@ -16,6 +16,7 @@ export const TextSettings = () => {
             <Switch
                 name="Long_answer"
                 label="Long Answer"
+                dataTestid="toggle-answer-length"
                 defaultValue={!question?.settings.singleLine}
                 onChange={(e) => {
                     updateQuestion({

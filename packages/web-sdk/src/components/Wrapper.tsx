@@ -54,9 +54,9 @@ export const Wrapper: preact.FunctionComponent<ContainerProps> = ({
         <Fragment>
             {/* Overlay */}
             {backgroundOverlay === "light" ? (
-                <div className={"bg-white fixed inset-0 opacity-50"}></div>
+                <div id={"light-overlay"} className={"bg-white fixed inset-0 opacity-50"}></div>
             ) : backgroundOverlay === "dark" ? (
-                <div className={"bg-black fixed inset-0 opacity-50"}></div>
+                <div id={"dark-overlay"} className={"bg-black fixed inset-0 opacity-50"}></div>
             ) : null}
 
             {/* survey div start */}
@@ -104,7 +104,7 @@ export const Wrapper: preact.FunctionComponent<ContainerProps> = ({
                                 >
                                     {showProgressBar && <Progress bgColor={theme?.progressBar} progress={progress} />}
                                     {!fullScreen && showClose && (
-                                        <button onClick={close}>
+                                        <button onClick={close} data-testid="close-survey">
                                             <XIcon color={calculateTextColor(theme?.background ?? "#FFFFFF")} />
                                         </button>
                                     )}
