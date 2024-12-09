@@ -1,6 +1,7 @@
 export const NeutralEmoji = () => {
     return (
         <svg
+            data-testid="neutral-emoji"
             className="inline"
             width="20"
             height="20"
