@@ -18,7 +18,11 @@ export const Response = ({ title, responder, date, ...props }: Props) => {
     }
 
     return (
-        <div className="flex flex-col gap-3 rounded-lg bg-intg-bg-21 px-[14px] py-4" {...props}>
+        <div
+            data-testid="response-card"
+            className="flex flex-col gap-3 rounded-lg border bg-intg-bg-21 px-[14px] py-4"
+            {...props}
+        >
             <div className="flex items-center justify-between">
                 <h4 className="text-base font-medium text-intg-text-11">{title}</h4>
 

@@ -1,9 +1,12 @@
 export const NEW_USER_FILE = "playwright/.auth/newUser.json";
 export const ONBOARDED_USER_FILE = "playwright/.auth/onboardedUser.json";
 export const NON_ONBOARDED_USER_FILE = "playwright/.auth/nonOnboardedUser.json";
+export const RESPONSE_CHECKER_USER_FILE = "playwright/.auth/responseChecker.json";
 export const SURVEY_MAKER_FILE = "playwright/.auth/nonOnboardedUser.json";
+
 export const userDetailsFile = "playwright/.auth/userDetails.json";
 export const surveyMakerDetailsFile = "playwright/.auth/surveyMakerDetails.json";
+export const surveyResponseDetailsFile = "playwright/.auth/surveyResponseDetailsFile.json";
 
 export const e2eTestToken = "e2e_test_token";
 
@@ -12,6 +15,7 @@ export const userCredentials = {
     NEW_USER_EMAIL: "new-user@example.com",
     NON_ONBOARDED_USER_EMAIL: "nonboarded@example.com",
     SURVEY_MAKER: "surveymaker@example.com",
+    RESPONSE_CHECKER: "responsechecker@example.mail.com",
 };
 
 export const ROUTES = {

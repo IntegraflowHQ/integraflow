@@ -1,11 +1,14 @@
 import { faker } from "@faker-js/faker";
 import { expect, Page, test as setup } from "@playwright/test";
+import fs from "fs";
 import {
     NEW_USER_FILE,
     NON_ONBOARDED_USER_FILE,
     ONBOARDED_USER_FILE,
+    RESPONSE_CHECKER_USER_FILE,
     ROUTES,
     SURVEY_MAKER_FILE,
+    surveyResponseDetailsFile,
     userCredentials,
 } from "./utils/constants";
 import { authenticateUser, saveSurveyMakerDetails, saveUserDetails } from "./utils/helper";
@@ -112,6 +115,50 @@ setup("authenticate as non onboarded user", async ({ page }) => {
     } else {
         throw new Error(`Unexpected URL: ${currentUrl}`);
     }
+});
+
+setup("authenticate as response validation user", async ({ page }) => {
+    await authenticateUser(page, userCredentials.RESPONSE_CHECKER);
+    const currentUrl = page.url();
+
+    if (ROUTES.PATTERNS.ONBOARDING_URL.test(currentUrl)) {
+        const url = new URL(page.url());
+        await saveUserDetails(page, RESPONSE_CHECKER_USER_FILE, url);
+    } else {
+        throw new Error(`Unexpected URL: ${currentUrl}`);
+    }
+
+    await page.getByRole("link", { name: "Surveys" }).click();
+
+    await page.waitForURL((url) => ROUTES.PATTERNS.SURVEY_LIST_URL.test(url.pathname));
+
+    await page.getByText("Untitled Survey").last().waitFor();
+    await page.getByText("Untitled Survey").last().click();
+
+    await page.waitForURL((url) => ROUTES.PATTERNS.SINGLE_SURVEY.test(url.pathname));
+
+    const url = new URL(page.url());
+    // await saveUserDetails(page, RESPONSE_CHECKER_USER_FILE, url);
+
+    const pathname = new URL(url).pathname;
+    const workspaceSlug = pathname.split("/")[1];
+    const projectSlug = pathname.split("/")[3];
+    const surveySlug = pathname.split("/")[5];
+
+    const details = { workspaceSlug, projectSlug, surveySlug };
+
+    await page.getByRole("tab", { name: "Distribute" }).click();
+
+    const surveyUrl = await page.getByRole("link").first().getAttribute("href");
+    if (surveyUrl) {
+        await page.goto(surveyUrl);
+        fs.writeFileSync(surveyResponseDetailsFile, JSON.stringify({ surveyUrl, details }), "utf-8");
+        await page.context().storageState({ path: RESPONSE_CHECKER_USER_FILE });
+    } else {
+        throw new Error("Distribute link not found!");
+    }
+
+    await page.getByText("Integraflow").click();
 });
 
 async function handleOnboardingSteps(page: Page) {

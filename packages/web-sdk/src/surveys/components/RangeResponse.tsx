@@ -43,11 +43,16 @@ function RangeResponse({ question, label, description, onAnswered, theme }: Rang
     }, [value, answerId, maxCount]);
 
     const renderOption = (index: number, option: QuestionOption | null = null) => {
-        const isSelected = value === index + 1;
+        // const isSelected = value === index + 1;
+        const isSelected = question.type === AnswerType.NPS ? value === index : value === index + 1;
 
         const handleOptionClick = () => {
             option && setAnswerId(option.id); // When `question.options` is provided
-            setValue(index + 1);
+            if (question.type === AnswerType.NPS) {
+                setValue(index);
+            } else {
+                setValue(index + 1);
+            }
         };
 
         if (question.type === AnswerType.NPS || question.type === AnswerType.NUMERICAL_SCALE) {
