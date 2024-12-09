@@ -1,6 +1,7 @@
 export const HappyEmoji = () => {
     return (
         <svg
+            data-testid="happy-emoji"
             className="inline"
             width="20"
             height="20"

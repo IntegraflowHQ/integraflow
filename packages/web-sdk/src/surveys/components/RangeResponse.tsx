@@ -43,11 +43,16 @@ function RangeResponse({ question, label, description, onAnswered, theme }: Rang
     }, [value, answerId, maxCount]);
 
     const renderOption = (index: number, option: QuestionOption | null = null) => {
-        const isSelected = value === index + 1;
+        // const isSelected = value === index + 1;
+        const isSelected = question.type === AnswerType.NPS ? value === index : value === index + 1;
 
         const handleOptionClick = () => {
             option && setAnswerId(option.id); // When `question.options` is provided
-            setValue(index + 1);
+            if (question.type === AnswerType.NPS) {
+                setValue(index);
+            } else {
+                setValue(index + 1);
+            }
         };
 
         if (question.type === AnswerType.NPS || question.type === AnswerType.NUMERICAL_SCALE) {
@@ -76,7 +81,12 @@ function RangeResponse({ question, label, description, onAnswered, theme }: Rang
             );
         } else if (question.type === AnswerType.RATING) {
             return (
-                <button onClick={handleOptionClick} key={index} onMouseOver={() => setHoveredRatingValue(index + 1)}>
+                <button
+                    onClick={handleOptionClick}
+                    data-testid={(question.settings as RangeSettings).shape}
+                    key={index}
+                    onMouseOver={() => setHoveredRatingValue(index + 1)}
+                >
                     <RatingIcon
                         shape={(question.settings as RangeSettings).shape}
                         color={index + 1 <= hoveredRatingValue ? answerColor : hexToRgba(answerColor, 0.1)}

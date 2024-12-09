@@ -34,9 +34,9 @@ const getBooleanAnswer = (answer: SurveyAnswer): JSX.Element | string => {
 
     if (shape === "thumb") {
         if (answer.answerId === 0) {
-            return <ThumbsDown fill="#9582C0" />;
+            return <ThumbsDown data-testid="thumbs-down" fill="#9582C0" />;
         } else {
-            return <ThumbsUp fill="#9582C0" />;
+            return <ThumbsUp data-testid="thumbs-up" fill="#9582C0" />;
         }
     }
 
@@ -52,8 +52,7 @@ export default function Answer({ question, answer }: { question?: ParsedQuestion
                 {answer[0].type?.toLocaleLowerCase() !== SurveyQuestionTypeEnum.Form.toLocaleLowerCase() && (
                     <span>Answer:</span>
                 )}
-
-                <span>
+                <span data-testid="answer">
                     {answer[0].type?.toLocaleLowerCase() === SurveyQuestionTypeEnum.Form.toLocaleLowerCase() ? (
                         resolvedAnswer.map((answer, i) => <div key={i}>{answer}</div>)
                     ) : answer[0].type?.toLocaleLowerCase() === SurveyQuestionTypeEnum.Multiple.toLocaleLowerCase() ? (
@@ -74,7 +73,7 @@ export default function Answer({ question, answer }: { question?: ParsedQuestion
                     ) : answer[0].type?.toLocaleLowerCase() === SurveyQuestionTypeEnum.Boolean.toLocaleLowerCase() ? (
                         <>{getBooleanAnswer(answer[0])} </>
                     ) : (
-                        <> {resolvedAnswer[0]}</>
+                        <>{resolvedAnswer[0]}</>
                     )}
                 </span>
             </div>
