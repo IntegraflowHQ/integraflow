@@ -1,2 +1,15 @@
+
+app = "your-app-name"
+primary_region = "iad" # Change this to your preferred Fly.io region
+
 [build]
-  dockerfile = "backend/Dockerfile"
+  image = "" # Leave empty to use Docker Compose
+
+[deploy]
+  strategy = "rolling"
+
+[experimental]
+  cmd = ["docker", "compose", "up"]
+
+[processes]
+  app = "docker compose up"
