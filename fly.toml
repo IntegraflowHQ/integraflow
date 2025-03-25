@@ -5,6 +5,7 @@ primary_region = "iad" # Change this to your preferred Fly.io region
 [build]
   dockerfile = "backend/Dockerfile"
   ignorefile = "backend/.dockerignore"
+  build-target = "backend"
 
 [deploy]
   strategy = "rolling"
