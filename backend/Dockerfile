@@ -23,16 +23,15 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip
 
-RUN pip install poetry
+# Install setuptools==68.2.2 to avoid the following error:
+# ERROR: setuptools==58.1.0 is used in combination with setuptools-scm>=8.x
+RUN pip install setuptools==68.2.2
 
 WORKDIR /backend
 
 COPY requirements.txt requirements.txt
-COPY requirements_dev.txt requirements_dev.txt
-COPY poetry.lock poetry.lock
-COPY pyproject.toml pyproject.toml
 
-RUN poetry install --no-interaction
+RUN pip install -r requirements.txt
 
 COPY . .
 
