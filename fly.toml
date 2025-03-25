@@ -3,8 +3,8 @@ app = "your-app-name"
 primary_region = "iad" # Change this to your preferred Fly.io region
 
 [build]
-  dockerfile = "backend/Dockerfile"
-  build-target = "backend"
+  dockerfile = "/backend/Dockerfile"
+  build-target = "/backend/"
 
 [deploy]
   strategy = "rolling"
