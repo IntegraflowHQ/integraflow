@@ -9,3 +9,15 @@ swap_size_mb = 512
 [[vm]]
   size = "shared-cpu-2x"
   memory = "512mb"
+
+[[services]]
+  internal_port = 8000  # Match this to the port your app runs on inside the container
+  protocol = "tcp"
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls"]
+    port = 443
