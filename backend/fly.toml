@@ -1,0 +1,6 @@
+
+app = "your-app-name"
+primary_region = "iad" # Change this to your preferred Fly.io region
+
+[build]
+  dockerfile = "Dockerfile"
