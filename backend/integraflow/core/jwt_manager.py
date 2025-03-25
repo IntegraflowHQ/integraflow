@@ -98,8 +98,6 @@ class JWTManager(JWTManagerBase):
             else:
                 pem = pem.encode("utf-8")
 
-            print("decoded: ", pem)
-
         password: Union[str, bytes, None] = settings.RSA_PRIVATE_PASSWORD
         if isinstance(password, str):
             password = password.encode("utf-8")
