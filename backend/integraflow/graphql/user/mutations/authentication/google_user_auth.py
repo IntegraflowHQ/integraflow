@@ -67,7 +67,7 @@ class GoogleUserAuth(BaseMutation):
     @classmethod
     def _get_credentials(cls, code: str) -> Dict[str, str]:
         try:
-            flow = Flow.from_client_secrets_file(
+            flow = Flow.from_client_config(
                 GOOGLE_AUTH_CLIENT_CREDENTIALS,
                 scopes=[
                     "https://www.googleapis.com/auth/userinfo.profile",
