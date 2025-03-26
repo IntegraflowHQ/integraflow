@@ -1,3 +1,4 @@
+import json
 from typing import Dict, cast
 
 import graphene
@@ -68,7 +69,7 @@ class GoogleUserAuth(BaseMutation):
     def _get_credentials(cls, code: str) -> Dict[str, str]:
         try:
             flow = Flow.from_client_config(
-                GOOGLE_AUTH_CLIENT_CREDENTIALS,
+                json.loads(GOOGLE_AUTH_CLIENT_CREDENTIALS),
                 scopes=[
                     "https://www.googleapis.com/auth/userinfo.profile",
                     "https://www.googleapis.com/auth/userinfo.email",
