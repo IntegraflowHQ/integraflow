@@ -37,4 +37,6 @@ COPY . .
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+EXPOSE 8000
+
 CMD ["/usr/bin/supervisord"]
