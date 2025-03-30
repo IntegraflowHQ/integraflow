@@ -21,6 +21,7 @@ export const CTASettings = () => {
     return (
         <>
             <EditorTextInput
+                dataTestid="button-label"
                 label="Button label"
                 defaultValue={question?.settings.text}
                 onChange={(e) => {
@@ -34,6 +35,7 @@ export const CTASettings = () => {
                         options={ctaTypeOptions}
                         defaultValue={ctaTypeOptions.find((option) => option.value === question?.settings.type)}
                         label="Button type"
+                        dataTestid="button-type-indicator"
                         onchange={(option) => {
                             const newSettings = {
                                 ...question.settings,
@@ -51,6 +53,7 @@ export const CTASettings = () => {
 
                     {question?.settings.type === CTAType.LINK && (
                         <EditorTextInput
+                            dataTestid="button-link"
                             maxCharacterCount={100}
                             label="Button link"
                             defaultValue={question?.settings.link}

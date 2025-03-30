@@ -46,6 +46,7 @@ const TextResponse = ({ theme, question, label, description, submitText, onAnswe
                         onChange={(e: h.JSX.TargetedEvent<HTMLInputElement, Event>) => {
                             setAnswer(e.currentTarget.value);
                         }}
+                        data-testid="input-box"
                     />
                 ) : (
                     <textarea
@@ -60,6 +61,7 @@ const TextResponse = ({ theme, question, label, description, submitText, onAnswe
                         }}
                         className={"w-full h-full mt-3 resize-none border rounded-xl p-4"}
                         style={styles}
+                        data-testid="textarea-box"
                     ></textarea>
                 )}
                 <Button color={theme?.button} type="submit" size="full" classname="mt-3">
