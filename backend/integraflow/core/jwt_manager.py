@@ -1,3 +1,4 @@
+import base64
 import json
 import logging
 from os.path import exists, join
@@ -15,7 +16,7 @@ from django.utils.module_loading import import_string
 from jwt import api_jws
 from jwt.algorithms import RSAAlgorithm
 
-from .utils import build_absolute_uri, get_domain
+from .utils import build_absolute_uri, get_domain, is_base_64
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +93,10 @@ class JWTManager(JWTManagerBase):
     @classmethod
     def _get_private_key(cls, pem: Union[str, bytes]) -> rsa.RSAPrivateKey:
         if isinstance(pem, str):
-            pem = pem.encode("utf-8")
+            if is_base_64(pem):
+                pem = base64.b64decode(pem)
+            else:
+                pem = pem.encode("utf-8")
 
         password: Union[str, bytes, None] = settings.RSA_PRIVATE_PASSWORD
         if isinstance(password, str):

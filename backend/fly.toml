@@ -1,0 +1,18 @@
+
+app = "integraflow-backend"
+primary_region = "fra"
+swap_size_mb = 512
+
+[build]
+  dockerfile = "Dockerfile"
+
+[[vm]]
+  size = "shared-cpu-2x"
+  memory = "512mb"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 1

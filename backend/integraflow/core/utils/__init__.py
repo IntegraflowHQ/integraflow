@@ -1,8 +1,9 @@
+import base64
+import binascii
 import datetime
 import secrets
 import socket
 import string
-import pytz
 from random import choice
 from typing import (
     TYPE_CHECKING,
@@ -12,10 +13,11 @@ from typing import (
     Optional,
     Tuple,
     TypeVar,
-    Union
+    Union,
 )
 from urllib.parse import urljoin, urlparse
 
+import pytz
 from celery.utils.log import get_task_logger
 from django.conf import settings
 from django.db import IntegrityError, transaction
@@ -382,3 +384,11 @@ class UniqueConstraintByExpression(BaseConstraint):
                 self.name == other.name and self.expression == other.expression
             )
         return super().__eq__(other)
+
+
+def is_base_64(text: str):
+    try:
+        base64.b64decode(text, validate=True)
+        return True
+    except binascii.Error:
+        return False

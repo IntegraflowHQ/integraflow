@@ -1,3 +1,5 @@
+import json
+import logging
 from typing import Dict, cast
 
 import graphene
@@ -19,6 +21,8 @@ from integraflow.user.models import User
 from .utils import _get_new_csrf_token
 
 GOOGLE_AUTH_CLIENT_CREDENTIALS = settings.GOOGLE_AUTH_CLIENT_CREDENTIALS
+
+logger = logging.getLogger(__name__)
 
 
 class GoogleUserAuth(BaseMutation):
@@ -67,8 +71,8 @@ class GoogleUserAuth(BaseMutation):
     @classmethod
     def _get_credentials(cls, code: str) -> Dict[str, str]:
         try:
-            flow = Flow.from_client_secrets_file(
-                GOOGLE_AUTH_CLIENT_CREDENTIALS,
+            flow = Flow.from_client_config(
+                json.loads(GOOGLE_AUTH_CLIENT_CREDENTIALS),
                 scopes=[
                     "https://www.googleapis.com/auth/userinfo.profile",
                     "https://www.googleapis.com/auth/userinfo.email",
@@ -83,7 +87,9 @@ class GoogleUserAuth(BaseMutation):
                 clock_skew_in_seconds=10
             )
             return credentials  # type: ignore
-        except Exception:
+        except Exception as err:
+            logger.exception(f"Google auth error: {err}")
+
             raise ValidationError(
                 "Failed to fetch user info from google auth.",
             )
