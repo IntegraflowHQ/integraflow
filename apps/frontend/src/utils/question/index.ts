@@ -337,6 +337,16 @@ export function resolveAnswer(answer: SurveyAnswer[], question?: ParsedQuestion)
         }
     }
 
+    if (answer[0].type?.toLowerCase() === SurveyQuestionTypeEnum.Nps.toLocaleLowerCase()) {
+        const answer = answer[0].answer;
+
+        if (!answer) {
+            return [""];
+        }
+
+        return [`${parseInt(answer) - 1}`];
+    }
+
     if (answer[0].type?.toLocaleLowerCase() === SurveyQuestionTypeEnum.Form.toLocaleLowerCase()) {
         const texts = answer.map((item) => {
             const option = question?.options.find((opt) => opt.id === item.answerId);
