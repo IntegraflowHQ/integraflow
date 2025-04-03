@@ -201,7 +201,7 @@ const CreateWorkspace = () => {
                                     />
                                 </div>
                             </div>
-                            <Button text="Create Workspace" />
+                            <Button text="Create Workspace" data-testid="create-workspace" />
                         </form>
                     </div>
                 </div>

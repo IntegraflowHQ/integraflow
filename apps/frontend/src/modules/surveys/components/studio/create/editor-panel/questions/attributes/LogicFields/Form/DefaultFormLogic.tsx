@@ -1,6 +1,6 @@
 import { useQuestion } from "@/modules/surveys/hooks/useQuestion";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
-import { QuestionLogic, LogicOperator } from "@/types";
+import { LogicOperator, QuestionLogic } from "@/types";
 import { cn, generateUniqueId } from "@/utils";
 import { destinationOptions } from "@/utils/question";
 import { PlusIcon } from "lucide-react";
@@ -131,6 +131,7 @@ const FormLogicDefault = ({ setFormLogicValues, formLogicValues, setIsCreatingLo
                             onchange={(value: SingleValue<Option> | MultiValue<Option>) => {
                                 handleUpdateCondition(value);
                             }}
+                            dataTestid="destination-indicator"
                         />
                     </div>
                 </div>
