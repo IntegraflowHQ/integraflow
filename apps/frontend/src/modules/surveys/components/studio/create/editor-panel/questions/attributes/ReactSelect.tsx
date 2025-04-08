@@ -66,6 +66,10 @@ export const ReactSelect = ({
     };
 
     const styles = {
+        input: (provided: CSSObjectWithLabel) => ({
+            ...provided,
+            color: "#FFF",
+        }),
         control: (provided: CSSObjectWithLabel) => ({
             ...provided,
             borderRadius: "8px",
