@@ -338,13 +338,13 @@ export function resolveAnswer(answer: SurveyAnswer[], question?: ParsedQuestion)
     }
 
     if (answer[0].type?.toLowerCase() === SurveyQuestionTypeEnum.Nps.toLocaleLowerCase()) {
-        const answer = answer[0].answer;
+        const nps = answer[0].answer;
 
-        if (!answer) {
+        if (!nps) {
             return [""];
         }
 
-        return [`${parseInt(answer) - 1}`];
+        return [`${parseInt(nps) - 1}`];
     }
 
     if (answer[0].type?.toLocaleLowerCase() === SurveyQuestionTypeEnum.Form.toLocaleLowerCase()) {
