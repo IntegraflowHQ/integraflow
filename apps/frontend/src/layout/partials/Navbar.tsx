@@ -165,6 +165,7 @@ export const Navbar = () => {
                     </div>
                     <div className="space-y-[27px] pb-[24px]">
                         <button
+                            data-testid="create-survey"
                             onClick={() =>
                                 navigate(
                                     `${ROUTES.SURVEY_LIST}/?create=2`
