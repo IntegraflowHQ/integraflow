@@ -65,10 +65,10 @@ export default function BooleanResponse({
                     </Fragment>
                 ) : (
                     <Fragment>
-                        <button onClick={answerNegative}>
+                        <button onClick={answerNegative} data-testid="thumbs-down">
                             <ThumbsDown size={32} color={theme?.answer ?? "#050505"} />
                         </button>
-                        <button onClick={answerPositive}>
+                        <button onClick={answerPositive} data-testid="thumbs-up">
                             <ThumbsUp size={32} color={theme?.answer ?? "#050505"} />
                         </button>
                     </Fragment>

@@ -54,6 +54,7 @@ export const RatingFields = () => {
                 <div className="flex gap-2">
                     <div className="flex-1">
                         <ReactSelect
+                            dataTestid="scale-style-indicator"
                             label="Scale Style"
                             options={scaleStyleOptions}
                             defaultValue={scaleStyleOptions.find((option) => option.value === question?.type)}
