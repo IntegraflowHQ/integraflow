@@ -23,7 +23,8 @@ export const Pagination = ({
     return (
         <div className={cn("flex items-center justify-between text-intg-text-4", className ?? "")}>
             <p>
-                {totalCount} {itemName}
+                <span data-testid="survey-count">{totalCount}</span>
+                <span>{itemName}</span>
             </p>
 
             <div className="flex gap-4">

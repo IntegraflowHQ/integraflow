@@ -64,11 +64,12 @@ export const QuestionPanel = ({ questionIndex }: Props) => {
                 </Tabs.List>
 
                 <div className="flex items-center gap-3">
-                    {survey?.status !== SurveyStatusEnum.Active ? (
-                        <Trash2 onClick={() => deleteQuestion(question)} className="cursor-pointer" size={20} />
-                    ) : null}
-
-                    <button onClick={clear}>
+                    <button data-testid="delete-question">
+                        {survey?.status !== SurveyStatusEnum.Active ? (
+                            <Trash2 onClick={() => deleteQuestion(question)} className="cursor-pointer" size={20} />
+                        ) : null}
+                    </button>
+                    <button onClick={clear} name="close-question">
                         <XIcon className="cursor-pointer" />
                     </button>
                 </div>
