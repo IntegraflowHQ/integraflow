@@ -33,6 +33,7 @@ export const FormSettings = () => {
                         <Switch
                             name="disclaimer"
                             label="Show Disclaimer"
+                            dataTestid="toggle-disclaimer"
                             defaultValue={question?.settings.disclaimer}
                             onChange={(e) => {
                                 const newSettings = { ...question?.settings };
@@ -65,6 +66,7 @@ export const FormSettings = () => {
                             maxCharacterCount={100}
                             defaultValue={question?.settings.disclaimerText}
                             label={"Disclaimer content"}
+                            dataTestid="disclaimer-content"
                             placeholder="Type in your disclaimer here"
                         />
                     ) : null}
@@ -86,6 +88,7 @@ export const FormSettings = () => {
                                 });
                                 setShowConsent(!showConsent);
                             }}
+                            dataTestid="toggle-consent-box"
                             disabled={survey?.status === SurveyStatusEnum.Active}
                         />
                     </div>
@@ -106,6 +109,7 @@ export const FormSettings = () => {
                             maxCharacterCount={100}
                             defaultValue={question.settings.consentText}
                             placeholder="Type in consent label here"
+                            dataTestid="consent-label"
                         />
                     ) : null}
                 </div>

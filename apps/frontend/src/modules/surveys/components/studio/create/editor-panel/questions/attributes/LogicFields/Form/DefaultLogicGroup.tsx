@@ -82,6 +82,7 @@ export const LogicGroup = ({ group, formLogicValues, setFormLogicValues, setIsCr
                                     group.fields.includes(option.value),
                                 ) ?? []
                             }
+                            dataTestid="value-indicator"
                         />
                     </div>
                 </div>
@@ -95,6 +96,7 @@ export const LogicGroup = ({ group, formLogicValues, setFormLogicValues, setIsCr
                                 onchange={(value) => {
                                     handleUpdateCondition(value);
                                 }}
+                                dataTestid="condition-indicator"
                             />
                         </div>
                     </div>

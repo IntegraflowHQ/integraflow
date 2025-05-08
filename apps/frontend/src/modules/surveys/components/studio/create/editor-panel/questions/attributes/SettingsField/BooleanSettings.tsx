@@ -26,6 +26,7 @@ export const BooleanSettings = () => {
     return (
         <div className="space-y-6">
             <ReactSelect
+                dataTestid="shape-indicator"
                 label="Shape"
                 options={booleanOptionsShape}
                 defaultValue={booleanOptionsShape.find((option) => option.value === question?.settings?.shape)}

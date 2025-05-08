@@ -32,6 +32,12 @@ jobs:
 
       - name: Build dashboard
         run: yarn build:dashboard
+        env:
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+          VITE_SERVER_BASE_URL: ${{ secrets.VITE_SERVER_BASE_URL }}
+          VITE_LINK_SURVEY_HOST: ${{ secrets.VITE_LINK_SURVEY_HOST }}
+          VITE_PUBLIC_POSTHOG_KEY: ${{ secrets.VITE_PUBLIC_POSTHOG_KEY }}
+          VITE_PUBLIC_POSTHOG_HOST: ${{ secrets.VITE_PUBLIC_POSTHOG_HOST }}
 
       - name: Start Backend Server
         run: docker compose -f ./docker-compose-test.yml up -d

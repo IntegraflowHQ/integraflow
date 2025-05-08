@@ -76,7 +76,12 @@ function RangeResponse({ question, label, description, onAnswered, theme }: Rang
             );
         } else if (question.type === AnswerType.RATING) {
             return (
-                <button onClick={handleOptionClick} key={index} onMouseOver={() => setHoveredRatingValue(index + 1)}>
+                <button
+                    onClick={handleOptionClick}
+                    data-testid={(question.settings as RangeSettings).shape}
+                    key={index}
+                    onMouseOver={() => setHoveredRatingValue(index + 1)}
+                >
                     <RatingIcon
                         shape={(question.settings as RangeSettings).shape}
                         color={index + 1 <= hoveredRatingValue ? answerColor : hexToRgba(answerColor, 0.1)}
