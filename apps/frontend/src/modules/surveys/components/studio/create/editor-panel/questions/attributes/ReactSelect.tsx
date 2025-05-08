@@ -2,8 +2,17 @@ import { SurveyStatusEnum } from "@/generated/graphql";
 import { useSurvey } from "@/modules/surveys/hooks/useSurvey";
 import { LogicOperator } from "@/types";
 import { cn } from "@/utils";
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import Select, { CSSObjectWithLabel, MultiValue, MultiValueGenericProps, SingleValue } from "react-select";
+import Select, {
+    components,
+    CSSObjectWithLabel,
+    DropdownIndicatorProps,
+    GroupBase,
+    MultiValue,
+    MultiValueGenericProps,
+    SingleValue,
+} from "react-select";
 import CreatableSelect from "react-select/creatable";
 import { LogicOperatorBtn } from "./LogicOperator";
 
@@ -19,6 +28,7 @@ type Props = {
     onOperatorChange?: (value: Option) => void;
     logicOperator?: LogicOperator;
     classname?: string;
+    dataTestid?: string;
 };
 
 export interface Option {
@@ -45,6 +55,7 @@ export const ReactSelect = ({
     logicOperator,
     shouldLogicalOperatorChange = false,
     classname,
+    dataTestid,
 }: Props) => {
     const [values, setValue] = useState<Option | Option[]>([]);
     const [userOptions, setUserOptions] = useState<Option[]>([]);
@@ -122,6 +133,16 @@ export const ReactSelect = ({
         }),
     };
 
+    const DropdownIndicator = <Option,>(props: DropdownIndicatorProps<Option, boolean, GroupBase<Option>>) => {
+        return (
+            <components.DropdownIndicator {...props}>
+                <span data-testid={dataTestid}>
+                    <ChevronDown size={20} />
+                </span>
+            </components.DropdownIndicator>
+        );
+    };
+
     const customMultiValue = (props: MultiValueGenericProps<Option>) => {
         return (
             <div className="flex items-center justify-center">
@@ -174,6 +195,7 @@ export const ReactSelect = ({
                         className={classname}
                         isDisabled={survey?.status === SurveyStatusEnum.Active}
                         classNamePrefix={"react-select"}
+                        components={{ DropdownIndicator }}
                     />
                 </div>
             ) : (
@@ -181,7 +203,7 @@ export const ReactSelect = ({
                     {enableUserOptions ? (
                         <CreatableSelect<Option, boolean>
                             closeMenuOnSelect={false}
-                            components={{ MultiValue: customMultiValue }}
+                            components={{ MultiValue: customMultiValue, DropdownIndicator }}
                             onCreateOption={(inputValue) => {
                                 handleCreate(inputValue);
                                 onchange && onchange([...(values as Option[]), createOption(inputValue)]);
@@ -201,7 +223,7 @@ export const ReactSelect = ({
                     ) : (
                         <div>
                             <Select
-                                components={{ MultiValue: customMultiValue }}
+                                components={{ MultiValue: customMultiValue, DropdownIndicator }}
                                 value={value}
                                 options={options}
                                 defaultValue={defaultValue}

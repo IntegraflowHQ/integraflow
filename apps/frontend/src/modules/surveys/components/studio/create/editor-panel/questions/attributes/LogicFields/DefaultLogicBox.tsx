@@ -132,6 +132,7 @@ export const DefaultLogicBox: React.FC<Props> = ({
                         value={conditionOptions((question as ParsedQuestion).type!)?.find(
                             (option: Option) => option.value === (logicValues.condition as string),
                         )}
+                        dataTestid="condition-indicator"
                     />
                 </div>
             </div>
@@ -174,6 +175,7 @@ export const DefaultLogicBox: React.FC<Props> = ({
                                 onOperatorChange={() => {
                                     handleOperatorChange();
                                 }}
+                                dataTestid="value-indicator"
                                 comboBox={true}
                                 options={logicValuesOptions(question!)}
                                 onchange={handleValuesSelection}
@@ -204,6 +206,7 @@ export const DefaultLogicBox: React.FC<Props> = ({
                         <ReactSelect
                             options={destinationOptions(parsedQuestions, question!)}
                             onchange={handleDestinationSelection}
+                            dataTestid="destination-indicator"
                         />
                     </div>
                 </div>

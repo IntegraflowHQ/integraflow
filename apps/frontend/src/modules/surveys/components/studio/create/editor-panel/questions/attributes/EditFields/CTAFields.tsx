@@ -84,6 +84,7 @@ export const CTAFields = () => {
                     classname={`${showDescription ? "hidden" : "block"} mt-2`}
                     text="Add description"
                     onclick={() => setShowDescription(true)}
+                    dataTestid="add-description-btn"
                 />
             ) : null}
         </div>

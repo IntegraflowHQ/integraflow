@@ -122,6 +122,7 @@ export default function Studio() {
                         <Tabs.Trigger
                             key={tab.label}
                             value={tab.label}
+                            data-testid={`${tab.label}-tab`}
                             className={`rounded-md px-3 py-2 text-sm text-intg-text transition-all ease-in hover:bg-[#272138] data-[state=active]:bg-[#272138] data-[state=active]:text-white`}
                             disabled={index !== 0 && parsedQuestions.length === 0}
                         >

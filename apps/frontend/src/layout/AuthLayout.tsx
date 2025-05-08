@@ -6,7 +6,7 @@ import Profile2 from "../assets/images/loginScreen/profile-2.png";
 import Profile3 from "../assets/images/loginScreen/profile-3.png";
 import Logo from "../assets/images/logo.png";
 
-const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? "";
 
 export function AuthLayout() {
     return (

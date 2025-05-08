@@ -165,6 +165,7 @@ export const LogicTab = ({ questionIndex }: Props) => {
 
                     setIsCreatingLogic(true);
                 }}
+                data-testid="add-new-logic"
             >
                 <p className="text-xs underline">Add new Logic</p>
             </div>

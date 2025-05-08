@@ -22,6 +22,7 @@ export interface EditorTextProps {
     defaultValue?: string;
     showMention?: boolean;
     value?: string;
+    dataTestid?: string;
 }
 
 export const EditorTextInput = ({
@@ -35,6 +36,7 @@ export const EditorTextInput = ({
     placeholder,
     showMention = false,
     value,
+    dataTestid,
 }: EditorTextProps) => {
     const [displayFallbackField, setDisplayFallbackField] = useState(false);
     const [fallbackValue, setFallbackValue] = useState("");
@@ -269,6 +271,7 @@ export const EditorTextInput = ({
                     value={value}
                     defaultValue={defaultValue}
                     placeholder={placeholder}
+                    data-testid={dataTestid}
                     className="rounded-lg border border-transparent bg-[#272138] text-sm text-intg-text-1 placeholder:text-intg-text-3 focus:border-intg-text-3 focus:outline-none"
                     disabled={maxCharacterCount === stripHtmlTags(defaultValue ?? "")?.length}
                     readOnly={survey?.status === SurveyStatusEnum.Active}

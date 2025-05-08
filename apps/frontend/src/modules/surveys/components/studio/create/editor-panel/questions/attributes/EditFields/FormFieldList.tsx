@@ -49,6 +49,7 @@ export const FormFieldList = () => {
                                             options: newOptions,
                                         });
                                     }}
+                                    dataTestid="form-type-indicator"
                                 />
 
                                 <EditorTextInput
@@ -66,6 +67,7 @@ export const FormFieldList = () => {
                                             true,
                                         );
                                     }}
+                                    dataTestid="form-label"
                                 />
                             </div>
 
@@ -99,6 +101,7 @@ export const FormFieldList = () => {
             {survey?.status !== SurveyStatusEnum.Active ? (
                 <TextButton
                     text={"Add next field"}
+                    dataTestid="add-next-field-btn"
                     onclick={() => {
                         const highestOrderNumber = getHighestOrderNumber(question?.options);
                         const newOptions = [...question.options];
